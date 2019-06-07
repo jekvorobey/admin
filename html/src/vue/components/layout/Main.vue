@@ -1,7 +1,16 @@
 <template>
-    <div>
+    <div class="fake-vue-body">
         <LayoutHeader></LayoutHeader>
-        <slot></slot>
+        <div class="d-flex flex-row middle-area">
+            <div style="width: 300px; background: lightgray">
+                <!-- sidebar -->
+            </div>
+            <div class="container-fluid flex-grow-1">
+                <b-breadcrumb :items="breadcrumbsItems" class="breadcrumbs"></b-breadcrumb>
+                <slot></slot>
+            </div>
+        </div>
+
         <modal-message></modal-message>
         <LayoutFooter></LayoutFooter>
     </div>
@@ -24,3 +33,15 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+    .fake-vue-body {
+        height: 100%;
+    }
+    .breadcrumbs {
+        margin-top: 15px;
+    }
+    .middle-area {
+        height: calc(100% - 106px);
+    }
+</style>
