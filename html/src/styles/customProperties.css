@@ -1,0 +1,66 @@
+:root {
+    /* Минимальный размер сетки.
+    Все размеры делаем кратными ему (кроме случаев, где сетка неприменима). */
+    --gs: 8px;
+    --g: calc(var(--gs) * 4);
+    --column: 90px;
+    --grid-columns: 12;
+
+    /* Глобальные цвета проекта. */
+    --cl-black: #000;
+    --cl-white: #fff;
+
+    /* Основные цвета проекта и текста */
+
+    --cl-global: #212529;
+    --cl-global-invert: #fff;
+    --cl-grey: #989898;
+    --cl-elem-grey: #f6f6f6;
+    --cl-divider-grey: #dfdfdf;
+
+    /* Цвета проекта */
+
+    --cl-cyan: #30baee;
+    --cl-magenta: #ff4a81;
+    --cl-pink: #ff6896;
+    --cl-lg-blue: #7cdbff;
+    --cl-blue: #1c81c3;
+    --cl-green: #a7d858;
+
+    /* Основные размеры для элементов */
+    --field-height: 40px;
+
+    /* Базовый путь к папке с картинками
+     * Использование: background-image: url('--img_path/svg/load.svg')
+     */
+    --img_path: ../images;
+
+    /* Время для основных анимаций (изменение цфета, фона и пр.) */
+    --time: 200ms;
+
+    /* Время для анимаций появления, исчезновения */
+    --animation-time: 500ms;
+
+    /* http://cubic-bezier.com/#.3,.76,.36,.93 */
+    --timing-function: cubic-bezier(0.3, 0.76, 0.36, 0.93);
+
+    /* Шрифты */
+    --montserrat: 'montserrat', sans-serif;
+
+    /* Точки адаптива */
+    --mobile-sm-size-min: 320px;
+    --mobile-size: 479px;
+    --mobile-size-min: 480px;
+    --mobile-lg-size: 639px;
+    --mobile-lg-size-min: 640px;
+    --tablet-size: 767px;
+    --tablet-size-min: 768px;
+    --tablet-lg-size: 1023px;
+    --tablet-lg-size-min: 1024px;
+    --desktop-size: 1279px;
+    --desktop-size-min: 1280px;
+    --desktop-lg-size: 1599px;
+    --desktop-lg-size-min: 1600px;
+    --desktop-xl-size: 1909px;
+    --desktop-xl-size-min: 1910px;
+}
