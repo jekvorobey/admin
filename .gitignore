@@ -65,15 +65,11 @@ sftp-config.json
 ###########
 node_modules
 bower_components
-/public/hot
-/public/storage
 /storage/*.key
 /storage/debugbar
 /vendor
 npm-debug.log
 yarn-error.log
 .env
-/public/assets/styles/*.map
-/public/assets/scripts/*.map
-/public/build
+/public
 auth.json
