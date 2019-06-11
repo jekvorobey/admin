@@ -2,8 +2,8 @@
     <div class="fake-vue-body">
         <LayoutHeader></LayoutHeader>
         <div class="d-flex flex-row middle-area">
-            <div style="width: 300px; background: lightgray">
-                <!-- sidebar -->
+            <div style="width: 300px;" class="bg-light">
+                <MainMenu></MainMenu>
             </div>
             <div class="container-fluid flex-grow-1">
                 <b-breadcrumb :items="breadcrumbsItems" class="breadcrumbs"></b-breadcrumb>
@@ -20,6 +20,7 @@
 import LayoutFooter from '../layout-footer/layout-footer.vue';
 import LayoutHeader from '../layout-header/layout-header.vue';
 import ModalMessage from '../modal-message/modal-message.vue';
+import MainMenu from '../main-menu/main-menu.vue';
 
 export default {
     name: 'layout-main',
@@ -30,6 +31,7 @@ export default {
         LayoutFooter,
         LayoutHeader,
         ModalMessage,
+        MainMenu,
     },
 };
 </script>
