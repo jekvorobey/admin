@@ -7,7 +7,7 @@
                         v-for="link in group.items"
                         :key="JSON.stringify(link.route)"
                         :href="link.route" class="nav-link"
-                        :class="{'bg-secondary text-light':link.isActive, 'pl-5':link.subitem}"
+                        :class="{'bg-secondary text-light':link.active, 'pl-5':link.subitem}"
                 >{{ link.title }}</a>
             </div>
         </div>

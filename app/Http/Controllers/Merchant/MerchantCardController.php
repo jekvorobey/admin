@@ -16,6 +16,7 @@ class MerchantCardController extends Controller
      */
     public function index()
     {
+        $this->breadcrumbs = 'merchant.card';
         return $this->render('Index', [
             'message' => 'Карточка мерчанта'
         ]);
