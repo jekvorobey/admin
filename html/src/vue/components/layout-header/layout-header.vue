@@ -1,24 +1,27 @@
 <template>
     <nav class="navbar navbar-dark bg-dark" style="color: #dfdfdf;">
         <a class="navbar-brand">MAS</a>
-        <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+
+        <a v-if="isGuest" :href="route('login')" class="btn btn-danger">Не авторизован</a>
+        <button v-else @click="logout" class="btn btn-success">Авторизован</button>
     </nav>
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
     name: 'layout-header',
-    components: {},
-    props: {},
-    mixins: [],
     data() {
         return {};
     },
-    computed: {},
-    methods: {},
+    methods: {
+        logout() {
+            axios.get(this.route('logout-ajax'))
+                .then(() => {
+                    window.location.href = this.route('home');
+                })
+        }
+    },
 };
 </script>

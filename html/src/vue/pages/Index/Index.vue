@@ -8,13 +8,11 @@
 
 export default {
     name: 'page-index',
-    components: {},
     props: [
         'message'
     ],
     data() {
         return {};
     },
-    computed: {},
 };
 </script>

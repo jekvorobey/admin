@@ -45,7 +45,10 @@ Vue.mixin({
             return String(str).split('\n');
         },
         changeModal(modal, flag) {
-            this.$store.commit('modals', { modal, flag });
+            this.$store.commit('modals', {modal, flag});
+        },
+        route(name) {
+            return '/' + this.$store.state.routes[name].replace(/^\//, '');
         },
     },
     computed: {
@@ -58,5 +61,8 @@ Vue.mixin({
         staticText() {
             return this.$store.state.layout.staticBlock;
         },
+        isGuest() {
+            return this.$store.state.layout.isGuest;
+        }
     },
 });

@@ -1,6 +1,10 @@
 <?php
 
 return [
+    
+    'serviceAuth' => [
+        'host' => env('AUTH_SERVICE_HOST', 'http://localhost'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

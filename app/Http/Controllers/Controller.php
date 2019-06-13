@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\Menu;
+use Common\Auth\Client;
+use Common\Auth\TokenStore;
 use DaveJamesMiller\Breadcrumbs\Facades\Breadcrumbs;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -26,6 +28,7 @@ class Controller extends BaseController
             [
                 'breadcrumbs' => $breadcrumbs ? Breadcrumbs::generate(...$breadcrumbs) : [],
                 'menu' => Menu::getMenuItems(),
+                'isGuest' => resolve(TokenStore::class)->token() == null
             ],
             [
                 'title' => $this->title,
