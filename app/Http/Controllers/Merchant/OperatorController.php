@@ -16,6 +16,7 @@ class OperatorController extends Controller
      */
     public function list()
     {
+        $this->breadcrumbs = 'merchant.operator_list';
         return $this->render('Index', [
             'message' => 'Менеджеры'
         ]);

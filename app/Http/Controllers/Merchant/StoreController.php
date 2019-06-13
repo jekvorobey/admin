@@ -16,6 +16,7 @@ class StoreController extends Controller
      */
     public function list()
     {
+        $this->breadcrumbs = 'merchant.store_list';
         return $this->render('Index', [
             'message' => 'Магазины и склады'
         ]);

@@ -15,7 +15,8 @@ class Menu
                     [
                         'title' => 'Карточка мерчанта',
                         'route' => route('merchant.card'),
-                        'permission' => '#merchant-card/view'
+                        'permission' => '#merchant-card/view',
+                        'isActive'
                     ],
                     [
                         'title' => 'Менеджеры',
@@ -121,10 +122,13 @@ class Menu
     {
         $menuItems = static::menu();
         
-        foreach ($menuItems as $group) {
+        foreach ($menuItems as &$group) {
             //todo Добавить проверку прав для группы
-            foreach ($group as $item) {
+            foreach ($group['items'] as &$item) {
                 //todo Добавить проверку прав для пункта меню
+                if (url()->full() == $item['route']) {
+                    $item['active'] = true;
+                }
             }
         }
         
