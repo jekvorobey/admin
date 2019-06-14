@@ -1,13 +1,15 @@
 /* eslint-disable require-jsdoc */
 
+import NetService from "./net";
+
 let services_instance;
 export default class Services {
     constructor() {
         this.services = {};
 
-        // this.register('net', function() {
-        //     return new NetService();
-        // });
+        this.register('net', function() {
+            return new NetService();
+        });
     }
 
     static instance() {

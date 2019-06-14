@@ -36,8 +36,8 @@ export default {
                     email: this.email,
                     password: this.password
                 }
-            }).then(data => {
-                console.log(data);
+            }).then(() => {
+                window.location.href = this.route('home')
             });
         }
     }
