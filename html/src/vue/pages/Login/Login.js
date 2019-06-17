@@ -4,8 +4,6 @@ import store from '../../store/store';
 import media from '../../plugins/MediaPlugin';
 import Login from './Login.vue';
 
-import(/* webpackChunkName: 'fonts.preload' */ '../../../scripts/fonts');
-
 // Boot the current Vue component
 const root = document.getElementById('app');
 
