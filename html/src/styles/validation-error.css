@@ -1,9 +1,6 @@
 /* Ошибки валидатора */
 
 .validation-error {
-    position: absolute;
-    bottom: 0;
-    left: 0;
     color: var(--cl-magenta);
     font-size: 12px;
     line-height: 1.5;
@@ -16,8 +13,6 @@
 
 .error-message {
     color: var(--cl-magenta);
-    position: absolute;
-    bottom: 0;
     font-size: 14px;
     line-height: 20px;
 
