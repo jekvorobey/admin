@@ -44,9 +44,7 @@ class Controller extends BaseController
                 'js' => [
                     "scripts/{$componentName}.js",
                 ],
-                'css' => [
-                    "styles/{$componentName}.css",
-                ],
+                'css' => [],
             ];
         } else {
             $webPack = json_decode(file_get_contents(public_path('/assets/webpack-assets.json')), true);

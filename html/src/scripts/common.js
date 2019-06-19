@@ -4,6 +4,7 @@ import '../styles/customMedia.css';
 import '../styles/customProperties.css';
 import '../styles/customSelectors.css';
 import '../styles/app.css';
+import '../styles/validation-error.css';
 
 import 'focus-visible';
 import './mask';

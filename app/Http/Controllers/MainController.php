@@ -15,7 +15,7 @@ class MainController extends Controller
             'message' => 'Banana!'
         ]);
     }
-
+    
     public function login()
     {
         $this->breadcrumbs = 'login';
@@ -40,5 +40,11 @@ class MainController extends Controller
         $store->saveToken('');
         $store->saveRefreshToken('');
         return response()->json([]);
+    }
+    
+    public function registration()
+    {
+        $this->breadcrumbs = 'registration';
+        return $this->render('Registration', []);
     }
 }

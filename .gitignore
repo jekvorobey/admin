@@ -73,3 +73,4 @@ yarn-error.log
 .env
 /public
 auth.json
+/html/build/

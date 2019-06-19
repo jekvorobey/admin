@@ -31,8 +31,14 @@ Breadcrumbs::for('merchant.store_list', function ($trail) {
     $trail->push('Магазины и склады', route('merchant.store_list'));
 });
 
-// Главная > Логин
+// Главная > Авторизация
 Breadcrumbs::for('login', function ($trail) {
     $trail->parent('home');
-    $trail->push('Login', route('login'));
+    $trail->push('Авторизация', route('login'));
+});
+
+// Главная > Регистрация
+Breadcrumbs::for('registration', function ($trail) {
+    $trail->parent('home');
+    $trail->push('Регистрация', route('registration'));
 });
