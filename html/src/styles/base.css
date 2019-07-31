@@ -1,0 +1,494 @@
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: white;
+    background: #343a40 !important;
+    border-color: #343a40 !important;
+}
+
+/*
+!* Базовые стили *!
+
+*,
+::before,
+::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+!* ::selection {
+    color: var(--cl-white);
+    background: var(--cl-cyan);
+} *!
+
+:focus {
+    outline: 1px solid var(--cl-cyan);
+}
+
+.js-focus-visible :focus:not(.focus-visible) {
+    outline: none;
+}
+
+html,
+body,
+.fake-vue-body {
+    min-height: 100%;
+}
+
+body,
+.fake-vue-body {
+    min-height: 100vh;
+    position: relative;
+    color: var(--cl-global);
+    font-size: 14px;
+    line-height: 1.5;
+    vertical-align: top;
+    background: var(--cl-global-invert);
+    backface-visibility: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        z-index: 5;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        visibility: hidden;
+        background-color: rgba(153, 153, 153, 0.8);
+        transition: all 0.5s ease-in-out;
+    }
+
+    &.has-overlay {
+        &::before {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+
+    .fonts-stage-1 &,
+    .fonts-stage-2 & {
+        font-size: 16px;
+        line-height: 1.5;
+        letter-spacing: 0;
+        word-spacing: 0;
+    }
+}
+
+.browse-happy {
+    background: var(--cl-global-invert);
+    padding: 20px 0;
+    text-align: center;
+
+    strong {
+        color: var(--cl-global);
+    }
+
+    &__notice {
+        font-size: 20px;
+    }
+
+    &__security {
+        font-size: 12px;
+    }
+
+    &__update {
+        margin-bottom: calc(var(--gs) * 5);
+        font-size: 14px;
+    }
+
+    &__recommend {
+        font-size: 12px;
+    }
+}
+
+.wrap-main {
+    position: relative;
+    min-width: var(--mobile-sm-size-min);
+    margin: 0;
+}
+
+.container {
+    position: relative;
+    min-width: var(--mobile-sm-size-min);
+    max-width: var(--desktop-lg-size-min);
+    margin: 0 auto;
+    padding: 0 calc(var(--gs) * 11);
+
+    @media (--desktop) {
+        padding: 0 calc(var(--gs) * 5);
+    }
+
+    @media (--tablet-lg) {
+        padding: 0 calc(var(--gs) * 4);
+    }
+
+    @media (--tablet) {
+        padding: 0 calc(var(--gs) * 2);
+    }
+}
+
+.section {
+    position: relative;
+
+    &__hl {
+        margin: 0 0 var(--g) 0;
+        text-align: center;
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+
+    !* При использовании LQIP изображениям добавляется blur через фильтры.
+    Это правило добавляет им плавное исчезновение при окончании подгрузки изображения. *!
+    transition: filter 1000ms;
+}
+
+a {
+    color: var(--cl-blue);
+    fill: var(--cl-blue);
+    text-decoration: none;
+    transition: all var(--time) var(--timing-function);
+    font-size: 16px;
+    line-height: 24px;
+
+    &:hover {
+        color: var(--cl-cyan);
+        fill: var(--cl-cyan);
+        text-decoration: none;
+    }
+}
+
+strong,
+b {
+    font-weight: bold;
+
+    i,
+    em {
+        font-weight: bold;
+        font-style: italic;
+    }
+}
+
+em,
+i {
+    font-style: italic;
+
+    strong,
+    b {
+        font-weight: bold;
+        font-style: italic;
+    }
+}
+
+p {
+    margin: 0 0 calc(var(--g) / 2);
+
+    @media (--tablet-lg) {
+        font-size: 15px;
+    }
+
+    @media (--tablet) {
+        font-size: 13px;
+        line-height: 20px;
+        margin-bottom: calc(var(--gs) * 0.5);
+    }
+}
+
+.text {
+    &-review {
+        font-weight: 500;
+        font-size: 21px;
+        line-height: 32px;
+
+        @media (--tablet-lg) {
+            font-size: 15px;
+            line-height: 24px;
+        }
+
+        @media (--tablet) {
+            font-size: 13px;
+            line-height: 20px;
+        }
+
+        &--quotes {
+            &::before {
+                content: '';
+                display: inline-block;
+                background-image: svg-load('../images/svg/quote.svg', 'fill: #1C81C3');
+                transform: rotate(180deg);
+                width: 17px;
+                height: 15px;
+                position: relative;
+                margin-right: calc(var(--gs) * 1.5);
+                top: 1px;
+
+                @media (--tablet) {
+                    width: 13px;
+                    height: 12px;
+                }
+            }
+
+            &::after {
+                content: '';
+                display: inline-block;
+                background-image: svg-load('../images/svg/quote.svg', 'fill: #1C81C3');
+                width: 17px;
+                height: 15px;
+                position: relative;
+                margin-left: calc(var(--gs) * 1.5);
+                top: 1px;
+
+                @media (--tablet) {
+                    width: 13px;
+                    height: 12px;
+                }
+            }
+        }
+    }
+
+    &-sm {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--cl-grey);
+
+        @media (--tablet) {
+            font-size: 11px;
+            line-height: 16px;
+        }
+    }
+
+    &-money {
+        font-weight: 700;
+        font-size: 20px;
+        line-height: 32px;
+        margin-bottom: calc(var(--gs) * 0.5);
+
+        @media (--desktop) {
+            font-size: 16px;
+            line-height: 20px;
+            margin-bottom: 0;
+        }
+
+        @media (--tablet) {
+            font-size: 14px;
+            line-height: 16px;
+        }
+    }
+
+    &-strike {
+        text-decoration: line-through;
+    }
+}
+
+:--heading {
+    margin: calc(var(--g) / 2) 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: normal;
+
+    @media (--tablet-lg) {
+        font-size: 28px;
+        line-height: 40px;
+    }
+
+    @media (--tablet) {
+        font-size: 20px;
+        line-height: 28px;
+    }
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 32px;
+    font-weight: normal;
+
+    @media (--tablet-lg) {
+        font-size: 22px;
+        line-height: 32px;
+    }
+
+    @media (--tablet) {
+        font-size: 18px;
+        line-height: 24px;
+    }
+}
+
+h3 {
+    font-size: 20px;
+    line-height: 32px;
+    font-weight: normal;
+
+    @media (--tablet-lg) {
+        font-size: 18px;
+    }
+
+    @media (--tablet) {
+        font-size: 16px;
+        line-height: 22px;
+    }
+}
+
+h4,
+h5,
+h6 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: normal;
+
+    @media (--tablet-lg) {
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    @media (--tablet) {
+        font-size: 15px;
+        line-height: 22px;
+    }
+}
+
+hr {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--cl-divider-grey);
+    display: block;
+    position: relative;
+    height: 1px;
+    margin: calc(var(--g) / 2) 0;
+    line-height: 0;
+    font-size: 0;
+}
+
+!*ul,
+ol {
+    li {
+        list-style: none outside;
+        line-height: 32px;
+    }
+}
+
+ul {
+    li {
+        position: relative;
+        padding-left: calc(var(--gs) * 2);
+
+        &::before {
+            content: '–';
+            position: absolute;
+            left: 0;
+        }
+    }
+}*!
+
+.ul-list {
+    &--marked {
+        li {
+            padding-left: calc(var(--gs) * 4);
+
+            &::before {
+                content: '';
+                background-image: svg-load('../images/svg/polygon.svg', 'fill: #FF4A81');
+                width: 16px;
+                height: 14px;
+                position: absolute;
+                left: 0;
+                top: 9px;
+            }
+        }
+    }
+}
+
+q,
+blockquote {
+    margin-bottom: calc(var(--g) / 2);
+    font-weight: bold;
+}
+
+fieldset {
+    border: 1px solid var(--cl-grey);
+    margin-bottom: calc(var(--g) / 2);
+    padding: var(--g);
+
+    legend {
+        position: relative;
+        margin-left: -10px;
+        padding: 0 10px;
+    }
+}
+
+:--btn {
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    text-transform: uppercase;
+    fill: var(--cl-global);
+
+    &.btn--big {
+        font-size: 16px;
+    }
+
+    &:hover {
+        fill: var(--cl-global);
+    }
+}
+
+:--input {
+    border-radius: 0;
+
+    !* Прячет крестик очистки поля в IE *!
+
+    &::-ms-clear {
+        display: none;
+    }
+
+    &.parsley-error {
+        border-color: var(--cl-cyan);
+    }
+}
+
+input[type='number'] {
+    !* Прячет стрелки управления поля number в Firefox *!
+
+    appearance: textfield;
+
+    !* Прячет стрелки управления поля number в Chrome, Safari и Opera *!
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        margin: 0;
+        appearance: none;
+    }
+}
+
+textarea {
+    resize: none;
+}
+
+a,
+:--btn,
+:--input {
+    &:disabled,
+    &.is-disabled {
+        cursor: default;
+        pointer-events: none;
+    }
+}
+
+.html-modal-open {
+    @media (--desktop-min) {
+        padding-right: 17px;
+    }
+}
+*/

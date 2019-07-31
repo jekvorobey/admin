@@ -48,6 +48,14 @@ export default ({ mode, presets }) =>
                             symbolId: 'icon-[name]',
                         },
                     },
+                    {
+                        test: /\.png$/,
+                        include: path.resolve(__dirname, 'src/images'),
+                        loader: 'file-loader',
+                        options: {
+                            name: 'images/[name].[ext]',
+                        },
+                    }
                 ],
             },
             resolve: {

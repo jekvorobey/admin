@@ -1,0 +1,47 @@
+.icon {
+    position: relative;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+    text-align: center;
+    vertical-align: middle;
+    transition: color var(--time) ease, background-color var(--time) ease, border-color var(--time) ease,
+        opacity var(--time) ease;
+
+    .btn & {
+        margin: -3px calc(var(--gs) * 1.5) 0 calc(var(--gs) * -0.5);
+    }
+
+    .link & {
+        margin: -3px var(--gs) 0 calc(var(--gs) * -0.5);
+    }
+
+    &--rotate {
+        transform: rotate(180deg);
+    }
+
+    &--cross-big {
+        width: 38px;
+        height: 38px;
+    }
+
+    &--cross-small {
+        width: 17px;
+        height: 17px;
+    }
+
+    &--cross {
+        width: 25px;
+        height: 25px;
+    }
+
+    &--polygon {
+        width: 16px;
+        height: 14px;
+    }
+
+    &--quote {
+        width: 17px;
+        height: 15px;
+    }
+}

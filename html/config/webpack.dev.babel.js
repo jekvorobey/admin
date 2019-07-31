@@ -94,19 +94,6 @@ export default {
                 use: ['style-loader', 'css-loader'],
             },
             {
-                test: /\.(jpe?g|png)$/,
-                include: path.resolve(__dirname, '../src/images'),
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            name: 'images/[name].[ext]',
-                            limit: 10 * 1024,
-                        },
-                    },
-                ],
-            },
-            {
                 test: /\.svg$/,
                 include: path.resolve(__dirname, '../src/images'),
                 exclude: path.resolve(__dirname, '../src/images/sprite'),
@@ -143,9 +130,9 @@ export default {
             include: 'allAssets',
             fileWhitelist: [/fonts(\..*)?\.js/],
         }),
-        new WriteFilePlugin({
-            test: /^(?!.*(hot)).*/,
-        }),
-        new webpack.HotModuleReplacementPlugin(),
+        // new WriteFilePlugin({
+        //     test: /^(?!.*(hot)).*/,
+        // }),
+        //new webpack.HotModuleReplacementPlugin(),
     ],
 };

@@ -1,4 +1,15 @@
 html,
 body {
     height: 100%;
+    background: lightgray !important;
+}
+
+.breadcrumb-item a {
+    color: black;
+    text-decoration: underline;
+}
+
+.breadcrumb-item a:hover {
+    color: #6C757D;
+    text-decoration: underline;
 }

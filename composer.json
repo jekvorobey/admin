@@ -11,6 +11,30 @@
         {
             "type": "vcs",
             "url": "https://gitlab.com/greensight/ibt-common-ms-code.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-pim-lib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-merchant-management-lib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-file-lib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-store-lib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-message-lib"
+        },
+        {
+            "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-marketing-lib"
         }
     ],
     "require": {
@@ -19,6 +43,12 @@
         "davejamesmiller/laravel-breadcrumbs": "^5.2",
         "fideloper/proxy": "^4.0",
         "greensight/ibt-common-lib": "dev-master",
+        "greensight/ibt-file-lib": "dev-master",
+        "greensight/ibt-marketing-lib": "dev-master",
+        "greensight/ibt-merchant-management-lib": "dev-master",
+        "greensight/ibt-message-lib": "dev-master",
+        "greensight/ibt-pim-lib": "dev-master",
+        "greensight/ibt-store-lib": "dev-master",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0"
     },
@@ -62,8 +92,7 @@
     "prefer-stable": true,
     "scripts": {
         "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""

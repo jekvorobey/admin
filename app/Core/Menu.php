@@ -13,19 +13,19 @@ class Menu
                 'permission' => 'menu/merchant',
                 'items' => [
                     [
-                        'title' => 'Карточка мерчанта',
-                        'route' => route('merchant.card'),
+                        'title' => 'Пункт меню',
+                        'route' => route('home'),
                         'permission' => '#merchant-card/view',
                         'isActive'
                     ],
                     [
-                        'title' => 'Менеджеры',
-                        'route' => route('merchant.operator_list'),
+                        'title' => 'Ещё один',
+                        'route' => route('home'),
                         'permission' => '#operator/view'
                     ],
                     [
-                        'title' => 'Магазины и склады',
-                        'route' => route('merchant.store_list'),
+                        'title' => 'И ещё',
+                        'route' => route('home'),
                         'permission' => '#store/view'
                     ],
                 ],

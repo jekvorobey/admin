@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c3c9723b8d285d8c4b197cc74b1fe6c",
+    "content-hash": "8822150aedc49ad366af793b46205905",
     "packages": [
         {
             "name": "davejamesmiller/laravel-breadcrumbs",
@@ -487,29 +487,43 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "9f5748779c918c1e2803e657a312159c8b8c8649"
+                "reference": "947a45b48ce259463ba643f51d0137b437b824f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=9f5748779c918c1e2803e657a312159c8b8c8649",
-                "reference": "9f5748779c918c1e2803e657a312159c8b8c8649",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=947a45b48ce259463ba643f51d0137b437b824f0",
+                "reference": "947a45b48ce259463ba643f51d0137b437b824f0",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
+                "ext-pdo": "*",
                 "firebase/php-jwt": "^5.0",
                 "guzzlehttp/guzzle": "^6.3",
                 "php": "^7.1.3"
             },
             "require-dev": {
-                "laravel/framework": "^5.8"
+                "fzaninotto/faker": "^1.4",
+                "laravel/framework": "^5.8",
+                "phpunit/php-code-coverage": "6.1.4",
+                "phpunit/phpunit": "^7.5"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Common\\": "lib/"
+                    "Greensight\\CommonMsa\\": "src/"
                 }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\CommonMsa\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
             },
             "authors": [
                 {
@@ -518,7 +532,273 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2019-06-14T13:33:37+00:00"
+            "time": "2019-07-31T08:49:34+00:00"
+        },
+        {
+            "name": "greensight/ibt-file-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-file-lib.git",
+                "reference": "7963200e040c442ba7abc8b52ab00d698f80ce2e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-file-lib/repository/archive.zip?sha=7963200e040c442ba7abc8b52ab00d698f80ce2e",
+                "reference": "7963200e040c442ba7abc8b52ab00d698f80ce2e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Greensight\\Filestorage\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\Filestorage\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Ivan Koryukov",
+                    "email": "koryukov@greensight.ru"
+                }
+            ],
+            "description": "iBT filestorage client",
+            "time": "2019-07-26T07:23:02+00:00"
+        },
+        {
+            "name": "greensight/ibt-marketing-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
+                "reference": "4c1542590d84a2bd8ce3bae32f49febbd0683605"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=4c1542590d84a2bd8ce3bae32f49febbd0683605",
+                "reference": "4c1542590d84a2bd8ce3bae32f49febbd0683605",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Greensight\\Marketing\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\Marketing\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Yury Kudryavtsev",
+                    "email": "kudryavtsev@greensight.ru"
+                }
+            ],
+            "description": "iBT marketing client",
+            "time": "2019-07-25T14:29:57+00:00"
+        },
+        {
+            "name": "greensight/ibt-merchant-management-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-merchant-management-lib.git",
+                "reference": "5219e90f2d01b829ffbba625f956ae23f5558c8a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=5219e90f2d01b829ffbba625f956ae23f5558c8a",
+                "reference": "5219e90f2d01b829ffbba625f956ae23f5558c8a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MerchantManagement\\": "lib/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Bereza Evgeny",
+                    "email": "bereza@greensight.ru"
+                }
+            ],
+            "description": "iBT Merchant Management service client",
+            "time": "2019-07-04T09:18:59+00:00"
+        },
+        {
+            "name": "greensight/ibt-message-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-message-lib.git",
+                "reference": "88b97306a47c2f201a081fe669eee6d37e16af38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=88b97306a47c2f201a081fe669eee6d37e16af38",
+                "reference": "88b97306a47c2f201a081fe669eee6d37e16af38",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Greensight\\Message\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\Message\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Evgeny Bereza",
+                    "email": "bereza@greensight.ru"
+                }
+            ],
+            "description": "iBT message client",
+            "time": "2019-07-29T15:01:37+00:00"
+        },
+        {
+            "name": "greensight/ibt-pim-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
+                "reference": "5cf560c9ccb4d1ecabefa49b0946b5ea024f232b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=5cf560c9ccb4d1ecabefa49b0946b5ea024f232b",
+                "reference": "5cf560c9ccb4d1ecabefa49b0946b5ea024f232b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Pim\\": "lib/"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Ivan Koryukov",
+                    "email": "koryukov@greensight.ru"
+                }
+            ],
+            "description": "iBT PIM service client",
+            "time": "2019-07-30T13:45:12+00:00"
+        },
+        {
+            "name": "greensight/ibt-store-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-store-lib.git",
+                "reference": "dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0",
+                "reference": "dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Greensight\\Store\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\Store\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Evgeny Bereza",
+                    "email": "bereza@greensight.ru"
+                }
+            ],
+            "description": "iBT store client",
+            "time": "2019-07-30T11:55:01+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -5694,7 +5974,13 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "greensight/ibt-common-lib": 20
+        "greensight/ibt-common-lib": 20,
+        "greensight/ibt-file-lib": 20,
+        "greensight/ibt-marketing-lib": 20,
+        "greensight/ibt-merchant-management-lib": 20,
+        "greensight/ibt-message-lib": 20,
+        "greensight/ibt-pim-lib": 20,
+        "greensight/ibt-store-lib": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

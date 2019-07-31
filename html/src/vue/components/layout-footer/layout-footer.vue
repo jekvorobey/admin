@@ -1,6 +1,11 @@
 <template>
-    <footer class="container-fluid mas-footer">
-        <p class="float-right">iBT MAS</p>
+    <footer class="d-flex mas-footer justify-content-between">
+        <div>
+
+        </div>
+        <div class="d-flex flex-column">
+            <span class="align-self-end">iBT Admin</span>
+        </div>
     </footer>
 </template>
 
@@ -18,6 +23,7 @@ export default {
         border-top: 1px solid gray;
         background: lightgray;
         height: 50px;
-        line-height: 50px;
+        padding: 8px;
+        font-size: 90%;
     }
 </style>

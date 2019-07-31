@@ -1,12 +1,12 @@
 <template>
     <div class="fake-vue-body">
-        <LayoutHeader></LayoutHeader>
+        <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="d-flex flex-row middle-area">
-            <div style="width: 300px;" class="bg-light">
+            <div style="width: 300px;" class="bg-light" v-if="!isGuest">
                 <MainMenu></MainMenu>
             </div>
-            <div class="container-fluid flex-grow-1">
-                <b-breadcrumb :items="breadcrumbsItems" class="breadcrumbs"></b-breadcrumb>
+            <div class="container-fluid flex-grow-1 pb-5">
+                <b-breadcrumb :items="breadcrumbsItems" class="breadcrumbs" v-if="breadcrumbsItems.length"></b-breadcrumb>
                 <slot></slot>
             </div>
         </div>
@@ -44,6 +44,6 @@ export default {
         margin-top: 15px;
     }
     .middle-area {
-        height: calc(100% - 106px);
+        background: #fff;
     }
 </style>

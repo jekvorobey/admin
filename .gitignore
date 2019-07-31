@@ -71,6 +71,8 @@ bower_components
 npm-debug.log
 yarn-error.log
 .env
-/public
+public/storage
+public/assets
+public/build
 auth.json
 /html/build/

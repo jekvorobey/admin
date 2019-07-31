@@ -72,50 +72,6 @@ export default {
                 use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
             {
-                test: /\.(jpe?g|png)$/,
-                include: path.resolve(__dirname, '../src/images/responsive'),
-                use: [
-                    {
-                        loader: 'cache-loader',
-                        options: {
-                            cacheDirectory: path.resolve(__dirname, '../node_modules/.cache/cache-loader'),
-                        },
-                    },
-                    {
-                        loader: 'responsive-loader',
-                        options: {
-                            outputPath: 'images',
-                            name: '[name]-[width].[hash:4].[ext]',
-                            min: 480,
-                            max: 1200,
-                            steps: 4,
-                            quality: 100,
-                            placeholder: true,
-                        },
-                    },
-                ],
-            },
-            {
-                test: /\.(jpe?g|png)$/,
-                include: path.resolve(__dirname, '../src/images'),
-                exclude: path.resolve(__dirname, '../src/images/responsive'),
-                use: [
-                    {
-                        loader: 'cache-loader',
-                        options: {
-                            cacheDirectory: path.resolve(__dirname, '../node_modules/.cache/cache-loader'),
-                        },
-                    },
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            name: 'images/[name].[hash:4].[ext]',
-                            limit: 10 * 1024,
-                        },
-                    },
-                ],
-            },
-            {
                 test: /\.svg$/,
                 include: path.resolve(__dirname, '../src/images'),
                 exclude: path.resolve(__dirname, '../src/images/sprite'),
@@ -254,6 +210,5 @@ export default {
             fileTypes: ['js', 'css', 'gz'],
             prettyPrint: true,
         }),
-        cleanOldAssets(),
     ],
 };

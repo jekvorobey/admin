@@ -1,7 +1,6 @@
 <template>
     <div @click="onClose" class="modal-mask">
         <div
-            v-scroll-lock="lock"
             ref="wrapper"
             class="modal-wrapper"
             tabindex="0"

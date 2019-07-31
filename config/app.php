@@ -1,10 +1,6 @@
 <?php
 
 return [
-    
-    'serviceAuth' => [
-        'host' => env('AUTH_SERVICE_HOST', 'http://localhost'),
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -174,6 +170,13 @@ return [
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
+        \Greensight\CommonMsa\CommonLibServiceProvider::class,
+        \Pim\PimLibServiceProvider::class,
+        \Greensight\Message\MessageLibServiceProvider::class,
+        \MerchantManagement\MerchantLibServiceProvider::class,
+        \Greensight\Store\StoreLibServiceProvider::class,
+        \Greensight\Marketing\MarketingLibServiceProvider::class,
+        \Greensight\Filestorage\FileLibServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,

@@ -2,20 +2,28 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Closure;
+use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Illuminate\Http\Request;
 
-class Authenticate extends Middleware
+/**
+ * Class Authenticate
+ * @package App\Http\Middleware
+ */
+class Authenticate
 {
     /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string
+     * @param  Request  $request
+     * @param  Closure  $next
+     * @return mixed
      */
-    protected function redirectTo($request)
+    public function handle(Request $request, Closure $next)
     {
-        if (! $request->expectsJson()) {
-            return route('login');
+        if (resolve(TokenStore::class)->token() == null) {
+            return redirect()->route('page.login');
         }
+
+        return $next($request);
     }
+
 }
