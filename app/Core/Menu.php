@@ -7,114 +7,224 @@ class Menu
 {
     private static function menu()
     {
+        $fake_route = 0;
         return [
             [
-                'title' => 'Мерчант',
-                'permission' => 'menu/merchant',
+                'title' => 'Поток закзов',
                 'items' => [
                     [
-                        'title' => 'Пункт меню',
-                        'route' => route('home'),
-                        'permission' => '#merchant-card/view',
-                        'isActive'
+                        'title' => 'Новые заказы',
+                        'route' => $fake_route++,//route('home'),
                     ],
                     [
-                        'title' => 'Ещё один',
-                        'route' => route('home'),
-                        'permission' => '#operator/view'
+                        'title' => 'Список заказов',
+                        'route' => $fake_route++,//route('home'),
                     ],
                     [
-                        'title' => 'И ещё',
-                        'route' => route('home'),
-                        'permission' => '#store/view'
+                        'title' => 'Заказы на консолидацию',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Проблемные заказы',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Возвраты и отмены',
+                        'route' => $fake_route++,//route('home'),
                     ],
                 ],
             ],
-            /*[
-                'title' => 'Товары',
-                'permission' => 'menu/products',
+            [
+                'title' => 'Каталог (товары)',
                 'items' => [
                     [
                         'title' => 'Товары',
-                        'route' => ['name' => 'model.list', 'params' => ['crud' => 'product']],
-                        'permission' =>
-                            '#product/view'
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Справочники свойств',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Товарные свойства',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Категории товаров',
+                        'route' => $fake_route++,//route('home'),
                     ],
                 ],
             ],
             [
-                'title' => 'Заказы',
-                'permission' => 'menu/orders',
+                'title' => 'Логистика',
                 'items' => [
-                    ['title' => 'Заказы', 'route' => ['name' => 'order.list'], 'permission' => '#order/view']
+                    [
+                        'title' => 'Статусы доставки',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Таблица соотвествий статусов',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Склады',
+                'items' => [
+                    [
+                        'title' => 'Склад консолидации',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Склад ответсвенного хранения',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Управление контентом',
+                'items' => [
+                    [
+                        'title' => 'Страницы маркетплейса',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'SEO',
+                        'route' => $fake_route++,//route('home'),
+                    ],
                 ],
             ],
             [
                 'title' => 'Маркетинг',
-                'permission' => 'menu/marketing',
                 'items' => [
                     [
-                        'title' => 'Акции',
-                        'route' => ['name' => 'model.list', 'params' => ['crud' => 'promotion']],
-                        'permission' =>
-                            '#promotion/view'
+                        'title' => 'Брошенные корзины',
+                        'route' => $fake_route++,//route('home'),
                     ],
                     [
-                        'title' => 'Промокоды',
-                        'route' => ['name' => 'model.list', 'params' => ['crud' => 'promotional_code']],
-                        'permission' =>
-                            '#promotional_code/view'
+                        'title' => 'Скидки и промокоды',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Подарочные сертификаты',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Бандлы',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Мастер-классы',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Магазин подарков',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Мерчанты',
+                'items' => [
+                    [
+                        'title' => 'Заявки на регистрацию',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Список мерчантов',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Обратная связь с мерчантами',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Взаиморасчёты с мерчантами',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Амбассадоры',
+                'items' => [
+                    [
+                        'title' => 'Заявки на регистрацию',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Список амбассадоров',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Обратная связь с амбассадорами',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Взаиморасчёты с амбассадорами',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Покупатели и профессионалы',
+                'items' => [
+                    [
+                        'title' => 'Список покупателей',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Сегменты покупателей',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Анализ поведения покупателей',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Рассылки',
+                'items' => [
+                    [
+                        'title' => 'Создание рассылки',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Анализ рассылок',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Настройки',
+                'items' => [
+                    [
+                        'title' => 'Профиль',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Пользователи и права',
+                        'route' => $fake_route++,//route('home'),
+                    ],
+                    [
+                        'title' => 'Настройки интеграций',
+                        'route' => $fake_route++,//route('home'),
                     ],
                 ],
             ],
             [
                 'title' => 'Отчёты',
-                'permission' => 'menu/reports',
                 'items' => [
                     [
-                        'title' => 'Сводный отчет по продажам',
-                        'route' => ['name' => 'report.sales_summary_report'],
-                        'permission' =>
-                            '#sales_summary_report/view'
+                        'title' => 'Стандартные отчёты',
+                        'route' => $fake_route++,//route('home'),
                     ],
                     [
-                        'title' => 'Отчет по позициям',
-                        'route' => ['name' => 'report.position_report'],
-                        'permission' =>
-                            '#position_report/view'
-                    ],
-                    [
-                        'title' => 'Отчет по продажам',
-                        'route' => ['name' => 'report.sales_report'],
-                        'permission' =>
-                            '#sales_report/view'
-                    ],
-                    [
-                        'title' => 'Отчет по остаткам',
-                        'route' => ['name' => 'report.rests_report'],
-                        'permission' =>
-                            '#rests_report/view'
-                    ],
-                    [
-                        'title' => 'Отчет по подтвержденным остаткам',
-                        'route' => ['name' => 'report.confirmed_rests_report'],
-                        'permission' =>
-                            '#confirmed_rests_report/view'
-                    ],
-                    [
-                        'title' => 'Отчет по неотгруженным резервам',
-                        'route' => ['name' => 'report.unloaded_rests_report'],
-                        'permission' =>
-                            '#unloaded_rests_report/view'
-                    ],
-                    [
-                        'title' => 'Отчет комиссионера',
-                        'route' => ['name' => 'report.commissioner_report'],
-                        'permission' =>
-                            '#commissioner_report/view'
+                        'title' => 'Свободный отчёт',
+                        'route' => $fake_route++,//route('home'),
                     ],
                 ],
-            ],*/
+            ],
         ];
     }
     
