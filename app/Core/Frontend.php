@@ -25,7 +25,7 @@ class Frontend
      *
      * @var bool
      */
-    public $forceDevMode = false;
+    public $forceDevMode = true;
 
     /**
      * Директория где лежит production-сборка.

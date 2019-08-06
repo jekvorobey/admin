@@ -1,5 +1,6 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
+import NetService from "../../scripts/services/net";
 
 Vue.use(Vuex);
 
@@ -39,7 +40,14 @@ export default new Vuex.Store({
         },
 
     },
-    getters: {},
+    getters: {
+        getRoute: state => (name, params = {}) => {
+            let r = state.routes[name];
+            if (!r) return;
+            let {uri} = NetService.prepareUri(r, params);
+            return '/' + uri.replace(/^\//, '');
+        }
+    },
     actions: {
         modal_message({ commit }, message) {
             commit('modal_message', message);
