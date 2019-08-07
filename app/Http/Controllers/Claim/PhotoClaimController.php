@@ -10,11 +10,14 @@ use Greensight\Message\Dto\Claim\PhotoClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PhotoClaimController extends Controller
@@ -93,10 +96,48 @@ class PhotoClaimController extends Controller
         $products = $productService->newQuery()->setFilter('id', $productIds)->products();
 
         return $this->render('Claim/PhotoClaimDetail', [
-            'claim' => $claim,
+            'iClaim' => $claim,
             'statuses' => $claimType->statusNames,
             'products' => $products
         ]);
+    }
+
+    public function update(int $id, Request $request, ClaimService $claimService)
+    {
+        $availableStatuses = [
+            PhotoClaimDto::STATUS_APPROVED,
+            PhotoClaimDto::STATUS_CANCEL,
+            PhotoClaimDto::STATUS_DONE,
+            PhotoClaimDto::STATUS_WORK,
+            PhotoClaimDto::STATUS_NEW
+        ];
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'status' => ['nullable', Rule::in($availableStatuses)],
+            'comment' => ['nullable', 'string'],
+        ]);
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+        if (!count($data)) {
+            throw new BadRequestHttpException('"status" or "comment" required');
+        }
+        /** @var PhotoClaimDto|null $claim */
+        $claim = $claimService->newQuery()->setFilter('id', $id)->claims()->first();
+        if (!$claim) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($data['status']) {
+            $claim->status = $data['status'];
+        }
+        if ($data['comment']) {
+            $claim->setMessage($data['comment']);
+        }
+
+        $claimService->updateClaim($claim->id, $claim);
+
+        return response()->json([]);
     }
 
     protected function prepareQuery(Request $request, ClaimService $claimService)
