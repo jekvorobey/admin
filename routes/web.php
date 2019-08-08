@@ -21,5 +21,15 @@ Route::middleware('auth')->group(function () {
                 Route::post('', 'PhotoClaimController@update')->name('photoClaims.update');
             });
         });
+
+        Route::prefix('delivery')->group(function () {
+            Route::get('', 'DeliveryClaimController@index')->name('deliveryClaims.list');
+            Route::post('', 'DeliveryClaimController@create')->name('deliveryClaims.create');
+            Route::get('page', 'DeliveryClaimController@page')->name('deliveryClaims.pagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'DeliveryClaimController@detail')->name('deliveryClaims.detail');
+                Route::post('', 'DeliveryClaimController@update')->name('deliveryClaims.update');
+            });
+        });
     });
 });

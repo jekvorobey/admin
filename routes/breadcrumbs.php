@@ -26,8 +26,19 @@ Breadcrumbs::for('claims.photo', function (BreadcrumbsGenerator $trail) {
     $trail->parent('claims');
     $trail->push('Съёмка', route('photoClaims.list'));
 });
-// Главная > Заявки > Съёмка > Деталка
+// Главная > Заявки > Съёмка > Заявка
 Breadcrumbs::for('claims.photo.detail', function (BreadcrumbsGenerator $trail) {
     $trail->parent('claims.photo');
+    $trail->push('Заявка');
+});
+
+// Главная > Заявки > Доставка
+Breadcrumbs::for('claims.delivery', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('claims');
+    $trail->push('Доставка', route('photoClaims.list'));
+});
+// Главная > Заявки > Доставка > Заявка
+Breadcrumbs::for('claims.delivery.detail', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('claims.delivery');
     $trail->push('Заявка');
 });

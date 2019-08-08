@@ -26,7 +26,7 @@
             </div>
             <div class="card-footer">
                 <button :disabled="!formChanged" @click="saveClaim" class="btn btn-dark">Сохранить</button>
-                <button v-if="showProductsRequest" class="btn btn-outline-dark">Создать запрос товаров</button>
+                <button v-if="showProductsRequest" @click="createDelivery" class="btn btn-outline-dark">Создать запрос товаров</button>
             </div>
         </div>
         <h2>Товары</h2>
@@ -98,6 +98,17 @@
                         this.claim.status = this.form.status;
                         this.claim.payload.comment = this.form.comment;
                     });
+            },
+            createDelivery() {
+                Services.net()
+                    .post(this.getRoute('deliveryClaims.create'), {}, {
+                        productIds: this.claim.payload.productId,
+                        merchantId: this.claim.payload.merchantId,
+                        photoClaim: this.claim.id,
+                    })
+                    .then(data => {
+                        this.$set(this.claim.payload, 'deliveryId', data.id);
+                    });
             }
         },
         computed: {
@@ -109,7 +120,7 @@
                 return this.$v.$anyDirty;
             },
             showProductsRequest() {
-                return parseInt(this.claim.status) === 2;
+                return parseInt(this.claim.status) === 2 && !this.claim.payload.deliveryId;
             }
         }
     };
