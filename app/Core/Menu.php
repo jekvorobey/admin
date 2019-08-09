@@ -10,6 +10,19 @@ class Menu
         $fake_route = 0;
         return [
             [
+                'title' => 'Заявки',
+                'items' => [
+                    [
+                        'title' => 'На съёмку',
+                        'route' => route('photoClaims.list'),
+                    ],
+                    [
+                        'title' => 'На доставку товара',
+                        'route' => route('deliveryClaims.list'),
+                    ],
+                ]
+            ]
+            /*[
                 'title' => 'Поток закзов',
                 'items' => [
                     [
@@ -224,7 +237,7 @@ class Menu
                         'route' => $fake_route++,//route('home'),
                     ],
                 ],
-            ],
+            ],*/
         ];
     }
     

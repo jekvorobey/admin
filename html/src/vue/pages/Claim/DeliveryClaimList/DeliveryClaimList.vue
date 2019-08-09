@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <h1>Заявки на съёмку</h1>
+        <h1>Заявки доставу товара</h1>
         <div class="d-flex flex-row justify-content-between">
             <div>
                 <div class="custom-control custom-checkbox mt-3">

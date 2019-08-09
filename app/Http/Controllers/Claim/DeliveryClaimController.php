@@ -10,6 +10,7 @@ use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\DeliveryClaimDto;
 use Greensight\Message\Dto\Claim\PhotoClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
+use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -36,8 +37,8 @@ class DeliveryClaimController extends Controller
         /** @var ClaimTypeDto $claimType */
         $claimType = $claimService->newQuery()
             ->include('statusNames')
-            ->setFilter('type', ClaimTypeDto::TYPE_DELIVERY)
             ->claimTypes()
+            ->filter(function (ClaimTypeDto $claimType) { return $claimType->id == ClaimTypeDto::TYPE_DELIVERY;})
             ->first();
 
         $query = $this->prepareQuery($request, $claimService);
@@ -67,6 +68,47 @@ class DeliveryClaimController extends Controller
             $result['pager'] = $query->countClaims();
         }
         return response()->json($result);
+    }
+
+    public function detail(
+        int $id,
+        ClaimService $claimService,
+        MerchantService $merchantService,
+        ProductService $productService,
+        StoreService $storeService
+    )
+    {
+        $query = $claimService->newQuery()->setFilter('id', $id);
+        /** @var DeliveryClaimDto $claim */
+        $claim = $this->loadClaims($query, $merchantService)->first();
+        if (!$claim) {
+            throw new NotFoundHttpException();
+        }
+
+        /** @var ClaimTypeDto $claimType */
+        $claimType = $claimService->newQuery()
+            ->include('statusNames')
+            ->claimTypes()
+            ->filter(function (ClaimTypeDto $claimType) { return $claimType->id == ClaimTypeDto::TYPE_DELIVERY;})
+            ->first();
+
+        $productIds = $claim->payload['productIds'];
+        /** @var Collection|ProductDto[] $products */
+        $products = $productService->newQuery()->setFilter('id', $productIds)->products();
+        $merchantId = $claim->payload['merchantId'] ?? null;
+        if ($merchantId) {
+            $stores = $storeService->merchantStores($merchantId)->pluck('name', 'id');
+        } else {
+            $stores = [];
+        }
+
+
+        return $this->render('Claim/DeliveryClaimDetail', [
+            'iClaim' => $claim,
+            'statuses' => $claimType->statusNames,
+            'products' => $products,
+            'stores' => $stores,
+        ]);
     }
 
     public function create(Request $request, ClaimService $claimService, RequestInitiator $user)
@@ -103,6 +145,43 @@ class DeliveryClaimController extends Controller
         return response()->json([
             'id' => $id
         ]);
+    }
+
+    public function update(int $id, Request $request, ClaimService $claimService)
+    {
+        $availableStatuses = [
+            DeliveryClaimDto::STATUS_NEW,
+            DeliveryClaimDto::STATUS_READY_TO_SHIP,
+            DeliveryClaimDto::STATUS_DELIVERY,
+            DeliveryClaimDto::STATUS_DONE,
+        ];
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'status' => ['nullable', Rule::in($availableStatuses)],
+            'store' => ['nullable', 'integer'],
+        ]);
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+        if (!count($data)) {
+            throw new BadRequestHttpException('"status" or "store" required');
+        }
+        /** @var DeliveryClaimDto|null $claim */
+        $claim = $claimService->newQuery()->setFilter('id', $id)->claims()->first();
+        if (!$claim) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($data['status']) {
+            $claim->status = $data['status'];
+        }
+        if ($data['store']) {
+            $claim->setStoreId($data['store']);
+        }
+
+        $claimService->updateClaim($claim->id, $claim);
+
+        return response()->json([]);
     }
 
     protected function prepareQuery(Request $request, ClaimService $claimService)
