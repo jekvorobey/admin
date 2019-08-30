@@ -84,7 +84,7 @@ class RegistrationRequestController extends Controller
         $query = new RestQuery();
         $page = $request->get('page', 1);
         $query->setFilter('status', '!=', MerchantStatus::STATUS_DONE);
-        $query->pageNumber($page, 10);
+        $query->pageNumber($page, 3);
 
         $filter = $request->get('filter');
 

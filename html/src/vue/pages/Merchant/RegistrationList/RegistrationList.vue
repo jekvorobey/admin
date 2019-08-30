@@ -12,6 +12,9 @@
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
+        <div class="mb-3">
+            Всего заявок: {{ pager.total }}. <span v-if="selectedMerchants.length">Выбрано: {{selectedMerchants.length}}</span>
+        </div>
         <table class="table">
             <thead>
             <tr>
@@ -25,7 +28,10 @@
             </thead>
             <tbody>
             <tr v-for="merchant in merchants">
-                <td></td>
+                <td>
+                    <input type="checkbox" :checked="merchantSelected(merchant.id)"
+                           @change="e => selectMerchant(e, merchant.id)">
+                </td>
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.display_name }}</td>
                 <td>{{ merchant.operator.name }}</td>
@@ -82,6 +88,7 @@
                 pager: this.iPager,
                 currentPage: this.iCurrentPage || 1,
                 filter,
+                selectedMerchants: []
             };
         },
         methods: {
@@ -128,6 +135,19 @@
                         return 'badge-danger';
                     case 5:
                         return 'badge-success';
+                }
+            },
+            merchantSelected(id) {
+                return this.selectedMerchants.indexOf(id) !== -1;
+            },
+            selectMerchant(e, id) {
+                if (e.target.checked) {
+                    this.selectedMerchants.push(id);
+                } else {
+                    let index = this.selectedMerchants.indexOf(id);
+                    if (index !== -1) {
+                        this.selectedMerchants.splice(index, 1);
+                    }
                 }
             }
         },
