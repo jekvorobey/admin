@@ -23,6 +23,13 @@ use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class DeliveryClaimController
+ * @package App\Http\Controllers\Claim
+ *
+ * @deprecated
+ * @todo удалить т.к. устарело
+ */
 class DeliveryClaimController extends Controller
 {
     public function index(

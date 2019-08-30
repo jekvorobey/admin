@@ -11,8 +11,13 @@ import 'lazysizes/plugins/respimg/ls.respimg';
 import store from './store/store';
 import Services from '../scripts/services/services';
 import BootstrapVue from 'bootstrap-vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import './fontawesome';
 
 Vue.use(BootstrapVue);
+
+//Font Awesome Icons
+Vue.component('fa-icon', FontAwesomeIcon);
 
 // Boot the current Vue component
 const root = document.getElementById('app');

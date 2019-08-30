@@ -12,6 +12,13 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
+    Route::prefix('merchant')->namespace('Merchant')->group(function () {
+        Route::prefix('registration')->group(function () {
+            Route::get('page', 'RegistrationRequestController@page')->name('merchant.registrationListPage');
+            Route::get('', 'RegistrationRequestController@index')->name('merchant.registrationList');
+        });
+    });
+
     Route::prefix('claims')->namespace('Claim')->group(function () {
         Route::prefix('photo')->group(function () {
             Route::get('', 'PhotoClaimController@index')->name('photoClaims.list');

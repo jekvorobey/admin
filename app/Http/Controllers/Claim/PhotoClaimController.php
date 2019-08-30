@@ -20,6 +20,13 @@ use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class PhotoClaimController
+ * @package App\Http\Controllers\Claim
+ *
+ * @deprecated
+ * @todo удалить т.к. устарело
+ */
 class PhotoClaimController extends Controller
 {
     public function index(

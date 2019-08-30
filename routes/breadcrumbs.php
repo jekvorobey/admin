@@ -42,3 +42,15 @@ Breadcrumbs::for('claims.delivery.detail', function (BreadcrumbsGenerator $trail
     $trail->parent('claims.delivery');
     $trail->push('Заявка');
 });
+
+//=============== мерчанты =============================================================================================
+// Главная > Мерчанты
+Breadcrumbs::for('merchant', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Мерчанты');
+});
+// Главная > Мерчанты > Заявки на регистрацию
+Breadcrumbs::for('merchant.registrationList', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Заявки на регистрацию');
+});

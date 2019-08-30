@@ -10,40 +10,27 @@ class Menu
         $fake_route = 0;
         return [
             [
-                'title' => 'Заявки',
-                'items' => [
-                    [
-                        'title' => 'На съёмку',
-                        'route' => route('photoClaims.list'),
-                    ],
-                    [
-                        'title' => 'На доставку товара',
-                        'route' => route('deliveryClaims.list'),
-                    ],
-                ]
-            ]
-            /*[
                 'title' => 'Поток закзов',
                 'items' => [
                     [
                         'title' => 'Новые заказы',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Список заказов',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Заказы на консолидацию',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Проблемные заказы',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Возвраты и отмены',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -52,19 +39,19 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Товары',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Справочники свойств',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Товарные свойства',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Категории товаров',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -73,11 +60,11 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Статусы доставки',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Таблица соотвествий статусов',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -86,11 +73,11 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Склад консолидации',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Склад ответсвенного хранения',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -99,11 +86,11 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Страницы маркетплейса',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'SEO',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -112,27 +99,27 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Брошенные корзины',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Скидки и промокоды',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Подарочные сертификаты',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Бандлы',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Мастер-классы',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Магазин подарков',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -141,19 +128,19 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Заявки на регистрацию',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => route('merchant.registrationList'),
                     ],
                     [
                         'title' => 'Список мерчантов',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Обратная связь с мерчантами',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Взаиморасчёты с мерчантами',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -162,19 +149,19 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Заявки на регистрацию',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Список амбассадоров',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Обратная связь с амбассадорами',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Взаиморасчёты с амбассадорами',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -183,15 +170,15 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Список покупателей',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Сегменты покупателей',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Анализ поведения покупателей',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -200,11 +187,11 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Создание рассылки',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Анализ рассылок',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -213,15 +200,15 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Профиль',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Пользователи и права',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Настройки интеграций',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
             ],
@@ -230,14 +217,14 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Стандартные отчёты',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                     [
                         'title' => 'Свободный отчёт',
-                        'route' => $fake_route++,//route('home'),
+                        'route' => '#',
                     ],
                 ],
-            ],*/
+            ],
         ];
     }
     
