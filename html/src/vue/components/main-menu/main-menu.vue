@@ -1,24 +1,19 @@
 <template>
     <nav class="d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
-            <div v-for="group in menu" :key="group.title" class="p-2">
-                <h5><img v-if="group.icon" :src="group.icon" class="menu-icon" :alt="group.title">{{ group.title }}</h5>
-                <a
-                        v-for="link in group.items"
-                        :key="JSON.stringify(link.route)"
-                        :href="link.route" class="nav-link"
-                        :class="{'bg-secondary text-light':link.active, 'pl-5':link.subitem}"
-                >{{ link.title }}</a>
-            </div>
+            <menu-item v-for="(item, index) in menu" :item="item" :key="index"></menu-item>
         </div>
     </nav>
 </template>
 
 <script>
-    import './main-menu.css';
+    import MenuItem from './menu-item.vue';
 
     export default {
         name: 'main-menu',
+        components: {
+            MenuItem
+        },
         computed: {
             menu() {
                 return this.$store.state.layout.menu;
@@ -26,3 +21,12 @@
         },
     };
 </script>
+<style>
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 48px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
