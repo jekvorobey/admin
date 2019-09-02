@@ -1,8 +1,11 @@
 <template>
     <transition name="modal">
-        <modal :close="() => this.changeModal('modal_message', false)" v-if="show">
+        <modal :close="closeModal" v-if="isModalOpen('messageBox')">
+            <div slot="header">
+                <p v-html="$store.state.modal.messageBox.title"></p>
+            </div>
             <div slot="body">
-                <p v-html="text"></p>
+                <p v-html="$store.state.modal.messageBox.text"></p>
             </div>
         </modal>
     </transition>
@@ -10,19 +13,12 @@
 
 <script>
 import modal from '../controls/modal/modal.vue';
+import modalMixin from '../../mixins/modal.js';
 
 export default {
-    name: 'modal-message',
+    mixins: [modalMixin],
     components: {
         modal,
-    },
-    computed: {
-        show() {
-            return this.$store.state.modals.message;
-        },
-        text() {
-            return this.$store.state.modal_message;
-        },
     },
 };
 </script>

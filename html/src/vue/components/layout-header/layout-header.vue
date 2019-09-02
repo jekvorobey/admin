@@ -27,9 +27,11 @@
 <script>
 import '../../../images/logo_white.png';
 import Services from '../../../scripts/services/services';
+import modalMixin from '../../mixins/modal.js';
 
 export default {
     name: 'layout-header',
+    mixins: [modalMixin],
     props: {
         onIndex: { type: Boolean, default: false },
     },
@@ -42,7 +44,7 @@ export default {
                 .then(() => {
                     window.location.href = this.route('page.login');
                 }, () => {
-                    this.$store.dispatch('modal_message', 'Произошла ошибка при выходе.');
+                    this.showMessageBox({title: 'Ошибка', text: 'Произошла ошибка. Попробуйте позже.'})
                 })
         }
     },

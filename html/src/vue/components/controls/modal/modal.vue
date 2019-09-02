@@ -1,18 +1,18 @@
 <template>
     <div @click="onClose" class="modal-mask">
         <div
-            ref="wrapper"
-            class="modal-wrapper"
-            tabindex="0"
-            @click.stop
-            @keydown="keyDown"
-            :class="{ 'modal-wrapper--fullscreen': type === 'fullscreen' }"
+                ref="wrapper"
+                class="modal-wrapper"
+                tabindex="0"
+                @click.stop
+                @keydown="keyDown"
+                :class="{ 'modal-wrapper--fullscreen': type === 'fullscreen' }"
         >
             <div
-                class="modal-container popup"
-                :class="{ [`popup--${type}`]: type, [`popup--${name}`]: name }"
-                @mousedown="onPopupMouseDown"
-                @mouseup="onPopupMouseUp"
+                    class="modal-container popup"
+                    :class="{ [`popup--${type}`]: type, [`popup--${name}`]: name }"
+                    @mousedown="onPopupMouseDown"
+                    @mouseup="onPopupMouseUp"
             >
                 <div class="modal-header popup__header">
                     <slot name="header">
@@ -26,10 +26,6 @@
                     </slot>
                 </div>
 
-                <!--div class="modal-footer popup__footer">
-                            <slot name="footer">
-                            </slot>
-        </div-->
                 <button type="button" title="Закрыть" class="modal-default-button popup__close" @click="close">
                     <svg class="icon icon--cross-big">
                         <use xlink:href="#icon-cross"></use>
@@ -41,62 +37,62 @@
 </template>
 
 <script>
-import './modal.css';
+    import './modal.css';
 
-export default {
-    name: 'modal',
-    props: {
-        type: {
-            type: String,
+    export default {
+        name: 'modal',
+        props: {
+            type: {
+                type: String,
+            },
+            name: {
+                type: String,
+            },
+            closeOnBtn: {
+                type: Boolean,
+                default: true,
+            },
+            isScrollLocked: {
+                type: Boolean,
+                default: true,
+            },
+            close: {
+                type: Function,
+                default: () => {},
+            },
         },
-        name: {
-            type: String,
+        data() {
+            return {
+                clickInside: false,
+                lock: false,
+            };
         },
-        closeOnBtn: {
-            type: Boolean,
-            default: true,
+        methods: {
+            onPopupMouseDown(e) {
+                this.clickInside = true;
+            },
+            onPopupMouseUp(e) {
+                this.clickInside = false;
+            },
+            onClose(e) {
+                if (!this.clickInside) this.close();
+                else this.clickInside = false;
+            },
+            keyDown(e) {
+                switch (e.key) {
+                    case 'Escape':
+                        if (this.closeOnBtn) this.close();
+                        e.preventDefault();
+                        break;
+                }
+            },
         },
-        isScrollLocked: {
-            type: Boolean,
-            default: true,
+        mounted() {
+            this.lock = this.isScrollLocked;
+            this.$refs.wrapper.focus();
         },
-        close: {
-            type: Function,
-            default: () => {},
+        beforeDestroy() {
+            this.lock = false;
         },
-    },
-    data() {
-        return {
-            clickInside: false,
-            lock: false,
-        };
-    },
-    methods: {
-        onPopupMouseDown(e) {
-            this.clickInside = true;
-        },
-        onPopupMouseUp(e) {
-            this.clickInside = false;
-        },
-        onClose(e) {
-            if (!this.clickInside) this.close();
-            else this.clickInside = false;
-        },
-        keyDown(e) {
-            switch (e.key) {
-                case 'Escape':
-                    if (this.closeOnBtn) this.close();
-                    e.preventDefault();
-                    break;
-            }
-        },
-    },
-    mounted() {
-        this.lock = this.isScrollLocked;
-        this.$refs.wrapper.focus();
-    },
-    beforeDestroy() {
-        this.lock = false;
-    },
-};
+    };
 </script>

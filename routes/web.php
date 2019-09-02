@@ -16,6 +16,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('registration')->group(function () {
             Route::get('page', 'RegistrationRequestController@page')->name('merchant.registrationListPage');
             Route::get('', 'RegistrationRequestController@index')->name('merchant.registrationList');
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'MerchantDetailController@index')->name('merchant.registrationDetail');
+            });
         });
     });
 

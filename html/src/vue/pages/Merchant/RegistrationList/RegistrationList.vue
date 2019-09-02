@@ -33,7 +33,7 @@
                            @change="e => selectMerchant(e, merchant.id)">
                 </td>
                 <td>{{ merchant.id }}</td>
-                <td>{{ merchant.display_name }}</td>
+                <td><a :href="getRoute('merchant.registrationDetail', {id: merchant.id})">{{ merchant.display_name }}</a></td>
                 <td>{{ merchant.operator.name }}</td>
                 <td>{{ merchant.created_at }}</td>
                 <td><span class="badge" :class="statusClass(merchant.status)">{{ statusName(merchant.status) }}</span>
@@ -62,6 +62,7 @@
 
     import FMultiSelect from "../../../components/filter/f-multi-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
+    import {mapGetters} from "vuex";
 
     const cleanFilter = {
         name: '',
@@ -165,6 +166,7 @@
             }
         },
         computed: {
+            ...mapGetters(['getRoute']),
             statusOptions() {
                 return Object.values(this.options.statuses)
                     .map(status => ({value: status.id, text: status.name}))

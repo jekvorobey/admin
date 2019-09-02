@@ -29,12 +29,14 @@
 
 <script>
 import Services from '../../../scripts/services/services';
+import modalMixin from '../../mixins/modal.js';
 
 import './Login.css';
 
 export default {
     name: 'page-login',
     components: {},
+    mixins: [modalMixin],
     props: [],
     data() {
         return {
@@ -55,10 +57,10 @@ export default {
                     if (data.status === 'ok') {
                         window.location.href = this.route('home');
                     } else {
-                        this.$store.dispatch('modal_message', errorMessage);
+                        this.showMessageBox({title: 'Ошибка', text: errorMessage});
                     }
                 }, () => {
-                    this.$store.dispatch('modal_message', errorMessage);
+                    this.showMessageBox({title: 'Ошибка', text: errorMessage});
                 });
             });
         }

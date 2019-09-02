@@ -54,3 +54,8 @@ Breadcrumbs::for('merchant.registrationList', function (BreadcrumbsGenerator $tr
     $trail->parent('home');
     $trail->push('Заявки на регистрацию');
 });
+// Главная > Мерчанты > Заявки на регистрацию > Деталка
+Breadcrumbs::for('merchant.registrationList.detail', function (BreadcrumbsGenerator $trail, int $id) {
+    $trail->parent('merchant.registrationList');
+    $trail->push("Заявка №{$id}");
+});
