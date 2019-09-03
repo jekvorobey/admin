@@ -2,7 +2,7 @@
     <layout-main>
         <div class="d-flex justify-contend-start align-items-stretch">
             <div>
-                <shadow-card title="Мерчант">
+                <shadow-card title="Мерчант" :edit-btn="true" @on-edit="openModal('merchantEdit')">
                     <h3>{{ merchant.display_name }}</h3>
                     <span class="badge" :class="[statusClass(merchant.status)]">{{ statusName(merchant.status) }}</span>
                 </shadow-card>
@@ -10,7 +10,7 @@
                     <h5>Вышненижний Виталий Аркадьевич</h5>
                 </shadow-card>
             </div>
-            <shadow-card title="Реквизиты" :edit-btn="true" @on-edit="startLegalEdit">
+            <shadow-card title="Реквизиты" :edit-btn="true" @on-edit="openModal('legalEdit')">
                 <values-table :values="merchantLegalValues" :names="merchantLegalNames"/>
             </shadow-card>
         </div>
@@ -44,6 +44,8 @@
                 </tbody>
             </table>
         </div>
+        <legal-edit-modal :source="merchant" @edited="onLegalUpdate"></legal-edit-modal>
+        <merchant-edit-modal :source="merchant" :statuses="options.statuses" @edited="onLegalUpdate"></merchant-edit-modal>
     </layout-main>
 </template>
 
@@ -51,7 +53,13 @@
     import ShadowCard from '../../../components/shadow-card.vue';
     import ValuesTable from '../../../components/values-table.vue';
     import VTabs from '../../../components/tabs.vue';
-    import modalMixin from '../../../mixins/modal.js'
+    import modal from '../../../components/controls/modal/modal.vue';
+    import VInput from '../../../components/controls/VInput/VInput.vue';
+
+    import LegalEditModal from './components/legal-edit-modal.vue';
+    import MerchantEditModal from './components/merchant-edit-modal.vue';
+
+    import modalMixin from '../../../mixins/modal.js';
 
     export default {
         name: 'page-index',
@@ -59,7 +67,13 @@
         components: {
             ShadowCard,
             ValuesTable,
-            VTabs
+            VTabs,
+
+            modal,
+            VInput,
+
+            LegalEditModal,
+            MerchantEditModal
         },
         props: {
             iMerchant: {},
@@ -106,7 +120,10 @@
                 }
             },
             startLegalEdit() {
-                this.showMessageBox({text: "Banana!", title: "fuk"})
+                this.openModal('legalEdit');
+            },
+            onLegalUpdate(merchant) {
+                this.$set(this, 'merchant', merchant);
             },
             openTab(name) {
                 this.currentTab = name;

@@ -196,16 +196,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        top: var(--gs);
-        right: var(--gs);
+        top: 0;
+        right: 0;
         width: 44px;
         height: 44px;
-        fill: var(--cl-grey);
+        color: var(--cl-grey);
         transition: all $time ease;
         cursor: pointer;
+        background: white;
+        border: none;
 
         &:hover {
-            fill: var(--cl-cyan);
+            fill: black;
         }
 
         .icon {

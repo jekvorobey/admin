@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'RegistrationRequestController@index')->name('merchant.registrationList');
             Route::prefix('{id}')->group(function () {
                 Route::get('', 'MerchantDetailController@index')->name('merchant.registrationDetail');
+                Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
             });
         });
     });

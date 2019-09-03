@@ -27,9 +27,7 @@
                 </div>
 
                 <button type="button" title="Закрыть" class="modal-default-button popup__close" @click="close">
-                    <svg class="icon icon--cross-big">
-                        <use xlink:href="#icon-cross"></use>
-                    </svg>
+                    <fa-icon icon="times" size="lg"></fa-icon>
                 </button>
             </div>
         </div>

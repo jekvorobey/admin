@@ -487,12 +487,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "947a45b48ce259463ba643f51d0137b437b824f0"
+                "reference": "53d79efee93bd7e57deec70902c933c0639b24de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=947a45b48ce259463ba643f51d0137b437b824f0",
-                "reference": "947a45b48ce259463ba643f51d0137b437b824f0",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=53d79efee93bd7e57deec70902c933c0639b24de",
+                "reference": "53d79efee93bd7e57deec70902c933c0639b24de",
                 "shasum": ""
             },
             "require": {
@@ -532,7 +532,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2019-07-31T08:49:34+00:00"
+            "time": "2019-08-28T09:51:59+00:00"
         },
         {
             "name": "greensight/ibt-file-lib",
@@ -588,12 +588,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "4c1542590d84a2bd8ce3bae32f49febbd0683605"
+                "reference": "3b70bef60fea0d8d2a2242de95e718ac74eb6118"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=4c1542590d84a2bd8ce3bae32f49febbd0683605",
-                "reference": "4c1542590d84a2bd8ce3bae32f49febbd0683605",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=3b70bef60fea0d8d2a2242de95e718ac74eb6118",
+                "reference": "3b70bef60fea0d8d2a2242de95e718ac74eb6118",
                 "shasum": ""
             },
             "require": {
@@ -628,7 +628,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2019-07-25T14:29:57+00:00"
+            "time": "2019-08-23T11:08:15+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -636,12 +636,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-merchant-management-lib.git",
-                "reference": "5219e90f2d01b829ffbba625f956ae23f5558c8a"
+                "reference": "09b65ea196f79f837445d17bab9d36cf80298e83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=5219e90f2d01b829ffbba625f956ae23f5558c8a",
-                "reference": "5219e90f2d01b829ffbba625f956ae23f5558c8a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=09b65ea196f79f837445d17bab9d36cf80298e83",
+                "reference": "09b65ea196f79f837445d17bab9d36cf80298e83",
                 "shasum": ""
             },
             "require": {
@@ -665,7 +665,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2019-07-04T09:18:59+00:00"
+            "time": "2019-09-02T11:50:55+00:00"
         },
         {
             "name": "greensight/ibt-message-lib",
@@ -673,12 +673,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "47f55245afa8f80243281d9930c612bcecc883cb"
+                "reference": "fb88be7c9091567a50b5f55b5973174d42f4a31e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=47f55245afa8f80243281d9930c612bcecc883cb",
-                "reference": "47f55245afa8f80243281d9930c612bcecc883cb",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=fb88be7c9091567a50b5f55b5973174d42f4a31e",
+                "reference": "fb88be7c9091567a50b5f55b5973174d42f4a31e",
                 "shasum": ""
             },
             "require": {
@@ -713,7 +713,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2019-08-06T11:57:31+00:00"
+            "time": "2019-08-20T10:19:04+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -721,12 +721,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "5cf560c9ccb4d1ecabefa49b0946b5ea024f232b"
+                "reference": "95c714129ab2f66ca5650c188c3084745c073a01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=5cf560c9ccb4d1ecabefa49b0946b5ea024f232b",
-                "reference": "5cf560c9ccb4d1ecabefa49b0946b5ea024f232b",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=95c714129ab2f66ca5650c188c3084745c073a01",
+                "reference": "95c714129ab2f66ca5650c188c3084745c073a01",
                 "shasum": ""
             },
             "require": {
@@ -750,7 +750,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2019-07-30T13:45:12+00:00"
+            "time": "2019-08-26T13:57:15+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -758,12 +758,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0"
+                "reference": "d43934ba383326b6712f1bbbe3a299f1da8e201c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0",
-                "reference": "dee4d6dcf9426ee27300cd4ff853ea42ef31fbb0",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=d43934ba383326b6712f1bbbe3a299f1da8e201c",
+                "reference": "d43934ba383326b6712f1bbbe3a299f1da8e201c",
                 "shasum": ""
             },
             "require": {
@@ -798,7 +798,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2019-07-30T11:55:01+00:00"
+            "time": "2019-08-26T15:15:30+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
