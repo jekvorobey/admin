@@ -59,3 +59,14 @@ Breadcrumbs::for('merchant.registrationList.detail', function (BreadcrumbsGenera
     $trail->parent('merchant.registrationList');
     $trail->push("Заявка №{$id}");
 });
+//============== настройки =============================================================================================
+// Главная > Настройки
+Breadcrumbs::for('settings', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Настрйки');
+});
+// Главная > Настройки > Список пользователей
+Breadcrumbs::for('settings.userList', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('settings');
+    $trail->push('Список пользователей');
+});

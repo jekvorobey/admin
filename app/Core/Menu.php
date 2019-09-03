@@ -204,7 +204,7 @@ class Menu
                     ],
                     [
                         'title' => 'Пользователи и права',
-                        'route' => '#',
+                        'route' => route('settings.userList'),
                     ],
                     [
                         'title' => 'Настройки интеграций',

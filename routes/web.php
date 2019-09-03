@@ -43,4 +43,12 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
+
+    Route::prefix('settings')->namespace('Settings')->group(function () {
+        Route::prefix('users')->group(function () {
+            Route::get('page', 'UsersController@page')->name('settings.userListPagination');
+            Route::get('', 'UsersController@index')->name('settings.userList');
+            Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+        });
+    });
 });
