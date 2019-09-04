@@ -2,9 +2,9 @@
     <div class="shadow mt-3 mr-3">
         <div class="card-head">
             {{ title }}
-            <fa-icon v-if="editBtn" @click="$emit('on-edit')" icon="pencil-alt" class="corner-edit-btn"></fa-icon>
+            <fa-icon v-for="(icon, e) in buttons" @click="$emit(e)" :key="e" :icon="icon" class="corner-edit-btn"></fa-icon>
         </div>
-        <div class="px-5 pb-5">
+        <div :class="[`px-${padding}`, `pb-${padding}`]">
             <slot></slot>
         </div>
     </div>
@@ -14,7 +14,10 @@
     export default {
         props: {
             title: String,
-            editBtn: Boolean,
+            padding: {
+                default: 5
+            },
+            buttons: Object
         }
     }
 </script>
@@ -31,6 +34,7 @@
         color: gray;
         transition: 0.3s all;
         cursor: pointer;
+        margin-left: var(--gs);
     }
     .corner-edit-btn:hover {
         color: black;

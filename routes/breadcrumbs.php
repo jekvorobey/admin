@@ -52,7 +52,7 @@ Breadcrumbs::for('merchant', function (BreadcrumbsGenerator $trail) {
 // Главная > Мерчанты > Заявки на регистрацию
 Breadcrumbs::for('merchant.registrationList', function (BreadcrumbsGenerator $trail) {
     $trail->parent('home');
-    $trail->push('Заявки на регистрацию');
+    $trail->push('Заявки на регистрацию', route('merchant.registrationList'));
 });
 // Главная > Мерчанты > Заявки на регистрацию > Деталка
 Breadcrumbs::for('merchant.registrationList.detail', function (BreadcrumbsGenerator $trail, int $id) {
@@ -68,5 +68,10 @@ Breadcrumbs::for('settings', function (BreadcrumbsGenerator $trail) {
 // Главная > Настройки > Список пользователей
 Breadcrumbs::for('settings.userList', function (BreadcrumbsGenerator $trail) {
     $trail->parent('settings');
-    $trail->push('Список пользователей');
+    $trail->push('Список пользователей', route('settings.userList'));
+});
+// Главная > Настройки > Список пользователей > Пользователь
+Breadcrumbs::for('settings.userDetail', function (BreadcrumbsGenerator $trail, int $id) {
+    $trail->parent('settings.userList');
+    $trail->push("Пользователь № {$id}");
 });

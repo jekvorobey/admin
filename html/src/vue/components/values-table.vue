@@ -1,9 +1,9 @@
 <template>
     <table class="values-table">
         <tbody>
-            <tr v-for="(value, key) in values">
-                <th>{{ names[key] }}</th>
-                <td>{{ value }}</td>
+            <tr v-for="(name, key) in names">
+                <th>{{ name }}</th>
+                <td>{{ values[key] }}</td>
             </tr>
         </tbody>
     </table>

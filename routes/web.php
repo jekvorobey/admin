@@ -47,6 +47,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('settings')->namespace('Settings')->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('page', 'UsersController@page')->name('settings.userListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'UsersController@detail')->name('settings.userDetail');
+                Route::post('addRole', 'UsersController@addRole')->name('user.addRole');
+                Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
+            });
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });

@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\RoleService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
@@ -43,6 +45,32 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
+    public function detail(int $id, UserService $userService, RoleService $roleService)
+    {
+        $userQuery = new RestQuery();
+        $userQuery->setFilter('id', $id);
+        /** @var UserDto $user */
+        $user = $userService->users($userQuery)->first();
+
+        if (!$user) {
+            throw new NotFoundHttpException('user not found');
+        }
+
+        $this->title = "Пользователь № {$user->id}";
+        $this->breadcrumbs = ['settings.userDetail', $user->id];
+
+        $userRoles = $userService->userRoles($id);
+
+        return $this->render('Settings/UserDetail', [
+            'iUser' => $user,
+            'iRoles' => $userRoles,
+            'options' => [
+                'fronts' => Front::allFronts(),
+                'roles' => $roleService->roles()
+            ]
+        ]);
+    }
+
     public function saveUser(Request $request, UserService $userService)
     {
         $data = $request->all();
@@ -57,6 +85,39 @@ class UsersController extends Controller
         $newUser = new UserDto($data);
         $userService->create($newUser);
         return response()->json([]);
+    }
+
+    public function addRole(int $id, Request $request, UserService $userService)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'role' => 'required|integer',
+            'expires' => 'nullable|date'
+        ]);
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $userService->addRoles($id, [$data['role']], $data['expires'] ?? null);
+        return response()->json([
+            'roles' => $userService->userRoles($id)
+        ]);
+    }
+
+    public function deleteRole(int $id, Request $request, UserService $userService)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'role' => 'required|integer',
+        ]);
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $userService->deleteRole($id, $data['role']);
+        return response()->json([
+            'roles' => $userService->userRoles($id)
+        ]);
     }
 
     protected function makeQuery(Request $request): RestQuery

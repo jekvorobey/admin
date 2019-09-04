@@ -21,7 +21,7 @@
                            @change="e => selectItem(e, user.id)">
                 </td>
                 <td>{{ user.id }}</td>
-                <td><a>{{ user.email }}</a></td>
+                <td><a :href="getRoute('settings.userDetail', {id: user.id})">{{ user.email }}</a></td>
                 <td>{{ frontName(user.front) }}</td>
                 <td><span class="badge" :class="{'badge-success': user.email_verified, 'badge-danger': !user.email_verified}">{{ user.email_verified ? 'Да' : 'Нет' }}</span></td>
             </tr>
