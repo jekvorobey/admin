@@ -38,7 +38,7 @@
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
-        <user-add-modal :fronts="options.fronts"></user-add-modal>
+        <user-add-modal :fronts="options.fronts" @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
 
@@ -47,7 +47,7 @@
     import Services from "../../../../scripts/services/services";
     import withQuery from "with-query";
 
-    import UserAddModal from './components/user-add-modal.vue';
+    import UserAddModal from '../components/user-add-modal.vue';
 
     import {mapGetters} from "vuex";
     import modalMixin from '../../../mixins/modal.js';
@@ -107,6 +107,9 @@
             frontName(id) {
                 let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
+            },
+            onUserCreated() {
+                this.showMessageBox({text: "Пользователь создан!"});
             }
         },
         created() {

@@ -75,15 +75,21 @@ class UsersController extends Controller
     {
         $data = $request->all();
         $validator = Validator::make($data, [
+            'id' => 'nullable|integer',
             'email' => 'required|email',
             'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
-            'password' => 'required'
+            'password' => 'required_without:id',
         ]);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }
         $newUser = new UserDto($data);
-        $userService->create($newUser);
+        if ($data['id']) {
+            $userService->update($newUser);
+        } else {
+            $userService->create($newUser);
+        }
+
         return response()->json([]);
     }
 

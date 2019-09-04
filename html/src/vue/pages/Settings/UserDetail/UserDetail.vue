@@ -2,7 +2,7 @@
     <layout-main>
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
-                <shadow-card title="Основная информация">
+                <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}" @onEdit="openModal('userAdd')">
                     <values-table :values="userInfo" :names="userValuesNames"/>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('add-user-role')">
@@ -36,6 +36,7 @@
                 </div>
             </modal>
         </transition>
+        <user-edit-modal :source="user" :fronts="options.fronts" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 
@@ -52,13 +53,16 @@
     import modal from '../../../components/controls/modal/modal.vue';
     import VSelect from "../../../components/controls/VSelect/VSelect.vue";
 
+    import UserEditModal from "../components/user-add-modal.vue";
+
     export default {
         mixins: [modalMixin],
         components: {
             ShadowCard,
             ValuesTable,
             modal,
-            VSelect
+            VSelect,
+            UserEditModal
         },
         props: {
             iUser: {},
@@ -105,6 +109,10 @@
                     .then(data => {
                         this.roles = data.roles;
                     });
+            },
+            updateUser(newData) {
+                Object.assign(this.user, newData);
+                this.closeModal();
             }
         },
         computed: {
