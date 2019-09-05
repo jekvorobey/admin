@@ -11,6 +11,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/', 'MainController@home')->name('home');
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
+    Route::get('available-managers', 'Merchant\\MerchantDetailController@availableManagers')->name('managers.all');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::prefix('registration')->group(function () {

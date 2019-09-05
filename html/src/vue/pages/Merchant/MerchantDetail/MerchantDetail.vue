@@ -6,8 +6,9 @@
                     <h3>{{ merchant.display_name }}</h3>
                     <span class="badge" :class="[statusClass(merchant.status)]">{{ statusName(merchant.status) }}</span>
                 </shadow-card>
-                <shadow-card title="Назначенный менеджер">
-                    <h5>Вышненижний Виталий Аркадьевич</h5>
+                <shadow-card title="Назначенный менеджер" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('managerEdit')" :padding="3">
+                    <h5 v-if="manager.id">{{manager.name}}</h5>
+                    <p v-else class="text-light rounded bg-danger text-center">Менеджер не назначен</p>
                 </shadow-card>
             </div>
             <shadow-card title="Реквизиты" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('legalEdit')">
@@ -44,8 +45,9 @@
                 </tbody>
             </table>
         </div>
-        <legal-edit-modal :source="merchant" @edited="onLegalUpdate"></legal-edit-modal>
-        <merchant-edit-modal :source="merchant" :statuses="options.statuses" @edited="onLegalUpdate"></merchant-edit-modal>
+        <legal-edit-modal :source="merchant" @edited="replaceMerchant"></legal-edit-modal>
+        <merchant-edit-modal :source="merchant" :statuses="options.statuses" @edited="replaceMerchant"></merchant-edit-modal>
+        <manager-edit-modal :source="merchant"  @edited="replaceMerchantAndManager"></manager-edit-modal>
     </layout-main>
 </template>
 
@@ -58,6 +60,7 @@
 
     import LegalEditModal from './components/legal-edit-modal.vue';
     import MerchantEditModal from './components/merchant-edit-modal.vue';
+    import ManagerEditModal from './components/manager-edit-modal.vue';
 
     import modalMixin from '../../../mixins/modal.js';
 
@@ -73,17 +76,20 @@
             VInput,
 
             LegalEditModal,
-            MerchantEditModal
+            MerchantEditModal,
+            ManagerEditModal
         },
         props: {
             iMerchant: {},
             iOperators: Array,
+            iManager: {},
             options: {}
         },
         data() {
             return {
                 merchant: this.iMerchant,
                 operators: this.iOperators,
+                manager: this.iManager,
                 merchantLegalNames: {
                     correspondent_account: 'Корреспонденский счёт',
                     correspondent_account_bank: 'Корреспонденский банк',
@@ -122,8 +128,12 @@
             startLegalEdit() {
                 this.openModal('legalEdit');
             },
-            onLegalUpdate(merchant) {
+            replaceMerchant(merchant) {
                 this.$set(this, 'merchant', merchant);
+            },
+            replaceMerchantAndManager({merchant, manager}) {
+                this.$set(this, 'merchant', merchant);
+                this.$set(this, 'manager', manager);
             },
             openTab(name) {
                 this.currentTab = name;

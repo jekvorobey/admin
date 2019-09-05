@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -17,11 +20,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MerchantDetailController extends Controller
 {
+    const ROLE_MANAGER = 7;
+    
     public function index(
         int $id,
         Request $request,
         MerchantService $merchantService,
-        OperatorService $operatorService
+        OperatorService $operatorService,
+        UserService $userService
     )
     {
         /** @var MerchantDto $merchant */
@@ -40,10 +46,30 @@ class MerchantDetailController extends Controller
 
         /** @var Collection|OperatorDto $operators */
         $operators = $operatorService->newQuery()->setFilter('merchant_id', $merchant->id)->operators();
+        
+        $manager = [
+            'id' => 0,
+            'name' => ''
+        ];
+        if ($merchant->manager_id) {
+            $managerQuery = new RestQuery();
+            $managerQuery
+                ->setFilter('id', $merchant->manager_id)
+                ->include('profile');
+            /** @var UserDto $managerUser */
+            $managerUser = $userService->users($managerQuery)->first();
+            if ($managerUser) {
+                $manager = [
+                    'id' => $managerUser->id,
+                    'name' => $managerUser->full_name ?: $managerUser->email,
+                ];
+            }
+        }
 
         return $this->render('Merchant/MerchantDetail', [
             'iMerchant' => $merchant,
             'iOperators' => $operators,
+            'iManager' => $manager,
             'options' => [
                 'statuses' => MerchantStatus::allStatuses()
             ]
@@ -72,7 +98,8 @@ class MerchantDetailController extends Controller
             'payment_account_bank' => 'nullable',
             'correspondent_account' => 'nullable|numeric',
             'correspondent_account_bank' => 'nullable',
-            'status' => ['nullable', Rule::in($availableStatuses)]
+            'status' => ['nullable', Rule::in($availableStatuses)],
+            'manager_id' => 'nullable|integer',
         ];
         $validator = Validator::make(collect($data)->only(array_keys($fields))->all(), $fields);
         if ($validator->fails()) {
@@ -85,6 +112,21 @@ class MerchantDetailController extends Controller
         $newMerchant = $merchantService->newQuery()->setFilter('id', $id)->merchants()->first();
         return response()->json([
             'merchant' => $newMerchant
+        ]);
+    }
+    
+    public function availableManagers(UserService $userService)
+    {
+        $managerQuery = new RestQuery();
+        $managerQuery->setFilter('role', self::ROLE_MANAGER)->include('profile');
+        $users = $userService->users($managerQuery)->map(function (UserDto $user) {
+            return [
+                'id' => $user->id,
+                'name' => $user->full_name ?: $user->email,
+            ];
+        });
+        return response()->json([
+            'items' => $users
         ]);
     }
 }
