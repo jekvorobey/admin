@@ -14,6 +14,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-oms-lib"
+        },
+        {
+            "type": "vcs",
             "url": "https://gitlab.com/greensight/ibt-pim-lib"
         },
         {
@@ -47,6 +51,7 @@
         "greensight/ibt-marketing-lib": "dev-master",
         "greensight/ibt-merchant-management-lib": "dev-master",
         "greensight/ibt-message-lib": "dev-master",
+        "greensight/ibt-oms-lib": "dev-master",
         "greensight/ibt-pim-lib": "dev-master",
         "greensight/ibt-store-lib": "dev-master",
         "laravel/framework": "5.8.*",

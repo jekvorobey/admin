@@ -96,8 +96,8 @@ export default class Helpers {
         return n % 10 == 1 && n % 100 != 11
             ? forms[0]
             : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)
-            ? forms[1]
-            : forms[2];
+                ? forms[1]
+                : forms[2];
     }
 
     /**
@@ -109,7 +109,7 @@ export default class Helpers {
      * @param thousands_sep
      * @returns {string | void}
      */
-    static preparePrice(number, decimals, dec_point, thousands_sep) {
+    static preparePrice(number, decimals = 2, dec_point = '.', thousands_sep = ' ') {
         let i;
         let j;
         let kw;
@@ -120,12 +120,6 @@ export default class Helpers {
         // input sanitation & defaults
         if (isNaN((decimals = Math.abs(decimals)))) {
             decimals = 2;
-        }
-        if (dec_point === undefined) {
-            dec_point = ',';
-        }
-        if (thousands_sep === undefined) {
-            thousands_sep = ' ';
         }
 
         if (number < 0) {
@@ -144,10 +138,10 @@ export default class Helpers {
         kd =
             decimals && Math.abs(number - i) > 0
                 ? dec_point +
-                  Math.abs(number - i)
-                      .toFixed(decimals)
-                      .replace(/-/, 0)
-                      .slice(2)
+                Math.abs(number - i)
+                    .toFixed(decimals)
+                    .replace(/-/, 0)
+                    .slice(2)
                 : '';
 
         return minus + km + kw + kd;
@@ -205,11 +199,11 @@ export default class Helpers {
             duration === 0
                 ? () => to
                 : (t, b, c, d) => {
-                      t /= d / 2;
-                      if (t < 1) return (c / 2) * t * t + b;
-                      t -= 1;
-                      return (-c / 2) * (t * (t - 2) - 1) + b;
-                  };
+                    t /= d / 2;
+                    if (t < 1) return (c / 2) * t * t + b;
+                    t -= 1;
+                    return (-c / 2) * (t * (t - 2) - 1) + b;
+                };
 
         let interval;
         const animateScroll = () => {
@@ -235,4 +229,118 @@ export default class Helpers {
     }
     /* eslint-enable func-names */
     /* eslint-enable prefer-rest-params */
+
+    static diffObjects(oldObject, newObject) {
+        let oldCopy = Object.assign({}, oldObject),
+            newCopy = Object.assign({}, newObject),
+            diff = {};
+        for (let [key, oldValue] of Object.entries(oldCopy)) {
+            let newValue = newCopy[key];
+            if (oldValue != newValue) {
+                diff[key] = newValue;
+            }
+        }
+        for (let [key, newValue] of Object.entries(newCopy)) {
+            let oldValue = oldCopy[key];
+            if (oldValue != newValue) {
+                diff[key] = newValue;
+            }
+        }
+        return diff;
+    }
+
+    /**
+     * Возвращает cookie с именем name, если есть, если нет, то undefined
+     * @param name
+     * @returns {any}
+     */
+    static getCookie(name) {
+        var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    /**
+     * Возвращает xsrf-token из cookie
+     * @returns {String}
+     */
+    static getXsrfTokenFromCookie() {
+        return Helpers.getCookie('XSRF-TOKEN').toString();
+    }
+    static isEqual (value, other) {
+
+        // Get the value type
+        var type = Object.prototype.toString.call(value);
+
+        // If the two objects are not the same type, return false
+        if (type !== Object.prototype.toString.call(other)) return false;
+
+        // If items are not an object or array, return false
+        if (['[object Array]', '[object Object]'].indexOf(type) < 0) return false;
+
+        // Compare the length of the length of the two items
+        var valueLen = type === '[object Array]' ? value.length : Object.keys(value).length;
+        var otherLen = type === '[object Array]' ? other.length : Object.keys(other).length;
+        if (valueLen !== otherLen) return false;
+
+        // Compare two items
+        var compare = function (item1, item2) {
+
+            // Get the object type
+            var itemType = Object.prototype.toString.call(item1);
+
+            // If an object or array, compare recursively
+            if (['[object Array]', '[object Object]'].indexOf(itemType) >= 0) {
+                if (!isEqual(item1, item2)) return false;
+            }
+
+            // Otherwise, do a simple comparison
+            else {
+
+                // If the two items are not the same type, return false
+                if (itemType !== Object.prototype.toString.call(item2)) return false;
+
+                // Else if it's a function, convert to a string and compare
+                // Otherwise, just compare
+                if (itemType === '[object Function]') {
+                    if (item1.toString() !== item2.toString()) return false;
+                } else {
+                    if (item1 !== item2) return false;
+                }
+
+            }
+        };
+
+        // Compare properties
+        if (type === '[object Array]') {
+            for (var i = 0; i < valueLen; i++) {
+                if (compare(value[i], other[i]) === false) return false;
+            }
+        } else {
+            for (var key in value) {
+                if (value.hasOwnProperty(key)) {
+                    if (compare(value[key], other[key]) === false) return false;
+                }
+            }
+        }
+
+        // If nothing failed, return true
+        return true;
+
+    };
+
+    /**
+     * Разбить массив на массивы, размером chunkSize
+     * @param array
+     * @param chunkSize
+     * @returns {*[]}
+     */
+    static chunkSize(array, chunkSize) {
+        return [].concat.apply([],
+            array.map(function(elem, i) {
+                return i % chunkSize ? [] : [array.slice(i, i + chunkSize)];
+            })
+        );
+    };
 }

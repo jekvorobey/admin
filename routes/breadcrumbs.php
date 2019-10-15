@@ -75,3 +75,10 @@ Breadcrumbs::for('settings.userDetail', function (BreadcrumbsGenerator $trail, i
     $trail->parent('settings.userList');
     $trail->push("Пользователь № {$id}");
 });
+
+//================= Заказы =============================================================================================
+// Главная > Поток заказов
+Breadcrumbs::for('orders.flowList', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Поток сборки');
+});

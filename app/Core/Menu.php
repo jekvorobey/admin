@@ -47,7 +47,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Поток сборки',
-                        'route' => '#',
+                        'route' => route('orders.flowList'),
                     ],
                     [
                         'title' => 'Проблемные заказы',
@@ -240,11 +240,11 @@ class Menu
             ],
         ];
     }
-    
+
     public static function getMenuItems()
     {
         $menuItems = static::menu();
-        
+
         foreach ($menuItems as &$group) {
             //todo Добавить проверку прав для группы
             foreach ($group['items'] as &$item) {
@@ -254,7 +254,7 @@ class Menu
                 }
             }
         }
-        
+
         return $menuItems;
     }
 }

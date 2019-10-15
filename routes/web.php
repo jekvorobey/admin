@@ -57,4 +57,14 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
     });
+
+    Route::prefix('orders')->namespace('Orders')->group(function () {
+        Route::prefix('flow')->group(function () {
+            Route::get('page', 'FlowController@page')->name('ordersFlow.pagination');
+//            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+//                Route::get('', 'FlowController@detail')->name('orders.flow');
+//            });
+            Route::get('', 'FlowController@index')->name('orders.flowList');
+        });
+    });
 });

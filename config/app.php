@@ -177,11 +177,11 @@ return [
         \Greensight\Store\StoreLibServiceProvider::class,
         \Greensight\Marketing\MarketingLibServiceProvider::class,
         \Greensight\Filestorage\FileLibServiceProvider::class,
+        \Greensight\Oms\OmsLibServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
     ],
 
     /*
