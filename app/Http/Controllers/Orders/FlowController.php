@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Orders;
 
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -31,7 +32,6 @@ class FlowController extends Controller
         $pager = $orderService->ordersCount($restQuery);
         $orders = $this->loadOrders($restQuery, $orderService);
 
-
         return $this->render('Orders/Flow/List', [
             'iOrders' => $orders,
             'iCurrentPage' => $request->get('page', 1),
@@ -47,7 +47,21 @@ class FlowController extends Controller
         ]);
     }
 
+    public function page(
+        Request $request,
+        OrderService $orderService
+    ): JsonResponse {
+        $restQuery = $this->makeRestQuery($orderService, $request);
+        $orders = $this->loadOrders($restQuery, $orderService);
+        $result = [
+            'orders' => $orders,
+        ];
+        if ($request->get('page') == 1) {
+            $result['pager'] = $orderService->ordersCount($restQuery);
+        }
 
+        return response()->json($result);
+    }
 
     protected function loadOrders(DataQuery $restQuery, OrderService $orderService): Collection
     {

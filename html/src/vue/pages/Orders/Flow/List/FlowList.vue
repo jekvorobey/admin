@@ -24,45 +24,50 @@
                     </f-select>
                 </div>
 
+                <div>
+
+                </div>
                 <transition name="slide">
-                    <div v-if="opened" class="additional-filter pt-3 mt-3">
-                        <div class="row">
-                            <f-input v-model="filter.number" class="col-2">
-                                № заказа
-                            </f-input>
-                            <f-input type="number" class="col-2">
-                                Сумма заказа
-                                <template #prepend><span class="input-group-text">от</span></template>
-                                <template #append><span class="input-group-text">руб.</span></template>
-                            </f-input>
-                            <f-input type="number" class="col-2">
-                                &nbsp;
-                                <template #prepend><span class="input-group-text">до</span></template>
-                                <template #append><span class="input-group-text">руб.</span></template>
-                            </f-input>
-                            <f-input type="text" class="col-2">
-                                Код товара из ERP
-                                <template #help>Код из внешней системы, по которому импортируется товар</template>
-                            </f-input>
-                            <f-input type="text" class="col-2">
-                                Артикул
-                                <template #help>Артикул товара в системе iBT</template>
-                            </f-input>
-                        </div>
-                        <div class="row">
-                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-4">
-                                Бренд
-                                <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
-                            </f-multi-select>
-                            <f-multi-select v-model="filter.payType" :options="paymentMethodOptions" class="col-3">
-                                Способ оплаты
-                            </f-multi-select>
-                            <f-multi-select v-model="filter.deliveryCity" :options="deliveryCityOptions" class="col-3">
-                                Город доставки
-                            </f-multi-select>
-                            <f-multi-select v-model="filter.deliveryMethod" :options="deliveryMethodOptions" class="col">
-                                Способ доставки
-                            </f-multi-select>
+                    <div v-if="opened">
+                        <div class="additional-filter pt-3 mt-3">
+                            <div class="row">
+                                <f-input v-model="filter.number" class="col-2">
+                                    № заказа
+                                </f-input>
+                                <f-input type="number" class="col-2">
+                                    Сумма заказа
+                                    <template #prepend><span class="input-group-text">от</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
+                                <f-input type="number" class="col-2">
+                                    &nbsp;
+                                    <template #prepend><span class="input-group-text">до</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
+                                <f-input type="text" class="col-2">
+                                    Код товара из ERP
+                                    <template #help>Код из внешней системы, по которому импортируется товар</template>
+                                </f-input>
+                                <f-input type="text" class="col-2">
+                                    Артикул
+                                    <template #help>Артикул товара в системе iBT</template>
+                                </f-input>
+                            </div>
+                            <div class="row">
+                                <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-4">
+                                    Бренд
+                                    <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
+                                </f-multi-select>
+                                <f-multi-select v-model="filter.payType" :options="paymentMethodOptions" class="col-3">
+                                    Способ оплаты
+                                </f-multi-select>
+                                <f-multi-select v-model="filter.deliveryCity" :options="deliveryCityOptions" class="col-3">
+                                    Город доставки
+                                </f-multi-select>
+                                <f-multi-select v-model="filter.deliveryMethod" :options="deliveryMethodOptions" class="col">
+                                    Способ доставки
+                                </f-multi-select>
+                            </div>
                         </div>
                     </div>
                 </transition>
@@ -148,8 +153,10 @@ import FDate from '../../../../components/filter/f-date.vue';
 import FSelect from '../../../../components/filter/f-select.vue';
 import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 import Dropdown from '../../../../components/dropdown/dropdown.vue';
-import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 import Helpers from "../../../../../scripts/helpers";
+import ModalColumns from './components/modal-columns.vue';
+
+import modalMixin from '../../../../mixins/modal.js';
 
 const cleanHiddenFilter = {
     number: '',
@@ -171,6 +178,8 @@ const serverKeys = [
 ];
 
 export default {
+    name: 'page-order-flow',
+    mixins: [modalMixin],
     props: [
         'iOrders',
         'iCurrentPage',
@@ -189,8 +198,8 @@ export default {
         FDate,
         FSelect,
         FMultiSelect,
-        ModalColumns,
         Dropdown,
+        ModalColumns,
     },
     data() {
         let self = this;
@@ -328,7 +337,7 @@ export default {
             }));
         },
         loadPage() {
-            Service.net().get(this.route('orderAssembly.pagination'), {
+            Service.net().get(this.route('orders.FlowPagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
                 sort: this.sort,
