@@ -178,6 +178,7 @@ return [
         \Greensight\Marketing\MarketingLibServiceProvider::class,
         \Greensight\Filestorage\FileLibServiceProvider::class,
         \Greensight\Oms\OmsLibServiceProvider::class,
+        \Greensight\Customer\CustomerLibServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
