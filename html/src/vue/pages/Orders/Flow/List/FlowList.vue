@@ -224,7 +224,7 @@ export default {
                     name: '№ заказа',
                     code: 'number',
                     value: function(order) {
-                        return '<a href="' + self.getRoute('orderAssembly.edit', {id: order.id}) + '">' +
+                        return '<a href="' + self.getRoute('orders.flowDetail', {id: order.id}) + '">' +
                             order.number + '</a>';
                     },
                     isShown: true,
@@ -244,6 +244,18 @@ export default {
                     code: 'cost',
                     value: function(order) {
                         return self.preparePrice(order.cost);
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+
+                {
+                    name: 'Покупатель',
+                    code: 'customer',
+                    value: function(order) {
+                        return order.customer ?
+                            `${order.customer.last_name} ${order.customer.first_name} ${order.customer.middle_name}` :
+                            'Нет данных'
                     },
                     isShown: true,
                     isAlwaysShown: false,
