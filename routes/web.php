@@ -61,9 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('orders')->namespace('Orders')->group(function () {
         Route::prefix('flow')->group(function () {
             Route::get('page', 'FlowController@page')->name('orders.FlowPagination');
-//            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-//                Route::get('', 'FlowController@detail')->name('orders.flow');
-//            });
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'FlowController@detail')->name('orders.flowDetail');
+            });
             Route::get('', 'FlowController@index')->name('orders.flowList');
         });
     });
