@@ -67,4 +67,9 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'FlowController@index')->name('orders.flowList');
         });
     });
+
+    Route::prefix('offers')->namespace('Product')->group(function () {
+        Route::get('', 'OfferListController@index')->name('offers.list');
+        Route::get('page', 'OfferListController@page')->name('offers.listPage');
+    });
 });

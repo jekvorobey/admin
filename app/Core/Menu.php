@@ -16,6 +16,10 @@ class Menu
                         'route' => '#',
                     ],
                     [
+                        'title' => 'Предложения мерчантов',
+                        'route' => route('offers.list'),
+                    ],
+                    [
                         'title' => 'Подарки',
                         'route' => '#',
                     ],
