@@ -95,3 +95,9 @@ Breadcrumbs::for('offers.list', function (BreadcrumbsGenerator $trail) {
     $trail->parent('products');
     $trail->push('Предложения мерчантов');
 });
+
+// Главная > Товары > Список товаров
+Breadcrumbs::for('products.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('products');
+    $trail->push('Список товаров');
+});

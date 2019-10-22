@@ -72,4 +72,9 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
     });
+    
+    Route::prefix('products')->namespace('Product')->group(function () {
+        Route::get('', 'ProductListController@index')->name('products.list');
+        Route::get('page', 'ProductListController@page')->name('products.listPage');
+    });
 });
