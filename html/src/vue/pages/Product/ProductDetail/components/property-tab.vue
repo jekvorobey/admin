@@ -34,48 +34,51 @@
                 </tbody>
             </table>
         </shadow-card>
+        <shadow-card title="Характеристики" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productPropsEdit')" class="flex-grow-1">
+            <table class="table table-striped table-bordered table-sm">
+                <tbody>
+                <tr v-for="property in options.availableProperties">
+                    <td>{{ property.name }}</td>
+                    <td>
+                        <p v-for="value in values(property.id)" class="value">
+                            <template v-if="property.type === 'directory'">{{ directoryValue(property.id, value) }}
+                            </template>
+                            <template v-else>{{value}}</template>
+                        </p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </shadow-card>
 
-        <div class="flex-grow-1 shadow mt-3 mr-3">
-            <div class="card-head">
-                Характеристики
-                <fa-icon icon="pencil-alt" class="corner-edit-btn"></fa-icon>
-            </div>
-            <div class="px-5 pb-5">
-                <table class="table table-striped table-bordered table-sm">
-                    <tbody>
-                    <tr v-for="property in options.availableProperties">
-                        <td>{{ property.name }}</td>
-                        <td>
-                            <p v-for="value in values(property.id)" class="value">
-                                <template v-if="property.type === 'directory'">{{ directoryValue(property.id, value) }}
-                                </template>
-                                <template v-else>{{value}}</template>
-                            </p>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
         <product-edit-modal
                 :source="product"
                 :options="options"
                 @onSave="$emit('onSave')"
                 modal-name="productValuesEdit">
         </product-edit-modal>
+
+        <product-props-modal
+                :properties="propertyValues"
+                :availableProperties="options.availableProperties"
+                :directoryValues="options.directoryValues"
+                modal-name="productPropsEdit">
+        </product-props-modal>
     </div>
 </template>
 
 <script>
     import ShadowCard from '../../../../components/shadow-card.vue';
     import ProductEditModal from './product-values-modal.vue';
+    import ProductPropsModal from './product-props-modal.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
 
     export default {
         components: {
             ShadowCard,
-            ProductEditModal
+            ProductEditModal,
+            ProductPropsModal,
         },
         mixins: [modalMixin],
         props: {
