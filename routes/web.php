@@ -76,5 +76,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', 'ProductListController@index')->name('products.list');
         Route::get('page', 'ProductListController@page')->name('products.listPage');
+        Route::prefix('{id}')->group(function () {
+            Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
+            Route::get('', 'ProductDetailController@index')->name('products.detail');
+            Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
+        });
     });
 });

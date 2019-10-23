@@ -5,16 +5,14 @@ namespace App\Http\Controllers;
 use App\Core\Menu;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use DaveJamesMiller\Breadcrumbs\Facades\Breadcrumbs;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-
     protected $title = '';
     protected $breadcrumbs = '';
 
@@ -63,5 +61,15 @@ class Controller extends BaseController
                 'css' => $css,
             ];
         }
+    }
+    
+    protected function validate(Request $request, array $rules): array
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+        return $data;
     }
 }

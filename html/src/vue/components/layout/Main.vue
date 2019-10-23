@@ -22,6 +22,8 @@ import LayoutHeader from '../layout-header/layout-header.vue';
 import ModalMessage from '../modal-message/modal-message.vue';
 import MainMenu from '../main-menu/main-menu.vue';
 
+import '../../../images/favicon.ico';
+
 export default {
     name: 'layout-main',
     props: {
