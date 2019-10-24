@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
             Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
+            Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
         });
     });
 });

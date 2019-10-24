@@ -13,6 +13,7 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductDetailController extends Controller
@@ -98,6 +99,27 @@ class ProductDetailController extends Controller
         
         $productService->updateProduct($id, $product);
         
+        return response()->json();
+    }
+    
+    public function saveProps(
+        int $id,
+        Request $request,
+        ProductService $productService
+    )
+    {
+        /** @var Collection|ProductDto $products */
+        $products = $productService
+            ->newQuery()
+            ->setFilter('id', $id)
+            ->products();
+        if (!$products->count()) {
+            throw new NotFoundHttpException('product not found');
+        }
+        $data = $this->validate($request, [
+           'props' => 'required|array'
+        ]);
+        $productService->saveProperties($id, $data['props']);
         return response()->json();
     }
     

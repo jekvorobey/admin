@@ -59,9 +59,11 @@
         </product-edit-modal>
 
         <product-props-modal
+                :product-id="product.id"
                 :properties="propertyValues"
                 :availableProperties="options.availableProperties"
                 :directoryValues="options.directoryValues"
+                @onSave="$emit('onSave')"
                 modal-name="productPropsEdit">
         </product-props-modal>
     </div>

@@ -86,6 +86,7 @@
         mixins: [modalMixin, validationMixin],
         props: {
             modalName: String,
+            productId: Number,
             properties: {},
             availableProperties: {},
             directoryValues: {}
@@ -121,12 +122,11 @@
                 if (this.$v.$invalid) {
                     return;
                 }
-                // let data = Helpers.filterObject(this.form, formFields);
-                // Services.net().post(this.getRoute('products.saveProduct', {id: this.source.id}), {}, data)
-                //     .then(()=> {
-                //         this.$emit('onSave');
-                //         this.closeModal();
-                //     });
+                Services.net().post(this.getRoute('products.saveProps', {id: this.productId}), {}, {props: this.form})
+                    .then(()=> {
+                        this.$emit('onSave');
+                        this.closeModal();
+                    });
             },
             errorProperty(propertyId) {
                 return this.$v.form[propertyId].$invalid;
@@ -137,7 +137,7 @@
                 if (this.$v.form[propertyId].$each[index].$dirty) {
                     if (this.$v.form[propertyId].$each[index].required === false) return "Обязательное поле!";
                     if (this.$v.form[propertyId].$each[index].integer === false) return "Только целые числа!";
-                    if (this.$v.form[propertyId].$each[index].numeric === false) return "Только цифры и точка!";
+                    if (this.$v.form[propertyId].$each[index].numeric === false) return "Только точка и цифры!";
                 }
             },
             directoryOptions(propertyId) {
@@ -147,7 +147,6 @@
                 })) : [];
             },
             getDate(propertyId, index) {
-                console.log(this.form[propertyId][index]);
                 if (!this.form[propertyId][index]) {
                     return '';
                 }
