@@ -6,8 +6,8 @@
                     <div class="shadow mt-3 mr-3">
                         <img :src="mainImage.url" class="big-image">
                         Основная фотография
-                        <fa-icon icon="trash-alt" class="float-right media-btn"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn"></fa-icon>
+                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDelete(mainImage.type, mainImage.id)"></fa-icon>
+                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadFile(mainImage.type, mainImage.id)"></fa-icon>
                     </div>
                 </div>
             </div>
@@ -46,16 +46,59 @@
                 </div>
             </div>
         </div>
+        <file-upload-modal @accept="onAccept" modal-name="FileUpload"></file-upload-modal>
     </div>
 </template>
 
 <script>
+    import modalMixin from '../../../../mixins/modal';
+    import FileUploadModal from './file-upload-modal.vue';
+    import Services from "../../../../../scripts/services/services";
+    import {mapGetters} from "vuex";
     export default {
+        components: {FileUploadModal},
+        mixins: [modalMixin],
         props: {
             images: {},
             product: {},
         },
+        data() {
+            return {
+                currentType: 0,
+                replaceFileId: undefined,
+            };
+        },
+        methods: {
+            startUploadFile(type, replaceFileId) {
+                this.currentType = type;
+                this.replaceFileId = replaceFileId;
+                this.openModal('FileUpload');
+            },
+            onAccept(file) {
+                if (this.replaceFileId) {
+                    this.onDelete(this.currentType, this.replaceFileId);
+                }
+                Services.net().post(this.getRoute('products.saveImage', {id: this.product.id}), {}, {
+                    id: file.id,
+                    type: this.currentType,
+                })
+                    .then(() => {
+                        this.$emit('onSave');
+                        this.closeModal();
+                    });
+            },
+            onDelete(type, fileId) {
+                Services.net().post(this.getRoute('products.deleteImage', {id: this.product.id}), {}, {
+                    id: fileId,
+                    type: type,
+                })
+                    .then(() => {
+                        this.$emit('onSave');
+                    });
+            }
+        },
         computed: {
+            ...mapGetters(['getRoute']),
             mainImage() {
                 let mainImages = this.images.filter(image => image.type === 1);
                 return mainImages.length > 0 ? mainImages[0] : {};

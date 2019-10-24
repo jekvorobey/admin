@@ -80,7 +80,9 @@ Route::middleware('auth')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
             Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
-            Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
+            Route::post('props', 'ProductDetailController@saveImage')->name('products.saveProps');
+            Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
+            Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
         });
     });
 });

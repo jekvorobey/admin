@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Product\ProductImageDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
@@ -85,16 +86,6 @@ class ProductDetailController extends Controller
             'length' => 'integer',
             'weight' => 'integer',
         ]);
-        
-        /** @var Collection|ProductDto $products */
-        $products = $productService
-            ->newQuery()
-            ->setFilter('id', $id)
-            ->products();
-        if (!$products->count()) {
-            throw new NotFoundHttpException('product not found');
-        }
-        
         $product = new ProductDto($data);
         
         $productService->updateProduct($id, $product);
@@ -108,18 +99,41 @@ class ProductDetailController extends Controller
         ProductService $productService
     )
     {
-        /** @var Collection|ProductDto $products */
-        $products = $productService
-            ->newQuery()
-            ->setFilter('id', $id)
-            ->products();
-        if (!$products->count()) {
-            throw new NotFoundHttpException('product not found');
-        }
         $data = $this->validate($request, [
            'props' => 'required|array'
         ]);
         $productService->saveProperties($id, $data['props']);
+        return response()->json();
+    }
+    
+    public function saveImage(int $id, Request $request, ProductService $productService)
+    {
+        $data = $this->validate($request, [
+            'id' => 'required|integer',
+            'type' => 'required|integer'
+        ]);
+        $images = $productService->images($id);
+        $image = new ProductImageDto();
+        $image->type = $data['type'];
+        $image->product_id = $id;
+        $image->id = $data['id'];
+        
+        $images[] = $image;
+        $productService->saveImages($id, $images->toArray());
+        return response()->json();
+    }
+    
+    public function deleteImage(int $id, Request $request, ProductService $productService)
+    {
+        $data = $this->validate($request, [
+            'id' => 'required|integer',
+            'type' => 'required|integer'
+        ]);
+        $images = $productService->images($id);
+        $images = $images->filter(function (array $image) use ($data) {
+            return !($image['id'] == $data['id'] && $image['type'] == $data['type']);
+        });
+        $productService->saveImages($id, $images->toArray());
         return response()->json();
     }
     
