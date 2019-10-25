@@ -28,20 +28,21 @@
             <shadow-card title="Описание товара" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DescriptionEdit')">
                 <div v-html="product.description"></div>
             </shadow-card>
-            <div class="shadow mt-3 mr-3" style="max-width: 500px">
-                <div class="card-head">
-                    How to use
-                    <fa-icon icon="pencil-alt" class="corner-edit-btn"></fa-icon>
+            <shadow-card title="How to use" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('VideoEdit')">
+                <div v-if="product.video" class="embed-responsive embed-responsive-16by9 ">
+                    <iframe
+                            width="424"
+                            height="238"
+                            class="embed-responsive-item"
+                            :src="'https://www.youtube.com/embed/' + product.video"
+                            allowfullscreen></iframe>
                 </div>
-                <div class="px-5 pb-5">
-                    <div class="embed-responsive embed-responsive-16by9 ">
-                        <iframe width="424" height="238" class="embed-responsive-item" src="https://www.youtube.com/embed/yKRxxMuHthg" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
+                <img v-else src="//placehold.it/424x238?text=No+video" class="embed-responsive embed-responsive-16by9 ">
+            </shadow-card>
         </div>
         <file-upload-modal @accept="onAccept" modal-name="FileUpload"></file-upload-modal>
         <description-edit-modal :source="product" @onSave="$emit('onSave')" modal-name="DescriptionEdit"></description-edit-modal>
+        <video-edit-modal :source="product" @onSave="$emit('onSave')" modal-name="VideoEdit"></video-edit-modal>
     </div>
 </template>
 
@@ -51,6 +52,7 @@
     import ShadowCard from '../../../../components/shadow-card.vue';
     import FileUploadModal from './file-upload-modal.vue';
     import DescriptionEditModal from './product-description-modal.vue';
+    import VideoEditModal from './product-video-modal.vue';
 
     import Services from "../../../../../scripts/services/services";
     import {mapGetters} from "vuex";
@@ -59,7 +61,8 @@
         components: {
             ShadowCard,
             FileUploadModal,
-            DescriptionEditModal
+            DescriptionEditModal,
+            VideoEditModal,
         },
         mixins: [modalMixin],
         props: {
