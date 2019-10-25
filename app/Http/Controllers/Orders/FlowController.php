@@ -197,7 +197,8 @@ class FlowController extends Controller
         int $id,
         OrderService $orderService,
         ProductService $productService,
-        UserService $userService
+        UserService $userService,
+        CustomerService $customerService
     )
     {
         $restQuery = $orderService
@@ -212,6 +213,8 @@ class FlowController extends Controller
         /** @var OrderDto $order */
         $order = $orders->first();
         $data = $order->toArray();
+
+//        dd($order);
 
         if (isset($data['basket']['items'])) {
             $basketItems = &$data['basket']['items'];
@@ -242,6 +245,30 @@ class FlowController extends Controller
                 $basketItem['product']['photo'] = $images[$product->id] ?? '';
                 $basketItem['cost'] = $basketItem['qty'] * $basketItem['price'];
             }
+        }
+
+        // Получаем пользователя заказа
+        $customerQuery = new RestQuery();
+        $customerQuery->setFilter('id', $data['customer_id']);
+        $customer = $customerService->customers($customerQuery)->first();
+
+        $userQuery = new RestQuery();
+        $userQuery->addFields('profile', '*');
+        $userQuery->setFilter('id', $customer->user_id);
+        $userQuery->setFilter('front', Front::FRONT_SHOWCASE);
+
+        $data['customer'] = $userService->users($userQuery)->first();
+
+
+
+        // Получаем все заказы пользователя
+        $previousQuery = new RestQuery();
+        $previousQuery->setFilter('id', '!=', $data['id']);
+        $previousQuery->setFilter('customer_id', $data['customer_id']);
+        $previousOrders = $orderService->orders($customerQuery);
+
+        if($previousOrders) {
+            $data['customer_history'] = $previousOrders;
         }
 
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo

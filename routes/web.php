@@ -59,6 +59,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('orders')->namespace('Orders')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+            Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
+        });
+
         Route::prefix('flow')->group(function () {
             Route::get('page', 'FlowController@page')->name('orders.FlowPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
@@ -72,7 +76,7 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
     });
-    
+
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', 'ProductListController@index')->name('products.list');
         Route::get('page', 'ProductListController@page')->name('products.listPage');
@@ -85,4 +89,5 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
         });
     });
+
 });
