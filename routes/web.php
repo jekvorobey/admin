@@ -59,7 +59,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('orders')->namespace('Orders')->group(function () {
-
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
         });
@@ -68,16 +67,27 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'FlowController@page')->name('orders.FlowPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowController@detail')->name('orders.flowDetail');
-
             });
             Route::get('', 'FlowController@index')->name('orders.flowList');
         });
     });
 
-
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+    });
+
+    Route::prefix('products')->namespace('Product')->group(function () {
+        Route::get('', 'ProductListController@index')->name('products.list');
+        Route::get('page', 'ProductListController@page')->name('products.listPage');
+        Route::prefix('{id}')->group(function () {
+            Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
+            Route::get('', 'ProductDetailController@index')->name('products.detail');
+            Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
+            Route::post('props', 'ProductDetailController@saveImage')->name('products.saveProps');
+            Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
+            Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
+        });
     });
 
 });

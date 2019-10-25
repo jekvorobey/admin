@@ -672,6 +672,16 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@ckeditor/ckeditor5-build-classic@^15.0.0":
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-15.0.0.tgz#fb036552160d4511cafb8873363075efa7805128"
+  integrity sha512-oIEYT4obF3+aPgA2BkzCZsK4vzOohpZRWn549dz/FWU6TIIBH7g5wE7CQtsMJG8KnnqC5Y+eh+HNURQxDGvj/g==
+
+"@ckeditor/ckeditor5-vue@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-vue/-/ckeditor5-vue-1.0.0.tgz#f1c22776fa625afa8603b2156406c5673bdb1bce"
+  integrity sha512-rrwuRQ/vHPnBDBhgOj/0y0QlJTmTJwPWF9QbyxJ/ThPFE8U8823HGZ6wKOCtXOzuNmGvFkXRKQULpXupo4URRw==
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"

@@ -13,7 +13,11 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Каталог товаров',
-                        'route' => '#',
+                        'route' => route('products.list'),
+                    ],
+                    [
+                        'title' => 'Предложения мерчантов',
+                        'route' => route('offers.list'),
                     ],
                     [
                         'title' => 'Подарки',

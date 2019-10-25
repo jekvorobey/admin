@@ -343,4 +343,12 @@ export default class Helpers {
             })
         );
     };
+
+    static filterObject(data, keys) {
+        let pairs = Object.entries(data).filter(prop => keys.indexOf(prop[0]) !== -1);
+        return pairs.reduce((obj, pair) => {
+            obj[pair[0]] = pair[1];
+            return obj;
+        }, {});
+    }
 }

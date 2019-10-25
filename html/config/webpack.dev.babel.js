@@ -105,6 +105,16 @@ export default {
                 },
             },
             {
+                test: /\.ico$/,
+                include: path.resolve(__dirname, '../src/images'),
+                loader: 'file-loader',
+                options: {
+                    name: 'images/[name].[ext]',
+                    limit: 10 * 1024,
+                    noquotes: true,
+                },
+            },
+            {
                 test: /\.woff2?$/,
                 include: path.resolve(__dirname, '../src/fonts'),
                 use: [

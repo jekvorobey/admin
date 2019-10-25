@@ -82,3 +82,22 @@ Breadcrumbs::for('orders.flowList', function (BreadcrumbsGenerator $trail) {
     $trail->parent('home');
     $trail->push('Поток сборки');
 });
+
+//================= Товары =============================================================================================
+// Главная > Товары
+Breadcrumbs::for('products', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Товары');
+});
+
+// Главная > Товары > Предложения мерчантов
+Breadcrumbs::for('offers.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('products');
+    $trail->push('Предложения мерчантов');
+});
+
+// Главная > Товары > Список товаров
+Breadcrumbs::for('products.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('products');
+    $trail->push('Список товаров');
+});
