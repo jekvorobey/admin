@@ -25,15 +25,9 @@
             </div>
         </div>
         <div class="d-flex flex-column justify-content-start align-items-start">
-            <div class="shadow mt-3 mr-3" style="max-width: 500px; min-width: 300px">
-                <div class="card-head">
-                    Описание товара
-                    <fa-icon icon="pencil-alt" class="corner-edit-btn"></fa-icon>
-                </div>
-                <div class="px-5 pb-5">
-                    <p>{{ product.description }}</p>
-                </div>
-            </div>
+            <shadow-card title="Описание товара" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DescriptionEdit')">
+                <div v-html="product.description"></div>
+            </shadow-card>
             <div class="shadow mt-3 mr-3" style="max-width: 500px">
                 <div class="card-head">
                     How to use
@@ -47,16 +41,26 @@
             </div>
         </div>
         <file-upload-modal @accept="onAccept" modal-name="FileUpload"></file-upload-modal>
+        <description-edit-modal :source="product" @onSave="$emit('onSave')" modal-name="DescriptionEdit"></description-edit-modal>
     </div>
 </template>
 
 <script>
     import modalMixin from '../../../../mixins/modal';
+
+    import ShadowCard from '../../../../components/shadow-card.vue';
     import FileUploadModal from './file-upload-modal.vue';
+    import DescriptionEditModal from './product-description-modal.vue';
+
     import Services from "../../../../../scripts/services/services";
     import {mapGetters} from "vuex";
+
     export default {
-        components: {FileUploadModal},
+        components: {
+            ShadowCard,
+            FileUploadModal,
+            DescriptionEditModal
+        },
         mixins: [modalMixin],
         props: {
             images: {},
