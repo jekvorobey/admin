@@ -41,6 +41,15 @@
                         Вес, гр
                     </v-input>
                 </div>
+                <hr>
+                <div class="row">
+                    <v-select v-model="$v.form.explosive.$model" :options="booleanOptions" class="col-md-6 col-sm-12">
+                        Легковоспламеняющееся
+                    </v-select>
+                    <v-select v-model="$v.form.has_battery.$model" :options="booleanOptions" class="col-md-6 col-sm-12">
+                        В составе есть элемент питания
+                    </v-select>
+                </div>
                 <button @click="save" class="btn btn-dark" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -63,7 +72,7 @@
     import modalMixin from '../../../../mixins/modal.js';
 
 
-    const formFields = ['name', 'brand_id', 'category_id', 'segment', 'approval_status',
+    const formFields = ['has_battery', 'explosive', 'name', 'brand_id', 'category_id', 'segment', 'approval_status',
         'vendor_code', 'width', 'height', 'length', 'weight'];
     export default {
         components: {
@@ -94,6 +103,8 @@
                 height: {required, integer},
                 length: {required, integer},
                 weight: {required, integer},
+                has_battery: {},
+                explosive: {},
             }
         },
         methods: {
@@ -123,6 +134,9 @@
             },
             approvalStatusOptions() {
                 return Object.entries(this.options.approval).map(status => ({value: status[0], text: status[1]}));
+            },
+            booleanOptions() {
+                return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
             },
 
             errorName() {

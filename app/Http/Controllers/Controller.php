@@ -66,7 +66,9 @@ class Controller extends BaseController
     protected function validate(Request $request, array $rules): array
     {
         $data = $request->all();
-        $validator = Validator::make($data, $rules);
+        $validator = Validator::make($data, $rules, [
+            'required' => 'required :attribute'
+        ]);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }

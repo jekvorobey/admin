@@ -29,14 +29,6 @@
                 :product="product"
                 @onSave="refresh"
             ></content-tab>
-        <values-tab
-                v-if="nav.currentTab === 'values'"
-                :product="product"
-                :brand="options.brand"
-                :category="options.category"
-                :stocks="stocks"
-                :stores="options.stores"
-        ></values-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
@@ -51,7 +43,6 @@ import VTabs from '../../../components/tabs/tabs.vue';
 
 import PropertyTab from './components/property-tab.vue';
 import ContentTab from './components/content-tab.vue';
-import ValuesTab from './components/values-tab.vue';
 import HistoryTab from './components/history-tab.vue';
 import Services from "../../../../scripts/services/services";
 
@@ -61,7 +52,6 @@ export default {
 
         PropertyTab,
         ContentTab,
-        ValuesTab,
         HistoryTab,
     },
     props: {
@@ -81,7 +71,6 @@ export default {
                 tabs: [
                     {value: 'props', text: 'Мастер-данные'},
                     {value: 'content', text: 'Контент'},
-                    {value: 'values', text: 'Хранение'},
                     {value: 'history', text: 'История'},
                 ]
             }
