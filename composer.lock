@@ -818,12 +818,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "a1eab9b1225b281db8e250972a40b8cdde583559"
+                "reference": "fb488e4d7d2cfa677960f9fab38960e91c8f4fcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=a1eab9b1225b281db8e250972a40b8cdde583559",
-                "reference": "a1eab9b1225b281db8e250972a40b8cdde583559",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=fb488e4d7d2cfa677960f9fab38960e91c8f4fcc",
+                "reference": "fb488e4d7d2cfa677960f9fab38960e91c8f4fcc",
                 "shasum": ""
             },
             "require": {
@@ -858,7 +858,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2019-10-07T07:58:18+00:00"
+            "time": "2019-10-24T16:45:32+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -866,12 +866,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "6be3d2deb69c70bfe386e350c7395680b20e11b0"
+                "reference": "0e6be0546f0c4dfb2511e7f5bd3de83057aae050"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=6be3d2deb69c70bfe386e350c7395680b20e11b0",
-                "reference": "6be3d2deb69c70bfe386e350c7395680b20e11b0",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=0e6be0546f0c4dfb2511e7f5bd3de83057aae050",
+                "reference": "0e6be0546f0c4dfb2511e7f5bd3de83057aae050",
                 "shasum": ""
             },
             "require": {
@@ -895,7 +895,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2019-10-21T15:46:27+00:00"
+            "time": "2019-10-25T10:23:53+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",

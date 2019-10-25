@@ -42,6 +42,7 @@
             },
             accept() {
                 this.$emit('accept', this.file);
+                this.file = undefined;
             }
         },
     }

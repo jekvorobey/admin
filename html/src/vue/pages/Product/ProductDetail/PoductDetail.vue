@@ -11,7 +11,7 @@
                 <p class="text-secondary">Артикул: <span class="float-right">{{ product.vendor_code }}</span></p>
 
             </div>
-            <div class="shadow flex-grow-2 mr-3 mt-3" v-if="mainImage.url">
+            <div class="shadow flex-grow-2 mr-3 mt-3">
                 <img :src="mainImage.url" :alt="product.name">
             </div>
         </div>
@@ -27,6 +27,7 @@
                 v-if="nav.currentTab === 'content'"
                 :images="images"
                 :product="product"
+                @onSave="refresh"
             ></content-tab>
         <values-tab
                 v-if="nav.currentTab === 'values'"
@@ -118,7 +119,10 @@ export default {
         },
         mainImage() {
             let mainImages = this.images.filter(image => image.type === 1);
-            return mainImages.length > 0 ? mainImages[0] : {};
+            return mainImages.length > 0 ? mainImages[0] : {
+                id: 0,
+                url: '//placehold.it/150x150?text=No+image'
+            };
         }
     },
 };

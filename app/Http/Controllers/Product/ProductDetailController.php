@@ -112,14 +112,7 @@ class ProductDetailController extends Controller
             'id' => 'required|integer',
             'type' => 'required|integer'
         ]);
-        $images = $productService->images($id);
-        $image = new ProductImageDto();
-        $image->type = $data['type'];
-        $image->product_id = $id;
-        $image->id = $data['id'];
-        
-        $images[] = $image;
-        $productService->saveImages($id, $images->toArray());
+        $productService->addImage($id, $data['id'], $data['type']);
         return response()->json();
     }
     
@@ -129,11 +122,7 @@ class ProductDetailController extends Controller
             'id' => 'required|integer',
             'type' => 'required|integer'
         ]);
-        $images = $productService->images($id);
-        $images = $images->filter(function (array $image) use ($data) {
-            return !($image['id'] == $data['id'] && $image['type'] == $data['type']);
-        });
-        $productService->saveImages($id, $images->toArray());
+        $productService->deleteImage($id, $data['id'], $data['type']);
         return response()->json();
     }
     

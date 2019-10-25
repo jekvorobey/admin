@@ -6,8 +6,8 @@
                     <div class="shadow mt-3 mr-3">
                         <img :src="mainImage.url" class="big-image">
                         Основная фотография
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDelete(mainImage.type, mainImage.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadFile(mainImage.type, mainImage.id)"></fa-icon>
+                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDelete(1, mainImage.id)"></fa-icon>
+                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadFile(1, mainImage.id)"></fa-icon>
                     </div>
                 </div>
             </div>
@@ -15,11 +15,11 @@
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <div v-for="image in galleryImages" class="shadow mt-3 mr-3">
                         <img :src="image.url" class="small-image">
-                        <fa-icon icon="trash-alt" class="float-right media-btn"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn"></fa-icon>
+                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDelete(3, image.id)"></fa-icon>
+                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadFile(3, image.id)"></fa-icon>
                     </div>
                     <div class="align-self-center">
-                        <button class="btn btn-light">Добавить</button>
+                        <button class="btn btn-light" @click="startUploadFile(3)">Добавить</button>
                     </div>
                 </div>
             </div>
@@ -88,6 +88,9 @@
                     });
             },
             onDelete(type, fileId) {
+                if (!fileId) {
+                    return;
+                }
                 Services.net().post(this.getRoute('products.deleteImage', {id: this.product.id}), {}, {
                     id: fileId,
                     type: type,
@@ -101,7 +104,10 @@
             ...mapGetters(['getRoute']),
             mainImage() {
                 let mainImages = this.images.filter(image => image.type === 1);
-                return mainImages.length > 0 ? mainImages[0] : {};
+                return mainImages.length > 0 ? mainImages[0] : {
+                    id: 0,
+                    url: '//placehold.it/150x150?text=No+image'
+                };
             },
             galleryImages() {
                 return this.images.filter(image => image.type === 3);
