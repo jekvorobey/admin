@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex justify-content-start align-content-stretch">
-        <div class="shadow mt-3 mr-3 p-3">
+        <div class="shadow mt-3 mr-3 p-3 w-100">
             <div class="d-flex justify-content-between mt-3 mb-3">
                 <div class="action-bar d-flex justify-content-start">
                     <dropdown :items="dropdownItems" class="mr-4 order-btn">

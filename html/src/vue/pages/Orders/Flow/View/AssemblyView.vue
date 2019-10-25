@@ -15,6 +15,10 @@
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
                     </p>
+
+                    <p class="text-secondary" v-if="order.customer">
+                        Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
+                    </p>
                 </div>
             </div>
             <div class="col-md-4">
@@ -83,6 +87,16 @@
                 v-if="nav.currentTab === 'history'"
                 :history="order.history"
         ></history-tab>
+        <customer-history-tab
+                v-if="nav.currentTab === 'customer_history'"
+                :history="order.customer_history"
+        ></customer-history-tab>
+        <main-tab
+                v-if="nav.currentTab === 'main'"
+        ></main-tab>
+        <delivery-tab
+                v-if="nav.currentTab === 'delivery'"
+        ></delivery-tab>
     </layout-main>
 </template>
 
@@ -93,6 +107,9 @@ import VTabs from '../../../../components/tabs/tabs.vue';
 
 import BasketItemsTab from './components/basket-items-tab.vue';
 import HistoryTab from './components/history-tab.vue';
+import CustomerHistoryTab from './components/customer-history-tab.vue';
+import MainTab from './components/main-tab.vue';
+import DeliveryTab from './components/delivery-tab.vue';
 
 export default {
     components: {
@@ -100,6 +117,9 @@ export default {
 
         BasketItemsTab,
         HistoryTab,
+        CustomerHistoryTab,
+        MainTab,
+        DeliveryTab,
     },
     props: {
         iOrder: {},
@@ -108,9 +128,10 @@ export default {
         return {
             order: this.iOrder,
             history: this.iOrder.history,
+            customer_history: this.iOrder.customer_history,
 
             nav: {
-                currentTab: 'products',
+                currentTab: 'main',
                 tabs: [
                     {value: 'main', text: 'Общее'},
                     {value: 'delivery', text: 'Доставка'},
