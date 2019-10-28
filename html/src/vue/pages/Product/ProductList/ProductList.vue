@@ -36,7 +36,7 @@
                     <td>{{product.id}}</td>
                     <td><img :src="product.photo ? product.photo : '//placehold.it/75x50?text=No+image'" class="preview"></td>
                     <td class="with-small">
-                        {{product.name}}
+                        <a :href="getRoute('products.detail', {id: product.id})">{{product.name}}</a>
                         <small>{{product.vendor_code}}</small>
                     </td>
                     <td>{{product.brand.name}}</td>

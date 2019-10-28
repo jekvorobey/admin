@@ -1,11 +1,11 @@
 <template>
     <div class="d-flex justify-content-start align-items-start">
-        <div class="d-flex flex-column">
-            <shadow-card >
-                <button v-if="!product.archive" @click="openModal('ArchiveEdit')" class="btn btn-outline-warning btn-block">
+        <div class="d-flex flex-column left-side">
+            <shadow-card>
+                <p v-if="product.archive" class="text-danger">{{ product.archive_comment }}</p>
+                <button @click="openModal('ArchiveEdit')" class="btn btn-outline-warning btn-block mt-3">
                     {{ product.archive ? 'Вернуть из архива' : 'Убрать в архив' }}
                 </button>
-                <p v-if="product.archive" class="mt-3">{{ product.archive_comment }}</p>
             </shadow-card>
             <shadow-card title="Свойства товара" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productValuesEdit')">
                 <table class="values-table">
@@ -139,6 +139,9 @@
 </script>
 
 <style scoped>
+    .left-side {
+        max-width: 400px;
+    }
     .value {
         margin: 0;
         padding: 0;
