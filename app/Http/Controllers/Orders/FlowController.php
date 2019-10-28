@@ -256,7 +256,10 @@ class FlowController extends Controller
         $data['customer'] = $userService->users($userQuery)->first();
 
 
-
+        // Получаем пользователя заказа
+        $customerQuery = new RestQuery();
+        $customerQuery->setFilter('id', $data['customer_id']);
+        
         // Получаем все заказы пользователя
         $previousQuery = new RestQuery();
         $previousQuery->setFilter('id', '!=', $data['id']);
