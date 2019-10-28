@@ -247,14 +247,10 @@ class FlowController extends Controller
             }
         }
 
-        // Получаем пользователя заказа
-        $customerQuery = new RestQuery();
-        $customerQuery->setFilter('id', $data['customer_id']);
-        $customer = $customerService->customers($customerQuery)->first();
 
         $userQuery = new RestQuery();
         $userQuery->addFields('profile', '*');
-        $userQuery->setFilter('id', $customer->user_id);
+        $userQuery->setFilter('id', $data['customer_id']);
         $userQuery->setFilter('front', Front::FRONT_SHOWCASE);
 
         $data['customer'] = $userService->users($userQuery)->first();
