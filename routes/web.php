@@ -63,12 +63,14 @@ Route::middleware('auth')->group(function () {
             Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
         });
 
-        Route::prefix('flow')->group(function () {
-            Route::get('page', 'FlowController@page')->name('orders.FlowPagination');
+        Route::prefix('flow')->namespace('Flow')->group(function () {
+            Route::get('', 'FlowListController@index')->name('orders.flowList');
+            Route::get('page', 'FlowListController@page')->name('orders.FlowPagination');
+
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'FlowController@detail')->name('orders.flowDetail');
+                Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
             });
-            Route::get('', 'FlowController@index')->name('orders.flowList');
+
         });
     });
 

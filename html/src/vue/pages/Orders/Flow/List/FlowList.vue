@@ -10,17 +10,20 @@
             </div>
             <div class="card-body">
                 <div class="row">
+                    <f-input v-model="filter.number" class="col-2">
+                        № заказа
+                    </f-input>
+                    <f-input v-model="filter.customer" class="col">
+                        ФИО, E-mail или телефон покупателя
+                    </f-input>
                     <f-date v-model="filter.created" class="col" range confirm>
                         Дата заказа
                     </f-date>
-                    <f-date v-model="filter.deliveryTime" class="col">
-                        Дата отгрузки
+                    <f-date v-model="filter.deliveryTime" class="col" range confirm>
+                        Дата доставки
                     </f-date>
                     <f-select v-model="filter.orderStatus" :options="statusOptions" class="col">
                         Статус
-                    </f-select>
-                    <f-select v-model="filter.deliveryStore" :options="deliveryStoreOptions" class="col">
-                        Склад отгрузки
                     </f-select>
                 </div>
 
@@ -31,9 +34,6 @@
                     <div v-if="opened">
                         <div class="additional-filter pt-3 mt-3">
                             <div class="row">
-                                <f-input v-model="filter.number" class="col-2">
-                                    № заказа
-                                </f-input>
                                 <f-input type="number" class="col-2">
                                     Сумма заказа
                                     <template #prepend><span class="input-group-text">от</span></template>
@@ -88,20 +88,16 @@
                     Распечатать документы
                 </dropdown>
                 <div class="mr-4 order-btn">
-                    <fa-icon icon="archive"></fa-icon>
-                    Подбор товаров
-                </div>
-                <div class="mr-4 order-btn">
-                    <fa-icon icon="check-circle"></fa-icon>
-                    Сменить статус
-                </div>
-                <div class="mr-4 order-btn">
-                    <fa-icon icon="truck"></fa-icon>
-                    Сменить склад
-                </div>
-                <div class="mr-4 order-btn">
                     <fa-icon icon="comment-dots"></fa-icon>
                     Добавить комментарий
+                </div>
+                <div class="mr-4 order-btn">
+                    <fa-icon icon="plus"></fa-icon>
+                    Создать заказ
+                </div>
+                <div class="mr-4 order-btn">
+                    <fa-icon icon="file-download"></fa-icon>
+                    Скачать таблицу
                 </div>
             </div>
         </div>
@@ -240,6 +236,24 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
+                    name: 'Дата последнего изменения',
+                    code: 'date',
+                    value: function(order) {
+                        return order.status_at;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Дата доставки',
+                    code: 'date',
+                    value: function(order) {
+                        return order.deliveries[0].delivery_at;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
                     name: 'Сумма',
                     code: 'cost',
                     value: function(order) {
@@ -256,24 +270,6 @@ export default {
                         return order.customer ?
                             `${order.customer.last_name} ${order.customer.first_name} ${order.customer.middle_name}` :
                             'Нет данных'
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Дата отгрузки',
-                    code: 'delivery_time',
-                    value: function(order) {
-                        return order.delivery_time;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Склад',
-                    code: 'store',
-                    value: function(order) {
-                        return order.delivery_store.name; //todo
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -297,19 +293,19 @@ export default {
                     isAlwaysShown: true,
                 },
                 {
-                    name: 'Кол-во коробок',
-                    code: 'box_qty',
+                    name: 'Кол-во доставок',
+                    code: 'delivery_qty',
                     value: function(order) {
-                        return Math.ceil(Math.random()*10); //todo
+                        return order.deliveries.length;
                     },
                     isShown: true,
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'Тип доставки',
-                    code: 'delivery_type',
+                    name: 'Способ доставки',
+                    code: 'delivery_method',
                     value: function(order) {
-                        return order.delivery_type.name;
+                        return order.delivery_method.name;
                     },
                     isShown: true,
                     isAlwaysShown: false,
