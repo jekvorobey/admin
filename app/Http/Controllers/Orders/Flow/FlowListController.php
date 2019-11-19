@@ -138,9 +138,7 @@ class FlowListController extends Controller
             $data['deliveries'] = $deliveryService->deliveries(null, $order->id)->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
-            $data['delivery_store'] = DeliveryStore::allStores()[array_rand(DeliveryStore::allStores())]->toArray(); //todo
             $data['delivery_city'] = DeliveryCity::allCities()[array_rand(DeliveryCity::allCities())]->toArray(); //todo
-            $data['payment_method'] = PaymentMethod::allMethods()[array_rand(PaymentMethod::allMethods())]->toArray(); //todo
 
             return $data;
         });
@@ -174,11 +172,6 @@ class FlowListController extends Controller
             $restQuery->setFilter('created_at', '<=', $filter['created'][1]);
         }
 
-        if (isset($filter['deliveryTime'])) {
-            $restQuery->setFilter('delivery_time', '>=', $filter['deliveryTime'][0]);
-            $restQuery->setFilter('delivery_time', '<=', $filter['deliveryTime'][1]);
-        }
-
         if (isset($filter['deliveryMethod'])) {
             $restQuery->setFilter('delivery_method', $filter['deliveryMethod']);
         }
@@ -188,13 +181,13 @@ class FlowListController extends Controller
         }
 
 
-        // TODO
         if(isset($filter['customer'])) {
-
+            $restQuery->setFilter('customer', $filter['customer']);
         }
 
         if (isset($filter['deliveryTime'])) {
-
+            $restQuery->setFilter('delivery_time', '>=', $filter['deliveryTime'][0]);
+            $restQuery->setFilter('delivery_time', '<=', $filter['deliveryTime'][1]);
         }
 
         if (isset($filter['deliveryCount'])) {
