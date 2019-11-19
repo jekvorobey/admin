@@ -186,12 +186,12 @@ class FlowListController extends Controller
         }
 
         if (isset($filter['deliveryTime'])) {
-            $restQuery->setFilter('delivery_time', '>=', $filter['deliveryTime'][0]);
-            $restQuery->setFilter('delivery_time', '<=', $filter['deliveryTime'][1]);
+            $restQuery->setFilter('deliveryTime', '>=', $filter['deliveryTime'][0]);
+            $restQuery->setFilter('deliveryTime', '<=', $filter['deliveryTime'][1]);
         }
 
         if (isset($filter['deliveryCount'])) {
-
+            $restQuery->setFilter('deliveryCount', $filter['deliveryCount']);
         }
 
         return $restQuery;

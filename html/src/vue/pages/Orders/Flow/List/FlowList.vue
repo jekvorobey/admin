@@ -170,7 +170,7 @@ const cleanFilter = Object.assign({
 }, cleanHiddenFilter);
 
 const serverKeys = [
-    'createdAtFrom', 'createdAtTo', 'deliveryTime', 'orderStatus', 'deliveryMethod', 'number', 'customer'
+    'createdAtFrom', 'createdAtTo', 'orderStatus', 'deliveryTime', 'deliveryCount', 'deliveryMethod', 'number', 'customer'
 ];
 
 export default {
