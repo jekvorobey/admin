@@ -46,7 +46,7 @@ class FlowDetailController extends Controller
         $data = $order->toArray();
 
 
-        if (isset($data['basket']['items'])) {
+        if (isset($data['basket']['items']) && !empty($data['basket']['items'])) {
             $basketItems = &$data['basket']['items'];
 
             $offersIds = array_column($basketItems, 'offer_id');
@@ -108,9 +108,9 @@ class FlowDetailController extends Controller
         $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
         $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
         $data['delivery_store'] = DeliveryStore::allStores()[array_rand(DeliveryStore::allStores())]->toArray(); //todo
-        $data['totalQty'] = $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
+        $data['totalQty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
             return $sum + $item->qty;
-        }, 0);
+        }, 0) : null;
         $data['payment_method'] = PaymentMethod::allMethods()[array_rand(PaymentMethod::allMethods())]->toArray(); //todo
         $data['discount'] = rand(0, (int)$data['cost'] / 4); //todo
         $data['cost_without_discount'] = $data['cost'] - $data['discount'];
