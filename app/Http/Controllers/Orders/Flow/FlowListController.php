@@ -127,7 +127,7 @@ class FlowListController extends Controller
         $customers = $customers->keyBy('id')->toArray();
 
         $deliveryQuery = new RestQuery();
-        $deliveryQuery->setFilter('id', array_values($orders->pluck('id')->unique()->toArray()));
+        $deliveryQuery->setFilter('order_id', array_values($orders->pluck('id')->unique()->toArray()));
         $deliveries = $deliveryService->deliveries($deliveryQuery);
 
         $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveries) {
