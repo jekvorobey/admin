@@ -105,8 +105,9 @@ class FlowDetailController extends Controller
         $data['delivery_type'] = $order->deliveryType()->toArray();
         $data['delivery_method'] = $order->deliveryMethod()->toArray();
         $data['delivery_cost'] = rand(0, (int)$data['cost'] / 4); //todo
-        $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
-        $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
+        $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y h:i');
+        $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d h:i');
+        $data['delivery_time'] = (new Carbon($order->delivery_time))->format('y.m.d h:i');
         $data['delivery_store'] = DeliveryStore::allStores()[array_rand(DeliveryStore::allStores())]->toArray(); //todo
         $data['totalQty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
             return $sum + $item->qty;
@@ -159,6 +160,8 @@ class FlowDetailController extends Controller
 //        } catch (\Exception $e) {}
 
         $data['history'] = $history;
+
+//        dd($data);
 
         return $this->render('Orders/Flow/View', [
             'iOrder' => $data

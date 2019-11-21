@@ -248,7 +248,9 @@ export default {
                     name: 'Дата доставки',
                     code: 'date',
                     value: function(order) {
-                        return order.deliveries[0].delivery_at;
+                        return order.deliveries[0] ?
+                            order.deliveries[0].delivery_at :
+                            'Нет данных';
                     },
                     isShown: true,
                     isAlwaysShown: false,
