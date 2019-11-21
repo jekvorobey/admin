@@ -126,7 +126,11 @@ class FlowListController extends Controller
         $users = $userService->users($userQuery)->keyBy('id')->toArray();
         $customers = $customers->keyBy('id')->toArray();
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveryService) {
+        $deliveryQuery = new RestQuery();
+        $deliveryQuery->setFilter('id', array_values($orders->pluck('id')->unique()->toArray()));
+        $deliveries = $deliveryService->deliveries($deliveryQuery);
+
+        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveries) {
             $data = $order->toArray();
 
             if(isset($customers[$data['customer_id']]) && isset($users[$customers[$data['customer_id']]['user_id']])) {
@@ -135,7 +139,7 @@ class FlowListController extends Controller
 
             $data['status'] = $order->status()->toArray();
             $data['delivery_method'] = $order->deliveryMethod()->toArray();
-            $data['deliveries'] = $deliveryService->deliveries(null, $order->id)->toArray();
+            $data['deliveries'] = $deliveries->where('order_id', $order->id)->values()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
             $data['delivery_city'] = DeliveryCity::allCities()[array_rand(DeliveryCity::allCities())]->toArray(); //todo
