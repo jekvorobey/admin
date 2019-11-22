@@ -12,7 +12,7 @@
                 <tr v-for="(item, index) in history">
                     <td>{{ item.created_at }}</td>
                     <td><a :href="getRoute('orders.flowDetail', {id: item.id})">{{ item.number }}</a></td>
-                    <td>{{ item.cost }}</td>
+                    <td>{{ item.cost }} руб.</td>
                 </tr>
             </tbody>
         </table>

@@ -141,6 +141,7 @@ class FlowListController extends Controller
             $data['delivery_method'] = $order->deliveryMethod()->toArray();
             $data['deliveries'] = $deliveries->where('order_id', $order->id)->values()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
+            $data['updated_at'] = (new Carbon($order->updated_at))->format('h:i:s Y-m-d');
             $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
             $data['delivery_city'] = DeliveryCity::allCities()[array_rand(DeliveryCity::allCities())]->toArray(); //todo
 

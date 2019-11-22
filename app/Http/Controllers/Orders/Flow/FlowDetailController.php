@@ -9,6 +9,9 @@ use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Oms\Services\DeliveryService\DeliveryService;
+use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -29,7 +32,10 @@ class FlowDetailController extends Controller
         OrderService $orderService,
         ProductService $productService,
         UserService $userService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        DeliveryService $deliveryService,
+        ShipmentService $shipmentService,
+        ShipmentPackageService $shipmentPackageService
     )
     {
         $restQuery = $orderService
@@ -85,20 +91,32 @@ class FlowDetailController extends Controller
 
         $data['customer'] = $userService->users($userQuery)->first();
 
-
         // Получаем пользователя заказа
         $customerQuery = new RestQuery();
         $customerQuery->setFilter('id', $data['customer_id']);
 
-        // Получаем все заказы пользователя
+        // Все заказы пользователя
         $previousQuery = new RestQuery();
         $previousQuery->setFilter('id', '!=', $data['id']);
         $previousQuery->setFilter('customer_id', $data['customer_id']);
         $previousOrders = $orderService->orders($customerQuery);
+        $data['customer_history'] = $previousOrders ?? null;
 
-        if($previousOrders) {
-            $data['customer_history'] = $previousOrders;
-        }
+        // Доставки заказа
+        $deliveries = $deliveryService->deliveries(null, $order->id);
+        $data['deliveries'] = $deliveries->toArray();
+
+        // Отправления заказа
+        $shipmentQuery = new RestQuery();
+        $shipmentQuery->setFilter('delivery_id', $deliveries->pluck('id')->unique()->values()->toArray());
+        $shipments = $shipmentService->shipments($shipmentQuery);
+        $data['shipments'] = $shipments->toArray();
+
+        // Коробки отправлений
+        $shipmentPackagesQuery = new RestQuery();
+        $shipmentPackagesQuery->setFilter('shipment_id', $shipments->pluck('id')->unique()->values()->toArray());
+        $shipmentPackages = $shipmentPackageService->shipmentPackages($shipmentPackagesQuery);
+        $data['shipments_packages'] = $shipmentPackages->toArray();
 
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();

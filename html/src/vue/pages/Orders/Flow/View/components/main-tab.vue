@@ -2,7 +2,12 @@
     <div class="row mt-3">
         <div class="col-4">
             <div class="shadow p-3 w-100">
-                123
+                <ul v-for="(delivery, key) in order.deliveries">
+                    <li>
+                       Доставка #{{ key+1 }}
+                        {{ delivery }}
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="col-4">
@@ -57,6 +62,7 @@ export default {
     },
     props: {
         customer_notes: Array,
+        order: {},
         // history: Array,
         // pager: Object
     },

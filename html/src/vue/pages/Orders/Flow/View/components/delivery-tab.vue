@@ -28,6 +28,7 @@ export default {
         }
     },
     props: {
+        deliveries: {},
     },
     methods: {
     },

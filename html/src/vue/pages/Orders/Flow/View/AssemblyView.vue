@@ -1,83 +1,26 @@
 <template>
     <layout-main back>
-        <div class="row align-items-stretch justify-content-start order-header">
-            <div class="col-md-4">
-                <div class="shadow p-3 height-100">
-                    <h2>Заказ {{ order.number }} от {{ order.created_at }}</h2>
-                    <div style="height: 40px">
-                        <span class="badge" :class="statusClass(order)">
-                            {{ order.status.name || 'N/A' }}
-                        </span>
-                        <button class="btn btn-primary">Принять</button>
-                        <button class="btn btn-secondary">Отклонить</button>
-                    </div>
-
-                    <p class="text-secondary mt-3">
-                        Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
-                    </p>
-
-                    <p class="text-secondary" v-if="order.customer">
-                        Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="shadow p-3 height-100">
-                <h2>
-                    Сумма заказа {{preparePrice(order.cost)}} руб.
-                    <fa-icon icon="question-circle" v-b-popover.hover="tooltipOrderCost"></fa-icon>
-                </h2>
-                <div style="height: 40px">
-                    <span class="badge" :class="paymentMethodClass(order.payment_method.id)">
-                        {{ order.payment_method.name || 'N/A' }}
+        <div class="align-items-stretch justify-content-start order-header mt-3">
+            <div class="shadow p-3 height-100">
+                <h4>Заказ {{ order.number }}
+                    <span class="badge" :class="statusClass(order.status.id)">
+                        {{ order.status.name || 'N/A' }}
                     </span>
-                    <span class="float-right text-secondary"> оплачено: {{order.paid || 0}} руб.</span>
-                </div>
-                <p class="text-secondary" v-if="order.discount">
-                    Скидка:  <span class="float-right text-danger measure">руб. </span>
-                    <span class="float-right text-danger">-{{order.discount}}</span>
-                </p>
-                <p class="text-secondary">
-                    {{order.delivery_method.name}}:
-                    <span class="float-right text-danger measure">руб.</span>
-                    <span class="float-right text-danger">+{{order.delivery_cost || 0}}</span>
+                </h4>
+
+                <p class="text-secondary mt-3">
+                    Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
                 </p>
                 <p class="text-secondary mt-3">
-                    Сумма без скидки: <span class="float-right text-danger measure">руб.</span>
-                    <span class="float-right text-danger">{{preparePrice(order.cost_without_discount)}}</span>
+                    Дата заказа:<span class="float-right">{{ order.created_at }}</span>
                 </p>
-                <p class="text-secondary">
-                    Сумма без скидки и доставки: <span class="float-right text-danger measure">руб.</span>
-                    <span class="float-right text-danger">{{preparePrice(order.products_cost)}}</span>
+
+                <p class="text-secondary" v-if="order.customer">
+                    Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
                 </p>
-            </div>
-            </div>
-            <div class="col-md-4">
-                <div class="shadow p-3 height-100">
-                <h2>{{order.totalQty}} ед.</h2>
-                <div style="height: 40px">
-                    <span class="badge" :class="deliveryMethodClass(order.delivery_method.id)">
-                        {{ order.delivery_method.name || 'N/A' }}
-                    </span>
-                    <span class="float-right text-secondary"> кол-во коробок: {{order.box_qty || 1}} шт.</span>
-                </div>
-                <p class="text-secondary">
-                    Вес:<span class="float-right">{{ order.weight }} г</span>
-                </p>
-                <p class="text-secondary">
-                    Тип упаковки:<span class="float-right">{{ order.packaging_type }}</span>
-                </p>
-                <p class="text-secondary mt-3">
-                    Склад отгрузки:
-                    <span class="float-right">{{order.delivery_store.name}}</span>
-                </p>
-                <p class="text-secondary">
-                    {{order.delivery_method.name}} по адресу:
-                    <span class="float-right">{{order.delivery_address}}</span>
-                </p>
-            </div>
             </div>
         </div>
+
         <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
         <basket-items-tab
                 v-if="nav.currentTab === 'products'"
@@ -93,9 +36,11 @@
         ></customer-history-tab>
         <main-tab
                 v-if="nav.currentTab === 'main'"
+                :order="order"
         ></main-tab>
         <delivery-tab
                 v-if="nav.currentTab === 'delivery'"
+                :deliveries="order.deliveries"
         ></delivery-tab>
     </layout-main>
 </template>
@@ -134,8 +79,9 @@ export default {
                 currentTab: 'main',
                 tabs: [
                     {value: 'main', text: 'Общее'},
+                    {value: 'deliveries', text: 'Доставки'},
+                    {value: 'departures', text: 'Отправления'},
                     {value: 'delivery', text: 'Доставка'},
-                    {value: 'products', text: 'Состав заказа'},
                     {value: 'history', text: 'История'},
                     {value: 'transactions', text: 'Транзакции'},
                     {value: 'customer_history', text: 'История заказов клиента'},
@@ -145,8 +91,8 @@ export default {
     },
 
     methods: {
-        statusClass(orderId) {
-            switch (orderId) {
+        statusClass(statusId) {
+            switch (statusId) {
                 case 1: return 'badge-danger';
                 case 2: return 'badge-warning';
                 case 3: return 'badge-success';
