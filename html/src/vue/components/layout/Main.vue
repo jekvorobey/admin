@@ -2,11 +2,14 @@
     <div class="fake-vue-body">
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="d-flex flex-row middle-area">
-            <div style="width: 300px;" class="bg-light" v-if="!isGuest">
+            <div style="width: 210px;" class="bg-light" v-if="!isGuest">
                 <MainMenu></MainMenu>
             </div>
-            <div class="container-fluid flex-grow-1 pb-5">
-                <b-breadcrumb :items="breadcrumbsItems" class="breadcrumbs" v-if="breadcrumbsItems.length"></b-breadcrumb>
+            <div class="container-fluid flex-grow-1 pb-5 pl-4">
+                <div v-if="back" class="mt-3">
+                    <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+                </div>
+                <h1 class="mt-3 mb-3">{{ title }}</h1>
                 <slot></slot>
             </div>
         </div>
@@ -17,25 +20,38 @@
 </template>
 
 <script>
-import LayoutFooter from '../layout-footer/layout-footer.vue';
-import LayoutHeader from '../layout-header/layout-header.vue';
-import ModalMessage from '../modal-message/modal-message.vue';
-import MainMenu from '../main-menu/main-menu.vue';
+    import LayoutFooter from '../layout-footer/layout-footer.vue';
+    import LayoutHeader from '../layout-header/layout-header.vue';
+    import ModalMessage from '../modal-message/modal-message.vue';
+    import MainMenu from '../main-menu/main-menu.vue';
 
-import '../../../images/favicon.ico';
-
-export default {
-    name: 'layout-main',
-    props: {
-        onIndex: { type: Boolean, default: false },
-    },
-    components: {
-        LayoutFooter,
-        LayoutHeader,
-        ModalMessage,
-        MainMenu,
-    },
-};
+    export default {
+        name: 'layout-main',
+        props: {
+            onIndex: { type: Boolean, default: false },
+            back: Boolean,
+            customTitle: {
+                type: String,
+                default: ''
+            }
+        },
+        components: {
+            LayoutFooter,
+            LayoutHeader,
+            ModalMessage,
+            MainMenu,
+        },
+        methods: {
+            goBack() {
+                history.back();
+            }
+        },
+        computed: {
+            title() {
+                return this.customTitle === '' ?  this.$store.state.title : this.customTitle;
+            }
+        }
+    };
 </script>
 
 <style scoped>
