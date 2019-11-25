@@ -11,7 +11,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(item, index) in deliveries">
+            <tr v-for="(item, index) in shipments">
                 <td>{{ item.number }}</td>
                 <td>ID: {{ item.merchant_id }}</td>
                 <td>{{ item.cost }} руб.</td>
@@ -33,37 +33,37 @@
     </div>
 </template>
 <script>
-    import {mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 
-    export default {
-        data() {
-            return {
+export default {
+    data() {
+        return {
 
-            }
-        },
-        props: {
-            deliveries: {},
-        },
-        methods: {
-            editDelivery(id) {
-
-            },
-            deleteDelivery(id) {
-
-            },
-            editShipment(id) {
-
-            },
-            deleteShipment(id) {
-
-            }
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
-        },
-        mounted() {
         }
+    },
+    props: {
+        shipments: {},
+    },
+    methods: {
+        editShipment(id) {
+
+        },
+        deleteShipment(id) {
+
+        },
+        editProduct(id) {
+
+        },
+        deleteProduct(id) {
+
+        }
+    },
+    computed: {
+        ...mapGetters(['getRoute']),
+    },
+    mounted() {
     }
+}
 </script>
 
 <style scoped>

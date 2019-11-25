@@ -1,23 +1,33 @@
 <template>
     <layout-main back>
         <div class="align-items-stretch justify-content-start order-header mt-3">
-            <div class="shadow p-3 height-100">
-                <h4>Заказ {{ order.number }}
-                    <span class="badge" :class="statusClass(order.status.id)">
+            <div class="shadow p-3 height-100 row">
+                <div class="col-6">
+                    <h4>Заказ {{ order.number }}
+                        <span class="badge" :class="statusClass(order.status.id)">
                         {{ order.status.name || 'N/A' }}
                     </span>
-                </h4>
+                    </h4>
 
-                <p class="text-secondary mt-3">
-                    Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
-                </p>
-                <p class="text-secondary mt-3">
-                    Дата заказа:<span class="float-right">{{ order.created_at }}</span>
-                </p>
+                    <p class="text-secondary mt-3">
+                        Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
+                    </p>
+                    <p class="text-secondary mt-3">
+                        Дата заказа:<span class="float-right">{{ order.created_at }}</span>
+                    </p>
 
-                <p class="text-secondary" v-if="order.customer">
-                    Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
-                </p>
+                    <p class="text-secondary mt-3">
+                        Сумма заказа:<span class="float-right">{{preparePrice(order.cost)}} руб.</span>
+                    </p>
+
+                    <p class="text-secondary" v-if="order.customer">
+                        Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
+                    </p>
+                </div>
+                <div class="col-6">
+
+                </div>
+
             </div>
         </div>
 
@@ -42,6 +52,10 @@
                 v-if="nav.currentTab === 'delivery'"
                 :deliveries="order.deliveries"
         ></delivery-tab>
+        <shipment-tab
+                v-if="nav.currentTab === 'shipment'"
+                :shipments="order.shipments"
+        ></shipment-tab>
     </layout-main>
 </template>
 
@@ -55,6 +69,7 @@ import HistoryTab from './components/history-tab.vue';
 import CustomerHistoryTab from './components/customer-history-tab.vue';
 import MainTab from './components/main-tab.vue';
 import DeliveryTab from './components/delivery-tab.vue';
+import ShipmentTab from './components/shipment-tab.vue';
 
 export default {
     components: {
@@ -65,6 +80,7 @@ export default {
         CustomerHistoryTab,
         MainTab,
         DeliveryTab,
+        ShipmentTab,
     },
     props: {
         iOrder: {},
@@ -79,9 +95,8 @@ export default {
                 currentTab: 'main',
                 tabs: [
                     {value: 'main', text: 'Общее'},
-                    {value: 'deliveries', text: 'Доставки'},
-                    {value: 'departures', text: 'Отправления'},
-                    {value: 'delivery', text: 'Доставка'},
+                    {value: 'delivery', text: 'Доставки'},
+                    {value: 'shipment', text: 'Отправления'},
                     {value: 'history', text: 'История'},
                     {value: 'transactions', text: 'Транзакции'},
                     {value: 'customer_history', text: 'История заказов клиента'},

@@ -187,7 +187,7 @@ class FlowDetailController extends Controller
         $data['discount'] = rand(0, (int)$data['cost'] / 4); //todo
         $data['cost_without_discount'] = $data['cost'] - $data['discount'];
         $data['products_cost'] = $data['cost_without_discount'] - $data['delivery_cost'];
-        $data['box_qty'] = rand(1, 4); //todo
+        $data['box_qty'] = count($data['shipments_packages']);
         $data['weight'] = rand(100, 3000); //todo
         $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
         $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
