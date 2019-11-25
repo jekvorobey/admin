@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Orders\Flow;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
+use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
@@ -20,6 +22,7 @@ use Pim\Services\ProductService\ProductService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\BrandDto;
+use Greensight\Oms\Dto\History\HistoryDto;
 
 /**
  * Class FlowDetailController
@@ -104,19 +107,69 @@ class FlowDetailController extends Controller
 
         // Доставки заказа
         $deliveries = $deliveryService->deliveries(null, $order->id);
-        $data['deliveries'] = $deliveries->toArray();
 
         // Отправления заказа
         $shipmentQuery = new RestQuery();
         $shipmentQuery->setFilter('delivery_id', $deliveries->pluck('id')->unique()->values()->toArray());
         $shipments = $shipmentService->shipments($shipmentQuery);
-        $data['shipments'] = $shipments->toArray();
 
         // Коробки отправлений
         $shipmentPackagesQuery = new RestQuery();
         $shipmentPackagesQuery->setFilter('shipment_id', $shipments->pluck('id')->unique()->values()->toArray());
         $shipmentPackages = $shipmentPackageService->shipmentPackages($shipmentPackagesQuery);
+
+        // Добавляем коробки в отправления
+        $shipments = $shipments->map(function (ShipmentDto $item) use ($shipmentPackages) {
+            $data = $item->toArray();
+            $data['packages'] = $shipmentPackages->where('shipment_id', $item->id)->values()->toArray();
+
+            return $data;
+        });
+
+        // Добавляем отправления в доставки
+        $data['deliveries'] = $deliveries->map(function (DeliveryDto $item) use ($shipments) {
+            $data = $item->toArray();
+            $data['shipments'] = $shipments->where('delivery_id', $item->id)->values()->toArray();
+
+            return $data;
+        });
+
+
+        $data['shipments'] = $shipments->toArray();
         $data['shipments_packages'] = $shipmentPackages->toArray();
+
+        // История заказа
+        $data['history'] = [];
+        try {
+            $history = $orderService->orderHistory($order->id);
+
+            if (!empty($history) && count($history) > 0) {
+                $users = $history->pluck('user_id')->unique()->toArray();
+
+                $restQuery = $userService
+                    ->newQuery()
+                    ->setFilter('id', $users);
+
+                $users = $userService->users($restQuery);
+
+                $history = $history->map(function (HistoryDto $item) use ($users) {
+                    $data = $item->toArray();
+                    $data['type'] = $item->type()->toArray();
+
+                    if ($item->user_id) {
+                        $data['user'] = $users->filter(function ($user) use ($item) {
+                            return $user->id == $item->user_id;
+                        })->first();
+                    }
+
+                    return $data;
+                });
+            }
+
+            $data['history'] = $history->sortByDesc('created_at')->values()->toArray();
+
+        } catch (Exception $e) {
+        }
 
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();
@@ -138,48 +191,6 @@ class FlowDetailController extends Controller
         $data['weight'] = rand(100, 3000); //todo
         $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
         $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
-
-        // TODO: История по заказу
-        $history = [];
-//        try {
-//            $restQuery = $orderService
-//                ->newQuery()
-//                ->setFilter('order_id', $order->id);
-//            $history = $orderService->ordersHistory($restQuery);
-//
-//            dd($history);
-//
-//            if(!empty($history) && count($history) > 1) {
-//                $users = $history->pluck('user_id')->toArray();
-//
-//                $restQuery = $orderService
-//                    ->newQuery()
-//                    ->setFilter('id', $users);
-//
-//                $users = $userService->users($restQuery);
-//
-//                $history = $history->map(function(OrderHistoryDto $item) use($users) {
-//                    $data = $item->toArray();
-//                    $data['data'] = json_decode($item->data, true);
-//                    $data['typeName'] = $item->typeDto()->name;
-//
-//                    if($item->user_id) {
-//                        $data['user'] = $users->filter(function($user) use($item) {
-//                            return $user->id == $item->user_id;
-//                        })->first();
-//                    }
-//                    return $data;
-//                });
-//            }
-//
-//            $history = $history->sortByDesc('created_at')->toArray();
-//            $history = array_values($data['history']);
-//
-//        } catch (\Exception $e) {}
-
-        $data['history'] = $history;
-
-//        dd($data);
 
         return $this->render('Orders/Flow/View', [
             'iOrder' => $data

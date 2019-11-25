@@ -2,10 +2,19 @@
     <div class="row mt-3">
         <div class="col-4">
             <div class="shadow p-3 w-100">
-                <ul v-for="(delivery, key) in order.deliveries">
-                    <li>
-                       Доставка #{{ key+1 }}
-                        {{ delivery }}
+                <ul v-for="(delivery, key) in order.deliveries" class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Доставка {{ delivery.number }}
+                        <ul v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
+                            <li>
+                                Отправление {{ shipment.number }}
+                                <ul v-if="shipment.packages" v-for="(pack, key) in shipment.packages">
+                                    <li>
+                                        Коробка {{ pack.package_id }}
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -36,7 +45,7 @@
                     </p>
                     <div class="form-group">
                         <textarea class="form-control" placeholder="Нет комментариев..." rows="3" v-model="new_addition"></textarea>
-                        <button @click="addAddition()">Добавить</button>
+                        <button @click="addAddition()" class="btn btn-primary mt-3">Добавить</button>
                     </div>
                 </div>
             </div>
@@ -63,8 +72,6 @@ export default {
     props: {
         customer_notes: Array,
         order: {},
-        // history: Array,
-        // pager: Object
     },
     methods: {
         addAddition() {
