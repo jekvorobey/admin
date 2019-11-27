@@ -84,8 +84,9 @@ class FlowDetailController extends Controller
                 $basketItem['product']['photo'] = $images[$product->id] ?? '';
                 $basketItem['cost'] = $basketItem['qty'] * $basketItem['price'];
             }
-        }
 
+            $basketItems = collect($basketItems);
+        }
 
         $userQuery = new RestQuery();
         $userQuery->addFields('profile', '*');
@@ -109,22 +110,23 @@ class FlowDetailController extends Controller
         $deliveries = $deliveryService->deliveries(null, $order->id);
 
         // Отправления заказа
-        $shipmentQuery = new RestQuery();
-        $shipmentQuery->setFilter('delivery_id', $deliveries->pluck('id')->unique()->values()->toArray());
+        $shipmentQuery = $shipmentService
+            ->newQuery()
+            ->addFields(
+                ShipmentDto::entity(),
+                'id',
+                'store_id',
+                'status',
+                'number',
+                'required_shipping_at',
+                'cost',
+                'package_qty',
+                'created_at',
+                'updated_at'
+            )
+            ->setFilter('delivery_id', $deliveries->pluck('id')->unique()->values()->toArray())
+            ->include('basketItems', 'items', 'packages.items');
         $shipments = $shipmentService->shipments($shipmentQuery);
-
-        // Коробки отправлений
-        $shipmentPackagesQuery = new RestQuery();
-        $shipmentPackagesQuery->setFilter('shipment_id', $shipments->pluck('id')->unique()->values()->toArray());
-        $shipmentPackages = $shipmentPackageService->shipmentPackages($shipmentPackagesQuery);
-
-        // Добавляем коробки в отправления
-        $shipments = $shipments->map(function (ShipmentDto $item) use ($shipmentPackages) {
-            $data = $item->toArray();
-            $data['packages'] = $shipmentPackages->where('shipment_id', $item->id)->values()->toArray();
-
-            return $data;
-        });
 
         // Добавляем отправления в доставки
         $data['deliveries'] = $deliveries->map(function (DeliveryDto $item) use ($shipments) {
@@ -135,8 +137,35 @@ class FlowDetailController extends Controller
         });
 
 
-        $data['shipments'] = $shipments->toArray();
-        $data['shipments_packages'] = $shipmentPackages->toArray();
+        // Берем информацию по товарам из корзин и объединяем ее с товарами в отправлениях и коробках
+        $shipments->transform(function (ShipmentDto $shipment) use ($basketItems) {
+            $shipmentItems = [];
+
+            foreach ($shipment->basketItems as $item) {
+                $basketItem = $basketItems->where('offer_id', $item['offer_id'])->first();
+                $shipmentItems[] = array_merge($item, $basketItem);
+            }
+
+            if($shipment->packages) {
+                $shipmentPackages = [];
+
+                foreach ($shipment->packages as $package) {
+                    $itemBasketIds = collect($package['items'])->pluck('basket_item_id')->toArray();
+                    $items = $basketItems->whereIn('id', $itemBasketIds)->values()->toArray();
+                    $package['items'] = $items;
+
+                    $shipmentPackages[] = $package;
+                }
+
+                $shipment->packages = $shipmentPackages;
+            }
+
+            $shipment->basketItems = $shipmentItems;
+
+            return $shipment;
+        });
+
+        $data['shipments'] = $shipments;
 
         // История заказа
         $data['history'] = [];
@@ -187,7 +216,6 @@ class FlowDetailController extends Controller
         $data['discount'] = rand(0, (int)$data['cost'] / 4); //todo
         $data['cost_without_discount'] = $data['cost'] - $data['discount'];
         $data['products_cost'] = $data['cost_without_discount'] - $data['delivery_cost'];
-        $data['box_qty'] = count($data['shipments_packages']);
         $data['weight'] = rand(100, 3000); //todo
         $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
         $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
@@ -196,4 +224,5 @@ class FlowDetailController extends Controller
             'iOrder' => $data
         ]);
     }
+
 }

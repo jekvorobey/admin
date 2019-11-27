@@ -10,7 +10,7 @@
                                 Отправление {{ shipment.number }}
                                 <ul v-if="shipment.packages" v-for="(pack, key) in shipment.packages">
                                     <li>
-                                        Коробка {{ pack.package_id }}
+                                        Коробка #{{ key+1 }}
                                     </li>
                                 </ul>
                             </li>
@@ -52,7 +52,7 @@
         </div>
         <div class="col-4">
             <div class="shadow p-3 w-100">
-                123
+
             </div>
         </div>
     </div>
