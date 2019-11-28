@@ -1,5 +1,5 @@
 <template>
-    <layout-main back>
+    <layout-main back hide-title>
         <div class="align-items-stretch justify-content-start order-header mt-3">
             <div class="shadow p-3 height-100">
                 <div class="row">

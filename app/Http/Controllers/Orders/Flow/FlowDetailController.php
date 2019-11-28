@@ -15,7 +15,6 @@ use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\Front;
 use Pim\Services\ProductService\ProductService;
@@ -30,15 +29,23 @@ use Greensight\Oms\Dto\History\HistoryDto;
  */
 class FlowDetailController extends Controller
 {
+    /**
+     * @param int $id
+     * @param OrderService $orderService
+     * @param ProductService $productService
+     * @param UserService $userService
+     * @param DeliveryService $deliveryService
+     * @param ShipmentService $shipmentService
+     * @return mixed
+     * @throws \Exception
+     */
     public function detail(
         int $id,
         OrderService $orderService,
         ProductService $productService,
         UserService $userService,
-        CustomerService $customerService,
         DeliveryService $deliveryService,
-        ShipmentService $shipmentService,
-        ShipmentPackageService $shipmentPackageService
+        ShipmentService $shipmentService
     )
     {
         $restQuery = $orderService
@@ -54,6 +61,7 @@ class FlowDetailController extends Controller
         $order = $orders->first();
         $data = $order->toArray();
 
+        $this->title = 'Редактирование заказа ' . $data['number'];
 
         if (isset($data['basket']['items']) && !empty($data['basket']['items'])) {
             $basketItems = &$data['basket']['items'];
@@ -205,9 +213,9 @@ class FlowDetailController extends Controller
         $data['delivery_type'] = $order->deliveryType()->toArray();
         $data['delivery_method'] = $order->deliveryMethod()->toArray();
         $data['delivery_cost'] = rand(0, (int)$data['cost'] / 4); //todo
-        $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y h:i');
-        $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d h:i');
-        $data['delivery_time'] = (new Carbon($order->delivery_time))->format('y.m.d h:i');
+        $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y H:i');
+        $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d H:i');
+        $data['delivery_time'] = (new Carbon($order->delivery_time))->format('y.m.d H:i');
         $data['delivery_store'] = DeliveryStore::allStores()[array_rand(DeliveryStore::allStores())]->toArray(); //todo
         $data['totalQty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
             return $sum + $item->qty;

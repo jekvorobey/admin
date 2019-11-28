@@ -28,13 +28,16 @@ use Greensight\CommonMsa\Dto\Front;
  */
 class FlowListController extends Controller
 {
+
     /**
      * @param Request $request
      * @param OrderService $orderService
      * @param BrandService $brandService
      * @param CustomerService $customerService
      * @param UserService $userService
+     * @param DeliveryService $deliveryService
      * @return mixed
+     * @throws \Exception
      */
     public function index(
         Request $request,
