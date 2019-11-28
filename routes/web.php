@@ -72,6 +72,11 @@ Route::middleware('auth')->group(function () {
             });
 
         });
+
+        Route::prefix('create')->namespace('Create')->group(function () {
+            Route::get('', 'OrderCreateController@create')->name('orders.create');
+
+        });
     });
 
     Route::prefix('offers')->namespace('Product')->group(function () {

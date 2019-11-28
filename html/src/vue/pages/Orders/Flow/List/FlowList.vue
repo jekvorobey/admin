@@ -100,6 +100,9 @@
                     Скачать таблицу
                 </div>
             </div>
+            <div>
+                <a :href="getRoute('orders.create')" class="btn btn-dark">Создать заказ</a>
+            </div>
         </div>
         <table class="table table-condensed">
             <thead>

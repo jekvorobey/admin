@@ -77,6 +77,7 @@ class FlowListController extends Controller
      * @param UserService $userService
      * @param DeliveryService $deliveryService
      * @return JsonResponse
+     * @throws \Exception
      */
     public function page(
         Request $request,
