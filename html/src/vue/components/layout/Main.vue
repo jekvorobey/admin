@@ -9,7 +9,7 @@
                 <div v-if="back" class="mt-3">
                     <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
                 </div>
-                <h1 class="mt-3 mb-3">{{ title }}</h1>
+                <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
                 <slot></slot>
             </div>
         </div>
@@ -33,7 +33,8 @@
             customTitle: {
                 type: String,
                 default: ''
-            }
+            },
+            hideTitle: { type: Boolean, default: false },
         },
         components: {
             LayoutFooter,
