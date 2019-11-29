@@ -50,6 +50,10 @@ class Menu
                 'title' => 'Заказы',
                 'items' => [
                     [
+                        'title' => 'Создать заказ',
+                        'route' => route('orders.create'),
+                    ],
+                    [
                         'title' => 'Поток сборки',
                         'route' => route('orders.flowList'),
                     ],

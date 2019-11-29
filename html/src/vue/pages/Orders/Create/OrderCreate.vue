@@ -2,16 +2,21 @@
     <layout-main>
         <div class="select">
             <div class="row">
-                <f-input class="col-4" :model="product.article">
+                <f-input class="col-4" :model="product.article" @change="productChange()">
                     Артикулы товаров (через ,)
                 </f-input>
+                <ul v-if="searchedProducts.length > 0" v-for="(product, key) in searchedProducts">
+                    <li>
+                        {{ product.name }} - {{ product.articul }}
+                    </li>
+                </ul>
                 <div class="col-8">
                     Товары:
                     selectedProducts
                 </div>
             </div>
             <div class="row">
-                <f-input class="col-4" :model="user">
+                <f-input class="col-4" :model="user" @change="customerChange()">
                     ID, ФИО или e-mail пользователя
                 </f-input>
                 <div class="col-8">
@@ -67,11 +72,19 @@ export default {
     data() {
         return {
             product: {},
-            products: {},
+            searchedProducts: {},
         }
     },
     methods: {
-
+        checkOrder() {
+            return false;
+        },
+        productChange() {
+            console.log('productChange');
+        },
+        customerChange() {
+            console.log('customerChange');
+        }
     },
     computed: {
         ...mapGetters(['getRoute']),
@@ -88,6 +101,8 @@ export default {
                 },
             ];
         },
+
+
 
     },
     created() {
