@@ -7,6 +7,7 @@ use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
@@ -23,6 +24,11 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\BrandDto;
 use Greensight\Oms\Dto\History\HistoryDto;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class OrderCreateController
@@ -52,16 +58,59 @@ class OrderCreateController extends Controller
 
     public function searchUsers
     (
-
-    ): array
+        Request $request,
+        CustomerService $customerService
+    ): JsonResponse
     {
-        return [];
+        /** @var \Illuminate\Validation\Validator $validator */
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'search' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $query = $customerService->newQuery();
+
+        $userIds = explode(',', $data['search']);
+        $query->setFilter('user_id', $userIds);
+
+        $products = $customerService->customers($query);
+
+        return response()->json($products);
     }
 
-    public function searchProducts(
 
-    ): array
+    /**
+     * @param Request $request
+     * @param ProductService $productService
+     * @return JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function searchProducts(
+        Request $request,
+        ProductService $productService
+    ): JsonResponse
     {
-        return [];
+        /** @var \Illuminate\Validation\Validator $validator */
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'search' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $query = $productService->newQuery();
+
+        $vendorCodes = explode(',', $data['search']);
+        $query->setFilter('vendor_code', $vendorCodes);
+
+        $products = $productService->products($query);
+
+        return response()->json($products);
     }
 }

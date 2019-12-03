@@ -2,22 +2,42 @@
     <layout-main>
         <div class="select">
             <div class="row">
-                <f-input class="col-4" :model="product.article" @change="productChange()">
-                    Артикулы товаров (через ,)
-                </f-input>
-                <ul v-if="searchedProducts.length > 0" v-for="(product, key) in searchedProducts">
-                    <li>
-                        {{ product.name }} - {{ product.articul }}
-                    </li>
-                </ul>
+                <div class="col-4">
+                    <f-input v-model="search.products" @change="productChange()" placeholder="e908-3543-9fdd,85de-3283-8b96">
+                        Артикулы товаров (через ,)
+                    </f-input>
+                    Найденные товары:
+                    <ul class="list-group mt-2">
+                        <li class="list-group-item list-group-item-action" @click="selectProduct(product)" v-for="(product, key) in searchedProducts">
+                            <small>{{ product.vendor_code }}</small> {{ product.name }}
+                        </li>
+                    </ul>
+                </div>
                 <div class="col-8">
-                    Товары:
-                    selectedProducts
+                    Выбранные товары:
+                    <ul class="list-group mt-2">
+                        <li class="list-group-item list-group-item-action" v-for="(product, key) in selectedProducts">
+                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
+                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
+
+                            <small class="ml-3">{{ product.vendor_code }}</small> {{ product.name }}
+                            <span class="badge badge-primary badge-pill">{{ product.count }} шт.</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="row">
-                <f-input class="col-4" :model="user" @change="customerChange()">
-                    ID, ФИО или e-mail пользователя
+                <f-input class="col-4" v-model="search.users" @change="customerChange()" :disabled="Object.keys(selectedProducts) < 1">
+                    ID пользователя
+                </f-input>
+                <div class="col-8">
+                    Пользователь:
+                    {{ searchedUsers }}
+                </div>
+            </div>
+            <div class="row">
+                <f-input class="col-4" v-model="search.address" @change="addressChange()">
+                    Адрес
                 </f-input>
                 <div class="col-8">
                     Пользователь:
@@ -25,8 +45,8 @@
                 </div>
             </div>
             <div class="row">
-                <f-select class="col-4" :model="user" :options="avaliableDeliveries">
-                    Служба доставки
+                <f-select class="col-4" v-model="selectedCity" :options="avaliableCities">
+                    Город
                 </f-select>
                 <div class="col-8">
                     Служба доставки:
@@ -41,7 +61,7 @@
 
 <script>
 
-import Service from "../../../../scripts/services/services";
+import Services from "../../../../scripts/services/services";
 import qs from 'qs';
 
 import {mapGetters} from "vuex";
@@ -71,8 +91,13 @@ export default {
     },
     data() {
         return {
-            product: {},
+            search: {},
+            address: '',
             searchedProducts: {},
+            searchedUsers: {},
+            selectedProducts: {},
+            selectedUsers: {},
+            selectedCity: '',
         }
     },
     methods: {
@@ -80,24 +105,57 @@ export default {
             return false;
         },
         productChange() {
-            console.log('productChange');
+            Services.net().post(this.getRoute('orders.searchProducts', null), {}, {
+                search: this.search.products
+            })
+                .then(result => {
+                    this.searchedProducts = {};
+                    if(result) {
+                        this.searchedProducts = result;
+                    }
+                });
         },
         customerChange() {
-            console.log('customerChange');
+            Services.net().post(this.getRoute('orders.searchUsers', null), {}, {
+                search: this.search.users
+            })
+                .then(result => {
+                    this.searchedUsers = {};
+                    if(result) {
+                        this.searchedUsers = result;
+                    }
+                });
+        },
+        selectProduct(product) {
+            this.$set(this.selectedProducts, product.id, product);
+            this.$set(this.selectedProducts[product.id], 'count', 1);
+        },
+        changeProduct(product, action) {
+            if(!action && product.count === 1) {
+                this.$delete(this.selectedProducts, product.id);
+                return;
+            }
+
+            action ? product.count++ : product.count--;
+            this.$set(this.selectedProducts, product.id, product);
         }
     },
     computed: {
         ...mapGetters(['getRoute']),
 
-        avaliableDeliveries() {
+        avaliableCities() {
             return [
                 {
-                    value: 1,
-                    text: 'DPD'
+                    value: 'c52ea942-555e-45c6-9751-58897717b02f',
+                    text: 'Москва'
                 },
                 {
-                    value: 2,
-                    text: 'Another one'
+                    value: 'c52ea942-555e-45c6-9751-58897717b02f',
+                    text: 'Санкт-петербург'
+                },
+                {
+                    value: 'c52ea942-555e-45c6-9751-58897717b02f',
+                    text: 'Казань'
                 },
             ];
         },

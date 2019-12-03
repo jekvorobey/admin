@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('create')->namespace('Create')->group(function () {
             Route::get('', 'OrderCreateController@create')->name('orders.create');
 
+            Route::post('products', 'OrderCreateController@searchProducts')->name('orders.searchProducts');
+            Route::post('users', 'OrderCreateController@searchUsers')->name('orders.searchUsers');
         });
     });
 
