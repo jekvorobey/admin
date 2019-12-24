@@ -98,5 +98,44 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
         });
     });
-
+    
+    Route::prefix('stores')->namespace('Store')->group(function () {
+        Route::prefix('merchant-stores')->group(function () {
+            Route::get('/', 'MerchantStoreController@index')->name('merchantStore.list');
+            Route::get('/create', 'MerchantStoreController@createPage')->name('merchantStore.add');
+            
+            Route::get('/{id}', 'MerchantStoreController@detailPage')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.edit');
+            
+            Route::get('page', 'MerchantStoreController@page')->name('merchantStore.pagination');
+            
+            Route::post('', 'MerchantStoreController@create')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.create');
+            Route::put('/{id}', 'MerchantStoreController@update')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.update');
+            Route::delete('/{id}', 'MerchantStoreController@delete')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.delete');
+            
+            Route::prefix('working')->group(function () {
+                Route::put('/{id}', 'MerchantStoreController@updateWorking')
+                    ->where(['id' => '[0-9]+'])
+                    ->name('merchantStore.updateWorking');
+            });
+            
+            Route::prefix('contacts')->group(function () {
+                Route::post('/{id}', 'MerchantStoreController@createContact')
+                    ->name('merchantStore.createContact');
+                Route::put('/{id}', 'MerchantStoreController@updateContact')
+                    ->where(['id' => '[0-9]+'])
+                    ->name('merchantStore.updateContact');
+                Route::delete('/{id}', 'MerchantStoreController@deleteContact')
+                    ->where(['id' => '[0-9]+'])
+                    ->name('merchantStore.deleteContact');
+            });
+        });
+    });
 });

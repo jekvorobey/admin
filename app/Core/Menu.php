@@ -126,7 +126,7 @@ class Menu
                     ],
                     [
                         'title' => 'Склады мерчантов',
-                        'route' => '#',
+                        'route' => route('merchantStore.list'),
                     ],
                 ],
             ],
