@@ -27,7 +27,7 @@ class MerchantStoreController extends Controller
      * @param StoreService $storeService
      * @return mixed
      */
-    public function index(Request $request, StoreService $storeService)
+    public function index(Request $request, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Склады';
         
@@ -42,8 +42,10 @@ class MerchantStoreController extends Controller
         
         return $this->render('Store/MerchantStore/List', [
             'iStores' => $stores,
+            'iFilter' => $this->getFilter(),
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants()
         ]);
     }
     
@@ -64,6 +66,14 @@ class MerchantStoreController extends Controller
         return response()->json([
             'iStores' => $stores,
         ]);
+    }
+    
+    /**
+     * @return array|null
+     */
+    protected function getFilter(): ?array
+    {
+        return request()->get('filter');
     }
     
     /**
@@ -253,7 +263,6 @@ class MerchantStoreController extends Controller
                 case 'name':
                     $restQuery->setFilter('name', 'like', "%{$value}%");
                     break;
-                
                 default:
                     $restQuery->setFilter($key, $value);
             }

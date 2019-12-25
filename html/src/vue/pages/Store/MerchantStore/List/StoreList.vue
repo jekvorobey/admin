@@ -9,9 +9,9 @@
                     <f-input v-model="filter.id" class="col">
                         ID
                     </f-input>
-                    <!--<f-multi-select v-model="filter.merchant_id" :options="merchantOptions" class="col">
+                    <f-multi-select v-model="filter.merchant_id" :options="merchantOptions" class="col">
                         Мерчант
-                    </f-multi-select>-->
+                    </f-multi-select>
                     <f-input v-model="filter.name" class="col">
                         Название
                     </f-input>
@@ -87,6 +87,7 @@ import FDate from '../../../../components/filter/f-date.vue';
 
 const cleanFilter = {
     id: '',
+    merchant_id: [],
     name: '',
     city: '',
 };
@@ -100,13 +101,18 @@ export default {
     },
     props: {
         iStores: [Array, null],
+        iFilter: [Object, {}],
         iCurrentPage: Number,
-        pager: Object
+        pager: Object,
+        merchants: [Array]
     },
     data() {
+        let filter = Object.assign({}, cleanFilter, this.iFilter);
+        filter.merchant_id = filter.merchant_id.map(value => parseInt(value));
+
         return {
             stores: this.iStores,
-            filter: {},
+            filter: filter,
             options: [],
             appliedFilter: {},
         };
@@ -159,7 +165,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute'])
+        ...mapGetters(['getRoute']),
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+        },
     },
     created() {
         window.onpopstate = () => {
