@@ -79,11 +79,13 @@ class MerchantStoreController extends Controller
     /**
      * @return mixed
      */
-    public function createPage()
+    public function createPage(MerchantService $merchantService)
     {
         $this->title = 'Добавление склада';
         
-        return $this->render('Store/MerchantStore/Create', []);
+        return $this->render('Store/MerchantStore/Create', [
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants()
+        ]);
     }
     
     /**

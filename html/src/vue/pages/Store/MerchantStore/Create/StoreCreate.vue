@@ -2,6 +2,15 @@
     <layout-main back>
         <form v-on:submit.prevent.stop="save" class="mt-3">
             <div class="row">
+                <v-select
+                    v-model="$v.store.merchant_id.$model"
+                    :options="merchantOptions"
+                    :error="error_merchant_id"
+                    class="col-lg-6 col-12">
+                    Мерчант
+                </v-select>
+            </div>
+            <div class="row">
                 <v-input
                     v-model="$v.store.name.$model"
                     :error="error_name"
@@ -46,19 +55,25 @@
 import Service from '../../../../../scripts/services/services';
 import {mapGetters} from "vuex";
 import VInput from '../../../../components/controls/VInput/VInput.vue';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
 import {validationMixin} from 'vuelidate';
-import {required} from 'vuelidate/lib/validators';
+import {integer, required} from 'vuelidate/lib/validators';
 
 export default {
     name: 'page-stores-detail',
     components: {
         VInput,
+        VSelect,
     },
     mixins: [validationMixin],
+    props: {
+        merchants: [Array]
+    },
     data() {
         return {
             store: {
+                merchant_id: null,
                 name: null,
                 xml_id: null,
                 zip: null,
@@ -71,6 +86,7 @@ export default {
     },
     validations: {
         store: {
+            merchant_id: {integer, required},
             name: {required},
             zip: {required},
             city: {required},
@@ -85,19 +101,32 @@ export default {
             }
 
             Service.net().post(
-                this.getRoute('store.create'),
+                this.getRoute('merchantStore.create'),
                 null,
                 this.store
             ).then(data => {
                 if (data.status === 'ok') {
-                    window.location.href = this.route('store.list');
+                    window.location.href = this.route('merchantStore.list');
                 }
             });
         },
     },
     computed: {
         ...mapGetters(['getRoute']),
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+        },
 
+        error_merchant_id() {
+            if (this.$v.store.merchant_id.$dirty) {
+                if (!this.$v.store.merchant_id.required) {
+                    return "Обязательное поле!";
+                }
+                if (!this.$v.store.merchant_id.integer) {
+                    return "Только целое число!";
+                }
+            }
+        },
         error_name() {
             if (this.$v.store.name.$dirty) {
                 if (!this.$v.store.name.required) {
