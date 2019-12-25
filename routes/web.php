@@ -136,6 +136,9 @@ Route::middleware('auth')->group(function () {
                     ->where(['id' => '[0-9]+'])
                     ->name('merchantStore.deleteContact');
             });
+    
+            Route::put('/pickup-times', 'MerchantStoreController@savePickupTime')
+                ->name('merchantStore.savePickupTime');
         });
     });
 });

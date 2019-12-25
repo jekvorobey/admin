@@ -2,6 +2,15 @@
     <layout-main back>
         <form v-on:submit.prevent.stop="save" class="mt-3">
             <div class="row">
+                <v-select
+                        v-model="$v.store.merchant_id.$model"
+                        :options="merchantOptions"
+                        :error="error_merchant_id"
+                        class="col-lg-6 col-12">
+                    Мерчант
+                </v-select>
+            </div>
+            <div class="row">
                 <v-input
                     v-model="$v.store.name.$model"
                     :error="error_store_name"
@@ -94,26 +103,72 @@
 
         <hr class="mt-3">
         <h3 class="mb-3">График отгрузки</h3>
-        <table class="table table-condensed">
-            <thead>
-            <tr>
-                <th>День недели</th>
-                <th v-for="deliveryService in deliveryServices">{{deliveryService.name}}</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(day, index) in store.storePickupTime" :class="!day.hasPickupTime ? 'inactive' : ''" v-if="store.storePickupTime">
-                <td>{{ dayName(index) }}</td>
-                <td v-for="deliveryService in deliveryServices">
-                    {{store.storePickupTime[index][deliveryService.id] ?
-                    store.storePickupTime[index][deliveryService.id]['pickup_time'] : ''}}
-                </td>
-            </tr>
-            <tr>
-                <td :colspan="Object.keys(deliveryServices).length + 1">Нет информации</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="scroll-x">
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>День недели</th>
+                    <th>
+                        Все службы доставки
+                        <span class="font-weight-normal"><br>Создание заявки<br>Отгрузка товара</span>
+                    </th>
+                    <th v-for="deliveryService in deliveryServices">
+                        {{deliveryService.name}}
+                        <span class="font-weight-normal"><br>Создание заявки<br>Отгрузка товара</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(day, index) in store.pickupTimes">
+                    <td>{{ dayName(index) }}</td>
+                    <td>
+                        <date-picker
+                            v-model="store.pickupTimes[index]['all']['cargo_export_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index]['all'])"
+                        /><br>
+                        <date-picker
+                            v-model="store.pickupTimes[index]['all']['pickup_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index]['all'])"
+                        />
+                    </td>
+                    <td v-for="deliveryService in deliveryServices">
+                        <date-picker
+                            v-model="store.pickupTimes[index][deliveryService.id]['cargo_export_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                        /><br>
+                        <date-picker
+                            v-model="store.pickupTimes[index][deliveryService.id]['pickup_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                        />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
         <hr class="mt-3">
         <h3 class="mb-3">Контактные лица</h3>
@@ -171,20 +226,23 @@
 import Service from '../../../../../scripts/services/services';
 import {mapGetters} from "vuex";
 import VInput from '../../../../components/controls/VInput/VInput.vue';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import DatePicker from 'vue2-datepicker';
 
 import {validationMixin} from 'vuelidate';
-import {required} from 'vuelidate/lib/validators';
+import {integer, required} from 'vuelidate/lib/validators';
 
 export default {
     name: 'page-stores-detail',
     components: {
         VInput,
-        DatePicker
+        DatePicker,
+        VSelect
     },
     props: {
         iStore: [Object, null],
         iDeliveryServices: [Object, null],
+        merchants: [Array]
     },
     mixins: [validationMixin],
     data() {
@@ -200,6 +258,11 @@ export default {
                     date: 'до',
                 }
             },
+            langAt: {
+                placeholder: {
+                    date: 'в',
+                }
+            },
             timePickerOptions: {
                 start: '00:00',
                 step: '00:30',
@@ -210,6 +273,7 @@ export default {
     },
     validations: {
         store: {
+            merchant_id: {integer, required},
             name: {required},
             zip: {required},
             city: {required},
@@ -243,7 +307,7 @@ export default {
             }
 
             Service.net().put(
-                this.getRoute('store.update', {id: this.store.id}),
+                this.getRoute('merchantStore.update', {id: this.store.id}),
                 null,
                 this.store
             ).then(data => {
@@ -251,10 +315,19 @@ export default {
         },
         updateWorking(day) {
             Service.net().put(
-                this.getRoute('store.updateWorking', {id: day.id}),
+                this.getRoute('merchantStore.updateWorking', {id: day.id}),
                 null,
                 day
             ).then(data => {
+            });
+        },
+        savePickupTime(pickupTime) {
+            Service.net().put(
+                this.getRoute('merchantStore.savePickupTime'),
+                null,
+                pickupTime
+            ).then(data => {
+                this.store.pickupTimes = data.pickupTimes;
             });
         },
         createContact() {
@@ -266,7 +339,7 @@ export default {
             };
 
             Service.net().post(
-                this.getRoute('store.createContact', {id: contact.store_id}),
+                this.getRoute('merchantStore.createContact', {id: contact.store_id}),
                 null,
                 contact
             ).then(data => {
@@ -278,7 +351,7 @@ export default {
         },
         updateContact(contact) {
             Service.net().put(
-                this.getRoute('store.updateContact', {id: contact.id}),
+                this.getRoute('merchantStore.updateContact', {id: contact.id}),
                 null,
                 contact
             ).then(data => {
@@ -288,7 +361,7 @@ export default {
             let id = this.store.storeContact[index].id;
             if(id) {
                 Service.net().delete(
-                    this.getRoute('store.deleteContact', {id: id}),
+                    this.getRoute('merchantStore.deleteContact', {id: id}),
                     null,
                     null
                 ).then(data => {
@@ -301,7 +374,20 @@ export default {
     },
     computed: {
         ...mapGetters(['getRoute']),
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+        },
 
+        error_merchant_id() {
+            if (this.$v.store.merchant_id.$dirty) {
+                if (!this.$v.store.merchant_id.required) {
+                    return "Обязательное поле!";
+                }
+                if (!this.$v.store.merchant_id.integer) {
+                    return "Только целое число!";
+                }
+            }
+        },
         error_store_name() {
             if (this.$v.store.name.$dirty) {
                 if (!this.$v.store.name.required) {
@@ -345,5 +431,12 @@ export default {
     }
     .table .form-group label {
         display: none;
+    }
+    .scroll-x {
+        width: 1024px;
+        overflow-x: auto;
+    }
+    .font-weight-normal {
+        font-weight: normal;
     }
 </style>

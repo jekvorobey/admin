@@ -13,6 +13,7 @@ use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 
@@ -45,7 +46,7 @@ class MerchantStoreController extends Controller
             'iFilter' => $this->getFilter(),
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants()
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
         ]);
     }
     
@@ -84,7 +85,7 @@ class MerchantStoreController extends Controller
         $this->title = 'Добавление склада';
         
         return $this->render('Store/MerchantStore/Create', [
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants()
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
         ]);
     }
     
@@ -94,21 +95,31 @@ class MerchantStoreController extends Controller
      * @param StoreService $storeService
      * @return mixed
      */
-    public function detailPage(int $id, Request $request, StoreService $storeService)
+    public function detailPage(int $id, Request $request, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Редактирование склада';
         
+        return $this->render('Store/MerchantStore/Detail', [
+            'iStore' => $this->getStore($id, $request, $storeService),
+            'iDeliveryServices' => DeliveryService::allServices(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+        ]);
+    }
+    
+    /**
+     * @param  int  $storeId
+     * @param  Request  $request
+     * @param  StoreService  $storeService
+     * @return array
+     */
+    protected function getStore(int $storeId, Request $request, StoreService $storeService): array
+    {
         $restQuery = new RestQuery();
-        $restQuery->setFilter('id', $id)
+        $restQuery->setFilter('id', $storeId)
             ->include('storePickupTime', 'storeWorking', 'storeContact');
-        
         $stores = $this->loadStores($request, $restQuery, $storeService);
         
-        $store = $stores->first();
-        
-        return $this->render('Store/MerchantStore/Detail', [
-            'iStore' => $store,
-        ]);
+        return $stores->first();
     }
     
     /**
@@ -194,6 +205,34 @@ class MerchantStoreController extends Controller
         $storeService->updateStoreWorking($validatedData['id'], new StoreWorkingDto($validatedData));
         
         return response()->json([]);
+    }
+    
+    /**
+     * @param  Request  $request
+     * @param  StoreService  $storeService
+     * @return JsonResponse
+     */
+    public function savePickupTime(Request $request, StoreService $storeService): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'id' => 'integer|nullable',
+            'day' => 'integer|required',
+            'store_id' => 'integer|required',
+            'pickup_time' => 'string|nullable',
+            'cargo_export_time' => 'string|nullable',
+            'delivery_service' => ['sometimes', Rule::in(array_keys(DeliveryService::allServices()))],
+        ]);
+        
+        $storePickupTimeDto = new StorePickupTimeDto($validatedData);
+        if ($storePickupTimeDto->id) {
+            $storeService->updateStorePickupTime($storePickupTimeDto->id, $storePickupTimeDto);
+        } else {
+            $storeService->createStorePickupTime($storePickupTimeDto->store_id, $storePickupTimeDto);
+        }
+        
+        return response()->json([
+            'pickupTimes' => $this->getStore($storePickupTimeDto->store_id, $request, $storeService)['pickupTimes']
+        ]);
     }
     
     
@@ -296,33 +335,38 @@ class MerchantStoreController extends Controller
                             $data['days'][$day] = $store['storeWorking'][$workingDay];
                         }
                     }
-            
-                    if (!is_null($store->storePickupTime())) {
-                        $dayHasPickupTime = false;
-                        foreach (DeliveryService::allServices() as $deliveryService) {
-                            /** @var StorePickupTimeDto $pickupTimeDto */
-                            $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item) use (
-                                $day,
-                                $deliveryService
-                            ) {
-                                return $item->day == $day && $item->delivery_service == $deliveryService->id;
-                            })->first();
-                            if (is_null($pickupTimeDto)) {
-                                $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item
-                                ) use (
-                                    $day
-                                ) {
-                                    return $item->day == $day;
-                                })->first();
-                            }
                     
-                            $data['storePickupTime'][$day][$deliveryService->id] = is_null($pickupTimeDto) ? [] : $pickupTimeDto->toArray();
-                            if (!is_null($pickupTimeDto)) {
-                                $dayHasPickupTime = true;
-                            }
+                    $dayHasPickupTime = false;
+                    foreach (DeliveryService::allServices() as $deliveryService) {
+                        /** @var StorePickupTimeDto $pickupTimeDto */
+                        $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item) use (
+                            $day,
+                            $deliveryService
+                        ) {
+                            return $item->day == $day && $item->delivery_service == $deliveryService->id;
+                        })->first();
+                        
+                        $allDeliveryServicePickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item
+                        ) use (
+                            $day
+                        ) {
+                            return $item->day == $day && !$item->delivery_service;
+                        })->first();
+                
+                        $emptyPickupTimeDto = new StorePickupTimeDto([
+                            'day' => $day,
+                            'store_id' => $store->id,
+                        ]);
+                        $data['pickupTimes'][$day][$deliveryService->id] = array_filter(is_null($pickupTimeDto) ?
+                            array_merge($emptyPickupTimeDto->toArray(), ['delivery_service' => $deliveryService->id]) : $pickupTimeDto->toArray());
+                        $data['pickupTimes'][$day]['all'] = array_filter(is_null($allDeliveryServicePickupTimeDto) ?
+                            $emptyPickupTimeDto->toArray() : $allDeliveryServicePickupTimeDto->toArray());
+                        
+                        if (!is_null($pickupTimeDto) || !is_null($allDeliveryServicePickupTimeDto)) {
+                            $dayHasPickupTime = true;
                         }
-                        $data['storePickupTime'][$day]['hasPickupTime'] = $dayHasPickupTime;
                     }
+                    $data['pickupTimes'][$day]['hasPickupTime'] = $dayHasPickupTime;
                 }
             }
             
