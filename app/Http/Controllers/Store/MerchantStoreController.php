@@ -23,6 +23,14 @@ use MerchantManagement\Services\MerchantService\MerchantService;
  */
 class MerchantStoreController extends Controller
 {
+    /** @var array */
+    protected const FILTER_FIELDS = [
+        'id',
+        'merchant_id',
+        'name',
+        'city',
+    ];
+    
     /**
      * @param Request $request
      * @param StoreService $storeService
@@ -37,13 +45,13 @@ class MerchantStoreController extends Controller
         $restQuery = new RestQuery();
         $restQuery->pageNumber($page, 20);
         
-        $stores = $this->loadStores($request, $restQuery, $storeService);
+        $stores = $this->loadStores($restQuery, $storeService);
         
         $pager = $storeService->storesCount($restQuery);
         
         return $this->render('Store/MerchantStore/List', [
             'iStores' => $stores,
-            'iFilter' => $this->getFilter(),
+            'iFilter' => $this->getFilter() ? : null,
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
@@ -62,7 +70,7 @@ class MerchantStoreController extends Controller
         $restQuery = new RestQuery();
         $restQuery->pageNumber($page, 20);
         
-        $stores = $this->loadStores($request, $restQuery, $storeService);
+        $stores = $this->loadStores($restQuery, $storeService);
         
         return response()->json([
             'iStores' => $stores,
@@ -70,11 +78,17 @@ class MerchantStoreController extends Controller
     }
     
     /**
-     * @return array|null
+     * @return array
      */
-    protected function getFilter(): ?array
+    protected function getFilter(): array
     {
-        return request()->get('filter');
+        return array_filter(
+            request()->get('filter', []),
+            function ($value, $filter) {
+                return in_array($filter, static::FILTER_FIELDS);
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
     }
     
     /**
@@ -108,16 +122,15 @@ class MerchantStoreController extends Controller
     
     /**
      * @param  int  $storeId
-     * @param  Request  $request
      * @param  StoreService  $storeService
      * @return array
      */
-    protected function getStore(int $storeId, Request $request, StoreService $storeService): array
+    protected function getStore(int $storeId, StoreService $storeService): array
     {
         $restQuery = new RestQuery();
         $restQuery->setFilter('id', $storeId)
             ->include('storePickupTime', 'storeWorking', 'storeContact');
-        $stores = $this->loadStores($request, $restQuery, $storeService);
+        $stores = $this->loadStores($restQuery, $storeService);
         
         return $stores->first();
     }
@@ -290,20 +303,21 @@ class MerchantStoreController extends Controller
     
     
     /**
-     * @param Request $request
      * @param RestQuery $restQuery
      * @param StoreService $storeService
      * @return Collection
      */
-    protected function loadStores(Request $request, RestQuery $restQuery, StoreService $storeService): Collection
+    protected function loadStores(RestQuery $restQuery, StoreService $storeService): Collection
     {
-        $filters = $request->get('filter', []);
-        
-        foreach ($filters as $key => $value) {
+        $filter = $this->getFilter();
+    
+        foreach ($filter as $key => $value) {
             switch ($key) {
                 case 'name':
-                    $restQuery->setFilter('name', 'like', "%{$value}%");
+                case 'city':
+                    $restQuery->setFilter($key, 'like', "%{$value}%");
                     break;
+            
                 default:
                     $restQuery->setFilter($key, $value);
             }
