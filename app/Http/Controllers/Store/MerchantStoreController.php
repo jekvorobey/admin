@@ -105,16 +105,15 @@ class MerchantStoreController extends Controller
     
     /**
      * @param int $id
-     * @param Request $request
      * @param StoreService $storeService
      * @return mixed
      */
-    public function detailPage(int $id, Request $request, StoreService $storeService, MerchantService $merchantService)
+    public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Редактирование склада';
         
         return $this->render('Store/MerchantStore/Detail', [
-            'iStore' => $this->getStore($id, $request, $storeService),
+            'iStore' => $this->getStore($id, $storeService),
             'iDeliveryServices' => DeliveryService::allServices(),
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
         ]);
@@ -244,7 +243,7 @@ class MerchantStoreController extends Controller
         }
         
         return response()->json([
-            'pickupTimes' => $this->getStore($storePickupTimeDto->store_id, $request, $storeService)['pickupTimes']
+            'pickupTimes' => $this->getStore($storePickupTimeDto->store_id, $storeService)['pickupTimes']
         ]);
     }
     
