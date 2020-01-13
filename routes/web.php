@@ -79,6 +79,28 @@ Route::middleware('auth')->group(function () {
             Route::post('products', 'OrderCreateController@searchProducts')->name('orders.searchProducts');
             Route::post('users', 'OrderCreateController@searchUsers')->name('orders.searchUsers');
         });
+    
+        Route::prefix('cargo')->namespace('Cargo')->group(function () {
+            Route::get('/', 'CargoListController@index')->name('cargo.list');
+            Route::get('/page', 'CargoListController@page')->name('cargo.pagination');
+        
+            Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'CargoDetailController@index')->name('cargo.detail');
+                Route::put('changeStatus', 'CargoDetailController@changeStatus')->name('cargo.changeStatus');
+                Route::put('reportProblem', 'CargoDetailController@reportProblem')->name('cargo.reportProblem');
+                Route::get('/unshipped-shipments', 'CargoDetailController@getUnshippedShipments')->name('cargo.unshippedShipments');
+            
+                Route::prefix('/shipments')->group(function () {
+                    Route::post('addShipmentPackage', 'CargoDetailController@addShipment2Cargo')
+                        ->name('cargo.addShipment2Cargo');
+                
+                    Route::prefix('/{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
+                        Route::delete('', 'CargoDetailController@deleteShipmentFromCargo')
+                            ->name('cargo.deleteShipmentFromCargo');
+                    });
+                });
+            });
+        });
     });
 
     Route::prefix('offers')->namespace('Product')->group(function () {

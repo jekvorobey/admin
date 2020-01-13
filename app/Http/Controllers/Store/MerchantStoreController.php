@@ -323,19 +323,13 @@ class MerchantStoreController extends Controller
         }
         
         $stores = $storeService->stores($restQuery);
-        $merchantIds = $stores->pluck('merchant_id')->all();
-        $merchants = collect();
-        if ($merchantIds) {
-            /** @var MerchantService $merchantService */
-            $merchantService = resolve(MerchantService::class);
-            $merchantQuery = $merchantService->newQuery()
-                ->setFilter('id', $merchantIds)
-                ->addFields(MerchantDto::entity(), 'id', 'display_name');
-            $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
-        }
+        
+        $merchantIds = $stores->pluck('merchant_id')->unique()->all();
+        $merchants = $this->getMerchants($merchantIds);
         
         $stores = $stores->map(function (StoreDto $store) use ($merchants) {
             $data = $store->toArray();
+            
             $data['merchant'] = $merchants->has($store->merchant_id) ? $merchants[$store->merchant_id] : [];
     
             if (!is_null($store->storeWorking()) || !is_null($store->storePickupTime())) {

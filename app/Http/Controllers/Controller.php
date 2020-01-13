@@ -7,8 +7,11 @@ use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use DaveJamesMiller\Breadcrumbs\Facades\Breadcrumbs;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Controller extends BaseController
@@ -73,5 +76,25 @@ class Controller extends BaseController
             throw new BadRequestHttpException($validator->errors()->first());
         }
         return $data;
+    }
+    
+    /**
+     * @param  array  $merchantIds
+     * @return Collection|MerchantDto[]
+     */
+    protected function getMerchants(array $merchantIds): Collection
+    {
+        $merchants = collect();
+        
+        if ($merchantIds) {
+            /** @var MerchantService $merchantService */
+            $merchantService = resolve(MerchantService::class);
+            $merchantQuery = $merchantService->newQuery()
+                ->setFilter('id', $merchantIds)
+                ->addFields(MerchantDto::entity(), 'id', 'display_name');
+            $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
+        }
+        
+        return $merchants;
     }
 }

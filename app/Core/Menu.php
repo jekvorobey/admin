@@ -65,6 +65,10 @@ class Menu
                         'title' => 'Возвраты и отмены',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Грузы',
+                        'route' => route('cargo.list')
+                    ],
                 ],
             ],
             [

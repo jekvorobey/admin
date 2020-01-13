@@ -8,27 +8,27 @@
     "packages": [
         {
             "name": "davejamesmiller/laravel-breadcrumbs",
-            "version": "5.3.1",
+            "version": "5.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davejamesmiller/laravel-breadcrumbs.git",
-                "reference": "40a73bc9b32fbbee18938dc92228dea161365245"
+                "reference": "99f92a706faefb5e1816caa96e877a0184509e5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davejamesmiller/laravel-breadcrumbs/zipball/40a73bc9b32fbbee18938dc92228dea161365245",
-                "reference": "40a73bc9b32fbbee18938dc92228dea161365245",
+                "url": "https://api.github.com/repos/davejamesmiller/laravel-breadcrumbs/zipball/99f92a706faefb5e1816caa96e877a0184509e5b",
+                "reference": "99f92a706faefb5e1816caa96e877a0184509e5b",
                 "shasum": ""
             },
             "require": {
                 "facade/ignition-contracts": "^1.0",
-                "illuminate/support": "^5.6|^6.0",
-                "illuminate/view": "^5.6|^6.0",
+                "illuminate/support": ">=5.6",
+                "illuminate/view": ">=5.6",
                 "php": ">=7.1.3"
             },
             "require-dev": {
-                "orchestra/testbench": "^3.6",
-                "php-coveralls/php-coveralls": "^1.0",
+                "orchestra/testbench": ">=3.6",
+                "php-coveralls/php-coveralls": "^2.0",
                 "phpunit/phpunit": "^7.0|^8.0",
                 "spatie/phpunit-snapshot-assertions": "^2.0"
             },
@@ -63,7 +63,7 @@
             "keywords": [
                 "laravel"
             ],
-            "time": "2019-10-20T18:25:39+00:00"
+            "time": "2019-12-30T22:50:51+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -283,16 +283,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.13",
+            "version": "2.1.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "834593d5900615639208417760ba6a17299e2497"
+                "reference": "c4b8d12921999d8a561004371701dbc2e05b5ece"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/834593d5900615639208417760ba6a17299e2497",
-                "reference": "834593d5900615639208417760ba6a17299e2497",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/c4b8d12921999d8a561004371701dbc2e05b5ece",
+                "reference": "c4b8d12921999d8a561004371701dbc2e05b5ece",
                 "shasum": ""
             },
             "require": {
@@ -336,20 +336,20 @@
                 "validation",
                 "validator"
             ],
-            "time": "2019-12-30T08:14:25+00:00"
+            "time": "2020-01-05T14:11:20+00:00"
         },
         {
             "name": "erusev/parsedown",
-            "version": "1.7.3",
+            "version": "1.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7"
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
-                "reference": "6d893938171a817f4e9bc9e86f2da1e370b7bcd7",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
                 "shasum": ""
             },
             "require": {
@@ -382,7 +382,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2019-03-17T18:48:37+00:00"
+            "time": "2019-12-30T22:54:17+00:00"
         },
         {
             "name": "facade/ignition-contracts",
@@ -684,12 +684,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "52c37342fb9a6988b6408ceb2742ce4048d4f4ac"
+                "reference": "10f23d57be66a05d84ef19e52183dac89e12ce89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=52c37342fb9a6988b6408ceb2742ce4048d4f4ac",
-                "reference": "52c37342fb9a6988b6408ceb2742ce4048d4f4ac",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=10f23d57be66a05d84ef19e52183dac89e12ce89",
+                "reference": "10f23d57be66a05d84ef19e52183dac89e12ce89",
                 "shasum": ""
             },
             "require": {
@@ -724,7 +724,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2019-12-23T13:40:10+00:00"
+            "time": "2019-12-30T15:15:38+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -732,12 +732,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "a9be72ab9bc235ecaff75bcc748762c62ed48b72"
+                "reference": "f8b20a4b0cefa313057c9cc59235270e6e470852"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=a9be72ab9bc235ecaff75bcc748762c62ed48b72",
-                "reference": "a9be72ab9bc235ecaff75bcc748762c62ed48b72",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=f8b20a4b0cefa313057c9cc59235270e6e470852",
+                "reference": "f8b20a4b0cefa313057c9cc59235270e6e470852",
                 "shasum": ""
             },
             "require": {
@@ -772,7 +772,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2019-11-19T13:40:47+00:00"
+            "time": "2019-12-30T13:22:41+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -913,12 +913,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "b97bd89f5cf4f60023b7085f6948433d2e0fa088"
+                "reference": "4925b4e8d333b81e1f1b83c8533800e19131d9d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=b97bd89f5cf4f60023b7085f6948433d2e0fa088",
-                "reference": "b97bd89f5cf4f60023b7085f6948433d2e0fa088",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=4925b4e8d333b81e1f1b83c8533800e19131d9d3",
+                "reference": "4925b4e8d333b81e1f1b83c8533800e19131d9d3",
                 "shasum": ""
             },
             "require": {
@@ -942,7 +942,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2019-11-15T13:17:22+00:00"
+            "time": "2020-01-10T13:10:24+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -950,12 +950,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "29bf248394abcb35c2f9f9f468c22edd641efe24"
+                "reference": "87967a647553874f48ac2a1d425b4f8f2c443425"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=29bf248394abcb35c2f9f9f468c22edd641efe24",
-                "reference": "29bf248394abcb35c2f9f9f468c22edd641efe24",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=87967a647553874f48ac2a1d425b4f8f2c443425",
+                "reference": "87967a647553874f48ac2a1d425b4f8f2c443425",
                 "shasum": ""
             },
             "require": {
@@ -990,7 +990,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2019-12-24T14:22:57+00:00"
+            "time": "2020-01-10T16:16:40+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1482,16 +1482,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.62",
+            "version": "1.0.63",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0"
+                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
-                "reference": "14dd5d7dff5fbc29ca9a2a53ff109760e40d91a0",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8132daec326565036bc8e8d1876f77ec183a7bd6",
+                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6",
                 "shasum": ""
             },
             "require": {
@@ -1562,7 +1562,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-12-29T14:46:55+00:00"
+            "time": "2020-01-04T16:30:31+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",
@@ -4549,16 +4549,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.10.0",
+            "version": "v2.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "0c9a646775ef549eb0a213a4f9bd4381d9b4d934"
+                "reference": "c2b8e6e82732a64ecde1cddf9e1e06cb8556e3d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/0c9a646775ef549eb0a213a4f9bd4381d9b4d934",
-                "reference": "0c9a646775ef549eb0a213a4f9bd4381d9b4d934",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/c2b8e6e82732a64ecde1cddf9e1e06cb8556e3d8",
+                "reference": "c2b8e6e82732a64ecde1cddf9e1e06cb8556e3d8",
                 "shasum": ""
             },
             "require": {
@@ -4637,7 +4637,7 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "time": "2019-11-03T16:50:43+00:00"
+            "time": "2020-01-04T12:56:21+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -5743,16 +5743,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.18",
+            "version": "7.5.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "fcf6c4bfafaadc07785528b06385cce88935474d"
+                "reference": "9467db479d1b0487c99733bb1e7944d32deded2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/fcf6c4bfafaadc07785528b06385cce88935474d",
-                "reference": "fcf6c4bfafaadc07785528b06385cce88935474d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9467db479d1b0487c99733bb1e7944d32deded2c",
+                "reference": "9467db479d1b0487c99733bb1e7944d32deded2c",
                 "shasum": ""
             },
             "require": {
@@ -5823,7 +5823,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-12-06T05:14:37+00:00"
+            "time": "2020-01-08T08:45:45+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
