@@ -97,6 +97,7 @@ class CargoListController extends Controller
                 'status' => [
                     CargoStatus::STATUS_CREATED,
                     CargoStatus::STATUS_REQUEST_SEND,
+                    CargoStatus::STATUS_SHIPPING_PROBLEM,
                 ]
             ]),
             function ($value, $filter) {

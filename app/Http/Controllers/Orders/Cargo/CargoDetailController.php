@@ -29,7 +29,7 @@ class CargoDetailController extends Controller
     {
         $page = new CargoPage($id);
         
-        return $this->render('Shipment/CargoDetail', [
+        return $this->render('Orders/Cargo/Detail', [
             'iCargo' => $page->loadCargo()['cargo'],
         ]);
     }
@@ -65,30 +65,6 @@ class CargoDetailController extends Controller
         }
     
         return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
-    }
-    
-    /**
-     * Сообщить о проблеме с отгрузкой груза
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  CargoService $cargoService
-     * @return JsonResponse
-     */
-    public function reportProblem(
-        int $id,
-        Request $request,
-        CargoService $cargoService
-    ): JsonResponse
-    {
-        return $this->abstractAction($id, function () use ($id, $request, $cargoService) {
-            $data = $this->validate($request, [
-                'shipping_problem_comment' => ['required'],
-            ]);
-            $cargo = new CargoDto($data);
-            $cargo->status = CargoStatus::STATUS_SHIPPING_PROBLEM;
-            
-            $cargoService->updateCargo($id, $cargo);
-        });
     }
     
     /**

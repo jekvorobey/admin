@@ -8,14 +8,10 @@
                         <span class="badge" :class="statusClass(cargo.status.id)">
                             {{ cargo.status.name || 'N/A' }}
                         </span>
-                        <template v-if="isRequestSendStatus">
-                            <button class="btn btn-primary"
-                                    @click="changeCargoStatus(3)">Груз передан курьеру</button>
-                            <button class="btn btn-secondary"
-                                    @click="openModal('reportProblem')">
-                                Проблема при отгрузке
-                            </button>
-                        </template>
+                        <button class="btn btn-primary" v-if="isRequestSendStatus"
+                                @click="changeCargoStatus(3)">Груз передан курьеру</button>
+                        <button class="btn btn-primary" v-if="!isCancelStatus"
+                                @click="changeCargoStatus(5)">Отменить</button>
                     </div>
 
                     <p class="text-secondary mt-3">
@@ -23,6 +19,9 @@
                     </p>
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
+                    </p>
+                    <p class="text-secondary mt-3" v-if="isShippingProblemStatus">
+                        Описание проблемы:<span class="float-right">{{ cargo.shipping_problem_comment }}</span>
                     </p>
                 </div>
             </div>
@@ -69,20 +68,6 @@
                 v-if="nav.currentTab === 'history'"
                 :history="cargo.history"
         ></history-tab>
-
-        <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('reportProblem')">
-                <div slot="header">
-                    Сообщение о проблеме с отгрузкой
-                </div>
-                <div slot="body">
-                    <report-problem-form
-                            :cargo="cargo"
-                            @onSave="onReportProblem"
-                    ></report-problem-form>
-                </div>
-            </modal>
-        </transition>
     </layout-main>
 </template>
 
@@ -95,7 +80,6 @@ import modalMixin from '../../../../mixins/modal.js';
 import VTabs from '../../../../components/tabs/tabs.vue';
 import ShipmentsTab from './components/shipments-tab.vue';
 import HistoryTab from './components/history-tab.vue';
-import ReportProblemForm from './components/forms/report-problem-form.vue';
 import Modal from '../../../../components/controls/modal/modal.vue';
 
 export default {
@@ -105,7 +89,6 @@ export default {
 
         ShipmentsTab,
         HistoryTab,
-        ReportProblemForm,
     },
     mixins: [modalMixin],
     props: {
@@ -169,6 +152,12 @@ export default {
         },
         isRequestSendStatus() {
             return this.isStatus(2);
+        },
+        isShippingProblemStatus() {
+            return this.isStatus(4);
+        },
+        isCancelStatus() {
+            return this.isStatus(5);
         },
     },
 };

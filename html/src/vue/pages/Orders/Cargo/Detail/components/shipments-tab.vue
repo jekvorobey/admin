@@ -24,12 +24,11 @@
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th>№ заказа</th>
-                        <th>Дата заказа</th>
+                        <th>№ отправления</th>
+                        <th>Дата отправления</th>
                         <th>Сумма</th>
                         <th>Требуемая дата отгрузки</th>
                         <th>Кол-во коробок</th>
-                        <th>Комментарий</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -42,7 +41,6 @@
                         <td>{{ shipment.cost }}</td>
                         <td>{{ shipment.required_shipping_at }}</td>
                         <td>{{ shipment.packages.length }}</td>
-                        <td>{{ shipment.assembly_problem_comment }}</td>
                         <td>
                             <fa-icon icon="times" title="Удалить из груза" class="cursor-pointer"
                                     @click="deleteShipmentFromCargo(shipment.id)"

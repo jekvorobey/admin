@@ -4,9 +4,7 @@ namespace App\Models;
 
 use Exception;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
-use Greensight\Oms\Dto\Checkout\Commit\Shipment;
 use Greensight\Oms\Dto\Delivery\CargoDto;
-use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Services\CargoService\CargoService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
