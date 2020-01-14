@@ -15,8 +15,8 @@
                     <f-input v-model="filter.name" class="col">
                         Название
                     </f-input>
-                    <f-input v-model="filter.city" class="col">
-                        Город
+                    <f-input v-model="filter.address.city" class="col">
+                        Населенный пункт
                     </f-input>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <th>ID</th>
                 <th>Мерчант</th>
                 <th>Название</th>
-                <th>Город</th>
+                <th>Населенный пункт</th>
                 <th></th>
             </tr>
             </thead>
@@ -57,7 +57,7 @@
                 <td>
                     <a :href="getRoute('merchantStore.edit', {id: store.id})">{{ store.name }}</a>
                 </td>
-                <td>{{ store.city }}</td>
+                <td>{{ store.address ? store.address.city : '' }}</td>
                 <td>
                     <fa-icon icon="trash-alt" @click="deleteStore(index)"></fa-icon>
                 </td>
@@ -89,7 +89,9 @@ const cleanFilter = {
     id: '',
     merchant_id: [],
     name: '',
-    city: '',
+    address: {
+        city: '',
+    }
 };
 
 export default {
@@ -111,6 +113,7 @@ export default {
         filter.merchant_id = filter.merchant_id.map(value => parseInt(value));
 
         return {
+            currentPage: this.iCurrentPage,
             stores: this.iStores,
             filter: filter,
             options: [],

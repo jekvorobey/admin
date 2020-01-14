@@ -14,6 +14,7 @@ use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -24,14 +25,6 @@ use MerchantManagement\Services\MerchantService\MerchantService;
  */
 class MerchantStoreController extends Controller
 {
-    /** @var array */
-    protected const FILTER_FIELDS = [
-        'id',
-        'merchant_id',
-        'name',
-        'city',
-    ];
-    
     /**
      * @param Request $request
      * @param StoreService $storeService
@@ -83,13 +76,12 @@ class MerchantStoreController extends Controller
      */
     protected function getFilter(): array
     {
-        return array_filter(
-            request()->get('filter', []),
-            function ($value, $filter) {
-                return in_array($filter, static::FILTER_FIELDS);
-            },
-            ARRAY_FILTER_USE_BOTH
-        );
+        return Validator::make(request('filter') ?? [], [
+            'id' => 'integer|someone',
+            'merchant_id' => 'integer|someone',
+            'name' => 'string|someone',
+            'address.city' => 'string|someone',
+        ])->attributes();
     }
     
     /**
@@ -343,14 +335,28 @@ class MerchantStoreController extends Controller
         $filter = $this->getFilter();
     
         foreach ($filter as $key => $value) {
-            switch ($key) {
-                case 'name':
-                case 'city':
-                    $restQuery->setFilter($key, 'like', "%{$value}%");
-                    break;
-            
-                default:
-                    $restQuery->setFilter($key, $value);
+            if ($value) {
+                switch ($key) {
+                    case 'name':
+                        $restQuery->setFilter($key, 'like', "%{$value}%");
+                        break;
+                    case 'address':
+                        foreach ($value as $key1 => $value1) {
+                            $field = $key . '->' . $key1;
+                            
+                            if ($value1) {
+                                switch ($key1) {
+                                    case 'city':
+                                        $restQuery->setFilter($field, 'like', "%{$value1}%");
+                                        break;
+                                }
+                            }
+                        }
+                        break;
+        
+                    default:
+                        $restQuery->setFilter($key, $value);
+                }
             }
         }
         
