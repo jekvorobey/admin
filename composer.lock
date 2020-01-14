@@ -684,12 +684,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "10f23d57be66a05d84ef19e52183dac89e12ce89"
+                "reference": "598c949d58fb29f49adacff21c08b57a21fd4210"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=10f23d57be66a05d84ef19e52183dac89e12ce89",
-                "reference": "10f23d57be66a05d84ef19e52183dac89e12ce89",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=598c949d58fb29f49adacff21c08b57a21fd4210",
+                "reference": "598c949d58fb29f49adacff21c08b57a21fd4210",
                 "shasum": ""
             },
             "require": {
@@ -724,7 +724,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2019-12-30T15:15:38+00:00"
+            "time": "2020-01-14T15:25:13+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -780,12 +780,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-merchant-management-lib.git",
-                "reference": "60492a2b550a6c48e9347fe5918485b2e05dcd27"
+                "reference": "25ab3dfa642821eade1337c107025f054394a159"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=60492a2b550a6c48e9347fe5918485b2e05dcd27",
-                "reference": "60492a2b550a6c48e9347fe5918485b2e05dcd27",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=25ab3dfa642821eade1337c107025f054394a159",
+                "reference": "25ab3dfa642821eade1337c107025f054394a159",
                 "shasum": ""
             },
             "require": {
@@ -809,7 +809,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2019-12-20T15:33:25+00:00"
+            "time": "2020-01-13T15:59:55+00:00"
         },
         {
             "name": "greensight/ibt-message-lib",
@@ -913,12 +913,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "4925b4e8d333b81e1f1b83c8533800e19131d9d3"
+                "reference": "d97ba9a83f400a90273c05745ce5f9f5462d9e28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=4925b4e8d333b81e1f1b83c8533800e19131d9d3",
-                "reference": "4925b4e8d333b81e1f1b83c8533800e19131d9d3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=d97ba9a83f400a90273c05745ce5f9f5462d9e28",
+                "reference": "d97ba9a83f400a90273c05745ce5f9f5462d9e28",
                 "shasum": ""
             },
             "require": {
@@ -942,7 +942,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-01-10T13:10:24+00:00"
+            "time": "2020-01-13T13:58:35+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -4165,16 +4165,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.2.5",
+            "version": "1.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "62e8fc2dc550e5d6d8c9360c7721662670f58149"
+                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/62e8fc2dc550e5d6d8c9360c7721662670f58149",
-                "reference": "62e8fc2dc550e5d6d8c9360c7721662670f58149",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/47fe531de31fca4a1b997f87308e7d7804348f7e",
+                "reference": "47fe531de31fca4a1b997f87308e7d7804348f7e",
                 "shasum": ""
             },
             "require": {
@@ -4217,7 +4217,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2019-12-11T14:44:42+00:00"
+            "time": "2020-01-13T10:02:55+00:00"
         },
         {
             "name": "composer/composer",
@@ -4301,24 +4301,23 @@
         },
         {
             "name": "composer/semver",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "46d9139568ccb8d9e7cdd4539cab7347568a5e2e"
+                "reference": "c6bea70230ef4dd483e6bbcab6005f682ed3a8de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
-                "reference": "46d9139568ccb8d9e7cdd4539cab7347568a5e2e",
+                "url": "https://api.github.com/repos/composer/semver/zipball/c6bea70230ef4dd483e6bbcab6005f682ed3a8de",
+                "reference": "c6bea70230ef4dd483e6bbcab6005f682ed3a8de",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.3.2 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.5 || ^5.0.5",
-                "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
+                "phpunit/phpunit": "^4.5 || ^5.0.5"
             },
             "type": "library",
             "extra": {
@@ -4359,7 +4358,7 @@
                 "validation",
                 "versioning"
             ],
-            "time": "2019-03-19T17:25:45+00:00"
+            "time": "2020-01-13T12:06:48+00:00"
         },
         {
             "name": "composer/spdx-licenses",
@@ -6442,16 +6441,16 @@
         },
         {
             "name": "seld/phar-utils",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/phar-utils.git",
-                "reference": "7009b5139491975ef6486545a39f3e6dad5ac30a"
+                "reference": "84715761c35808076b00908a20317a3a8a67d17e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/7009b5139491975ef6486545a39f3e6dad5ac30a",
-                "reference": "7009b5139491975ef6486545a39f3e6dad5ac30a",
+                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/84715761c35808076b00908a20317a3a8a67d17e",
+                "reference": "84715761c35808076b00908a20317a3a8a67d17e",
                 "shasum": ""
             },
             "require": {
@@ -6482,7 +6481,7 @@
             "keywords": [
                 "phra"
             ],
-            "time": "2015-10-13T18:44:15+00:00"
+            "time": "2020-01-13T10:41:09+00:00"
         },
         {
             "name": "symfony/filesystem",
