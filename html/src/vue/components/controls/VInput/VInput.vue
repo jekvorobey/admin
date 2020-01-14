@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import inputMixin from './inputMixin';
+import inputMixin from '../../../mixins/input-mixin';
 
 const validTags = ['input', 'textarea'];
 

@@ -12,44 +12,46 @@
             </div>
             <div class="row">
                 <v-input
-                    v-model="$v.store.name.$model"
-                    :error="error_store_name"
-                    class="col-lg-6 col-12"
-                    @change="update">Название склада</v-input>
-            </div>
-            <div class="row">
+                        v-model="$v.store.name.$model"
+                        :error="error_store_name"
+                        class="col-lg-4 col-8"
+                        @change="update">Название склада</v-input>
                 <v-input
-                    v-model="store.xml_id"
-                    class="col-lg-2 col-4">
+                        v-model="store.xml_id"
+                        class="col-lg-2 col-4"
+                        @change="update">
                     Внешний код
                 </v-input>
-                <v-input
-                    v-model="$v.store.zip.$model"
-                    :error="error_store_zip"
-                    class="col-lg-2 col-4"
-                    @change="update">
-                    Индекс
-                </v-input>
-                <v-input
-                    v-model="$v.store.city.$model"
-                    :error="error_store_city"
-                    class="col-lg-2 col-4"
-                    @change="update">Город</v-input>
+            </div>
+            <div class="row">
+                <v-dadata
+                        :value="$v.store.address.address_string.$model"
+                        :error="error_store_address"
+                        @onSelect="onStoreAddressAdd"
+                        class="col-lg-6 col-12">
+                    Адрес
+                </v-dadata>
             </div>
             <div class="row">
                 <v-input
-                    v-model="$v.store.street.$model"
-                    :error="error_store_street"
-                    class="col-lg-2 col-4"
-                    @change="update">Улица</v-input>
+                        v-model="store.address.porch"
+                        @change="update"
+                        class="col-lg-2 col-4">Подъезд</v-input>
                 <v-input
-                    v-model="store.house"
-                    class="col-lg-2 col-4"
-                    @change="update">Дом</v-input>
+                        v-model="store.address.floor"
+                        @change="update"
+                        class="col-lg-2 col-4">Этаж</v-input>
                 <v-input
-                    v-model="store.flat"
-                    class="col-lg-2 col-4"
-                    @change="update">Квартира/Офис</v-input>
+                        v-model="store.address.intercom"
+                        @change="update"
+                        class="col-lg-2 col-4">Домофон</v-input>
+            </div>
+            <div class="row">
+                <v-input
+                        type="textarea"
+                        v-model="store.address.comment"
+                        @change="update"
+                        class="col-lg-6 col-12">Комментарий к адресу</v-input>
             </div>
         </form>
 
@@ -110,7 +112,7 @@
                     <th>День недели</th>
                     <th>
                         Все службы доставки
-                        <span class="font-weight-normal"><br>Создание заявки<br>Отгрузка товара</span>
+                        <span class="font-weight-normal"><br>Создание заявки</span>
                     </th>
                     <th v-for="deliveryService in deliveryServices">
                         {{deliveryService.name}}
@@ -131,16 +133,6 @@
                             :lang="langAt"
                             :time-picker-options="timePickerOptions"
                             @change="savePickupTime(store.pickupTimes[index]['all'])"
-                        /><br>
-                        <date-picker
-                            v-model="store.pickupTimes[index]['all']['pickup_time']"
-                            input-class="form-control form-control-sm"
-                            type="time"
-                            format="HH:mm"
-                            value-type="format"
-                            :lang="langAt"
-                            :time-picker-options="timePickerOptions"
-                            @change="savePickupTime(store.pickupTimes[index]['all'])"
                         />
                     </td>
                     <td v-for="deliveryService in deliveryServices">
@@ -154,16 +146,11 @@
                             :time-picker-options="timePickerOptions"
                             @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
                         /><br>
-                        <date-picker
-                            v-model="store.pickupTimes[index][deliveryService.id]['pickup_time']"
-                            input-class="form-control form-control-sm"
-                            type="time"
-                            format="HH:mm"
-                            value-type="format"
-                            :lang="langAt"
-                            :time-picker-options="timePickerOptions"
-                            @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
-                        />
+                        <v-select
+                                v-model="store.pickupTimes[index][deliveryService.id]['pickup_time']"
+                                :options="pickupTimeOptions(deliveryService.id)"
+                                @change="savePickupTime(store.pickupTimes[index][deliveryService.id])">
+                        </v-select>
                     </td>
                 </tr>
                 </tbody>
@@ -225,24 +212,27 @@
 <script>
 import Service from '../../../../../scripts/services/services';
 import {mapGetters} from "vuex";
+import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
 import VInput from '../../../../components/controls/VInput/VInput.vue';
 import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import DatePicker from 'vue2-datepicker';
 
 import {validationMixin} from 'vuelidate';
-import {integer, required} from 'vuelidate/lib/validators';
+import {integer, required, requiredIf} from 'vuelidate/lib/validators';
 
 export default {
     name: 'page-stores-detail',
     components: {
         VInput,
         DatePicker,
-        VSelect
+        VSelect,
+        VDadata,
     },
     props: {
         iStore: [Object, null],
         iDeliveryServices: [Object, null],
-        merchants: [Array]
+        merchants: [Array],
+        pickupTimes: [Object],
     },
     mixins: [validationMixin],
     data() {
@@ -271,14 +261,41 @@ export default {
             deliveryServices: this.iDeliveryServices
         }
     },
-    validations: {
-        store: {
-            merchant_id: {integer, required},
-            name: {required},
-            zip: {required},
-            city: {required},
-            street: {required},
+    mounted() {
+        for(let prop in this.store.address) {
+            if (this.$v.store.address.hasOwnProperty(prop)) {
+                this.$v.store.address[prop].$model = this.store.address[prop];
+            }
         }
+    },
+    validations() {
+        let self = this;
+
+        return {
+            store: {
+                merchant_id: {integer, required},
+                name: {required},
+                address: {
+                    address_string: {required},
+                    country_code: {required},
+                    post_index: {required},
+                    region: {required},
+                    region_guid: {required},
+                    city: {required},
+                    city_guid: {required},
+                    house: {
+                        required: requiredIf(() => {
+                            return !self.store.address.block;
+                        })
+                    },
+                    block: {
+                        required: requiredIf(() => {
+                            return !self.store.address.house;
+                        })
+                    },
+                }
+            }
+        };
     },
     methods: {
         dayName(id) {
@@ -299,6 +316,32 @@ export default {
                 case 7:
                     return 'Воскресенье';
             }
+        },
+        pickupTimeOptions(deliveryService) {
+            return this.pickupTimes.hasOwnProperty(deliveryService) ? Object.values(this.pickupTimes[deliveryService]).map(
+                pickupTime => ({value: pickupTime.id, text: pickupTime.name})
+            ) : [];
+        },
+        onStoreAddressAdd(suggestion) {
+            let address = suggestion.data;
+
+            this.store.address.address_string = suggestion.unrestricted_value;
+            this.store.address.country_code = address.country_iso_code;
+            this.store.address.post_index = address.postal_code;
+            this.store.address.region = address.region_with_type;
+            this.store.address.region_guid = address.region_fias_id;
+            this.store.address.area = address.area_with_type;
+            this.store.address.area_guid = address.area_fias_id;
+            this.store.address.city = address.settlement_with_type ? address.settlement_with_type :
+                address.city_with_type;
+            this.store.address.city_guid = address.settlement_with_type ? address.settlement_fias_id :
+                address.city_fias_id;
+            this.store.address.street = address.street_with_type;
+            this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
+            this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
+            this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
+
+            this.update();
         },
         update() {
             this.$v.$touch();
@@ -395,24 +438,30 @@ export default {
                 }
             }
         },
-        error_store_zip() {
-            if (this.$v.store.zip.$dirty) {
-                if (!this.$v.store.zip.required) {
-                    return "Обязательное поле!";
+        error_store_address() {
+            if (this.$v.store.address.address_string.$dirty) {
+                if (!this.$v.store.address.address_string.required) {
+                    return "Введите адрес и выберите его из подсказки ниже";
                 }
             }
-        },
-        error_store_city() {
-            if (this.$v.store.city.$dirty) {
-                if (!this.$v.store.city.required) {
-                    return "Обязательное поле!";
+            if (this.$v.store.address.post_index.$dirty) {
+                if (!this.$v.store.address.post_index.required) {
+                    return "Введите почтовый индекс";
                 }
             }
-        },
-        error_store_street() {
-            if (this.$v.store.street.$dirty) {
-                if (!this.$v.store.street.required) {
-                    return "Обязательное поле!";
+            if (this.$v.store.address.region.$dirty) {
+                if (!this.$v.store.address.region.required) {
+                    return "Введите регион";
+                }
+            }
+            if (this.$v.store.address.city.$dirty) {
+                if (!this.$v.store.address.city.required) {
+                    return "Введите город/населенный пункт";
+                }
+            }
+            if (this.$v.store.address.house.$dirty || this.$v.store.address.block.$dirty) {
+                if (!this.$v.store.address.house.required || !this.$v.store.address.block.required) {
+                    return "Введите дом/строение/корпус";
                 }
             }
         },

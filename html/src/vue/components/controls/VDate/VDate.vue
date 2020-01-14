@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import inputMixin from '../VInput/inputMixin';
+import inputMixin from '../../../mixins/input-mixin';
 export default {
     name: "v-date",
     inheritAttrs: false,

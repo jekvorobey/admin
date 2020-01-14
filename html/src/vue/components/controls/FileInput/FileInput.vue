@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import inputMixin from '../VInput/inputMixin';
+    import inputMixin from '../../../mixins/input-mixin';
     import Services from "../../../../scripts/services/services";
     import {mapGetters} from "vuex";
     export default {

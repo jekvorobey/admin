@@ -6456,6 +6456,11 @@ jpegtran-bin@^4.0.0:
     bin-wrapper "^4.0.0"
     logalot "^2.0.0"
 
+"jquery@>= 1.9", jquery@^3.2.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.4.1.tgz#714f1f8d9dde4bdfa55764ba37ef214630d80ef2"
+  integrity sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
+
 js-base64@^2.1.9:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.5.1.tgz#1efa39ef2c5f7980bb1784ade4a8af2de3291121"
@@ -11083,6 +11088,13 @@ sugarss@^2.0.0:
   dependencies:
     postcss "^7.0.2"
 
+suggestions-jquery@^17.5.0:
+  version "17.12.0"
+  resolved "https://registry.yarnpkg.com/suggestions-jquery/-/suggestions-jquery-17.12.0.tgz#c43ec1003b4067070f56377ecc90b983df5bbd03"
+  integrity sha512-F+9d6YjMuErWW3XNYISL96wKztHLoIp9MQOZ6WcyuIgDiinLE3xfRLnY6B1DQohguN4txoWzJZUc1YmJ/Axrnw==
+  dependencies:
+    jquery ">= 1.9"
+
 supports-color@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
@@ -12037,6 +12049,14 @@ vue-style-loader@^4.1.0:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
+
+vue-suggestions@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/vue-suggestions/-/vue-suggestions-1.4.0.tgz#2a267a4d83b68040280f6d2ff9d4b430cb66cfd5"
+  integrity sha512-toahs5yfIun94PDetWkX+q94c9u2VQmL//qB+H/WDro8KUG2jT6WH1tMRpYj6MoS8rfDgzA+0hUbzR9RTILRVw==
+  dependencies:
+    jquery "^3.2.1"
+    suggestions-jquery "^17.5.0"
 
 vue-template-compiler@^2.6.10:
   version "2.6.10"

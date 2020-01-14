@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Logistics\Dto\Lists\CourierCallTime\B2CplCourierCallTime;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Store\Dto\StoreContactDto;
 use Greensight\Store\Dto\StoreDto;
@@ -116,6 +117,7 @@ class MerchantStoreController extends Controller
             'iStore' => $this->getStore($id, $storeService),
             'iDeliveryServices' => DeliveryService::allServices(),
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+            'pickupTimes' => $this->getPickupTimes(),
         ]);
     }
     
@@ -135,6 +137,16 @@ class MerchantStoreController extends Controller
     }
     
     /**
+     * @return array
+     */
+    protected function getPickupTimes(): array
+    {
+        return [
+            DeliveryService::SERVICE_B2CPL => B2CplCourierCallTime::all(),
+        ];
+    }
+    
+    /**
      * @param  Request  $request
      * @param  StoreService  $storeService
      * @return JsonResponse
@@ -144,11 +156,21 @@ class MerchantStoreController extends Controller
         $validatedData = $request->validate([
             'merchant_id' => 'integer|required',
             'name' => 'string|required',
-            'zip' => 'string|required',
-            'city' => 'string|required',
-            'street' => 'string|required',
-            'house' => 'string|nullable',
-            'flat' => 'string|nullable',
+            'address.address_string' => 'string|required',
+            'address.country_code' => 'string|required',
+            'address.post_index' => 'string|required',
+            'address.region' => 'string|required',
+            'address.region_guid' => 'string|required',
+            'address.city' => 'string|required',
+            'address.city_guid' => 'string|required',
+            'address.street' => 'string|nullable',
+            'address.house' => 'string|nullable',
+            'address.block' => 'string|nullable',
+            'address.flat' => 'string|nullable',
+            'address.porch' => 'string|nullable',
+            'address.intercom' => 'string|nullable',
+            'address.floor' => 'string|nullable',
+            'address.comment' => 'string|nullable',
         ]);
         
         $result = $storeService->createStore(new StoreDto($validatedData));
@@ -170,11 +192,21 @@ class MerchantStoreController extends Controller
             'xml_id' => 'string|nullable',
             'active' => 'boolean',
             'name' => 'string|required',
-            'zip' => 'string|required',
-            'city' => 'string|required',
-            'street' => 'string|required',
-            'house' => 'string|nullable',
-            'flat' => 'string|nullable',
+            'address.address_string' => 'string|required',
+            'address.country_code' => 'string|required',
+            'address.post_index' => 'string|required',
+            'address.region' => 'string|required',
+            'address.region_guid' => 'string|required',
+            'address.city' => 'string|required',
+            'address.city_guid' => 'string|required',
+            'address.street' => 'string|nullable',
+            'address.house' => 'string|nullable',
+            'address.block' => 'string|nullable',
+            'address.flat' => 'string|nullable',
+            'address.porch' => 'string|nullable',
+            'address.intercom' => 'string|nullable',
+            'address.floor' => 'string|nullable',
+            'address.comment' => 'string|nullable',
         ]);
         
         $validatedData['id'] = $id;
@@ -345,20 +377,25 @@ class MerchantStoreController extends Controller
                     
                     $dayHasPickupTime = false;
                     foreach (DeliveryService::allServices() as $deliveryService) {
-                        /** @var StorePickupTimeDto $pickupTimeDto */
-                        $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item) use (
-                            $day,
-                            $deliveryService
-                        ) {
-                            return $item->day == $day && $item->delivery_service == $deliveryService->id;
-                        })->first();
-                        
-                        $allDeliveryServicePickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item
-                        ) use (
-                            $day
-                        ) {
-                            return $item->day == $day && !$item->delivery_service;
-                        })->first();
+                        $pickupTimeDto = null;
+                        $allDeliveryServicePickupTimeDto = null;
+                        if (!is_null($store->storePickupTime())) {
+                            /** @var StorePickupTimeDto $pickupTimeDto */
+                            $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item) use (
+                                $day,
+                                $deliveryService
+                            ) {
+                                return $item->day == $day && $item->delivery_service == $deliveryService->id;
+                            })->first();
+    
+                            $allDeliveryServicePickupTimeDto = $store->storePickupTime()->filter(function (
+                                StorePickupTimeDto $item
+                            ) use (
+                                $day
+                            ) {
+                                return $item->day == $day && !$item->delivery_service;
+                            })->first();
+                        }
                 
                         $emptyPickupTimeDto = new StorePickupTimeDto([
                             'day' => $day,

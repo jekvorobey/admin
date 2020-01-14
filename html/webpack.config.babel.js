@@ -17,7 +17,7 @@ export default ({ mode, presets }) =>
                 rules: [
                     {
                         test: /\.vue$/,
-                        include: path.resolve(__dirname, 'src'),
+                        include: [path.resolve(__dirname, 'src'), path.resolve(__dirname, 'node_modules')],
                         use: ['vue-loader'],
                     },
                     {
