@@ -111,6 +111,10 @@ class Menu
                         'title' => 'Таблица соотвествий статусов',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Стоимость доставки по регионам',
+                        'route' => route('deliveryPrice.index'),
+                    ],
                 ],
             ],
             [

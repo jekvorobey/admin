@@ -162,4 +162,10 @@ Route::middleware('auth')->group(function () {
                 ->name('merchantStore.savePickupTime');
         });
     });
+    
+    Route::prefix('logistics')->namespace('Logistics')->group(function () {
+        Route::prefix('delivery-prices')->group(function () {
+            Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
+        });
+    });
 });

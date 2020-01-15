@@ -32,7 +32,7 @@ class MerchantStoreController extends Controller
      */
     public function index(Request $request, StoreService $storeService, MerchantService $merchantService)
     {
-        $this->title = 'Склады';
+        $this->title = 'Склады мерчантов';
         
         $page = $request->get('page', 1);
         
@@ -89,7 +89,7 @@ class MerchantStoreController extends Controller
      */
     public function createPage(MerchantService $merchantService)
     {
-        $this->title = 'Добавление склада';
+        $this->title = 'Добавление склада мерчанта';
         
         return $this->render('Store/MerchantStore/Create', [
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
@@ -103,7 +103,7 @@ class MerchantStoreController extends Controller
      */
     public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
-        $this->title = 'Редактирование склада';
+        $this->title = 'Редактирование склада мерчанта';
         
         return $this->render('Store/MerchantStore/Detail', [
             'iStore' => $this->getStore($id, $storeService),
