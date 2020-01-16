@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Logistics;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Logistics\Dto\Lists\DeliveryPriceDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\FederalDistrictDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -27,7 +28,7 @@ class DeliveryPriceController extends Controller
         
         return $this->render('Logistics/DeliveryPrice/Index', [
             'iDeliveryPrices' => $deliveryPrices,
-            'iDeliveryServices' => DeliveryService::allServices(),
+            'deliveryServices' => DeliveryService::allServices(),
         ]);
     }
     
@@ -39,17 +40,24 @@ class DeliveryPriceController extends Controller
      */
     protected function loadDeliveryPrices(ListsService $listsService): Collection
     {
-        $deliveryPrices = $listsService->deliveryPrices()->groupBy('region_guid', 'delivery_service');
+        $deliveryPrices = $listsService->deliveryPrices();
+        $deliveryPricesByFederalDistrict = $deliveryPrices->filter(function (DeliveryPriceDto $deliveryPrice) {
+            return !$deliveryPrice->region_id;
+        })->groupBy('federal_district_id', 'delivery_service');
+        $deliveryPricesByRegions = $deliveryPrices->filter(function (DeliveryPriceDto $deliveryPrice) {
+            return $deliveryPrice->region_id;
+        })->groupBy('region_id', 'delivery_service');
         
         $federalDistrictsQuery = $listsService->newQuery()
             ->include('regions');
         $federalDistricts = $listsService->federalDistricts($federalDistrictsQuery);
     
-        $federalDistricts = $federalDistricts->map(function (FederalDistrictDto $federalDistrict) use ($deliveryPrices) {
+        $federalDistricts = $federalDistricts->map(function (FederalDistrictDto $federalDistrict) use ($deliveryPricesByFederalDistrict, $deliveryPricesByRegions) {
             $data = $federalDistrict->toArray();
+            $data['deliveryPrices'] = $deliveryPricesByFederalDistrict->has($data['id']) ? $deliveryPricesByFederalDistrict[$data['id']] : [];
             
             foreach ($data['regions'] as &$region) {
-                $region['deliveryPrices'] = $deliveryPrices->has($region['region_guid']) ? $deliveryPrices[$region['region_guid']] : [];
+                $region['deliveryPrices'] = $deliveryPricesByRegions->has($region['id']) ? $deliveryPricesByRegions[$region['id']] : [];
             }
     
             return $data;
