@@ -21,7 +21,8 @@ import {
     faPrint,
     faArchive,
     faTruck,
-    faRubleSign
+    faRubleSign,
+    faSave,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -45,3 +46,4 @@ library.add(faPrint);
 library.add(faArchive);
 library.add(faTruck);
 library.add(faRubleSign);
+library.add(faSave);

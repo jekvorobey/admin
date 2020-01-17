@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Logistics;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryPriceDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\FederalDistrictDto;
@@ -30,6 +31,7 @@ class DeliveryPriceController extends Controller
         return $this->render('Logistics/DeliveryPrice/Index', [
             'iData' => $this->loadData($listsService),
             'deliveryServices' => DeliveryService::allServices(),
+            'deliveryMethods' => DeliveryMethod::allMethods(),
         ]);
     }
     
@@ -46,6 +48,7 @@ class DeliveryPriceController extends Controller
             'region_id' => 'integer|nullable',
             'region_guid' => 'string|nullable',
             'delivery_service' => ['required', Rule::in(array_keys(DeliveryService::allServices()))],
+            'delivery_method' => ['required', Rule::in(array_keys(DeliveryMethod::allMethods()))],
             'price' => 'numeric|required',
         ]);
         
@@ -53,11 +56,11 @@ class DeliveryPriceController extends Controller
         if ($deliveryPriceDto->id) {
             $listsService->updateDeliveryPrice($deliveryPriceDto->id, $deliveryPriceDto);
         } else {
-            $listsService->createDeliveryPrice($deliveryPriceDto);
+            $deliveryPriceDto->id = $listsService->createDeliveryPrice($deliveryPriceDto);
         }
         
         return response()->json([
-            'iData' => $this->loadData($listsService)
+            'deliveryPrice' => $deliveryPriceDto
         ]);
     }
     
@@ -71,13 +74,21 @@ class DeliveryPriceController extends Controller
         $deliveryPrices = $listsService->deliveryPrices();
         $deliveryPricesByFederalDistrict = $deliveryPrices->filter(function (DeliveryPriceDto $deliveryPrice) {
             return !$deliveryPrice->region_id;
-        })->groupBy('federal_district_id')->map(function (Collection $pricesByDeliveryService) {
-            return $pricesByDeliveryService->keyBy('delivery_service');
+        })->groupBy('federal_district_id')->map(function (Collection $pricesByFederalDistrict) {
+            return $pricesByFederalDistrict
+                ->groupBy('delivery_service')
+                ->map(function (Collection $pricesByDeliveryService) {
+                    return $pricesByDeliveryService->keyBy('delivery_method');
+                });
         });
         $deliveryPricesByRegions = $deliveryPrices->filter(function (DeliveryPriceDto $deliveryPrice) {
             return $deliveryPrice->region_id;
-        })->groupBy('region_id')->map(function (Collection $pricesByDeliveryService) {
-            return $pricesByDeliveryService->keyBy('delivery_service');
+        })->groupBy('region_id')->map(function (Collection $pricesByRegion) {
+            return $pricesByRegion
+                ->groupBy('delivery_service')
+                ->map(function (Collection $pricesByDeliveryService) {
+                    return $pricesByDeliveryService->keyBy('delivery_method');
+                });
         });
         
         $federalDistrictsQuery = $listsService->newQuery()
@@ -86,32 +97,34 @@ class DeliveryPriceController extends Controller
     
         $federalDistricts = $federalDistricts->map(function (FederalDistrictDto $federalDistrict) use ($deliveryPricesByFederalDistrict, $deliveryPricesByRegions) {
             $data = $federalDistrict->toArray();
-            if ($deliveryPricesByFederalDistrict->has($data['id'])) {
-                $data['deliveryPrices'] =  $deliveryPricesByFederalDistrict[$data['id']];
-            } else {
-                foreach (DeliveryService::allServices() as $deliveryService) {
+            foreach (DeliveryService::allServices() as $deliveryService) {
+                foreach (DeliveryMethod::allMethods() as $deliveryMethod) {
                     $emptyDeliveryPriceDto = new DeliveryPriceDto([
                         'federal_district_id' => $federalDistrict->id,
                         'delivery_service' => $deliveryService->id,
+                        'delivery_method' => $deliveryMethod->id,
                         'price' => '',
                     ]);
-                    $data['deliveryPrices'][$deliveryService->id] = $emptyDeliveryPriceDto->toArray();
+                    $data['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
+                        isset($deliveryPricesByFederalDistrict[$data['id']][$deliveryService->id][$deliveryMethod->id]) ?
+                            $deliveryPricesByFederalDistrict[$data['id']][$deliveryService->id][$deliveryMethod->id] : $emptyDeliveryPriceDto->toArray();
                 }
             }
             
             foreach ($data['regions'] as &$region) {
-                if ($deliveryPricesByRegions->has($region['id'])) {
-                    $region['deliveryPrices'] = $deliveryPricesByRegions[$region['id']];
-                } else {
-                    foreach (DeliveryService::allServices() as $deliveryService) {
+                foreach (DeliveryService::allServices() as $deliveryService) {
+                    foreach (DeliveryMethod::allMethods() as $deliveryMethod) {
                         $emptyDeliveryPriceDto = new DeliveryPriceDto([
                             'federal_district_id' => $federalDistrict->id,
                             'region_id' => $region['id'],
                             'region_guid' => $region['guid'],
                             'delivery_service' => $deliveryService->id,
+                            'delivery_method' => $deliveryMethod->id,
                             'price' => '',
                         ]);
-                        $region['deliveryPrices'][$deliveryService->id] = $emptyDeliveryPriceDto->toArray();
+                        $region['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
+                            isset($deliveryPricesByRegions[$region['id']][$deliveryService->id][$deliveryMethod->id]) ?
+                                $deliveryPricesByRegions[$region['id']][$deliveryService->id][$deliveryMethod->id] : $emptyDeliveryPriceDto->toArray();
                     }
                 }
             }
