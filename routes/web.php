@@ -166,6 +166,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
         Route::prefix('delivery-prices')->group(function () {
             Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
+            Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
         });
     });
 });
