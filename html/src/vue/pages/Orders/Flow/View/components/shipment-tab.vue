@@ -50,7 +50,7 @@
                             <td><img :src="item.product.photo" class="preview" :alt="item.product.name"
                                      v-if="item.product.photo"></td>
                             <td class="with-small">
-                                <a :href="getRoute('item.product.edit', {id: item.product.id})">
+                                <a :href="getRoute('products.detail', {id: item.product.id})">
                                     {{ item.name }}
                                 </a>
                                 <small>{{ item.product.vendor_code }}</small>
