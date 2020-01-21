@@ -13,11 +13,19 @@ import Services from '../scripts/services/services';
 import BootstrapVue from 'bootstrap-vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import './fontawesome';
+import {capitalize, formatSize, lowercase, truncate, integer} from '../scripts/filters';
 
 Vue.use(BootstrapVue);
 
 //Font Awesome Icons
 Vue.component('fa-icon', FontAwesomeIcon);
+
+//Filters
+Vue.filter('capitalize', capitalize);
+Vue.filter('lowercase', lowercase);
+Vue.filter('truncate', truncate);
+Vue.filter('formatSize', formatSize);
+Vue.filter('integer', integer);
 
 // Boot the current Vue component
 const root = document.getElementById('app');
