@@ -3,7 +3,6 @@
         <table class="table table-condensed">
             <thead>
             <tr>
-                <th>ID</th>
                 <th>Фото</th>
                 <th class="with-small">Название <small>Артикул</small></th>
                 <th></th>
@@ -18,7 +17,7 @@
             <tbody>
             <template v-for="(shipment, key) in shipments">
                 <tr>
-                    <td colspan="9">
+                    <td colspan="8">
                         <b>Отправление {{ shipment.number }}</b>
                     </td>
                     <td>
@@ -33,7 +32,7 @@
                 <template v-if="shipment.packages.length > 0">
                     <template v-for="(pack, key) in shipment.packages">
                         <tr>
-                            <td colspan="9">
+                            <td colspan="8">
                                 Коробка #{{ key+1 }}
                             </td>
                             <td>
@@ -46,7 +45,6 @@
                             </td>
                         </tr>
                         <tr v-for="(item, key) in pack.items">
-                            <td>{{ key+1 }}</td>
                             <td><img :src="item.product.photo" class="preview" :alt="item.product.name"
                                      v-if="item.product.photo"></td>
                             <td class="with-small">
@@ -75,8 +73,29 @@
                 </template>
                 <template v-else>
                     <tr v-for="(item, key) in shipment.basketItems">
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.product.vendor_code }}</td>
+                        <td><img :src="item.product.photo" class="preview" :alt="item.product.name"
+                                 v-if="item.product.photo"></td>
+                        <td class="with-small">
+                            <a :href="getRoute('products.detail', {id: item.product.id})">
+                                {{ item.name }}
+                            </a>
+                            <small>{{ item.product.vendor_code }}</small>
+                        </td>
+                        <td>
+                        <span class="segment" :class="segmentClass(item.product.segment)">
+                            {{item.product.segment }}
+                        </span>
+                        </td>
+                        <td class="with-small">
+                            {{ item.product.category.name }}
+                            <small>{{ item.product.brand.name }}</small>
+                        </td>
+                        <td>{{ item.qty | integer }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.discount }}</td>
+                        <td>{{ item.cost }}</td>
+                        <td>
+                        </td>
                     </tr>
                 </template>
             </template>
