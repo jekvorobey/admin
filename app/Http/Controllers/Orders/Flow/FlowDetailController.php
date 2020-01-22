@@ -6,6 +6,7 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
@@ -208,6 +209,7 @@ class FlowDetailController extends Controller
         } catch (Exception $e) {
         }
 
+        $data['delivery_statuses'] = DeliveryStatus::allStatuses();
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();
         $data['delivery_type'] = $order->deliveryType()->toArray();
