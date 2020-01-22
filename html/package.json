@@ -145,7 +145,7 @@
         "vue-for-range": "^1.0.2",
         "vue-loader": "^15.7.0",
         "vue-recaptcha": "^1.1.1",
-        "vue-suggestion": "^1.0.0",
+        "vue-suggestions": "^1.4.0",
         "vue-the-mask": "^0.11.1",
         "vue2-datepicker": "^2.12.0",
         "vuelidate": "^0.7.4",
