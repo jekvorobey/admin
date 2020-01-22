@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
+                Route::get('delivery', 'FlowDeliveryController@detail')->name('orders.flowDelivery');
             });
 
         });
@@ -79,20 +80,20 @@ Route::middleware('auth')->group(function () {
             Route::post('products', 'OrderCreateController@searchProducts')->name('orders.searchProducts');
             Route::post('users', 'OrderCreateController@searchUsers')->name('orders.searchUsers');
         });
-    
+
         Route::prefix('cargo')->namespace('Cargo')->group(function () {
             Route::get('/', 'CargoListController@index')->name('cargo.list');
             Route::get('/page', 'CargoListController@page')->name('cargo.pagination');
-        
+
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'CargoDetailController@index')->name('cargo.detail');
                 Route::put('changeStatus', 'CargoDetailController@changeStatus')->name('cargo.changeStatus');
                 Route::get('/unshipped-shipments', 'CargoDetailController@getUnshippedShipments')->name('cargo.unshippedShipments');
-            
+
                 Route::prefix('/shipments')->group(function () {
                     Route::post('addShipmentPackage', 'CargoDetailController@addShipment2Cargo')
                         ->name('cargo.addShipment2Cargo');
-                
+
                     Route::prefix('/{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::delete('', 'CargoDetailController@deleteShipmentFromCargo')
                             ->name('cargo.deleteShipmentFromCargo');
@@ -119,18 +120,18 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
         });
     });
-    
+
     Route::prefix('stores')->namespace('Store')->group(function () {
         Route::prefix('merchant-stores')->group(function () {
             Route::get('/', 'MerchantStoreController@index')->name('merchantStore.list');
             Route::get('/create', 'MerchantStoreController@createPage')->name('merchantStore.add');
-            
+
             Route::get('/{id}', 'MerchantStoreController@detailPage')
                 ->where(['id' => '[0-9]+'])
                 ->name('merchantStore.edit');
-            
+
             Route::get('page', 'MerchantStoreController@page')->name('merchantStore.pagination');
-            
+
             Route::post('', 'MerchantStoreController@create')
                 ->where(['id' => '[0-9]+'])
                 ->name('merchantStore.create');
@@ -140,13 +141,13 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'MerchantStoreController@delete')
                 ->where(['id' => '[0-9]+'])
                 ->name('merchantStore.delete');
-            
+
             Route::prefix('working')->group(function () {
                 Route::put('/{id}', 'MerchantStoreController@updateWorking')
                     ->where(['id' => '[0-9]+'])
                     ->name('merchantStore.updateWorking');
             });
-            
+
             Route::prefix('contacts')->group(function () {
                 Route::post('/{id}', 'MerchantStoreController@createContact')
                     ->name('merchantStore.createContact');
@@ -157,12 +158,12 @@ Route::middleware('auth')->group(function () {
                     ->where(['id' => '[0-9]+'])
                     ->name('merchantStore.deleteContact');
             });
-    
+
             Route::put('/pickup-times', 'MerchantStoreController@savePickupTime')
                 ->name('merchantStore.savePickupTime');
         });
     });
-    
+
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
         Route::prefix('delivery-prices')->group(function () {
             Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');

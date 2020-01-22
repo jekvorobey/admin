@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
@@ -210,6 +211,7 @@ class FlowDetailController extends Controller
         }
 
         $data['delivery_statuses'] = DeliveryStatus::allStatuses();
+        $data['delivery_services'] = DeliveryServiceDto::allServices();
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();
         $data['delivery_type'] = $order->deliveryType()->toArray();

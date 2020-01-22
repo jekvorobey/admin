@@ -49,6 +49,7 @@
                 v-if="nav.currentTab === 'delivery'"
                 :deliveries="order.deliveries"
                 :statuses="order.delivery_statuses"
+                :services="order.delivery_services"
         ></delivery-tab>
         <shipment-tab
                 v-if="nav.currentTab === 'shipment'"

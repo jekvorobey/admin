@@ -3,46 +3,30 @@
         <table class="table table-condensed">
             <thead>
                 <tr>
-                    <th></th>
+                    <th>Доставка</th>
+                    <th>Отправления</th>
                     <th>Дата</th>
-                    <th>Статус</th>
                     <th>Служба</th>
+                    <th>Статус</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(delivery, key) in deliveries">
-                    <tr>
-                        <td>
-                            <b>Доставка {{ delivery.number }}</b>
-                        </td>
-                        <td>
-                            {{ delivery.delivery_at }}
-                        </td>
-                        <td>
-                            {{ statusName(delivery.status) }}
-                        </td>
-                    </tr>
-                    <tr v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
-                        <td colspan="5">
-                            Отправление {{ shipment.number }}
-                        </td>
-                    </tr>
-                </template>
+                <tr v-for="(delivery, key) in deliveries">
+                    <td>
+                        <b>Доставка {{ delivery.number }}</b>
+                    </td>
+                    <td>
+                        <template v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
+                            Отправление {{ shipment.number }}<br>
+                        </template>
+                    </td>
+                    <td>{{ delivery.delivery_at }}</td>
+                    <td>{{ serviceName(delivery.delivery_service) }}</td>
+                    <td>{{ statusName(delivery.status) }}</td>
+                </tr>
             </tbody>
         </table>
-
-        <ul v-for="(delivery, key) in deliveries" class="list-group list-group-flush">
-            <li class="list-group-item">
-                Доставка {{ delivery.number }}
-                {{ delivery }}
-                <ul v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
-                    <li>
-                        Отправление {{ shipment.number }}
-                    </li>
-                </ul>
-            </li>
-        </ul>
     </div>
 </template>
 <script>
@@ -57,6 +41,7 @@
         props: {
             deliveries: {},
             statuses: {},
+            services: {},
         },
         methods: {
             editDelivery(id) {
@@ -75,16 +60,21 @@
                 let status = this.statuses[id];
                 return status ? status.name : 'N/A';
             },
+            serviceName(id) {
+                let service = this.services[id];
+                return service ? service.name : 'N/A';
+            },
         },
         computed: {
             ...mapGetters(['getRoute']),
         },
         mounted() {
-            console.log(this.statuses);
         }
     }
 </script>
 
 <style scoped>
-
+table tr td:first-child {
+    vertical-align:middle;
+}
 </style>
