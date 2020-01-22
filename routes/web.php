@@ -121,6 +121,10 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('collections')->namespace('Product')->group(function () {
+        Route::get('', 'CollectionListController@index')->name('collections.list');
+    });
+
     Route::prefix('stores')->namespace('Store')->group(function () {
         Route::prefix('merchant-stores')->group(function () {
             Route::get('/', 'MerchantStoreController@index')->name('merchantStore.list');

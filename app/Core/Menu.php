@@ -44,6 +44,10 @@ class Menu
                             ],
                         ]
                     ],
+                    [
+                        'title' => 'Подборки',
+                        'route' => route('collections.list'),
+                    ],
                 ],
             ],
             [

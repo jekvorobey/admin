@@ -101,3 +101,9 @@ Breadcrumbs::for('products.list', function (BreadcrumbsGenerator $trail) {
     $trail->parent('products');
     $trail->push('Список товаров');
 });
+
+// Главная > Товары > Список подборок
+Breadcrumbs::for('collections.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('products');
+    $trail->push('Список подборок');
+});
