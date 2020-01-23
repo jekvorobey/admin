@@ -250,6 +250,15 @@ class Menu
                 ],
             ],
             [
+                'title' => 'Коммуникации',
+                'items' => [
+                    [
+                        'title' => 'Статусы',
+                        'route' => route('communications.statuses.list'),
+                    ],
+                ],
+            ],
+            [
                 'title' => 'Настройки',
                 'items' => [
                     [
