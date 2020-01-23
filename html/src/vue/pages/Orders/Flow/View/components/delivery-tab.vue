@@ -14,7 +14,9 @@
             <tbody>
                 <tr v-for="(delivery, key) in deliveries">
                     <td>
-                        <b>Доставка {{ delivery.number }}</b>
+                        <a :href="getRoute('orders.flowDelivery', {id: delivery.order_id, deliveryId: delivery.id})">
+                            Доставка {{ delivery.number }}
+                        </a>
                     </td>
                     <td>
                         <template v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
