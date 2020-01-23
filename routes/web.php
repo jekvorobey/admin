@@ -174,4 +174,12 @@ Route::middleware('auth')->group(function () {
             Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
         });
     });
+
+    Route::prefix('communications')->namespace('Communications')->group(function () {
+        Route::prefix('statuses')->group(function () {
+            Route::get('', 'StatusController@index')->name('communications.statuses.list');
+            Route::put('', 'StatusController@save')->name('communications.statuses.save');
+        });
+    });
+
 });
