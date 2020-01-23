@@ -817,12 +817,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "9829eaecb3eded727d803e617d6ad02ba8331106"
+                "reference": "9a52a4d119cb2a055d40370e4f0dc228a202a3ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=9829eaecb3eded727d803e617d6ad02ba8331106",
-                "reference": "9829eaecb3eded727d803e617d6ad02ba8331106",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=9a52a4d119cb2a055d40370e4f0dc228a202a3ae",
+                "reference": "9a52a4d119cb2a055d40370e4f0dc228a202a3ae",
                 "shasum": ""
             },
             "require": {
@@ -857,7 +857,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2019-11-14T14:35:21+00:00"
+            "time": "2020-01-23T13:35:21+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
