@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
-                Route::get('delivery', 'FlowDeliveryController@detail')->name('orders.flowDelivery');
+                Route::get('delivery/{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.flowDelivery');
             });
 
         });
@@ -174,4 +174,29 @@ Route::middleware('auth')->group(function () {
             Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
         });
     });
+
+    Route::prefix('communications')->namespace('Communications')->group(function () {
+        Route::prefix('statuses')->group(function () {
+            Route::get('', 'StatusController@index')->name('communications.statuses.list');
+            Route::post('', 'StatusController@save')->name('communications.statuses.save');
+            Route::delete('{id}', 'StatusController@delete')->name('communications.statuses.delete');
+        });
+        Route::prefix('themes')->group(function () {
+            Route::get('', 'ThemeController@index')->name('communications.themes.list');
+            Route::post('', 'ThemeController@save')->name('communications.themes.save');
+            Route::delete('{id}', 'ThemeController@delete')->name('communications.themes.delete');
+        });
+        Route::prefix('types')->group(function () {
+            Route::get('', 'TypeController@index')->name('communications.types.list');
+            Route::post('', 'TypeController@save')->name('communications.types.save');
+            Route::delete('{id}', 'TypeController@delete')->name('communications.types.delete');
+        });
+
+        Route::prefix('chats')->group(function () {
+            Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
+            Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
+            Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
+        });
+    });
+
 });

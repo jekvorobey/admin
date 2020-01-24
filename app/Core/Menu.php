@@ -250,6 +250,23 @@ class Menu
                 ],
             ],
             [
+                'title' => 'Коммуникации',
+                'items' => [
+                    [
+                        'title' => 'Статусы',
+                        'route' => route('communications.statuses.list'),
+                    ],
+                    [
+                        'title' => 'Темы',
+                        'route' => route('communications.themes.list'),
+                    ],
+                    [
+                        'title' => 'Типы',
+                        'route' => route('communications.types.list'),
+                    ],
+                ],
+            ],
+            [
                 'title' => 'Настройки',
                 'items' => [
                     [

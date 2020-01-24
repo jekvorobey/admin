@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\Menu;
-use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use DaveJamesMiller\Breadcrumbs\Facades\Breadcrumbs;
+use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
@@ -19,7 +19,7 @@ class Controller extends BaseController
     protected $title = '';
     protected $breadcrumbs = '';
 
-    public function render($componentName, $props)
+    public function render($componentName, $props = [])
     {
         $breadcrumbs = $this->breadcrumbs ? (array)$this->breadcrumbs : false;
         return View::component(

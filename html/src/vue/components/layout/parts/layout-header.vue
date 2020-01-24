@@ -20,17 +20,23 @@
             </span>
         </div>
 
-        <button v-if="!isGuest" @click="logout" class="btn btn-dark">Выйти</button>
+        <div v-if="!isGuest">
+            <communication-chats-unread/>
+
+            <button @click="logout" class="btn btn-dark">Выйти</button>
+        </div>
     </nav>
 </template>
 
 <script>
-import '../../../images/logo_white.png';
-import Services from '../../../scripts/services/services';
-import modalMixin from '../../mixins/modal.js';
+import '../../../../images/logo_white.png';
+import Services from '../../../../scripts/services/services';
+import modalMixin from '../../../mixins/modal.js';
+import CommunicationChatsUnread from './communication-chats-unread.vue';
 
 export default {
     name: 'layout-header',
+    components: {CommunicationChatsUnread},
     mixins: [modalMixin],
     props: {
         onIndex: { type: Boolean, default: false },
