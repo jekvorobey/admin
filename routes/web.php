@@ -191,6 +191,12 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'TypeController@save')->name('communications.types.save');
             Route::delete('{id}', 'TypeController@delete')->name('communications.types.delete');
         });
+
+        Route::prefix('chats')->group(function () {
+            Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
+            Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
+            Route::get('filter', 'ChatsController@unread')->name('communications.chats.unread');
+        });
     });
 
 });
