@@ -37,10 +37,10 @@
                             </td>
                             <td>
                                 <fa-icon icon="pencil-alt" title="Изменить" class="cursor-pointer mr-3"
-                                         @click="editPackage(item.id)"
+                                     @click="editPackage(item.id)"
                                 />
                                 <fa-icon icon="times" title="Удалить" class="cursor-pointer"
-                                         @click="deletePackage(item.id)"
+                                     @click="deletePackage(item.id)"
                                 />
                             </td>
                         </tr>
