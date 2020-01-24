@@ -195,7 +195,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('chats')->group(function () {
             Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
-            Route::get('filter', 'ChatsController@unread')->name('communications.chats.unread');
+            Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
         });
     });
 
