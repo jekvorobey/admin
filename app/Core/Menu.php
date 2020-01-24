@@ -260,6 +260,10 @@ class Menu
                         'title' => 'Темы',
                         'route' => route('communications.themes.list'),
                     ],
+                    [
+                        'title' => 'Типы',
+                        'route' => route('communications.types.list'),
+                    ],
                 ],
             ],
             [
