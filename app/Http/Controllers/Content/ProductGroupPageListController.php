@@ -19,7 +19,7 @@ class ProductGroupPageListController extends Controller
         $query = $this->makeQuery($request);
 
         return $this->render('Content/ProductGroupPageList', [
-            'iCollections' => $this->loadItems($query, $productGroupPageService),
+            'iProductGroupPages' => $this->loadItems($query, $productGroupPageService),
             'iPager' => $productGroupPageService->productGroupPagesCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
@@ -50,8 +50,6 @@ class ProductGroupPageListController extends Controller
         RestQuery $query,
         ProductGroupPageService $productGroupPageService
     ) {
-        $productGroupPages = $productGroupPageService->productGroupPages($query);
-
-        return $productGroupPages;
+        return $productGroupPageService->productGroupPages($query);
     }
 }
