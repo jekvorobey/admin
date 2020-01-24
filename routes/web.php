@@ -178,7 +178,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('communications')->namespace('Communications')->group(function () {
         Route::prefix('statuses')->group(function () {
             Route::get('', 'StatusController@index')->name('communications.statuses.list');
-            Route::put('', 'StatusController@save')->name('communications.statuses.save');
+            Route::post('', 'StatusController@save')->name('communications.statuses.save');
+            Route::delete('{id}', 'StatusController@delete')->name('communications.statuses.delete');
         });
     });
 

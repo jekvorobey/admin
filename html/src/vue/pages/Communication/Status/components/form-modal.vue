@@ -5,7 +5,7 @@
                 {{ status.id ? 'Редактирование' : 'Создание' }} статуса
             </div>
             <div slot="body">
-            <b-form @submit="accept">
+            <b-form @submit.prevent="accept">
                 <b-form-group
                     label="Название"
                     label-for="status-name"
@@ -29,11 +29,14 @@
 
                 <b-form-group>
                     <b-form-select v-model="status.channel_id" class="mb-3">
-                        <b-form-select-option :value="null">Please select an option</b-form-select-option>
+                        <b-form-select-option :value="null">Общий статус</b-form-select-option>
+                        <b-form-select-option :value="channel.id" v-for="channel in channels">
+                            {{ channel.name }}
+                        </b-form-select-option>
                     </b-form-select>
                 </b-form-group>
 
-                <b-button type="submit" variant="dark">Submit</b-button>
+                <b-button type="submit" variant="dark">Сохранить</b-button>
             </b-form>
             </div>
         </modal>

@@ -23,7 +23,7 @@
                 <td>{{ status.channel_id ? channels[status.channel_id].name : '-' }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" @click="editStatus(status)"><fa-icon icon="edit"/></button>
-                    <button class="btn btn-danger btn-sm" @click="deleteStatus(status.id)"><fa-icon icon="trash-alt"/></button>
+                    <v-delete-button @delete="deleteStatus(status.id)" btn-class="btn-danger btn-sm"/>
                 </td>
             </tr>
             </tbody>
@@ -37,11 +37,12 @@ import modalMixin from '../../../mixins/modal';
 import FormModal from './components/form-modal.vue';
 import { mapGetters } from 'vuex';
 import Services from '../../../../scripts/services/services.js';
+import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
 
 export default {
     mixins: [modalMixin],
     props: ['iStatuses', 'channels'],
-    components: {FormModal},
+    components: {VDeleteButton, FormModal},
     data() {
         return {
             statuses: this.iStatuses,
@@ -59,7 +60,18 @@ export default {
             }
         },
         deleteStatus(status_id) {
-
+            Services.net().delete(this.getRoute('communications.statuses.delete', {id: status_id})).then((data)=> {
+                this.statuses = data.statuses;
+                this.$bvToast.toast('Статус удалён', {
+                    title: 'Успех',
+                    variant: 'success',
+                });
+            }).catch(() => {
+                this.$bvToast.toast('Статус не был удалён', {
+                    title: 'Ошибка',
+                    variant: 'danger',
+                });
+            });
         },
         createStatus() {
             this.status = this.fillStatus();
@@ -70,8 +82,14 @@ export default {
             this.openModal('FormStatus');
         },
         saveStatus() {
-            Services.net().put(this.getRoute('communications.statuses.save', {status: this.status})).then((data)=> {
-
+            Services.net().post(this.getRoute('communications.statuses.save'), {}, {status: this.status}).then((data)=> {
+                this.statuses = data.statuses;
+                this.closeModal('FormStatus');
+                this.$bvToast.toast(`Статус ${this.status.name} сохранён`, {
+                    title: 'Успех',
+                    variant: 'success',
+                });
+                this.status = null;
             });
         },
     },
