@@ -25,13 +25,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="collection in collections">
-                    <td>{{collection.id}}</td>
-                    <td><img :src="collection.photo ? collection.photo : '//placehold.it/75x50?text=No+image'" class="preview"></td>
+                <tr v-for="productGroupPage in productGroupPages">
+                    <td>{{productGroupPage.id}}</td>
+                    <td><img :src="productGroupPage.photo ? productGroupPage.photo : '//placehold.it/75x50?text=No+image'" class="preview"></td>
                     <td class="with-small">
-                        <a :href="getRoute('collection.detail', {id: collection.id})">{{collection.name}}</a>
+                        <a :href="getRoute('productGroupPage.detail', {id: productGroupPage.id})">{{productGroupPage.name}}</a>
                     </td>
-                    <td>{{collection.type.name}}</td>
+                    <td>{{productGroupPage.type.name}}</td>
                 </tr>
             </tbody>
         </table>
@@ -70,7 +70,7 @@
             FInput,
         },
         props: {
-            iCollections: {},
+            iProductGroupPages: {},
             iPager: {},
             iCurrentPage: {},
             iFilter: {},
@@ -79,7 +79,7 @@
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
             return {
-                collections: this.iCollections,
+                productGroupPages: this.iProductGroupPages,
                 pager: this.iPager,
                 currentPage: this.iCurrentPage || 1,
                 filter,
@@ -100,12 +100,12 @@
                 }));
             },
             loadPage() {
-                Services.net().get(this.route('collections.listPage'), {
+                Services.net().get(this.route('productGroupPages.listPage'), {
                     page: this.currentPage,
                     filter: this.filter,
                     //sort: this.sort,
                 }).then(data => {
-                    this.collections = data.collections;
+                    this.productGroupPages = data.productGroupPages;
                     if (data.pager) {
                         this.pager = data.pager
                     }

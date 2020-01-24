@@ -44,10 +44,6 @@ class Menu
                             ],
                         ]
                     ],
-                    [
-                        'title' => 'Подборки',
-                        'route' => route('collections.list'),
-                    ],
                 ],
             ],
             [
@@ -101,6 +97,10 @@ class Menu
                     [
                         'title' => 'Отзывы',
                         'route' => '#',
+                    ],
+                    [
+                        'title' => 'Страницы с подборками товаров',
+                        'route' => route('productGroupPages.list'),
                     ],
                 ]
             ],

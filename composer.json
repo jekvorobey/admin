@@ -46,6 +46,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://gitlab.com/greensight/ibt-cms-lib"
+        },
+        {
+            "type": "vcs",
             "url": "https://gitlab.com/greensight/ibt-logistics-lib"
         }
     ],
@@ -54,6 +58,8 @@
         "ext-json": "*",
         "davejamesmiller/laravel-breadcrumbs": "^5.2",
         "fideloper/proxy": "^4.0",
+        "greensight/ibt-cm-lib": "dev-master",
+        "greensight/ibt-cms-lib": "dev-master",
         "greensight/ibt-common-lib": "dev-master",
         "greensight/ibt-file-lib": "dev-master",
         "greensight/ibt-logistics-lib": "dev-master",
@@ -63,7 +69,6 @@
         "greensight/ibt-oms-lib": "dev-master",
         "greensight/ibt-pim-lib": "dev-master",
         "greensight/ibt-store-lib": "dev-master",
-        "greensight/ibt-cm-lib": "dev-master",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0"
     },

@@ -1,28 +1,26 @@
 <?php
 
-namespace App\Http\Controllers\Product;
+namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Crm\Dto\CollectionDto;
-use Crm\Services\CollectionService\CollectionService;
+use Cms\Dto\ProductGroupPageDto;
+use Cms\Services\ProductGroupPageService\ProductGroupPageService;
 
-class CollectionListController extends Controller
+class ProductGroupPageListController extends Controller
 {
     public function index(
         Request $request,
-        CollectionService $collectionService
+        ProductGroupPageService $productGroupPageService
     ) {
         $this->title = 'Подборки';
-        $this->breadcrumbs = 'collections.list';
+        $this->breadcrumbs = 'productGroupPages.list';
         $query = $this->makeQuery($request);
 
-        return $this->render('Product/CollectionList', [
-            'iCollections' => $this->loadItems($query, $collectionService),
-            'iPager' => $collectionService->collectionsCount($query),
+        return $this->render('Content/ProductGroupPageList', [
+            'iCollections' => $this->loadItems($query, $productGroupPageService),
+            'iPager' => $productGroupPageService->productGroupPagesCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
@@ -37,7 +35,7 @@ class CollectionListController extends Controller
         $page = $request->get('page', 1);
         $query->pageNumber($page, 10);
 
-        $query->addFields(CollectionDto::entity(), 'id', 'name');
+        $query->addFields(ProductGroupPageDto::entity(), 'id', 'name');
 
         $filter = $request->get('filter', []);
 
@@ -50,11 +48,10 @@ class CollectionListController extends Controller
 
     protected function loadItems(
         RestQuery $query,
-        CollectionService $collectionService
+        ProductGroupPageService $productGroupPageService
     ) {
-        /** @var Collection $collections */
-        $collections = $collectionService->collections($query);
+        $productGroupPages = $productGroupPageService->productGroupPages($query);
 
-        return $collections;
+        return $productGroupPages;
     }
 }

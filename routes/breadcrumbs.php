@@ -102,8 +102,9 @@ Breadcrumbs::for('products.list', function (BreadcrumbsGenerator $trail) {
     $trail->push('Список товаров');
 });
 
-// Главная > Товары > Список подборок
-Breadcrumbs::for('collections.list', function (BreadcrumbsGenerator $trail) {
-    $trail->parent('products');
-    $trail->push('Список подборок');
+//================= Контент =============================================================================================
+// Главная > Контент > Страницы с подборками товаров
+Breadcrumbs::for('productGroupPages.list', function (BreadcrumbsGenerator $trail) {
+    $trail->parent('home');
+    $trail->push('Список страниц с подборками товаров');
 });

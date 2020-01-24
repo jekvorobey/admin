@@ -172,6 +172,7 @@ return [
         App\Providers\AppServiceProvider::class,
         \Greensight\CommonMsa\CommonLibServiceProvider::class,
         \Pim\PimLibServiceProvider::class,
+        \Cms\CmsLibServiceProvider::class,
         \Greensight\Message\MessageLibServiceProvider::class,
         \MerchantManagement\MerchantLibServiceProvider::class,
         \Greensight\Store\StoreLibServiceProvider::class,

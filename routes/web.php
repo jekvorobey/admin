@@ -121,8 +121,8 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('collections')->namespace('Product')->group(function () {
-        Route::get('', 'CollectionListController@index')->name('collections.list');
+    Route::prefix('content')->namespace('Content')->group(function () {
+        Route::get('product-group-pages', 'ProductGroupPageListController@index')->name('productGroupPages.list');
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
