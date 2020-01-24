@@ -1,7 +1,7 @@
 <template>
-    <a :href="getRoute('communications.chats.unread')" class="btn btn-dark">
+    <a :href="getRoute('communications.chats.unread')" class="btn btn-dark" v-if="count">
         <fa-icon icon="envelope" size="lg"/>
-        <span class="badge badge-info" v-if="count">{{ count }}</span>
+        <span class="badge badge-info">{{ count }}</span>
     </a>
 </template>
 
