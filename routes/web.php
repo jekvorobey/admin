@@ -181,6 +181,11 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'StatusController@save')->name('communications.statuses.save');
             Route::delete('{id}', 'StatusController@delete')->name('communications.statuses.delete');
         });
+        Route::prefix('themes')->group(function () {
+            Route::get('', 'ThemeController@index')->name('communications.themes.list');
+            Route::post('', 'ThemeController@save')->name('communications.themes.save');
+            Route::delete('{id}', 'ThemeController@delete')->name('communications.themes.delete');
+        });
     });
 
 });

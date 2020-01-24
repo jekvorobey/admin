@@ -2,7 +2,7 @@
     <transition name="modal">
         <modal :close="closeModal" v-if="isModalOpen(modalName)">
             <div slot="header">
-                {{ status.id ? 'Редактирование' : 'Создание' }} статуса
+                {{ theme.id ? 'Редактирование' : 'Создание' }} темы
             </div>
             <div slot="body">
             <b-form @submit.prevent="accept">
@@ -12,7 +12,7 @@
                 >
                     <b-form-input
                         id="status-name"
-                        v-model="status.name"
+                        v-model="theme.name"
                         type="text"
                         required
                         placeholder="Введите название"
@@ -20,16 +20,12 @@
                 </b-form-group>
 
                 <b-form-group>
-                    <b-form-checkbox v-model="status.active" :value="1" :unchecked-value="0">Активность</b-form-checkbox>
+                    <b-form-checkbox v-model="theme.active" :value="1" :unchecked-value="0">Активность</b-form-checkbox>
                 </b-form-group>
 
                 <b-form-group>
-                    <b-form-checkbox v-model="status.default" :value="1" :unchecked-value="0">По умолчанию</b-form-checkbox>
-                </b-form-group>
-
-                <b-form-group>
-                    <b-form-select v-model="status.channel_id" class="mb-3">
-                        <b-form-select-option :value="null">Общий статус</b-form-select-option>
+                    <b-form-select v-model="theme.channel_id" class="mb-3">
+                        <b-form-select-option :value="null">Общая тема</b-form-select-option>
                         <b-form-select-option :value="channel.id" v-for="channel in channels">
                             {{ channel.name }}
                         </b-form-select-option>
@@ -63,7 +59,7 @@ export default {
         }
     },
     computed: {
-        status: {
+        theme: {
             get() { return this.model; },
             set(value) { this.$emit('update:model', value); }
         }

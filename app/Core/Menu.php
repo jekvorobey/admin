@@ -256,6 +256,10 @@ class Menu
                         'title' => 'Статусы',
                         'route' => route('communications.statuses.list'),
                     ],
+                    [
+                        'title' => 'Темы',
+                        'route' => route('communications.themes.list'),
+                    ],
                 ],
             ],
             [
