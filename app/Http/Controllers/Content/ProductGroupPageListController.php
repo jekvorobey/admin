@@ -24,7 +24,12 @@ class ProductGroupPageListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'types' => [],
+                'types' => [
+                    [
+                        'id' => 1,
+                        'name' => 'Тест',
+                    ],
+                ],
             ]
         ]);
     }
