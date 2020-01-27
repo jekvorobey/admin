@@ -4,7 +4,7 @@
             :channels="channels"
             :statuses="statuses"
             :types="types"
-            :filter="{unread: true}"
+            :filter="{unread_admin: 1}"
         />
     </layout-main>
 </template>

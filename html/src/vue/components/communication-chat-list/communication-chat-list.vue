@@ -51,6 +51,36 @@
                 </b-form>
             </div>
         </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Тема</th>
+                    <th>Пользователь</th>
+                    <th>Канал</th>
+                    <th>Статус</th>
+                    <th>Тип</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="chat in chats">
+                    <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;" @click="openChat(chat)">
+                        <td>{{ chat.theme }}</td>
+                        <td>{{ users[chat.user_id].short_name }}</td>
+                        <td>{{ channels[chat.channel_id].name }}</td>
+                        <td>{{ statuses[chat.status_id].name }}</td>
+                        <td>{{ chat.type_id ? types[chat.type_id].name : '-' }}</td>
+                    </tr>
+                    <tr v-for="message in chat.messages" v-if="showChat === chat.id">
+                        <td>{{ users[message.user_id].short_name }}</td>
+                        <td colspan="2">{{ message.message }}</td>
+                        <td>
+                            <div v-for="file in message.files">{{  }}</div>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -68,6 +98,7 @@ export default {
     },
     data() {
         return {
+            showChat: null,
             form: {
                 theme: '',
                 channel_id: null,
@@ -75,6 +106,7 @@ export default {
                 type_id: null,
             },
             chats: [],
+            users: {},
         };
     },
     watch: {
@@ -96,12 +128,31 @@ export default {
     },
     methods: {
         filterChats() {
-            const filter = {
-
-            };
-            Services.net().post(this.getRoute('communications.chats.filter'), {}, {filter: filter}).then((data)=> {
+            let filter = {};
+            if (this.form.theme) {
+                filter.theme = this.form.theme;
+            }
+            if (this.form.channel_id) {
+                filter.channel_id = this.form.channel_id;
+            }
+            if (this.form.status_id) {
+                filter.status_id = this.form.status_id;
+            }
+            if (this.form.type_id) {
+                filter.type_id = this.form.type_id;
+            }
+            filter = Object.assign(filter, this.filter);
+            Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data)=> {
                 this.chats = data.chats;
+                this.users = data.users;
             });
+        },
+        openChat(chat) {
+            this.showChat = this.showChat === chat.id ? null : chat.id;
+            if (this.showChat && chat.unread_admin) {
+                chat.unread_admin = false;
+                Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
+            }
         }
     },
     computed: {
