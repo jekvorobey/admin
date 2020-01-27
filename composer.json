@@ -26,10 +26,6 @@
         },
         {
             "type": "vcs",
-            "url": "https://gitlab.com/greensight/ibt-file-lib"
-        },
-        {
-            "type": "vcs",
             "url": "https://gitlab.com/greensight/ibt-store-lib"
         },
         {
@@ -61,7 +57,6 @@
         "greensight/ibt-cm-lib": "dev-master",
         "greensight/ibt-cms-lib": "dev-master",
         "greensight/ibt-common-lib": "dev-master",
-        "greensight/ibt-file-lib": "dev-master",
         "greensight/ibt-logistics-lib": "dev-master",
         "greensight/ibt-marketing-lib": "dev-master",
         "greensight/ibt-merchant-management-lib": "dev-master",
