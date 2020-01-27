@@ -177,7 +177,6 @@ return [
         \MerchantManagement\MerchantLibServiceProvider::class,
         \Greensight\Store\StoreLibServiceProvider::class,
         \Greensight\Marketing\MarketingLibServiceProvider::class,
-        \Greensight\Filestorage\FileLibServiceProvider::class,
         \Greensight\Oms\OmsLibServiceProvider::class,
         \Greensight\Customer\CustomerLibServiceProvider::class,
         \Greensight\Logistics\LogisticsLibServiceProvider::class,
