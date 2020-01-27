@@ -14,7 +14,7 @@
             <tbody>
                 <tr v-for="(delivery, key) in deliveries">
                     <td>
-                        <a :href="getRoute('orders.flowDelivery', {id: delivery.order_id, deliveryId: delivery.id})">
+                        <a :href="getRoute('orders.delivery', {id: delivery.order_id, deliveryId: delivery.id})">
                             Доставка {{ delivery.number }}
                         </a>
                     </td>

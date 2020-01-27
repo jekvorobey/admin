@@ -69,7 +69,12 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
-                Route::get('delivery/{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.flowDelivery');
+
+                Route::prefix('delivery')->group(function () {
+                    Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
+                    Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');
+                    Route::put('editShipment', 'FlowDeliveryController@editShipment')->name('orders.delivery.editShipment');
+                });
             });
 
         });
