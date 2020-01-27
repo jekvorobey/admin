@@ -12,7 +12,7 @@
                             <label for="filter-channel">Канал</label>
                             <b-form-select v-model="form.channel_id" id="filter-channel">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="channel.id" v-for="channel in channels">
+                                <b-form-select-option :value="channel.id" v-for="channel in channels" :key="channel.id">
                                     {{ channel.name }}
                                 </b-form-select-option>
                             </b-form-select>
@@ -21,7 +21,7 @@
                             <label for="filter-status">Статус</label>
                             <b-form-select v-model="form.status_id" id="filter-status">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="status.id" v-for="status in availableStatuses">
+                                <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
                                         (
@@ -35,7 +35,7 @@
                             <label for="filter-type">Тип</label>
                             <b-form-select v-model="form.type_id" id="filter-type">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="type.id" v-for="type in availableTypes">
+                                <b-form-select-option :value="type.id" v-for="type in availableTypes" :key="type.id">
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
                                         (

@@ -26,7 +26,7 @@
                 <b-form-group>
                     <b-form-select v-model="theme.channel_id" class="mb-3">
                         <b-form-select-option :value="null">Общая тема</b-form-select-option>
-                        <b-form-select-option :value="channel.id" v-for="channel in channels">
+                        <b-form-select-option :value="channel.id" v-for="channel in channels" :key="channel.id">
                             {{ channel.name }}
                         </b-form-select-option>
                     </b-form-select>
