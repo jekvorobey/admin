@@ -104,7 +104,7 @@ Breadcrumbs::for('products.list', function (BreadcrumbsGenerator $trail) {
 
 //================= Контент =============================================================================================
 // Главная > Контент > Страницы с подборками товаров
-Breadcrumbs::for('productGroupPages.list', function (BreadcrumbsGenerator $trail) {
+Breadcrumbs::for('productGroups.list', function (BreadcrumbsGenerator $trail) {
     $trail->parent('home');
     $trail->push('Список страниц с подборками товаров');
 });

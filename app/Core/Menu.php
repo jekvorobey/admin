@@ -99,8 +99,8 @@ class Menu
                         'route' => '#',
                     ],
                     [
-                        'title' => 'Страницы с подборками товаров',
-                        'route' => route('productGroupPages.list'),
+                        'title' => 'Подборки товаров',
+                        'route' => route('productGroups.list'),
                     ],
                 ]
             ],
