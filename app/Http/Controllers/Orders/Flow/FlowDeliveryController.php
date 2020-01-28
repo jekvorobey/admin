@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Orders\Flow;
 
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
@@ -11,6 +12,7 @@ use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Exception;
@@ -61,31 +63,91 @@ class FlowDeliveryController extends Controller
     }
 
     /**
-     * @param int $orderId
      * @param int $deliveryId
      * @param Request $request
      * @param DeliveryService $deliveryService
      * @return JsonResponse
      */
-    public function editDelivery(int $orderId, int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
+    public function editDelivery(int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
     {
-        $result = 'ok';
+        $validatedData = $request->validate([
+            'id' => 'integer|required',
+            'order_id' => 'integer|required',
+            'status' => ['required', Rule::in(array_keys(DeliveryStatus::allStatuses()))],
+            'delivery_method' => 'integer|nullable',
+            'delivery_service' => 'integer|nullable',
 
-        return response()->json(['result' => $result]);
+            'xml_id' => 'string|nullable',
+            'status_xml_id' => 'string|nullable',
+            'tariff_id' => 'integer|nullable',
+            'point_id' => 'integer|nullable',
+            'number' => 'string|required',
+
+            'cost' => 'numeric|nullable',
+            'height' => 'numeric|nullable',
+            'length' => 'numeric|nullable',
+            'weight' => 'numeric|nullable',
+
+            'receiver_name' => 'string|nullable',
+            'receiver_phone' => 'string|nullable',
+            'receiver_email' => 'string|nullable',
+            'delivery_address' => 'string|nullable',
+
+            'delivery_at' => 'string|nullable',
+            'status_at' => 'string|nullable',
+            'status_xml_id_at' => 'string|nullable',
+        ]);
+
+        $deliveryDto = new DeliveryDto($validatedData);
+
+        $result = true;
+        try {
+            $deliveryService->updateDelivery($validatedData['id'], $deliveryDto);
+        } catch (Exception $e) {
+            $result = false;
+        }
+
+        return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
     /**
-     * @param int $orderId
      * @param int $deliveryId
      * @param Request $request
      * @param ShipmentService $shipmentService
      * @return JsonResponse
      */
-    public function editShipment(int $orderId, int $deliveryId, Request $request, ShipmentService $shipmentService): JsonResponse
+    public function editShipment(int $deliveryId, Request $request, ShipmentService $shipmentService): JsonResponse
     {
-        $result = 'ok';
+        $validatedData = $request->validate([
+            'id' => 'integer|required',
+            'delivery_id' => 'integer|nullable',
+            'merchant_id' => 'integer|required',
+            'delivery_service_zero_mile' => 'integer|nullable',
+            'store_id' => 'integer|nullable',
+            'status' => ['required', Rule::in(array_keys(ShipmentStatus::allStatuses()))],
+            'cargo_id' => 'integer|nullable',
 
-        return response()->json(['result' => $result]);
+            'number' => 'string|required',
+            'cost' => 'numeric|nullable',
+            'height' => 'numeric|nullable',
+            'length' => 'numeric|nullable',
+            'weight' => 'numeric|nullable',
+            'required_shipping_at' => 'string|nullable',
+            'assembly_problem_comment' => 'string|nullable',
+
+            'package_qty' => 'integer|nullable',
+        ]);
+
+        $shipmentDto = new ShipmentDto($validatedData);
+
+        $result = true;
+        try {
+           $shipmentService->updateShipment($validatedData['id'], $shipmentDto);
+        } catch (Exception $e) {
+            $result = false;
+        }
+
+        return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
 

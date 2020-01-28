@@ -2,20 +2,21 @@
     <layout-main back hide-title>
         <div class="align-items-stretch justify-content-start order-header mt-3">
             <div class="shadow p-3 height-100">
-                <div class="row">
+                <div class="row info">
                     <div class="col-sm-12">
                         <h4>Доставка {{ delivery.number }}</h4>
 
                         <div class="row align-items-center">
-                            <p class="col-10 text-secondary">Последнее изменение:</p>
+                            <p class="col-10 text-secondary mt-4 mb-0">Последнее изменение:</p>
                             <p class="col-2">{{ delivery.updated_at }}</p>
 
-                            <p class="col-10 text-secondary">Статус:</p>
+                            <p class="col-10 text-secondary mt-4 mb-0">Статус:</p>
                             <f-select class="col-2" v-model="delivery.status" :options="avaliableDeliveryStatuses" />
 
-                            <p class="col-10 text-secondary">Служба:</p>
+                            <p class="col-10 text-secondary mt-4 mb-0">Служба:</p>
                             <f-select class="col-2 float-right" v-model="delivery.delivery_service" :options="avaliableServices" />
                         </div>
+                        <button @click="saveDelivery" class="btn btn-sm btn-dark float-right mt-3">Сохранить</button>
                     </div>
                 </div>
             </div>
@@ -29,6 +30,7 @@
                     <th>Статус</th>
                     <th>Мерчант</th>
                     <th>Служба</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -53,6 +55,9 @@
                                 :options="avaliableServices"
                                 v-if="canEditShipmentDelivery(shipment)"
                             />
+                        </td>
+                        <td>
+                            <button @click="saveShipment(shipment)" class="btn btn-sm btn-dark float-right mt-3">Сохранить</button>
                         </td>
                     </tr>
                 </template>
@@ -123,7 +128,21 @@ export default {
             }
 
             return arr;
-        }
+        },
+        saveDelivery() {
+            Services.net().put(this.getRoute('orders.delivery.editDelivery', {id: this.delivery.order_id, deliveryId: this.delivery.id}), null, this.delivery).then(data => {
+                if (data.result === 'ok') {
+                }
+            }, () => {
+            });
+        },
+        saveShipment(shipment) {
+            Services.net().put(this.getRoute('orders.delivery.editShipment', {id: this.delivery.order_id, deliveryId: shipment.delivery_id}), null, shipment).then(data => {
+                    if (data.result === 'ok') {
+                    }
+                }, () => {
+            });
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
@@ -135,7 +154,6 @@ export default {
         },
     },
     mounted() {
-        console.log(this.shipmentNotEditableStatuses);
     },
 };
 </script>
@@ -150,5 +168,9 @@ export default {
 
     table td.service label {
         display: none;
+    }
+
+    .row.info .form-group {
+        margin: 0;
     }
 </style>
