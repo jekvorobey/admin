@@ -12,7 +12,7 @@
                     v-on="inputListeners"
                     :value="value"
                     class="form-control">
-                <option v-if="!without_none" :value="null">Не важно</option>
+                <option v-if="!without_none" :value="null">Не выбрано</option>
                 <option v-for="option in options" :value="option.value">{{ option.text }}</option>
             </select>
             <div v-if="$slots.append" class="input-group-append"><slot name="append"/></div>
