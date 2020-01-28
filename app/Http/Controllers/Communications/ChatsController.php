@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
+use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 
 class ChatsController extends Controller
 {
@@ -31,7 +33,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function filter(CommunicationService $communicationService, UserService $userService, FileService $fileService)
+    public function filter(CommunicationService $communicationService)
     {
         $listConstructor = $communicationService->chats();
         if (request('theme')) {
@@ -49,7 +51,49 @@ class ChatsController extends Controller
         if (!is_null(request('unread_admin'))) {
             $listConstructor->setUnreadAdmin((bool)request('unread_admin'));
         }
-        $chats = $listConstructor->load();
+
+        [$chats, $users, $files] = $this->loadChats($listConstructor);
+
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
+    }
+
+    public function unreadCount(CommunicationService $communicationService)
+    {
+        $count = $communicationService->unreadCount();
+        return response()->json([
+            'count' => $count
+        ]);
+    }
+
+    public function read(CommunicationService $communicationService)
+    {
+        $communicationService->readChat(request('id'), 0);
+        return response()->json([], 204);
+    }
+
+    public function send(CommunicationService $communicationService, RequestInitiator $user)
+    {
+        $chatIds = request('chat_ids');
+        $communicationService->createMessage($chatIds, $user->userId(), request('message'), request('files'));
+
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
+    }
+
+    protected function loadChats(ListConstructor $constructor)
+    {
+        $userService = resolve(UserService::class);
+        $fileService = resolve(FileService::class);
+
+        $chats = $constructor->load();
 
         $userIds = [];
         $fileIds = [];
@@ -88,24 +132,7 @@ class ChatsController extends Controller
         } else {
             $files = [];
         }
-        return response()->json([
-            'chats' => $chats,
-            'users' => $users,
-            'files' => $files,
-        ]);
-    }
 
-    public function unreadCount(CommunicationService $communicationService)
-    {
-        $count = $communicationService->unreadCount();
-        return response()->json([
-            'count' => $count
-        ]);
-    }
-
-    public function read(CommunicationService $communicationService)
-    {
-        $communicationService->readChat(request('id'), 0);
-        return response()->json([], 204);
+        return [$chats, $users, $files];
     }
 }

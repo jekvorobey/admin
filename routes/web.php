@@ -205,6 +205,7 @@ Route::middleware('auth')->group(function () {
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
+            Route::post('send', 'ChatsController@send')->name('communications.chats.send');
         });
     });
 

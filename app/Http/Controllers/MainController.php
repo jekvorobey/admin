@@ -86,6 +86,7 @@ class MainController extends Controller
 
         return response()->json([
             'id' => $id,
+            'name' => $fileDto->original_name,
             'url' => $fileDto->absoluteUrl(),
         ]);
     }

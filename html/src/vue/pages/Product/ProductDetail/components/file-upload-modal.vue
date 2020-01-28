@@ -5,7 +5,7 @@
                 Загрузка файла
             </div>
             <div slot="body">
-                <file-input v-if="!file" @uploaded="onUpload"></file-input>
+                <file-input v-if="!file" @uploaded="onUpload" class="mb-3"/>
                 <div v-else class="alert alert-success" role="alert">
                     Файл загружен
                 </div>

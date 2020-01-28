@@ -80,6 +80,9 @@
                             </div>
                         </td>
                     </tr>
+                    <tr v-if="showChat === chat.id">
+                        <td colspan="5"><communication-chat-message @send="({files, message}) => onSend(files, message, chat.id)"/></td>
+                    </tr>
                 </template>
             </tbody>
         </table>
@@ -89,9 +92,11 @@
 <script>
 import { mapGetters } from 'vuex';
 import Services from '../../../scripts/services/services.js';
+import CommunicationChatMessage from '../communication-chat-message/communication-chat-message.vue';
 
 export default {
     name: 'communication-chat-list',
+    components: {CommunicationChatMessage},
     props: {
         channels: Object,
         statuses: Object,
@@ -154,9 +159,26 @@ export default {
             this.showChat = this.showChat === chat.id ? null : chat.id;
             if (this.showChat && chat.unread_admin) {
                 chat.unread_admin = false;
-                Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
+                //Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
             }
-        }
+        },
+        onSend(files, message, chat_id) {
+            Services.net().post(this.getRoute('communications.chats.send'), {}, {
+                chat_ids: [chat_id],
+                files: files,
+                message: message,
+            }).then(data => {
+                this.users = Object.assign(this.users, data.users);
+                this.files = Object.assign(this.files, data.files);
+                data.chats.forEach(data_chat => {
+                    this.chats.forEach((chat, key) => {
+                        if (chat.id === data_chat.id) {
+                            this.$set(this.chats, key, data_chat);
+                        }
+                    })
+                });
+            });
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
