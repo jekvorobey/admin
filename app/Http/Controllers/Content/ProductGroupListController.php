@@ -5,22 +5,22 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
-use Cms\Dto\ProductGroupPageDto;
-use Cms\Services\ProductGroupPageService\ProductGroupPageService;
+use Cms\Dto\ProductGroupDto;
+use Cms\Services\ProductGroupService\ProductGroupService;
 
-class ProductGroupPageListController extends Controller
+class ProductGroupListController extends Controller
 {
     public function index(
         Request $request,
-        ProductGroupPageService $productGroupPageService
+        ProductGroupService $productGroupService
     ) {
         $this->title = 'Подборки';
-        $this->breadcrumbs = 'productGroupPages.list';
+        $this->breadcrumbs = 'productGroups.list';
         $query = $this->makeQuery($request);
 
-        return $this->render('Content/ProductGroupPageList', [
-            'iProductGroupPages' => $this->loadItems($query, $productGroupPageService),
-            'iPager' => $productGroupPageService->productGroupPagesCount($query),
+        return $this->render('Content/ProductGroupList', [
+            'iProductGroups' => $this->loadItems($query, $productGroupService),
+            'iPager' => $productGroupService->productGroupsCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
@@ -40,7 +40,7 @@ class ProductGroupPageListController extends Controller
         $page = $request->get('page', 1);
         $query->pageNumber($page, 10);
 
-        $query->addFields(ProductGroupPageDto::entity(), 'id', 'name');
+        $query->addFields(ProductGroupDto::entity(), 'id', 'name');
 
         $filter = $request->get('filter', []);
 
@@ -53,8 +53,8 @@ class ProductGroupPageListController extends Controller
 
     protected function loadItems(
         RestQuery $query,
-        ProductGroupPageService $productGroupPageService
+        ProductGroupService $productGroupService
     ) {
-        return $productGroupPageService->productGroupPages($query);
+        return $productGroupService->productGroups($query);
     }
 }

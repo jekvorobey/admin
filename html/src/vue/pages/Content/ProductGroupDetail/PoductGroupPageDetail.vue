@@ -2,10 +2,10 @@
     <layout-main back>
         <div class="d-flex flex-wrap align-items-stretch justify-content-start product-header">
             <div class="shadow flex-grow-3 mr-3 mt-3">
-                <h2>{{ productGroupPage.name }}</h2>
+                <h2>{{ productGroup.name }}</h2>
             </div>
             <div class="shadow flex-grow-2 mr-3 mt-3">
-                <img :src="productGroupPage.photo" :alt="productGroupPage.name">
+                <img :src="productGroup.photo" :alt="productGroup.name">
             </div>
         </div>
     </layout-main>
@@ -23,12 +23,12 @@ export default {
         VTabs,
     },
     props: {
-        iProductGroupPage: {},
+        iProductGroup: {},
         options: {}
     },
     data() {
         return {
-            productGroupPage: this.iProductGroupPage,
+            productGroup: this.iProductGroup,
         };
     },
 
@@ -36,7 +36,7 @@ export default {
         refresh() {
             Services.net().get(this.getRoute('products.detailData', {id: this.product.id}))
                 .then((data)=> {
-                    this.productGroupPage = data.productGroupPage;
+                    this.productGroup = data.productGroup;
                 });
         },
     },

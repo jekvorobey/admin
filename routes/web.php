@@ -127,9 +127,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
-        Route::get('product-group-pages', 'ProductGroupPageListController@index')->name('productGroupPages.list');
+        Route::get('product-group', 'ProductGroupListController@index')->name('productGroups.list');
         Route::prefix('{id}')->group(function () {
-            Route::get('', 'ProductGroupPageDetailController@index')->name('productGroupPage.detail');
+            Route::get('', 'ProductGroupDetailController@index')->name('productGroup.detail');
         });
     });
 
