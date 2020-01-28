@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Greensight\CommonMsa\Services\AuthService\AuthService;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
-use Greensight\Filestorage\Services\FileService\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -78,7 +78,7 @@ class MainController extends Controller
             throw new BadRequestHttpException();
         }
 
-        $id = $fileService->uploadFile('catalog', $file->getBasename(), $file->path());
+        $id = $fileService->uploadFile('catalog', $file->getClientOriginalName(), $file->path());
         $fileDto = $fileService->getFiles([$id])->first();
         if (!$fileDto) {
             throw new HttpException(500);

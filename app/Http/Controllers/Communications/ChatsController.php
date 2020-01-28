@@ -81,8 +81,8 @@ class ChatsController extends Controller
                 ->keyBy('id')
                 ->map(function (FileDto $file) {
                     return [
-                        'name' => $file->name,
-                        'absoluteUrl' => $file->absoluteUrl(),
+                        'name' => $file->original_name,
+                        'url' => $file->absoluteUrl(),
                     ];
                 });
         } else {

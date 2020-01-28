@@ -3,7 +3,7 @@
         <div class="card">
             <div class="card-body">
                 <b-form @submit.prevent="filterChats">
-                    <b-row>
+                    <b-row class="mb-2">
                         <b-col>
                             <label for="filter-theme">Тема</label>
                             <b-form-input id="filter-theme" v-model="form.theme" placeholder="Введите тему"/>
@@ -73,9 +73,11 @@
                     </tr>
                     <tr v-for="message in chat.messages" v-if="showChat === chat.id">
                         <td>{{ users[message.user_id].short_name }}</td>
-                        <td colspan="2">{{ message.message }}</td>
+                        <td colspan="3">{{ message.message }}</td>
                         <td>
-                            <div v-for="file in message.files">{{  }}</div>
+                            <div v-for="file in message.files">
+                                <a :href="files[file].url" target="_blank">{{ files[file].name }}</a>
+                            </div>
                         </td>
                     </tr>
                 </template>
@@ -145,6 +147,7 @@ export default {
             Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data)=> {
                 this.chats = data.chats;
                 this.users = data.users;
+                this.files = data.files;
             });
         },
         openChat(chat) {
