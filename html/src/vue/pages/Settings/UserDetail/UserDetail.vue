@@ -42,18 +42,18 @@
 
 <script>
 
-    import Services from "../../../../scripts/services/services";
+    import Services from '../../../../scripts/services/services';
 
-    import {mapGetters} from "vuex";
+    import { mapGetters } from 'vuex';
     import modalMixin from '../../../mixins/modal.js';
 
     import ShadowCard from '../../../components/shadow-card.vue';
     import ValuesTable from '../../../components/values-table.vue';
 
     import modal from '../../../components/controls/modal/modal.vue';
-    import VSelect from "../../../components/controls/VSelect/VSelect.vue";
+    import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
-    import UserEditModal from "../components/user-add-modal.vue";
+    import UserEditModal from '../components/user-add-modal.vue';
 
     export default {
         mixins: [modalMixin],
@@ -75,7 +75,7 @@
                 roles: this.iRoles,
                 userValuesNames: {
                     id: 'ID',
-                    email: 'E-mail',
+                    login: 'Логин',
                     front: 'Система',
                     email_verified: 'E-mail подтверждён',
                     created_at: 'Дата регистрации'
@@ -120,7 +120,7 @@
             userInfo() {
                 return {
                     id: this.user.id,
-                    email: this.user.email,
+                    login: this.user.login,
                     front: this.frontName(this.user.front),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
                     created_at: this.user.created_at,

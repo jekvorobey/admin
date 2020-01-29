@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Greensight\CommonMsa\Services\AuthService\AuthService;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Services\FileService\FileService;
-use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -36,37 +36,31 @@ class MainController extends Controller
     {
         return $this->render('Login', []);
     }
-    
+
     /**
      * Выполнить авторизацию
-     * @param  Request  $request
-     * @param  AuthService  $auth
-     * @param  TokenStore  $store
+     * @param Request $request
+     * @param RequestInitiator $user
      * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
      */
-    public function loginAjax(Request $request, AuthService $auth, TokenStore $store): JsonResponse
+    public function loginAjax(Request $request, RequestInitiator $user): JsonResponse
     {
         $email = $request->get('email');
         $password = $request->get('password');
-        $data = $auth->token(1, $email, $password);
-        if ($data) {
-            ['token' => $token, 'refresh' => $refresh] = $data;
-            $store->saveToken($token);
-            $store->saveRefreshToken($refresh);
-        }
+
+        $data = $user->loginByPassword($email, $password, Front::FRONT_ADMIN);
+
         return response()->json(['status' => $data ? 'ok' : 'fail']);
     }
-    
+
     /**
      * Выполнить выход
-     * @param  TokenStore  $store
+     * @param RequestInitiator $user
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logoutAjax(TokenStore $store): JsonResponse
+    public function logoutAjax(RequestInitiator $user): JsonResponse
     {
-        $store->saveToken('');
-        $store->saveRefreshToken('');
+        $user->logout();
         return response()->json([]);
     }
 
