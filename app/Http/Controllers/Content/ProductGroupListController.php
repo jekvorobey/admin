@@ -40,7 +40,9 @@ class ProductGroupListController extends Controller
         $page = $request->get('page', 1);
         $query->pageNumber($page, 10);
 
-        $query->addFields(ProductGroupDto::entity(), 'id', 'name');
+        $query->addFields('type', '*');
+        $query->addFields('productIds', '*');
+        $query->addFields('filters', '*');
 
         $filter = $request->get('filter', []);
 

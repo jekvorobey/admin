@@ -31,7 +31,7 @@
                     <td class="with-small">
                         <a :href="getRoute('productGroup.detail', {id: productGroup.id})">{{productGroup.name}}</a>
                     </td>
-                    <td>{{productGroup.product_group_type.name}}</td>
+                    <td>{{productGroup.type.name}}</td>
                 </tr>
             </tbody>
         </table>

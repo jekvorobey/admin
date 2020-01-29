@@ -127,9 +127,12 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
-        Route::get('product-group', 'ProductGroupListController@index')->name('productGroups.list');
-        Route::prefix('{id}')->group(function () {
-            Route::get('', 'ProductGroupDetailController@index')->name('productGroup.detail');
+        Route::prefix('product-group')->group(function () {
+            Route::get('/', 'ProductGroupListController@index')
+                ->name('productGroups.list');
+            Route::get('/{id}', 'ProductGroupDetailController@index')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.detail');
         });
     });
 

@@ -1,86 +1,164 @@
 <template>
     <layout-main back>
-        <div class="d-flex flex-wrap align-items-stretch justify-content-start product-header">
-            <div class="shadow flex-grow-3 mr-3 mt-3">
-                <h2>{{ productGroup.name }}</h2>
-            </div>
-            <div class="shadow flex-grow-2 mr-3 mt-3">
-                <img :src="productGroup.photo" :alt="productGroup.name">
-            </div>
-        </div>
+        <b-form @submit.prevent="update">
+            <b-form-group
+                    label="Наименование"
+                    label-for="group-name"
+            >
+                <b-form-input
+                        id="group-name"
+                        v-model="productGroup.name"
+                        type="text"
+                        required
+                        placeholder="Введите наименование"
+                />
+            </b-form-group>
+
+            <b-form-group
+                    label="Символьный код"
+                    label-for="group-code"
+            >
+                <b-form-input
+                        id="group-code"
+                        v-model="productGroup.code"
+                        type="text"
+                        required
+                        placeholder="Введите символьный код"
+                />
+            </b-form-group>
+
+            <b-form-group
+                    label="Активность"
+                    label-for="group-active"
+            >
+                <b-form-checkbox
+                        id="group-active"
+                        v-model="productGroup.active"
+                        :value="1"
+                        :unchecked-value="0"
+                        required
+                />
+            </b-form-group>
+
+            <b-form-group
+                    label="Наличие в меню"
+                    label-for="group-added-in-menu"
+            >
+                <b-form-checkbox
+                        id="group-added-in-menu"
+                        v-model="productGroup.added_in_menu"
+                        :value="1"
+                        :unchecked-value="0"
+                        required
+                />
+            </b-form-group>
+
+            <b-form-group
+                    label="Превью изображение"
+                    label-for="group-preview_photo_id"
+            >
+                <b-form-file
+                        v-model="productGroup.new_preview_photo"
+                ></b-form-file>
+            </b-form-group>
+
+            <b-form-group
+                    label="Тип"
+                    label-for="group-type"
+            >
+                <b-form-select
+                        v-model="productGroup.type_id"
+                        id="group-type"
+                >
+                    <b-form-select-option
+                            :value="type.id"
+                            v-for="type in productGroupTypes"
+                            :key="type.id"
+                    >
+                        {{ type.name }}
+                    </b-form-select-option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group
+                    label="Категория"
+                    label-for="group-categories"
+            >
+                <b-form-select
+                        v-model="productGroup.category"
+                        id="group-category"
+                >
+                    <b-form-select-option
+                            :value="category.id"
+                            v-for="category in categories"
+                            :key="category.id"
+                    >
+                        {{ category.name }}
+                    </b-form-select-option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-form-group
+                    label="Фильтры"
+                    label-for="group-filters"
+            >
+                <b-form-select
+                        v-model="productGroup.filters"
+                        id="group-type"
+                >
+                    <b-form-select-option
+                            :value="filter.id"
+                            v-for="filter in filters"
+                            :key="filter.id"
+                    >
+                        {{ filter.name }}
+                    </b-form-select-option>
+                </b-form-select>
+            </b-form-group>
+
+            <b-button type="submit" variant="dark">Обновить</b-button>
+        </b-form>
     </layout-main>
 </template>
 
 <script>
 
-import {mapGetters} from "vuex";
-import VTabs from '../../../components/tabs/tabs.vue';
+    import {mapGetters} from "vuex";
+    import Services from "../../../../scripts/services/services";
 
-import Services from "../../../../scripts/services/services";
-
-export default {
-    components: {
-        VTabs,
-    },
-    props: {
-        iProductGroup: {},
-        options: {}
-    },
-    data() {
-        return {
-            productGroup: this.iProductGroup,
-        };
-    },
-
-    methods: {
-        refresh() {
-            Services.net().get(this.getRoute('products.detailData', {id: this.product.id}))
-                .then((data)=> {
-                    this.productGroup = data.productGroup;
-                });
+    export default {
+        components: {},
+        props: {
+            iProductGroup: {},
+            iProductGroupTypes: {},
+            iCategories: {},
+            iFilters: {},
+            options: {}
         },
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
-    },
-};
+        data() {
+            return {
+                productGroup: this.iProductGroup,
+                productGroupTypes: this.iProductGroupTypes,
+                categories: this.iCategories,
+                filters: this.iFilters,
+            };
+        },
+
+        methods: {
+            refresh() {
+                Services.net().get(this.getRoute('productGroups.detailData', {id: this.productGroup.id}))
+                    .then((data) => {
+                        this.productGroup = data.productGroup;
+                    });
+            },
+            update() {
+
+            }
+        },
+        computed: {
+            ...mapGetters(['getRoute']),
+        },
+    };
 </script>
 <style scoped>
-    .product-header {
-        min-height: 200px;
-    }
-    .product-header > div {
-        padding: 16px;
-    }
-    .product-header img {
-        max-height: calc( 200px - 16px * 2 );
-    }
-    .product-header p {
-        margin: 0;
-        padding: 0;
-    }
-    .measure {
-        width: 30px;
-        margin-left: 10px;
-    }
-    .segment {
-        padding: 5px;
-        border-radius: 50%;
-        float: right;
-        color: white;
-        font-weight: bold;
-        line-height: 20px;
-        width: 32px;
-        height: 32px;
-        text-align: center;
-    }
-    .segment-a {
-        background: #ffd700;
-    }
-    .segment-b {
-        background: #c0c0c0;
-    }
-    .segment-c {
-        background: #cd7f32;
-    }
 </style>
