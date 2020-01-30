@@ -41,7 +41,6 @@ class MerchantDetailController extends Controller
         }
 
         $isRegistration = $request->routeIs('merchant.registrationDetail');
-        $this->breadcrumbs = $isRegistration ? ['merchant.registrationList.detail', $merchant->id] : '';
         $this->title = $isRegistration ? "Заявка {$merchant->id}" : '';
 
         /** @var Collection|OperatorDto $operators */

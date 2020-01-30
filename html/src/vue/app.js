@@ -10,10 +10,10 @@ import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 import 'lazysizes/plugins/respimg/ls.respimg';
 import store from './store/store';
 import Services from '../scripts/services/services';
-import BootstrapVue from 'bootstrap-vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import BootstrapVue from 'bootstrap-vue';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import './fontawesome';
-import {capitalize, formatSize, lowercase, truncate, integer} from '../scripts/filters';
+import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
 
 Vue.use(BootstrapVue);
 
@@ -65,12 +65,6 @@ Vue.mixin({
         },
     },
     computed: {
-        breadcrumbsItems() {
-            return this.$store.state.layout.breadcrumbs.map(item => ({
-                text: item.title,
-                href: item.url,
-            }));
-        },
         staticText() {
             return this.$store.state.layout.staticBlock;
         },

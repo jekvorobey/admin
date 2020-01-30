@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Core\Menu;
-use DaveJamesMiller\Breadcrumbs\Facades\Breadcrumbs;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -17,16 +16,13 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class Controller extends BaseController
 {
     protected $title = '';
-    protected $breadcrumbs = '';
 
     public function render($componentName, $props = [])
     {
-        $breadcrumbs = $this->breadcrumbs ? (array)$this->breadcrumbs : false;
         return View::component(
             $componentName,
             $props,
             [
-                'breadcrumbs' => $breadcrumbs ? Breadcrumbs::generate(...$breadcrumbs) : [],
                 'menu' => Menu::getMenuItems(),
                 'isGuest' => resolve(TokenStore::class)->token() == null
             ],

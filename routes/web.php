@@ -25,22 +25,21 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('claims')->namespace('Claim')->group(function () {
-        Route::prefix('photo')->group(function () {
-            Route::get('', 'PhotoClaimController@index')->name('photoClaims.list');
-            Route::get('page', 'PhotoClaimController@page')->name('photoClaims.pagination');
+        Route::prefix('product-check')->group(function () {
+            Route::get('', 'ProductCheckClaimController@index')->name('productCheckClaims.list');
+            Route::get('page', 'ProductCheckClaimController@page')->name('productCheckClaims.pagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'PhotoClaimController@detail')->name('photoClaims.detail');
-                Route::post('', 'PhotoClaimController@update')->name('photoClaims.update');
+                Route::get('', 'ProductCheckClaimController@detail')->name('productCheckClaims.detail');
+                Route::post('', 'ProductCheckClaimController@update')->name('productCheckClaims.update');
             });
         });
 
-        Route::prefix('delivery')->group(function () {
-            Route::get('', 'DeliveryClaimController@index')->name('deliveryClaims.list');
-            Route::post('', 'DeliveryClaimController@create')->name('deliveryClaims.create');
-            Route::get('page', 'DeliveryClaimController@page')->name('deliveryClaims.pagination');
+        Route::prefix('content')->group(function () {
+            Route::post('', 'ContentClaimController@create')->name('contentClaims.create');
+            Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
+            Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'DeliveryClaimController@detail')->name('deliveryClaims.detail');
-                Route::post('', 'DeliveryClaimController@update')->name('deliveryClaims.update');
+                Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
             });
         });
     });
