@@ -62,7 +62,7 @@ class RegistrationRequestController extends Controller
         $merchantIds = $merchants->pluck('id')->all();
         $operatorsQuery = (new RestQuery())
             ->setFilter('merchant_id', $merchantIds)
-            ->addFields(OperatorDto::entity(), 'id', 'name', 'merchant_id');
+            ->addFields(OperatorDto::entity(), 'id', 'merchant_id');
         $operators = $operatorService
             ->operators($operatorsQuery)
             ->groupBy('merchant_id')
