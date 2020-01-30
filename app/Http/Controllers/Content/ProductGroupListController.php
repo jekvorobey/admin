@@ -15,7 +15,7 @@ class ProductGroupListController extends Controller
         ProductGroupService $productGroupService
     ) {
         $this->title = 'Подборки';
-        $this->breadcrumbs = 'productGroups.list';
+        $this->breadcrumbs = 'productGroup.list';
         $query = $this->makeQuery($request);
 
         return $this->render('Content/ProductGroupList', [
@@ -41,7 +41,7 @@ class ProductGroupListController extends Controller
         $query->pageNumber($page, 10);
 
         $query->addFields('type', '*');
-        $query->addFields('productIds', '*');
+        $query->addFields('products', '*');
         $query->addFields('filters', '*');
 
         $filter = $request->get('filter', []);
