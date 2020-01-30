@@ -9,7 +9,7 @@
             <tr>
                 <th></th>
                 <th>№</th>
-                <th>E-mail</th>
+                <th>Login</th>
                 <th>Система</th>
                 <th>E-mail подтверждён</th>
             </tr>
@@ -21,7 +21,7 @@
                            @change="e => selectItem(e, user.id)">
                 </td>
                 <td>{{ user.id }}</td>
-                <td><a :href="getRoute('settings.userDetail', {id: user.id})">{{ user.email }}</a></td>
+                <td><a :href="getRoute('settings.userDetail', {id: user.id})">{{ user.login }}</a></td>
                 <td>{{ frontName(user.front) }}</td>
                 <td><span class="badge" :class="{'badge-success': user.email_verified, 'badge-danger': !user.email_verified}">{{ user.email_verified ? 'Да' : 'Нет' }}</span></td>
             </tr>
@@ -44,12 +44,12 @@
 
 <script>
 
-    import Services from "../../../../scripts/services/services";
-    import withQuery from "with-query";
+    import Services from '../../../../scripts/services/services';
+    import withQuery from 'with-query';
 
     import UserAddModal from '../components/user-add-modal.vue';
 
-    import {mapGetters} from "vuex";
+    import { mapGetters } from 'vuex';
     import modalMixin from '../../../mixins/modal.js';
 
     export default {

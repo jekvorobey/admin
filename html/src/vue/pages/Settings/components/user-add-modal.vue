@@ -5,8 +5,8 @@
                 {{source ? 'Редактирование пользователя' : 'Добавление пользователя'}}
             </div>
             <div slot="body">
-                <v-input v-model="$v.form.email.$model" :error="errorEmail"  autocomplete="no">
-                    E-mail
+                <v-input v-model="$v.form.login.$model" :error="errorEmail"  autocomplete="no">
+                    Логин
                 </v-input>
                 <v-select v-model="$v.form.front.$model" :options="frontOptions" :error="errorFront">
                     Система
@@ -32,10 +32,10 @@
     import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../mixins/modal.js';
-    import {validationMixin} from 'vuelidate';
-    import {required, email, minLength, sameAs} from 'vuelidate/lib/validators'
-    import Services from "../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import { validationMixin } from 'vuelidate';
+    import { minLength, required } from 'vuelidate/lib/validators';
+    import Services from '../../../../scripts/services/services';
+    import { mapGetters } from 'vuex';
 
     export default {
         mixins: [modalMixin, validationMixin],
@@ -51,7 +51,7 @@
         data() {
             return {
                 form: {
-                    email: '',
+                    login: '',
                     front: '',
                     password: '',
                     repeat: ''
@@ -61,13 +61,13 @@
         validations() {
             let validations = {
                 form: {
-                    email: {required, email},
+                    login: {required},
                     front: {required},
                     password: {},
                     repeat: {},
                 }
             };
-            if (!this.source.id) {
+            if (!this.source) {
                 validations.form.password[required] = required;
                 validations.form.password[minLength] = minLength(8);
             }
@@ -81,7 +81,7 @@
                     return;
                 }
                 let formData = {
-                    email: this.form.email,
+                    login: this.form.login,
                     front: this.form.front,
                 };
                 if (this.source) {
@@ -91,7 +91,7 @@
                     formData.password = this.form.password;
                 }
                 Services.net().post(this.getRoute('settings.createUser'), {}, formData).then(() => {
-                    this.$emit('onSave', {email: this.form.email, front: this.form.front});
+                    this.$emit('onSave', {login: this.form.login, front: this.form.front});
                 });
             },
         },
@@ -102,9 +102,8 @@
             },
             // =========================================================================================================
             errorEmail() {
-                if (this.$v.form.email.$dirty) {
-                    if (!this.$v.form.email.required) return 'Обязательное поле!';
-                    if (!this.$v.form.email.email) return 'Неверный формат email!';
+                if (this.$v.form.login.$dirty) {
+                    if (!this.$v.form.login.required) return 'Обязательное поле!';
                 }
             },
             errorFront() {
@@ -127,7 +126,7 @@
         watch: {
             '$store.state.modal.currentModal': function(newValue) {
                 if (newValue === 'userAdd' && this.source) {
-                    this.form.email = this.source.email;
+                    this.form.login = this.source.login;
                     this.form.front = this.source.front;
                 }
             }
