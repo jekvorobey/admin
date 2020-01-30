@@ -15,6 +15,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 
@@ -24,17 +26,6 @@ use MerchantManagement\Services\MerchantService\MerchantService;
  */
 class CargoListController extends Controller
 {
-    /** @var array */
-    protected const FILTER_FIELDS = [
-        'id',
-        'merchant_id',
-        'status',
-        'delivery_service',
-        'store_id',
-        'shipment_number',
-        'created_at',
-    ];
-    
     /**
      * @param  Request  $request
      * @param  CargoService  $cargoService
@@ -92,19 +83,24 @@ class CargoListController extends Controller
      */
     protected function getFilter(): array
     {
-        return array_filter(
-            request()->get('filter', [
+        return Validator::make(request('filter') ??
+            [
                 'status' => [
                     CargoStatus::STATUS_CREATED,
                     CargoStatus::STATUS_REQUEST_SEND,
                     CargoStatus::STATUS_SHIPPING_PROBLEM,
-                ]
-            ]),
-            function ($value, $filter) {
-                return in_array($filter, static::FILTER_FIELDS);
-            },
-            ARRAY_FILTER_USE_BOTH
-        );
+                ],
+            ],
+            [
+                'id' => 'integer|someone',
+                'merchant_id' => 'array|someone',
+                'status' => Rule::in(array_keys(CargoStatus::allStatuses())),
+                'delivery_service' => Rule::in(array_keys(DeliveryService::allServices())),
+                'store_id' => 'array|someone',
+                'shipment_number' => 'integer|someone',
+                'created_at' => 'array|someone',
+            ]
+        )->attributes();
     }
     
     /**

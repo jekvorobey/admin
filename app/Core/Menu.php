@@ -72,6 +72,13 @@ class Menu
                 ],
             ],
             [
+                'title' => 'Заявки',
+                'items' => [
+                    ['title' => 'Заявки на проверку товаров', 'route' => route('productCheckClaims.list')],
+                    ['title' => 'Заявки на производство контента', 'route' => route('contentClaims.list')],
+                ]
+            ],
+            [
                 'title' => 'Контент',
                 'items' => [
                     [

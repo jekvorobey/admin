@@ -1,0 +1,314 @@
+<template>
+    <layout-main>
+        <div class="card">
+            <div class="card-header">
+                Фильтр
+                <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
+                    <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <f-input v-model="filter.id" class="col-2">
+                        ID
+                    </f-input>
+                    <f-multi-select v-model="filter.status" :options="statusOptions" class="col">
+                        Статус заявки
+                    </f-multi-select>
+                    <f-select v-model="filter.merchantId" :options="merchantOptions" class="col">
+                        Мерчант
+                    </f-select>
+                </div>
+
+                <transition name="slide">
+                    <div v-if="opened" class="additional-filter pt-3 mt-3">
+                        <div class="row">
+                            <f-date v-model="filter.created_at" class="col" range confirm>
+                                Дата создания
+                            </f-date>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+            <div class="card-footer">
+                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
+                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
+            </div>
+        </div>
+
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
+                <th>
+                    <button class="btn btn-light float-right" @click="showChangeColumns">
+                        <fa-icon icon="cog"></fa-icon>
+                    </button>
+                    <modal-columns :i-columns="editedShowColumns"></modal-columns>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="claim in claims">
+                <td v-for="column in columns" v-if="column.isShown" v-html="column.value(claim)"></td>
+            </tr>
+            <tr v-if="!claims.length">
+                <td :colspan="columns.length + 1">Заявок нет</td>
+            </tr>
+            </tbody>
+        </table>
+        <b-pagination
+                v-if="pager.pages > 1"
+                v-model="currentPage"
+                :total-rows="pager.total"
+                :per-page="pager.pageSize"
+                @change="changePage"
+                :hide-goto-end-buttons="pager.pages < 10"
+                class="float-right"
+        ></b-pagination>
+    </layout-main>
+</template>
+
+<script>
+
+    import Services from '../../../../../scripts/services/services';
+    import withQuery from 'with-query';
+    import qs from 'qs';
+
+    import {mapGetters} from 'vuex';
+
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import FSelect from '../../../../components/filter/f-select.vue';
+    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
+    import Helpers from '../../../../../scripts/helpers';
+
+    import modalMixin from '../../../../mixins/modal';
+
+    const cleanHiddenFilter = {
+    created_at: [],
+};
+
+const cleanFilter = Object.assign({
+    id: '',
+    merchantId: '',
+    status: [],
+}, cleanHiddenFilter);
+
+const serverKeys = [
+    'id',
+    'merchantId',
+    'status',
+    'created_at',
+];
+
+export default {
+    components: {
+        FInput,
+        FDate,
+        FSelect,
+        FMultiSelect,
+        ModalColumns,
+    },
+    mixins: [modalMixin],
+    props: {
+        iClaims: Array,
+        statuses: {},
+        merchants: {},
+        iPager: {},
+        iCurrentPage: Number,
+        iFilter: {},
+        iSort: {},
+    },
+    data() {
+        let self = this;
+        let filter = Object.assign({}, cleanFilter, this.iFilter);
+        filter.merchantId = parseInt(filter.merchantId);
+        filter.status = filter.status.map(value => parseInt(value));
+
+        return {
+            opened: false,
+            currentPage: this.iCurrentPage,
+            claims: this.iClaims,
+            filter,
+            sort: this.iSort,
+            pager: this.iPager,
+            options: [],
+            appliedFilter: {},
+            columns: [
+                {
+                    name: 'ID',
+                    code: 'id',
+                    value: function(claim) {
+                        return '<a href="' + self.getRoute('productCheckClaims.detail', {id: claim.id}) + '">' +
+                            claim.id + '</a>';
+                    },
+                    isShown: true,
+                    isAlwaysShown: true,
+                },
+                {
+                    name: 'Мерчант',
+                    code: 'merchant',
+                    value: function(claim) {
+                        return claim.payload.merchant.display_name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Автор',
+                    code: 'author',
+                    value: function(claim) {
+                        return claim.userName;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Статус',
+                    code: 'status',
+                    value: function(claim) {
+                        return '<span class="badge ' + self.statusClass(claim.status) + '">' +
+                            self.statusName(claim.status) + '</span>';
+                    },
+                    isShown: true,
+                    isAlwaysShown: true,
+                },
+                {
+                    name: 'Кол-во товаров',
+                    code: 'products_qty',
+                    value: function(claim) {
+                        return claim.payload.productIds ? claim.payload.productIds.length : 0;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Дата создания',
+                    code: 'date',
+                    value: function(claim) {
+                        return claim.created_at;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+            ],
+        };
+    },
+    methods: {
+        statusName(statusId) {
+            return this.statuses[statusId] || 'N/A';
+        },
+        changePage(newPage) {
+            history.pushState(null, null, location.origin + location.pathname + withQuery('', {
+                page: newPage,
+                filter: this.appliedFilter,
+                sort: this.sort
+            }));
+        },
+        loadPage() {
+            Services.net().get(this.route('productCheckClaims.pagination'), {
+                page: this.currentPage,
+                filter: this.appliedFilter,
+                sort: this.sort,
+            }).then(data => {
+                this.claims = data.items;
+                if (data.pager) {
+                    this.pager = data.pager
+                }
+            });
+        },
+        applyFilter() {
+            let tmpFilter = {};
+            for (let [key, value] of Object.entries(this.filter)) {
+                if (value && serverKeys.indexOf(key) !== -1) {
+                    tmpFilter[key] = value;
+                }
+            }
+            this.appliedFilter = tmpFilter;
+            this.currentPage = 1;
+            this.changePage(1);
+            this.loadPage();
+        },
+        clearFilter() {
+            for (let entry of Object.entries(cleanFilter)) {
+                this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+            }
+            this.applyFilter();
+        },
+        toggleHiddenFilter() {
+            this.opened = !this.opened;
+            if (this.opened === false) {
+                for (let entry of Object.entries(cleanHiddenFilter)) {
+                    this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+                }
+                this.applyFilter();
+            }
+        },
+        isHiddenFilterDefaultOpen() {
+            for (let entry of Object.entries(cleanHiddenFilter)) {
+                if (!Helpers.isEqual(entry[1], this.filter[entry[0]]) && entry[1] !== this.filter[entry[0]]) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        statusClass(statusId) {
+            switch (statusId) {
+                case 1: return 'badge-info';
+                case 2: return 'badge-secondary';
+                case 3: return 'badge-primary';
+                case 4: return 'badge-success';
+                case 5: return 'badge-warning';
+                default: return 'badge-light';
+            }
+        },
+        showChangeColumns() {
+            this.openModal('list_columns');
+        },
+    },
+    computed: {
+        ...mapGetters(['getRoute']),
+        statusOptions() {
+            let statusOptions = [];
+            for (let [key, value] of Object.entries(this.statuses)) {
+                statusOptions.push({
+                    value: parseInt(key),
+                    text: value
+                });
+            }
+
+            return statusOptions;
+        },
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+        },
+        editedShowColumns() {
+            return this.columns.filter(function(column) {
+                return !column.isAlwaysShown;
+            })
+        }
+    },
+    created() {
+        window.onpopstate = () => {
+            let query = qs.parse(document.location.search.substr(1));
+            if (query.page) {
+                this.currentPage = query.page;
+            }
+        };
+        this.opened = this.isHiddenFilterDefaultOpen();
+    },
+    watch: {
+        currentPage() {
+            this.loadPage();
+        }
+    }
+};
+</script>
+<style scoped>
+    .additional-filter {
+        border-top: 1px solid #DFDFDF;
+    }
+</style>
