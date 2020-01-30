@@ -19,7 +19,6 @@ class UsersController extends Controller
     public function index(Request $request, UserService $userService)
     {
         $this->title = 'Список пользователей';
-        $this->breadcrumbs = 'settings.userList';
 
         $query = $this->makeQuery($request);
 
@@ -57,7 +56,6 @@ class UsersController extends Controller
         }
 
         $this->title = "Пользователь № {$user->id}";
-        $this->breadcrumbs = ['settings.userDetail', $user->id];
 
         $userRoles = $userService->userRoles($id);
 

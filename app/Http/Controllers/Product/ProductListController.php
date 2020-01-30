@@ -24,7 +24,6 @@ class ProductListController extends Controller
     )
     {
         $this->title = 'Товары';
-        $this->breadcrumbs = 'products.list';
         $query = $this->makeQuery($request);
         return $this->render('Product/ProductList', [
             'iProducts' => $this->loadItems($query, $productService),

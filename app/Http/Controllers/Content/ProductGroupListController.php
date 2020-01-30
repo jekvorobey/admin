@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
+use Cms\Services\ProductGroupService\ProductGroupService;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
-use Cms\Dto\ProductGroupDto;
-use Cms\Services\ProductGroupService\ProductGroupService;
 
 class ProductGroupListController extends Controller
 {
@@ -15,7 +14,6 @@ class ProductGroupListController extends Controller
         ProductGroupService $productGroupService
     ) {
         $this->title = 'Подборки';
-        $this->breadcrumbs = 'productGroups.list';
         $query = $this->makeQuery($request);
 
         return $this->render('Content/ProductGroupList', [

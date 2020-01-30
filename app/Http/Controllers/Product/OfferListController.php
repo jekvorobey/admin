@@ -12,7 +12,6 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
 use MerchantManagement\Services\MerchantService\MerchantService;
-use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\OfferService\OfferService;
@@ -28,7 +27,6 @@ class OfferListController extends Controller
     )
     {
         $this->title = 'Предложения мерчантов';
-        $this->breadcrumbs = 'offers.list';
 
         $query = $this->makeQuery($request);
 

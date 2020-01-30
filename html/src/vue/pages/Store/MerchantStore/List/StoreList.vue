@@ -27,15 +27,6 @@
         </div>
         <div>
             <a :href="getRoute('merchantStore.add')" class="btn btn-success mt-3">Добавить склад</a>
-            <b-pagination
-                v-if="pager.pages !== 1"
-                v-model="currentPage"
-                :total-rows="pager.total"
-                :per-page="pager.pageSize"
-                @change="changePage"
-                :hide-goto-end-buttons="pager.pages < 10"
-                class="mt-3 float-right"
-            ></b-pagination>
         </div>
         <table class="table table-condensed mt-3">
             <thead>
@@ -65,7 +56,7 @@
             </tbody>
         </table>
         <b-pagination
-                v-if="pager.pages != 1"
+                v-if="pager.pages > 1"
                 v-model="currentPage"
                 :total-rows="pager.total"
                 :per-page="pager.pageSize"
@@ -76,16 +67,16 @@
 </template>
 
 <script>
-import Service from "../../../../../scripts/services/services";
-import withQuery from 'with-query';
-import qs from 'qs';
-import {mapGetters} from "vuex";
-import FInput from '../../../../components/filter/f-input.vue';
-import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-import FDate from '../../../../components/filter/f-date.vue';
+    import Service from '../../../../../scripts/services/services';
+    import withQuery from 'with-query';
+    import qs from 'qs';
+    import {mapGetters} from 'vuex';
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
 
 
-const cleanFilter = {
+    const cleanFilter = {
     id: '',
     merchant_id: [],
     name: '',

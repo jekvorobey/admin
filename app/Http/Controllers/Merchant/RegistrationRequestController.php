@@ -21,7 +21,6 @@ class RegistrationRequestController extends Controller
     )
     {
         $this->title = 'Заявки на регистрацию';
-        $this->breadcrumbs = 'merchant.registrationList';
 
         $query = $this->makeQuery($request);
 

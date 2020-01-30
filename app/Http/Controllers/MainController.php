@@ -23,8 +23,6 @@ class MainController extends Controller
      */
     public function home()
     {
-        $this->breadcrumbs = 'home';
-        
         return $this->render('Index', []);
     }
     
