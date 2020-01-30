@@ -85,36 +85,25 @@
                     label-for="group-categories"
             >
                 <b-form-select
-                        v-model="productGroup.category"
+                        v-model="productGroup.category_code"
                         id="group-category"
                 >
                     <b-form-select-option
-                            :value="category.id"
+                            :value="category.code"
                             v-for="category in categories"
-                            :key="category.id"
+                            :key="category.code"
                     >
                         {{ category.name }}
                     </b-form-select-option>
                 </b-form-select>
             </b-form-group>
 
-            <b-form-group
-                    label="Фильтры"
-                    label-for="group-filters"
+            <select-filters
+                    :i-selected-filters="productGroup.filters"
+                    :i-selected-category="productGroup.category_code"
+                    @update="(data) => selectedFilters = data"
             >
-                <b-form-select
-                        v-model="productGroup.filters"
-                        id="group-type"
-                >
-                    <b-form-select-option
-                            :value="filter.id"
-                            v-for="filter in filters"
-                            :key="filter.id"
-                    >
-                        {{ filter.name }}
-                    </b-form-select-option>
-                </b-form-select>
-            </b-form-group>
+            </select-filters>
 
             <b-button type="submit" variant="dark">Обновить</b-button>
         </b-form>
@@ -125,14 +114,16 @@
 
     import {mapGetters} from "vuex";
     import Services from "../../../../scripts/services/services";
+    import SelectFilters from './components/select-filters.vue';
 
     export default {
-        components: {},
+        components: {
+            SelectFilters
+        },
         props: {
             iProductGroup: {},
             iProductGroupTypes: {},
             iCategories: {},
-            iFilters: {},
             options: {}
         },
         data() {
@@ -140,20 +131,29 @@
                 productGroup: this.iProductGroup,
                 productGroupTypes: this.iProductGroupTypes,
                 categories: this.iCategories,
-                filters: this.iFilters,
+                selectedFilters: [],
+                selectedProducts: [],
             };
         },
 
         methods: {
             refresh() {
-                Services.net().get(this.getRoute('productGroups.detailData', {id: this.productGroup.id}))
+                Services.net().get(this.getRoute('productGroup.detail', {id: this.productGroup.id}))
                     .then((data) => {
                         this.productGroup = data.productGroup;
                     });
             },
             update() {
+                let model = this.productGroup;
+                model.filters = this.selectedFilters;
+                model.products = this.selectedProducts;
 
-            }
+                Services.net()
+                    .put(this.getRoute('productGroup.update', {id: this.productGroup.id,}), {}, model)
+                    .then((data) => {
+                        console.log(data);
+                    });
+            },
         },
         computed: {
             ...mapGetters(['getRoute']),

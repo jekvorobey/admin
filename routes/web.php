@@ -128,10 +128,16 @@ Route::middleware('auth')->group(function () {
     Route::prefix('content')->namespace('Content')->group(function () {
         Route::prefix('product-group')->group(function () {
             Route::get('/', 'ProductGroupListController@index')
-                ->name('productGroups.list');
+                ->name('productGroup.list');
             Route::get('/{id}', 'ProductGroupDetailController@index')
                 ->where(['id' => '[0-9]+'])
                 ->name('productGroup.detail');
+            Route::put('/{id}', 'ProductGroupDetailController@update')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.update');
+
+            Route::get('/filter', 'ProductGroupDetailController@getFilters')
+                ->name('productGroup.getFilters');
         });
     });
 

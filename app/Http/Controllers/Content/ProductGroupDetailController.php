@@ -7,9 +7,9 @@ use Cms\Dto\ProductGroupDto;
 use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
 use Cms\Services\ProductGroupTypeService\ProductGroupTypeService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Dto\CategoryDto;
-use Pim\Dto\Product\ProductDto;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,21 +28,53 @@ class ProductGroupDetailController extends Controller
         $id,
         ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
-        CategoryService $categoryService,
-        ProductService $productService
+        CategoryService $categoryService
     ) {
         $productGroup = $this->getProductGroup($id, $productGroupService);
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
-        $filters = $this->getFilters($productService);
 
         return $this->render('Content/ProductGroupDetail', [
             'iProductGroup' => $productGroup,
             'iProductGroupTypes' => $productGroupTypes,
             'iCategories' => $categories,
-            'iFilters' => $filters,
             'options' => [],
         ]);
+    }
+
+    public function getFilters(
+        Request $request,
+        ProductService $productService
+    ) {
+        $categoryCode = $request->get('category', '');
+        $filters = $productService->filters($categoryCode, true);
+
+        if (!$filters->count()) {
+            throw new NotFoundHttpException('FilterItem not found');
+        }
+
+        return response()->json($filters);
+    }
+
+    public function update($id, Request $request, ProductGroupService $productGroupService)
+    {
+        $validatedData = $request->validate([
+            'id' => 'integer|required',
+            'name' => 'string|required',
+            'code' => 'string|required',
+            'active' => 'boolean|required',
+            'added_in_menu' => 'boolean|required',
+            'type_id' => 'integer|required',
+            'category_code' => 'string|nullable',
+            'filters' => 'array',
+            'products' => 'array',
+        ]);
+
+        $validatedData['id'] = $id;
+
+        $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
+
+        return response()->json([], 204);
     }
 
     protected function getProductGroupTypes(ProductGroupTypeService $productGroupTypeService)
@@ -55,18 +87,6 @@ class ProductGroupDetailController extends Controller
         }
 
         return $productGroupTypes;
-    }
-
-    protected function getFilters(ProductService $productService)
-    {
-        /** @var Collection|ProductDto[] $filters */
-        $filters = $productService->filters('', true);
-
-        if (!$filters->count()) {
-            throw new NotFoundHttpException('Product not found');
-        }
-
-        return $filters;
     }
 
     protected function getCategories(CategoryService $categoryService)
@@ -87,7 +107,7 @@ class ProductGroupDetailController extends Controller
         $productGroups = $productGroupService
             ->newQuery()
             ->addFields('type', '*')
-            ->addFields('productIds', '*')
+            ->addFields('products', '*')
             ->addFields('filters', '*')
             ->setFilter('id', $id)
             ->productGroups($productGroupService->newQuery());

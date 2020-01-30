@@ -39,7 +39,7 @@ class ProductGroupListController extends Controller
         $query->pageNumber($page, 10);
 
         $query->addFields('type', '*');
-        $query->addFields('productIds', '*');
+        $query->addFields('products', '*');
         $query->addFields('filters', '*');
 
         $filter = $request->get('filter', []);
