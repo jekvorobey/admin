@@ -77,6 +77,7 @@
                 <tr v-for="cargo in cargos">
                     <td><input type="checkbox" value="true" class="cargo-select" :value="cargo.id"></td>
                     <td v-for="column in columns" v-if="column.isShown" v-html="column.value(cargo)"></td>
+                    <td></td>
                 </tr>
                 <tr v-if="!cargos.length">
                     <td :colspan="columns.length + 1">Грузов нет</td>
@@ -97,23 +98,23 @@
 
 <script>
 
-import Service from "../../../../../scripts/services/services";
-import withQuery from 'with-query';
-import qs from 'qs';
+    import Service from '../../../../../scripts/services/services';
+    import withQuery from 'with-query';
+    import qs from 'qs';
 
-import {mapGetters} from "vuex";
+    import {mapGetters} from 'vuex';
 
-import FInput from '../../../../components/filter/f-input.vue';
-import FDate from '../../../../components/filter/f-date.vue';
-import FSelect from '../../../../components/filter/f-select.vue';
-import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-import Dropdown from '../../../../components/dropdown/dropdown.vue';
-import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
-import Helpers from "../../../../../scripts/helpers";
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
+    import FSelect from '../../../../components/filter/f-select.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import Dropdown from '../../../../components/dropdown/dropdown.vue';
+    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
+    import Helpers from '../../../../../scripts/helpers';
 
-import modalMixin from '../../../../mixins/modal';
+    import modalMixin from '../../../../mixins/modal';
 
-const cleanHiddenFilter = {
+    const cleanHiddenFilter = {
     shipment_number: '',
     created_at: [],
 };

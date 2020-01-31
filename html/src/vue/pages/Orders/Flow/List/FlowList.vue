@@ -124,6 +124,7 @@
                 <tr v-for="order in orders">
                     <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
                     <td v-for="column in columns" v-if="column.isShown" v-html="column.value(order)"></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
@@ -141,23 +142,23 @@
 
 <script>
 
-import Service from "../../../../../scripts/services/services";
-import withQuery from 'with-query';
-import qs from 'qs';
+    import Service from '../../../../../scripts/services/services';
+    import withQuery from 'with-query';
+    import qs from 'qs';
 
-import {mapGetters} from "vuex";
+    import {mapGetters} from 'vuex';
 
-import FInput from '../../../../components/filter/f-input.vue';
-import FDate from '../../../../components/filter/f-date.vue';
-import FSelect from '../../../../components/filter/f-select.vue';
-import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-import Dropdown from '../../../../components/dropdown/dropdown.vue';
-import Helpers from "../../../../../scripts/helpers";
-import ModalColumns from './components/modal-columns.vue';
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
+    import FSelect from '../../../../components/filter/f-select.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import Dropdown from '../../../../components/dropdown/dropdown.vue';
+    import Helpers from '../../../../../scripts/helpers';
+    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
-import modalMixin from '../../../../mixins/modal.js';
+    import modalMixin from '../../../../mixins/modal.js';
 
-const cleanHiddenFilter = {
+    const cleanHiddenFilter = {
     number: '',
     brands: [],
     payType: [],
@@ -231,7 +232,7 @@ export default {
                 },
                 {
                     name: 'Дата заказа',
-                    code: 'date',
+                    code: 'created_at',
                     value: function(order) {
                         return order.created_at;
                     },
@@ -240,7 +241,7 @@ export default {
                 },
                 {
                     name: 'Дата последнего изменения',
-                    code: 'date',
+                    code: 'status_at',
                     value: function(order) {
                         return order.status_at;
                     },
@@ -249,7 +250,7 @@ export default {
                 },
                 {
                     name: 'Дата доставки',
-                    code: 'date',
+                    code: 'delivery_at',
                     value: function(order) {
                         return order.deliveries[0] ?
                             order.deliveries[0].delivery_at :
@@ -307,30 +308,12 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'Способ доставки',
-                    code: 'delivery_method',
-                    value: function(order) {
-                        return order.delivery_method.name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
                     name: 'Комментарий',
                     code: 'comment',
                     value: function(order) {
                         return order.comment;
                     },
                     isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Способ оплаты',
-                    code: 'payment_method',
-                    value: function(order) {
-                        return order.payment_method.name; //todo
-                    },
-                    isShown: false,
                     isAlwaysShown: false,
                 },
             ],
@@ -410,7 +393,7 @@ export default {
             }
         },
         showChangeColumns() {
-            this.changeModal('list_columns', true);
+            this.openModal('list_columns');
         },
         downloadDoc(id) {
             window.open('/manual/docs.pdf');
