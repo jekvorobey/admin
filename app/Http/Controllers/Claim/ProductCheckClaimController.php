@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\ProductCheckClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
-use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -28,14 +27,14 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
+     * @param  UserService  $userService
      * @return mixed
      */
     public function index(
         Request $request,
         ClaimService $claimService,
         MerchantService $merchantService,
-        OperatorService $operatorService
+        UserService $userService
     )
     {
         $this->title = 'Заявки на проверку товаров';
@@ -46,8 +45,8 @@ class ProductCheckClaimController extends Controller
             ->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK)
             ->claimTypes();
 
-        $query = $this->prepareQuery($request, $claimService, $operatorService);
-        $claims = $this->loadClaims($query, $operatorService);
+        $query = $this->prepareQuery($request, $claimService);
+        $claims = $this->loadClaims($query, $userService);
         $pager = $query->countClaims();
 
         $statuses = $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames;
@@ -67,17 +66,17 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
+     * @param  UserService  $userService
      * @return \Illuminate\Http\JsonResponse
      */
     public function page(
         Request $request,
         ClaimService $claimService,
-        OperatorService $operatorService
+        UserService $userService
     ) {
-        $query = $this->prepareQuery($request, $claimService, $operatorService);
+        $query = $this->prepareQuery($request, $claimService);
         $result = [
-            'items' => $this->loadClaims($query, $operatorService),
+            'items' => $this->loadClaims($query, $userService),
         ];
         if ($request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
@@ -113,21 +112,21 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  int  $id
      * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
+     * @param  UserService  $userService
      * @param  ProductService  $productService
      * @return mixed
      */
     public function detail(
         int $id,
         ClaimService $claimService,
-        OperatorService $operatorService,
+        UserService $userService,
         ProductService $productService
     ) {
         $this->title = 'Заявка на проверку товаров';
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
-        $claim = $this->loadClaims($query, $operatorService)->first();
+        $claim = $this->loadClaims($query, $userService)->first();
 
         if (!$claim) {
             throw new NotFoundHttpException();
@@ -154,13 +153,12 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
      * @return \Greensight\CommonMsa\Dto\DataQuery
      */
-    protected function prepareQuery(Request $request, ClaimService $claimService, OperatorService $operatorService)
+    protected function prepareQuery(Request $request, ClaimService $claimService)
     {
         $page = $request->get('page', 1);
-        $filters = array_filter($request->get('filter', []));
+        $filters = $this->getFilter();
 
         $restQuery = $claimService->newQuery();
         $restQuery->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK);
@@ -168,7 +166,11 @@ class ProductCheckClaimController extends Controller
         foreach ($filters as $key => $value) {
             switch ($key) {
                 case 'created_at':
-                    $restQuery->setFilter('created_at', '>=', Carbon::parse($value));
+                    $value = array_filter($value);
+                    if ($value) {
+                        $restQuery->setFilter($key, '>=', $value[0]);
+                        $restQuery->setFilter($key, '<=', $value[1]);
+                    }
                     break;
 
                 default:
@@ -183,10 +185,10 @@ class ProductCheckClaimController extends Controller
 
     /**
      * @param  RestQuery  $query
-     * @param  OperatorService  $operatorService
+     * @param  UserService  $userService
      * @return Collection
      */
-    protected function loadClaims(RestQuery $query, OperatorService $operatorService)
+    protected function loadClaims(RestQuery $query, UserService $userService)
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();
@@ -199,13 +201,20 @@ class ProductCheckClaimController extends Controller
         $merchants = $this->getMerchants($merchantIds);
 
         $userIds = $claims->pluck('user_id')->all();
-        $operatorsQuery = (new RestQuery())->setFilter('user_id', $userIds);
-        $users = $operatorService->operators($operatorsQuery)->keyBy('user_id');
+        $users = collect();
+        if ($userIds) {
+            $userQuery = $userService
+                ->newQuery()
+                ->setFilter('id', $userIds)
+                ->include('profile');
+            $users = $userService->users($userQuery)->keyBy('id');
+        }
+
         return $claims->map(function (ProductCheckClaimDto $claim) use ($users, $merchants) {
             $data = $claim->toArray();
 
             $data['payload']['merchant'] = $merchants->has($claim->getMerchantId()) ? $merchants[$claim->getMerchantId()] : [];
-            $data['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->name : 'N/A';
+            $data['userName'] = $users->has($claim->user_id) ? $users[$claim->user_id]->full_name : 'N/A';
 
             return $data;
         });

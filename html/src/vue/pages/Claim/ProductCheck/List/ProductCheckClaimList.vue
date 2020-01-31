@@ -52,6 +52,7 @@
             <tbody>
             <tr v-for="claim in claims">
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(claim)"></td>
+                <td></td>
             </tr>
             <tr v-if="!claims.length">
                 <td :colspan="columns.length + 1">Заявок нет</td>
