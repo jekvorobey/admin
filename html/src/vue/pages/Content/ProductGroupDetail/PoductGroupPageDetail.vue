@@ -53,14 +53,13 @@
                 />
             </b-form-group>
 
-            <b-form-group
-                    label="Превью изображение"
-                    label-for="group-preview_photo_id"
+            <img v-if="previewPhoto"
+                 :src="previewPhoto.url"
+                 class="preview-photo"
             >
-                <b-form-file
-                        v-model="productGroup.new_preview_photo"
-                ></b-form-file>
-            </b-form-group>
+            <file-input @uploaded="onUploadPreviewPhoto"
+                        class="preview-photo_input"
+            />
 
             <b-form-group
                     label="Тип"
@@ -105,24 +104,34 @@
             >
             </select-filters>
 
+            <select-products
+                    :i-selected-product-ids="pluckSelectedProductIds()"
+                    @update="onUpdateSelectedProducts"
+            >
+            </select-products>
+
             <b-button type="submit" variant="dark">Обновить</b-button>
         </b-form>
     </layout-main>
 </template>
 
 <script>
-
     import {mapGetters} from "vuex";
     import Services from "../../../../scripts/services/services";
+    import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
+    import SelectProducts from './components/select-products.vue';
 
     export default {
         components: {
-            SelectFilters
+            SelectFilters,
+            SelectProducts,
+            FileInput
         },
         props: {
             iProductGroup: {},
             iProductGroupTypes: {},
+            iProductGroupImages: {},
             iCategories: {},
             options: {}
         },
@@ -130,8 +139,10 @@
             return {
                 productGroup: this.iProductGroup,
                 productGroupTypes: this.iProductGroupTypes,
+                productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
                 selectedFilters: [],
+                selectedProductIds: [],
                 selectedProducts: [],
             };
         },
@@ -154,11 +165,55 @@
                         console.log(data);
                     });
             },
+            onUploadPreviewPhoto(file) {
+                this.productGroupImages[file.id] = file;
+                this.productGroup.preview_photo_id = file.id;
+            },
+            onUpdateSelectedProducts(data) {
+                for (let productKey in data) {
+                    let productId = data[productKey];
+
+                    this.selectedProducts.push({
+                        product_id: productId,
+                        product_group_id: this.productGroup.id,
+                    });
+                }
+            },
+            pluckSelectedProductIds() {
+                let ids = [];
+
+                for (let productKey in this.productGroup.products) {
+                    let product = this.productGroup.products[productKey];
+                    ids.push(product.product_id);
+                }
+
+                return ids;
+            }
         },
         computed: {
             ...mapGetters(['getRoute']),
+            previewPhoto() {
+                const fileId = this.productGroup.preview_photo_id;
+
+                if (fileId) {
+                    const file = this.productGroupImages[fileId];
+
+                    return file ? file : null;
+                }
+
+                return null;
+            }
         },
     };
 </script>
+
 <style scoped>
+    .preview-photo {
+        width: 300px;
+    }
+
+    .preview-photo_input {
+        width: 300px;
+        margin-top: 10px;
+    }
 </style>
