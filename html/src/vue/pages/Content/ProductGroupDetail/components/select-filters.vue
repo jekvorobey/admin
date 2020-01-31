@@ -16,6 +16,7 @@
         <b-card no-body
                 class="mb-1"
                 v-for="filter in filters"
+                :key="filter.id"
         >
             <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button block href="#" v-b-toggle="'collapse-' + filter.id" variant="info">
@@ -36,6 +37,7 @@
                                         code: filter.code,
                                         value: filterValue.code,
                                     }"
+                                    :key="filterValue.code"
                             >
                                 {{ filterValue.name }}
                             </b-form-checkbox>
@@ -48,8 +50,8 @@
 </template>
 
 <script>
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
+    import { mapGetters } from 'vuex';
 
     export default {
         components: {},
