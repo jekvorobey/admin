@@ -28,9 +28,6 @@ class CargoPage extends AbstractPage
     /** @var CargoDto */
     private $cargo;
     
-    /** @var bool */
-    private $staticLoaded = false;
-    
     /**
      * OrderPage constructor.
      * @param  int|null  $id

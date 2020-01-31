@@ -116,7 +116,7 @@ export default {
     mixins: [modalMixin],
     props: {
         iClaims: Array,
-        statuses: {},
+        claimStatuses: {},
         merchants: {},
         iPager: {},
         iCurrentPage: Number,
@@ -153,7 +153,7 @@ export default {
                     name: 'Мерчант',
                     code: 'merchant',
                     value: function(claim) {
-                        return claim.payload.merchant.display_name;
+                        return claim.merchant.display_name ? claim.merchant.display_name : 'N/A';
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -162,7 +162,7 @@ export default {
                     name: 'Автор',
                     code: 'author',
                     value: function(claim) {
-                        return claim.userName;
+                        return claim.userName ? claim.userName : 'N/A';
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -200,7 +200,7 @@ export default {
     },
     methods: {
         statusName(statusId) {
-            return this.statuses[statusId] || 'N/A';
+            return this.claimStatuses[statusId] || 'N/A';
         },
         changePage(newPage) {
             history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -274,7 +274,7 @@ export default {
         ...mapGetters(['getRoute']),
         statusOptions() {
             let statusOptions = [];
-            for (let [key, value] of Object.entries(this.statuses)) {
+            for (let [key, value] of Object.entries(this.claimStatuses)) {
                 statusOptions.push({
                     value: parseInt(key),
                     text: value

@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
-use Pim\Dto\Product\ProductImageDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductDetailController extends Controller
@@ -123,6 +123,43 @@ class ProductDetailController extends Controller
             'type' => 'required|integer'
         ]);
         $productService->deleteImage($id, $data['id'], $data['type']);
+        return response()->json();
+    }
+
+    /**
+     * Изменить статус согласования товара
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ProductService  $productService
+     * @return JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function changeApproveStatus(int $id, Request $request, ProductService $productService): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'approval_status' => Rule::in(array_keys(ProductApprovalStatus::allStatuses())),
+        ]);
+        $product = new ProductDto($data);
+        $productService->updateProduct($id, $product);
+        return response()->json();
+    }
+
+    /**
+     * Изменить статус согласования товара на "Отклонен" с комментарием
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ProductService  $productService
+     * @return JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function reject(int $id, Request $request, ProductService $productService): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'approval_status_comment' => 'required|string',
+        ]);
+        $product = new ProductDto($data);
+        $product->approval_status = ProductApprovalStatus::STATUS_REJECT;
+        $productService->updateProduct($id, $product);
         return response()->json();
     }
     

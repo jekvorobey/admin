@@ -8,12 +8,15 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\ProductCheckClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\In;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -54,7 +57,7 @@ class ProductCheckClaimController extends Controller
 
         return $this->render('Claim/ProductCheck/List', [
             'iClaims' => $claims,
-            'statuses' => $statuses,
+            'claimStatuses' => $statuses,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
             'types' => $types,
             'iPager' => $pager,
@@ -85,6 +88,39 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
+     * @param  int  $id
+     * @param  ClaimService  $claimService
+     * @param  UserService  $userService
+     * @param  ProductService  $productService
+     * @return mixed
+     */
+    public function detail(
+        int $id,
+        ClaimService $claimService,
+        UserService $userService
+    ) {
+        $query = $claimService->newQuery()->setFilter('id', $id);
+        /** @var ProductCheckClaimDto $claim */
+        $claim = $this->loadClaims($query, $userService, true)->first();
+
+        if (!$claim) {
+            throw new NotFoundHttpException();
+        }
+
+        /** @var ClaimTypeDto $claimType */
+        $claimType = $claimService->newQuery()
+            ->include('statusNames')
+            ->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK)
+            ->claimTypes()
+            ->first();
+
+        return $this->render('Claim/ProductCheck/Detail', [
+            'iClaim' => $claim,
+            'claimStatuses' => $claimType->statusNames,
+        ]);
+    }
+
+    /**
      * @return array
      */
     protected function getFilter(): array
@@ -99,55 +135,78 @@ class ProductCheckClaimController extends Controller
             [
                 'id' => 'integer|someone',
                 'merchant_id' => 'integer|someone',
-                'status' => Rule::in([
-                    ProductCheckClaimDto::STATUS_NEW,
-                    ProductCheckClaimDto::STATUS_WORK,
-                    ProductCheckClaimDto::STATUS_DONE,
-                ]),
+                'status' => $this->validateStatus(),
                 'created_at' => 'array|someone',
             ]
         )->attributes();
     }
 
     /**
-     * @param  int  $id
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
-     * @param  ProductService  $productService
-     * @return mixed
+     * @return \Illuminate\Validation\Rules\In
      */
-    public function detail(
+    protected function validateStatus(): In
+    {
+        return Rule::in([
+            ProductCheckClaimDto::STATUS_NEW,
+            ProductCheckClaimDto::STATUS_WORK,
+            ProductCheckClaimDto::STATUS_DONE,
+        ]);
+    }
+
+    /**
+     * Изменить статус заявки
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ClaimService  $claimService
+     * @param  UserService $userService
+     * @param  ProductService $productService
+     * @return JsonResponse
+     */
+    public function changeStatus(
         int $id,
+        Request $request,
         ClaimService $claimService,
         UserService $userService,
         ProductService $productService
-    ) {
-        $this->title = 'Заявка на проверку товаров';
+    ): JsonResponse
+    {
+        $result = 'ok';
+        $claim = [];
+        $error = '';
+        $systemError = '';
+        try {
+            $data = $this->validate($request, [
+                'status' => $this->validateStatus(),
+            ]);
+            $claim = new ProductCheckClaimDto($data);
+            $claimService->updateClaim($id, $claim);
 
-        $query = $claimService->newQuery()->setFilter('id', $id);
-        /** @var ProductCheckClaimDto $claim */
-        $claim = $this->loadClaims($query, $userService)->first();
+            //Для заявки в статусе "В работе" переводим все товары из заявки в статус согласования "На рассмотрении"
+            if ($claim->status == ProductCheckClaimDto::STATUS_WORK) {
+                $query = $claimService->newQuery()->setFilter('id', $id);
+                /** @var ProductCheckClaimDto $claim */
+                $claim = $this->loadClaims($query, $userService)->first();
 
-        if (!$claim) {
-            throw new NotFoundHttpException();
+                if ($claim->getProductIds()) {
+                    $productService->changeApprovalStatus(
+                        $claim->getProductIds(),
+                        ProductApprovalStatus::STATUS_APPROVING
+                    );
+                }
+            }
+
+            $query = $claimService->newQuery()->setFilter('id', $id);
+            /** @var ProductCheckClaimDto $claim */
+            $claim = $this->loadClaims($query, $userService, true)->first();
+        } catch (\Exception $e) {
+            $result = 'fail';
+            if ($request->get('status') == ProductCheckClaimDto::STATUS_DONE) {
+                $error = 'Не все товары в заявке проверены (согласованы или отменены)';
+            }
+            $systemError = $e->getMessage();
         }
 
-        /** @var ClaimTypeDto $claimType */
-        $claimType = $claimService->newQuery()
-            ->include('statusNames')
-            ->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK)
-            ->claimTypes()
-            ->first();
-
-        $productIds = $claim['payload']['productIds'];
-        /** @var Collection|ProductDto[] $products */
-        $products = $productService->newQuery()->setFilter('id', $productIds)->products();
-
-        return $this->render('Claim/ProductCheck/Detail', [
-            'claim' => $claim,
-            'statuses' => $claimType->statusNames,
-            'products' => $products
-        ]);
+        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error,'systemErrors' => $systemError]);
     }
 
     /**
@@ -188,7 +247,7 @@ class ProductCheckClaimController extends Controller
      * @param  UserService  $userService
      * @return Collection
      */
-    protected function loadClaims(RestQuery $query, UserService $userService)
+    protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false)
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();
@@ -210,13 +269,51 @@ class ProductCheckClaimController extends Controller
             $users = $userService->users($userQuery)->keyBy('id');
         }
 
-        return $claims->map(function (ProductCheckClaimDto $claim) use ($users, $merchants) {
-            $data = $claim->toArray();
+        /** @var Collection|ProductDto[] $products */
+        $products = collect();
+        if ($withProducts) {
+            /** @var ProductService $productService */
+            $productService = resolve(ProductService::class);
 
-            $data['payload']['merchant'] = $merchants->has($claim->getMerchantId()) ? $merchants[$claim->getMerchantId()] : [];
-            $data['userName'] = $users->has($claim->user_id) ? $users[$claim->user_id]->full_name : 'N/A';
+            $productIds = [];
+            foreach ($claims as $claim) {
+                $productIds = $claim->getProductIds();
+            }
+            if ($productIds) {
+                $products = $productService
+                    ->newQuery()
+                    ->setFilter('id', $productIds)
+                    ->addFields(
+                        ProductDto::class,
+                        'id',
+                        'name',
+                        'vendor_code',
+                        'approval_status'
+                    )
+                    ->products();
+                $products = $products->map(function (ProductDto $product) {
+                    $product['approval_status'] = $product->approvalStatus()->toArray();
 
-            return $data;
+                    return $product;
+                })->keyBy('id');
+            }
+        }
+
+        return $claims->map(function (ProductCheckClaimDto $claim) use ($users, $merchants, $withProducts, $products) {
+            $claim['merchant'] = $merchants->has($claim->getMerchantId()) ? $merchants[$claim->getMerchantId()] : [];
+            $claim['userName'] = $users->has($claim->user_id) ? $users[$claim->user_id]->full_name : '';
+
+            if ($withProducts) {
+                $claimProducts = [];
+                foreach ($claim->getProductIds() as $productId) {
+                    if ($products->has($productId)) {
+                        $claimProducts[$productId] = $products[$productId];
+                    }
+                }
+                $claim['products'] = $claimProducts;
+            }
+
+            return $claim;
         });
     }
 }

@@ -1,42 +1,42 @@
 <template>
     <layout-main back>
-        <div class="card">
-            <div class="card-body d-flex">
-                <table>
-                    <tr><td class="name">№</td><td class="value">{{ claim.id }}</td></tr>
-                    <tr><td class="name">Создана</td><td class="value">{{ claim.created_at }}</td></tr>
-                    <tr><td class="name">Автор</td><td class="value">{{ claim.userName }}</td></tr>
-                    <tr><td class="name">Тип</td><td class="value">{{ claim.type }}</td></tr>
-                    <tr>
-                        <td class="name">Статус</td>
-                        <td class="value">
-                            <span class="badge" :class="statusClass(claim.status)">{{ statusName(claim.status) }}</span>
-                        </td>
-                    </tr>
-                </table>
-                <div v-if="claim.payload.comment" class="comment">
-                    <b>Комментарий</b><br>
-                    <p>{{ claim.payload.comment }}</p>
+        <div class="row align-items-stretch justify-content-start claim-header">
+            <div class="col-md-6">
+                <div class="shadow p-3 height-100">
+                    <h2>Заявка #{{ claim.id }} от {{ claim.created_at }}</h2>
+                    <div style="height: 40px">
+                        <span class="badge" :class="statusClass(claim.status)">
+                            {{ statusName(claim.status) || 'N/A' }}
+                        </span>
+                        <button class="btn btn-primary" v-if="isNewStatus"
+                                @click="changeClaimStatus(2)">В работу</button>
+                        <button class="btn btn-primary" v-if="isWorkStatus"
+                                @click="changeClaimStatus(3)">Обработана</button>
+                    </div>
+
+                    <p class="text-secondary mt-3">
+                        Мерчант:
+                        <span class="float-right">
+                            {{ claim.merchant.display_name ? claim.merchant.display_name : 'N/A' }}
+                        </span>
+                    </p>
+                    <p class="text-secondary mt-3">
+                        Автор:<span class="float-right">{{ claim.userName ? claim.userName : 'N/A' }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="shadow p-3 height-100">
+                    <h2>{{ claim.payload.productIds ? claim.payload.productIds.length : 0 }} ед. товара</h2>
                 </div>
             </div>
         </div>
-        <h2>Товары</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Название</th>
-                    <th>Артикул</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="product in products">
-                    <td>{{ product.id }}</td>
-                    <td><a :href="getRoute('product.edit', {id: product.id})" target="_blank">{{ product.name }}</a></td>
-                    <td>{{ product.vendor_code }}</td>
-                </tr>
-            </tbody>
-        </table>
+
+        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
+        <products-tab
+                v-if="nav.currentTab === 'products'"
+                :claim="claim"
+        ></products-tab>
     </layout-main>
 </template>
 
@@ -44,20 +44,37 @@
 
     import {mapGetters} from 'vuex';
 
+    import VTabs from '../../../../components/tabs/tabs.vue';
+    import ProductsTab from './components/products-tab.vue';
+    import Services from '../../../../../scripts/services/services';
+    import modalMixin from '../../../../mixins/modal';
+
     export default {
+    components: {
+        VTabs,
+
+        ProductsTab,
+    },
+    mixins: [modalMixin],
     props: {
-        claim: {},
-        statuses: {},
-        products: Array
+        iClaim: {},
+        claimStatuses: {},
     },
     data() {
         return {
+            claim: this.iClaim,
 
+            nav: {
+                currentTab: 'products',
+                tabs: [
+                    {value: 'products', text: 'Товары'},
+                ]
+            }
         };
     },
     methods: {
         statusName(statusId) {
-            return this.statuses[statusId] || 'N/A';
+            return this.claimStatuses[statusId] || 'N/A';
         },
         statusClass(statusId) {
             switch (statusId) {
@@ -69,22 +86,52 @@
                 default: return 'badge-light';
             }
         },
+        isStatus(statusId) {
+            return this.claim.status === statusId;
+        },
+        changeClaimStatus(statusId) {
+            let errorMessage = 'Ошибка при изменении статуса заявки.';
+
+            Services.net().put(this.getRoute('productCheckClaims.changeStatus', {id: this.claim.id}), null,
+                {'status': statusId}).then(data => {
+                if (data.result === 'ok') {
+                    this.claim = data.claim;
+                } else {
+                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
+                }
+            }, () => {
+                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+            });
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
-    }
+        isNewStatus() {
+            return this.isStatus(1);
+        },
+        isWorkStatus() {
+            return this.isStatus(2);
+        },
+    },
 };
 </script>
 
 <style scoped>
-    .name {
-        font-weight: bold;
-        text-align: end;
+    .claim-header {
+        min-height: 200px;
     }
-    .value {
-        padding-left: 10px;
+    .claim-header > div {
+        padding: 16px 0 16px 16px;
     }
-    .comment {
-        margin-left: 50px;
+    .claim-header img {
+        max-height: calc( 200px - 16px * 2 );
+    }
+    .claim-header p {
+        margin: 0;
+        padding: 0;
+    }
+    .height-100 {
+        min-height: 100%;
+        height: 100%;
     }
 </style>

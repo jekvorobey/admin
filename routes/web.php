@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'ProductCheckClaimController@page')->name('productCheckClaims.pagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ProductCheckClaimController@detail')->name('productCheckClaims.detail');
-                Route::post('', 'ProductCheckClaimController@update')->name('productCheckClaims.update');
+                Route::put('changeStatus', 'ProductCheckClaimController@changeStatus')->name('productCheckClaims.changeStatus');
             });
         });
 
@@ -122,6 +122,8 @@ Route::middleware('auth')->group(function () {
             Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
+            Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
+            Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
         });
     });
 
