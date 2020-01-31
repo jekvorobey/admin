@@ -138,6 +138,9 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/filter', 'ProductGroupDetailController@getFilters')
                 ->name('productGroup.getFilters');
+
+            Route::get('/product', 'ProductGroupDetailController@getProducts')
+                ->name('productGroup.getProducts');
         });
     });
 
