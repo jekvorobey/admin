@@ -11,6 +11,7 @@
             <b-card v-for="product in products"
                     no-body
                     class="overflow-hidden"
+                    :key="product.id"
             >
                 <b-row no-gutters>
                     <b-col md="1">
