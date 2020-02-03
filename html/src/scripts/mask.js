@@ -22,3 +22,5 @@ Vue.use(MaskPlugin);
 //     '!': {escape: true}
 
 // <input type="tel" v-mask="'+7(###) ###-##-##'" />
+
+export const telMask = '+7(###) ###-##-##';

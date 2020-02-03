@@ -222,4 +222,11 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('customers')->namespace('Customers')->name('customers.')->group(function () {
+        Route::get('', 'CustomerListController@list')->name('list');
+        Route::get('filter', 'CustomerListController@filter')->name('filter');
+
+        Route::get('{id}', 'CustomerListController@detail')->name('detail');
+    });
+
 });
