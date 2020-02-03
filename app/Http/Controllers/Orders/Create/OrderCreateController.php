@@ -3,15 +3,15 @@ namespace App\Http\Controllers\Orders\Create;
 
 
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Oms\Services\BasketService\BasketService;
+use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
-use Greensight\Oms\Dto\DeliveryStore;
-use Greensight\Oms\Dto\OrderDto;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
@@ -19,6 +19,7 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\Front;
+use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\ProductService\ProductService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\CategoryDto;
@@ -53,6 +54,7 @@ class OrderCreateController extends Controller
         return $this->render('Orders/Create', [
             'iOrder' => '',
             'iDeliveries' => '',
+            'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
         ]);
     }
 
@@ -86,12 +88,14 @@ class OrderCreateController extends Controller
     /**
      * @param Request $request
      * @param ProductService $productService
+     * @param StockService $stockService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function searchProducts(
         Request $request,
-        ProductService $productService
+        ProductService $productService,
+        StockService $stockService
     ): JsonResponse
     {
         /** @var \Illuminate\Validation\Validator $validator */
@@ -104,13 +108,46 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        $query = $productService->newQuery();
-
+        // Получаем продукты и их офферы
         $vendorCodes = explode(',', $data['search']);
-        $query->setFilter('vendor_code', $vendorCodes);
+        $query = $productService->newQuery()
+            ->include('offers')
+            ->setFilter('vendor_code', $vendorCodes);
 
         $products = $productService->products($query);
 
+        // Получаем остатки на всех складах по продуктам
+//        $stocksQuery = $stockService->newQuery()
+//            ->setFilter('id', array_values($products->pluck('customer_id')->unique()->toArray()));
+//        $stocks = $stockService->stocks($stocksQuery);
+
         return response()->json($products);
+    }
+
+    public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
+    {
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'required|integer',
+            'items' => 'required|array',
+            'delivery_service' => ['required', Rule::in(array_keys(DeliveryServiceDto::allServices()))],
+            'delivery_method' => ['required', Rule::in(array_keys(DeliveryMethod::allMethods()))],
+            'delivery_address' => ['nullable', 'array'],
+            'price' => 'numeric|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $basket = $basketService->getByUser($data['user_id'], 1, true);
+
+        foreach ($data['items'] as $item) {
+            $basketService->setItem($basket->id , $item['offer_id']);
+        }
+
+//        $basketService->setItem();
+
+
     }
 }

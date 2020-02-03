@@ -22,6 +22,13 @@
 
                             <small class="ml-3">{{ product.vendor_code }}</small> {{ product.name }}
                             <span class="badge badge-primary badge-pill">{{ product.count }} шт.</span>
+                            <ul>
+                                <li class="" v-for="offer in product.offers">
+                                    <input type="checkbox" :checked="offer.sale_status === 1">
+                                    {{ offer.xml_id }}
+                                    {{ saleStatusName(offer.sale_status) }}
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
@@ -55,7 +62,7 @@
             </div>
         </div>
 
-        <button class="btn btn-success" :disabled="checkOrder">Создать заказ</button>
+        <button class="btn btn-success" :disabled="checkOrder" @click="createOrder">Создать заказ</button>
     </layout-main>
 </template>
 
@@ -80,7 +87,8 @@ export default {
     name: 'page-order-create',
     mixins: [modalMixin],
     props: [
-        'iOrders'
+        'iOrders',
+        'offerSaleStatuses',
     ],
     components: {
         FInput,
@@ -126,6 +134,17 @@ export default {
                     }
                 });
         },
+        createOrder() {
+            Services.net().post(this.getRoute('orders.createOrder', null), {}, {
+                customer_id: this.search.users,
+
+            })
+                .then(result => {
+                    if(result) {
+
+                    }
+                });
+        },
         selectProduct(product) {
             this.$set(this.selectedProducts, product.id, product);
             this.$set(this.selectedProducts[product.id], 'count', 1);
@@ -138,6 +157,23 @@ export default {
 
             action ? product.count++ : product.count--;
             this.$set(this.selectedProducts, product.id, product);
+        },
+        changeOffer(offer) {
+
+        },
+        saleStatusName(id) {
+            let status = this.offerSaleStatuses[id];
+            return status ? status.name : 'N/A';
+        },
+        formatIds(ids) {
+            if (!ids) {
+                return [];
+            }
+
+            return ids
+                .split(',')
+                .map(id => { return parseInt(id); })
+                .filter(id => { return id > 0 });
         }
     },
     computed: {
@@ -167,6 +203,17 @@ export default {
 
     },
     watch: {
+        'search.users': {
+            handler(val, oldVal) {
+                if (val && val !== oldVal) {
+                    let format = this.formatIds(this.search.users).join(', ');
+                    let separator = val.slice(-1) === ','
+                        ? ','
+                        : (val.slice(-2) === ', ' ? ', ' : '');
+                    this.search.users = format + separator;
+                }
+            },
+        },
     }
 };
 </script>
