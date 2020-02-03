@@ -53,12 +53,11 @@ class ContentClaimController extends Controller
         $claims = $this->loadClaims($query, $operatorService);
         $pager = $query->countClaims();
 
-        $statuses = $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_CONTENT_ALL)->statusNames;
         $types = $claimTypes->pluck('name', 'id')->toArray();
 
         return $this->render('Claim/Content/List', [
             'iClaims' => $claims,
-            'statuses' => $statuses,
+            'statuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_CONTENT_ALL)->statusNames,
             'types' => $types,
             'iPager' => $pager,
             'iCurrentPage' => (int) $request->get('page', 1),
@@ -109,12 +108,11 @@ class ContentClaimController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var ClaimTypeDto $claimType */
-        $claimType = $claimService->newQuery()
+        /** @var Collection|ClaimTypeDto[] $claimTypes */
+        $claimTypes = $claimService->newQuery()
             ->include('statusNames')
             ->setFilter('type', $this->contentTypes)
-            ->claimTypes()
-            ->first();
+            ->claimTypes();
 
         $productIds = $claim->payload['productId'];
         /** @var Collection|ProductDto[] $products */
@@ -122,7 +120,7 @@ class ContentClaimController extends Controller
 
         return $this->render('Claim/Content/Detail', [
             'claim' => $claim,
-            'statuses' => $claimType->statusNames,
+            'statuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_CONTENT_ALL)->statusNames,
             'products' => $products
         ]);
     }
