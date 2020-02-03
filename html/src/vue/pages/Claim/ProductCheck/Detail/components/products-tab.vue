@@ -8,6 +8,7 @@
                         <th>Название</th>
                         <th>Артикул</th>
                         <th>Статус согласования</th>
+                        <th>Комментарий по статусу согласования</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -21,6 +22,7 @@
                         </td>
                         <td>{{ product.vendor_code }}</td>
                         <td>{{ product.approval_status.name }}</td>
+                        <td>{{ product.approval_status_comment }}</td>
                         <td>
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank"
                                     v-if="isRequestWorkStatus && !isProductChecked(product.approval_status.id)">
