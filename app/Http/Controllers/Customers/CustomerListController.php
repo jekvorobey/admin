@@ -12,7 +12,7 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 
 class CustomerListController extends Controller
 {
-    const PER_PAGE = 1;
+    const PER_PAGE = 10;
     public function list()
     {
         $this->title = 'Клиентская база';
