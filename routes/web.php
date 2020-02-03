@@ -83,6 +83,7 @@ Route::middleware('auth')->group(function () {
 
             Route::post('products', 'OrderCreateController@searchProducts')->name('orders.searchProducts');
             Route::post('users', 'OrderCreateController@searchUsers')->name('orders.searchUsers');
+            Route::post('order', 'OrderCreateController@createOrder')->name('orders.createOrder');
         });
 
         Route::prefix('cargo')->namespace('Cargo')->group(function () {
