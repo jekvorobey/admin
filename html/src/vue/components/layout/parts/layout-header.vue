@@ -20,7 +20,9 @@
             </span>
         </div>
 
-        <div v-if="!isGuest">
+        <div v-if="!isGuest" class="d-flex">
+            <notifications/>
+
             <communication-chats-unread/>
 
             <button @click="logout" class="btn btn-dark">Выйти</button>
@@ -29,14 +31,15 @@
 </template>
 
 <script>
-import '../../../../images/logo_white.png';
-import Services from '../../../../scripts/services/services';
-import modalMixin from '../../../mixins/modal.js';
-import CommunicationChatsUnread from './communication-chats-unread.vue';
+    import '../../../../images/logo_white.png';
+    import Services from '../../../../scripts/services/services';
+    import modalMixin from '../../../mixins/modal.js';
+    import CommunicationChatsUnread from './communication-chats-unread.vue';
+    import Notifications from './notifications.vue';
 
-export default {
+    export default {
     name: 'layout-header',
-    components: {CommunicationChatsUnread},
+    components: {Notifications, CommunicationChatsUnread},
     mixins: [modalMixin],
     props: {
         onIndex: { type: Boolean, default: false },

@@ -57,6 +57,11 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('notifications')->group(function () {
+        Route::get('', 'NotificationsController@read')->name('notifications.get');
+        Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
+    });
+
     Route::prefix('orders')->namespace('Orders')->group(function () {
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
