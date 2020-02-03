@@ -285,7 +285,8 @@ class ProductCheckClaimController extends Controller
                         'id',
                         'name',
                         'vendor_code',
-                        'approval_status'
+                        'approval_status',
+                        'approval_status_comment'
                     )
                     ->products();
                 $products = $products->map(function (ProductDto $product) {
