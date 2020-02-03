@@ -154,7 +154,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Клиентская база',
-                        'route' => '#',
+                        'route' => route('customers.list'),
                     ],
                     [
                         'title' => 'Сегментация',
