@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
@@ -30,6 +31,7 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
+     * @param  MerchantService  $merchantService
      * @param  UserService  $userService
      * @return mixed
      */
@@ -52,14 +54,10 @@ class ProductCheckClaimController extends Controller
         $claims = $this->loadClaims($query, $userService);
         $pager = $query->countClaims();
 
-        $statuses = $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames;
-        $types = $claimTypes->pluck('name', 'id')->toArray();
-
         return $this->render('Claim/ProductCheck/List', [
             'iClaims' => $claims,
-            'claimStatuses' => $statuses,
+            'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
-            'types' => $types,
             'iPager' => $pager,
             'iCurrentPage' => (int) $request->get('page', 1),
             'iFilter' => $this->getFilter(),
@@ -70,7 +68,7 @@ class ProductCheckClaimController extends Controller
      * @param  Request  $request
      * @param  ClaimService  $claimService
      * @param  UserService  $userService
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function page(
         Request $request,
@@ -91,7 +89,6 @@ class ProductCheckClaimController extends Controller
      * @param  int  $id
      * @param  ClaimService  $claimService
      * @param  UserService  $userService
-     * @param  ProductService  $productService
      * @return mixed
      */
     public function detail(
@@ -107,16 +104,15 @@ class ProductCheckClaimController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var ClaimTypeDto $claimType */
-        $claimType = $claimService->newQuery()
+        /** @var Collection|ClaimTypeDto[] $claimTypes */
+        $claimTypes = $claimService->newQuery()
             ->include('statusNames')
             ->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK)
-            ->claimTypes()
-            ->first();
+            ->claimTypes();
 
         return $this->render('Claim/ProductCheck/Detail', [
             'iClaim' => $claim,
-            'claimStatuses' => $claimType->statusNames,
+            'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
         ]);
     }
 
@@ -212,9 +208,9 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
-     * @return \Greensight\CommonMsa\Dto\DataQuery
+     * @return DataQuery
      */
-    protected function prepareQuery(Request $request, ClaimService $claimService)
+    protected function prepareQuery(Request $request, ClaimService $claimService): DataQuery
     {
         $page = $request->get('page', 1);
         $filters = $this->getFilter();
@@ -245,9 +241,10 @@ class ProductCheckClaimController extends Controller
     /**
      * @param  RestQuery  $query
      * @param  UserService  $userService
-     * @return Collection
+     * @param  bool  $withProducts
+     * @return Collection|ProductCheckClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false)
+    protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();
