@@ -42,6 +42,16 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
             });
         });
+
+        Route::prefix('price-change')->group(function () {
+            Route::get('', 'PriceChangeClaimController@index')->name('priceChangeClaims.list');
+            Route::get('page', 'PriceChangeClaimController@page')->name('priceChangeClaims.pagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'PriceChangeClaimController@detail')->name('priceChangeClaims.detail');
+                Route::put('changeStatus', 'PriceChangeClaimController@changeStatus')->name('priceChangeClaims.changeStatus');
+                Route::put('changePrice', 'PriceChangeClaimController@changePrice')->name('priceChangeClaims.changePrice');
+            });
+        });
     });
 
     Route::prefix('settings')->namespace('Settings')->group(function () {

@@ -54,7 +54,8 @@ class ProductCheckClaimController extends Controller
         $claims = $this->loadClaims($query, $userService);
         $pager = $query->countClaims();
 
-        return $this->render('Claim/ProductCheck/List', [
+        return $this->render('Claim/ClaimList', [
+            'routePrefix' => 'productCheckClaims',
             'iClaims' => $claims,
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
@@ -300,6 +301,7 @@ class ProductCheckClaimController extends Controller
         return $claims->map(function (ProductCheckClaimDto $claim) use ($users, $merchants, $withProducts, $products) {
             $claim['merchant'] = $merchants->has($claim->getMerchantId()) ? $merchants[$claim->getMerchantId()] : [];
             $claim['userName'] = $users->has($claim->user_id) ? $users[$claim->user_id]->full_name : '';
+            $claim['productsQty'] = count($claim->getProductIds());
 
             if ($withProducts) {
                 $claimProducts = [];

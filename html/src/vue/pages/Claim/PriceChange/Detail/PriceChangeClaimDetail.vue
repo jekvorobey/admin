@@ -33,10 +33,11 @@
         </div>
 
         <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
-        <products-tab
-                v-if="nav.currentTab === 'products'"
+        <offers-tab
+                v-if="nav.currentTab === 'offers'"
                 :claim="claim"
-        ></products-tab>
+                @onSave="onChange"
+        ></offers-tab>
     </layout-main>
 </template>
 
@@ -45,7 +46,7 @@
     import {mapGetters} from 'vuex';
 
     import VTabs from '../../../../components/tabs/tabs.vue';
-    import ProductsTab from './components/products-tab.vue';
+    import OffersTab from './components/offers-tab.vue';
     import Services from '../../../../../scripts/services/services';
     import modalMixin from '../../../../mixins/modal';
 
@@ -53,7 +54,7 @@
     components: {
         VTabs,
 
-        ProductsTab,
+        OffersTab,
     },
     mixins: [modalMixin],
     props: {
@@ -65,9 +66,9 @@
             claim: this.iClaim,
 
             nav: {
-                currentTab: 'products',
+                currentTab: 'offers',
                 tabs: [
-                    {value: 'products', text: 'Товары'},
+                    {value: 'offers', text: 'Предложения мерчанта'},
                 ]
             }
         };
@@ -92,16 +93,19 @@
         changeClaimStatus(statusId) {
             let errorMessage = 'Ошибка при изменении статуса заявки.';
 
-            Services.net().put(this.getRoute('productCheckClaims.changeStatus', {id: this.claim.id}), null,
+            Services.net().put(this.getRoute('priceChangeClaims.changeStatus', {id: this.claim.id}), null,
                 {'status': statusId}).then(data => {
                 if (data.result === 'ok') {
-                    this.claim = data.claim;
+                    this.onChange(data);
                 } else {
                     this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
                 }
             }, () => {
                 this.showMessageBox({title: 'Ошибка', text: errorMessage});
             });
+        },
+        onChange(data) {
+            this.claim = data.claim;
         },
     },
     computed: {

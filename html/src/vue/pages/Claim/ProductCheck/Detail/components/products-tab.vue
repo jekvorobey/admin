@@ -25,7 +25,7 @@
                         <td>{{ product.approval_status_comment }}</td>
                         <td>
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank"
-                                    v-if="isRequestWorkStatus && !isProductChecked(product.approval_status.id)">
+                                    v-if="isWorkStatus && !isProductChecked(product.approval_status.id)">
                                 <button class="btn btn-primary">Проверить...</button>
                             </a>
                         </td>
@@ -56,7 +56,7 @@
     },
     computed: {
         ...mapGetters(['getRoute']),
-        isRequestWorkStatus() {
+        isWorkStatus() {
             return this.isStatus(2);
         },
     },

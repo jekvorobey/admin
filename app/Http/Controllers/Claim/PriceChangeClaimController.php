@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Marketing\Dto\Price\PriceDto;
+use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\PriceChangeClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
@@ -53,7 +55,8 @@ class PriceChangeClaimController extends Controller
         $claims = $this->loadClaims($query, $userService);
         $pager = $query->countClaims();
 
-        return $this->render('Claim/PriceChange/List', [
+        return $this->render('Claim/ClaimList', [
+            'routePrefix' => 'priceChangeClaims',
             'iClaims' => $claims,
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRICE_CHANGE)->statusNames,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
@@ -190,6 +193,78 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
+     * Изменить статус заявки
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ClaimService  $claimService
+     * @param  UserService $userService
+     * @return JsonResponse
+     */
+    public function changePrice(
+        int $id,
+        Request $request,
+        ClaimService $claimService,
+        UserService $userService
+    ): JsonResponse
+    {
+        $result = 'ok';
+        $claim = [];
+        $error = '';
+        $systemError = '';
+        try {
+            $data = $this->validate($request, [
+                'action' => Rule::in(['accept', 'reject']),
+                'offerId' => 'sometimes|required|integer',
+                'comment' => 'sometimes|required|string',
+            ]);
+
+            $query = $claimService->newQuery()->setFilter('id', $id);
+            /** @var PriceChangeClaimDto $claim */
+            $claim = $this->loadClaims($query, $userService, true)->first();
+            $offers = $claim->getOffers();
+            //Формируем массив с измененными ценами
+            $newPrices = collect();
+            foreach ($offers as &$offer) {
+                if (
+                    ((isset($data['offerId']) && $data['offerId'] == $offer['offerId']) ||
+                        !isset($data['offerId'])) &&
+                    !isset($offer['status'])
+                ) {
+                    $offer['status'] = $data['action'];
+                    $offer['updated_at'] = now()->format('H:i:s Y-m-d');
+                    $offer['comment'] = $data['comment'] ?? '';
+
+                    if ($data['action'] == 'accept') {
+                        $priceDto = new PriceDto();
+                        $priceDto->offer_id = $offer['offerId'];
+                        $priceDto->price = $offer['newPrice'];
+
+                        $newPrices->push($priceDto);
+                    }
+                }
+            }
+            //Сохраняем новые цены
+            if ($newPrices->isNotEmpty()) {
+                /** @var PriceService $priceService */
+                $priceService = resolve(PriceService::class);
+                $priceService->setPrices($newPrices);
+            }
+            //Сохраняем информацию об изменении цен в заявке
+            $claim->setOffers($offers);
+            $claimService->updateClaim($id, $claim);
+            //Получаем всю информацию по заявке
+            $query = $claimService->newQuery()->setFilter('id', $id);
+            /** @var PriceChangeClaimDto $claim */
+            $claim = $this->loadClaims($query, $userService, true)->first();
+        } catch (\Exception $e) {
+            $result = 'fail';
+            $systemError = $e->getMessage();
+        }
+
+        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error,'systemErrors' => $systemError]);
+    }
+
+    /**
      * @param  Request  $request
      * @param  ClaimService  $claimService
      * @return DataQuery
@@ -264,7 +339,7 @@ class PriceChangeClaimController extends Controller
                 $productQuery = $productService
                     ->newQuery()
                     ->addFields(
-                        ProductDto::class,
+                        ProductDto::entity(),
                         'id',
                         'name',
                         'vendor_code'
@@ -276,15 +351,22 @@ class PriceChangeClaimController extends Controller
         return $claims->map(function (PriceChangeClaimDto $claim) use ($users, $merchants, $withProducts, $productsByOffers) {
             $claim['merchant'] = $merchants->has($claim->getMerchantId()) ? $merchants[$claim->getMerchantId()] : [];
             $claim['userName'] = $users->has($claim->user_id) ? $users[$claim->user_id]->full_name : '';
+            $claim['productsQty'] = count($claim->getOffers());
 
             if ($withProducts) {
+                $isProcessed = true;
                 $claimProducts = [];
                 foreach ($claim->getOffers() as $offer) {
                     if ($productsByOffers->has($offer['offerId'])) {
                         $claimProducts[$offer['offerId']] = $productsByOffers[$offer['offerId']];
                     }
+
+                    if (!isset($offer['status'])) {
+                        $isProcessed = false;
+                    }
                 }
                 $claim['productsByOffers'] = $claimProducts;
+                $claim['isProcessed'] = $isProcessed;
             }
 
             return $claim;

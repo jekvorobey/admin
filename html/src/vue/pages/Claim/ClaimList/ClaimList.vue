@@ -73,20 +73,20 @@
 
 <script>
 
-    import Services from '../../../../../scripts/services/services';
+    import Services from '../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
 
     import {mapGetters} from 'vuex';
 
-    import FInput from '../../../../components/filter/f-input.vue';
-    import FDate from '../../../../components/filter/f-date.vue';
-    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-    import FSelect from '../../../../components/filter/f-select.vue';
-    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
-    import Helpers from '../../../../../scripts/helpers';
+    import FInput from '../../../components/filter/f-input.vue';
+    import FDate from '../../../components/filter/f-date.vue';
+    import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+    import FSelect from '../../../components/filter/f-select.vue';
+    import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
+    import Helpers from '../../../../scripts/helpers';
 
-    import modalMixin from '../../../../mixins/modal';
+    import modalMixin from '../../../mixins/modal';
 
     const cleanHiddenFilter = {
     created_at: [],
@@ -115,6 +115,7 @@ export default {
     },
     mixins: [modalMixin],
     props: {
+        routePrefix: String,
         iClaims: Array,
         claimStatuses: {},
         merchants: {},
@@ -143,7 +144,8 @@ export default {
                     name: 'ID',
                     code: 'id',
                     value: function(claim) {
-                        return '<a href="' + self.getRoute('productCheckClaims.detail', {id: claim.id}) + '">' +
+                        return '<a href="' + self.getRoute(self.routePrefix + '.detail',
+                            {id: claim.id}) + '">' +
                             claim.id + '</a>';
                     },
                     isShown: true,
@@ -181,7 +183,7 @@ export default {
                     name: 'Кол-во товаров',
                     code: 'products_qty',
                     value: function(claim) {
-                        return claim.payload.productIds ? claim.payload.productIds.length : 0;
+                        return claim.productsQty;
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -210,7 +212,7 @@ export default {
             }));
         },
         loadPage() {
-            Services.net().get(this.route('productCheckClaims.pagination'), {
+            Services.net().get(this.route(this.routePrefix + '.pagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
                 sort: this.sort,
