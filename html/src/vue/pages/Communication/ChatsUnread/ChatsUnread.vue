@@ -1,9 +1,6 @@
 <template>
     <layout-main>
         <communication-chat-list
-            :channels="channels"
-            :statuses="statuses"
-            :types="types"
             :filter="{unread_admin: 1}"
         />
     </layout-main>
@@ -14,10 +11,5 @@ import CommunicationChatList from '../../../components/communication-chat-list/c
 
 export default {
     components: {CommunicationChatList},
-    props: {
-        channels: Object,
-        statuses: Object,
-        types: Object,
-    },
 };
 </script>

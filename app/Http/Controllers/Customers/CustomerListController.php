@@ -22,14 +22,6 @@ class CustomerListController extends Controller
         ]);
     }
 
-    public function detail()
-    {
-        $this->title = 'Клиент';
-        return $this->render('Customer/Detail', [
-
-        ]);
-    }
-
     public function filter(UserService $userService, CustomerService $customerService)
     {
         $filter = request()->validate([
