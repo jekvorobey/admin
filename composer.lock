@@ -622,12 +622,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "f7fdf59c8665f0cf28563c6e97bdfe50cc4aea91"
+                "reference": "3e7cbc975e553e71984d9939daa5f8a59425bacc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=f7fdf59c8665f0cf28563c6e97bdfe50cc4aea91",
-                "reference": "f7fdf59c8665f0cf28563c6e97bdfe50cc4aea91",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=3e7cbc975e553e71984d9939daa5f8a59425bacc",
+                "reference": "3e7cbc975e553e71984d9939daa5f8a59425bacc",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-01-31T15:05:39+00:00"
+            "time": "2020-02-04T14:51:45+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -707,12 +707,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "fd6825b700de8cbc68749c3b5a87ca3a8a4b4c47"
+                "reference": "baa324feb27b2f544b1daf76df45c864ec3e8f47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=fd6825b700de8cbc68749c3b5a87ca3a8a4b4c47",
-                "reference": "fd6825b700de8cbc68749c3b5a87ca3a8a4b4c47",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=baa324feb27b2f544b1daf76df45c864ec3e8f47",
+                "reference": "baa324feb27b2f544b1daf76df45c864ec3e8f47",
                 "shasum": ""
             },
             "require": {
@@ -747,7 +747,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-02-03T15:53:58+00:00"
+            "time": "2020-02-04T14:52:42+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -4114,16 +4114,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.9.2",
+            "version": "1.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb"
+                "reference": "1291a16ce3f48bfdeca39d64fca4875098af4d7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb",
-                "reference": "7a04aa0201ddaa0b3cf64d41022bd8cdcd7fafeb",
+                "url": "https://api.github.com/repos/composer/composer/zipball/1291a16ce3f48bfdeca39d64fca4875098af4d7b",
+                "reference": "1291a16ce3f48bfdeca39d64fca4875098af4d7b",
                 "shasum": ""
             },
             "require": {
@@ -4190,7 +4190,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-01-14T15:30:32+00:00"
+            "time": "2020-02-04T11:58:49+00:00"
         },
         {
             "name": "composer/semver",
