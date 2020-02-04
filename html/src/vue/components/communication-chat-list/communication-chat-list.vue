@@ -98,13 +98,13 @@ export default {
     name: 'communication-chat-list',
     components: {CommunicationChatMessage},
     props: {
-        channels: Object,
-        statuses: Object,
-        types: Object,
         filter: Object,
     },
     data() {
         return {
+            channels: {},
+            statuses: {},
+            types: {},
             showChat: null,
             form: {
                 theme: '',
@@ -135,6 +135,7 @@ export default {
     },
     methods: {
         filterChats() {
+            Services.showLoader();
             let filter = {};
             if (this.form.theme) {
                 filter.theme = this.form.theme;
@@ -153,6 +154,7 @@ export default {
                 this.chats = data.chats;
                 this.users = data.users;
                 this.files = data.files;
+                Services.hideLoader();
             });
         },
         openChat(chat) {
@@ -198,7 +200,13 @@ export default {
         },
     },
     created() {
-        this.filterChats();
+        Services.showLoader();
+        Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
+            this.channels = data.channels;
+            this.statuses = data.statuses;
+            this.types = data.types;
+            this.filterChats();
+        });
     }
 };
 </script>

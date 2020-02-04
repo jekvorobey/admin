@@ -15,18 +15,23 @@ use Greensight\Message\Services\CommunicationService\Constructors\ListConstructo
 
 class ChatsController extends Controller
 {
-    public function unread(
+    public function unread()
+    {
+        $this->title = 'Непрочитанные сообщения';
+        return $this->render('Communication/ChatsUnread');
+    }
+
+    public function directories(
         CommunicationService $communicationService,
         CommunicationStatusService $communicationStatusService,
         CommunicationTypeService $communicationTypeService
-    )
-    {
-        $this->title = 'Непрочитанные сообщения';
+    ) {
 
         $channels = $communicationService->channels()->keyBy('id');
         $statuses = $communicationStatusService->statuses()->keyBy('id');
         $types = $communicationTypeService->types()->keyBy('id');
-        return $this->render('Communication/ChatsUnread', [
+
+        return response()->json([
             'channels' => $channels,
             'statuses' => $statuses,
             'types' => $types,
@@ -36,6 +41,9 @@ class ChatsController extends Controller
     public function filter(CommunicationService $communicationService)
     {
         $listConstructor = $communicationService->chats();
+        if (request('user_id')) {
+            $listConstructor->setUserIds([request('user_id')]);
+        }
         if (request('theme')) {
             $listConstructor->setTheme(request('theme'));
         }

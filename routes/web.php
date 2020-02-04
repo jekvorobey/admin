@@ -232,6 +232,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('chats')->group(function () {
             Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
+            Route::get('directories', 'ChatsController@directories')->name('communications.chats.directories');
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
@@ -242,7 +243,16 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'CustomerListController@list')->name('list');
         Route::get('filter', 'CustomerListController@filter')->name('filter');
 
-        Route::get('{id}', 'CustomerListController@detail')->name('detail');
+        Route::prefix('{id}')->group(function () {
+            Route::get('', 'CustomerDetailController@detail')->name('detail');
+            Route::put('', 'CustomerDetailController@save')->name('detail.save');
+
+            Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
+            Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');
+            Route::get('preference', 'CustomerDetailController@infoPreference')->name('detail.preference');
+            Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
+            Route::get('log', 'CustomerDetailController@infoLog')->name('detail.log');
+        });
     });
 
 });
