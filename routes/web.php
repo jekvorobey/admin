@@ -24,6 +24,13 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('marketing')->namespace('Marketing')->group(function () {
+        Route::prefix('discounts')->group(function () {
+            Route::get('/', 'DiscountController@index')->name('discount.list');
+            Route::get('/create', 'DiscountController@createPage')->name('discount.create');
+        });
+    });
+
     Route::prefix('claims')->namespace('Claim')->group(function () {
         Route::prefix('product-check')->group(function () {
             Route::get('', 'ProductCheckClaimController@index')->name('productCheckClaims.list');

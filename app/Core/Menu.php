@@ -215,7 +215,7 @@ class Menu
                     ],
                     [
                         'title' => 'Скидки',
-                        'route' => '#',
+                        'route' => route('discount.list'),
                     ],
                     [
                         'title' => 'Бандлы',
