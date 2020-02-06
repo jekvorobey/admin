@@ -2,44 +2,53 @@
     <layout-main>
         <div class="select">
             <div class="row">
-                <div class="col-4">
+                <div class="col-12">
                     <f-input v-model="search.products" @change="productChange()" placeholder="e908-3543-9fdd,85de-3283-8b96">
                         Артикулы товаров (через ,)
                     </f-input>
                     Найденные товары:
                     <ul class="list-group mt-2">
                         <li class="list-group-item list-group-item-action" @click="selectProduct(product)" v-for="(product, key) in searchedProducts">
-                            <small>{{ product.vendor_code }}</small> {{ product.name }}
+                            <img :src="product.photo" class="preview" :alt="product.name"
+                                 v-if="product.photo">
+                            {{ product.name }}
+                            <small>{{ product.vendor_code }}</small>
                         </li>
                     </ul>
                 </div>
-                <div class="col-8">
+                <div class="col-12">
                     Выбранные товары:
                     <ul class="list-group mt-2">
                         <li class="list-group-item list-group-item-action" v-for="(product, key) in selectedProducts">
                             <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
                             <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
-
-                            <small class="ml-3">{{ product.vendor_code }}</small> {{ product.name }}
+                            <img :src="product.photo" class="preview" :alt="product.name"
+                                 v-if="product.photo">
+                            {{ product.name }}
+                            <small class="ml-3">{{ product.vendor_code }}</small>
                             <span class="badge badge-primary badge-pill">{{ product.count }} шт.</span>
-                            <ul>
-                                <li class="" v-for="offer in product.offers">
-                                    <input type="checkbox" :checked="offer.sale_status === 1">
-                                    {{ offer.xml_id }}
-                                    {{ saleStatusName(offer.sale_status) }}
-                                </li>
-                            </ul>
+                            <div v-for="(offer, key) in product.offers" :key="offer.id">
+                                <input :id="'check' + offer.id" type="radio" v-model="selectedOffers[product.id]" :value="offer.id">
+                                <label :for="'check' + offer.id">
+                                    Мерчант: | Склад:
+                                    <span class="badge badge-secondary badge-pill">{{ saleStatusName(offer.sale_status) }}</span>
+                                </label>
+                            </div>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="row">
-                <f-input class="col-4" v-model="search.users" @change="customerChange()" :disabled="Object.keys(selectedProducts) < 1">
-                    ID пользователя
+            <div class="row mt-5">
+                <f-select class="col-1" v-model="selectedUserType" :options="userTypeSelect" without_none>
+                    Пользователь
+                </f-select>
+                <f-input class="col-3" v-model="search.users" @change="customerChange()" :disabled="Object.keys(selectedOffers) < 1">
+                    &nbsp;
                 </f-input>
                 <div class="col-8">
-                    Пользователь:
+                    Выбр:
                     {{ searchedUsers }}
+
                 </div>
             </div>
             <div class="row">
@@ -104,8 +113,11 @@ export default {
             searchedProducts: {},
             searchedUsers: {},
             selectedProducts: {},
-            selectedUsers: {},
+            searchedStocks: {},
+            selectedOffers: {},
+            selectedUser: {},
             selectedCity: '',
+            selectedUserType: 'fio'
         }
     },
     methods: {
@@ -118,8 +130,10 @@ export default {
             })
                 .then(result => {
                     this.searchedProducts = {};
+                    this.searchedStocks = {};
                     if(result) {
-                        this.searchedProducts = result;
+                        this.searchedProducts = result.products;
+                        this.searchedStocks = result.stocks;
                     }
                 });
         },
@@ -195,6 +209,18 @@ export default {
                 },
             ];
         },
+        userTypeSelect() {
+            return [
+                {
+                    value: 'fio',
+                    text: 'ФИО'
+                },
+                {
+                    value: 'id',
+                    text: 'ID'
+                },
+            ];
+        },
 
 
 
@@ -218,4 +244,18 @@ export default {
 };
 </script>
 <style scoped>
+    img.preview {
+        height: 30px;
+        float: left;
+        padding-right: 15px;
+        margin-top: 5px;
+        border-radius: 5px;
+    }
+
+    small {
+        display: block;
+        color: gray;
+        line-height: 1rem;
+        overflow: hidden;
+    }
 </style>

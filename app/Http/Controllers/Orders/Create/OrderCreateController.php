@@ -109,19 +109,46 @@ class OrderCreateController extends Controller
         }
 
         // Получаем продукты и их офферы
-        $vendorCodes = explode(',', $data['search']);
+        $vendorCodes = explode(',', trim($data['search']));
         $query = $productService->newQuery()
             ->include('offers')
             ->setFilter('vendor_code', $vendorCodes);
 
         $products = $productService->products($query);
 
-        // Получаем остатки на всех складах по продуктам
-//        $stocksQuery = $stockService->newQuery()
-//            ->setFilter('id', array_values($products->pluck('customer_id')->unique()->toArray()));
-//        $stocks = $stockService->stocks($stocksQuery);
+        if($products->isEmpty()) {
+            response()->json(false);
+        }
 
-        return response()->json($products);
+        $productsIds = $products->pluck('id')->values()->toArray();
+
+        // Изображения продуктов
+        $images = $productService
+            ->allImages($productsIds, 1)
+            ->pluck('url', 'productId')
+            ->toArray();
+
+        // Остатки на складах по продуктам
+        $stocksQuery = $stockService->newQuery()
+            ->setFilter('product_id', $productsIds);
+        $stocks = $stockService->stocks($stocksQuery);
+
+        $storesIds = $products->pluck('store_id')->values()->toArray();
+
+        $stocks = $stocks->groupBy('offer_id');
+
+        foreach ($products as $key => &$product) {
+            $product['photo'] = $images[$product->id] ?? '';
+        }
+
+
+        // Получаем доп информацию по мерчантам для офферов
+
+
+        return response()->json([
+            'products' => $products,
+            'stocks' => $stocks
+        ]);
     }
 
     public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
