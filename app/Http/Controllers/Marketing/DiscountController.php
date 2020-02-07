@@ -8,10 +8,10 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\RestRoleService;
-use Greensight\Marketing\Dto\Discount\DiscountApprovalStatus;
-use Greensight\Marketing\Dto\Discount\DiscountCondition;
-use Greensight\Marketing\Dto\Discount\DiscountStatus;
-use Greensight\Marketing\Dto\Discount\DiscountType;
+use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
+use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
+use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
+use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -53,9 +53,9 @@ class DiscountController extends Controller
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => (int)$page,
-            'discountStatuses' => DiscountStatus::allStatuses(),
-            'discountApprovalStatuses' => DiscountApprovalStatus::allStatuses(),
-            'discountTypes' => DiscountType::allTypes(),
+            'discountStatuses' => DiscountStatusDto::allStatuses(),
+            'discountApprovalStatuses' => DiscountApprovalStatusDto::allStatuses(),
+            'discountTypes' => DiscountTypeDto::allTypes(),
             'pager' => $pager,
         ]);
     }
@@ -83,12 +83,12 @@ class DiscountController extends Controller
     {
         $this->title = 'Создание скидки';
 
-        $discountTypes = Helpers::getSelectOptions(DiscountType::allTypes());
-        $conditionTypes = Helpers::getSelectOptions(DiscountCondition::allTypes());
+        $discountTypes = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
+        $conditionTypes = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
         $deliveryMethods = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
         $paymentMethods = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
         $roles = Helpers::getSelectOptions($roleService->rolesByFront(Front::FRONT_SHOWCASE));
-        $discountStatuses = Helpers::getSelectOptions(DiscountStatus::allStatuses());
+        $discountStatuses = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
 
         $query = $listsService->newQuery()->include('regions');
         $districts = $listsService->federalDistricts($query)->toArray();

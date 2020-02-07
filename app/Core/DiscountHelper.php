@@ -3,16 +3,16 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Marketing\Dto\Discount\DiscountApprovalStatus;
-use Greensight\Marketing\Dto\Discount\DiscountBrand;
-use Greensight\Marketing\Dto\Discount\DiscountCategory;
-use Greensight\Marketing\Dto\Discount\DiscountCondition;
+use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
+use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
+use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
+use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
-use Greensight\Marketing\Dto\Discount\DiscountOffer;
-use Greensight\Marketing\Dto\Discount\DiscountSegment;
-use Greensight\Marketing\Dto\Discount\DiscountStatus;
-use Greensight\Marketing\Dto\Discount\DiscountType;
-use Greensight\Marketing\Dto\Discount\DiscountUserRole;
+use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
+use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
+use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
+use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
+use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -106,7 +106,7 @@ class DiscountHelper
             'name' => $data['name'],
             'value_type' => $data['value_type'],
             'value' => $data['value'],
-            'approval_status' => DiscountApprovalStatus::STATUS_APPROVED,
+            'approval_status' => DiscountApprovalStatusDto::STATUS_APPROVED,
             'status' => $data['status'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
@@ -145,16 +145,16 @@ class DiscountHelper
         ];
 
         switch ($data['type']) {
-            case DiscountType::TYPE_OFFER:
+            case DiscountTypeDto::TYPE_OFFER:
                 foreach ($data['offers'] as $offer) {
-                    $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOffer())
+                    $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOfferDto())
                         ->setExcept(false)
                         ->setOffer($offer);
                 }
                 break;
-            case DiscountType::TYPE_BRAND:
+            case DiscountTypeDto::TYPE_BRAND:
                 foreach ($data['brands'] as $brand) {
-                    $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrand())
+                    $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrandDto())
                         ->setExcept(false)
                         ->setBrand($brand);
                 }
@@ -162,15 +162,15 @@ class DiscountHelper
                 // Скидка на бренд за исключением следующих офферов
                 if (isset($data['except']['offers'])) {
                     foreach ($data['except']['offers'] as $offer) {
-                        $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOffer())
+                        $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOfferDto())
                             ->setExcept(true)
                             ->setOffer($offer);
                     }
                 }
                 break;
-            case DiscountType::TYPE_CATEGORY:
+            case DiscountTypeDto::TYPE_CATEGORY:
                 foreach ($data['categories'] as $category) {
-                    $relations[DiscountDto::DISCOUNT_CATEGORY_RELATION][] = (new DiscountCategory())
+                    $relations[DiscountDto::DISCOUNT_CATEGORY_RELATION][] = (new DiscountCategoryDto())
                         ->setExcept(false)
                         ->setCategory($category);
                 }
@@ -178,7 +178,7 @@ class DiscountHelper
                 // Скидка на категорию за исключением следующих офферов
                 if (isset($data['except']['offers'])) {
                     foreach ($data['except']['offers'] as $offer) {
-                        $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOffer())
+                        $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOfferDto())
                             ->setExcept(true)
                             ->setOffer($offer);
                     }
@@ -187,7 +187,7 @@ class DiscountHelper
                 // Скидка на категорию за исключением следующих брендов
                 if (isset($data['except']['brands'])) {
                     foreach ($data['except']['brands'] as $brand) {
-                        $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrand())
+                        $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrandDto())
                             ->setExcept(true)
                             ->setBrand($brand);
                     }
@@ -199,13 +199,13 @@ class DiscountHelper
          * Условия, которые выделени в отдельные DTO для оптимизации расчета скидки в каталоге
          */
         foreach ($data['conditions'] as $condition) {
-            if ($condition['type'] !== DiscountCondition::CONDITION_TYPE_USER) {
+            if ($condition['type'] !== DiscountConditionDto::CONDITION_TYPE_USER) {
                 continue;
             }
 
             if (isset($condition['segments']) && count($condition['segments']) > 0) {
                 foreach ($condition['segments'] as $segment) {
-                    $relations[DiscountDto::DISCOUNT_SEGMENT_RELATION][] = (new DiscountSegment())
+                    $relations[DiscountDto::DISCOUNT_SEGMENT_RELATION][] = (new DiscountSegmentDto())
                         ->setExcept(false)
                         ->setSegment($segment);
                 }
@@ -213,7 +213,7 @@ class DiscountHelper
 
             if (isset($condition['roles']) && count($condition['roles']) > 0) {
                 foreach ($condition['roles'] as $role) {
-                    $relations[DiscountDto::DISCOUNT_USER_ROLE_RELATION][] = (new DiscountUserRole())
+                    $relations[DiscountDto::DISCOUNT_USER_ROLE_RELATION][] = (new DiscountUserRoleDto())
                         ->setExcept(false)
                         ->setRole($role);
                 }
@@ -235,56 +235,56 @@ class DiscountHelper
 
         foreach ($data['conditions'] as $condition) {
             switch ($condition['type']) {
-                case DiscountCondition::CONDITION_TYPE_FIRST_ORDER:
+                case DiscountConditionDto::CONDITION_TYPE_FIRST_ORDER:
                     $conditions[$condition['type']] = null;
                     break;
-                case DiscountCondition::CONDITION_TYPE_MIN_PRICE_ORDER:
+                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_ORDER:
                     $conditions[$condition['type']] = ['min_price' => (float)$condition['sum']];
                     break;
-                case DiscountCondition::CONDITION_TYPE_MIN_PRICE_BRAND:
+                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_BRAND:
                     $conditions[$condition['type']] = [
                         'brands' => (int)$condition['brands'],
                         'min_price' => (float)$condition['sum'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_MIN_PRICE_CATEGORY:
+                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_CATEGORY:
                     $conditions[$condition['type']] = [
                         'categories' => (int)$condition['categories'],
                         'min_price' => (float)$condition['sum'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_EVERY_UNIT_PRODUCT:
+                case DiscountConditionDto::CONDITION_TYPE_EVERY_UNIT_PRODUCT:
                     $conditions[$condition['type']] = [
                         'offer' => (int)$condition['offer'],
                         'count' => (int)$condition['count'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_DELIVERY_METHOD:
+                case DiscountConditionDto::CONDITION_TYPE_DELIVERY_METHOD:
                     $conditions[$condition['type']] = [
                         'deliveryMethods' => $condition['deliveryMethods'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_PAY_METHOD:
+                case DiscountConditionDto::CONDITION_TYPE_PAY_METHOD:
                     $conditions[$condition['type']] = [
                         'paymentMethods' => $condition['paymentMethods'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_REGION:
+                case DiscountConditionDto::CONDITION_TYPE_REGION:
                     $conditions[$condition['type']] = [
                         'regions' => $condition['regions'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_USER:
+                case DiscountConditionDto::CONDITION_TYPE_USER:
                     $conditions[$condition['type']] = [
                         'users' => $condition['users'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_ORDER_SEQUENCE_NUMBER:
+                case DiscountConditionDto::CONDITION_TYPE_ORDER_SEQUENCE_NUMBER:
                     $conditions[$condition['type']] = [
                         'sequence_number' => (int)$condition['sequenceNumber'],
                     ];
                     break;
-                case DiscountCondition::CONDITION_TYPE_DISCOUNT_SYNERGY:
+                case DiscountConditionDto::CONDITION_TYPE_DISCOUNT_SYNERGY:
                     $conditions[$condition['type']] = [
                         'discounts' => $condition['synergy'],
                     ];
@@ -293,7 +293,7 @@ class DiscountHelper
         }
 
         if (!empty($data['bundles'])) {
-            $conditions[DiscountCondition::CONDITION_TYPE_BUNDLE] = ['bundles' => $data['bundles'],];
+            $conditions[DiscountConditionDto::CONDITION_TYPE_BUNDLE] = ['bundles' => $data['bundles'],];
         }
 
         return $conditions;
