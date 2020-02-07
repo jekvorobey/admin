@@ -44,32 +44,34 @@
                         </tr>
                         <tr>
                             <th>ФИО</th>
-                            <td colspan="3"></td>
+                            <td colspan="3">{{ customer.full_name || '-' }}</td>
                         </tr>
                         <tr>
                             <th>ID</th>
-                            <td></td>
+                            <td>{{ customer.id }}</td>
                             <th>Фото</th>
                             <td></td>
                         </tr>
                         <tr>
                             <th>E-mail</th>
-                            <td></td>
+                            <td>{{ customer.email || '-' }}</td>
                             <th>Телефон</th>
-                            <td></td>
+                            <td>{{ customer.phone || '-' }}</td>
                         </tr>
                         <tr>
                             <th>Соцсети</th>
                             <td>
-                                1<br>
-                                2<br>
-                                3<br>
+                                <div v-for="social in customer.socials">
+                                    {{ social.driver }}: {{ social.name }}
+                                </div>
+                                <div v-if="!customer.socials.length">-</div>
                             </td>
                             <th>Ссылка на портфолио</th>
                             <td>
-                                1<br>
-                                2<br>
-                                3<br>
+                                <div v-for="portfolio in customer.portfolios">
+                                    <a :href="portfolio.link" target="_blank">{{ portfolio.name }}</a>
+                                </div>
+                                <div v-if="!customer.portfolios.length">-</div>
                             </td>
                         </tr>
                         </tbody>
@@ -98,7 +100,7 @@
         <b-card no-body>
             <b-tabs lazy pills card vertical>
                 <b-tab title="Основная информация">
-                    <info-main :id="customer.id"/>
+                    <info-main :customer="customer"/>
                 </b-tab>
                 <b-tab title="Предпочтения">
                     <info-preference :id="customer.id"/>

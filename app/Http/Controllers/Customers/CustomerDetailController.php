@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Customers;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -26,6 +31,10 @@ class CustomerDetailController extends Controller
         if (!$user) {
             throw new NotFoundHttpException();
         }
+        $portfolios = $customerService->portfolios($customer->user_id);
+
+        /** @var UserDto $user */
+        $socials = $userService->socials($customer->user_id);
 
         $this->title = $user->full_name;
         return $this->render('Customer/Detail', [
@@ -33,6 +42,22 @@ class CustomerDetailController extends Controller
                 'id' => $customer->id,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
+                'full_name' => $user->full_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'created_at' => $user->created_at,
+                'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
+                    return [
+                        'link' => $portfolio->link,
+                        'name' => $portfolio->name,
+                    ];
+                }),
+                'socials' => $socials->map(function (SocialUserLinkDto $socials) {
+                    return [
+                        'name' => $socials->socialTitle,
+                        'driver' => $socials->getDriverTitle(),
+                    ];
+                }),
             ],
             'statuses' => CustomerDto::statuses(),
         ]);
@@ -46,9 +71,26 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function infoMain($id)
+    public function infoMain($id, CustomerService $customerService, FileService $fileService)
     {
+        $certificates = $customerService->certificates($id);
+        $files = [];
+        if ($certificates) {
+            $files = $fileService->getFiles($certificates->pluck('file_id')->all())->keyBy('id');
+        }
+
         return response()->json([
+            'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
+                /** @var FileDto $file */
+                $file = $files->get($certificate->file_id);
+                if (!$file) {
+                    return false;
+                }
+                return [
+                    'url' => $file->absoluteUrl(),
+                    'name' => $file->original_name,
+                ];
+            })->filter(),
             'kpis' => [
                 $this->kpi('Количество заказов', 0)
             ]
