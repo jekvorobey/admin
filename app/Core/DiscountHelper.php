@@ -70,10 +70,9 @@ class DiscountHelper
 
     /**
      * @param Request $request
-     * @param MerchantService $merchantService
      * @return DiscountDto
      */
-    public static function validate(Request $request, MerchantService $merchantService)
+    public static function validate(Request $request)
     {
         $data = $request->validate([
             'name' => 'string|required',
@@ -83,6 +82,7 @@ class DiscountHelper
             'start_date' => 'string|nullable',
             'end_date' => 'string|nullable',
             'promo_code_only' => 'boolean|required',
+            'status' => 'numeric|required',
             'offers' => 'array',
             'bundles' => 'array',
             'brands' => 'array',
@@ -100,14 +100,14 @@ class DiscountHelper
             : null;
 
         $discount = new DiscountDto([
-            'sponsor' => DiscountDto::DISCOUNT_MERCHANT_SPONSOR,
-            'merchant_id' => $merchantService->current()->id,
+            'sponsor' => DiscountDto::DISCOUNT_ADMIN_SPONSOR,
+            'merchant_id' => null,
             'type' => $data['type'],
             'name' => $data['name'],
             'value_type' => $data['value_type'],
             'value' => $data['value'],
-            'approval_status' => DiscountApprovalStatus::STATUS_SENT,
-            'status' => DiscountStatus::STATUS_PAUSED,
+            'approval_status' => DiscountApprovalStatus::STATUS_APPROVED,
+            'status' => $data['status'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],

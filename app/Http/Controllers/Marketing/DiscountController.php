@@ -16,6 +16,7 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\PaymentMethod;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Services\BrandService\BrandService;
@@ -45,6 +46,7 @@ class DiscountController extends Controller
             $restQuery->setFilter('id', $filter['id']);
         }
         $restQuery->pageNumber($page, 20);
+        $restQuery->addSort('id', 'desc');
         $discounts = DiscountHelper::load($request, $restQuery, $discountService);
         $pager = $discountService->discountsCount($restQuery);
 
@@ -86,6 +88,7 @@ class DiscountController extends Controller
         $deliveryMethods = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
         $paymentMethods = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
         $roles = Helpers::getSelectOptions($roleService->rolesByFront(Front::FRONT_SHOWCASE));
+        $discountStatuses = Helpers::getSelectOptions(DiscountStatus::allStatuses());
 
         $query = $listsService->newQuery()->include('regions');
         $districts = $listsService->federalDistricts($query)->toArray();
@@ -103,11 +106,32 @@ class DiscountController extends Controller
             'discountTypes' => $discountTypes,
             'iConditionTypes' => $conditionTypes,
             'deliveryMethods' => $deliveryMethods,
+            'discountStatuses' => $discountStatuses,
             'paymentMethods' => $paymentMethods,
             'roles' => $roles,
             'iDistricts' => $districts,
             'categories' => $categoryService->categories($categoryService->newQuery()),
             'brands' => $brandService->brands($brandService->newQuery()),
         ]);
+    }
+
+    /**
+     * Запрос на создание заявки на скидки
+     *
+     * @param Request $request
+     * @param MerchantService $merchantService
+     * @param DiscountService $discountService
+     * @return JsonResponse
+     */
+    public function create(Request $request, MerchantService $merchantService, DiscountService $discountService)
+    {
+        try {
+            $discount = DiscountHelper::validate($request, $merchantService);
+            $result = $discountService->create($discount);
+        } catch (\Exception $ex) {
+            return response()->json(['status' => $ex->getMessage()]);
+        }
+
+        return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 }

@@ -69,6 +69,10 @@
             </div>
 
             <div class="row">
+                <v-select v-model="discount.status" :options="discountStatuses" class="col-3">Статус</v-select>
+            </div>
+
+            <div class="row">
                 <div class="col-12">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="promo_code_only" v-model="discount.promo_code_only">
@@ -142,6 +146,7 @@
             discounts: Array,
             discountTypes: Object,
             iConditionTypes: Object,
+            discountStatuses: Object,
             paymentMethods: Array,
             deliveryMethods: Array,
             categories: Array,
@@ -160,6 +165,7 @@
                     end_date: null,
                     offers: null,
                     bundles: null,
+                    status: 1, // STATUS_ACTIVE
                     brands: [],
                     categories: [],
                     conditions: [],
@@ -200,6 +206,7 @@
                     start_date: this.discount.start_date,
                     end_date: this.discount.end_date,
                     conditions: this.discount.conditions,
+                    status: this.discount.status,
                     promo_code_only: !!this.discount.promo_code_only,
                 };
 

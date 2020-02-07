@@ -25,6 +25,7 @@
                 :type="type"
                 :aria-describedby="`${inputId}-alert`"
         />
+        <small :id="`${inputId}-help`" class="form-text text-muted" v-if="help">{{ help }}</small>
         <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
             <slot name="error" :error="error">
                 {{ error }}
@@ -44,6 +45,7 @@ export default {
     mixins: [inputMixin],
     props: {
         value: {},
+        help: { type: String, default: '' },
         type: { type: String, default: 'text' },
         tag: {
             type: String,
