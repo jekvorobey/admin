@@ -84,7 +84,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Меню сайта',
-                        'route' => '#',
+                        'route' => route('menu.list'),
                     ],
                     [
                         'title' => 'Управление страницами',
