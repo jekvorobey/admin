@@ -103,10 +103,12 @@ export default {
             Services.showLoader();
             Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
                 customer: {
-                    comment_internal: this.form.comment_internal
+                    comment_internal: this.form.comment_internal,
+                    manager_id: this.form.manager_id,
                 },
             }).then(data => {
                 this.customer.comment_internal = this.form.comment_internal;
+                this.customer.manager_id = this.form.manager_id;
                 Services.hideLoader();
             })
         }

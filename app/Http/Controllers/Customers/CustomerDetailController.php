@@ -78,13 +78,15 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function infoMain($id, CustomerService $customerService, FileService $fileService)
+    public function infoMain($id, CustomerService $customerService, FileService $fileService, UserService $userService)
     {
         $certificates = $customerService->certificates($id);
         $files = [];
         if ($certificates) {
             $files = $fileService->getFiles($certificates->pluck('file_id')->all())->keyBy('id');
         }
+
+        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
 
         return response()->json([
             'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
@@ -98,8 +100,12 @@ class CustomerDetailController extends Controller
                     'name' => $file->original_name,
                 ];
             })->filter(),
+            'managers' => $managers->mapWithKeys(function (UserDto $user) {
+                return [$user->id => $user->full_name];
+            }),
             'kpis' => [
-                $this->kpi('Количество заказов', 0)
+                $this->kpi('Количество заказов', 0),
+                $this->kpi('Сумма заказов накопительным итогом', 0),
             ]
         ]);
     }
