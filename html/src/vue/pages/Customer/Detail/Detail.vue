@@ -12,9 +12,10 @@
                         <tbody>
                         <tr>
                             <th>Роль</th>
-                            <td></td>
-                            <th>Дата активации</th>
-                            <td></td>
+                            <td colspan="3">
+                                {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
+                                ({{ customer.role_date }})
+                            </td>
                         </tr>
                         <tr>
                             <th>Статус</th>
@@ -100,7 +101,7 @@
         <b-card no-body>
             <b-tabs lazy pills card vertical>
                 <b-tab title="Основная информация">
-                    <info-main :customer="customer"/>
+                    <info-main :model.sync="customer"/>
                 </b-tab>
                 <b-tab title="Предпочтения">
                     <info-preference :id="customer.id"/>
@@ -155,7 +156,9 @@ export default {
         saveStatus() {
             Services.showLoader();
             Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
-                status: this.editStatus,
+                customer: {
+                    status: this.editStatus,
+                }
             }).then(data => {
                 this.customer.status = this.editStatus;
                 this.editStatus = false;

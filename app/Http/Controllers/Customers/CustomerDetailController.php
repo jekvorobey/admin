@@ -33,10 +33,10 @@ class CustomerDetailController extends Controller
         }
         $portfolios = $customerService->portfolios($customer->user_id);
 
-        /** @var UserDto $user */
         $socials = $userService->socials($customer->user_id);
 
         $this->title = $user->full_name;
+        $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         return $this->render('Customer/Detail', [
             'customer' => [
                 'id' => $customer->id,
@@ -58,26 +58,35 @@ class CustomerDetailController extends Controller
                         'driver' => $socials->getDriverTitle(),
                     ];
                 }),
+                'referral' => $referral,
+                'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
+                'comment_internal' => $customer->comment_internal,
+                'manager_id' => $customer->manager_id,
             ],
             'statuses' => CustomerDto::statuses(),
+            'managers' => [],
         ]);
     }
 
     public function save($id, CustomerService $customerService)
     {
-        $customer = new CustomerDto();
-        $customer->status = request('status');
-        $customerService->updateCustomer($id, $customer);
+        $customer = request('customer');
+        if ($customer) {
+            $customer = new CustomerDto($customer);
+            $customerService->updateCustomer($id, $customer);
+        }
         return response('', 204);
     }
 
-    public function infoMain($id, CustomerService $customerService, FileService $fileService)
+    public function infoMain($id, CustomerService $customerService, FileService $fileService, UserService $userService)
     {
         $certificates = $customerService->certificates($id);
         $files = [];
         if ($certificates) {
             $files = $fileService->getFiles($certificates->pluck('file_id')->all())->keyBy('id');
         }
+
+        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
 
         return response()->json([
             'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
@@ -91,8 +100,12 @@ class CustomerDetailController extends Controller
                     'name' => $file->original_name,
                 ];
             })->filter(),
+            'managers' => $managers->mapWithKeys(function (UserDto $user) {
+                return [$user->id => $user->full_name];
+            }),
             'kpis' => [
-                $this->kpi('Количество заказов', 0)
+                $this->kpi('Количество заказов', 0),
+                $this->kpi('Сумма заказов накопительным итогом', 0),
             ]
         ]);
     }

@@ -75,4 +75,5 @@ public/storage
 public/assets
 public/build
 auth.json
+studio.json
 /html/build/

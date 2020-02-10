@@ -168,6 +168,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/product', 'ProductGroupDetailController@getProducts')
                 ->name('productGroup.getProducts');
         });
+
+        Route::prefix('menu')->group(function () {
+            Route::get('/', 'MenuListController@index')
+                ->name('menu.list');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
