@@ -33,10 +33,10 @@ class CustomerDetailController extends Controller
         }
         $portfolios = $customerService->portfolios($customer->user_id);
 
-        /** @var UserDto $user */
         $socials = $userService->socials($customer->user_id);
 
         $this->title = $user->full_name;
+        $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         return $this->render('Customer/Detail', [
             'customer' => [
                 'id' => $customer->id,
@@ -58,16 +58,23 @@ class CustomerDetailController extends Controller
                         'driver' => $socials->getDriverTitle(),
                     ];
                 }),
+                'referral' => $referral,
+                'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
+                'comment_internal' => $customer->comment_internal,
+                'manager_id' => $customer->manager_id,
             ],
             'statuses' => CustomerDto::statuses(),
+            'managers' => [],
         ]);
     }
 
     public function save($id, CustomerService $customerService)
     {
-        $customer = new CustomerDto();
-        $customer->status = request('status');
-        $customerService->updateCustomer($id, $customer);
+        $customer = request('customer');
+        if ($customer) {
+            $customer = new CustomerDto($customer);
+            $customerService->updateCustomer($id, $customer);
+        }
         return response('', 204);
     }
 

@@ -3,7 +3,7 @@
          <table class="table table-sm">
             <thead>
             <tr>
-                <th colspan="2">Основная информация</th>
+                <th colspan="2">Основная информация <button @click="save" class="btn btn-success">Сохранить</button></th>
             </tr>
             </thead>
             <tbody>
@@ -55,11 +55,18 @@
             </tr>
             <tr>
                 <th>Персональный Менеджер</th>
-                <td></td>
+                <td>
+                    <select class="form-control form-control-sm" v-model="form.manager_id">
+                        <option :value="null">-</option>
+                        <option v-for="(manager, id) in managers" :value="id">{{ manager }}</option>
+                    </select>
+                </td>
             </tr>
             <tr>
-                <th>Служебный комментарий</th>
-                <td></td>
+                <th><label for="comment_internal">Служебный комментарий</label></th>
+                <td>
+                    <textarea class="form-control" id="comment_internal" v-model="form.comment_internal"/>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -72,18 +79,42 @@ import Services from '../../../../../scripts/services/services.js';
 
 export default {
     name: 'info-main',
-    props: ['customer'],
+    props: ['model'],
     data() {
         return {
             certificates: [],
+            managers: [],
+
+            form: {
+                comment_internal: this.model.comment_internal,
+                manager_id: this.model.manager_id,
+            }
         }
     },
     computed: {
         ...mapGetters(['getRoute']),
+        customer: {
+            get() {return this.model},
+            set(value) {this.$emit('update:model', value)},
+        }
+    },
+    methods: {
+        save() {
+            Services.showLoader();
+            Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
+                customer: {
+                    comment_internal: this.form.comment_internal
+                },
+            }).then(data => {
+                this.customer.comment_internal = this.form.comment_internal;
+                Services.hideLoader();
+            })
+        }
     },
     created() {
         Services.showLoader();
-        Services.net().get(this.getRoute('customers.detail.main', {id: this.customer.id}), {user_id: this.customer.user_id}).then(data => {
+        Services.net().get(this.getRoute('customers.detail.main', {id: this.model.id}), {user_id: this.model.user_id}).then(data => {
+            this.managers = data.managers;
             this.certificates = data.certificates;
             Services.event().$emit('kpiLoad', {kpis: data.kpis});
             Services.hideLoader();

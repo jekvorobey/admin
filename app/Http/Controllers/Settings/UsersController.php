@@ -44,7 +44,7 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
-    public function detail(int $id, UserService $userService, RoleService $roleService)
+    public function detail(int $id, UserService $userService)
     {
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
@@ -64,7 +64,7 @@ class UsersController extends Controller
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'roles' => $roleService->roles()
+                'roles' => UserDto::roles()
             ]
         ]);
     }

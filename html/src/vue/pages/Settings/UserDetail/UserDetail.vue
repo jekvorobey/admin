@@ -89,8 +89,7 @@
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
             roleName(id) {
-                let roles = this.options.roles.filter(role => role.id === id);
-                return roles.length > 0 ? roles[0].name : 'N/A';
+                return this.options.roles.hasOwnProperty(id) ? this.options.roles[id] : 'N/A';
             },
             addRole() {
                 Services.net().post(this.getRoute('user.addRole', {id: this.user.id}), {}, {
