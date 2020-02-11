@@ -19,6 +19,7 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\Front;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\ProductService\ProductService;
 use Pim\Dto\Product\ProductDto;
@@ -37,6 +38,16 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class OrderCreateController extends Controller
 {
+    /**
+     * @param OrderService $orderService
+     * @param ProductService $productService
+     * @param UserService $userService
+     * @param CustomerService $customerService
+     * @param DeliveryService $deliveryService
+     * @param ShipmentService $shipmentService
+     * @param ShipmentPackageService $shipmentPackageService
+     * @return mixed
+     */
     public function create(
         OrderService $orderService,
         ProductService $productService,
@@ -58,15 +69,23 @@ class OrderCreateController extends Controller
         ]);
     }
 
-    public function searchUsers
+    /**
+     * @param Request $request
+     * @param UserService $userService
+     * @param CustomerService $customerService
+     * @return JsonResponse
+     */
+    public function searchCustomer
     (
         Request $request,
+        UserService $userService,
         CustomerService $customerService
     ): JsonResponse
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
         $validator = Validator::make($data, [
+            'type' => 'required|string',
             'search' => 'required',
         ]);
 
@@ -74,14 +93,34 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        $query = $customerService->newQuery();
+        $query = $userService->newQuery();
+        $query->include('profile');
 
-        $userIds = explode(',', $data['search']);
-        $query->setFilter('user_id', $userIds);
+        switch ($data['type']) {
+            case 'fio';
+                $query->setFilter('first_name', 'like', $data['search']);
+                $query->setFilter('last_name', 'like', $data['search']);
+                break;
+            case 'email';
+                $query->setFilter('email', 'like', $data['search']);
+                break;
+            default:
+                $query->setFilter('id', (int) $data['search']);
+        }
 
-        $products = $customerService->customers($query);
+        $users = $userService->users($query);
+        if($users->isEmpty()) {
+            throw new NotFoundHttpException();
+        }
 
-        return response()->json($products);
+        $customers = $customerService->customers($query);
+        if($customers->isEmpty()) {
+            throw new NotFoundHttpException();
+        }
+
+        $customer = $customers->first();
+
+        return response()->json($customer);
     }
 
 
@@ -89,13 +128,15 @@ class OrderCreateController extends Controller
      * @param Request $request
      * @param ProductService $productService
      * @param StockService $stockService
+     * @param MerchantService $merchantService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function searchProducts(
         Request $request,
         ProductService $productService,
-        StockService $stockService
+        StockService $stockService,
+        MerchantService $merchantService
     ): JsonResponse
     {
         /** @var \Illuminate\Validation\Validator $validator */
@@ -108,24 +149,20 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        // Получаем продукты и их офферы
+        // Продукты и их офферы
         $productVendors = explode(',', $data['search']);
         $productVendors = array_map('trim', $productVendors);
-
 
         $query = $productService->newQuery()
             ->include('offers')
             ->setFilter('vendor_code', $productVendors);
-
         $products = $productService->products($query);
-
         if($products->isEmpty()) {
-            response()->json(false);
+            throw new NotFoundHttpException();
         }
 
-        $productsIds = $products->pluck('id')->values()->toArray();
-
         // Изображения продуктов
+        $productsIds = $products->pluck('id')->values()->toArray();
         $images = $productService
             ->allImages($productsIds, 1)
             ->pluck('url', 'productId')
@@ -136,31 +173,37 @@ class OrderCreateController extends Controller
             ->setFilter('product_id', $productsIds);
         $stocks = $stockService->stocks($stocksQuery);
 
-//        $storesIds = $products->merge()->pluck('merchant_id')->values()->toArray();
+        // Мерчанты офферов
+        $merchantsIds = $products->pluck('merchant_id')->unique()->values()->toArray();
+        $query = $merchantService->newQuery()
+            ->setFilter('id', $merchantsIds);
+        $merchants = $merchantService->merchants($query);
 
-        $stocks = $stocks->groupBy('offer_id')
-            ->map(function ($item) {
-                $item = $item->toArray();
-//                $item['qty'] = (double) $item['qty'];
-                return array_merge(...$item);
-            })
-            ->toArray();
+//        $stocks = $stocks->groupBy('offer_id')
+//            ->map(function ($item) {
+//                $item = $item->toArray();
+//                return array_merge(...$item);
+//            })
+//            ->toArray();
 
 
         foreach ($products as $key => &$product) {
             $product['photo'] = $images[$product->id] ?? '';
+            $product['qty'] = 1;
         }
-
-
-        // Получаем доп информацию по мерчантам для офферов
-
 
         return response()->json([
             'products' => $products,
-            'stocks' => $stocks
+            'stocks' => $stocks,
+            'merchants' => $merchants
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param OrderService $orderService
+     * @param BasketService $basketService
+     */
     public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
     {
         /** @var \Illuminate\Validation\Validator $validator */

@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OrderCreateController@create')->name('orders.create');
 
             Route::post('products', 'OrderCreateController@searchProducts')->name('orders.searchProducts');
-            Route::post('users', 'OrderCreateController@searchUsers')->name('orders.searchUsers');
+            Route::post('users', 'OrderCreateController@searchCustomer')->name('orders.searchCustomer');
             Route::post('order', 'OrderCreateController@createOrder')->name('orders.createOrder');
         });
 
