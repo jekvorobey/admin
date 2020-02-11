@@ -169,9 +169,15 @@ Route::middleware('auth')->group(function () {
                 ->name('productGroup.getProducts');
         });
 
-        Route::prefix('menu')->group(function () {
+        Route::prefix('menu')->namespace('Menu')->group(function () {
             Route::get('/', 'MenuListController@index')
                 ->name('menu.list');
+            Route::get('/{id}', 'MenuDetailController@index')
+                ->where(['id' => '[0-9]+'])
+                ->name('menu.detail');
+            Route::put('/{id}', 'MenuDetailController@update')
+                ->where(['id' => '[0-9]+'])
+                ->name('menu.update');
         });
     });
 

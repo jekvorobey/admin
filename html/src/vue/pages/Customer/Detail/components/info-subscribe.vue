@@ -17,7 +17,6 @@ export default {
     created() {
         Services.showLoader();
         Services.net().get(this.getRoute('customers.detail.subscribe', {id: this.id})).then(data => {
-            Services.event().$emit('kpiLoad', {kpis: data.kpis});
             Services.hideLoader();
         })
     }

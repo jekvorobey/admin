@@ -14,11 +14,19 @@ use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\OrderDto;
+use Greensight\Oms\Dto\Payment\PaymentDto;
+use Greensight\Oms\Services\DeliveryService\DeliveryService;
+use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\PaymentService\PaymentService;
+use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
 {
-    public function detail($id, CustomerService $customerService, UserService $userService)
+    public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService)
     {
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
@@ -35,10 +43,12 @@ class CustomerDetailController extends Controller
 
         $socials = $userService->socials($customer->user_id);
 
+        $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
+
         $this->title = $user->full_name;
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         return $this->render('Customer/Detail', [
-            'customer' => [
+            'iCustomer' => [
                 'id' => $customer->id,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
@@ -64,7 +74,10 @@ class CustomerDetailController extends Controller
                 'manager_id' => $customer->manager_id,
             ],
             'statuses' => CustomerDto::statuses(),
-            'managers' => [],
+            'order' => [
+                'count' => $orders->count(),
+                'price' => number_format($orders->sum('price'), 2, '.', ' '),
+            ],
         ]);
     }
 
@@ -103,46 +116,65 @@ class CustomerDetailController extends Controller
             'managers' => $managers->mapWithKeys(function (UserDto $user) {
                 return [$user->id => $user->full_name];
             }),
-            'kpis' => [
-                $this->kpi('Количество заказов', 0),
-                $this->kpi('Сумма заказов накопительным итогом', 0),
-            ]
         ]);
     }
 
     public function infoSubscribe($id)
     {
         return response()->json([
-            'kpis' => []
         ]);
     }
 
     public function infoPreference($id)
     {
         return response()->json([
-            'kpis' => []
         ]);
     }
 
-    public function infoOrder($id)
+    public function infoOrder($id, OrderService $orderService, PaymentService $paymentService, DeliveryService $deliveryService)
     {
+        $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
+        if ($orders) {
+            $orderIds = $orders->pluck('id')->all();
+            $payments = $paymentService->payments($orderIds)->groupBy('order_id');
+
+            $deliveries = $deliveryService
+                ->deliveries((new RestQuery())->setFilter('order_id', $orderIds))
+                ->groupBy('order_id');
+
+            $orders = $orders->map(function (OrderDto $order) use ($payments, $deliveries) {
+                /** @var Collection|PaymentDto[] $ps */
+                $ps = $payments->get($order->id, collect());
+                /** @var Collection|DeliveryDto[] $ds */
+                $ds = $deliveries->get($order->id, collect());
+                $ar = $order->toArray();
+                $ar['status'] = $order->status();
+                $ar['isPayed'] = $order->isPayed();
+                $ar['deliveryType'] = $order->deliveryType();
+                $ar['paymentMethod'] = $ps->map(function (PaymentDto $payment) {
+                    return $payment->paymentMethod()->name;
+                })->unique()->join(', ');
+                $ar['deliveryMethod'] = $ds->map(function (DeliveryDto $delivery) {
+                    return DeliveryMethod::methodById($delivery->delivery_method)->name;
+                })->unique()->join(', ');
+                $ar['deliverySystems'] = $ds->map(function (DeliveryDto $delivery) {
+                    return \Greensight\Logistics\Dto\Lists\DeliveryService::serviceById($delivery->delivery_service)->name;
+                })->unique()->join(', ');
+                $ar['deliveryCount'] = $ds->count();
+                $ar['deliveryDate'] = $ds->map(function (DeliveryDto $delivery) {
+                    return explode(' ', $delivery->delivery_at)[0];
+                })->unique()->join(', ');
+                return $ar;
+            });
+        }
         return response()->json([
-            'kpis' => []
+            'orders' => $orders,
         ]);
     }
 
     public function infoLog($id)
     {
         return response()->json([
-            'kpis' => []
         ]);
-    }
-
-    protected function kpi($title, $value)
-    {
-        return [
-            'title' => $title,
-            'value' => $value,
-        ];
     }
 }

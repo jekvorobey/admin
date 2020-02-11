@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad7451fe32369a92207f4b833b9ee20f",
+    "content-hash": "1f84e143977fd5dd2487f7972c4754ed",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "199f9227419a75d261c256b9cef442d1c6f03181"
+                "reference": "83a0d9857fe20f02cf99f8c5da7422b3217df0da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=199f9227419a75d261c256b9cef442d1c6f03181",
-                "reference": "199f9227419a75d261c256b9cef442d1c6f03181",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=83a0d9857fe20f02cf99f8c5da7422b3217df0da",
+                "reference": "83a0d9857fe20f02cf99f8c5da7422b3217df0da",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-02-10T07:21:04+00:00"
+            "time": "2020-02-10T13:03:27+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -480,12 +480,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "5ce164bcd9204aa5792398567f3de2576d9c3e04"
+                "reference": "fceaa183287d27a28e27d4d3c71ce6f7c30e72f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=5ce164bcd9204aa5792398567f3de2576d9c3e04",
-                "reference": "5ce164bcd9204aa5792398567f3de2576d9c3e04",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=fceaa183287d27a28e27d4d3c71ce6f7c30e72f4",
+                "reference": "fceaa183287d27a28e27d4d3c71ce6f7c30e72f4",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +509,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-02-03T11:16:22+00:00"
+            "time": "2020-02-10T13:49:54+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -517,12 +517,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "b40574c20f8bfb879d7a0d37e62074db3e23c47e"
+                "reference": "7c1333cfddfff07e26a43f56e5691746b159be42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=b40574c20f8bfb879d7a0d37e62074db3e23c47e",
-                "reference": "b40574c20f8bfb879d7a0d37e62074db3e23c47e",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=7c1333cfddfff07e26a43f56e5691746b159be42",
+                "reference": "7c1333cfddfff07e26a43f56e5691746b159be42",
                 "shasum": ""
             },
             "require": {
@@ -566,7 +566,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-02-10T12:54:00+00:00"
+            "time": "2020-02-10T14:01:21+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -574,12 +574,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "68a3fdb00afc3d2e63b1771f9ea641593947d100"
+                "reference": "17b2b2a8414291727110641c9646c0ae4433aa2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=68a3fdb00afc3d2e63b1771f9ea641593947d100",
-                "reference": "68a3fdb00afc3d2e63b1771f9ea641593947d100",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=17b2b2a8414291727110641c9646c0ae4433aa2c",
+                "reference": "17b2b2a8414291727110641c9646c0ae4433aa2c",
                 "shasum": ""
             },
             "require": {
@@ -614,7 +614,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-01-21T13:00:39+00:00"
+            "time": "2020-02-11T14:56:24+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -755,12 +755,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "476f7e9ed2be97384ee67230cdae6e29d705528d"
+                "reference": "620dc75f4da7d44ef60aa8a156433a7366d40ea9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=476f7e9ed2be97384ee67230cdae6e29d705528d",
-                "reference": "476f7e9ed2be97384ee67230cdae6e29d705528d",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=620dc75f4da7d44ef60aa8a156433a7366d40ea9",
+                "reference": "620dc75f4da7d44ef60aa8a156433a7366d40ea9",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +795,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2019-12-30T12:06:12+00:00"
+            "time": "2020-02-11T15:16:32+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -4723,6 +4723,60 @@
                 "whoops"
             ],
             "time": "2020-01-15T10:00:00+00:00"
+        },
+        {
+            "name": "franzl/studio",
+            "version": "0.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/franzliedke/studio.git",
+                "reference": "4c8784d2e35c6163bd80b1255fffc9454ac29d5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/franzliedke/studio/zipball/4c8784d2e35c6163bd80b1255fffc9454ac29d5f",
+                "reference": "4c8784d2e35c6163bd80b1255fffc9454ac29d5f",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "symfony/console": "^2.7 || ^3.0 || ^4.0",
+                "symfony/filesystem": "^2.5 || ^3.0 || ^4.0",
+                "symfony/process": "^2.5 || ^3.0 || ^4.0"
+            },
+            "replace": {
+                "franzliedke/studio": "self.version"
+            },
+            "require-dev": {
+                "composer/composer": "dev-master",
+                "phpspec/phpspec": "~2.3"
+            },
+            "bin": [
+                "bin/studio"
+            ],
+            "type": "composer-plugin",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.11.x-dev"
+                },
+                "class": "Studio\\Composer\\StudioPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Studio\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Develop your Composer libraries with style",
+            "keywords": [
+                "composer",
+                "development",
+                "workflow"
+            ],
+            "time": "2017-12-01T17:45:24+00:00"
         },
         {
             "name": "fzaninotto/faker",

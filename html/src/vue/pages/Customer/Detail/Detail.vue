@@ -80,7 +80,7 @@
                 </b-card>
             </b-col>
             <b-col>
-                <b-card v-if="kpis.length">
+                <b-card>
                     <table class="table table-sm">
                         <thead>
                         <tr>
@@ -88,9 +88,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="kpi in kpis">
-                            <th>{{ kpi.title }}</th>
-                            <td>{{ kpi.value }}</td>
+                        <tr>
+                            <th>Количество заказов</th>
+                            <td>{{ order.count }}</td>
+                        </tr>
+                        <tr>
+                            <th>Сумма заказов накопительным итогом</th>
+                            <td>{{ order.price }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -99,9 +103,9 @@
         </b-row>
 
         <b-card no-body>
-            <b-tabs lazy pills card vertical>
+            <b-tabs lazy card>
                 <b-tab title="Основная информация">
-                    <info-main :model.sync="customer"/>
+                    <info-main :model.sync="customer" :order="order"/>
                 </b-tab>
                 <b-tab title="Предпочтения">
                     <info-preference :id="customer.id"/>
@@ -137,17 +141,12 @@ import { mapGetters } from 'vuex';
 
 export default {
     components: {CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
-    props: ['customer', 'statuses'],
+    props: ['iCustomer', 'statuses', 'order'],
     data() {
         return {
-            kpis: [],
             editStatus: false,
+            customer: this.iCustomer,
         };
-    },
-    mounted() {
-        Services.event().$on('kpiLoad', ({kpis}) => {
-            this.kpis = kpis
-        });
     },
     computed: {
         ...mapGetters(['getRoute']),
