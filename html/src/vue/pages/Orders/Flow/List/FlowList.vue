@@ -123,7 +123,10 @@
             <tbody>
                 <tr v-for="order in orders">
                     <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
-                    <td v-for="column in columns" v-if="column.isShown" v-html="column.value(order)"></td>
+                    <td v-for="column in columns" v-if="column.isShown">
+                        <order-status v-if="column.code === 'status'" :status='order.status'/>
+                        <div v-else v-html="column.value(order)"></div>
+                    </td>
                     <td></td>
                 </tr>
             </tbody>
@@ -142,23 +145,23 @@
 
 <script>
 
-    import Service from '../../../../../scripts/services/services';
-    import withQuery from 'with-query';
-    import qs from 'qs';
+import Service from '../../../../../scripts/services/services';
+import withQuery from 'with-query';
+import qs from 'qs';
 
-    import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
-    import FInput from '../../../../components/filter/f-input.vue';
-    import FDate from '../../../../components/filter/f-date.vue';
-    import FSelect from '../../../../components/filter/f-select.vue';
-    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-    import Dropdown from '../../../../components/dropdown/dropdown.vue';
-    import Helpers from '../../../../../scripts/helpers';
-    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
+import FInput from '../../../../components/filter/f-input.vue';
+import FDate from '../../../../components/filter/f-date.vue';
+import FSelect from '../../../../components/filter/f-select.vue';
+import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+import Dropdown from '../../../../components/dropdown/dropdown.vue';
+import Helpers from '../../../../../scripts/helpers';
+import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
-    import modalMixin from '../../../../mixins/modal.js';
+import modalMixin from '../../../../mixins/modal.js';
 
-    const cleanHiddenFilter = {
+const cleanHiddenFilter = {
     number: '',
     brands: [],
     payType: [],
@@ -292,9 +295,6 @@ export default {
                 {
                     name: 'Статус',
                     code: 'status',
-                    value: function(order) {
-                        return '<span class="badge ' + self.statusClass(order.status.id) + '">' + order.status.name + '</span>';
-                    },
                     isShown: true,
                     isAlwaysShown: true,
                 },
@@ -378,13 +378,6 @@ export default {
                 }
             }
             return false;
-        },
-        statusClass(statusId) {
-            switch (statusId) {
-                case 1: return 'badge-danger';
-                case 2: return 'badge-warning';
-                case 3: return 'badge-success';
-            }
         },
         selectAllPageOrders() {
             let checkboxes = document.getElementsByClassName('order-select');
