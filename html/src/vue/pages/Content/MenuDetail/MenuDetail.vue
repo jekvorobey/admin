@@ -32,6 +32,7 @@
                     @update="onUpdateMenuItems"
             >
             </menu-items>
+            {{selectedMenuItems}}
 
             <b-button type="submit" variant="dark">Обновить</b-button>
         </b-form>
@@ -54,7 +55,43 @@
         data() {
             return {
                 menu: this.iMenu,
-                selectedMenuItems: [],
+                selectedMenuItems: [{
+                    id: 1,
+                    name: '01',
+                    url: '/',
+                    options: {},
+                    items: [],
+                }, {
+                    id: 2,
+                    name: '02',
+                    url: '/',
+                    options: {},
+                    items: [],
+                }, {
+                    id: 3,
+                    name: '03',
+                    url: '/',
+                    options: {},
+                    items: [{
+                        id: 5,
+                        name: '05',
+                        url: '/',
+                        options: {},
+                        items: [],
+                    }, {
+                        id: 6,
+                        name: '06',
+                        url: '/',
+                        options: {},
+                        items: [],
+                    }],
+                }, {
+                    id: 4,
+                    name: '04',
+                    url: '/',
+                    options: {},
+                    items: [],
+                }],
             };
         },
 

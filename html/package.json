@@ -20,6 +20,7 @@
     "scripts": {
         "dev": "cross-env BROWSERSLIST_ENV=development webpack-dev-server --env.mode dev",
         "dev-build": "cross-env BROWSERSLIST_ENV=development webpack --env.mode dev",
+        "watch": "yarn dev-build --watch",
         "prod": "cross-env BROWSERSLIST_ENV=production webpack --env.mode prod",
         "analyze": "yarn prod --env.presets analyze",
         "buddy": "yarn prod --env.presets buddy",
