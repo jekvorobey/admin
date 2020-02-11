@@ -109,10 +109,13 @@ class OrderCreateController extends Controller
         }
 
         // Получаем продукты и их офферы
-        $vendorCodes = explode(',', trim($data['search']));
+        $productVendors = explode(',', $data['search']);
+        $productVendors = array_map('trim', $productVendors);
+
+
         $query = $productService->newQuery()
             ->include('offers')
-            ->setFilter('vendor_code', $vendorCodes);
+            ->setFilter('vendor_code', $productVendors);
 
         $products = $productService->products($query);
 
@@ -133,9 +136,16 @@ class OrderCreateController extends Controller
             ->setFilter('product_id', $productsIds);
         $stocks = $stockService->stocks($stocksQuery);
 
-        $storesIds = $products->pluck('store_id')->values()->toArray();
+//        $storesIds = $products->merge()->pluck('merchant_id')->values()->toArray();
 
-        $stocks = $stocks->groupBy('offer_id');
+        $stocks = $stocks->groupBy('offer_id')
+            ->map(function ($item) {
+                $item = $item->toArray();
+//                $item['qty'] = (double) $item['qty'];
+                return array_merge(...$item);
+            })
+            ->toArray();
+
 
         foreach ($products as $key => &$product) {
             $product['photo'] = $images[$product->id] ?? '';

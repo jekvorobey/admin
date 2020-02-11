@@ -2,40 +2,42 @@
     <layout-main>
         <div class="select">
             <div class="row">
-                <div class="col-12">
+                <div class="col-8">
                     <f-input v-model="search.products" @change="productChange()" placeholder="e908-3543-9fdd,85de-3283-8b96">
                         Артикулы товаров (через ,)
                     </f-input>
-                    Найденные товары:
-                    <ul class="list-group mt-2">
-                        <li class="list-group-item list-group-item-action" @click="selectProduct(product)" v-for="(product, key) in searchedProducts">
-                            <img :src="product.photo" class="preview" :alt="product.name"
-                                 v-if="product.photo">
-                            {{ product.name }}
-                            <small>{{ product.vendor_code }}</small>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-12">
-                    Выбранные товары:
-                    <ul class="list-group mt-2">
-                        <li class="list-group-item list-group-item-action" v-for="(product, key) in selectedProducts">
-                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
-                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
-                            <img :src="product.photo" class="preview" :alt="product.name"
-                                 v-if="product.photo">
-                            {{ product.name }}
-                            <small class="ml-3">{{ product.vendor_code }}</small>
-                            <span class="badge badge-primary badge-pill">{{ product.count }} шт.</span>
-                            <div v-for="(offer, key) in product.offers" :key="offer.id">
-                                <input :id="'check' + offer.id" type="radio" v-model="selectedOffers[product.id]" :value="offer.id">
-                                <label :for="'check' + offer.id">
-                                    Мерчант: | Склад:
-                                    <span class="badge badge-secondary badge-pill">{{ saleStatusName(offer.sale_status) }}</span>
-                                </label>
-                            </div>
-                        </li>
-                    </ul>
+                    <div v-if="searchedProducts">
+                        <ul class="list-group mt-2">
+                            <li class="list-group-item" :class="selectedOffers[product.id] ? 'bg-light' : ''" v-for="(product, key) in searchedProducts">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        <img :src="product.photo" class="preview" :alt="product.name"
+                                             v-if="product.photo">
+                                        {{ product.name }}
+                                        <small>{{ product.vendor_code }}</small>
+                                    </div>
+                                    <fa-icon icon="times" @click="deleteProduct(product.id)"></fa-icon>
+                                </div>
+                                <div v-for="offer in product.offers" :key="offer.id" class="offers">
+                                    <hr>
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" :id="`check-${offer.id}`" v-model="selectedOffers[product.id]" :value="offer.id" class="custom-control-input">
+                                            <label class="custom-control-label" :for="`check-${offer.id}`">
+                                                Мерчант: {{ offerMerchant(offer) }}
+                                                <span class="badge badge-secondary badge-pill">{{ saleStatusName(offer.sale_status) }}</span>
+                                            </label>
+                                        </div>
+                                        <div>
+                                            {{ offer.qty }} шт.
+                                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
+                                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <div class="row mt-5">
@@ -134,6 +136,8 @@ export default {
                     if(result) {
                         this.searchedProducts = result.products;
                         this.searchedStocks = result.stocks;
+
+                        console.log(result); // TODO: DEL
                     }
                 });
         },
@@ -163,8 +167,11 @@ export default {
             this.$set(this.selectedProducts, product.id, product);
             this.$set(this.selectedProducts[product.id], 'count', 1);
         },
-        changeProduct(product, action) {
-            if(!action && product.count === 1) {
+        deleteProduct(product) {
+
+        },
+        changeProduct(offer, action) {
+            if(!action && offer.count === 1) {
                 this.$delete(this.selectedProducts, product.id);
                 return;
             }
@@ -172,8 +179,11 @@ export default {
             action ? product.count++ : product.count--;
             this.$set(this.selectedProducts, product.id, product);
         },
-        changeOffer(offer) {
-
+        selectOffer(product) {
+            // this.$set(this.selectedOffers[product.id], 'qty', 1);
+        },
+        offerMerchant(offer) {
+            return 'merchant';
         },
         saleStatusName(id) {
             let status = this.offerSaleStatuses[id];
@@ -257,5 +267,10 @@ export default {
         color: gray;
         line-height: 1rem;
         overflow: hidden;
+    }
+
+    .offers {
+        max-height: 200px;
+        overflow: auto;
     }
 </style>
