@@ -23,7 +23,7 @@
         </thead>
         <tbody>
         <tr v-for="order in orders">
-            <td>{{ order.number }}</td>
+            <td><a :href="getRoute('orders.flowDetail', {id: order.id})">{{ order.number }}</a></td>
             <td>{{ order.created_at }}</td>
             <td>{{ order.price }}</td>
             <td><fa-icon :icon="order.isPayed ? 'check' : 'times'" :class="order.isPayed ? 'text-success': 'text-danger'"/></td>

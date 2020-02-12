@@ -24,7 +24,7 @@
         </tr>
         <tr>
             <th>Сумма покупок накопительным итогом</th>
-            <td>{{ order.price }}</td>
+            <td><a tabindex @click="openOrder">{{ order.price }}</a></td>
         </tr>
         <tr>
             <th>Подписка на рассылку</th>
@@ -109,6 +109,9 @@ export default {
                 this.customer.manager_id = this.form.manager_id;
                 Services.hideLoader();
             })
+        },
+        openOrder() {
+            Services.event().$emit('showTab', 'order');
         }
     },
     created() {

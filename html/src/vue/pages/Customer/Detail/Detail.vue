@@ -103,7 +103,7 @@
         </b-row>
 
         <b-card no-body>
-            <b-tabs lazy card>
+            <b-tabs lazy card v-model="tabIndex">
                 <b-tab title="Основная информация">
                     <info-main :model.sync="customer" :order="order"/>
                 </b-tab>
@@ -146,6 +146,15 @@ export default {
         return {
             editStatus: false,
             customer: this.iCustomer,
+            tabIndex: 0,
+            tabs: {
+                main: 0,
+                preference: 1,
+                order: 2,
+                'chat-list': 3,
+                subscribe: 4,
+                log: 5,
+            }
         };
     },
     computed: {
@@ -164,6 +173,11 @@ export default {
                 Services.hideLoader();
             })
         },
+    },
+    created() {
+        Services.event().$on('showTab', (tab) => {
+            this.tabIndex = this.tabs[tab];
+        });
     }
 };
 </script>
