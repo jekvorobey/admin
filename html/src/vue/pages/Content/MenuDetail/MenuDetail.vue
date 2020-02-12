@@ -46,7 +46,7 @@
 
     export default {
         components: {
-            MenuItems,
+            MenuItems
         },
         props: {
             iMenu: {},
