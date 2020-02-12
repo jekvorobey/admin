@@ -39,34 +39,49 @@ class DiscountController extends Controller
     public function index(Request $request, DiscountService $discountService)
     {
         $this->title = 'Скидки';
-        $page = $request->get('page', 1);
-        $restQuery = new RestQuery();
-        $filter = $request->get('filter', []);
-        if (isset($filter['id'])) {
-            $restQuery->setFilter('id', $filter['id']);
-        }
-        $restQuery->pageNumber($page, 20);
-        $restQuery->addSort('id', 'desc');
-        $discounts = DiscountHelper::load($request, $restQuery, $discountService);
-        $pager = $discountService->discountsCount($restQuery);
+        $pager = DiscountHelper::getDefaultPager($request);
+        $params = DiscountHelper::getParams($request, $pager);
+        $countParams = DiscountHelper::getParams($request);
+        $discounts = DiscountHelper::load($params, $discountService);
+        $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
-            'iCurrentPage' => (int)$page,
+            'iCurrentPage' => $pager['page'],
+            'roles' => DiscountHelper::getOptionRoles(),
+            'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
             'discountApprovalStatuses' => DiscountApprovalStatusDto::allStatuses(),
             'discountTypes' => DiscountTypeDto::allTypes(),
-            'pager' => $pager,
+            'iPager' => $pager,
         ]);
     }
 
     /**
-     * Страница для создания администратором скидки
+     * AJAX пагинация страниц со скидками
+     *
+     * @param Request $request
+     * @param DiscountService $discountService
+     * @return JsonResponse
+     */
+    public function page(Request $request, DiscountService $discountService)
+    {
+        $pager = DiscountHelper::getDefaultPager($request);
+        $params = DiscountHelper::getParams($request, $pager);
+        $countParams = DiscountHelper::getParams($request);
+        $discounts = DiscountHelper::load($params, $discountService);
+        return response()->json([
+            'iDiscounts' => $discounts,
+            'total' => DiscountHelper::count($countParams, $discountService),
+        ]);
+    }
+
+    /**
+     * Страница для создания мерчантом заявки на скидку
      *
      * @param Request $request
      * @param DiscountService $discountService
      * @param CategoryService $categoryService
-     * @param RestRoleService $roleService
      * @param ListsService $listsService
      * @param BrandService $brandService
      * @return mixed
@@ -76,7 +91,6 @@ class DiscountController extends Controller
         Request $request,
         DiscountService $discountService,
         CategoryService $categoryService,
-        RestRoleService $roleService,
         ListsService $listsService,
         BrandService $brandService
     )
@@ -87,14 +101,14 @@ class DiscountController extends Controller
         $conditionTypes = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
         $deliveryMethods = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
         $paymentMethods = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
-        $roles = Helpers::getSelectOptions($roleService->rolesByFront(Front::FRONT_SHOWCASE));
+        $roles = DiscountHelper::getOptionRoles();
         $discountStatuses = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
 
         $query = $listsService->newQuery()->include('regions');
         $districts = $listsService->federalDistricts($query)->toArray();
 
-        $restQuery = new RestQuery();
-        $discounts = DiscountHelper::load($request, $restQuery, $discountService)
+        $params = DiscountHelper::getParams($request);
+        $discounts = DiscountHelper::load($params, $discountService)
             ->sortByDesc('created_at')
             ->map(function ($item) {
                 return ['value' => $item['id'], 'text' => "{$item['name']} ({$item['validityPeriod']})"];

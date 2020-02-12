@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
@@ -10,62 +11,81 @@ use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
-use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use MerchantManagement\Services\MerchantService\MerchantService;
 
 class DiscountHelper
 {
     /**
      * @param Request $request
-     * @param RestQuery $restQuery
-     * @param DiscountService $discountService
-     * @return Collection
+     * @param array $pager
+     * @return array
      */
-    public static function load(
-        Request $request,
-        RestQuery $restQuery,
-        DiscountService $discountService
-    ): Collection
+    public static function getParams(Request $request, array $pager = [])
     {
-        $filters = $request->get('filter', []);
+        $whiteListFilters = [
+            'id',
+            'name',
+            'status',
+            'approval_status',
+            'start_date',
+            'fix_start_date',
+            'end_date',
+            'fix_end_date',
+            'type',
+            'role_id',
+        ];
 
-        foreach ($filters as $key => $value) {
-            switch ($key) {
-                case 'name':
-                    $restQuery->setFilter('name', 'like', "%{$value}%");
-                    break;
+        $params = [];
+        $params['sort'] = 'desc';
+        $params['filter'] = [];
+        if (!empty($pager)) {
+            $params['page'] = $pager['page'];
+            $params['perPage'] = $pager['perPage'];
+        }
 
-                case 'start_date':
-                    $restQuery->setFilter('start_date', '>=', Carbon::parse($value));
-                    break;
-
-                case 'end_date':
-                    $restQuery->setFilter('end_date', '<=', Carbon::parse($value));
-                    break;
-
-                default:
-                    $restQuery->setFilter($key, $value);
+        $filter = $request->get('filter', []);
+        foreach ($filter as $key => $value) {
+            if (in_array($key, $whiteListFilters)) {
+                $params['filter'][$key] = $value;
             }
         }
 
-        $discounts = $discountService->discounts($restQuery);
+        return $params;
+    }
 
+    /**
+     * @param array $params
+     * @param DiscountService $discountService
+     * @return Collection
+     */
+    public static function load(array $params, DiscountService $discountService): Collection
+    {
+        $discounts = $discountService->discounts($params);
         $discounts = $discounts->map(function (DiscountDto $discount) use ($discountService) {
             $data = $discount->toArray();
-            $data['approvalStatusName'] = $discount->approvalStatusDto()->name;
-            $data['statusName'] = $discount->statusDto()->name;
+            $data['approvalStatusName'] = $discount->approvalStatusDto() ? $discount->approvalStatusDto()->name : 'N/A';
+            $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
             $data['validityPeriod'] = $discount->validityPeriod();
-
             return $data;
         });
 
         return $discounts;
+    }
+
+    /**
+     * @param array $params
+     * @param DiscountService $discountService
+     * @return int
+     */
+    public static function count(array $params, DiscountService $discountService)
+    {
+        $discounts = $discountService->discountsCount($params);
+        return $discounts['total'] ?? 0;
     }
 
     /**
@@ -297,5 +317,30 @@ class DiscountHelper
         }
 
         return $conditions;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getOptionRoles()
+    {
+        return [
+            ['value' => null, 'text' => 'Все'],
+            ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'],
+            ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'],
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @param int $perPage
+     * @return array
+     */
+    static public function getDefaultPager(Request $request, int $perPage = 20)
+    {
+        return [
+            'page' =>  (int) $request->get('page', 1),
+            'perPage' => $perPage,
+        ];
     }
 }

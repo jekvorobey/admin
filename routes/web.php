@@ -27,8 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('marketing')->namespace('Marketing')->group(function () {
         Route::prefix('discounts')->group(function () {
             Route::get('/', 'DiscountController@index')->name('discount.list');
-            Route::get('/create', 'DiscountController@createPage')->name('discount.create');
             Route::post('/', 'DiscountController@create')->name('discount.save');
+            Route::get('/create', 'DiscountController@createPage')->name('discount.create');
+            Route::get('page', 'DiscountController@page')->name('discount.pagination');
         });
     });
 

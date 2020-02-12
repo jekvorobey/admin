@@ -46,11 +46,13 @@
 </template>
 
 <script>
+    import Service from "../../../scripts/services/services";
+
     export default {
         name: 'f-multi-select',
         inheritAttrs: false,
         props: {
-            value: {},
+            name: String|null,
             options: Array,
             grouped: {
                 type: Boolean,
@@ -59,6 +61,7 @@
         },
         data() {
             return {
+                value: [],
                 opened: false,
             };
         },
@@ -105,6 +108,10 @@
                 return this.options.filter(option => option.group === group);
             }
         },
+        mounted() {
+            Service.event().$on('set-filter-' + this.name, (value) => { this.value = value });
+            Service.event().$on('clear-filter', () => { this.value = [] });
+        }
     }
 </script>
 
