@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import inputMixin from '../VInput/inputMixin';
+    import inputMixin from '../../../mixins/input-mixin';
     export default {
         name: "VSelect",
         mixins: [inputMixin],

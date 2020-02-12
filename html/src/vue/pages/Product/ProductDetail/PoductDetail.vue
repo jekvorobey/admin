@@ -6,6 +6,10 @@
                 <div style="height: 40px">
                     <span class="badge" :class="approvalClass(product.approval_status)">{{ options.approval[product.approval_status] || 'N/A' }}</span>
                     <span class="segment" :class="segmentClass(product.segment)">{{ product.segment }}</span>
+                    <template v-if="!isRejectApprovalStatus && !isApprovedApprovalStatus">
+                        <button class="btn btn-primary" @click="changeProductApproveStatus(5)">Согласовать</button>
+                        <button class="btn btn-primary" @click="openModal('productReject')">Отклонить</button>
+                    </template>
                 </div>
 
                 <p class="text-secondary">Артикул: <span class="float-right">{{ product.vendor_code }}</span></p>
@@ -33,27 +37,37 @@
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
         ></history-tab>
+
+        <product-reject-modal
+                :product-id="product.id"
+                @onSave="refresh"
+                modal-name="productReject">
+        </product-reject-modal>
     </layout-main>
 </template>
 
 <script>
 
-import {mapGetters} from "vuex";
-import VTabs from '../../../components/tabs/tabs.vue';
+    import {mapGetters} from 'vuex';
+    import VTabs from '../../../components/tabs/tabs.vue';
 
-import PropertyTab from './components/property-tab.vue';
-import ContentTab from './components/content-tab.vue';
-import HistoryTab from './components/history-tab.vue';
-import Services from "../../../../scripts/services/services";
+    import PropertyTab from './components/property-tab.vue';
+    import ContentTab from './components/content-tab.vue';
+    import HistoryTab from './components/history-tab.vue';
+    import ProductRejectModal from './components/product-reject-modal.vue';
+    import Services from '../../../../scripts/services/services';
+    import modalMixin from '../../../mixins/modal';
 
-export default {
+    export default {
     components: {
         VTabs,
 
         PropertyTab,
         ContentTab,
         HistoryTab,
+        ProductRejectModal,
     },
+    mixins: [modalMixin],
     props: {
         iProduct: {},
         iImages: {},
@@ -88,6 +102,16 @@ export default {
                     this.options.directoryValues = data.directoryValues;
                 });
         },
+        changeProductApproveStatus(statusId) {
+            let errorMessage = 'Ошибка при изменении статуса согласования товара.';
+
+            Services.net().put(this.getRoute('products.changeApproveStatus', {id: this.product.id}), null,
+                {'approval_status': statusId}).then(data => {
+                this.refresh();
+            }, () => {
+                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+            });
+        },
         segmentClass(segment) {
             return segment ? `segment-${segment.toLowerCase()}` : '';
         },
@@ -99,6 +123,9 @@ export default {
                 case 4: return 'badge-danger';
                 case 5: return 'badge-success';
             }
+        },
+        isApprovalStatus(statusId) {
+            return this.product.approval_status === statusId;
         },
     },
     computed: {
@@ -112,7 +139,13 @@ export default {
                 id: 0,
                 url: '//placehold.it/150x150?text=No+image'
             };
-        }
+        },
+        isRejectApprovalStatus() {
+            return this.isApprovalStatus(4);
+        },
+        isApprovedApprovalStatus() {
+            return this.isApprovalStatus(5);
+        },
     },
 };
 </script>

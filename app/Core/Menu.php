@@ -65,14 +65,26 @@ class Menu
                         'title' => 'Возвраты и отмены',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Грузы',
+                        'route' => route('cargo.list')
+                    ],
                 ],
+            ],
+            [
+                'title' => 'Заявки',
+                'items' => [
+                    ['title' => 'Проверка товаров', 'route' => route('productCheckClaims.list')],
+                    ['title' => 'Производство контента', 'route' => route('contentClaims.list')],
+                    ['title' => 'Изменение цен', 'route' => route('priceChangeClaims.list')],
+                ]
             ],
             [
                 'title' => 'Контент',
                 'items' => [
                     [
                         'title' => 'Меню сайта',
-                        'route' => '#',
+                        'route' => route('menu.list'),
                     ],
                     [
                         'title' => 'Управление страницами',
@@ -94,6 +106,10 @@ class Menu
                         'title' => 'Отзывы',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Подборки товаров',
+                        'route' => route('productGroup.list'),
+                    ],
                 ]
             ],
             [
@@ -106,6 +122,10 @@ class Menu
                     [
                         'title' => 'Таблица соотвествий статусов',
                         'route' => '#',
+                    ],
+                    [
+                        'title' => 'Стоимость доставки по регионам',
+                        'route' => route('deliveryPrice.index'),
                     ],
                 ],
             ],
@@ -126,7 +146,7 @@ class Menu
                     ],
                     [
                         'title' => 'Склады мерчантов',
-                        'route' => '#',
+                        'route' => route('merchantStore.list'),
                     ],
                 ],
             ],
@@ -135,7 +155,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Клиентская база',
-                        'route' => '#',
+                        'route' => route('customers.list'),
                     ],
                     [
                         'title' => 'Сегментация',
@@ -195,7 +215,7 @@ class Menu
                     ],
                     [
                         'title' => 'Скидки',
-                        'route' => '#',
+                        'route' => route('discount.list'),
                     ],
                     [
                         'title' => 'Бандлы',
@@ -234,6 +254,23 @@ class Menu
                     [
                         'title' => 'Отчёты по клиентам',
                         'route' => '#',
+                    ],
+                ],
+            ],
+            [
+                'title' => 'Коммуникации',
+                'items' => [
+                    [
+                        'title' => 'Статусы',
+                        'route' => route('communications.statuses.list'),
+                    ],
+                    [
+                        'title' => 'Темы',
+                        'route' => route('communications.themes.list'),
+                    ],
+                    [
+                        'title' => 'Типы',
+                        'route' => route('communications.types.list'),
                     ],
                 ],
             ],

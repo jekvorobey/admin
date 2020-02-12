@@ -3,15 +3,15 @@ namespace App\Http\Controllers\Orders\Create;
 
 
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Oms\Services\BasketService\BasketService;
+use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
-use Greensight\Oms\Dto\DeliveryStore;
-use Greensight\Oms\Dto\OrderDto;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
@@ -19,6 +19,8 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\Front;
+use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\ProductService\ProductService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\CategoryDto;
@@ -36,6 +38,16 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class OrderCreateController extends Controller
 {
+    /**
+     * @param OrderService $orderService
+     * @param ProductService $productService
+     * @param UserService $userService
+     * @param CustomerService $customerService
+     * @param DeliveryService $deliveryService
+     * @param ShipmentService $shipmentService
+     * @param ShipmentPackageService $shipmentPackageService
+     * @return mixed
+     */
     public function create(
         OrderService $orderService,
         ProductService $productService,
@@ -53,18 +65,27 @@ class OrderCreateController extends Controller
         return $this->render('Orders/Create', [
             'iOrder' => '',
             'iDeliveries' => '',
+            'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
         ]);
     }
 
-    public function searchUsers
+    /**
+     * @param Request $request
+     * @param UserService $userService
+     * @param CustomerService $customerService
+     * @return JsonResponse
+     */
+    public function searchCustomer
     (
         Request $request,
+        UserService $userService,
         CustomerService $customerService
     ): JsonResponse
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
         $validator = Validator::make($data, [
+            'type' => 'required|string',
             'search' => 'required',
         ]);
 
@@ -72,26 +93,50 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        $query = $customerService->newQuery();
+        $query = $userService->newQuery();
+        $query->include('profile');
 
-        $userIds = explode(',', $data['search']);
-        $query->setFilter('user_id', $userIds);
+        switch ($data['type']) {
+            case 'fio';
+                $query->setFilter('first_name', 'like', $data['search']);
+                $query->setFilter('last_name', 'like', $data['search']);
+                break;
+            case 'email';
+                $query->setFilter('email', 'like', $data['search']);
+                break;
+            default:
+                $query->setFilter('id', (int) $data['search']);
+        }
 
-        $products = $customerService->customers($query);
+        $users = $userService->users($query);
+        if($users->isEmpty()) {
+            throw new NotFoundHttpException();
+        }
 
-        return response()->json($products);
+        $customers = $customerService->customers($query);
+        if($customers->isEmpty()) {
+            throw new NotFoundHttpException();
+        }
+
+        $customer = $customers->first();
+
+        return response()->json($customer);
     }
 
 
     /**
      * @param Request $request
      * @param ProductService $productService
+     * @param StockService $stockService
+     * @param MerchantService $merchantService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function searchProducts(
         Request $request,
-        ProductService $productService
+        ProductService $productService,
+        StockService $stockService,
+        MerchantService $merchantService
     ): JsonResponse
     {
         /** @var \Illuminate\Validation\Validator $validator */
@@ -104,13 +149,85 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        $query = $productService->newQuery();
+        // Продукты и их офферы
+        $productVendors = explode(',', $data['search']);
+        $productVendors = array_map('trim', $productVendors);
 
-        $vendorCodes = explode(',', $data['search']);
-        $query->setFilter('vendor_code', $vendorCodes);
-
+        $query = $productService->newQuery()
+            ->include('offers')
+            ->setFilter('vendor_code', $productVendors);
         $products = $productService->products($query);
+        if($products->isEmpty()) {
+            throw new NotFoundHttpException();
+        }
 
-        return response()->json($products);
+        // Изображения продуктов
+        $productsIds = $products->pluck('id')->values()->toArray();
+        $images = $productService
+            ->allImages($productsIds, 1)
+            ->pluck('url', 'productId')
+            ->toArray();
+
+        // Остатки на складах по продуктам
+        $stocksQuery = $stockService->newQuery()
+            ->setFilter('product_id', $productsIds);
+        $stocks = $stockService->stocks($stocksQuery);
+
+        // Мерчанты офферов
+        $merchantsIds = $products->pluck('merchant_id')->unique()->values()->toArray();
+        $query = $merchantService->newQuery()
+            ->setFilter('id', $merchantsIds);
+        $merchants = $merchantService->merchants($query);
+
+//        $stocks = $stocks->groupBy('offer_id')
+//            ->map(function ($item) {
+//                $item = $item->toArray();
+//                return array_merge(...$item);
+//            })
+//            ->toArray();
+
+
+        foreach ($products as $key => &$product) {
+            $product['photo'] = $images[$product->id] ?? '';
+            $product['qty'] = 1;
+        }
+
+        return response()->json([
+            'products' => $products,
+            'stocks' => $stocks,
+            'merchants' => $merchants
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param OrderService $orderService
+     * @param BasketService $basketService
+     */
+    public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
+    {
+        /** @var \Illuminate\Validation\Validator $validator */
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'required|integer',
+            'items' => 'required|array',
+            'delivery_service' => ['required', Rule::in(array_keys(DeliveryServiceDto::allServices()))],
+            'delivery_method' => ['required', Rule::in(array_keys(DeliveryMethod::allMethods()))],
+            'delivery_address' => ['nullable', 'array'],
+            'price' => 'numeric|required',
+        ]);
+
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $basket = $basketService->getByUser($data['user_id'], 1, true);
+
+        foreach ($data['items'] as $item) {
+            $basketService->setItem($basket->id , $item['offer_id']);
+        }
+
+//        $basketService->setItem();
+
+
     }
 }

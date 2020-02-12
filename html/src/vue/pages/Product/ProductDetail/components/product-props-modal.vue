@@ -66,14 +66,13 @@
     import {validationMixin} from 'vuelidate';
     import {integer} from 'vuelidate/lib/validators';
 
-    import Helpers from '../../../../../scripts/helpers';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
+    import {mapGetters} from 'vuex';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
-    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
 

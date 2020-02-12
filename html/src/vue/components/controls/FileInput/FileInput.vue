@@ -1,16 +1,14 @@
 <template>
-    <div class="form-group">
-        <label :for="inputId">
-            <slot />
-        </label>
-        <div class="custom-file mt-3">
+    <div>
+        <label :for="inputId" v-if="label" class="mb-3">{{ label }}</label>
+        <div class="custom-file">
             <input @change="change" :class="{ 'is-invalid': fileError }" type="file" class="custom-file-input" :id="inputId" :disabled="disabled" ref="file">
             <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
-            <slot name="error" :error="fileError">
-                {{ fileError }}
-            </slot>
-        </span>
-            <label class="custom-file-label" :for="inputId">Choose file</label>
+                <slot name="error" :error="fileError">
+                    {{ fileError }}
+                </slot>
+            </span>
+            <label class="custom-file-label" :for="inputId">Выберите файл</label>
             <div v-if="showProgress" class="progress upload-progress">
                 <div class="progress-bar" role="progressbar" :style="{width: `${uploadProgress}%`}" :aria-valuenow="uploadProgress" aria-valuemin="0" aria-valuemax="100">
                     {{ uploadProgress < 100 ? `Отправка ${uploadProgress}%` : 'Сохранение' }}
@@ -21,9 +19,10 @@
 </template>
 
 <script>
-    import inputMixin from '../VInput/inputMixin';
-    import Services from "../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import inputMixin from '../../../mixins/input-mixin';
+    import Services from '../../../../scripts/services/services';
+    import { mapGetters } from 'vuex';
+
     export default {
         name: "FileInput",
         mixins: [inputMixin],
@@ -32,6 +31,7 @@
                 type: Boolean,
                 default: false,
             },
+            label: {},
         },
         data() {
             return {

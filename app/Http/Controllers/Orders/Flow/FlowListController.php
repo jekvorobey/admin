@@ -2,25 +2,25 @@
 namespace App\Http\Controllers\Orders\Flow;
 
 
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Greensight\CommonMsa\Dto\DataQuery;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Oms\Dto\DeliveryCity;
 use Greensight\Oms\Dto\DeliveryMethod;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Pim\Services\BrandService\BrandService;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\CommonMsa\Dto\Front;
 
 /**
  * Class FlowListController
@@ -49,7 +49,6 @@ class FlowListController extends Controller
     )
     {
         $this->title = 'Поток сборки';
-        $this->breadcrumbs = 'orders.flowList';
 
         $restQuery = $this->makeRestQuery($orderService, $request);
         $pager = $orderService->ordersCount($restQuery);
@@ -142,7 +141,7 @@ class FlowListController extends Controller
             }
 
             $data['status'] = $order->status()->toArray();
-            $data['delivery_method'] = $order->deliveryMethod()->toArray();
+            $data['delivery_method'] = [];// todo $order->deliveryMethod()->toArray();
             $data['deliveries'] = $deliveries->where('order_id', $order->id)->values()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['updated_at'] = (new Carbon($order->updated_at))->format('h:i:s Y-m-d');

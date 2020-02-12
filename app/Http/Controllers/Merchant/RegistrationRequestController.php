@@ -21,7 +21,6 @@ class RegistrationRequestController extends Controller
     )
     {
         $this->title = 'Заявки на регистрацию';
-        $this->breadcrumbs = 'merchant.registrationList';
 
         $query = $this->makeQuery($request);
 
@@ -62,7 +61,7 @@ class RegistrationRequestController extends Controller
         $merchantIds = $merchants->pluck('id')->all();
         $operatorsQuery = (new RestQuery())
             ->setFilter('merchant_id', $merchantIds)
-            ->addFields(OperatorDto::entity(), 'id', 'name', 'merchant_id');
+            ->addFields(OperatorDto::entity(), 'id', 'merchant_id');
         $operators = $operatorService
             ->operators($operatorsQuery)
             ->groupBy('merchant_id')

@@ -1,0 +1,491 @@
+<template>
+    <layout-main back>
+        <form v-on:submit.prevent.stop="save" class="mt-3">
+            <div class="row">
+                <v-select
+                        v-model="$v.store.merchant_id.$model"
+                        :options="merchantOptions"
+                        :error="error_merchant_id"
+                        class="col-lg-6 col-12">
+                    Мерчант
+                </v-select>
+            </div>
+            <div class="row">
+                <v-input
+                        v-model="$v.store.name.$model"
+                        :error="error_store_name"
+                        class="col-lg-4 col-8"
+                        @change="update">Название склада</v-input>
+                <v-input
+                        v-model="store.xml_id"
+                        class="col-lg-2 col-4"
+                        @change="update">
+                    Внешний код
+                </v-input>
+            </div>
+            <div class="row">
+                <v-dadata
+                        :value="$v.store.address.address_string.$model"
+                        :error="error_store_address"
+                        @onSelect="onStoreAddressAdd"
+                        class="col-lg-6 col-12">
+                    Адрес
+                </v-dadata>
+            </div>
+            <div class="row">
+                <v-input
+                        v-model="store.address.porch"
+                        @change="update"
+                        class="col-lg-2 col-4">Подъезд</v-input>
+                <v-input
+                        v-model="store.address.floor"
+                        @change="update"
+                        class="col-lg-2 col-4">Этаж</v-input>
+                <v-input
+                        v-model="store.address.intercom"
+                        @change="update"
+                        class="col-lg-2 col-4">Домофон</v-input>
+            </div>
+            <div class="row">
+                <v-input
+                        type="textarea"
+                        v-model="store.address.comment"
+                        @change="update"
+                        class="col-lg-6 col-12">Комментарий к адресу</v-input>
+            </div>
+        </form>
+
+        <hr class="mt-3">
+        <h3 class="mb-3">График работы</h3>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>День недели</th>
+                <th>Время работы</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(day, index) in store.days" :class="!day.active ? 'inactive' : ''">
+                <td>
+                    <input type="checkbox" v-model="day.active" @change="updateWorking(day)"/>
+                </td>
+                <td>
+                    {{ dayName(index) }}
+                </td>
+                <td>
+                    <div class="form-group">
+                        <date-picker
+                            v-model="day.working_start_time"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langFrom"
+                            :time-picker-options="timePickerOptions"
+                            :disabled="!day.active"
+                            @change="updateWorking(day)"
+                        />
+                        <date-picker
+                            v-model="day.working_end_time"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langTo"
+                            :time-picker-options="timePickerOptions"
+                            :disabled="!day.active"
+                            @change="updateWorking(day)"
+                        />
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <hr class="mt-3">
+        <h3 class="mb-3">График отгрузки</h3>
+        <div class="scroll-x">
+            <table class="table table-condensed">
+                <thead>
+                <tr>
+                    <th>День недели</th>
+                    <th>
+                        Все службы доставки
+                        <span class="font-weight-normal"><br>Создание заявки</span>
+                    </th>
+                    <th v-for="deliveryService in deliveryServices">
+                        {{deliveryService.name}}
+                        <span class="font-weight-normal"><br>Создание заявки<br>Отгрузка товара</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(day, index) in store.pickupTimes">
+                    <td>{{ dayName(index) }}</td>
+                    <td>
+                        <date-picker
+                            v-model="store.pickupTimes[index]['all']['cargo_export_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index]['all'])"
+                        />
+                    </td>
+                    <td v-for="deliveryService in deliveryServices">
+                        <date-picker
+                            v-model="store.pickupTimes[index][deliveryService.id]['cargo_export_time']"
+                            input-class="form-control form-control-sm"
+                            type="time"
+                            format="HH:mm"
+                            value-type="format"
+                            :lang="langAt"
+                            :time-picker-options="timePickerOptions"
+                            @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                        /><br>
+                        <v-select
+                                v-model="store.pickupTimes[index][deliveryService.id]['pickup_time']"
+                                :options="pickupTimeOptions(deliveryService.id)"
+                                @change="savePickupTime(store.pickupTimes[index][deliveryService.id])">
+                        </v-select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="mt-3">
+        <h3 class="mb-3">Контактные лица</h3>
+        <table class="table table-condensed">
+            <thead>
+            <tr>
+                <th>Контактное лицо</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(contact, index) in store.storeContact">
+                <td>
+                    <input
+                        v-model="contact.name"
+                        class="form-control form-control-sm"
+                        type="text"
+                        @change="updateContact(contact)"
+                    />
+                </td>
+                <td>
+                    <input
+                        v-model="contact.phone"
+                        class="form-control form-control-sm"
+                        type="text"
+                        @change="updateContact(contact)"
+                    />
+                </td>
+                <td>
+                    <input
+                        v-model="contact.email"
+                        class="form-control form-control-sm"
+                        type="text"
+                        @change="updateContact(contact)"
+                    />
+                </td>
+                <td>
+                    <fa-icon icon="trash-alt" @click="deleteContact(index)"></fa-icon>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-center">
+                    <button @click="createContact" class="btn btn-sm btn-dark">Добавить контакт <fa-icon icon="plus"></fa-icon></button>
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </layout-main>
+</template>
+
+<script>
+import Service from '../../../../../scripts/services/services';
+import {mapGetters} from "vuex";
+import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
+import VInput from '../../../../components/controls/VInput/VInput.vue';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+import DatePicker from 'vue2-datepicker';
+
+import {validationMixin} from 'vuelidate';
+import {integer, required, requiredIf} from 'vuelidate/lib/validators';
+
+export default {
+    name: 'page-stores-detail',
+    components: {
+        VInput,
+        DatePicker,
+        VSelect,
+        VDadata,
+    },
+    props: {
+        iStore: [Object, null],
+        iDeliveryServices: [Object, null],
+        merchants: [Array],
+        pickupTimes: [Object],
+    },
+    mixins: [validationMixin],
+    data() {
+        return {
+            store: this.iStore,
+            langFrom: {
+                placeholder: {
+                    date: 'от',
+                }
+            },
+            langTo: {
+                placeholder: {
+                    date: 'до',
+                }
+            },
+            langAt: {
+                placeholder: {
+                    date: 'в',
+                }
+            },
+            timePickerOptions: {
+                start: '00:00',
+                step: '00:30',
+                end: '23:30'
+            },
+            deliveryServices: this.iDeliveryServices
+        }
+    },
+    mounted() {
+        for(let prop in this.store.address) {
+            if (this.$v.store.address.hasOwnProperty(prop)) {
+                this.$v.store.address[prop].$model = this.store.address[prop];
+            }
+        }
+    },
+    validations() {
+        let self = this;
+
+        return {
+            store: {
+                merchant_id: {integer, required},
+                name: {required},
+                address: {
+                    address_string: {required},
+                    country_code: {required},
+                    post_index: {required},
+                    region: {required},
+                    region_guid: {required},
+                    city: {required},
+                    city_guid: {required},
+                    house: {
+                        required: requiredIf(() => {
+                            return !self.store.address.block;
+                        })
+                    },
+                    block: {
+                        required: requiredIf(() => {
+                            return !self.store.address.house;
+                        })
+                    },
+                }
+            }
+        };
+    },
+    methods: {
+        dayName(id) {
+            id = parseInt(id);
+            switch (id) {
+                case 1:
+                    return 'Понедельник';
+                case 2:
+                    return 'Вторник';
+                case 3:
+                    return 'Среда';
+                case 4:
+                    return 'Четверг';
+                case 5:
+                    return 'Пятница';
+                case 6:
+                    return 'Суббота';
+                case 7:
+                    return 'Воскресенье';
+            }
+        },
+        pickupTimeOptions(deliveryService) {
+            return this.pickupTimes.hasOwnProperty(deliveryService) ? Object.values(this.pickupTimes[deliveryService]).map(
+                pickupTime => ({value: pickupTime.id, text: pickupTime.name})
+            ) : [];
+        },
+        onStoreAddressAdd(suggestion) {
+            let address = suggestion.data;
+
+            this.store.address.address_string = suggestion.unrestricted_value;
+            this.store.address.country_code = address.country_iso_code;
+            this.store.address.post_index = address.postal_code;
+            this.store.address.region = address.region_with_type;
+            this.store.address.region_guid = address.region_fias_id;
+            this.store.address.area = address.area_with_type;
+            this.store.address.area_guid = address.area_fias_id;
+            this.store.address.city = address.settlement_with_type ? address.settlement_with_type :
+                address.city_with_type;
+            this.store.address.city_guid = address.settlement_with_type ? address.settlement_fias_id :
+                address.city_fias_id;
+            this.store.address.street = address.street_with_type;
+            this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
+            this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
+            this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
+
+            this.update();
+        },
+        update() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+
+            Service.net().put(
+                this.getRoute('merchantStore.update', {id: this.store.id}),
+                null,
+                this.store
+            ).then(data => {
+            });
+        },
+        updateWorking(day) {
+            Service.net().put(
+                this.getRoute('merchantStore.updateWorking', {id: day.id}),
+                null,
+                day
+            ).then(data => {
+            });
+        },
+        savePickupTime(pickupTime) {
+            Service.net().put(
+                this.getRoute('merchantStore.savePickupTime'),
+                null,
+                pickupTime
+            ).then(data => {
+                this.store.pickupTimes = data.pickupTimes;
+            });
+        },
+        createContact() {
+            let contact = {
+                name: '',
+                email: '',
+                phone: '',
+                store_id: this.store.id
+            };
+
+            Service.net().post(
+                this.getRoute('merchantStore.createContact', {id: contact.store_id}),
+                null,
+                contact
+            ).then(data => {
+                if(data.id) {
+                    contact.id = data.id;
+                    this.store.storeContact.push(contact);
+                }
+            });
+        },
+        updateContact(contact) {
+            Service.net().put(
+                this.getRoute('merchantStore.updateContact', {id: contact.id}),
+                null,
+                contact
+            ).then(data => {
+            });
+        },
+        deleteContact(index) {
+            let id = this.store.storeContact[index].id;
+            if(id) {
+                Service.net().delete(
+                    this.getRoute('merchantStore.deleteContact', {id: id}),
+                    null,
+                    null
+                ).then(data => {
+                });
+            }
+
+            this.store.storeContact.splice(index, 1);
+        },
+
+    },
+    computed: {
+        ...mapGetters(['getRoute']),
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+        },
+
+        error_merchant_id() {
+            if (this.$v.store.merchant_id.$dirty) {
+                if (!this.$v.store.merchant_id.required) {
+                    return "Обязательное поле!";
+                }
+                if (!this.$v.store.merchant_id.integer) {
+                    return "Только целое число!";
+                }
+            }
+        },
+        error_store_name() {
+            if (this.$v.store.name.$dirty) {
+                if (!this.$v.store.name.required) {
+                    return "Обязательное поле!";
+                }
+            }
+        },
+        error_store_address() {
+            if (this.$v.store.address.address_string.$dirty) {
+                if (!this.$v.store.address.address_string.required) {
+                    return "Введите адрес и выберите его из подсказки ниже";
+                }
+            }
+            if (this.$v.store.address.post_index.$dirty) {
+                if (!this.$v.store.address.post_index.required) {
+                    return "Введите почтовый индекс";
+                }
+            }
+            if (this.$v.store.address.region.$dirty) {
+                if (!this.$v.store.address.region.required) {
+                    return "Введите регион";
+                }
+            }
+            if (this.$v.store.address.city.$dirty) {
+                if (!this.$v.store.address.city.required) {
+                    return "Введите город/населенный пункт";
+                }
+            }
+            if (this.$v.store.address.house.$dirty || this.$v.store.address.block.$dirty) {
+                if (!this.$v.store.address.house.required || !this.$v.store.address.block.required) {
+                    return "Введите дом/строение/корпус";
+                }
+            }
+        },
+    }
+};
+</script>
+<style>
+    .mx-calendar-icon {
+        height: auto;
+    }
+    tr.inactive {
+        opacity: 0.5;
+    }
+    .table .form-group {
+        margin-bottom: 0;
+    }
+    .table .form-group label {
+        display: none;
+    }
+    .scroll-x {
+        width: 1024px;
+        overflow-x: auto;
+    }
+    .font-weight-normal {
+        font-weight: normal;
+    }
+</style>

@@ -5,9 +5,7 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h4>Заказ {{ order.number }}
-                            <span class="badge ml-2" :class="statusClass(order.status.id)">
-                                {{ order.status.name || 'N/A' }}
-                            </span>
+                            <order-status class="ml-2" :status='order.status'/>
                         </h4>
 
                         <p class="text-secondary mt-3">
@@ -48,6 +46,8 @@
         <delivery-tab
                 v-if="nav.currentTab === 'delivery'"
                 :deliveries="order.deliveries"
+                :statuses="order.delivery_statuses"
+                :services="order.delivery_services"
         ></delivery-tab>
         <shipment-tab
                 v-if="nav.currentTab === 'shipment'"
@@ -58,7 +58,7 @@
 
 <script>
 
-import {mapGetters} from "vuex";
+import { mapGetters } from 'vuex';
 import VTabs from '../../../../components/tabs/tabs.vue';
 
 import BasketItemsTab from './components/basket-items-tab.vue';
@@ -103,14 +103,6 @@ export default {
     },
 
     methods: {
-        statusClass(statusId) {
-            switch (statusId) {
-                case 1: return 'badge-danger';
-                case 2: return 'badge-warning';
-                case 3: return 'badge-success';
-                default: return 'badge-secondary';
-            }
-        },
         paymentMethodClass(paymentMethodId) {
             switch (paymentMethodId) {
                 case 1: return 'badge-success';

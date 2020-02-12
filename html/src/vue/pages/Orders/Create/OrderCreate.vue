@@ -2,60 +2,67 @@
     <layout-main>
         <div class="select">
             <div class="row">
-                <div class="col-4">
+                <div class="col-8">
                     <f-input v-model="search.products" @change="productChange()" placeholder="e908-3543-9fdd,85de-3283-8b96">
                         Артикулы товаров (через ,)
                     </f-input>
-                    Найденные товары:
-                    <ul class="list-group mt-2">
-                        <li class="list-group-item list-group-item-action" @click="selectProduct(product)" v-for="(product, key) in searchedProducts">
-                            <small>{{ product.vendor_code }}</small> {{ product.name }}
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-8">
-                    Выбранные товары:
-                    <ul class="list-group mt-2">
-                        <li class="list-group-item list-group-item-action" v-for="(product, key) in selectedProducts">
-                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
-                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
-
-                            <small class="ml-3">{{ product.vendor_code }}</small> {{ product.name }}
-                            <span class="badge badge-primary badge-pill">{{ product.count }} шт.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row">
-                <f-input class="col-4" v-model="search.users" @change="customerChange()" :disabled="Object.keys(selectedProducts) < 1">
-                    ID пользователя
-                </f-input>
-                <div class="col-8">
-                    Пользователь:
-                    {{ searchedUsers }}
-                </div>
-            </div>
-            <div class="row">
-                <f-input class="col-4" v-model="search.address" @change="addressChange()">
-                    Адрес
-                </f-input>
-                <div class="col-8">
-                    Пользователь:
-                    selectedUser
+                    <div v-if="searchedProducts">
+                        <ul class="list-group mt-2">
+                            <li class="list-group-item" :class="selectedOffers[product.id] ? 'bg-light' : ''" v-for="(product, key) in searchedProducts">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        <img :src="product.photo" class="preview" :alt="product.name"
+                                             v-if="product.photo">
+                                        {{ product.name }}
+                                        <small>{{ product.vendor_code }}</small>
+                                    </div>
+                                    <div v-if="selectedOffers[product.id]">
+                                         {{ product.qty }} шт.
+                                        <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
+                                        <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
+                                        <fa-icon icon="times" class="ml-3" @click="deleteProduct(key)"></fa-icon>
+                                    </div>
+                                </div>
+                                <div v-for="offer in product.offers" :key="offer.id" class="offers">
+                                    <hr>
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" :id="`check-${offer.id}`" v-model="selectedOffers[product.id]" :value="offer.id" class="custom-control-input">
+                                            <label class="custom-control-label" :for="`check-${offer.id}`">
+                                                <span class="badge badge-secondary badge-pill">{{ saleStatusName(offer.sale_status) }}</span>
+                                                {{ offer.xml_id }}
+                                            </label>
+                                        </div>
+                                        ({{ offerMerchant(offer) }})
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <f-select class="col-4" v-model="selectedCity" :options="avaliableCities">
-                    Город
+            <div class="row mt-5">
+                <f-select class="col-1" v-model="selectedUserType" :options="userTypeSelect" without_none>
+                    Пользователь
                 </f-select>
+                <f-input v-model="search.customer" @change="customerChange()" :disabled="Object.keys(selectedOffers) < 1">
+                    &nbsp;
+                </f-input>
+                <div v-if="searchedCustomer">
+                    <ul class="list-group mt-2">
+                        <li class="list-group-item" :class="selectedOffers[product.id] ? 'bg-light' : ''" v-for="(product, key) in searchedProducts">
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="col-8">
-                    Служба доставки:
-                    selectedDelivery
+                    {{ searchedCustomer }}
+
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-success" :disabled="checkOrder">Создать заказ</button>
+        <button class="btn btn-success" :disabled="checkOrder" @click="createOrder">Создать заказ</button>
     </layout-main>
 </template>
 
@@ -80,7 +87,8 @@ export default {
     name: 'page-order-create',
     mixins: [modalMixin],
     props: [
-        'iOrders'
+        'iOrders',
+        'offerSaleStatuses',
     ],
     components: {
         FInput,
@@ -94,10 +102,14 @@ export default {
             search: {},
             address: '',
             searchedProducts: {},
-            searchedUsers: {},
+            searchedCustomer: {},
             selectedProducts: {},
-            selectedUsers: {},
+            searchedStocks: {},
+            searchedMerchants: {},
+            selectedOffers: {},
+            selectedUser: {},
             selectedCity: '',
+            selectedUserType: 'fio'
         }
     },
     methods: {
@@ -110,34 +122,71 @@ export default {
             })
                 .then(result => {
                     this.searchedProducts = {};
+                    this.searchedStocks = {};
                     if(result) {
-                        this.searchedProducts = result;
+                        this.searchedProducts = result.products;
+                        this.searchedStocks = result.stocks;
+                        this.searchedMerchants = result.merchants;
+
+                        console.log(result); // TODO: DEL
                     }
                 });
         },
         customerChange() {
-            Services.net().post(this.getRoute('orders.searchUsers', null), {}, {
-                search: this.search.users
+            Services.net().post(this.getRoute('orders.searchCustomer', null), {}, {
+                type: this.selectedUserType,
+                search: this.search.customer
             })
                 .then(result => {
-                    this.searchedUsers = {};
+                    this.search.customer = {};
                     if(result) {
-                        this.searchedUsers = result;
+                        this.search.customer = result;
                     }
                 });
         },
-        selectProduct(product) {
-            this.$set(this.selectedProducts, product.id, product);
-            this.$set(this.selectedProducts[product.id], 'count', 1);
+        createOrder() {
+            Services.net().post(this.getRoute('orders.createOrder', null), {}, {
+                customer_id: this.search.users,
+
+            })
+                .then(result => {
+                    if(result) {
+
+                    }
+                });
+        },
+        deleteProduct(key) {
+            const product = this.searchedProducts[key];
+            // this.$delete(this.searchedProducts, key);
+            this.$delete(this.selectedOffers, product.id);
         },
         changeProduct(product, action) {
-            if(!action && product.count === 1) {
-                this.$delete(this.selectedProducts, product.id);
+            if(!action && product.qty === 1) {
                 return;
             }
 
-            action ? product.count++ : product.count--;
+            action ? product.qty++ : product.qty--;
             this.$set(this.selectedProducts, product.id, product);
+        },
+        selectOffer(product) {
+            // this.$set(this.selectedOffers[product.id], 'qty', 1);
+        },
+        offerMerchant(offer) {
+            return 'merchant';
+        },
+        saleStatusName(id) {
+            let status = this.offerSaleStatuses[id];
+            return status ? status.name : 'N/A';
+        },
+        formatIds(ids) {
+            if (!ids) {
+                return [];
+            }
+
+            return ids
+                .split(',')
+                .map(id => { return parseInt(id); })
+                .filter(id => { return id > 0 });
         }
     },
     computed: {
@@ -159,6 +208,18 @@ export default {
                 },
             ];
         },
+        userTypeSelect() {
+            return [
+                {
+                    value: 'fio',
+                    text: 'ФИО'
+                },
+                {
+                    value: 'id',
+                    text: 'ID'
+                },
+            ];
+        },
 
 
 
@@ -167,8 +228,39 @@ export default {
 
     },
     watch: {
+        'search.users': {
+            handler(val, oldVal) {
+                if (val && val !== oldVal) {
+                    let format = this.formatIds(this.search.users).join(', ');
+                    let separator = val.slice(-1) === ','
+                        ? ','
+                        : (val.slice(-2) === ', ' ? ', ' : '');
+                    this.search.users = format + separator;
+                }
+            },
+
+        },
     }
 };
 </script>
 <style scoped>
+    img.preview {
+        height: 30px;
+        float: left;
+        padding-right: 15px;
+        margin-top: 5px;
+        border-radius: 5px;
+    }
+
+    small {
+        display: block;
+        color: gray;
+        line-height: 1rem;
+        overflow: hidden;
+    }
+
+    .offers {
+        max-height: 200px;
+        overflow: auto;
+    }
 </style>

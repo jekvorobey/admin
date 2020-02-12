@@ -1,0 +1,72 @@
+<template>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th colspan="14">Заказы</th>
+        </tr>
+        <tr>
+            <th>№ заказа</th>
+            <th>Дата оформления</th>
+            <th>Сумма</th>
+            <th>Оплата</th>
+            <th>Способ оплаты</th>
+            <th>Способ доставки</th>
+            <th>Стоимость доставки</th>
+            <th>Тип доставки</th>
+            <th>Кол-во доставок</th>
+            <th>Служба доставки</th>
+            <th>Статус</th>
+            <th>Дата доставки</th>
+            <th>Комментарий</th>
+            <th>Дата последнего изменения</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="order in orders">
+            <td><a :href="getRoute('orders.flowDetail', {id: order.id})">{{ order.number }}</a></td>
+            <td>{{ order.created_at }}</td>
+            <td>{{ order.price }}</td>
+            <td><fa-icon :icon="order.isPayed ? 'check' : 'times'" :class="order.isPayed ? 'text-success': 'text-danger'"/></td>
+            <td>{{ order.paymentMethod || '-' }}</td>
+            <td>{{ order.deliveryMethod || '-' }}</td>
+            <td>{{ order.delivery_cost }}</td>
+            <td>{{ order.deliveryType.name }}</td>
+            <td>{{ order.deliveryCount }}</td>
+            <td>{{ order.deliverySystems || '-' }}</td>
+            <td><order-status :status='order.status'/></td>
+            <td>{{ order.deliveryDate }}</td>
+            <td>{{ order.manager_comment }}</td>
+            <td>{{ order.updated_at }}</td>
+        </tr>
+        </tbody>
+    </table>
+</template>
+
+<script>
+import { mapGetters } from 'vuex';
+import Services from '../../../../../scripts/services/services.js';
+
+export default {
+    name: 'info-order',
+    props: ['id'],
+    data() {
+        return {
+            orders: [],
+        }
+    },
+    computed: {
+        ...mapGetters(['getRoute']),
+    },
+    created() {
+        Services.showLoader();
+        Services.net().get(this.getRoute('customers.detail.order', {id: this.id})).then(data => {
+            this.orders = data.orders;
+            Services.hideLoader();
+        })
+    }
+};
+</script>
+
+<style scoped>
+
+</style>

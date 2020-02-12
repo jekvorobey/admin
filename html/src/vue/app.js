@@ -10,14 +10,23 @@ import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 import 'lazysizes/plugins/respimg/ls.respimg';
 import store from './store/store';
 import Services from '../scripts/services/services';
-import BootstrapVue from 'bootstrap-vue'
+import BootstrapVue from 'bootstrap-vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import './fontawesome';
+import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts/filters';
+import OrderStatus from './components/order-status.vue';
 
 Vue.use(BootstrapVue);
 
 //Font Awesome Icons
 Vue.component('fa-icon', FontAwesomeIcon);
+
+//Filters
+Vue.filter('capitalize', capitalize);
+Vue.filter('lowercase', lowercase);
+Vue.filter('truncate', truncate);
+Vue.filter('formatSize', formatSize);
+Vue.filter('integer', integer);
 
 // Boot the current Vue component
 const root = document.getElementById('app');
@@ -26,6 +35,8 @@ store.commit('layout', JSON.parse(root.dataset.layout));
 store.commit('env', JSON.parse(root.dataset.env));
 store.commit('title', root.dataset.title);
 store.commit('routes', JSON.parse(root.dataset.routes));
+
+Vue.component('order-status', OrderStatus);
 
 Services.instance().register('store', () => {
     return store;
@@ -57,12 +68,6 @@ Vue.mixin({
         },
     },
     computed: {
-        breadcrumbsItems() {
-            return this.$store.state.layout.breadcrumbs.map(item => ({
-                text: item.title,
-                href: item.url,
-            }));
-        },
         staticText() {
             return this.$store.state.layout.staticBlock;
         },

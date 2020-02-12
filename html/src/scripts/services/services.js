@@ -1,6 +1,6 @@
 /* eslint-disable require-jsdoc */
 
-import NetService from "./net";
+import NetService from './net';
 
 let services_instance;
 export default class Services {
@@ -67,5 +67,13 @@ export default class Services {
      */
     static event() {
         return Services.instance().get('event');
+    }
+
+    static showLoader() {
+        return Services.store().commit('loaderShow', true);
+    }
+
+    static hideLoader() {
+        return Services.store().commit('loaderShow', false);
     }
 }

@@ -25,6 +25,7 @@
                 :type="type"
                 :aria-describedby="`${inputId}-alert`"
         />
+        <small :id="`${inputId}-help`" class="form-text text-muted" v-if="help">{{ help }}</small>
         <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
             <slot name="error" :error="error">
                 {{ error }}
@@ -34,7 +35,7 @@
 </template>
 
 <script>
-import inputMixin from './inputMixin';
+import inputMixin from '../../../mixins/input-mixin';
 
 const validTags = ['input', 'textarea'];
 
@@ -44,6 +45,7 @@ export default {
     mixins: [inputMixin],
     props: {
         value: {},
+        help: { type: String, default: '' },
         type: { type: String, default: 'text' },
         tag: {
             type: String,

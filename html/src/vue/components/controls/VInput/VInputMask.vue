@@ -40,7 +40,7 @@
 
 <script>
 import maskMixin from './maskMixin';
-import inputMixin from './inputMixin';
+import inputMixin from '../../../mixins/input-mixin';
 import './VInput.css';
 
 const validTags = ['input', 'textarea'];

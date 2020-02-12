@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => ini_get('date.timezone') ?? 'UTC',
 
     /*
     |--------------------------------------------------------------------------
@@ -172,11 +172,11 @@ return [
         App\Providers\AppServiceProvider::class,
         \Greensight\CommonMsa\CommonLibServiceProvider::class,
         \Pim\PimLibServiceProvider::class,
+        \Cms\CmsLibServiceProvider::class,
         \Greensight\Message\MessageLibServiceProvider::class,
         \MerchantManagement\MerchantLibServiceProvider::class,
         \Greensight\Store\StoreLibServiceProvider::class,
         \Greensight\Marketing\MarketingLibServiceProvider::class,
-        \Greensight\Filestorage\FileLibServiceProvider::class,
         \Greensight\Oms\OmsLibServiceProvider::class,
         \Greensight\Customer\CustomerLibServiceProvider::class,
         \Greensight\Logistics\LogisticsLibServiceProvider::class,

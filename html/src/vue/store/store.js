@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
-import NetService from "../../scripts/services/net";
+import NetService from '../../scripts/services/net';
 
 import ModalModule from './modules/modal.js';
 
@@ -12,11 +12,15 @@ export default new Vuex.Store({
         layout: {},
         env: {},
         routes: {},
+        loaderShow: false,
     },
     modules: {
         modal: ModalModule(),
     },
     mutations: {
+        loaderShow(state, loaderShow) {
+            state.loaderShow = loaderShow;
+        },
         title(state, data) {
             state.title = data;
         },

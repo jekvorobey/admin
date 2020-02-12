@@ -6,7 +6,9 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\OrderDto;
@@ -208,10 +210,12 @@ class FlowDetailController extends Controller
         } catch (Exception $e) {
         }
 
+        $data['delivery_statuses'] = DeliveryStatus::allStatuses();
+        $data['delivery_services'] = DeliveryServiceDto::allServices();
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();
         $data['delivery_type'] = $order->deliveryType()->toArray();
-        $data['delivery_method'] = $order->deliveryMethod()->toArray();
+        $data['delivery_method'] = []; // todo
         $data['delivery_cost'] = rand(0, (int)$data['cost'] / 4); //todo
         $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y H:i');
         $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d H:i');

@@ -19,7 +19,6 @@ class UsersController extends Controller
     public function index(Request $request, UserService $userService)
     {
         $this->title = 'Список пользователей';
-        $this->breadcrumbs = 'settings.userList';
 
         $query = $this->makeQuery($request);
 
@@ -45,7 +44,7 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
-    public function detail(int $id, UserService $userService, RoleService $roleService)
+    public function detail(int $id, UserService $userService)
     {
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
@@ -57,7 +56,6 @@ class UsersController extends Controller
         }
 
         $this->title = "Пользователь № {$user->id}";
-        $this->breadcrumbs = ['settings.userDetail', $user->id];
 
         $userRoles = $userService->userRoles($id);
 
@@ -66,7 +64,7 @@ class UsersController extends Controller
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'roles' => $roleService->roles()
+                'roles' => UserDto::roles()
             ]
         ]);
     }
@@ -76,7 +74,7 @@ class UsersController extends Controller
         $data = $request->all();
         $validator = Validator::make($data, [
             'id' => 'nullable|integer',
-            'email' => 'required|email',
+            'login' => 'required',
             'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
             'password' => 'required_without:id',
         ]);
@@ -84,7 +82,7 @@ class UsersController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
         $newUser = new UserDto($data);
-        if ($data['id']) {
+        if (isset($data['id'])) {
             $userService->update($newUser);
         } else {
             $userService->create($newUser);

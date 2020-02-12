@@ -41,7 +41,6 @@ class MerchantDetailController extends Controller
         }
 
         $isRegistration = $request->routeIs('merchant.registrationDetail');
-        $this->breadcrumbs = $isRegistration ? ['merchant.registrationList.detail', $merchant->id] : '';
         $this->title = $isRegistration ? "Заявка {$merchant->id}" : '';
 
         /** @var Collection|OperatorDto $operators */
@@ -61,7 +60,7 @@ class MerchantDetailController extends Controller
             if ($managerUser) {
                 $manager = [
                     'id' => $managerUser->id,
-                    'name' => $managerUser->full_name ?: $managerUser->email,
+                    'name' => $managerUser->full_name ?: $managerUser->login,
                 ];
             }
         }
@@ -122,7 +121,7 @@ class MerchantDetailController extends Controller
         $users = $userService->users($managerQuery)->map(function (UserDto $user) {
             return [
                 'id' => $user->id,
-                'name' => $user->full_name ?: $user->email,
+                'name' => $user->full_name ?: $user->login,
             ];
         });
         return response()->json([
