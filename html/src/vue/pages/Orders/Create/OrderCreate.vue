@@ -16,7 +16,12 @@
                                         {{ product.name }}
                                         <small>{{ product.vendor_code }}</small>
                                     </div>
-                                    <fa-icon icon="times" @click="deleteProduct(product.id)"></fa-icon>
+                                    <div v-if="selectedOffers[product.id]">
+                                         {{ product.qty }} шт.
+                                        <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
+                                        <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
+                                        <fa-icon icon="times" class="ml-3" @click="deleteProduct(key)"></fa-icon>
+                                    </div>
                                 </div>
                                 <div v-for="offer in product.offers" :key="offer.id" class="offers">
                                     <hr>
@@ -24,15 +29,11 @@
                                         <div class="custom-control custom-radio">
                                             <input type="radio" :id="`check-${offer.id}`" v-model="selectedOffers[product.id]" :value="offer.id" class="custom-control-input">
                                             <label class="custom-control-label" :for="`check-${offer.id}`">
-                                                Мерчант: {{ offerMerchant(offer) }}
                                                 <span class="badge badge-secondary badge-pill">{{ saleStatusName(offer.sale_status) }}</span>
+                                                {{ offer.xml_id }}
                                             </label>
                                         </div>
-                                        <div>
-                                            {{ offer.qty }} шт.
-                                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, false)">-</button>
-                                            <button class="btn btn-sm btn-dark" @click="changeProduct(product, true)">+</button>
-                                        </div>
+                                        ({{ offerMerchant(offer) }})
                                     </div>
                                 </div>
                             </li>
@@ -44,31 +45,19 @@
                 <f-select class="col-1" v-model="selectedUserType" :options="userTypeSelect" without_none>
                     Пользователь
                 </f-select>
-                <f-input class="col-3" v-model="search.users" @change="customerChange()" :disabled="Object.keys(selectedOffers) < 1">
+                <f-input v-model="search.customer" @change="customerChange()" :disabled="Object.keys(selectedOffers) < 1">
                     &nbsp;
                 </f-input>
-                <div class="col-8">
-                    Выбр:
-                    {{ searchedUsers }}
+                <div v-if="searchedCustomer">
+                    <ul class="list-group mt-2">
+                        <li class="list-group-item" :class="selectedOffers[product.id] ? 'bg-light' : ''" v-for="(product, key) in searchedProducts">
+                        </li>
+                    </ul>
+                </div>
 
-                </div>
-            </div>
-            <div class="row">
-                <f-input class="col-4" v-model="search.address" @change="addressChange()">
-                    Адрес
-                </f-input>
                 <div class="col-8">
-                    Пользователь:
-                    selectedUser
-                </div>
-            </div>
-            <div class="row">
-                <f-select class="col-4" v-model="selectedCity" :options="avaliableCities">
-                    Город
-                </f-select>
-                <div class="col-8">
-                    Служба доставки:
-                    selectedDelivery
+                    {{ searchedCustomer }}
+
                 </div>
             </div>
         </div>
@@ -113,9 +102,10 @@ export default {
             search: {},
             address: '',
             searchedProducts: {},
-            searchedUsers: {},
+            searchedCustomer: {},
             selectedProducts: {},
             searchedStocks: {},
+            searchedMerchants: {},
             selectedOffers: {},
             selectedUser: {},
             selectedCity: '',
@@ -136,19 +126,21 @@ export default {
                     if(result) {
                         this.searchedProducts = result.products;
                         this.searchedStocks = result.stocks;
+                        this.searchedMerchants = result.merchants;
 
                         console.log(result); // TODO: DEL
                     }
                 });
         },
         customerChange() {
-            Services.net().post(this.getRoute('orders.searchUsers', null), {}, {
-                search: this.search.users
+            Services.net().post(this.getRoute('orders.searchCustomer', null), {}, {
+                type: this.selectedUserType,
+                search: this.search.customer
             })
                 .then(result => {
-                    this.searchedUsers = {};
+                    this.search.customer = {};
                     if(result) {
-                        this.searchedUsers = result;
+                        this.search.customer = result;
                     }
                 });
         },
@@ -163,20 +155,17 @@ export default {
                     }
                 });
         },
-        selectProduct(product) {
-            this.$set(this.selectedProducts, product.id, product);
-            this.$set(this.selectedProducts[product.id], 'count', 1);
+        deleteProduct(key) {
+            const product = this.searchedProducts[key];
+            // this.$delete(this.searchedProducts, key);
+            this.$delete(this.selectedOffers, product.id);
         },
-        deleteProduct(product) {
-
-        },
-        changeProduct(offer, action) {
-            if(!action && offer.count === 1) {
-                this.$delete(this.selectedProducts, product.id);
+        changeProduct(product, action) {
+            if(!action && product.qty === 1) {
                 return;
             }
 
-            action ? product.count++ : product.count--;
+            action ? product.qty++ : product.qty--;
             this.$set(this.selectedProducts, product.id, product);
         },
         selectOffer(product) {
@@ -249,6 +238,7 @@ export default {
                     this.search.users = format + separator;
                 }
             },
+
         },
     }
 };
