@@ -45,16 +45,17 @@ class MerchantDetailController extends Controller
 
         /** @var Collection|OperatorDto $operators */
         $operators = $operatorService->newQuery()->setFilter('merchant_id', $merchant->id)->operators();
-        
+        $users = $userService
+            ->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
+            ->keyBy('id');
+
         $manager = [
             'id' => 0,
             'name' => ''
         ];
         if ($merchant->manager_id) {
             $managerQuery = new RestQuery();
-            $managerQuery
-                ->setFilter('id', $merchant->manager_id)
-                ->include('profile');
+            $managerQuery->setFilter('id', $merchant->manager_id);
             /** @var UserDto $managerUser */
             $managerUser = $userService->users($managerQuery)->first();
             if ($managerUser) {
@@ -68,6 +69,7 @@ class MerchantDetailController extends Controller
         return $this->render('Merchant/MerchantDetail', [
             'iMerchant' => $merchant,
             'iOperators' => $operators,
+            'users' => $users,
             'iManager' => $manager,
             'options' => [
                 'statuses' => MerchantStatus::allStatuses()
