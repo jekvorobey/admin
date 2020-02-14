@@ -1,8 +1,7 @@
 <template>
     <layout-main back>
         <b-form @submit.prevent="update">
-            <p>Наименование: {{menu.name}}</p>
-            <p>Символьный код: {{menu.code}}</p>
+            <h2>{{menu.name}}</h2>
 
             <menu-items
                     :i-menu-items="selectedMenuItems"
@@ -10,7 +9,7 @@
             >
             </menu-items>
 
-            <b-button type="submit" variant="dark">Обновить</b-button>
+            <b-button class="mt-5" type="submit" variant="dark">Сохранить</b-button>
         </b-form>
     </layout-main>
 </template>

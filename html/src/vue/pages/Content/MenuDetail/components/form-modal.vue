@@ -7,7 +7,7 @@
             <div slot="body">
                 <b-form @submit.prevent="accept">
                     <b-form-group
-                            label="Название"
+                            label="Название*"
                             label-for="item-name"
                     >
                         <b-form-input
@@ -20,7 +20,7 @@
                     </b-form-group>
 
                     <b-form-group
-                            label="Ссылка"
+                            label="Ссылка*"
                             label-for="item-url"
                     >
                         <b-form-input
