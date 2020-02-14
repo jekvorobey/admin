@@ -263,7 +263,7 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'CustomerListController@list')->name('list');
         Route::get('filter', 'CustomerListController@filter')->name('filter');
 
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'CustomerDetailController@detail')->name('detail');
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
 
@@ -273,6 +273,12 @@ Route::middleware('auth')->group(function () {
             Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
             Route::get('log', 'CustomerDetailController@infoLog')->name('detail.log');
         });
+
+        Route::prefix('activities')->group(function () {
+            Route::get('', 'ActivitiesController@list')->name('activities');
+            Route::post('', 'ActivitiesController@save')->name('activities.save');
+        });
+
     });
 
 });

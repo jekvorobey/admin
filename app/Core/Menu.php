@@ -161,6 +161,15 @@ class Menu
                         'title' => 'Сегментация',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Виды деятельности',
+                                'route' => route('customers.activities'),
+                            ],
+                        ]
+                    ],
                 ],
             ],
             [
