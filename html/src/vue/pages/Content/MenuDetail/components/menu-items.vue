@@ -3,52 +3,74 @@
         <draggable v-model="selectedMenuItems"
                    v-bind="dragOptions"
         >
-            <div v-for="(item, index) in selectedMenuItems"
-                 class="row align-items-center my-2 bg-light"
+            <!-- Первый уровень -->
+            <div v-for="(item, itemIndex) in selectedMenuItems"
+                 class="row my-2 bg-light border border-dark rounded"
             >
-                <div class="col border border-dark rounded p-2">
-                    {{item.name}} (<a :href="item.url">{{item.url}}</a>)<br>
-                    Опции: {{item.options}}
-
-                    <button class="btn btn-success btn-sm" @click="editItem(item)">
-                        <fa-icon icon="pencil"/>
-                    </button>
+                <div class="col p-2">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col align-self-center">
+                                <b>{{item.name}}</b> ({{item.url}})<br>
+                            </div>
+                            <div class="col-auto">
+                                <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
+                                    <fa-icon icon="edit"/>
+                                </b-button>
+                                <b-button class="btn btn-danger btn-sm">
+                                    <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
+                                </b-button>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="container-fluid">
-                        <draggable v-model="item.items"
+                        <draggable v-model="item.children"
                                    v-bind="dragOptions"
                         >
-                            <div v-for="subitem in item.items"
-                                 class="row align-items-center my-2 bg-light"
+                            <!-- Второй уровень -->
+                            <div v-for="(child, childIndex) in item.children"
+                                 class="row my-2 bg-light border border-dark rounded"
                             >
-                                <div class="col border border-dark rounded p-2">
-                                    {{subitem.name}} (<a :href="subitem.url">{{subitem.url}}</a>)<br>
-                                    Опции: {{subitem.options}}
-
-                                    <button class="btn btn-success btn-sm" @click="editItem(item)">
-                                        <fa-icon icon="pencil"/>
-                                    </button>
+                                <div class="col p-2">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col align-self-center">
+                                                {{child.name}} ({{child.url}})
+                                            </div>
+                                            <div class="col-auto">
+                                                <b-button class="btn btn-success btn-sm"
+                                                          @click="editItem(childIndex, itemIndex)">
+                                                    <fa-icon icon="edit"/>
+                                                </b-button>
+                                                <b-button class="btn btn-danger btn-sm">
+                                                    <fa-icon icon="trash-alt"
+                                                             @click="removeItem(childIndex, itemIndex)"/>
+                                                </b-button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="row align-items-center my-2">
-                                <button class="btn btn-success btn-sm" @click="createItem(item)">
+                            <div class="row my-2">
+                                <b-button class="btn btn-success btn-sm" @click="createItem(itemIndex)">
                                     <fa-icon icon="plus"/>
-                                </button>
+                                    Добавить подпункт
+                                </b-button>
                             </div>
                         </draggable>
                     </div>
                 </div>
             </div>
-            <div class="row align-items-center my-2">
-                <button class="btn btn-success btn-sm" @click="createItem()">
+            <div class="row my-2">
+                <b-button class="btn btn-success btn-sm" @click="createItem()">
                     <fa-icon icon="plus"/>
-                </button>
+                    Добавить пункт
+                </b-button>
             </div>
         </draggable>
 
-        <form-modal modal-name="FormTheme" @accept="applyItem" :model.sync="activeItem"/>
-
-        {{selectedMenuItems}}
+        <form-modal modal-name="FormTheme" @accept="onModalAccept" :model.sync="activeItem"/>
     </div>
 </template>
 
@@ -81,44 +103,93 @@
             };
         },
         methods: {
-            fillTheme(item) {
+            /**
+             * Подготовить активный (тот что редактируется или создаётся) пункт меню, чтобы его передать в попап
+             * @param {Object} item - существующий пункт меню, если есть
+             * @param {Number} itemIndex - индекс редактируемого пункта, если есть
+             * @param {Number|Undefined} parentIndex - индекс родительского пункта, если редактируем потомка
+             */
+            fillItem(item, itemIndex, parentIndex) {
                 return {
                     id: item ? item.id : null,
                     name: item ? item.name : '',
                     url: item ? item.url : '',
                     options: item ? item.options : {},
                     parent_id: item ? item.parent_id : null,
-                    items: item ? item.items : [],
+                    children: item ? item.children : [],
+                    _new: !item,
+                    _index: typeof itemIndex !== 'undefined' ? itemIndex : null,
+                    _parentIndex: typeof parentIndex !== 'undefined' ? parentIndex : null,
                 }
             },
-            createItem(parentItem) {
-                this.activeItem = this.fillTheme();
+            /**
+             * Создать новый пункт меню
+             * @param {Number|Undefined} parentIndex - индекс родительского элемента, если создаём потомка
+             */
+            createItem(parentIndex) {
+                this.activeItem = this.fillItem(false, false, parentIndex);
 
-                if (parentItem) {
-                    this.activeItem.parent_id = parentItem.id;
+                if (typeof parentIndex !== 'undefined') {
+                    this.activeItem.parent_id = this.fetchItem(parentIndex).id;
                 }
 
                 this.openModal('FormTheme');
             },
-            editItem(item) {
-                this.activeItem = this.fillTheme(item);
+            /**
+             * Отредактировать существующий пункт меню
+             * @param {Number} itemIndex - индекс редактируемого пункта
+             * @param {Number|Undefined} parentIndex - индекс родительского пункта, если редактируем потомка
+             */
+            editItem(itemIndex, parentIndex) {
+                this.activeItem = this.fillItem(this.fetchItem(itemIndex, parentIndex), itemIndex, parentIndex);
                 this.openModal('FormTheme');
             },
-            applyItem() {
-                if (this.activeItem.id) {
-                    if (this.activeItem.parent_id) {
-                        const index = this.activeItem.parent_id;
-                        this.selectedMenuItems[index].items;
-                    } else {
+            /**
+             * Удалить существующий пункт меню
+             * @param {Number} itemIndex - индекс удаляемого пункта
+             * @param {Number|Undefined} parentIndex - индекс родительского пункта, если удаляем потомка
+             */
+            removeItem(itemIndex, parentIndex) {
+                if (typeof parentIndex !== 'undefined') {
+                    this.selectedMenuItems[parentIndex].children.splice(itemIndex, 1);
+                } else {
+                    this.selectedMenuItems.splice(itemIndex, 1);
+                }
+            },
+            /**
+             * Получить пункт меню
+             * @param {Number} itemIndex - индекс пункта
+             * @param {Number|Undefined} parentIndex - индекс родительского пункта, если получаем потомка
+             */
+            fetchItem(itemIndex, parentIndex) {
+                if (typeof parentIndex !== 'undefined') {
+                    return this.selectedMenuItems[parentIndex].children[itemIndex];
+                }
+
+                return this.selectedMenuItems[itemIndex];
+            },
+            /**
+             * Обработка результатов попапа.
+             * Было либо редактирование, либо создание пункта меню
+             */
+            onModalAccept() {
+                if (this.activeItem._new) {
+                    // Новый элемент
+                    if (this.activeItem._parentIndex === null) {
+                        // Первый уровень
                         this.selectedMenuItems.push(this.activeItem);
+                    } else {
+                        // Второй уровень
+                        this.selectedMenuItems[this.activeItem._parentIndex].children.push(this.activeItem);
                     }
                 } else {
-                    if (this.activeItem.parent_id) {
-                        const parentId = this.activeItem.parent_id;
-                        const parentIndex = _.findIndex(this.selectedMenuItems, {id: parentId});
-                        this.selectedMenuItems[parentIndex].items.push(this.activeItem);
+                    // Существующий элемент
+                    if (this.activeItem._parentIndex === null) {
+                        // Первый уровень
+                        this.selectedMenuItems[this.activeItem._index] = this.activeItem;
                     } else {
-                        this.selectedMenuItems.push(this.activeItem);
+                        // Второй уровень
+                        this.selectedMenuItems[this.activeItem._parentIndex].children[this.activeItem._index] = this.activeItem;
                     }
                 }
 
@@ -129,9 +200,5 @@
         computed: {
             ...mapGetters(['getRoute']),
         },
-        watch: {},
-        mounted: function () {
-
-        }
     }
 </script>

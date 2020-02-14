@@ -1,38 +1,14 @@
 <template>
     <layout-main back>
         <b-form @submit.prevent="update">
-            <b-form-group
-                    label="Наименование"
-                    label-for="menu-name"
-            >
-                <b-form-input
-                        id="menu-name"
-                        v-model="menu.name"
-                        type="text"
-                        required
-                        placeholder="Введите наименование"
-                />
-            </b-form-group>
-
-            <b-form-group
-                    label="Символьный код"
-                    label-for="menu-code"
-            >
-                <b-form-input
-                        id="menu-code"
-                        v-model="menu.code"
-                        type="text"
-                        required
-                        placeholder="Введите символьный код"
-                />
-            </b-form-group>
+            <p>Наименование: {{menu.name}}</p>
+            <p>Символьный код: {{menu.code}}</p>
 
             <menu-items
                     :i-menu-items="selectedMenuItems"
                     @update="onUpdateMenuItems"
             >
             </menu-items>
-            {{selectedMenuItems}}
 
             <b-button type="submit" variant="dark">Обновить</b-button>
         </b-form>
@@ -55,53 +31,11 @@
         data() {
             return {
                 menu: this.iMenu,
-                selectedMenuItems: [{
-                    id: 1,
-                    name: '01',
-                    url: '/',
-                    options: {},
-                    items: [],
-                }, {
-                    id: 2,
-                    name: '02',
-                    url: '/',
-                    options: {},
-                    items: [],
-                }, {
-                    id: 3,
-                    name: '03',
-                    url: '/',
-                    options: {},
-                    items: [{
-                        id: 5,
-                        name: '05',
-                        url: '/',
-                        options: {},
-                        items: [],
-                    }, {
-                        id: 6,
-                        name: '06',
-                        url: '/',
-                        options: {},
-                        items: [],
-                    }],
-                }, {
-                    id: 4,
-                    name: '04',
-                    url: '/',
-                    options: {},
-                    items: [],
-                }],
+                selectedMenuItems: this.iMenu['items_tree'],
             };
         },
 
         methods: {
-            refresh() {
-                Services.net().get(this.getRoute('menu.detail', {id: this.menu.id}))
-                    .then((data) => {
-                        this.menu = data.menu;
-                    });
-            },
             update() {
                 let model = this.menu;
                 model.items = this.selectedMenuItems;
@@ -113,14 +47,7 @@
                     });
             },
             onUpdateMenuItems(data) {
-                for (let productKey in data) {
-                    let productId = data[productKey];
-
-                    this.selectedProducts.push({
-                        product_id: productId,
-                        product_group_id: this.productGroup.id,
-                    });
-                }
+                this.selectedMenuItems = data;
             },
         },
         computed: {
