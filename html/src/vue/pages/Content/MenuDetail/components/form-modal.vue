@@ -34,7 +34,7 @@
 
                     <!-- Option inputs -->
 
-                    <b-button type="submit" variant="dark">Сохранить</b-button>
+                    <b-button type="submit" variant="dark">Применить</b-button>
                 </b-form>
             </div>
         </modal>
