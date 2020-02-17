@@ -18,11 +18,13 @@
     import {mapGetters} from "vuex";
     import Services from "../../../../scripts/services/services";
     import MenuItems from './components/menu-items.vue';
+    import modalMixin from '../../../mixins/modal';
 
     export default {
         components: {
             MenuItems
         },
+        mixins: [modalMixin],
         props: {
             iMenu: {},
             options: {}
@@ -42,7 +44,11 @@
                 Services.net()
                     .put(this.getRoute('menu.update', {id: this.menu.id,}), {}, model)
                     .then((data) => {
-                        console.log(data);
+                        this.showMessageBox({title: 'Изменения сохранены'});
+                        window.location.href = this.route('menu.list');
+                    })
+                    .catch(() => {
+                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
             },
             onUpdateMenuItems(data) {
