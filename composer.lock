@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f84e143977fd5dd2487f7972c4754ed",
+    "content-hash": "ad7451fe32369a92207f4b833b9ee20f",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "1d36cde001fd844c77a76a5c35eac31f65d6a2ac"
+                "reference": "3425237547f3d18697fda049ccc58aa6bf3bb5c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=1d36cde001fd844c77a76a5c35eac31f65d6a2ac",
-                "reference": "1d36cde001fd844c77a76a5c35eac31f65d6a2ac",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=3425237547f3d18697fda049ccc58aa6bf3bb5c7",
+                "reference": "3425237547f3d18697fda049ccc58aa6bf3bb5c7",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-02-14T12:39:14+00:00"
+            "time": "2020-02-14T14:12:42+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -480,12 +480,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "9d5d0c1dc3c94ac4e3ba658690d59f6b096b51c5"
+                "reference": "d8374af245e8ef96712724e9f428027d87e76752"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=9d5d0c1dc3c94ac4e3ba658690d59f6b096b51c5",
-                "reference": "9d5d0c1dc3c94ac4e3ba658690d59f6b096b51c5",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=d8374af245e8ef96712724e9f428027d87e76752",
+                "reference": "d8374af245e8ef96712724e9f428027d87e76752",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +509,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-02-12T15:43:56+00:00"
+            "time": "2020-02-14T15:26:53+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -670,12 +670,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-merchant-management-lib.git",
-                "reference": "b3b0116942f5f314330ecdadc3041a7558202c9c"
+                "reference": "367cf9998b3a32f85565204f119895d56537b1cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=b3b0116942f5f314330ecdadc3041a7558202c9c",
-                "reference": "b3b0116942f5f314330ecdadc3041a7558202c9c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=367cf9998b3a32f85565204f119895d56537b1cf",
+                "reference": "367cf9998b3a32f85565204f119895d56537b1cf",
                 "shasum": ""
             },
             "require": {
@@ -699,7 +699,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2020-02-14T11:53:38+00:00"
+            "time": "2020-02-14T15:16:52+00:00"
         },
         {
             "name": "greensight/ibt-message-lib",
@@ -803,12 +803,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "9c3d02e496ac169beca31e8e362fb4695bbc7e4f"
+                "reference": "70babcdf6b60a94fff35bd8402783f0a1ac02af8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=9c3d02e496ac169beca31e8e362fb4695bbc7e4f",
-                "reference": "9c3d02e496ac169beca31e8e362fb4695bbc7e4f",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=70babcdf6b60a94fff35bd8402783f0a1ac02af8",
+                "reference": "70babcdf6b60a94fff35bd8402783f0a1ac02af8",
                 "shasum": ""
             },
             "require": {
@@ -832,7 +832,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-01-31T16:22:59+00:00"
+            "time": "2020-02-14T14:09:48+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1161,16 +1161,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.8.36",
+            "version": "v5.8.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "ccf857af50897eda43ceaf12e318cf214e0e4e95"
+                "reference": "ce08aaee3a0b8bb58b459b2decf7f25ba7b10fa4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ccf857af50897eda43ceaf12e318cf214e0e4e95",
-                "reference": "ccf857af50897eda43ceaf12e318cf214e0e4e95",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/ce08aaee3a0b8bb58b459b2decf7f25ba7b10fa4",
+                "reference": "ce08aaee3a0b8bb58b459b2decf7f25ba7b10fa4",
                 "shasum": ""
             },
             "require": {
@@ -1305,7 +1305,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2019-12-17T16:00:14+00:00"
+            "time": "2020-02-14T14:29:11+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -4725,60 +4725,6 @@
             "time": "2020-01-15T10:00:00+00:00"
         },
         {
-            "name": "franzl/studio",
-            "version": "0.13.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/franzliedke/studio.git",
-                "reference": "4c8784d2e35c6163bd80b1255fffc9454ac29d5f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/franzliedke/studio/zipball/4c8784d2e35c6163bd80b1255fffc9454ac29d5f",
-                "reference": "4c8784d2e35c6163bd80b1255fffc9454ac29d5f",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0",
-                "symfony/console": "^2.7 || ^3.0 || ^4.0",
-                "symfony/filesystem": "^2.5 || ^3.0 || ^4.0",
-                "symfony/process": "^2.5 || ^3.0 || ^4.0"
-            },
-            "replace": {
-                "franzliedke/studio": "self.version"
-            },
-            "require-dev": {
-                "composer/composer": "dev-master",
-                "phpspec/phpspec": "~2.3"
-            },
-            "bin": [
-                "bin/studio"
-            ],
-            "type": "composer-plugin",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "0.11.x-dev"
-                },
-                "class": "Studio\\Composer\\StudioPlugin"
-            },
-            "autoload": {
-                "psr-4": {
-                    "Studio\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Develop your Composer libraries with style",
-            "keywords": [
-                "composer",
-                "development",
-                "workflow"
-            ],
-            "time": "2017-12-01T17:45:24+00:00"
-        },
-        {
             "name": "fzaninotto/faker",
             "version": "v1.9.1",
             "source": {
@@ -6389,16 +6335,16 @@
         },
         {
             "name": "seld/phar-utils",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/phar-utils.git",
-                "reference": "84715761c35808076b00908a20317a3a8a67d17e"
+                "reference": "8800503d56b9867d43d9c303b9cbcc26016e82f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/84715761c35808076b00908a20317a3a8a67d17e",
-                "reference": "84715761c35808076b00908a20317a3a8a67d17e",
+                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/8800503d56b9867d43d9c303b9cbcc26016e82f0",
+                "reference": "8800503d56b9867d43d9c303b9cbcc26016e82f0",
                 "shasum": ""
             },
             "require": {
@@ -6427,9 +6373,9 @@
             ],
             "description": "PHAR file format utilities, for when PHP phars you up",
             "keywords": [
-                "phra"
+                "phar"
             ],
-            "time": "2020-01-13T10:41:09+00:00"
+            "time": "2020-02-14T15:25:33+00:00"
         },
         {
             "name": "symfony/filesystem",
