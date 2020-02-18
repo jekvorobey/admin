@@ -107,7 +107,7 @@ class ProductGroupDetailController extends Controller
             'name' => 'string|required',
             'code' => 'string|required',
             'active' => 'boolean|required',
-            'added_in_menu' => 'boolean|required',
+            'is_shown' => 'boolean|required',
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
             'category_code' => 'string|nullable',

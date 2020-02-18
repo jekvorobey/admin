@@ -41,12 +41,12 @@
             </b-form-group>
 
             <b-form-group
-                    label="Наличие в меню"
-                    label-for="group-added-in-menu"
+                    label="Наличие в списках"
+                    label-for="group-is-shown"
             >
                 <b-form-checkbox
-                        id="group-added-in-menu"
-                        v-model="productGroup.added_in_menu"
+                        id="group-is-shown"
+                        v-model="productGroup.is_shown"
                         :value="1"
                         :unchecked-value="0"
                         required
@@ -57,8 +57,9 @@
                  :src="previewPhoto.url"
                  class="preview-photo"
             >
-            <file-input @uploaded="onUploadPreviewPhoto"
-                        class="preview-photo_input"
+            <file-input
+                    @uploaded="onUploadPreviewPhoto"
+                    class="preview-photo-input"
             />
 
             <b-form-group
@@ -212,7 +213,7 @@
         width: 300px;
     }
 
-    .preview-photo_input {
+    .preview-photo-input {
         width: 300px;
         margin-top: 10px;
     }
