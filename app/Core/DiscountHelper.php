@@ -3,7 +3,6 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
@@ -30,7 +29,6 @@ class DiscountHelper
             'id',
             'name',
             'status',
-            'approval_status',
             'start_date',
             'fix_start_date',
             'end_date',
@@ -67,7 +65,6 @@ class DiscountHelper
         $discounts = $discountService->discounts($params);
         $discounts = $discounts->map(function (DiscountDto $discount) use ($discountService) {
             $data = $discount->toArray();
-            $data['approvalStatusName'] = $discount->approvalStatusDto() ? $discount->approvalStatusDto()->name : 'N/A';
             $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
             $data['validityPeriod'] = $discount->validityPeriod();
             return $data;
@@ -119,13 +116,11 @@ class DiscountHelper
             : null;
 
         $discount = new DiscountDto([
-            'sponsor' => DiscountDto::DISCOUNT_ADMIN_SPONSOR,
             'merchant_id' => null,
             'type' => $data['type'],
             'name' => $data['name'],
             'value_type' => $data['value_type'],
             'value' => $data['value'],
-            'approval_status' => DiscountApprovalStatusDto::STATUS_APPROVED,
             'status' => $data['status'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
