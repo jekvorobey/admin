@@ -153,7 +153,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
-        Route::prefix('product-group')->group(function () {
+        Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
             Route::get('/', 'ProductGroupListController@index')
                 ->name('productGroup.list');
             Route::get('/{id}', 'ProductGroupDetailController@index')
@@ -162,6 +162,9 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', 'ProductGroupDetailController@update')
                 ->where(['id' => '[0-9]+'])
                 ->name('productGroup.update');
+            Route::delete('/{id}', 'ProductGroupDetailController@delete')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.delete');
 
             Route::get('/filter', 'ProductGroupDetailController@getFilters')
                 ->name('productGroup.getFilters');

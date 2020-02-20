@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Content;
+namespace App\Http\Controllers\Content\ProductGroup;
 
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductGroupDto;
@@ -120,6 +120,13 @@ class ProductGroupDetailController extends Controller
         $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
 
         return response()->json([], 204);
+    }
+
+    public function delete(int $id, ProductGroupService $productGroupService)
+    {
+        $productGroupService->deleteProductGroup($id);
+
+        return response()->json([]);
     }
 
     protected function getProductGroupTypes(ProductGroupTypeService $productGroupTypeService)
