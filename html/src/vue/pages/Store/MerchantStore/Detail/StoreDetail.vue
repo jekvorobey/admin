@@ -146,11 +146,35 @@
                             :time-picker-options="timePickerOptions"
                             @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
                         /><br>
-                        <v-select
-                                v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_code']"
-                                :options="pickupTimeOptions(deliveryService.id)"
-                                @change="savePickupTime(store.pickupTimes[index][deliveryService.id])">
-                        </v-select>
+                        <template v-if="pickupTimeOptions(deliveryService.id).length > 0">
+                            <v-select
+                                    v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_code']"
+                                    :options="pickupTimeOptions(deliveryService.id)"
+                                    @change="savePickupTime(store.pickupTimes[index][deliveryService.id])">
+                            </v-select>
+                        </template>
+                        <template v-else>
+                            <date-picker
+                                    v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_start']"
+                                    input-class="form-control form-control-sm"
+                                    type="time"
+                                    format="HH:mm"
+                                    value-type="format"
+                                    :lang="langFrom"
+                                    :time-picker-options="timePickerOptions"
+                                    @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                            />
+                            <date-picker
+                                    v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_end']"
+                                    input-class="form-control form-control-sm"
+                                    type="time"
+                                    format="HH:mm"
+                                    value-type="format"
+                                    :lang="langTo"
+                                    :time-picker-options="timePickerOptions"
+                                    @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                            />
+                        </template>
                     </td>
                 </tr>
                 </tbody>
