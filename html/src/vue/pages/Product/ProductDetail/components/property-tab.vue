@@ -11,10 +11,6 @@
                 <table class="values-table">
                     <tbody>
                     <tr>
-                        <th>Сегмент:</th>
-                        <td>{{ product.segment }}</td>
-                    </tr>
-                    <tr>
                         <th>Категория:</th>
                         <td>{{ categoryName }}</td>
                     </tr>

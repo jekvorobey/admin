@@ -5,7 +5,7 @@
                 Редактирование Товара
             </div>
             <div slot="body">
-                <v-input v-model="$v.form.video.$model">
+                <v-input v-model="$v.form[video_field].$model">
                     Код ролика на YouTube
                 </v-input>
                 <button @click="save" class="btn btn-dark" :disabled="!$v.form.$anyDirty">Сохранить</button>
@@ -29,8 +29,6 @@
 
     import modalMixin from '../../../../mixins/modal.js';
 
-
-    const formFields = ['video'];
     export default {
         components: {
             modal,
@@ -40,6 +38,7 @@
         mixins: [modalMixin, validationMixin],
         props: {
             modalName: String,
+            video_field: String,
             source: Object,
         },
         data () {
@@ -47,10 +46,12 @@
                 form: Object.assign({}, this.source),
             };
         },
-        validations: {
-            form: {
-                video: {},
-            }
+        validations() {
+            return {
+                form: {
+                    [this.video_field]: {},
+                }
+            };
         },
         methods: {
             save() {
@@ -58,7 +59,7 @@
                 if (this.$v.$invalid) {
                     return;
                 }
-                let data = Helpers.filterObject(this.form, formFields);
+                let data = Helpers.filterObject(this.form, [this.video_field]);
                 Services.net().post(this.getRoute('products.saveProduct', {id: this.source.id}), {}, data)
                     .then(()=> {
                         this.$emit('onSave');
