@@ -15,6 +15,9 @@
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
+            <button @click="goToCreatePage" class="btn btn-success">Создать</button>
+        </div>
+        <div class="mb-3">
             Всего подборок: {{ pager.total }}.
         </div>
         <table class="table">
@@ -32,17 +35,14 @@
             <tr v-for="productGroup in productGroups">
                 <td>{{productGroup.id}}</td>
                 <td>
-                    <b-badge v-if="productGroup.active"
-                             variant="success">
+                    <b-badge v-if="productGroup.active" variant="success">
                         Активна
                     </b-badge>
-                    <b-badge v-if="!productGroup.active"
-                             variant="danger">
-                        Деактивированно
+                    <b-badge v-if="!productGroup.active" variant="danger">
+                        Деактивирована
                     </b-badge>
                     <br>
-                    <b-badge v-if="!productGroup.is_shown && productGroup.active"
-                             variant="warning">
+                    <b-badge v-if="!productGroup.is_shown && productGroup.active" variant="warning">
                         Только по прямой ссылке
                     </b-badge>
                 </td>
@@ -115,6 +115,9 @@
             ...mapActions({
                 showMessageBox: 'modal/showMessageBox',
             }),
+            goToCreatePage() {
+                window.location.href = this.route('productGroup.createPage');
+            },
             changePage(newPage) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
