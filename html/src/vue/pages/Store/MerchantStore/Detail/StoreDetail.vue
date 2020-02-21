@@ -147,7 +147,7 @@
                             @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
                         /><br>
                         <v-select
-                                v-model="store.pickupTimes[index][deliveryService.id]['pickup_time']"
+                                v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_code']"
                                 :options="pickupTimeOptions(deliveryService.id)"
                                 @change="savePickupTime(store.pickupTimes[index][deliveryService.id])">
                         </v-select>
@@ -210,17 +210,17 @@
 </template>
 
 <script>
-import Service from '../../../../../scripts/services/services';
-import {mapGetters} from "vuex";
-import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
-import VInput from '../../../../components/controls/VInput/VInput.vue';
-import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
-import DatePicker from 'vue2-datepicker';
+    import Service from '../../../../../scripts/services/services';
+    import {mapGetters} from 'vuex';
+    import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import DatePicker from 'vue2-datepicker';
 
-import {validationMixin} from 'vuelidate';
-import {integer, required, requiredIf} from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+    import {integer, required, requiredIf} from 'vuelidate/lib/validators';
 
-export default {
+    export default {
     name: 'page-stores-detail',
     components: {
         VInput,
