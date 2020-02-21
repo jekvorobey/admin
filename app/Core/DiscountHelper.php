@@ -52,6 +52,8 @@ class DiscountHelper
             }
         }
 
+        $params['filter']['!status'] = DiscountDto::STATUS_CREATED;
+
         return $params;
     }
 
