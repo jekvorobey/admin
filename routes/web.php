@@ -154,14 +154,22 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('content')->namespace('Content')->group(function () {
         Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
-            Route::get('/', 'ProductGroupListController@index')
-                ->name('productGroup.list');
-            Route::get('/{id}', 'ProductGroupDetailController@index')
+            Route::get('/', 'ProductGroupListController@indexPage')
+                ->name('productGroup.listPage');
+            Route::get('/{id}', 'ProductGroupDetailController@updatePage')
                 ->where(['id' => '[0-9]+'])
-                ->name('productGroup.detail');
+                ->name('productGroup.updatePage');
+            Route::get('/create', 'ProductGroupDetailController@createPage')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.createPage');
+
+            Route::get('/page', 'ProductGroupListController@page')
+                ->name('productGroups.page');
             Route::put('/{id}', 'ProductGroupDetailController@update')
                 ->where(['id' => '[0-9]+'])
                 ->name('productGroup.update');
+            Route::post('/', 'ProductGroupDetailController@create')
+                ->name('productGroup.create');
             Route::delete('/{id}', 'ProductGroupDetailController@delete')
                 ->where(['id' => '[0-9]+'])
                 ->name('productGroup.delete');

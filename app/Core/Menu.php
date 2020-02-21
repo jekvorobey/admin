@@ -108,7 +108,7 @@ class Menu
                     ],
                     [
                         'title' => 'Подборки товаров',
-                        'route' => route('productGroup.list'),
+                        'route' => route('productGroup.listPage'),
                     ],
                 ]
             ],

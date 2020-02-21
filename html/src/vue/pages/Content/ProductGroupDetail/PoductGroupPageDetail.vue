@@ -1,8 +1,8 @@
 <template>
     <layout-main back>
-        <b-form @submit.prevent="update">
+        <b-form @submit.prevent="submit">
             <b-form-group
-                    label="Наименование"
+                    label="Наименование*"
                     label-for="group-name"
             >
                 <b-form-input
@@ -15,7 +15,7 @@
             </b-form-group>
 
             <b-form-group
-                    label="Символьный код"
+                    label="Символьный код*"
                     label-for="group-code"
             >
                 <b-form-input
@@ -63,7 +63,7 @@
             />
 
             <b-form-group
-                    label="Тип"
+                    label="Тип*"
                     label-for="group-type"
             >
                 <b-form-select
@@ -111,13 +111,13 @@
             >
             </select-products>
 
-            <b-button type="submit" variant="dark">Обновить</b-button>
+            <b-button type="submit" class="mt-3" variant="dark">{{ idCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
     </layout-main>
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
     import Services from "../../../../scripts/services/services";
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
@@ -138,7 +138,7 @@
         },
         data() {
             return {
-                productGroup: this.iProductGroup,
+                productGroup: this.normalizeProductGroup(this.iProductGroup),
                 productGroupTypes: this.iProductGroupTypes,
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
@@ -149,11 +149,27 @@
         },
 
         methods: {
-            refresh() {
-                Services.net().get(this.getRoute('productGroup.detail', {id: this.productGroup.id}))
-                    .then((data) => {
-                        this.productGroup = data.productGroup;
-                    });
+            ...mapActions({
+                showMessageBox: 'modal/showMessageBox',
+            }),
+            normalizeProductGroup(source) {
+                return {
+                    id: source.id ? source.id : null,
+                    name: source.name ? source.name : null,
+                    code: source.code ? source.code : null,
+                    active: source.active ? source.active : null,
+                    is_shown: source.is_shown ? source.is_shown : null,
+                    type_id: source.type_id ? source.type_id : null,
+                    preview_photo_id: source.preview_photo_id ? source.preview_photo_id : null,
+                };
+            },
+            submit() {
+                if (this.idCreatingMode) {
+                    this.create();
+                }
+                else {
+                    this.update();
+                }
             },
             update() {
                 let model = this.productGroup;
@@ -163,7 +179,26 @@
                 Services.net()
                     .put(this.getRoute('productGroup.update', {id: this.productGroup.id,}), {}, model)
                     .then((data) => {
-                        console.log(data);
+                        this.showMessageBox({title: 'Изменения сохранены'});
+                        window.location.href = this.route('productGroup.listPage');
+                    })
+                    .catch(() => {
+                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                    });
+            },
+            create() {
+                let model = this.productGroup;
+                model.filters = this.selectedFilters;
+                model.products = this.selectedProducts;
+
+                Services.net()
+                    .post(this.getRoute('productGroup.create'), {}, model)
+                    .then((data) => {
+                        this.showMessageBox({title: 'Страница сохранена'});
+                        window.location.href = this.route('productGroup.listPage');
+                    })
+                    .catch(() => {
+                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
             },
             onUploadPreviewPhoto(file) {
@@ -203,7 +238,10 @@
                 }
 
                 return null;
-            }
+            },
+            idCreatingMode() {
+                return this.productGroup.id === null;
+            },
         },
     };
 </script>

@@ -15,6 +15,9 @@
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
+            <button @click="goToCreatePage" class="btn btn-success">Создать</button>
+        </div>
+        <div class="mb-3">
             Всего подборок: {{ pager.total }}.
         </div>
         <table class="table">
@@ -32,24 +35,21 @@
             <tr v-for="productGroup in productGroups">
                 <td>{{productGroup.id}}</td>
                 <td>
-                    <b-badge v-if="productGroup.active"
-                             variant="success">
+                    <b-badge v-if="productGroup.active" variant="success">
                         Активна
                     </b-badge>
-                    <b-badge v-if="!productGroup.active"
-                             variant="danger">
-                        Деактивированно
+                    <b-badge v-if="!productGroup.active" variant="danger">
+                        Деактивирована
                     </b-badge>
                     <br>
-                    <b-badge v-if="!productGroup.is_shown && productGroup.active"
-                             variant="warning">
+                    <b-badge v-if="!productGroup.is_shown && productGroup.active" variant="warning">
                         Только по прямой ссылке
                     </b-badge>
                 </td>
                 <td><img :src="productGroup.photo ? productGroup.photo : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
                 <td class="with-small">
-                    <a :href="getRoute('productGroup.detail', {id: productGroup.id})">{{productGroup.name}}</a>
+                    <a :href="getRoute('productGroup.updatePage', {id: productGroup.id})">{{productGroup.name}}</a>
                 </td>
                 <td>{{productGroup.type.name}}</td>
                 <td>
@@ -82,11 +82,10 @@
 
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
 
     const cleanFilter = {
         id: '',
-        vendorCode: '',
         type: '',
     };
 
@@ -104,6 +103,7 @@
         },
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+
             return {
                 productGroups: this.iProductGroups,
                 pager: this.iPager,
@@ -112,6 +112,12 @@
             };
         },
         methods: {
+            ...mapActions({
+                showMessageBox: 'modal/showMessageBox',
+            }),
+            goToCreatePage() {
+                window.location.href = this.route('productGroup.createPage');
+            },
             changePage(newPage) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
@@ -126,7 +132,7 @@
                 }));
             },
             loadPage() {
-                Services.net().get(this.route('productGroups.listPage'), {
+                Services.net().get(this.route('productGroups.page'), {
                     page: this.currentPage,
                     filter: this.filter,
                     //sort: this.sort,
@@ -150,7 +156,7 @@
                     .delete(this.getRoute('productGroup.delete', {id: id,}))
                     .then((data) => {
                         this.showMessageBox({title: 'Элемент удалён'});
-                        window.location.href = this.route('productGroups.list');
+                        this.loadPage();
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
