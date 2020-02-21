@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\Helpers;
 use App\Core\DiscountHelper;
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\RestRoleService;
-use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
@@ -51,7 +48,6 @@ class DiscountController extends Controller
             'roles' => DiscountHelper::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
-            'discountApprovalStatuses' => DiscountApprovalStatusDto::allStatuses(),
             'discountTypes' => DiscountTypeDto::allTypes(),
             'iPager' => $pager,
         ]);

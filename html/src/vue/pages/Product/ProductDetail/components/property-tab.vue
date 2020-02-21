@@ -11,10 +11,6 @@
                 <table class="values-table">
                     <tbody>
                     <tr>
-                        <th>Сегмент:</th>
-                        <td>{{ product.segment }}</td>
-                    </tr>
-                    <tr>
                         <th>Категория:</th>
                         <td>{{ categoryName }}</td>
                     </tr>
@@ -45,6 +41,10 @@
                     <tr>
                         <th>В составе элемент питания:</th>
                         <td>{{ product.has_battery ? 'Да' : 'Нет' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Новинка:</th>
+                        <td>{{ product.is_new ? 'Да' : 'Нет' }}</td>
                     </tr>
                     </tbody>
                 </table>

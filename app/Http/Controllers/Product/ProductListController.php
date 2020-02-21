@@ -61,7 +61,7 @@ class ProductListController extends Controller
         $query->include(BrandDto::entity(), CategoryDto::entity());
         $query->addFields(BrandDto::entity(), 'id', 'name');
         $query->addFields(CategoryDto::entity(), 'id', 'name');
-        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at', 'segment');
+        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
         
         $filter = $request->get('filter', []);
     

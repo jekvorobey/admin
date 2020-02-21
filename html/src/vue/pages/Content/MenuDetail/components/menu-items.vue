@@ -75,7 +75,6 @@
 </template>
 
 <script>
-    import Services from '../../../../../scripts/services/services';
     import draggable from 'vuedraggable';
     import {mapGetters} from 'vuex';
     import NewMenuItem from "./new-menu-item.vue";

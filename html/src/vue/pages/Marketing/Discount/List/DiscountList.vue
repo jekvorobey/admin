@@ -20,13 +20,7 @@
                                     :options="discountStatusesOptions"
                                     :name="'status'"
                                     class="col-3">
-                        Статус скидки
-                    </f-multi-select>
-                    <f-multi-select v-model="filter.approval_status"
-                                    :options="discountApprovalStatusesOptions"
-                                    :name="'approval_status'"
-                                    class="col-3">
-                        Статус проверки
+                        Статус
                     </f-multi-select>
                 </div>
                 <transition name="slide">
@@ -89,8 +83,7 @@
                 <th>Название</th>
                 <th>Скидка</th>
                 <th>Срок действия</th>
-                <th>Статус проверки</th>
-                <th>Статус скидки</th>
+                <th>Статус</th>
                 <th></th>
             </tr>
             </thead>
@@ -105,9 +98,6 @@
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
                 <td>{{ discount.validityPeriod }}</td>
-                <td :class="approvalClass(discount)">
-                    <span class="badge">{{ discount.approvalStatusName }}</span>
-                </td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
                 </td>
@@ -145,7 +135,6 @@
         name: '',
         type: [],
         status: [],
-        approval_status: [],
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -167,7 +156,6 @@
             iCurrentPage: Number,
             discountTypes: Object,
             discountStatuses: Object,
-            discountApprovalStatuses: Object,
             iPager: Object,
             roles: Array,
             iFilter: Object|Array,
@@ -182,17 +170,14 @@
                 appliedFilter: {},
                 opened: false,
 
-                // Статус заявки
-                APP_STATUS_NOT_APPROVED: 1,
-                APP_STATUS_SENT: 2,
-                APP_STATUS_APPROVING: 3,
-                APP_STATUS_REJECT: 4,
-                APP_STATUS_APPROVED: 5,
-
                 // Статус скидки
-                STATUS_ACTIVE: 1,
-                STATUS_PAUSED: 2,
-                STATUS_EXPIRED: 3,
+                STATUS_CREATED: 1,
+                STATUS_SENT: 2,
+                STATUS_ON_CHECKING: 3,
+                STATUS_ACTIVE: 4,
+                STATUS_REJECTED: 5,
+                STATUS_PAUSED: 6,
+                STATUS_EXPIRED: 7,
 
                 // Тип значения
                 DISCOUNT_VALUE_TYPE_PERCENT: 1,
@@ -215,26 +200,17 @@
                     this.total = data.total;
                 });
             },
-            approvalClass(discount) {
-                switch (discount.approval_status) {
-                    case this.APP_STATUS_NOT_APPROVED:
-                        return 'table-danger';
-                    case this.APP_STATUS_SENT:
-                        return 'table-info';
-                    case this.APP_STATUS_APPROVING:
-                        return 'table-warning';
-                    case this.APP_STATUS_REJECT:
-                        return 'table-danger';
-                    case this.APP_STATUS_APPROVED:
-                        return 'table-success';
-                }
-            },
             statusClass(discount) {
                 switch (discount.status) {
                     case this.STATUS_ACTIVE:
                         return 'table-success';
+                    case this.STATUS_CREATED:
+                    case this.STATUS_SENT:
                     case this.STATUS_PAUSED:
+                    case this.STATUS_ON_CHECKING:
                         return 'table-warning';
+                    case this.STATUS_REJECTED:
+                        return 'table-danger';
                     case this.STATUS_EXPIRED:
                         return 'table-secondary';
                 }
@@ -270,7 +246,6 @@
                     'name',
                     'type',
                     'status',
-                    'approval_status',
                     'start_date',
                     'end_date',
                     'fix_start_date',
@@ -299,7 +274,6 @@
                             break;
                         case 'type':
                         case 'status':
-                        case 'approval_status':
                             let value = this.iFilter[field].map(v => parseInt(v));
                             filter[field] = value;
                             Service.event().$emit('set-filter-' + field, value);
@@ -316,9 +290,6 @@
             },
             discountStatusesOptions() {
                 return Object.values(this.discountStatuses).map(type => ({value: type.id, text: type.name}));
-            },
-            discountApprovalStatusesOptions() {
-                return Object.values(this.discountApprovalStatuses).map(type => ({value: type.id, text: type.name}));
             },
             fixDateTooltip() {
                 return 'Искать точное совпадание с датой начала и/или окончания скидки';

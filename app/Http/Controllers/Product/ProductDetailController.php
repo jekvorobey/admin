@@ -166,7 +166,12 @@ class ProductDetailController extends Controller
     protected function getProductData(int $id, ProductService $productService)
     {
         /** @var Collection|ProductDto[] $products */
-        $products = $productService->newQuery()->setFilter('id', $id)->include('properties')->products();
+        $products = $productService
+            ->newQuery()
+            ->include('tips')
+            ->setFilter('id', $id)
+            ->include('properties')
+            ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
         }
