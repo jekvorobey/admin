@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 
 class ProductGroupListController extends Controller
 {
-    public function index(
+    public function indexPage(
         Request $request,
         ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
@@ -34,6 +34,22 @@ class ProductGroupListController extends Controller
                 'types' => $this->loadTypes($productGroupTypeService),
             ]
         ]);
+    }
+
+    public function page(
+        Request $request,
+        ProductGroupService $productGroupService,
+        FileService $fileService
+    )
+    {
+        $query = $this->makeQuery($request);
+        $data = [
+            'productGroups' => $this->loadItems($query, $productGroupService, $fileService),
+        ];
+        if (1 == $request->get('page', 1)) {
+            $data['pager'] = $productGroupService->productGroupsCount($query);
+        }
+        return response()->json($data);
     }
 
     /**
@@ -54,6 +70,10 @@ class ProductGroupListController extends Controller
 
         if (isset($filter['id']) && $filter['id']) {
             $query->setFilter('id', $filter['id']);
+        }
+
+        if (isset($filter['type'])) {
+            $query->setFilter('type_id', $filter['type']);
         }
 
         return $query;

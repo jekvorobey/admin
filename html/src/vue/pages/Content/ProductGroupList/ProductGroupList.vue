@@ -49,7 +49,7 @@
                 <td><img :src="productGroup.photo ? productGroup.photo : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
                 <td class="with-small">
-                    <a :href="getRoute('productGroup.detail', {id: productGroup.id})">{{productGroup.name}}</a>
+                    <a :href="getRoute('productGroup.updatePage', {id: productGroup.id})">{{productGroup.name}}</a>
                 </td>
                 <td>{{productGroup.type.name}}</td>
                 <td>
@@ -82,11 +82,10 @@
 
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
 
     const cleanFilter = {
         id: '',
-        vendorCode: '',
         type: '',
     };
 
@@ -104,6 +103,7 @@
         },
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+
             return {
                 productGroups: this.iProductGroups,
                 pager: this.iPager,
@@ -112,6 +112,9 @@
             };
         },
         methods: {
+            ...mapActions({
+                showMessageBox: 'modal/showMessageBox',
+            }),
             changePage(newPage) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
@@ -126,7 +129,7 @@
                 }));
             },
             loadPage() {
-                Services.net().get(this.route('productGroups.listPage'), {
+                Services.net().get(this.route('productGroups.page'), {
                     page: this.currentPage,
                     filter: this.filter,
                     //sort: this.sort,
@@ -150,7 +153,7 @@
                     .delete(this.getRoute('productGroup.delete', {id: id,}))
                     .then((data) => {
                         this.showMessageBox({title: 'Элемент удалён'});
-                        window.location.href = this.route('productGroups.list');
+                        this.loadPage();
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
