@@ -1,6 +1,6 @@
 export default class Media {
     static compressed(imageId, w, h, type = 'jpg') {
-        return `/content/${imageId}/${w}/${h}/${type}`;
+        return `/files/compressed/${imageId}/${w}/${h}/${type}`;
     }
 
     static empty(w, h, text = 'No image') {
@@ -9,5 +9,9 @@ export default class Media {
 
     static video(code) {
         return `https://www.youtube.com/embed/${code}`;
+    }
+
+    static file(id) {
+        return `/files/original/${id}`;
     }
 }

@@ -149,6 +149,12 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
+            
+            Route::prefix('tips')->group(function () {
+                Route::post('', 'ProductDetailController@addTip')->name('product.addTip');
+                Route::post('{tipId}/update', 'ProductDetailController@editTip')->name('product.editTip');
+                Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
+            });
         });
     });
 
