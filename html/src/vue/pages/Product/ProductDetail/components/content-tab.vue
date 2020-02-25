@@ -41,7 +41,7 @@
                                  @onDelete="onDelete(4, descriptionImage.id)"
                                 class="tip">
                         <img :src="imageUrl(tip.file_id)" class="big-image">
-                        {{tip.description}}
+                        <div class="tip-description">{{tip.description}}</div>
                     </shadow-card>
                 </template>
                 <div class="align-self-center">
@@ -67,7 +67,7 @@
                                     width="424"
                                     height="238"
                                     class="embed-responsive-item"
-                                    :src="'https://www.youtube.com/embed/' + product.description_video"
+                                    :src="videoUrl(product.description_video)"
                                     allowfullscreen></iframe>
                         </div>
                         <img v-else src="//placehold.it/424x238?text=No+video" class="embed-responsive embed-responsive-16by9 ">
@@ -100,7 +100,7 @@
                                     width="424"
                                     height="238"
                                     class="embed-responsive-item"
-                                    :src="'https://www.youtube.com/embed/' + product.how_to_video"
+                                    :src="videoUrl(product.how_to_video)"
                                     allowfullscreen></iframe>
                         </div>
                         <img v-else src="//placehold.it/424x238?text=No+video" class="embed-responsive embed-responsive-16by9 ">
@@ -154,6 +154,7 @@
 
     import Services from "../../../../../scripts/services/services";
     import {mapGetters} from "vuex";
+    import Media from "../../../../../scripts/media";
 
     export default {
         components: {
@@ -205,8 +206,10 @@
                     });
             },
             imageUrl(id) {
-                // todo
-                return `https://koryukov_file.ibt-mas.greensight.ru/content/${id}/150/150/webp`;
+                return Media.compressed(id, 290, 290);
+            },
+            videoUrl(code) {
+                return Media.video(code);
             }
         },
         computed: {
@@ -215,28 +218,28 @@
                 let mainImages = this.images.filter(image => image.type === 1);
                 return mainImages.length > 0 ? mainImages[0] : {
                     id: 0,
-                    url: '//placehold.it/150x150?text=No+image'
+                    url: Media.empty(150, 150),
                 };
             },
             catalogImage() {
                 let catalogImages = this.images.filter(image => image.type === 2);
                 return catalogImages.length > 0 ? catalogImages[0] : {
                     id: 0,
-                    url: '//placehold.it/150x150?text=No+image'
+                    url: Media.empty(150, 150),
                 };
             },
             descriptionImage() {
                 let descriptionImages = this.images.filter(image => image.type === 4);
                 return descriptionImages.length > 0 ? descriptionImages[0] : {
                     id: 0,
-                    url: '//placehold.it/150x150?text=No+image'
+                    url: Media.empty(150, 150),
                 };
             },
             howToImage() {
                 let howToImages = this.images.filter(image => image.type === 5);
                 return howToImages.length > 0 ? howToImages[0] : {
                     id: 0,
-                    url: '//placehold.it/150x150?text=No+image'
+                    url: Media.empty(150, 150),
                 };
             },
             galleryImages() {
@@ -297,7 +300,7 @@
     .big-add-btn:hover {
         color: black;
     }
-    .tip {
-        max-width: 300px;
+    .tip-description {
+        width: 260px;
     }
 </style>
