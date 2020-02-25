@@ -14,7 +14,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\Product\ProductDto;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductGroupDetailController extends Controller
@@ -83,8 +86,8 @@ class ProductGroupDetailController extends Controller
             'id' => 'integer|required',
             'name' => 'string|required',
             'code' => 'string|required',
-            'active' => 'boolean|required',
-            'is_shown' => 'boolean|required',
+            'active' => 'boolean',
+            'is_shown' => 'boolean',
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
             'category_code' => 'string|nullable',
@@ -104,6 +107,57 @@ class ProductGroupDetailController extends Controller
         $productGroupService->deleteProductGroup($id);
 
         return response()->json([], 204);
+    }
+
+    public function getFilters(
+        Request $request,
+        ProductService $productService
+    ) {
+        $categoryCode = $request->get('category', '');
+        $filters = $productService->filters($categoryCode, []);
+
+        if (!$filters->count()) {
+            throw new NotFoundHttpException('FilterItem not found');
+        }
+
+        return response()->json($filters);
+    }
+
+    public function getProducts(
+        Request $request,
+        ProductService $productService
+    ) {
+        $validatedData = $request->validate([
+            'id' => 'array',
+            'vendor_code' => 'string',
+        ]);
+
+        $query = $productService->newQuery();
+
+        $validatedData = array_filter($validatedData);
+        if (!$validatedData) {
+            throw new HttpException('500');
+        }
+
+        foreach ($validatedData as $keyParam => $valueParam) {
+            $query->setFilter($keyParam, $valueParam);
+        }
+
+        $products = $productService->products($query);
+
+        $images = collect();
+        if ($products) {
+            $productIds = $products->pluck('id')->all();
+            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
+        }
+        $products = $products->map(function (ProductDto $product) use ($images) {
+            $data = $product->toArray();
+            $data['photo'] = $images[$product->id] ?? '';
+
+            return $data;
+        });
+
+        return response()->json($products);
     }
 
     /**

@@ -53,6 +53,7 @@
                 />
             </b-form-group>
 
+            Превью картинка*<br>
             <img v-if="previewPhoto"
                  :src="previewPhoto.url"
                  class="preview-photo"
@@ -157,8 +158,8 @@
                     id: source.id ? source.id : null,
                     name: source.name ? source.name : null,
                     code: source.code ? source.code : null,
-                    active: source.active ? source.active : null,
-                    is_shown: source.is_shown ? source.is_shown : null,
+                    active: source.active ? source.active : false,
+                    is_shown: source.is_shown ? source.is_shown : false,
                     type_id: source.type_id ? source.type_id : null,
                     preview_photo_id: source.preview_photo_id ? source.preview_photo_id : null,
                 };

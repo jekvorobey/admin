@@ -85,6 +85,10 @@
                 return false;
             },
             filterNormalization(rawFilters) {
+                if (typeof rawFilters === 'undefined') {
+                    return [];
+                }
+
                 return rawFilters.map(function (filter) {
                     return {
                         code: filter.code,
