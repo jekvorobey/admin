@@ -25,7 +25,10 @@ function newBtnId() {
 export default {
     name: 'v-delete-button',
     props: {
-        btnClass: String,
+        btnClass: {
+            type: String,
+            default: 'btn-danger',
+        },
     },
     data() {
         return {

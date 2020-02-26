@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customers;
 
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -47,6 +48,8 @@ class CustomerDetailController extends Controller
 
         $this->title = $user->full_name;
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
+        $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
+
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
@@ -55,6 +58,8 @@ class CustomerDetailController extends Controller
                 'full_name' => $user->full_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
+                'gender' => $customer->gender,
+                'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
                 'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
                     return [
@@ -88,10 +93,32 @@ class CustomerDetailController extends Controller
             $customer = new CustomerDto($customer);
             $customerService->updateCustomer($id, $customer);
         }
+        $activities = request('activities');
+        if ($activities) {
+            $customerService->putActivities($id, $activities);
+        }
         return response('', 204);
     }
 
-    public function infoMain($id, CustomerService $customerService, FileService $fileService, UserService $userService)
+    public function createCertificate(int $id, int $file_id, CustomerService $customerService)
+    {
+        $certificateDto = new CustomerCertificateDto();
+        $certificateDto->file_id = $file_id;
+        $id = $customerService->createCertificate($id, $certificateDto);
+
+        return response()->json([
+            'id' => $id,
+        ]);
+    }
+
+    public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
+    {
+        $customerService->deleteCertificate($id, $certificate_id);
+
+        return response('', 204);
+    }
+
+    public function infoMain(int $id, CustomerService $customerService, FileService $fileService, UserService $userService)
     {
         $certificates = $customerService->certificates($id);
         $files = [];
@@ -101,6 +128,9 @@ class CustomerDetailController extends Controller
 
         $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
 
+        $activities = $customerService->activities()->setCustomerIds([$id])->load();
+        $activitiesAll = $customerService->activities()->load();
+
         return response()->json([
             'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
                 /** @var FileDto $file */
@@ -109,6 +139,7 @@ class CustomerDetailController extends Controller
                     return false;
                 }
                 return [
+                    'id' => $certificate->id,
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
@@ -116,6 +147,8 @@ class CustomerDetailController extends Controller
             'managers' => $managers->mapWithKeys(function (UserDto $user) {
                 return [$user->id => $user->full_name];
             }),
+            'activities' => $activities->pluck('id'),
+            'activitiesAll' => $activitiesAll,
         ]);
     }
 
