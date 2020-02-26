@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\Menu;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -24,7 +26,10 @@ class Controller extends BaseController
             $props,
             [
                 'menu' => Menu::getMenuItems(),
-                'isGuest' => resolve(TokenStore::class)->token() == null
+                'user' => [
+                    'isGuest' => resolve(TokenStore::class)->token() == null,
+                    'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
+                ],
             ],
             [
                 'title' => $this->title,

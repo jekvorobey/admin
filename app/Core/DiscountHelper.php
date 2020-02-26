@@ -2,70 +2,88 @@
 
 namespace App\Core;
 
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Marketing\Dto\Discount\DiscountApprovalStatusDto;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
-use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use MerchantManagement\Services\MerchantService\MerchantService;
 
 class DiscountHelper
 {
     /**
      * @param Request $request
-     * @param RestQuery $restQuery
-     * @param DiscountService $discountService
-     * @return Collection
+     * @param array $pager
+     * @return array
      */
-    public static function load(
-        Request $request,
-        RestQuery $restQuery,
-        DiscountService $discountService
-    ): Collection
+    public static function getParams(Request $request, array $pager = [])
     {
-        $filters = $request->get('filter', []);
+        $whiteListFilters = [
+            'id',
+            'name',
+            'status',
+            'start_date',
+            'fix_start_date',
+            'end_date',
+            'fix_end_date',
+            'type',
+            'role_id',
+        ];
 
-        foreach ($filters as $key => $value) {
-            switch ($key) {
-                case 'name':
-                    $restQuery->setFilter('name', 'like', "%{$value}%");
-                    break;
+        $params = [];
+        $params['sort'] = 'desc';
+        $params['filter'] = [];
+        if (!empty($pager)) {
+            $params['page'] = $pager['page'];
+            $params['perPage'] = $pager['perPage'];
+        }
 
-                case 'start_date':
-                    $restQuery->setFilter('start_date', '>=', Carbon::parse($value));
-                    break;
-
-                case 'end_date':
-                    $restQuery->setFilter('end_date', '<=', Carbon::parse($value));
-                    break;
-
-                default:
-                    $restQuery->setFilter($key, $value);
+        $filter = $request->get('filter', []);
+        foreach ($filter as $key => $value) {
+            if (in_array($key, $whiteListFilters)) {
+                $params['filter'][$key] = $value;
             }
         }
 
-        $discounts = $discountService->discounts($restQuery);
+        $params['filter']['!status'] = DiscountDto::STATUS_CREATED;
 
+        return $params;
+    }
+
+    /**
+     * @param array $params
+     * @param DiscountService $discountService
+     * @return Collection
+     */
+    public static function load(array $params, DiscountService $discountService): Collection
+    {
+        $discounts = $discountService->discounts($params);
         $discounts = $discounts->map(function (DiscountDto $discount) use ($discountService) {
             $data = $discount->toArray();
-            $data['approvalStatusName'] = $discount->approvalStatusDto()->name;
-            $data['statusName'] = $discount->statusDto()->name;
+            $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
             $data['validityPeriod'] = $discount->validityPeriod();
-
             return $data;
         });
 
         return $discounts;
+    }
+
+    /**
+     * @param array $params
+     * @param DiscountService $discountService
+     * @return int
+     */
+    public static function count(array $params, DiscountService $discountService)
+    {
+        $discounts = $discountService->discountsCount($params);
+        return $discounts['total'] ?? 0;
     }
 
     /**
@@ -100,13 +118,11 @@ class DiscountHelper
             : null;
 
         $discount = new DiscountDto([
-            'sponsor' => DiscountDto::DISCOUNT_ADMIN_SPONSOR,
             'merchant_id' => null,
             'type' => $data['type'],
             'name' => $data['name'],
             'value_type' => $data['value_type'],
             'value' => $data['value'],
-            'approval_status' => DiscountApprovalStatusDto::STATUS_APPROVED,
             'status' => $data['status'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
@@ -121,8 +137,8 @@ class DiscountHelper
         }
 
         $conditions = DiscountHelper::getDiscountCondition($data);
-        foreach ($conditions as $type => $condition) {
-            $discount->addCondition($type, $condition);
+        foreach ($conditions as $condition) {
+            $discount->addCondition($condition);
         }
 
         return $discount;
@@ -199,7 +215,7 @@ class DiscountHelper
          * Условия, которые выделени в отдельные DTO для оптимизации расчета скидки в каталоге
          */
         foreach ($data['conditions'] as $condition) {
-            if ($condition['type'] !== DiscountConditionDto::CONDITION_TYPE_USER) {
+            if ($condition['type'] !== DiscountConditionDto::USER) {
                 continue;
             }
 
@@ -234,68 +250,79 @@ class DiscountHelper
         $conditions = [];
 
         foreach ($data['conditions'] as $condition) {
+            $model = new DiscountConditionDto();
             switch ($condition['type']) {
-                case DiscountConditionDto::CONDITION_TYPE_FIRST_ORDER:
-                    $conditions[$condition['type']] = null;
+                case DiscountConditionDto::FIRST_ORDER:
+                    $conditions[] = $model->setFirstOrder();
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_ORDER:
-                    $conditions[$condition['type']] = ['min_price' => (float)$condition['sum']];
+                case DiscountConditionDto::MIN_PRICE_ORDER:
+                    $conditions[] = $model->setMinPriceOrder((float)$condition['sum']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_BRAND:
-                    $conditions[$condition['type']] = [
-                        'brands' => (int)$condition['brands'],
-                        'min_price' => (float)$condition['sum'],
-                    ];
+                case DiscountConditionDto::MIN_PRICE_BRAND:
+                    if (empty($condition['brands'])) break;
+                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float)$condition['sum']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_MIN_PRICE_CATEGORY:
-                    $conditions[$condition['type']] = [
-                        'categories' => (int)$condition['categories'],
-                        'min_price' => (float)$condition['sum'],
-                    ];
+                case DiscountConditionDto::MIN_PRICE_CATEGORY:
+                    if (empty($condition['categories'])) break;
+                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float)$condition['sum']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_EVERY_UNIT_PRODUCT:
-                    $conditions[$condition['type']] = [
-                        'offer' => (int)$condition['offer'],
-                        'count' => (int)$condition['count'],
-                    ];
+                case DiscountConditionDto::EVERY_UNIT_PRODUCT:
+                    $conditions[] = $model->setEveryUnitProduct((int)$condition['offer'], (int)$condition['count']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_DELIVERY_METHOD:
-                    $conditions[$condition['type']] = [
-                        'deliveryMethods' => $condition['deliveryMethods'],
-                    ];
+                case DiscountConditionDto::DELIVERY_METHOD:
+                    if (empty($condition['deliveryMethods'])) break;
+                    $conditions[] = $model->setDeliveryMethods($condition['deliveryMethods']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_PAY_METHOD:
-                    $conditions[$condition['type']] = [
-                        'paymentMethods' => $condition['paymentMethods'],
-                    ];
+                case DiscountConditionDto::PAY_METHOD:
+                    if (empty($condition['paymentMethods'])) break;
+                    $conditions[] = $model->setPaymentMethods($condition['paymentMethods']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_REGION:
-                    $conditions[$condition['type']] = [
-                        'regions' => $condition['regions'],
-                    ];
+                case DiscountConditionDto::REGION:
+                    if (empty($condition['regions'])) break;
+                    $conditions[] = $model->setRegions($condition['regions']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_USER:
-                    $conditions[$condition['type']] = [
-                        'users' => $condition['users'],
-                    ];
+                case DiscountConditionDto::USER:
+                    if (empty($condition['users'])) break;
+                    $conditions[] = $model->setUsers($condition['users']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_ORDER_SEQUENCE_NUMBER:
-                    $conditions[$condition['type']] = [
-                        'sequence_number' => (int)$condition['sequenceNumber'],
-                    ];
+                case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
+                    $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
                     break;
-                case DiscountConditionDto::CONDITION_TYPE_DISCOUNT_SYNERGY:
-                    $conditions[$condition['type']] = [
-                        'discounts' => $condition['synergy'],
-                    ];
+                case DiscountConditionDto::DISCOUNT_SYNERGY:
+                    $conditions[] = $model->setSynergy($condition['synergy']);
                     break;
             }
         }
 
         if (!empty($data['bundles'])) {
-            $conditions[DiscountConditionDto::CONDITION_TYPE_BUNDLE] = ['bundles' => $data['bundles'],];
+            $conditions[] = (new DiscountConditionDto())->setBundles($data['bundles']);
         }
 
         return $conditions;
+    }
+
+    /**
+     * @return array
+     */
+    static public function getOptionRoles()
+    {
+        return [
+            ['value' => null, 'text' => 'Все'],
+            ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'],
+            ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'],
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @param int $perPage
+     * @return array
+     */
+    static public function getDefaultPager(Request $request, int $perPage = 20)
+    {
+        return [
+            'page' =>  (int) $request->get('page', 1),
+            'perPage' => $perPage,
+        ];
     }
 }

@@ -17,9 +17,6 @@
                     </v-select>
                 </div>
                 <hr>
-                <v-select v-model="$v.form.segment.$model" :options="segmentOptions">
-                    Сегмент
-                </v-select>
                 <v-select v-model="$v.form.brand_id.$model" :options="brandOptions">
                     Бренд
                 </v-select>
@@ -50,6 +47,11 @@
                         В составе есть элемент питания
                     </v-select>
                 </div>
+                <div class="row">
+                    <v-select v-model="$v.form.is_new.$model" :options="booleanOptions" class="col-md-12 col-sm-12">
+                        Новинка
+                    </v-select>
+                </div>
                 <button @click="save" class="btn btn-dark" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -72,7 +74,7 @@
     import modalMixin from '../../../../mixins/modal.js';
 
 
-    const formFields = ['has_battery', 'explosive', 'name', 'brand_id', 'category_id', 'segment', 'approval_status',
+    const formFields = ['has_battery', 'explosive', 'is_new', 'name', 'brand_id', 'category_id', 'approval_status',
         'vendor_code', 'width', 'height', 'length', 'weight'];
     export default {
         components: {
@@ -96,7 +98,6 @@
                 name: {required},
                 brand_id: {required},
                 category_id: {required},
-                segment: {required},
                 approval_status: {required},
                 vendor_code: {required},
                 width: {required, integer},
@@ -105,6 +106,7 @@
                 weight: {required, integer},
                 has_battery: {},
                 explosive: {},
+                is_new: {},
             }
         },
         methods: {
@@ -128,9 +130,6 @@
             },
             categoryOptions() {
                 return this.options.categories.map(category => ({value: category.id, text: category.name}));
-            },
-            segmentOptions() {
-                return this.options.segments.map(segment => ({value: segment, text: segment}));
             },
             approvalStatusOptions() {
                 return Object.entries(this.options.approval).map(status => ({value: status[0], text: status[1]}));

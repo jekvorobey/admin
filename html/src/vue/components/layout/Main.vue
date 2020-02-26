@@ -2,7 +2,7 @@
     <div class="fake-vue-body">
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="d-flex flex-row middle-area">
-            <div style="width: 210px;" class="bg-light" v-if="!isGuest">
+            <div style="width: 210px;" class="bg-light" v-if="!user.isGuest">
                 <MainMenu></MainMenu>
             </div>
             <div class="container-fluid flex-grow-1 pb-5 pl-4">
@@ -57,6 +57,17 @@
             loaderShow() {
                 return Services.store().state.loaderShow;
             }
+        },
+        created() {
+            Services.event().$on('toast', ({text, variant}) => {
+                this.$bvToast.toast(text, {
+                    title: 'Сообщение',
+                    variant: variant || 'success',
+                    //toaster: 'b-toaster-top-center',
+                    solid: true,
+                    autoHideDelay: 5000,
+                });
+            });
         }
     };
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
@@ -17,7 +18,8 @@ class RegistrationRequestController extends Controller
     public function index(
         Request $request,
         MerchantService $merchantService,
-        OperatorService $operatorService
+        OperatorService $operatorService,
+        UserService $userService
     )
     {
         $this->title = 'Заявки на регистрацию';
@@ -25,7 +27,7 @@ class RegistrationRequestController extends Controller
         $query = $this->makeQuery($request);
 
         return $this->render('Merchant/RegistrationList', [
-            'iMerchants' => $this->loadItems($query, $merchantService, $operatorService),
+            'iMerchants' => $this->loadItems($query, $merchantService, $operatorService, $userService),
             'iPager' => $merchantService->merchantsCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
@@ -38,12 +40,13 @@ class RegistrationRequestController extends Controller
     public function page(
         Request $request,
         MerchantService $merchantService,
-        OperatorService $operatorService
+        OperatorService $operatorService,
+        UserService $userService
     )
     {
         $query = $this->makeQuery($request);
         $data = [
-            'items' => $this->loadItems($query, $merchantService, $operatorService),
+            'items' => $this->loadItems($query, $merchantService, $operatorService, $userService),
         ];
         if (1 == $request->get('page', 1)) {
             $data['pager'] = $merchantService->merchantsCount($query);
@@ -54,14 +57,15 @@ class RegistrationRequestController extends Controller
     protected function loadItems(
         RestQuery $query,
         MerchantService $merchantService,
-        OperatorService $operatorService
+        OperatorService $operatorService,
+        UserService $userService
     )
     {
         $merchants = $merchantService->merchants($query);
         $merchantIds = $merchants->pluck('id')->all();
         $operatorsQuery = (new RestQuery())
             ->setFilter('merchant_id', $merchantIds)
-            ->addFields(OperatorDto::entity(), 'id', 'merchant_id');
+            ->addFields(OperatorDto::entity(), 'id', 'merchant_id', 'user_id');
         $operators = $operatorService
             ->operators($operatorsQuery)
             ->groupBy('merchant_id')
@@ -71,11 +75,17 @@ class RegistrationRequestController extends Controller
                 return [$first->merchant_id => $first];
             });
 
-        $items = $merchants->map(function (MerchantDto $merchant) use ($operators) {
-            $merchant['operator'] = $operators->get($merchant->id);
+        $users = $userService
+            ->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
+            ->keyBy('id');
+
+        return $merchants->map(function (MerchantDto $merchant) use ($operators, $users) {
+            /** @var OperatorDto $operator */
+            $operator = $operators->get($merchant->id);
+            $merchant['operator'] = $operator;
+            $merchant['user'] = $users->get($operator->user_id);
             return $merchant;
         });
-        return $items;
     }
 
     protected function makeQuery(Request $request)

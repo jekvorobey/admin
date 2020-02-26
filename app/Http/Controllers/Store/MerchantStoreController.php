@@ -254,7 +254,9 @@ class MerchantStoreController extends Controller
             'id' => 'integer|nullable',
             'day' => 'integer|required',
             'store_id' => 'integer|required',
-            'pickup_time' => 'string|nullable',
+            'pickup_time_code' => 'string|nullable',
+            'pickup_time_start' => 'string|nullable',
+            'pickup_time_end' => 'string|nullable',
             'cargo_export_time' => 'string|nullable',
             'delivery_service' => ['sometimes', Rule::in(array_keys(DeliveryService::allServices()))],
         ]);

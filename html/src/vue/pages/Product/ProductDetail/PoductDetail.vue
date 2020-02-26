@@ -5,7 +5,6 @@
                 <h2>{{ product.name }}</h2>
                 <div style="height: 40px">
                     <span class="badge" :class="approvalClass(product.approval_status)">{{ options.approval[product.approval_status] || 'N/A' }}</span>
-                    <span class="segment" :class="segmentClass(product.segment)">{{ product.segment }}</span>
                     <template v-if="!isRejectApprovalStatus && !isApprovedApprovalStatus">
                         <button class="btn btn-primary" @click="changeProductApproveStatus(5)">Согласовать</button>
                         <button class="btn btn-primary" @click="openModal('productReject')">Отклонить</button>
@@ -112,9 +111,6 @@
                 this.showMessageBox({title: 'Ошибка', text: errorMessage});
             });
         },
-        segmentClass(segment) {
-            return segment ? `segment-${segment.toLowerCase()}` : '';
-        },
         approvalClass(approval_status) {
             switch (approval_status) {
                 case 1: return 'badge-dark';
@@ -166,25 +162,5 @@
     .measure {
         width: 30px;
         margin-left: 10px;
-    }
-    .segment {
-        padding: 5px;
-        border-radius: 50%;
-        float: right;
-        color: white;
-        font-weight: bold;
-        line-height: 20px;
-        width: 32px;
-        height: 32px;
-        text-align: center;
-    }
-    .segment-a {
-        background: #ffd700;
-    }
-    .segment-b {
-        background: #c0c0c0;
-    }
-    .segment-c {
-        background: #cd7f32;
     }
 </style>

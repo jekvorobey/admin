@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Content;
+namespace App\Http\Controllers\Content\ProductGroup;
 
 use App\Http\Controllers\Controller;
+use Cms\Core\CmsException;
 use Cms\Dto\ProductGroupDto;
 use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
@@ -11,6 +12,7 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\CategoryService\CategoryService;
@@ -20,15 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductGroupDetailController extends Controller
 {
-    /**
-     * @param int $id
-     * @param ProductGroupService $productGroupService
-     * @param ProductGroupTypeService $productGroupTypeService
-     * @param CategoryService $categoryService
-     * @param FileService $fileService
-     * @return mixed
-     */
-    public function index(
+    public function updatePage(
         $id,
         ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
@@ -49,12 +43,78 @@ class ProductGroupDetailController extends Controller
         ]);
     }
 
+    public function createPage(
+        ProductGroupService $productGroupService,
+        ProductGroupTypeService $productGroupTypeService,
+        CategoryService $categoryService,
+        FileService $fileService
+    ) {
+        $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
+        $categories = $this->getCategories($categoryService);
+
+        return $this->render('Content/ProductGroupDetail', [
+            'iProductGroup' => [],
+            'iProductGroupTypes' => $productGroupTypes,
+            'iProductGroupImages' => [],
+            'iCategories' => $categories,
+            'options' => [],
+        ]);
+    }
+
+    public function create(Request $request, ProductGroupService $productGroupService)
+    {
+        $validatedData = $request->validate([
+            'name' => 'string|required',
+            'code' => 'string|required',
+            'active' => 'boolean|required',
+            'is_shown' => 'boolean|required',
+            'type_id' => 'integer|required',
+            'preview_photo_id' => 'integer|required',
+            'category_code' => 'string|nullable',
+            'filters' => 'array',
+            'products' => 'array',
+        ]);
+
+        $productGroupService->createProductGroup(new ProductGroupDto($validatedData));
+
+        return response()->json([], 204);
+    }
+
+    public function update(int $id, Request $request, ProductGroupService $productGroupService)
+    {
+        $validatedData = $request->validate([
+            'id' => 'integer|required',
+            'name' => 'string|required',
+            'code' => 'string|required',
+            'active' => 'boolean',
+            'is_shown' => 'boolean',
+            'type_id' => 'integer|required',
+            'preview_photo_id' => 'integer|required',
+            'category_code' => 'string|nullable',
+            'filters' => 'array',
+            'products' => 'array',
+        ]);
+
+        $validatedData['id'] = $id;
+
+        $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
+
+        return response()->json([], 204);
+    }
+
+    public function delete(int $id, ProductGroupService $productGroupService)
+    {
+        $productGroupService->deleteProductGroup($id);
+
+        return response()->json([], 204);
+    }
+
     public function getFilters(
         Request $request,
         ProductService $productService
     ) {
         $categoryCode = $request->get('category', '');
-        $filters = $productService->filters($categoryCode, true);
+        $filters = $productService->filters($categoryCode, []);
 
         if (!$filters->count()) {
             throw new NotFoundHttpException('FilterItem not found');
@@ -100,47 +160,33 @@ class ProductGroupDetailController extends Controller
         return response()->json($products);
     }
 
-    public function update($id, Request $request, ProductGroupService $productGroupService)
-    {
-        $validatedData = $request->validate([
-            'id' => 'integer|required',
-            'name' => 'string|required',
-            'code' => 'string|required',
-            'active' => 'boolean|required',
-            'added_in_menu' => 'boolean|required',
-            'type_id' => 'integer|required',
-            'preview_photo_id' => 'integer|required',
-            'category_code' => 'string|nullable',
-            'filters' => 'array',
-            'products' => 'array',
-        ]);
-
-        $validatedData['id'] = $id;
-
-        $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
-
-        return response()->json([], 204);
-    }
-
+    /**
+     * @param ProductGroupTypeService $productGroupTypeService
+     * @return ProductGroupTypeDto[]|Collection
+     * @throws CmsException
+     */
     protected function getProductGroupTypes(ProductGroupTypeService $productGroupTypeService)
     {
-        /** @var Collection|ProductGroupTypeDto[] $productGroupTypes */
-        $productGroupTypes = $productGroupTypeService->productGroupTypes($productGroupTypeService->newQuery());
-
-        return $productGroupTypes;
+        return $productGroupTypeService->productGroupTypes($productGroupTypeService->newQuery());
     }
 
+    /**
+     * @param CategoryService $categoryService
+     * @return Collection|CategoryDto[]
+     * @throws PimException
+     */
     protected function getCategories(CategoryService $categoryService)
     {
-        /** @var Collection|CategoryDto[] $productGroupTypes */
-        $categories = $categoryService->categories($categoryService->newQuery());
-
-        return $categories;
+        return $categoryService->categories($categoryService->newQuery());
     }
 
+    /**
+     * @param int $id
+     * @param ProductGroupService $productGroupService
+     * @return ProductGroupDto
+     */
     protected function getProductGroup(int $id, ProductGroupService $productGroupService)
     {
-        /** @var Collection|ProductGroupDto[] $productGroups */
         $productGroups = $productGroupService
             ->newQuery()
             ->addFields('type', '*')

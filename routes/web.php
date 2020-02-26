@@ -27,8 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('marketing')->namespace('Marketing')->group(function () {
         Route::prefix('discounts')->group(function () {
             Route::get('/', 'DiscountController@index')->name('discount.list');
-            Route::get('/create', 'DiscountController@createPage')->name('discount.create');
             Route::post('/', 'DiscountController@create')->name('discount.save');
+            Route::get('/create', 'DiscountController@createPage')->name('discount.create');
+            Route::get('page', 'DiscountController@page')->name('discount.pagination');
         });
     });
 
@@ -148,19 +149,36 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
+            
+            Route::prefix('tips')->group(function () {
+                Route::post('', 'ProductDetailController@addTip')->name('product.addTip');
+                Route::post('{tipId}/update', 'ProductDetailController@editTip')->name('product.editTip');
+                Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
+            });
         });
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
-        Route::prefix('product-group')->group(function () {
-            Route::get('/', 'ProductGroupListController@index')
-                ->name('productGroup.list');
-            Route::get('/{id}', 'ProductGroupDetailController@index')
+        Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
+            Route::get('/', 'ProductGroupListController@indexPage')
+                ->name('productGroup.listPage');
+            Route::get('/{id}', 'ProductGroupDetailController@updatePage')
                 ->where(['id' => '[0-9]+'])
-                ->name('productGroup.detail');
+                ->name('productGroup.updatePage');
+            Route::get('/create', 'ProductGroupDetailController@createPage')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.createPage');
+
+            Route::get('/page', 'ProductGroupListController@page')
+                ->name('productGroups.page');
             Route::put('/{id}', 'ProductGroupDetailController@update')
                 ->where(['id' => '[0-9]+'])
                 ->name('productGroup.update');
+            Route::post('/', 'ProductGroupDetailController@create')
+                ->name('productGroup.create');
+            Route::delete('/{id}', 'ProductGroupDetailController@delete')
+                ->where(['id' => '[0-9]+'])
+                ->name('productGroup.delete');
 
             Route::get('/filter', 'ProductGroupDetailController@getFilters')
                 ->name('productGroup.getFilters');
@@ -262,9 +280,11 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'CustomerListController@list')->name('list');
         Route::get('filter', 'CustomerListController@filter')->name('filter');
 
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'CustomerDetailController@detail')->name('detail');
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
+            Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
+            Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
 
             Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
             Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');
@@ -272,6 +292,12 @@ Route::middleware('auth')->group(function () {
             Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
             Route::get('log', 'CustomerDetailController@infoLog')->name('detail.log');
         });
+
+        Route::prefix('activities')->group(function () {
+            Route::get('', 'ActivitiesController@list')->name('activities');
+            Route::post('', 'ActivitiesController@save')->name('activities.save');
+        });
+
     });
 
 });

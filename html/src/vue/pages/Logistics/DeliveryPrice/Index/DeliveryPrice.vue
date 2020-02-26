@@ -63,7 +63,7 @@
                                     <template v-else>
                                         {{region['deliveryPrices'].hasOwnProperty(deliveryService.id) ?
                                             region['deliveryPrices'][deliveryService.id].hasOwnProperty(deliveryMethod.id) ?
-                                                region['deliveryPrices'][deliveryService.id]['price'] : '' : ''}}
+                                                region['deliveryPrices'][deliveryService.id][deliveryMethod.id]['price'] : '' : ''}}
                                     </template>
                                 </div>
                             </td>
@@ -76,11 +76,11 @@
 </template>
 
 <script>
-    import Service from "../../../../../scripts/services/services";
+    import Service from '../../../../../scripts/services/services';
 
     import {validationMixin} from 'vuelidate';
     import {decimal, minValue} from 'vuelidate/lib/validators';
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
     import {mapGetters} from 'vuex';
 
 

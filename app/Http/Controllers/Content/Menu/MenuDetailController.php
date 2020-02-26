@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content\Menu;
 
 use App\Http\Controllers\Controller;
+use Cms\Dto\MenuDto;
 use Cms\Dto\ProductGroupDto;
 use Cms\Services\MenuService\MenuService;
 use Cms\Services\ProductGroupService\ProductGroupService;
@@ -33,29 +34,21 @@ class MenuDetailController extends Controller
     ) {
         $query = $menuService->newQuery();
         $query->setFilter('id', $id);
-        $menus = $menuService->menus($query);
+        $query->include('items');
 
-        return response()->json($menus);
+        return $menuService->menus($query)->first();
     }
 
-    public function update($id, Request $request, ProductGroupService $productGroupService)
+    public function update($id, Request $request, MenuService $menuService)
     {
         $validatedData = $request->validate([
             'id' => 'integer|required',
-            'name' => 'string|required',
-            'code' => 'string|required',
-            'active' => 'boolean|required',
-            'added_in_menu' => 'boolean|required',
-            'type_id' => 'integer|required',
-            'preview_photo_id' => 'integer|required',
-            'category_code' => 'string|nullable',
-            'filters' => 'array',
-            'products' => 'array',
+            'items' => 'array|required',
         ]);
 
         $validatedData['id'] = $id;
 
-        $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
+        $menuService->updateItemsTree($validatedData['id'], new MenuDto($validatedData));
 
         return response()->json([], 204);
     }

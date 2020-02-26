@@ -2,10 +2,10 @@
     <transition name="modal">
         <modal :close="closeModal" type="wide" v-if="isModalOpen(modalName)">
             <div slot="header">
-                Редактирование описания товара
+                {{ title }}
             </div>
             <div slot="body">
-                <ckeditor :editor="editor" v-model="$v.form.description.$model" :config="editorConfig"></ckeditor>
+                <ckeditor :editor="editor" v-model="$v.form[text_field].$model" :config="editorConfig"></ckeditor>
                 <button @click="save" class="btn btn-dark mt-3" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -29,8 +29,6 @@
 
     import modalMixin from '../../../../mixins/modal.js';
 
-
-    const formFields = ['description'];
     export default {
         components: {
             modal,
@@ -40,6 +38,8 @@
         mixins: [modalMixin, validationMixin],
         props: {
             modalName: String,
+            text_field: String,
+            title: String,
             source: Object,
         },
         data () {
@@ -52,10 +52,12 @@
                 form: Object.assign({}, this.source),
             };
         },
-        validations: {
-            form: {
-                description: {required},
-            }
+        validations() {
+            return {
+                form: {
+                    [this.text_field]: {required},
+                }
+            };
         },
         methods: {
             save() {
@@ -63,7 +65,7 @@
                 if (this.$v.$invalid) {
                     return;
                 }
-                let data = Helpers.filterObject(this.form, formFields);
+                let data = Helpers.filterObject(this.form, [this.text_field]);
                 Services.net().post(this.getRoute('products.saveProduct', {id: this.source.id}), {}, data)
                     .then(()=> {
                         this.$emit('onSave');
@@ -73,11 +75,6 @@
         },
         computed: {
             ...mapGetters(['getRoute']),
-            errorDescription() {
-                if (this.$v.form.description.$dirty) {
-                    if (!this.$v.form.description.required) return "Обязательное поле!";
-                }
-            },
         }
     }
 </script>

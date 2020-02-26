@@ -76,4 +76,8 @@ export default class Services {
     static hideLoader() {
         return Services.store().commit('loaderShow', false);
     }
+
+    static msg(text, variant) {
+        Services.event().$emit('toast', {text, variant});
+    }
 }

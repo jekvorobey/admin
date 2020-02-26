@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customers;
 
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -22,6 +23,8 @@ use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
@@ -47,14 +50,20 @@ class CustomerDetailController extends Controller
 
         $this->title = $user->full_name;
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
+        $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
+
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
-                'full_name' => $user->full_name,
+                'last_name' => $user->last_name,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
+                'gender' => $customer->gender,
+                'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
                 'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
                     return [
@@ -81,17 +90,85 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function save($id, CustomerService $customerService)
+    public function save($id, CustomerService $customerService, UserService $userService)
     {
+        $this->validate(request(), [
+            'customer' => 'nullable|array',
+            'customer.comment_internal' => 'nullable',
+            'customer.manager_id' => 'nullable',
+            'customer.gender' => ['nullable', Rule::in([CustomerDto::GENDER_MALE, CustomerDto::GENDER_FEMALE])],
+            'customer.birthday' => 'nullable|date_format:Y-m-d',
+            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statuses()))],
+
+            'activities' => 'nullable|array',
+            'activities.*' => 'numeric',
+
+            'user' => 'nullable|array',
+            'user.id' => 'numeric',
+            'user.last_name' => 'nullable',
+            'user.first_name' => 'nullable',
+            'user.middle_name' => 'nullable',
+            'user.email' => 'nullable|email',
+            'user.phone' => 'nullable|regex:/^\+7\d{10}$/',
+        ]);
+
         $customer = request('customer');
+        $user = request('user');
+        $activities = request('activities');
+
+        if ($user && array_key_exists('phone', $user)) {
+            /** @var UserDto $userDto */
+            $userDto = $userService->users((new RestQuery())->setFilter('id', $user['id']))->first();
+
+            // Если пользователю меняют телефон на новый, ото проверяем что такой телефон ещё не зареган
+            if ($user['phone'] && $user['phone'] != $userDto->phone) {
+                $count = $userService->count((new RestQuery())->setFilter('phone', $user['phone']));
+                if ($count['total'] > 0) {
+                    throw new BadRequestHttpException("Пользователь с таким телефоном уже существует");
+                }
+            }
+
+            // Если пользователь использует телефон для авторизации, то меняем пользователю логин
+            if ($userDto->hasPassword()) {
+                if (!$user['phone']) {
+                    throw new BadRequestHttpException("Невозможно удалить телефон. Он используется в качестве логина");
+                } else {
+                    $user['login'] = $user['phone'];
+                }
+            }
+        }
+
         if ($customer) {
-            $customer = new CustomerDto($customer);
-            $customerService->updateCustomer($id, $customer);
+            $customerService->updateCustomer($id, new CustomerDto($customer));
+        }
+        if ($user) {
+            $userService->update(new UserDto($user));
+        }
+        if ($activities) {
+            $customerService->putActivities($id, $activities);
         }
         return response('', 204);
     }
 
-    public function infoMain($id, CustomerService $customerService, FileService $fileService, UserService $userService)
+    public function createCertificate(int $id, int $file_id, CustomerService $customerService)
+    {
+        $certificateDto = new CustomerCertificateDto();
+        $certificateDto->file_id = $file_id;
+        $id = $customerService->createCertificate($id, $certificateDto);
+
+        return response()->json([
+            'id' => $id,
+        ]);
+    }
+
+    public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
+    {
+        $customerService->deleteCertificate($id, $certificate_id);
+
+        return response('', 204);
+    }
+
+    public function infoMain(int $id, CustomerService $customerService, FileService $fileService, UserService $userService)
     {
         $certificates = $customerService->certificates($id);
         $files = [];
@@ -101,6 +178,9 @@ class CustomerDetailController extends Controller
 
         $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
 
+        $activities = $customerService->activities()->setCustomerIds([$id])->load();
+        $activitiesAll = $customerService->activities()->load();
+
         return response()->json([
             'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
                 /** @var FileDto $file */
@@ -109,6 +189,7 @@ class CustomerDetailController extends Controller
                     return false;
                 }
                 return [
+                    'id' => $certificate->id,
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
@@ -116,6 +197,8 @@ class CustomerDetailController extends Controller
             'managers' => $managers->mapWithKeys(function (UserDto $user) {
                 return [$user->id => $user->full_name];
             }),
+            'activities' => $activities->pluck('id'),
+            'activitiesAll' => $activitiesAll,
         ]);
     }
 

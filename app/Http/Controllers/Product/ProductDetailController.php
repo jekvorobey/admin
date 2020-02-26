@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
@@ -50,8 +52,7 @@ class ProductDetailController extends Controller
                 
                 'approval' => $approvalStatuses,
                 'brands' => $brands,
-                'categories' => $categories,
-                'segments' => ['A', 'B', 'C']
+                'categories' => $categories
             ]
         ]);
     }
@@ -163,10 +164,48 @@ class ProductDetailController extends Controller
         return response()->json();
     }
     
+    public function addTip(int $id, Request $request, ProductService $productService): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'description' => 'required',
+            'fileId' => 'required'
+        ]);
+        $tip = new ProductTipDto();
+        $tip->description = $data['description'];
+        $tip->file_id = $data['fileId'];
+        
+        $productService->addTip($id, $tip);
+        return response()->json();
+    }
+    
+    public function editTip(int $id, int $tipId, Request $request, ProductService $productService): JsonResponse
+    {
+        $description = $request->get('description');
+        $fileId = $request->get('fileId');
+        
+        $tip = new ProductTipDto();
+        $tip->description = $description;
+        $tip->file_id = $fileId;
+    
+        $productService->updateTip($id, $tipId, $tip);
+        return response()->json();
+    }
+    
+    public function deleteTip(int $id, int $tipId, ProductService $productService): JsonResponse
+    {
+        $productService->deleteTip($id, $tipId);
+        return response()->json();
+    }
+    
     protected function getProductData(int $id, ProductService $productService)
     {
         /** @var Collection|ProductDto[] $products */
-        $products = $productService->newQuery()->setFilter('id', $id)->include('properties')->products();
+        $products = $productService
+            ->newQuery()
+            ->include('tips')
+            ->setFilter('id', $id)
+            ->include('properties')
+            ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
         }

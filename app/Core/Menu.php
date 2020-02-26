@@ -108,7 +108,7 @@ class Menu
                     ],
                     [
                         'title' => 'Подборки товаров',
-                        'route' => route('productGroup.list'),
+                        'route' => route('productGroup.listPage'),
                     ],
                 ]
             ],
@@ -160,6 +160,15 @@ class Menu
                     [
                         'title' => 'Сегментация',
                         'route' => '#',
+                    ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Виды деятельности',
+                                'route' => route('customers.activities'),
+                            ],
+                        ]
                     ],
                 ],
             ],

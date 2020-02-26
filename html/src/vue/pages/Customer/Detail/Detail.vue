@@ -3,80 +3,7 @@
         <b-row class="mb-2">
             <b-col>
                 <b-card>
-                    <table class="table table-sm">
-                        <thead>
-                        <tr>
-                            <th colspan="4">Инфопанель</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Роль</th>
-                            <td colspan="3">
-                                {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
-                                ({{ customer.role_date }})
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Статус</th>
-                            <td>
-                                <template v-if="!editStatus">
-                                    {{ statuses[customer.status] }}
-                                    <span class="align-middle float-right">
-                                        <fa-icon icon="pencil-alt" @click="editStatus = customer.status"/>
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    <div class="input-group input-group-sm">
-                                        <select class="form-control form-control-sm" v-model="editStatus">
-                                            <option v-for="(title, id) in statuses" :value="id">{{ title }}</option>
-                                        </select>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-success" @click="saveStatus"><fa-icon icon="save"/></button>
-                                            <button class="btn btn-outline-danger" @click="editStatus = false">
-                                                <fa-icon icon="times"/>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </template>
-                            </td>
-                            <th>Сегмент</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th>ФИО</th>
-                            <td colspan="3">{{ customer.full_name || '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>ID</th>
-                            <td>{{ customer.id }}</td>
-                            <th>Фото</th>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <th>E-mail</th>
-                            <td>{{ customer.email || '-' }}</td>
-                            <th>Телефон</th>
-                            <td>{{ customer.phone || '-' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Соцсети</th>
-                            <td>
-                                <div v-for="social in customer.socials">
-                                    {{ social.driver }}: {{ social.name }}
-                                </div>
-                                <div v-if="!customer.socials.length">-</div>
-                            </td>
-                            <th>Ссылка на портфолио</th>
-                            <td>
-                                <div v-for="portfolio in customer.portfolios">
-                                    <a :href="portfolio.link" target="_blank">{{ portfolio.name }}</a>
-                                </div>
-                                <div v-if="!customer.portfolios.length">-</div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <infopanel :model.sync="customer" :statuses="statuses"/>
                 </b-card>
             </b-col>
             <b-col>
@@ -137,10 +64,10 @@ import InfoSubscribe from './components/info-subscribe.vue';
 import InfoLog from './components/info-log.vue';
 import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
 import Services from '../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
+import Infopanel from './components/infopanel.vue';
 
 export default {
-    components: {CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+    components: {Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
     props: ['iCustomer', 'statuses', 'order'],
     data() {
         return {
@@ -156,23 +83,6 @@ export default {
                 log: 5,
             }
         };
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
-    },
-    methods: {
-        saveStatus() {
-            Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
-                customer: {
-                    status: this.editStatus,
-                }
-            }).then(data => {
-                this.customer.status = this.editStatus;
-                this.editStatus = false;
-                Services.hideLoader();
-            })
-        },
     },
     created() {
         Services.event().$on('showTab', (tab) => {
