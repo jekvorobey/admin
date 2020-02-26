@@ -23,6 +23,8 @@ use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
@@ -55,7 +57,9 @@ class CustomerDetailController extends Controller
                 'id' => $customer->id,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
-                'full_name' => $user->full_name,
+                'last_name' => $user->last_name,
+                'first_name' => $user->first_name,
+                'middle_name' => $user->middle_name,
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'gender' => $customer->gender,
@@ -86,14 +90,60 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function save($id, CustomerService $customerService)
+    public function save($id, CustomerService $customerService, UserService $userService)
     {
+        $this->validate(request(), [
+            'customer' => 'nullable|array',
+            'customer.comment_internal' => 'nullable',
+            'customer.manager_id' => 'nullable',
+            'customer.gender' => ['nullable', Rule::in([CustomerDto::GENDER_MALE, CustomerDto::GENDER_FEMALE])],
+            'customer.birthday' => 'nullable|date_format:Y-m-d',
+            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statuses()))],
+
+            'activities' => 'nullable|array',
+            'activities.*' => 'numeric',
+
+            'user' => 'nullable|array',
+            'user.id' => 'numeric',
+            'user.last_name' => 'nullable',
+            'user.first_name' => 'nullable',
+            'user.middle_name' => 'nullable',
+            'user.email' => 'nullable|email',
+            'user.phone' => 'nullable|regex:/^\+7\d{10}$/',
+        ]);
+
         $customer = request('customer');
-        if ($customer) {
-            $customer = new CustomerDto($customer);
-            $customerService->updateCustomer($id, $customer);
-        }
+        $user = request('user');
         $activities = request('activities');
+
+        if ($user && array_key_exists('phone', $user)) {
+            /** @var UserDto $userDto */
+            $userDto = $userService->users((new RestQuery())->setFilter('id', $user['id']))->first();
+
+            // Если пользователю меняют телефон на новый, ото проверяем что такой телефон ещё не зареган
+            if ($user['phone'] && $user['phone'] != $userDto->phone) {
+                $count = $userService->count((new RestQuery())->setFilter('phone', $user['phone']));
+                if ($count['total'] > 0) {
+                    throw new BadRequestHttpException("Пользователь с таким телефоном уже существует");
+                }
+            }
+
+            // Если пользователь использует телефон для авторизации, то меняем пользователю логин
+            if ($userDto->hasPassword()) {
+                if (!$user['phone']) {
+                    throw new BadRequestHttpException("Невозможно удалить телефон. Он используется в качестве логина");
+                } else {
+                    $user['login'] = $user['phone'];
+                }
+            }
+        }
+
+        if ($customer) {
+            $customerService->updateCustomer($id, new CustomerDto($customer));
+        }
+        if ($user) {
+            $userService->update(new UserDto($user));
+        }
         if ($activities) {
             $customerService->putActivities($id, $activities);
         }

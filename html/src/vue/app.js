@@ -71,8 +71,16 @@ Vue.mixin({
         staticText() {
             return this.$store.state.layout.staticBlock;
         },
-        isGuest() {
-            return this.$store.state.layout.isGuest;
+        /** @return {User} */
+        user() {
+            return this.$store.state.layout.user;
         }
     },
 });
+
+/**
+ @typedef User
+ @type {Object}
+ @property {boolean} isGuest - isGuest
+ @property {boolean} isSuper - isSuper
+ */

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import Services from "./services";
+import Services from './services';
 
 function paramSerialise(params) {
     // Qs is already included in the Axios package
@@ -79,12 +79,14 @@ export default class NetService {
                 return resp.data;
             }
         }).catch(error => {
+            let errorMsg = '';
             if (error.response) {
                 // The request was made and the server responded with a status code
                 // that falls out of the range of 2xx
                 console.log(error.response.data);
                 console.log(error.response.status);
                 console.log(error.response.headers);
+                errorMsg = error.response.data.message;
             } else if (error.request) {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -96,7 +98,7 @@ export default class NetService {
             }
             console.log(error.config);
 
-            return Promise.reject();
+            return Promise.reject(errorMsg);
         });
     }
 }

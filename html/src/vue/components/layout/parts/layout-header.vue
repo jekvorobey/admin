@@ -20,7 +20,7 @@
             </span>
         </div>
 
-        <div v-if="!isGuest" class="d-flex">
+        <div v-if="!user.isGuest" class="d-flex">
             <notifications/>
 
             <communication-chats-unread/>
