@@ -349,7 +349,7 @@
                     case this.CONDITION_TYPE_REGION:
                         return this.values.regions.length > 0;
                     case this.CONDITION_TYPE_USER:
-                        return this.formatIds(this.values.user).length > 0 || this.values.roles.length > 0 || this.values.segments.length;
+                        return this.formatIds(this.values.users).length > 0 || this.values.roles.length > 0 || this.values.segments.length;
                     case this.CONDITION_TYPE_ORDER_SEQUENCE_NUMBER:
                         return this.values.sequenceNumber > 0;
                     case this.CONDITION_TYPE_DISCOUNT_SYNERGY:
