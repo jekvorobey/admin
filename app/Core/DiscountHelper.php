@@ -288,7 +288,7 @@ class DiscountHelper
                     break;
                 case DiscountConditionDto::USER:
                     if (empty($condition['users'])) break;
-                    $conditions[] = $model->setUsers($condition['users']);
+                    $conditions[] = $model->setCustomers($condition['users']);
                     break;
                 case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
                     $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
