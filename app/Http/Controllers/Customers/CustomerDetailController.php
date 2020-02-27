@@ -11,6 +11,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
@@ -29,7 +30,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
 {
-    public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService)
+    public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
     {
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
@@ -42,21 +43,29 @@ class CustomerDetailController extends Controller
         if (!$user) {
             throw new NotFoundHttpException();
         }
-        $portfolios = $customerService->portfolios($customer->user_id);
+        $portfolios = $customerService->portfolios($customer->id);
 
         $socials = $userService->socials($customer->user_id);
 
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
 
-        $this->title = $user->full_name;
+        $this->title = $user->full_name ?: $user->phone ?: "Пользователь: {$customer->id}";
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
+
+        $avatar = null;
+        if ($customer->avatar) {
+            /** @var FileDto $avatar */
+            $avatar = $fileService->getFiles([$customer->avatar])->first();
+        }
 
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
+                'avatar' => $avatar ? $avatar->id : null,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
+                'comment_problem_status' => $customer->comment_problem_status,
                 'last_name' => $user->last_name,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -83,6 +92,7 @@ class CustomerDetailController extends Controller
                 'manager_id' => $customer->manager_id,
             ],
             'statuses' => CustomerDto::statuses(),
+            'statusProblem' => CustomerDto::STATUS_PROBLEM,
             'order' => [
                 'count' => $orders->count(),
                 'price' => number_format($orders->sum('price'), 2, '.', ' '),
@@ -90,15 +100,17 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function save($id, CustomerService $customerService, UserService $userService)
+    public function save($id, CustomerService $customerService, UserService $userService, RequestInitiator $requestInitiator)
     {
         $this->validate(request(), [
             'customer' => 'nullable|array',
+            'customer.avatar' => 'nullable',
             'customer.comment_internal' => 'nullable',
             'customer.manager_id' => 'nullable',
             'customer.gender' => ['nullable', Rule::in([CustomerDto::GENDER_MALE, CustomerDto::GENDER_FEMALE])],
             'customer.birthday' => 'nullable|date_format:Y-m-d',
             'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statuses()))],
+            'customer.comment_problem_status' => 'nullable',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
@@ -115,6 +127,12 @@ class CustomerDetailController extends Controller
         $customer = request('customer');
         $user = request('user');
         $activities = request('activities');
+
+        // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
+        if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
+            unset($user['phone']);
+            unset($user['email']);
+        }
 
         if ($user && array_key_exists('phone', $user)) {
             /** @var UserDto $userDto */
@@ -164,6 +182,21 @@ class CustomerDetailController extends Controller
     public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
     {
         $customerService->deleteCertificate($id, $certificate_id);
+
+        return response('', 204);
+    }
+
+    public function putPortfolios(int $id, CustomerService $customerService)
+    {
+        $portfolios = request('portfolios');
+        $portfolioDtos = collect();
+        foreach ($portfolios as $portfolio) {
+            $portfolioDto = new CustomerPortfolioDto();
+            $portfolioDto->name = $portfolio['name'];
+            $portfolioDto->link = $portfolio['link'];
+            $portfolioDtos->push($portfolioDto);
+        }
+        $customerService->updatePortfolio($id, $portfolioDtos);
 
         return response('', 204);
     }

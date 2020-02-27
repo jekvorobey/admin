@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import './fontawesome';
 import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts/filters';
 import OrderStatus from './components/order-status.vue';
+import Media from '../scripts/media.js';
 
 Vue.use(BootstrapVue);
 
@@ -74,6 +75,10 @@ Vue.mixin({
         /** @return {User} */
         user() {
             return this.$store.state.layout.user;
+        },
+        /** @return {Media} */
+        media() {
+            return Media;
         }
     },
 });

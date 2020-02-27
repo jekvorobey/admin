@@ -382,23 +382,23 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v5.0.0",
+            "version": "v5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+                "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
-                "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/4566062c68f76f43d44f1643f4970fe89757d4c6",
+                "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": " 4.8.35"
+                "phpunit/phpunit": "^4.8|^5"
             },
             "type": "library",
             "autoload": {
@@ -424,7 +424,7 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2017-06-27T22:17:23+00:00"
+            "time": "2020-02-24T23:15:03+00:00"
         },
         {
             "name": "greensight/ibt-cm-lib",
@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "0fc5f2fd8f03f78cfc0eb06cb0fd9cec15d4ae9f"
+                "reference": "3bc2bdcfacfb67ead733de610b587398416c482a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=0fc5f2fd8f03f78cfc0eb06cb0fd9cec15d4ae9f",
-                "reference": "0fc5f2fd8f03f78cfc0eb06cb0fd9cec15d4ae9f",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=3bc2bdcfacfb67ead733de610b587398416c482a",
+                "reference": "3bc2bdcfacfb67ead733de610b587398416c482a",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-02-20T13:25:25+00:00"
+            "time": "2020-02-27T13:58:17+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -517,12 +517,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "38d0c66c3fc92492c2d9af5bd66b12e4822055b6"
+                "reference": "b28356eb8a414520e91046fb201ff59d3299ae7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=38d0c66c3fc92492c2d9af5bd66b12e4822055b6",
-                "reference": "38d0c66c3fc92492c2d9af5bd66b12e4822055b6",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=b28356eb8a414520e91046fb201ff59d3299ae7c",
+                "reference": "b28356eb8a414520e91046fb201ff59d3299ae7c",
                 "shasum": ""
             },
             "require": {
@@ -566,7 +566,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-02-26T14:02:12+00:00"
+            "time": "2020-02-27T13:54:26+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -622,12 +622,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "12c49f209b2709b085bb570621d01e7b9b6ba9d3"
+                "reference": "34350a370d8d0352cda3bda90cba24ca87218c03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=12c49f209b2709b085bb570621d01e7b9b6ba9d3",
-                "reference": "12c49f209b2709b085bb570621d01e7b9b6ba9d3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=34350a370d8d0352cda3bda90cba24ca87218c03",
+                "reference": "34350a370d8d0352cda3bda90cba24ca87218c03",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-02-21T11:05:15+00:00"
+            "time": "2020-02-27T13:57:30+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",

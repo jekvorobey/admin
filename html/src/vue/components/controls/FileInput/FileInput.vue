@@ -1,18 +1,31 @@
 <template>
     <div>
-        <label :for="inputId" v-if="label" class="mb-3">{{ label }}</label>
-        <div class="custom-file">
-            <input @change="change" :class="{ 'is-invalid': fileError }" type="file" class="custom-file-input" :id="inputId" :disabled="disabled" ref="file">
-            <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
-                <slot name="error" :error="fileError">
-                    {{ fileError }}
-                </slot>
-            </span>
-            <label class="custom-file-label" :for="inputId">Выберите файл</label>
-            <div v-if="showProgress" class="progress upload-progress">
-                <div class="progress-bar" role="progressbar" :style="{width: `${uploadProgress}%`}" :aria-valuenow="uploadProgress" aria-valuemin="0" aria-valuemax="100">
-                    {{ uploadProgress < 100 ? `Отправка ${uploadProgress}%` : 'Сохранение' }}
-                </div>
+        <div v-show="!showProgress">
+            <label :for="inputId" v-if="label" class="mb-3">{{ label }}</label>
+            <div class="custom-file">
+                <input
+                        type="file"
+                        ref="file"
+                        :id="inputId"
+                        class="custom-file-input"
+                        :class="{'is-invalid': fileError, 'form-control-sm': sm}"
+                        :disabled="disabled"
+                        @change="change"
+                >
+                <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
+                    <slot name="error" :error="fileError">
+                        {{ fileError }}
+                    </slot>
+                </span>
+                <label class="custom-file-label mb-0" :class="{'col-form-label-sm': sm}" :for="inputId">
+                    Выберите файл
+                </label>
+            </div>
+        </div>
+
+        <div v-show="showProgress" class="progress upload-progress">
+            <div class="progress-bar" role="progressbar" :style="{width: `${uploadProgress}%`}" :aria-valuenow="uploadProgress" aria-valuemin="0" aria-valuemax="100">
+                {{ uploadProgress < 100 ? `Отправка ${uploadProgress}%` : 'Сохранение' }}
             </div>
         </div>
     </div>
@@ -32,6 +45,10 @@
                 default: false,
             },
             label: {},
+            size: {
+                type: String,
+                default: 'normal',
+            }
         },
         data() {
             return {
@@ -74,6 +91,9 @@
             ...mapGetters(['getRoute']),
             fileError() {
                 return this.uploadError || this.error;
+            },
+            sm() {
+                return this.size === 'sm';
             }
         },
     }
@@ -82,8 +102,5 @@
 <style scoped>
     .upload-progress {
         height: 38px;
-        position: relative;
-        top: -38px;
-        z-index: 999999;
     }
 </style>
