@@ -9,6 +9,7 @@ use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
+use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -52,7 +53,7 @@ class DiscountHelper
             }
         }
 
-        $params['filter']['!status'] = DiscountDto::STATUS_CREATED;
+        $params['filter']['!status'] = DiscountStatusDto::STATUS_CREATED;
 
         return $params;
     }
@@ -229,6 +230,10 @@ class DiscountHelper
 
             if (isset($condition['roles']) && count($condition['roles']) > 0) {
                 foreach ($condition['roles'] as $role) {
+                    if (!$role) {
+                        continue;
+                    }
+
                     $relations[DiscountDto::DISCOUNT_USER_ROLE_RELATION][] = (new DiscountUserRoleDto())
                         ->setExcept(false)
                         ->setRole($role);
@@ -289,7 +294,9 @@ class DiscountHelper
                     $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
-                    $conditions[] = $model->setSynergy($condition['synergy']);
+                    if (!empty($condition['synergy'])) {
+                        $conditions[] = $model->setSynergy($condition['synergy']);
+                    }
                     break;
             }
         }
