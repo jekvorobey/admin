@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "3bc2bdcfacfb67ead733de610b587398416c482a"
+                "reference": "0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=3bc2bdcfacfb67ead733de610b587398416c482a",
-                "reference": "3bc2bdcfacfb67ead733de610b587398416c482a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413",
+                "reference": "0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-02-27T13:58:17+00:00"
+            "time": "2020-02-28T10:03:55+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -755,12 +755,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "67edc953e75aef971a780d7bdd06d6e09201476c"
+                "reference": "7fd9d191eed2492fb0009b8a2ab9276581c38cc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=67edc953e75aef971a780d7bdd06d6e09201476c",
-                "reference": "67edc953e75aef971a780d7bdd06d6e09201476c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=7fd9d191eed2492fb0009b8a2ab9276581c38cc6",
+                "reference": "7fd9d191eed2492fb0009b8a2ab9276581c38cc6",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +795,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-02-26T07:37:27+00:00"
+            "time": "2020-02-28T11:28:03+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
