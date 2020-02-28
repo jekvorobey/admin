@@ -7,6 +7,7 @@
                 <button class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
                     Сохранить
                 </button>
+                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
                 <button class="btn btn-danger btn-sm" v-if="customer.status != statusProblem" v-b-modal.modal-mark-problem>
                     Пометить проблемным
                 </button>
@@ -172,11 +173,21 @@ export default {
                 this.customer.phone = this.form.phone;
                 this.customer.avatar = this.form.avatar;
                 this.customer.comment_problem_status = "";
+                Services.msg("Изменения сохранены");
             }).catch(errorMsg => {
                 Services.msg(errorMsg || "Ошибка сохранения", 'danger');
             }).then(data => {
                 Services.hideLoader();
             })
+        },
+        cancel() {
+            this.form.status = this.customer.status;
+            this.form.last_name = this.customer.last_name;
+            this.form.first_name = this.customer.first_name;
+            this.form.middle_name = this.customer.middle_name;
+            this.form.email = this.customer.email;
+            this.form.phone = this.customer.phone;
+            this.form.avatar = this.customer.avatar;
         },
     }
 };

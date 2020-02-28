@@ -25,6 +25,10 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use Pim\Dto\BrandDto;
+use Pim\Dto\CategoryDto;
+use Pim\Services\BrandService\BrandService;
+use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -134,10 +138,13 @@ class CustomerDetailController extends Controller
             unset($user['email']);
         }
 
-        if ($user && array_key_exists('phone', $user)) {
+        $userDto = null;
+        if ($user && (array_key_exists('phone', $user) || (array_key_exists('email', $user) && $user['email']))) {
             /** @var UserDto $userDto */
             $userDto = $userService->users((new RestQuery())->setFilter('id', $user['id']))->first();
+        }
 
+        if ($user && array_key_exists('phone', $user)) {
             // Если пользователю меняют телефон на новый, ото проверяем что такой телефон ещё не зареган
             if ($user['phone'] && $user['phone'] != $userDto->phone) {
                 $count = $userService->count((new RestQuery())->setFilter('phone', $user['phone']));
@@ -152,6 +159,15 @@ class CustomerDetailController extends Controller
                     throw new BadRequestHttpException("Невозможно удалить телефон. Он используется в качестве логина");
                 } else {
                     $user['login'] = $user['phone'];
+                }
+            }
+        }
+
+        if ($user && array_key_exists('email', $user) && $user['email']) {
+            if ($user['email'] != $userDto->email) {
+                $count = $userService->count((new RestQuery())->setFilter('email', $user['email']));
+                if ($count['total'] > 0) {
+                    throw new BadRequestHttpException("Пользователь с такой почтой уже существует");
                 }
             }
         }
@@ -201,6 +217,30 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
+    public function putBrands(int $id, CustomerService $customerService)
+    {
+        $this->validate(request(), [
+            'brands' => 'array',
+            'brands.*' => 'numeric',
+        ]);
+
+        $customerService->updateBrands($id, request('brands'));
+
+        return response('', 204);
+    }
+
+    public function putCategories(int $id, CustomerService $customerService)
+    {
+        $this->validate(request(), [
+            'categories' => 'array',
+            'categories.*' => 'numeric',
+        ]);
+
+        $customerService->updateCategories($id, request('categories'));
+
+        return response('', 204);
+    }
+
     public function infoMain(int $id, CustomerService $customerService, FileService $fileService, UserService $userService)
     {
         $certificates = $customerService->certificates($id);
@@ -241,9 +281,25 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function infoPreference($id)
+    public function infoPreference(
+        $id,
+        BrandService $brandService,
+        CategoryService $categoryService,
+        CustomerService $customerService
+    )
     {
+        $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
+        $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
+        /** @var CustomerDto $customer */
+        $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
+
         return response()->json([
+            'brands' => $brands->keyBy('id'),
+            'categories' => $categories->keyBy('id'),
+            'customer' => [
+                'brands' => $customer->brands,
+                'categories' => $customer->categories,
+            ],
         ]);
     }
 

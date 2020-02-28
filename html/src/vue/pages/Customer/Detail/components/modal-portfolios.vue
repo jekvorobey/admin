@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-portfolios" title="Редактирование портфолио" hide-footer>
+    <b-modal id="modal-portfolios" title="Редактирование портфолио" hide-footer ref="modal">
         <template v-slot:default="{close}">
 
             <table>
@@ -49,7 +49,7 @@ export default {
     props: ['model', 'customerId'],
     data() {
         return {
-            portfolios: JSON.parse(JSON.stringify(this.model)),
+            portfolios: [],
             portfolioNew: {
                 link: "",
                 name: "",
@@ -68,6 +68,7 @@ export default {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.portfolios)));
                 Services.hideLoader();
                 this.$bvModal.hide("modal-portfolios");
+                Services.msg("Изменения сохранены");
             });
         },
         addPortfolio() {
@@ -82,6 +83,11 @@ export default {
         deletePortfolio(index) {
             this.$delete(this.portfolios, index);
         },
+    },
+    mounted() {
+        this.$refs.modal.$on('show', (bvModalEvt) => {
+            this.portfolios = JSON.parse(JSON.stringify(this.model));
+        })
     }
 };
 </script>

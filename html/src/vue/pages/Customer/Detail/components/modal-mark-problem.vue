@@ -55,6 +55,7 @@ export default {
                 this.customer.status = this.statusProblem;
                 Services.hideLoader();
                 this.$bvModal.hide("modal-mark-problem");
+                Services.msg("Изменения сохранены");
             });
         },
     }

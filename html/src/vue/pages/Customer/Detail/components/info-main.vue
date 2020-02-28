@@ -5,6 +5,7 @@
             <th colspan="2">
                 Основная информация
                 <button @click="save" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
+                <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
             </th>
         </tr>
         </thead>
@@ -145,7 +146,6 @@ export default {
             return moment().diff(moment(this.customer.birthday, 'YYYY-MM-DD'), 'years');
         },
         showBtn() {
-            console.log(JSON.stringify(this.savedActivities), JSON.stringify(this.form.activities));
             return this.customer.manager_id !== this.form.manager_id ||
                 this.customer.gender !== this.form.gender ||
                 (this.customer.comment_internal || '') !== (this.form.comment_internal || '') ||
@@ -171,7 +171,15 @@ export default {
                 this.customer.birthday = this.form.birthday;
                 this.savedActivities = this.form.activities;
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
+        },
+        cancel() {
+            this.form.comment_internal = this.customer.comment_internal;
+            this.form.manager_id = this.customer.manager_id;
+            this.form.gender = this.customer.gender;
+            this.form.birthday = this.customer.birthday;
+            this.form.activities = this.savedActivities;
         },
         deleteCertificate(certificate_id, index) {
             Services.showLoader();
@@ -181,6 +189,7 @@ export default {
             })).then(data => {
                 this.$delete(this.certificates, index);
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
         },
         createCertificate() {
@@ -196,6 +205,7 @@ export default {
                 });
                 this.form.file = null;
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
         },
         openOrder() {
