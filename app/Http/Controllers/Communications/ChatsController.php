@@ -21,6 +21,12 @@ class ChatsController extends Controller
         return $this->render('Communication/ChatsUnread');
     }
 
+    public function unreadtest()
+    {
+        $this->title = 'Непрочитанные сообщения ТЕСТ';
+        return $this->render('Communication/ChatsList');
+    }
+
     public function directories(
         CommunicationService $communicationService,
         CommunicationStatusService $communicationStatusService,
