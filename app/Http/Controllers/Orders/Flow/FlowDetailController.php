@@ -2,28 +2,27 @@
 namespace App\Http\Controllers\Orders\Flow;
 
 
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Oms\Dto\BasketItemDto;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
+use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
-use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
-use Illuminate\Support\Carbon;
 use Greensight\Oms\Dto\DeliveryStore;
+use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\PaymentMethod;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Greensight\Oms\Services\ShipmentService\ShipmentService;
-use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\CommonMsa\Dto\Front;
-use Pim\Services\ProductService\ProductService;
-use Pim\Dto\Product\ProductDto;
-use Pim\Dto\CategoryDto;
+use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Illuminate\Support\Carbon;
 use Pim\Dto\BrandDto;
-use Greensight\Oms\Dto\History\HistoryDto;
+use Pim\Dto\CategoryDto;
+use Pim\Dto\Product\ProductDto;
+use Pim\Services\ProductService\ProductService;
 
 /**
  * Class FlowDetailController
@@ -70,7 +69,7 @@ class FlowDetailController extends Controller
 
             $offersIds = array_column($basketItems, 'offer_id');
             $restQuery = $productService->newQuery()
-                ->addFields(ProductDto::entity(), 'vendor_code', 'segment')
+                ->addFields(ProductDto::entity(), 'vendor_code')
                 ->include(CategoryDto::entity(), BrandDto::entity());
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
             $productsIds = $productsByOffers->keyBy(function ($item) {
@@ -153,7 +152,10 @@ class FlowDetailController extends Controller
 
             foreach ($shipment->basketItems as $item) {
                 $basketItem = $basketItems->where('offer_id', $item['offer_id'])->first();
-                $shipmentItems[] = array_merge($item, $basketItem);
+                foreach ($basketItem as $key => $value) {
+                    $item[$key] = $value;
+                }
+                $shipmentItems[] = $item;
             }
 
             if($shipment->packages) {

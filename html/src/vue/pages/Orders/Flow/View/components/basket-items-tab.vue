@@ -33,7 +33,6 @@
                     <th>ID</th>
                     <th>Фото</th>
                     <th class="with-small">Название <small>Артикул</small></th>
-                    <th></th>
                     <th class="with-small">Категория <small>Бренд</small></th>
                     <th>Количество</th>
                     <th>Цена</th>
@@ -56,11 +55,6 @@
                         <a :href="getRoute('product.edit', {id: product(basketItem.id).id})">{{ basketItem.name }}</a>
                         <small>{{ product(basketItem.id).vendor_code }}</small>
                     </td>
-                    <td>
-                        <span class="segment" :class="segmentClass(product(basketItem.id).segment)">
-                            {{product(basketItem.id).segment }}
-                        </span>
-                    </td>
                     <td class="with-small">
                         {{ product(basketItem.id).category.name }}
                         <small>{{ product(basketItem.id).brand.name }}</small>
@@ -76,7 +70,7 @@
                     <!--Строка с информацией о коробке-->
                     <tr>
                         <td colspan="4">Коробка {{ number + 1 }} ({{ packages[shipmentPackage.package_id].name }})</td>
-                        <td colspan="6">
+                        <td colspan="5">
                             <button class="btn btn-secondary" v-if="selectedBasketItemIds.length"
                                     @click="addShipmentPackageItems(shipmentPackage.id)">
                                 <fa-icon icon="box"></fa-icon> Добавить в коробку
@@ -98,11 +92,6 @@
                                 {{ shipment.basketItems[item.basket_item_id].name }}
                             </a>
                             <small>{{ product(item.basket_item_id).vendor_code }}</small>
-                        </td>
-                        <td>
-                        <span class="segment" :class="segmentClass(product(item.basket_item_id).segment)">
-                            {{product(item.basket_item_id).segment }}
-                        </span>
                         </td>
                         <td class="with-small">
                             {{ product(item.basket_item_id).category.name }}
@@ -182,11 +171,11 @@
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapGetters} from 'vuex';
 
     import Dropdown from '../../../../../components/dropdown/dropdown.vue';
     import modal from '../../../../../components/controls/modal/modal.vue';
-    import VSelect from "../../../../../components/controls/VSelect/VSelect.vue";
+    import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
     import PackageForm from './forms/package-form.vue';
     import AddShipmentPackageItemsForm from './forms/add-shipment-package-items-form.vue';
     import EditShipmentPackageItemForm from './forms/edit-shipment-package-item-form.vue';
@@ -223,9 +212,6 @@
             };
         },
         methods: {
-            segmentClass(segment) {
-                return segment ? `segment-${segment.toLowerCase()}` : '';
-            },
             product(basketItemId) {
                 return this.shipment.products[basketItemId];
             },
@@ -343,29 +329,6 @@
     .preview {
         height: 50px;
         border-radius: 5px;
-    }
-    /* todo Вынести стили для сегментов в общий css-файл */
-    .segment {
-        position: relative;
-        top: 5px;
-        padding: 5px;
-        border-radius: 50%;
-        float: right;
-        color: white;
-        font-weight: bold;
-        line-height: 20px;
-        width: 32px;
-        height: 32px;
-        text-align: center;
-    }
-    .segment-a {
-        background: #ffd700;
-    }
-    .segment-b {
-        background: #c0c0c0;
-    }
-    .segment-c {
-        background: #cd7f32;
     }
     .float-right {
         float: right;
