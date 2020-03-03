@@ -65,7 +65,13 @@
 
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
+
+    import {
+        NAMESPACE,
+        SET_PAGE,
+        ACT_LOAD_PAGE
+    } from "../../../store/modules/products";
 
     const cleanFilter = {
         id: '',
@@ -81,21 +87,26 @@
         },
         props: {
             iProducts: {},
-            iPager: {},
+            iTotal: {},
             iCurrentPage: {},
             iFilter: {},
             options: {}
         },
         data() {
+            this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
+                list: this.iProducts,
+                total: this.iTotal,
+                page: this.iCurrentPage
+            });
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
             return {
-                products: this.iProducts,
-                pager: this.iPager,
-                currentPage: this.iCurrentPage || 1,
                 filter,
             };
         },
         methods: {
+            ...mapActions([
+                ACT_LOAD_PAGE
+            ]),
             changePage(newPage) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
@@ -110,15 +121,9 @@
                 }));
             },
             loadPage() {
-                Services.net().get(this.route('products.listPage'), {
+                this[ACT_LOAD_PAGE]({
                     page: this.currentPage,
-                    filter: this.filter,
-                    //sort: this.sort,
-                }).then(data => {
-                    this.products = data.products;
-                    if (data.pager) {
-                        this.pager = data.pager
-                    }
+                    filter: this.filter
                 });
             },
             applyFilter() {
@@ -146,6 +151,14 @@
         },
         computed: {
             ...mapGetters(['getRoute']),
+            page: {
+                get: function () {
+
+                },
+                set: function (page) {
+
+                }
+            },
             brandOptions() {
                 return this.options.brands.map(brand => ({value: brand.id, text: brand.name}));
             },

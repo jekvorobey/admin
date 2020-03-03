@@ -10,24 +10,28 @@ use Illuminate\Support\Collection;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Search\ProductQuery;
+use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\SearchService\SearchService;
 
 class ProductListController extends Controller
 {
     public function index(
         Request $request,
-        ProductService $productService,
+        SearchService $searchService,
         CategoryService $categoryService,
         BrandService $brandService
     )
     {
         $this->title = 'Товары';
         $query = $this->makeQuery($request);
+        $productSearchResult = $searchService->products($query);
         return $this->render('Product/ProductList', [
-            'iProducts' => $this->loadItems($query, $productService),
-            'iPager' => $productService->productsCount($query),
+            'iProducts' => $productSearchResult->products,
+            'iTotal' => $productSearchResult->total,
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
@@ -39,70 +43,23 @@ class ProductListController extends Controller
     
     public function page(
         Request $request,
-        ProductService $productService
+        SearchService $searchService
     )
     {
         $query = $this->makeQuery($request);
+        $productSearchResult = $searchService->products($query);
         $data = [
-            'products' => $this->loadItems($query, $productService),
+            'products' => $productSearchResult->products,
+            'total' => $productSearchResult->total
         ];
-        if (1 == $request->get('page', 1)) {
-            $data['pager'] = $productService->productsCount($query);
-        }
         return response()->json($data);
     }
     
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): ProductQuery
     {
-        $query = new RestQuery();
+        $query = new ProductQuery();
         $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
-    
-        $query->include(BrandDto::entity(), CategoryDto::entity());
-        $query->addFields(BrandDto::entity(), 'id', 'name');
-        $query->addFields(CategoryDto::entity(), 'id', 'name');
-        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
-        
-        $filter = $request->get('filter', []);
-    
-        if (isset($filter['id']) && $filter['id']) {
-            $query->setFilter('id', $filter['id']);
-        }
-        if (isset($filter['vendorCode']) && $filter['vendorCode']) {
-            $query->setFilter('vendor_code', $filter['vendorCode']);
-        }
-    
-        if (isset($filter['category'])) {
-            $query->setFilter('category_id', $filter['category']);
-        }
-    
-        if (isset($filter['brand'])) {
-            $query->setFilter('brand_id', $filter['brand']);
-        }
-        
+        $query->page($page, 10);
         return $query;
-    }
-    
-    protected function loadItems(
-        RestQuery $query,
-        ProductService $productService
-    )
-    {
-        /** @var Collection $products */
-        $products = $productService->products($query);
-        $productIds = $products->pluck('id')->all();
-        $images = collect();
-        if ($productIds) {
-            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
-        }
-        $products = $products->map(function (ProductDto $product) use ($images) {
-            $data = $product->toArray();
-            $data['approvalStatusName'] = $product->approvalStatus()->name;
-            $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
-            $data['photo'] = $images[$product->id] ?? '';
-        
-            return $data;
-        });
-        return $products;
     }
 }
