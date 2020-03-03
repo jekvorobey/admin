@@ -34,7 +34,7 @@
                 </td>
                 <td>{{ merchant.id }}</td>
                 <td><a :href="getRoute('merchant.registrationDetail', {id: merchant.id})">{{ merchant.display_name }}</a></td>
-                <td>{{ merchant.user.full_name }}</td>
+                <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.created_at }}</td>
                 <td><span class="badge" :class="statusClass(merchant.status)">{{ statusName(merchant.status) }}</span>
                 </td>
@@ -62,7 +62,7 @@
 
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
-    import { mapGetters } from 'vuex';
+    import {mapGetters} from 'vuex';
 
     const cleanFilter = {
         name: '',
