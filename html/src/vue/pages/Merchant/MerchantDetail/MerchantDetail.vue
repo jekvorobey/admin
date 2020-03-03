@@ -34,8 +34,8 @@
                 </thead>
                 <tbody>
                 <tr v-for="operator in operators">
-                    <td>{{ users[operator.user_id].full_name }}</td>
-                    <td>{{ users[operator.user_id].phone }}</td>
+                    <td>{{ users[operator.user_id]  ? users[operator.user_id].full_name : ''}}</td>
+                    <td>{{ users[operator.user_id] ? users[operator.user_id].phone : '' }}</td>
                     <td>{{ operator.is_receive_sms ? 'Да' : 'Нет' }}</td>
                     <td>
                         <fa-icon icon="pencil-alt"></fa-icon>
