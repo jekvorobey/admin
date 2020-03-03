@@ -2,7 +2,11 @@
      <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="2">Основная информация <button @click="save" class="btn btn-success">Сохранить</button></th>
+            <th colspan="2">
+                Основная информация
+                <button @click="save" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
+                <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -116,6 +120,7 @@ export default {
             certificates: [],
             managers: [],
             activitiesAll: [],
+            savedActivities: [],
 
             form: {
                 comment_internal: this.model.comment_internal,
@@ -139,7 +144,14 @@ export default {
             }
 
             return moment().diff(moment(this.customer.birthday, 'YYYY-MM-DD'), 'years');
-        }
+        },
+        showBtn() {
+            return this.customer.manager_id !== this.form.manager_id ||
+                this.customer.gender !== this.form.gender ||
+                (this.customer.comment_internal || '') !== (this.form.comment_internal || '') ||
+                JSON.stringify(this.savedActivities) !== JSON.stringify(this.form.activities) ||
+                (this.customer.birthday || '') !== (this.form.birthday || '');
+        },
     },
     methods: {
         save() {
@@ -157,8 +169,17 @@ export default {
                 this.customer.manager_id = this.form.manager_id;
                 this.customer.gender = this.form.gender;
                 this.customer.birthday = this.form.birthday;
+                this.savedActivities = this.form.activities;
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
+        },
+        cancel() {
+            this.form.comment_internal = this.customer.comment_internal;
+            this.form.manager_id = this.customer.manager_id;
+            this.form.gender = this.customer.gender;
+            this.form.birthday = this.customer.birthday;
+            this.form.activities = this.savedActivities;
         },
         deleteCertificate(certificate_id, index) {
             Services.showLoader();
@@ -168,6 +189,7 @@ export default {
             })).then(data => {
                 this.$delete(this.certificates, index);
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
         },
         createCertificate() {
@@ -183,6 +205,7 @@ export default {
                 });
                 this.form.file = null;
                 Services.hideLoader();
+                Services.msg("Изменения сохранены");
             })
         },
         openOrder() {
@@ -196,6 +219,7 @@ export default {
             this.certificates = data.certificates;
             this.activitiesAll = data.activitiesAll;
             this.form.activities = data.activities;
+            this.savedActivities = data.activities;
             Services.hideLoader();
         })
     }

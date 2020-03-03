@@ -5,7 +5,6 @@
                 <tr>
                     <th>Фото</th>
                     <th class="with-small">Название <small>Артикул</small></th>
-                    <th></th>
                     <th class="with-small">Категория <small>Бренд</small></th>
                     <th>Количество</th>
                     <th>Цена без скидки</th>
@@ -53,11 +52,6 @@
                                 </a>
                                 <small>{{ item.product.vendor_code }}</small>
                             </td>
-                            <td>
-                        <span class="segment" :class="segmentClass(item.product.segment)">
-                            {{item.product.segment }}
-                        </span>
-                            </td>
                             <td class="with-small">
                                 {{ item.product.category.name }}
                                 <small>{{ item.product.brand.name }}</small>
@@ -81,11 +75,6 @@
                             </a>
                             <small>{{ item.product.vendor_code }}</small>
                         </td>
-                        <td>
-                        <span class="segment" :class="segmentClass(item.product.segment)">
-                            {{item.product.segment }}
-                        </span>
-                        </td>
                         <td class="with-small">
                             {{ item.product.category.name }}
                             <small>{{ item.product.brand.name }}</small>
@@ -104,9 +93,9 @@
     </div>
 </template>
 <script>
-import {mapGetters} from "vuex";
+    import {mapGetters} from 'vuex';
 
-export default {
+    export default {
     data() {
         return {
 
@@ -116,9 +105,6 @@ export default {
         shipments: {},
     },
     methods: {
-        segmentClass(segment) {
-            return segment ? `segment-${segment.toLowerCase()}` : '';
-        },
         editShipment(id) {
 
         },
@@ -153,31 +139,5 @@ export default {
     .preview {
         height: 50px;
         border-radius: 5px;
-    }
-    /* todo Вынести стили для сегментов в общий css-файл */
-    .segment {
-        position: relative;
-        top: 5px;
-        padding: 5px;
-        border-radius: 50%;
-        float: right;
-        color: white;
-        font-weight: bold;
-        line-height: 20px;
-        width: 32px;
-        height: 32px;
-        text-align: center;
-    }
-    .segment-a {
-        background: #ffd700;
-    }
-    .segment-b {
-        background: #c0c0c0;
-    }
-    .segment-c {
-        background: #cd7f32;
-    }
-    .float-right {
-        float: right;
     }
 </style>

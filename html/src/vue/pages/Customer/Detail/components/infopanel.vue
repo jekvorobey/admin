@@ -2,7 +2,16 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="4">Инфопанель <button class="btn btn-success btn-sm" @click="saveCustomer">Сохранить</button></th>
+            <th colspan="4">
+                Инфопанель
+                <button class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
+                    Сохранить
+                </button>
+                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
+                <button class="btn btn-danger btn-sm" v-if="customer.status != statusProblem" v-b-modal.modal-mark-problem>
+                    Пометить проблемным
+                </button>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -16,9 +25,18 @@
         <tr>
             <th>Статус</th>
             <td>
-                <select class="form-control form-control-sm" v-model="form.status">
-                    <option v-for="(title, id) in statuses" :value="id">{{ title }}</option>
-                </select>
+                <div class="input-group input-group-sm">
+                    <select class="form-control form-control-sm" v-model="form.status">
+                        <option v-for="(title, id) in statuses" :value="id" :disabled="id == statusProblem">
+                            {{ title }}
+                        </option>
+                    </select>
+                    <div class="input-group-append" v-if="form.status == statusProblem">
+                        <button class="btn btn-outline-info" v-b-tooltip.hover :title="customer.comment_problem_status">
+                            <fa-icon icon="info"/>
+                        </button>
+                    </div>
+                </div>
             </td>
             <th>Сегмент</th>
             <td></td>
@@ -39,7 +57,15 @@
             <th>ID</th>
             <td>{{ customer.id }}</td>
             <th>Фото</th>
-            <td></td>
+            <td>
+                <template v-if="!form.avatar">
+                    <file-input v-if="!form.avatar" @uploaded="(data) => form.avatar = data" size="sm"/>
+                </template>
+                <template v-else>
+                    <a :href="form.avatar.url">Посмотреть</a>
+                    <v-delete-button @delete="form.avatar = null" btn-class="btn-danger btn-sm"/>
+                </template>
+            </td>
         </tr>
         <tr>
             <th>E-mail</th>
@@ -65,6 +91,7 @@
                     <a :href="portfolio.link" target="_blank">{{ portfolio.name }}</a>
                 </div>
                 <div v-if="!customer.portfolios.length">-</div>
+                <button class="btn btn-info btn-sm" v-b-modal.modal-portfolios><fa-icon icon="pencil-alt"/></button>
             </td>
         </tr>
         </tbody>
@@ -74,10 +101,13 @@
 <script>
 import Services from '../../../../../scripts/services/services.js';
 import { mapGetters } from 'vuex';
+import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 
 export default {
     name: 'infopanel',
-    props: ['model', 'statuses'],
+    components: {VDeleteButton, FileInput},
+    props: ['model', 'statuses', 'statusProblem'],
     data() {
         return {
             editStatus: false,
@@ -88,14 +118,33 @@ export default {
                 middle_name: this.model.middle_name,
                 email: this.model.email,
                 phone: this.model.phone,
+                avatar: this.model.avatar,
             }
         };
+    },
+    watch: {
+        'model.status': function (val, oldVal) {
+            this.form.status = this.model.status;
+        }
     },
     computed: {
         ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
+        },
+        showBtn() {
+            return this.customer.status !== this.form.status ||
+                (this.customer.last_name || '') !== (this.form.last_name || '') ||
+                (this.customer.first_name || '') !== (this.form.first_name || '') ||
+                (this.customer.middle_name || '') !== (this.form.middle_name || '') ||
+                (this.customer.email || '') !== (this.form.email || '') ||
+                (this.customer.phone || '') !== (this.form.phone || '') ||
+                (
+                    (!this.customer.avatar && this.form.avatar) ||
+                    (this.customer.avatar && !this.form.avatar) ||
+                    (this.customer.avatar && this.form.avatar && this.customer.avatar.id !== this.form.avatar.id)
+                );
         },
     },
     methods: {
@@ -104,6 +153,8 @@ export default {
             Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
                 customer: {
                     status: this.form.status,
+                    comment_problem_status: "",
+                    avatar: this.form.avatar ? this.form.avatar.id : null,
                 },
                 user: {
                     id: this.customer.user_id,
@@ -120,11 +171,23 @@ export default {
                 this.customer.middle_name = this.form.middle_name;
                 this.customer.email = this.form.email;
                 this.customer.phone = this.form.phone;
+                this.customer.avatar = this.form.avatar;
+                this.customer.comment_problem_status = "";
+                Services.msg("Изменения сохранены");
             }).catch(errorMsg => {
                 Services.msg(errorMsg || "Ошибка сохранения", 'danger');
             }).then(data => {
                 Services.hideLoader();
             })
+        },
+        cancel() {
+            this.form.status = this.customer.status;
+            this.form.last_name = this.customer.last_name;
+            this.form.first_name = this.customer.first_name;
+            this.form.middle_name = this.customer.middle_name;
+            this.form.email = this.customer.email;
+            this.form.phone = this.customer.phone;
+            this.form.avatar = this.customer.avatar;
         },
     }
 };

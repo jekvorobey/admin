@@ -69,11 +69,11 @@
 
 <script>
 
-import {mapGetters} from "vuex";
-import Services from "../../../../../scripts/services/services";
-import FSelect from '../../../../components/filter/f-select.vue';
+    import {mapGetters} from 'vuex';
+    import Services from '../../../../../scripts/services/services';
+    import FSelect from '../../../../components/filter/f-select.vue';
 
-export default {
+    export default {
     components: {
         FSelect
     },
@@ -110,9 +110,6 @@ export default {
         merchantName(id) {
             let merchant = this.merchants[id];
             return merchant ? merchant.display_name : 'N/A';
-        },
-        segmentClass(segment) {
-            return segment ? `segment-${segment.toLowerCase()}` : '';
         },
         canEditShipmentDelivery(shipment) {
             return !this.shipmentNotEditableStatuses.includes(shipment.status);

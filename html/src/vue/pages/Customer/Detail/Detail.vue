@@ -3,7 +3,7 @@
         <b-row class="mb-2">
             <b-col>
                 <b-card>
-                    <infopanel :model.sync="customer" :statuses="statuses"/>
+                    <infopanel :model.sync="customer" :statuses="statuses" :status-problem="statusProblem"/>
                 </b-card>
             </b-col>
             <b-col>
@@ -51,6 +51,8 @@
                 </b-tab>
             </b-tabs>
         </b-card>
+        <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
+        <modal-mark-problem :model.sync="customer" :status-problem="statusProblem"/>
     </layout-main>
 </template>
 
@@ -65,10 +67,15 @@ import InfoLog from './components/info-log.vue';
 import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
 import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
+import ModalPortfolios from './components/modal-portfolios.vue';
+import ModalMarkProblem from './components/modal-mark-problem.vue';
 
 export default {
-    components: {Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
-    props: ['iCustomer', 'statuses', 'order'],
+    components: {
+        ModalMarkProblem,
+        ModalPortfolios,
+        Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+    props: ['iCustomer', 'statuses', 'order', 'statusProblem'],
     data() {
         return {
             editStatus: false,

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -79,7 +78,6 @@ class ProductDetailController extends Controller
             'name' => 'string',
             'brand_id' => 'integer',
             'category_id' => 'integer',
-            'segment' => 'string',
             'approval_status' => 'integer',
             'vendor_code' => 'string',
             'width' => 'integer',

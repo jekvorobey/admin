@@ -285,6 +285,9 @@ Route::middleware('auth')->group(function () {
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
             Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
             Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
+            Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
+            Route::put('brands', 'CustomerDetailController@putBrands')->name('detail.brand.save');
+            Route::put('categories', 'CustomerDetailController@putCategories')->name('detail.category.save');
 
             Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
             Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');
