@@ -110,6 +110,10 @@ class Menu
                         'title' => 'Подборки товаров',
                         'route' => route('productGroup.listPage'),
                     ],
+                    [
+                        'title' => 'Баннеры',
+                        'route' => route('banner.listPage'),
+                    ],
                 ]
             ],
             [

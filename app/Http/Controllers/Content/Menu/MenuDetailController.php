@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Content\Menu;
 
 use App\Http\Controllers\Controller;
+use Cms\Core\CmsException;
 use Cms\Dto\MenuDto;
-use Cms\Dto\ProductGroupDto;
 use Cms\Services\MenuService\MenuService;
-use Cms\Services\ProductGroupService\ProductGroupService;
 use Illuminate\Http\Request;
 
 class MenuDetailController extends Controller
@@ -15,6 +14,7 @@ class MenuDetailController extends Controller
      * @param int $id
      * @param MenuService $menuService
      * @return mixed
+     * @throws CmsException
      */
     public function index(
         $id,
@@ -26,17 +26,6 @@ class MenuDetailController extends Controller
             'iMenu' => $menu,
             'options' => [],
         ]);
-    }
-
-    public function getMenu(
-        int $id,
-        MenuService $menuService
-    ) {
-        $query = $menuService->newQuery();
-        $query->setFilter('id', $id);
-        $query->include('items');
-
-        return $menuService->menus($query)->first();
     }
 
     public function update($id, Request $request, MenuService $menuService)
@@ -51,5 +40,22 @@ class MenuDetailController extends Controller
         $menuService->updateItemsTree($validatedData['id'], new MenuDto($validatedData));
 
         return response()->json([], 204);
+    }
+
+    /**
+     * @param int $id
+     * @param MenuService $menuService
+     * @return mixed
+     * @throws CmsException
+     */
+    private function getMenu(
+        int $id,
+        MenuService $menuService
+    ) {
+        $query = $menuService->newQuery();
+        $query->setFilter('id', $id);
+        $query->include('items');
+
+        return $menuService->menus($query)->first();
     }
 }
