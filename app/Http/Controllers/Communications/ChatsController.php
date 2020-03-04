@@ -102,6 +102,25 @@ class ChatsController extends Controller
         ]);
     }
 
+    public function create(CommunicationService $communicationService, RequestInitiator $user)
+    {
+        $communicationService->createChat(
+            request('channel_id'),
+            request('theme'),
+            [$user->userId()],
+            0,
+            request('status_id'),
+            request('type_id')
+        );
+
+//        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+//        return response()->json([
+//            'chats' => $chats,
+//            'users' => $users,
+//            'files' => $files,
+//        ]);
+    }
+
     protected function loadChats(ListConstructor $constructor)
     {
         $userService = resolve(UserService::class);
