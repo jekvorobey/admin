@@ -37,6 +37,26 @@
                     class="preview-photo-input"
             />
 
+            Планшетное изображение<br>
+            <img v-if="tabletImage"
+                 :src="tabletImage.url"
+                 class="preview-photo"
+            >
+            <file-input
+                    @uploaded="onUploadTabletImage"
+                    class="preview-photo-input"
+            />
+
+            Мобильное изображение<br>
+            <img v-if="mobileImage"
+                 :src="mobileImage.url"
+                 class="preview-photo"
+            >
+            <file-input
+                    @uploaded="onUploadMobileImage"
+                    class="preview-photo-input"
+            />
+
             <b-form-group
                     label="Тип*"
                     label-for="group-type"
@@ -53,6 +73,32 @@
                         {{ type.name }}
                     </b-form-select-option>
                 </b-form-select>
+            </b-form-group>
+
+            <b-form-group
+                    label="Ссылка*"
+                    label-for="group-button-url"
+            >
+                <b-form-input
+                        id="group-button-url"
+                        v-model="button.url"
+                        type="text"
+                        required
+                        placeholder="Введите ссылку"
+                />
+            </b-form-group>
+
+            <b-form-group
+                    label="Текст*"
+                    label-for="group-button-text"
+            >
+                <b-form-input
+                        id="group-button-text"
+                        v-model="button.text"
+                        type="text"
+                        required
+                        placeholder="Введите текст"
+                />
             </b-form-group>
 
             <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
@@ -78,6 +124,7 @@
         data() {
             return {
                 banner: this.normalizeProductGroup(this.iBanner),
+                button: [],
                 bannerTypes: this.iBannerTypes,
                 bannerImages: this.iBannerImages,
             };
@@ -94,6 +141,8 @@
                     active: source.active ? source.active : false,
                     type_id: source.type_id ? source.type_id : null,
                     desktop_image_id: source.desktop_image_id ? source.desktop_image_id : null,
+                    tablet_image_id: source.tablet_image_id ? source.tablet_image_id : null,
+                    mobile_image_id: source.mobile_image_id ? source.mobile_image_id : null,
                 };
             },
             submit() {
@@ -133,6 +182,14 @@
                 this.bannerImages[file.id] = file;
                 this.banner.desktop_image_id = file.id;
             },
+            onUploadTabletImage(file) {
+                this.bannerImages[file.id] = file;
+                this.banner.tablet_image_id = file.id;
+            },
+            onUploadMobileImage(file) {
+                this.bannerImages[file.id] = file;
+                this.banner.mobile_image_id = file.id;
+            },
         },
         computed: {
             ...mapGetters(['getRoute']),
@@ -140,9 +197,25 @@
                 const fileId = this.banner.desktop_image_id;
 
                 if (fileId) {
-                    const file = this.bannerImages[fileId];
+                    return this.bannerImages[fileId] || null;
+                }
 
-                    return file ? file : null;
+                return null;
+            },
+            tabletImage() {
+                const fileId = this.banner.tablet_image_id;
+
+                if (fileId) {
+                    return this.bannerImages[fileId] || null;
+                }
+
+                return null;
+            },
+            mobileImage() {
+                const fileId = this.banner.mobile_image_id;
+
+                if (fileId) {
+                    return this.bannerImages[fileId] || null;
                 }
 
                 return null;
