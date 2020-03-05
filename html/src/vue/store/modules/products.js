@@ -5,8 +5,14 @@ export const NAMESPACE = 'products';
 export const SET_PAGE = 'set_page';
 
 export const GET_LIST = 'get_list';
+export const GET_PAGE_NUMBER = 'get_page_number';
+export const GET_TOTAL = 'get_total';
+export const GET_PAGE_SIZE = 'get_page_size';
+export const GET_NUM_PAGES = 'get_num_pages';
 
 export const ACT_LOAD_PAGE = 'act_load_page';
+
+const PAGE_SIZE = 10;
 
 export default {
     name: NAMESPACE,
@@ -25,6 +31,10 @@ export default {
     },
     getters: {
         [GET_LIST]: state => state.list,
+        [GET_PAGE_NUMBER]: state => state.page,
+        [GET_TOTAL]: state => state.total,
+        [GET_PAGE_SIZE]: () => PAGE_SIZE,
+        [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE)
     },
     actions: {
         [ACT_LOAD_PAGE]({commit, rootGetters}, {filter, page}) {

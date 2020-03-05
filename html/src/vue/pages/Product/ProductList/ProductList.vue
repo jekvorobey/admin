@@ -19,7 +19,7 @@
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
-            Всего товаров: {{ pager.total }}.
+            Всего товаров: {{ total }}.
         </div>
         <table class="table">
             <thead>
@@ -29,29 +29,58 @@
                     <th class="with-small">Название <small>Артикул</small></th>
                     <th>Бренд</th>
                     <th>Категория</th>
+                    <th>Дата создания</th>
+                    <th>Стоимость</th>
+                    <th>Количество</th>
+                    <th>На витрине</th>
+                    <th>В архиве</th>
+                    <th>Контент</th>
+                    <th>Согласование</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="product in products">
                     <td>{{product.id}}</td>
-                    <td><img :src="product.photo ? product.photo : '//placehold.it/75x50?text=No+image'" class="preview"></td>
+                    <td><img :src="imageUrl(product.catalogImageId, 100, 100)" class="preview"></td>
                     <td class="with-small">
                         <a :href="getRoute('products.detail', {id: product.id})">{{product.name}}</a>
-                        <small>{{product.vendor_code}}</small>
+                        <small>{{product.vendorCode}}</small>
                     </td>
-                    <td>{{product.brand.name}}</td>
-                    <td>{{product.category.name}}</td>
+                    <td>{{product.brandName}}</td>
+                    <td>{{product.categoryName}}</td>
+                    <td>{{formatDate(product.dateAdd)}}</td>
+                    <td>{{product.price ? product.price : '--'}}</td>
+                    <td>{{product.qty ? product.qty : '--'}}</td>
+                    <td>
+                        <span class="badge" :class="{'badge-success':product.active,'badge-danger':!product.active}">
+                            {{product.active ? 'Да' : 'Нет'}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" :class="{'badge-success':!product.archive,'badge-danger':product.archive}">
+                            {{product.archive ? 'Да' : 'Нет'}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" :class="{'badge-success':isProductionDone(product.productionStatus),'badge-danger':!isProductionDone(product.productionStatus)}">
+                            {{productionName(product.productionStatus)}}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" :class="{'badge-success':isApprovalDone(product.approvalStatus),'badge-danger':!isApprovalDone(product.approvalStatus)}">
+                            {{approvalName(product.approvalStatus)}}
+                        </span>
+                    </td>
                 </tr>
             </tbody>
         </table>
         <div>
             <b-pagination
-                    v-if="pager.pages !== 1"
-                    v-model="currentPage"
-                    :total-rows="pager.total"
-                    :per-page="pager.pageSize"
-                    @change="changePage"
-                    :hide-goto-end-buttons="pager.pages < 10"
+                    v-if="numPages !== 1"
+                    v-model="page"
+                    :total-rows="total"
+                    :per-page="pageSize"
+                    :hide-goto-end-buttons="numPages < 10"
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
@@ -59,8 +88,6 @@
 </template>
 
 <script>
-
-    import Services from "../../../../scripts/services/services";
     import withQuery from "with-query";
 
     import FSelect from "../../../components/filter/f-select.vue";
@@ -69,9 +96,15 @@
 
     import {
         NAMESPACE,
+        GET_PAGE_NUMBER,
+        GET_TOTAL,
+        GET_PAGE_SIZE,
+        GET_NUM_PAGES,
         SET_PAGE,
-        ACT_LOAD_PAGE
+        ACT_LOAD_PAGE, GET_LIST
     } from "../../../store/modules/products";
+
+    import mediaMixin from '../../../mixins/media';
 
     const cleanFilter = {
         id: '',
@@ -79,8 +112,8 @@
         brand: '',
         category: ''
     };
-
     export default {
+        mixins: [mediaMixin],
         components: {
             FSelect,
             FInput,
@@ -104,10 +137,10 @@
             };
         },
         methods: {
-            ...mapActions([
+            ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE
             ]),
-            changePage(newPage) {
+            loadPage(page) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
                     if (value) {
@@ -115,48 +148,67 @@
                     }
                 }
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
-                    page: newPage,
+                    page: page,
                     filter: cleanFilter,
-                    //sort: this.sort
                 }));
-            },
-            loadPage() {
+
                 this[ACT_LOAD_PAGE]({
-                    page: this.currentPage,
+                    page: page,
                     filter: this.filter
                 });
             },
             applyFilter() {
-                this.changePage(1);
-                this.loadPage();
+                this.loadPage(1);
             },
             clearFilter() {
                 this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
                 this.applyFilter();
             },
-
+            approvalName(status) {
+                if (this.options.approvalStatuses[status]) {
+                    return this.options.approvalStatuses[status].name;
+                }
+                return 'N/A';
+            },
+            productionName(status) {
+                if (this.options.productionStatuses[status]) {
+                    return this.options.productionStatuses[status].name;
+                }
+                return 'N/A';
+            },
+            isApprovalDone(status) {
+                return status === this.options.approvalDone;
+            },
+            isProductionDone(status){
+                return status === this.options.productionDone;
+            },
+            formatDate(date) {
+                return new Date(date).toLocaleDateString();
+            }
         },
         created() {
             window.onpopstate = () => {
                 let query = qs.parse(document.location.search.substr(1));
                 if (query.page) {
-                    this.currentPage = query.page;
+                    this.page = query.page;
                 }
             };
         },
-        watch: {
-            currentPage() {
-                this.loadPage();
-            }
-        },
         computed: {
             ...mapGetters(['getRoute']),
+            ...mapGetters(NAMESPACE, {
+                GET_PAGE_NUMBER,
+                total: GET_TOTAL,
+                pageSize: GET_PAGE_SIZE,
+                numPages: GET_NUM_PAGES,
+                products: GET_LIST,
+            }),
             page: {
                 get: function () {
-
+                    return this.GET_PAGE_NUMBER;
                 },
                 set: function (page) {
-
+                    this.loadPage(page);
                 }
             },
             brandOptions() {

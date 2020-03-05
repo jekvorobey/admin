@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\BrandService\BrandService;
@@ -36,7 +38,11 @@ class ProductListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'brands' => $brandService->brands($brandService->newQuery()),
-                'categories' => $categoryService->categories($categoryService->newQuery())
+                'categories' => $categoryService->categories($categoryService->newQuery()),
+                'productionStatuses' => ProductProductionStatus::allStatuses(),
+                'productionDone' => ProductProductionStatus::DONE,
+                'approvalStatuses' => ProductApprovalStatus::allStatuses(),
+                'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
             ]
         ]);
     }
@@ -60,6 +66,21 @@ class ProductListController extends Controller
         $query = new ProductQuery();
         $page = $request->get('page', 1);
         $query->page($page, 10);
+        $query->fields([
+            ProductQuery::ID,
+            ProductQuery::DATE_ADD,
+            ProductQuery::CATALOG_IMAGE_ID,
+            ProductQuery::NAME,
+            ProductQuery::VENDOR_CODE,
+            ProductQuery::CATEGORY_NAME,
+            ProductQuery::BRAND_NAME,
+            ProductQuery::PRICE,
+            ProductQuery::QTY,
+            ProductQuery::ACTIVE,
+            ProductQuery::ARCHIVE,
+            ProductQuery::PRODUCTION_STATUS,
+            ProductQuery::APPROVAL_STATUS,
+        ]);
         return $query;
     }
 }
