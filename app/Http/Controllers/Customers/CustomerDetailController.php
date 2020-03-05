@@ -36,6 +36,9 @@ class CustomerDetailController extends Controller
 {
     public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
     {
+        $this->loadUserRoles = true;
+        $this->loadCustomerStatus = true;
+
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
         if (!$customer) {
@@ -69,7 +72,7 @@ class CustomerDetailController extends Controller
                 'avatar' => $avatar ? $avatar->id : null,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
-                'comment_problem_status' => $customer->comment_problem_status,
+                'comment_status' => $customer->comment_status,
                 'last_name' => $user->last_name,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -95,8 +98,6 @@ class CustomerDetailController extends Controller
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
             ],
-            'statuses' => CustomerDto::statuses(),
-            'statusProblem' => CustomerDto::STATUS_PROBLEM,
             'order' => [
                 'count' => $orders->count(),
                 'price' => number_format($orders->sum('price'), 2, '.', ' '),
@@ -113,8 +114,8 @@ class CustomerDetailController extends Controller
             'customer.manager_id' => 'nullable',
             'customer.gender' => ['nullable', Rule::in([CustomerDto::GENDER_MALE, CustomerDto::GENDER_FEMALE])],
             'customer.birthday' => 'nullable|date_format:Y-m-d',
-            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statuses()))],
-            'customer.comment_problem_status' => 'nullable',
+            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statusesName()))],
+            'customer.comment_status' => 'nullable',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
@@ -181,6 +182,28 @@ class CustomerDetailController extends Controller
         if ($activities) {
             $customerService->putActivities($id, $activities);
         }
+        return response('', 204);
+    }
+
+    public function referral($id, $user_id, CustomerService $customerService, UserService $userService)
+    {
+        $updateCustomer = new CustomerDto();
+        $updateCustomer->status = CustomerDto::STATUS_ACTIVE;
+        $customerService->updateCustomer($id, $updateCustomer);
+
+        $userService->deleteRole($user_id, UserDto::SHOWCASE__PROFESSIONAL);
+        $userService->addRoles($user_id, [UserDto::SHOWCASE__REFERRAL_PARTNER]);
+        return response('', 204);
+    }
+
+    public function professional($id, $user_id, CustomerService $customerService, UserService $userService)
+    {
+        $updateCustomer = new CustomerDto();
+        $updateCustomer->status = CustomerDto::STATUS_ACTIVE;
+        $customerService->updateCustomer($id, $updateCustomer);
+
+        $userService->deleteRole($user_id, UserDto::SHOWCASE__REFERRAL_PARTNER);
+        $userService->addRoles($user_id, [UserDto::SHOWCASE__PROFESSIONAL]);
         return response('', 204);
     }
 

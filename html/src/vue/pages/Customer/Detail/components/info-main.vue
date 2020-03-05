@@ -55,7 +55,7 @@
         </tr>
         <tr>
             <th>Дата регистрации</th>
-            <td>{{ customer.created_at }}</td>
+            <td>{{ datetimePrint(customer.created_at) }}</td>
         </tr>
         <tr>
             <th>Профили в социальных сетях</th>

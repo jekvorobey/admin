@@ -16,6 +16,7 @@ import './fontawesome';
 import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts/filters';
 import OrderStatus from './components/order-status.vue';
 import Media from '../scripts/media.js';
+import * as moment from 'moment';
 
 Vue.use(BootstrapVue);
 
@@ -47,6 +48,7 @@ Services.instance().register('event', () => {
     return new Vue();
 });
 
+moment.locale('ru');
 Vue.mixin({
     methods: {
         preparePrice(number, decimals, dec_point, thousands_sep) {
@@ -67,6 +69,9 @@ Vue.mixin({
         route(name) {
             return '/' + this.$store.state.routes[name].replace(/^\//, '');
         },
+        datetimePrint(date) {
+            return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
+        },
     },
     computed: {
         staticText() {
@@ -76,6 +81,20 @@ Vue.mixin({
         user() {
             return this.$store.state.layout.user;
         },
+        /** @return {UserRoles} */
+        userRoles() {
+            return this.$store.state.layout.userRoles;
+        },
+        customerStatusByRole() {
+            return this.$store.state.layout.customerStatusByRole;
+        },
+        customerStatusName() {
+            return this.$store.state.layout.customerStatusName;
+        },
+        /** @return {CustomerStatus} */
+        customerStatus() {
+            return this.$store.state.layout.customerStatus;
+        },
         /** @return {Media} */
         media() {
             return Media;
@@ -84,8 +103,54 @@ Vue.mixin({
 });
 
 /**
+ @typedef CustomerStatus
+ @type {Object}
+ @property {number} created
+ @property {number} new
+ @property {number} consideration
+ @property {number} rejected
+ @property {number} active
+ @property {number} problem
+ @property {number} block
+ @property {number} potential_rp
+ @property {number} temporarily_suspended
+ */
+/**
  @typedef User
  @type {Object}
  @property {boolean} isGuest - isGuest
  @property {boolean} isSuper - isSuper
+ */
+/**
+ @typedef UserRoles
+ @type {Object}
+ @property {ShowcaseUserRoles} showcase
+ @property {ICommerceMlUserRoles} i_commerce_ml
+ @property {MasUserRoles} mas
+ @property {AdminUserRoles} admin
+ */
+/**
+ @typedef ShowcaseUserRoles
+ @type {Object}
+ @property {number} referral_partner
+ @property {number} professional
+ */
+/**
+ @typedef ICommerceMlUserRoles
+ @type {Object}
+ @property {number} external_system
+ */
+/**
+ @typedef MasUserRoles
+ @type {Object}
+ @property {number} merchant_operator
+ @property {number} merchant_admin
+ */
+/**
+ @typedef AdminUserRoles
+ @type {Object}
+ @property {number} manager_client
+ @property {number} manager_merchant
+ @property {number} admin
+ @property {number} super
  */
