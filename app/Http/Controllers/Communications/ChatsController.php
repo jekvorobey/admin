@@ -104,21 +104,30 @@ class ChatsController extends Controller
 
     public function create(CommunicationService $communicationService, RequestInitiator $user)
     {
-        $communicationService->createChat(
+        $userIds = request('user_ids');
+        $chatIds = $communicationService->createChat(
             request('channel_id'),
             request('theme'),
-            [$user->userId()],
-            0,
+            $userIds,
+            request('direction'),
             request('status_id'),
             request('type_id')
         );
 
-//        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
-//        return response()->json([
-//            'chats' => $chats,
-//            'users' => $users,
-//            'files' => $files,
-//        ]);
+        $message = request('message');
+        $files = request('files');
+        error_log($message, 3, '/var/www/apps/admin/filippov_admin.ibt-mas.greensight.ru/var.log');
+
+        if ($message OR $files) {
+            $communicationService->createMessage($chatIds, $user->userId(), $message, $files);
+        }
+
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setUserIds($userIds));
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
     }
 
     protected function loadChats(ListConstructor $constructor)

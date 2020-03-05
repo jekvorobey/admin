@@ -2,7 +2,8 @@
     <div>
         <div class="card">
             <div class="card-body">
-                <b-form @submit.prevent="">
+                <b-button @click="openChatForm()" type="submit" variant="dark" v-if="!showChatForm">Добавить чат</b-button>
+                <b-form @submit.prevent="" v-if="showChatForm">
                     <b-row>
                         <b-col cols="3">
                             <label for="chat-channel">Канал</label>
@@ -33,7 +34,7 @@
                         <b-col cols="4">
                             <b-form-select v-model="form.status_id" id="chat-status">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="status.id + 'value'" v-for="status in availableStatuses" :key="status.id + 'key'">
+                                <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
                                         (
@@ -47,7 +48,7 @@
 
                     <b-row>
                         <b-col cols="3">
-                            <label for="chat-type">Тип</label>
+                            <label for="chat-type">Тип1</label>
                         </b-col>
                         <b-col cols="4">
                             <b-form-select v-model="form.type_id" id="chat-type">
@@ -63,7 +64,15 @@
                             </b-form-select>
                         </b-col>
                     </b-row>
-                    <b-button type="submit" variant="dark">Добавить чат</b-button>
+                    <b-row>
+                        <b-button @click="openMessageForm()" type="submit" variant="dark" v-if="!showMessageForm">Добавить сообщение к чату</b-button>
+                    </b-row>
+                    <b-row v-if="showMessageForm">
+                        <communication-chat-message :addButton="0"/>
+                    </b-row>
+                    <b-row>
+                        <b-button @click="onCreate()" class="btn btn-success">Добавить чат</b-button>
+                    </b-row>
                 </b-form>
             </div>
         </div>
@@ -73,44 +82,57 @@
 <script>
 import { mapGetters } from 'vuex';
 import Services from "../../../scripts/services/services";
+import CommunicationChatMessage from "../communication-chat-message/communication-chat-message.vue";
 
 export default {
     name: 'communication-chat-creator',
+    components: {CommunicationChatMessage},
     props: ['user_id'],
     data() {
         return {
             channels: {},
+            statuses: {},
+            types: {},
+            showChatForm: false,
+            showMessageForm: false,
             form: {
                 channel_id: null,
                 theme: '',
                 status_id: null,
-                type_id: null
+                type_id: null,
+                message: CommunicationChatMessage.message,
+                files: CommunicationChatMessage.files,
             }
         }
     },
     methods: {
-        createChat() {
+        openChatForm(chat) {
+            if (this.showChatForm) {
+                this.showMessageForm = !this.showMessageForm;
+            }
+            this.showChatForm = !this.showChatForm;
+        },
+        openMessageForm(chat) {
+            this.showMessageForm = !this.showMessageForm;
+        },
+        onCreate() {
             Services.showLoader();
-            let filter = {};
-            if (this.form.theme) {
-                filter.theme = this.form.theme;
-            }
-            if (this.form.channel_id) {
-                filter.channel_id = this.form.channel_id;
-            }
-            if (this.form.status_id) {
-                filter.status_id = this.form.status_id;
-            }
-            if (this.form.type_id) {
-                filter.type_id = this.form.type_id;
-            }
-            filter = Object.assign(filter, this.filter);
-            Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data)=> {
+            Services.net().post(this.getRoute('communications.chats.create'), {}, {
+                channel_id: this.form.channel_id,
+                theme: this.form.theme,
+                user_ids: [this.user_id],
+                direction: 2,
+                status_id: this.form.status_id,
+                type_id: this.form.type_id,
+                message: this.message,
+                files: this.files,
+            }).then((data)=> {
                 this.chats = data.chats;
                 this.users = data.users;
                 this.files = data.files;
                 Services.hideLoader();
             });
+            this.openChatForm();
         }
     },
     computed: {

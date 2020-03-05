@@ -13,7 +13,7 @@
         </div>
         <button type="button" @click="onAdd()" class="btn btn-success"><fa-icon icon="plus"/></button>
         <hr/>
-        <button type="button" @click="onSend()" class="btn btn-success">Отправить сообщение</button>
+        <button type="button" @click="onSend()" class="btn btn-success" v-if="this.addButton">Отправить сообщение</button>
     </div>
 </template>
 
@@ -24,6 +24,7 @@ import VDeleteButton from '../controls/VDeleteButton/VDeleteButton.vue';
 export default {
     name: 'communication-chat-message',
     components: {VDeleteButton, FileInput},
+    props: ['addButton'],
     data() {
         return {
             form: {

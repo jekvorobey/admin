@@ -81,7 +81,7 @@
                         </td>
                     </tr>
                     <tr v-if="showChat === chat.id">
-                        <td colspan="5"><communication-chat-message @send="({files, message}) => onSend(files, message, chat.id)"/></td>
+                        <td colspan="5"><communication-chat-message :addButton="true" @send="({files, message}) => onSend(files, message, chat.id)"/></td>
                     </tr>
                 </template>
             </tbody>
