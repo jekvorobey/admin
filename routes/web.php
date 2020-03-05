@@ -160,42 +160,30 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('content')->namespace('Content')->group(function () {
         Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
-            Route::get('/', 'ProductGroupListController@indexPage')
-                ->name('productGroup.listPage');
-            Route::get('/{id}', 'ProductGroupDetailController@updatePage')
-                ->where(['id' => '[0-9]+'])
-                ->name('productGroup.updatePage');
-            Route::get('/create', 'ProductGroupDetailController@createPage')
-                ->where(['id' => '[0-9]+'])
-                ->name('productGroup.createPage');
-
-            Route::get('/page', 'ProductGroupListController@page')
-                ->name('productGroups.page');
-            Route::put('/{id}', 'ProductGroupDetailController@update')
-                ->where(['id' => '[0-9]+'])
-                ->name('productGroup.update');
-            Route::post('/', 'ProductGroupDetailController@create')
-                ->name('productGroup.create');
-            Route::delete('/{id}', 'ProductGroupDetailController@delete')
-                ->where(['id' => '[0-9]+'])
-                ->name('productGroup.delete');
-
-            Route::get('/filter', 'ProductGroupDetailController@getFilters')
-                ->name('productGroup.getFilters');
-
-            Route::get('/product', 'ProductGroupDetailController@getProducts')
-                ->name('productGroup.getProducts');
+            Route::get('/', 'ProductGroupListController@indexPage')->name('productGroup.listPage');
+            Route::get('/{id}', 'ProductGroupDetailController@updatePage')->where(['id' => '[0-9]+'])->name('productGroup.updatePage');
+            Route::get('/create', 'ProductGroupDetailController@createPage')->name('productGroup.createPage');
+            Route::get('/page', 'ProductGroupListController@page')->name('productGroups.page');
+            Route::put('/{id}', 'ProductGroupDetailController@update')->where(['id' => '[0-9]+'])->name('productGroup.update');
+            Route::post('/', 'ProductGroupDetailController@create')->name('productGroup.create');
+            Route::delete('/{id}', 'ProductGroupDetailController@delete')->where(['id' => '[0-9]+'])->name('productGroup.delete');
+            Route::get('/filter', 'ProductGroupDetailController@getFilters')->name('productGroup.getFilters');
+            Route::get('/product', 'ProductGroupDetailController@getProducts')->name('productGroup.getProducts');
         });
 
         Route::prefix('menu')->namespace('Menu')->group(function () {
-            Route::get('/', 'MenuListController@index')
-                ->name('menu.list');
-            Route::get('/{id}', 'MenuDetailController@index')
-                ->where(['id' => '[0-9]+'])
-                ->name('menu.detail');
-            Route::put('/{id}', 'MenuDetailController@update')
-                ->where(['id' => '[0-9]+'])
-                ->name('menu.update');
+            Route::get('/', 'MenuListController@index')->name('menu.list');
+            Route::get('/{id}', 'MenuDetailController@index')->where(['id' => '[0-9]+'])->name('menu.detail');
+            Route::put('/{id}', 'MenuDetailController@update')->where(['id' => '[0-9]+'])->name('menu.update');
+        });
+
+        Route::prefix('banner')->namespace('Banner')->group(function () {
+            Route::get('/', 'BannerListController@listPage')->name('banner.listPage');
+            Route::get('/{id}', 'BannerDetailController@updatePage')->where(['id' => '[0-9]+'])->name('banner.updatePage');
+            Route::get('/create', 'BannerDetailController@createPage')->name('banner.createPage');
+
+            Route::get('/page', 'BannerListController@page')->name('banner.page');
+            Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
         });
     });
 
