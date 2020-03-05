@@ -1,8 +1,8 @@
 <template>
-    <b-modal id="modal-mark-problem" title="Редактирование портфолио" hide-footer>
+    <b-modal :id="id" :title="`Пометить статусом '${customerStatusName[status]}'`" hide-footer>
         <template v-slot:default="{close}">
 
-            <textarea class="form-control" v-model="form.comment_problem_status"></textarea>
+            <textarea class="form-control" v-model="form.comment_status"></textarea>
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
@@ -17,18 +17,18 @@ import Services from '../../../../../scripts/services/services.js';
 import { mapGetters } from 'vuex';
 
 export default {
-    name: 'modal-mark-problem',
-    props: ['model', 'statusProblem'],
+    name: 'modal-mark-status',
+    props: ['model', 'status', 'id'],
     data() {
         return {
             form: {
-                comment_problem_status: this.model.comment_problem_status,
+                comment_status: this.model.comment_status,
             }
         }
     },
     watch: {
-        'model.comment_problem_status': function (val, oldVal) {
-            this.form.comment_problem_status = this.model.comment_problem_status;
+        'model.comment_status': function (val, oldVal) {
+            this.form.comment_status = this.model.comment_status;
         }
     },
     computed: {
@@ -40,21 +40,21 @@ export default {
     },
     methods: {
         saveStatus() {
-            if (!this.form.comment_problem_status) {
+            if (!this.form.comment_status) {
                 Services.msg("Введите комментарий", 'danger');
                 return;
             }
             Services.showLoader();
             Services.net().put(this.getRoute('customers.detail.save', {id: this.model.id}), {}, {
                 customer: {
-                    status: this.statusProblem,
-                    comment_problem_status: this.form.comment_problem_status,
+                    status: this.status,
+                    comment_status: this.form.comment_status,
                 },
             }).then(data => {
-                this.customer.comment_problem_status = this.form.comment_problem_status;
-                this.customer.status = this.statusProblem;
+                this.customer.comment_status = this.form.comment_status;
+                this.customer.status = this.status;
                 Services.hideLoader();
-                this.$bvModal.hide("modal-mark-problem");
+                this.$bvModal.hide(this.id);
                 Services.msg("Изменения сохранены");
             });
         },

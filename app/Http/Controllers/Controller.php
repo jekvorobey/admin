@@ -6,6 +6,7 @@ use App\Core\Menu;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\Customer\Dto\CustomerDto;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
@@ -18,9 +19,52 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class Controller extends BaseController
 {
     protected $title = '';
+    protected $loadUserRoles = false;
+    protected $loadCustomerStatus = false;
 
     public function render($componentName, $props = [])
     {
+        $userRoles = [];
+        if ($this->loadUserRoles) {
+            $userRoles = [
+                'admin' => [
+                    'super' => UserDto::ADMIN__SUPER,
+                    'admin' => UserDto::ADMIN__ADMIN,
+                    'manager_merchant' => UserDto::ADMIN__MANAGER_MERCHANT,
+                    'manager_client' => UserDto::ADMIN__MANAGER_CLIENT,
+                ],
+                'mas' => [
+                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
+                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
+                ],
+                'i_commerce_ml' => [
+                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
+                ],
+                'showcase' => [
+                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
+                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
+                ],
+            ];
+        }
+
+        $customerStatus = [];
+        $customerStatusName = [];
+        $customerStatusByRole = [];
+        if ($this->loadCustomerStatus) {
+            $customerStatus = [
+                'created' => CustomerDto::STATUS_CREATED,
+                'new' => CustomerDto::STATUS_NEW,
+                'consideration' => CustomerDto::STATUS_CONSIDERATION,
+                'rejected' => CustomerDto::STATUS_REJECTED,
+                'active' => CustomerDto::STATUS_ACTIVE,
+                'problem' => CustomerDto::STATUS_PROBLEM,
+                'block' => CustomerDto::STATUS_BLOCK,
+                'potential_rp' => CustomerDto::STATUS_POTENTIAL_RP,
+                'temporarily_suspended' => CustomerDto::STATUS_TEMPORARILY_SUSPENDED,
+            ];
+            $customerStatusName = CustomerDto::statusesName();
+            $customerStatusByRole = CustomerDto::statusesByRole();
+        }
         return View::component(
             $componentName,
             $props,
@@ -30,6 +74,12 @@ class Controller extends BaseController
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
                 ],
+
+                'userRoles' => $userRoles,
+
+                'customerStatusByRole' => $customerStatusByRole,
+                'customerStatusName' => $customerStatusName,
+                'customerStatus' => $customerStatus,
             ],
             [
                 'title' => $this->title,
