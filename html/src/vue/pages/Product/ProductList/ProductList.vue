@@ -1,23 +1,97 @@
 <template>
     <layout-main>
-        <div class="mt-3 mb-3 shadow p-3">
-            <div class="row">
-                <f-input v-model="filter.id" class="col-lg-3 col-md-6 col-sm-12">ID</f-input>
-                <f-input v-model="filter.vendorCode" class="col-lg-3 col-md-6 col-sm-12">Артикул</f-input>
-                <f-select
-                        v-model="filter.brand"
-                        :options="brandOptions"
-                        class="col-lg-3 col-md-6 col-sm-12"
-                >Бренд</f-select>
-                <f-select
-                        v-model="filter.category"
-                        :options="categoryOptions"
-                        class="col-lg-3 col-md-6 col-sm-12"
-                >Категория</f-select>
+        <div class="card">
+            <div class="card-header">
+                Фильтр
+                <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
+                    <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
+                </button>
             </div>
-            <button @click="applyFilter" class="btn btn-dark">Применить</button>
-            <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
+            <div class="card-body">
+                <div class="row">
+                    <f-input v-model="filter.name" class="col-md-4 col-sm-12">Название</f-input>
+                    <f-input v-model="filter.vendorCode" class="col-md-2 col-sm-12">Артикул</f-input>
+                    <f-input v-model="filter.id" class="col-md-2 col-sm-12">ID</f-input>
+                    <f-select
+                            v-model="filter.active"
+                            :options="activeOptions"
+                            class="col-md-2 col-sm-12"
+                    >На витрине</f-select>
+                    <f-select
+                            v-model="filter.archive"
+                            :options="archiveOptions"
+                            class="col-md-2 col-sm-12"
+                    >Архивность</f-select>
+                </div>
+
+                <transition name="slide">
+                    <div v-if="opened">
+                        <div class="additional-filter pt-3 mt-3">
+                            <div class="row">
+                                <f-input v-model="filter.priceFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                    Цена
+                                    <template #prepend><span class="input-group-text">от</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
+                                <f-input v-model="filter.priceTo" class="col-lg-2 col-md-3 col-sm-12">
+                                    &nbsp;
+                                    <template #prepend><span class="input-group-text">до</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
+
+                                <f-input v-model="filter.qtyFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                    Кол-во
+                                    <template #prepend><span class="input-group-text">от</span></template>
+                                </f-input>
+                                <f-input v-model="filter.qtyTo" class="col-lg-2 col-md-3 col-sm-12">
+                                    &nbsp;
+                                    <template #prepend><span class="input-group-text">до</span></template>
+                                </f-input>
+
+                                <f-date
+                                        v-model="filter.dateFrom"
+                                        class="col-lg-2 col-md-3 col-sm-12"
+                                >Дата содания от</f-date>
+                                <f-date
+                                        v-model="filter.dateTo"
+                                        class="col-lg-2 col-md-3 col-sm-12"
+                                >Дата содания до</f-date>
+                            </div>
+                            <div class="row">
+                                <f-select
+                                        v-model="filter.brand"
+                                        :options="brandOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Бренд</f-select>
+                                <f-select
+                                        v-model="filter.category"
+                                        :options="categoryOptions"
+                                        class="col-md-3 col-sm-12">
+                                    Категория
+                                    <template #help>Будут показаны товары выбранной и всех дочерних категорий</template>
+                                </f-select>
+                                <f-select
+                                        v-model="filter.approvalStatus"
+                                        :options="approvalOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Согласовано</f-select>
+                                <f-select
+                                        v-model="filter.productionStatus"
+                                        :options="productionOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Контент</f-select>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+            <div class="card-footer">
+                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
+                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
+            </div>
         </div>
+
         <div class="mb-3">
             Всего товаров: {{ total }}.
         </div>
@@ -92,6 +166,7 @@
 
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
+    import FDate from "../../../components/filter/f-date.vue";
     import {mapActions, mapGetters} from "vuex";
 
     import {
@@ -105,18 +180,35 @@
     } from "../../../store/modules/products";
 
     import mediaMixin from '../../../mixins/media';
+    import Helpers from "../../../../scripts/helpers";
 
-    const cleanFilter = {
-        id: '',
-        vendorCode: '',
+    const cleanHiddenFilter = {
+        active: null,
+        archive: null,
         brand: '',
-        category: ''
+        category: '',
+        approvalStatus: '',
+        productionStatus: '',
+        priceFrom: null,
+        priceTo: null,
+        qtyFrom: null,
+        qtyTo: null,
+        dateFrom: null,
+        dateTo: null,
     };
+
+    const cleanFilter = Object.assign({
+        id: '',
+        name: '',
+        vendorCode: '',
+    }, cleanHiddenFilter);
+
     export default {
         mixins: [mediaMixin],
         components: {
             FSelect,
             FInput,
+            FDate,
         },
         props: {
             iProducts: {},
@@ -134,6 +226,7 @@
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
             return {
                 filter,
+                opened: false
             };
         },
         methods: {
@@ -157,6 +250,7 @@
                     filter: this.filter
                 });
             },
+
             applyFilter() {
                 this.loadPage(1);
             },
@@ -164,6 +258,24 @@
                 this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
                 this.applyFilter();
             },
+            toggleHiddenFilter() {
+                this.opened = !this.opened;
+                if (this.opened === false) {
+                    for (let entry of Object.entries(cleanHiddenFilter)) {
+                        this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+                    }
+                    this.applyFilter();
+                }
+            },
+            isHiddenFilterDefaultOpen() {
+                for (let entry of Object.entries(cleanHiddenFilter)) {
+                    if (!Helpers.isEqual(entry[1], this.filter[entry[0]]) && entry[1] !== this.filter[entry[0]]) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+
             approvalName(status) {
                 if (this.options.approvalStatuses[status]) {
                     return this.options.approvalStatuses[status].name;
@@ -193,6 +305,7 @@
                     this.page = query.page;
                 }
             };
+            this.opened = this.isHiddenFilterDefaultOpen();
         },
         computed: {
             ...mapGetters(['getRoute']),
@@ -212,7 +325,7 @@
                 }
             },
             brandOptions() {
-                return this.options.brands.map(brand => ({value: brand.id, text: brand.name}));
+                return this.options.brands.map(brand => ({value: brand.code, text: brand.name}));
             },
             categoryOptions() {
                 const groups = this.options.categories.filter(category => !category.parent_id);
@@ -223,12 +336,30 @@
                 return this.options.categories
                     .filter(category => category.parent_id)
                     .map(category => ({
-                        value: category.id,
+                        value: category.code,
                         text: category.name,
                         group: groupNames.get(category.parent_id)
                     }));
 
             },
+            approvalOptions() {
+                return Object.values(this.options.approvalStatuses).map(({id, name}) => ({value: id, text: name}));
+            },
+            productionOptions() {
+                return Object.values(this.options.productionStatuses).map(({id, name}) => ({value: id, text: name}));
+            },
+            archiveOptions() {
+                return [
+                    {value: true, text: 'В архиве'},
+                    {value: false, text: 'Не в архиве'},
+                ];
+            },
+            activeOptions() {
+                return [
+                    {value: true, text: 'Да'},
+                    {value: false, text: 'Нет'},
+                ];
+            }
         }
     };
 </script>
@@ -246,5 +377,8 @@
     .preview {
         height: 50px;
         border-radius: 5px;
+    }
+    .additional-filter {
+        border-top: 1px solid #DFDFDF;
     }
 </style>

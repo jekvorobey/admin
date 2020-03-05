@@ -81,6 +81,23 @@ class ProductListController extends Controller
             ProductQuery::PRODUCTION_STATUS,
             ProductQuery::APPROVAL_STATUS,
         ]);
+        
+        $filter = $request->get('filter', []);
+        $query->name = data_get($filter, 'name');
+        $query->id = data_get($filter, 'id');
+        $query->vendorCode = data_get($filter, 'vendorCode');
+        $query->active = to_boolean(data_get($filter, 'active'));
+        $query->archive = to_boolean(data_get($filter, 'archive'));
+        $query->brandCode = data_get($filter, 'brand');
+        $query->categoryCode = data_get($filter, 'category');
+        $query->approvalStatus = data_get($filter, 'approvalStatus');
+        $query->productionStatus = data_get($filter, 'productionStatus');
+        $query->priceFrom = data_get($filter, 'priceFrom');
+        $query->priceTo = data_get($filter, 'priceTo');
+        $query->qtyFrom = data_get($filter, 'qtyFrom');
+        $query->qtyTo = data_get($filter, 'qtyTo');
+        $query->dateFrom = data_get($filter, 'dateFrom');
+        $query->dateTo = data_get($filter, 'dateTo');
         return $query;
     }
 }
