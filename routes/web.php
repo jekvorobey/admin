@@ -183,6 +183,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', 'BannerDetailController@createPage')->name('banner.createPage');
 
             Route::get('/page', 'BannerListController@page')->name('banner.page');
+            Route::post('/', 'BannerDetailController@create')->where(['id' => '[0-9]+'])->name('banner.create');
+            Route::put('/{id}', 'BannerDetailController@update')->where(['id' => '[0-9]+'])->name('banner.update');
             Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
         });
     });
