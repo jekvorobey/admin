@@ -21,10 +21,10 @@ class ChatsController extends Controller
         return $this->render('Communication/ChatsUnread');
     }
 
-    public function unreadtest()
+    public function broadcast()
     {
-        $this->title = 'Непрочитанные сообщения ТЕСТ';
-        return $this->render('Communication/ChatsList');
+        $this->title = 'Массовая рассылка';
+        return $this->render('Communication/Broadcast');
     }
 
     public function directories(
@@ -116,9 +116,6 @@ class ChatsController extends Controller
 
         $message = request('message');
         $files = request('files');
-//        dump($message);
-//        dd($files);
-        error_log($message, 3, '/var/www/apps/admin/filippov_admin.ibt-mas.greensight.ru/var.log');
 
         if ($message OR $files) {
             $communicationService->createMessage($chatIds, $user->userId(), $message, $files);

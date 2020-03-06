@@ -268,13 +268,13 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('chats')->group(function () {
             Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
-            Route::get('unreadtest', 'ChatsController@unreadtest')->name('communications.chats.unreadtest');
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
             Route::get('directories', 'ChatsController@directories')->name('communications.chats.directories');
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
+            Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
         });
     });
 

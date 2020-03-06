@@ -281,6 +281,10 @@ class Menu
                         'title' => 'Типы',
                         'route' => route('communications.types.list'),
                     ],
+                    [
+                        'title' => 'Массовая рассылка',
+                        'route' => route('communications.chats.broadcast'),
+                    ],
                 ],
             ],
             [

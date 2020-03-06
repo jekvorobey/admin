@@ -27,6 +27,25 @@
                         </b-col>
                     </b-row>
 
+                    <b-row class="mb-2" v-if="showUsersInput">
+                        <b-col cols="3">
+                            <label for="chat-users">Пользователи</label>
+                        </b-col>
+                        <b-col cols="9">
+                            <b-form-select v-model="form.status_id" id="chat-users">
+                                <b-form-select-option :value="null">Все</b-form-select-option>
+                                <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
+                                    {{ status.name }}
+                                    <template v-if="status.channel_id">
+                                        (
+                                        {{ channels[status.channel_id].name }}
+                                        )
+                                    </template>
+                                </b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                    </b-row>
+
                     <b-row class="mb-2">
                         <b-col cols="3">
                             <label for="chat-status">Статус</label>
@@ -96,20 +115,21 @@ import CommunicationChatMessage from "../communication-chat-message/communicatio
 export default {
     name: 'communication-chat-creator',
     components: {CommunicationChatMessage},
-    props: ['user_id'],
+    props: ['type','user_id'],
     data() {
         return {
             channels: {},
             statuses: {},
             types: {},
-            showChatForm: false,
-            showMessageForm: false,
             form: {
                 channel_id: null,
                 theme: '',
                 status_id: null,
                 type_id: null,
             },
+            showChatForm: true,
+            showUsersInput: true,
+            showMessageForm: true,
         }
     },
     methods: {
@@ -122,16 +142,19 @@ export default {
         showHideMessageForm(chat) {
             this.showMessageForm = !this.showMessageForm;
         },
+        initComponentVar() {
+            this.showChatForm = true;
+            this.showMessageForm = true;
+        },
         initComponent() {
             this.channels = {};
             this.statuses = {};
             this.types = {};
-            this.showChatForm = false;
-            this.showMessageForm = false;
             this.form.channel_id = null;
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
+            this.initComponentVar();
         },
         onCreateChat(message, files) {
             Services.showLoader();
@@ -179,6 +202,19 @@ export default {
             this.types = data.types;
             Services.hideLoader();
         });
+        switch (this.type) {
+            case 'selectedUser':
+                this.showChatForm = false;
+                this.showUsersInput = false;
+                this.showMessageForm = false;
+                this.initComponentVar = () => {
+                    this.showChatForm = false;
+                    this.showMessageForm = false;
+                };
+                break;
+            default:
+                break;
+        }
     }
 };
 </script>
