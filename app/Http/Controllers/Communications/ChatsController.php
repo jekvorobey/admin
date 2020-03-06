@@ -116,6 +116,8 @@ class ChatsController extends Controller
 
         $message = request('message');
         $files = request('files');
+//        dump($message);
+//        dd($files);
         error_log($message, 3, '/var/www/apps/admin/filippov_admin.ibt-mas.greensight.ru/var.log');
 
         if ($message OR $files) {

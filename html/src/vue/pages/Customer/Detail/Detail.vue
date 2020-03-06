@@ -101,6 +101,11 @@ export default {
             }
         };
     },
+    methods: {
+        updateList() {
+            this.$refs.chatList.updateList()
+        }
+    },
     created() {
         Services.event().$on('showTab', (tab) => {
             this.tabIndex = this.tabs[tab];

@@ -81,7 +81,7 @@
                         </td>
                     </tr>
                     <tr v-if="showChat === chat.id">
-                        <td colspan="5"><communication-chat-message :addButton="true" @send="({files, message}) => onSend(files, message, chat.id)"/></td>
+                        <td colspan="5"><communication-chat-message @send="({message, files}) => onSend(message, files, chat.id)"/></td>
                     </tr>
                 </template>
             </tbody>
@@ -164,11 +164,11 @@ export default {
                 //Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
             }
         },
-        onSend(files, message, chat_id) {
+        onSend(message, files, chat_id) {
             Services.net().post(this.getRoute('communications.chats.send'), {}, {
-                chat_ids: [chat_id],
-                files: files,
                 message: message,
+                files: files,
+                chat_ids: [chat_id],
             }).then(data => {
                 this.users = Object.assign(this.users, data.users);
                 this.files = Object.assign(this.files, data.files);
@@ -179,6 +179,18 @@ export default {
                         }
                     })
                 });
+            });
+        },
+        updateList() {
+            this.test = this.test + 'before';
+            this.filterChats();
+            this.test = this.test + 'after';
+            Services.showLoader();
+            Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
+                this.channels = data.channels;
+                this.statuses = data.statuses;
+                this.types = data.types;
+                this.filterChats();
             });
         },
     },
@@ -200,6 +212,7 @@ export default {
         },
     },
     created() {
+        Services.event().$on('updateListEvent', this.updateList);
         Services.showLoader();
         Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
             this.channels = data.channels;
