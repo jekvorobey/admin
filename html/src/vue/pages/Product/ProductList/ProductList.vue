@@ -89,15 +89,21 @@
             <div class="card-footer">
                 <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
                 <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
+                <span class="float-right">Всего товаров: {{ total }}.</span>
             </div>
         </div>
 
-        <div class="mb-3">
-            Всего товаров: {{ total }}.
+        <div class="d-flex justify-content-between mt-3 mb-3">
+            <div v-if="!massEmpty(massProductsType)" class="action-bar d-flex justify-content-start">
+                <dropdown :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
+                    Сменить статус
+                </dropdown>
+            </div>
         </div>
         <table class="table">
             <thead>
                 <tr>
+                    <td></td>
                     <th>ID</th>
                     <th></th>
                     <th class="with-small">Название <small>Артикул</small></th>
@@ -114,6 +120,12 @@
             </thead>
             <tbody>
                 <tr v-for="product in products">
+                    <td>
+                        <input
+                                type="checkbox"
+                                :checked="massHas({type:massProductsType, id:product.id})"
+                                @change="e => massCheckbox(e, massProductsType, product.id)">
+                    </td>
                     <td>{{product.id}}</td>
                     <td><img :src="imageUrl(product.catalogImageId, 100, 100)" class="preview"></td>
                     <td class="with-small">
@@ -167,6 +179,7 @@
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
     import FDate from "../../../components/filter/f-date.vue";
+    import Dropdown from "../../../components/dropdown/dropdown.vue";
     import {mapActions, mapGetters} from "vuex";
 
     import {
@@ -180,7 +193,12 @@
     } from "../../../store/modules/products";
 
     import mediaMixin from '../../../mixins/media';
+    import massSelectionMixin from '../../../mixins/mass-selection';
     import Helpers from "../../../../scripts/helpers";
+
+    const TYPE_ARCHIVE = 'archive';
+    const TYPE_PRODUCTION = 'production';
+    const TYPE_APPROVAL = 'approval';
 
     const cleanHiddenFilter = {
         active: null,
@@ -204,11 +222,12 @@
     }, cleanHiddenFilter);
 
     export default {
-        mixins: [mediaMixin],
+        mixins: [mediaMixin, massSelectionMixin],
         components: {
             FSelect,
             FInput,
             FDate,
+            Dropdown,
         },
         props: {
             iProducts: {},
@@ -224,9 +243,33 @@
                 page: this.iCurrentPage
             });
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+            let statusDropdown = [
+                {value: {type: TYPE_ARCHIVE, value: true}, text: 'В архив'},
+                {value: {type: TYPE_ARCHIVE, value: false}, text: 'Из архива'},
+            ];
+
+            for (let id in this.options.productionStatuses) {
+                let status = this.options.productionStatuses[id];
+                statusDropdown.push({
+                    value: {type: TYPE_PRODUCTION, value: status.id},
+                    text: `Контент: ${status.name}`,
+                });
+            }
+
+            for (let id in this.options.approvalStatuses) {
+                let status = this.options.approvalStatuses[id];
+                statusDropdown.push({
+                    value: {type: TYPE_APPROVAL, value: status.id},
+                    text: `Согласование: ${status.name}`,
+                });
+            }
+
             return {
                 filter,
-                opened: false
+                opened: false,
+                statusItems: statusDropdown,
+
+                massProductsType: 'products',
             };
         },
         methods: {
@@ -296,6 +339,17 @@
             },
             formatDate(date) {
                 return new Date(date).toLocaleDateString();
+            },
+            startChangeStatus(action) {
+                console.log(action, this.massAll(this.massProductsType));
+                switch (action.type) {
+                    case TYPE_ARCHIVE:
+                        break;
+                    case TYPE_PRODUCTION:
+                        break;
+                    case TYPE_APPROVAL:
+                        break;
+                }
             }
         },
         created() {
