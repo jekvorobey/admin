@@ -2,7 +2,7 @@
     <div>
         <div class="card">
             <div class="card-body">
-                <b-button @click="showHideChatForm()" type="submit" variant="dark" v-if="!showChatForm">Добавить чат</b-button>
+                <b-button @click="showHideChatForm()" type="submit" variant="dark" v-if="!showChatForm">Создать чат</b-button>
                 <b-form @submit.prevent="" v-if="showChatForm">
                     <b-row class="mb-2">
                         <b-col cols="3">
@@ -23,7 +23,10 @@
                             <label for="chat-theme">Тема</label>
                         </b-col>
                         <b-col cols="9">
-                            <b-form-input id="chat-theme" v-model="form.theme" placeholder="Введите тему чата"/>
+                            <b-form-input id="chat-theme" v-model="form.theme" placeholder="Введите тему чата" list="list-theme"/>
+                            <datalist id="list-theme">
+                                <option v-for="theme in availableThemes">{{ theme.name }}</option>
+                            </datalist>
                         </b-col>
                     </b-row>
 
@@ -32,15 +35,10 @@
                             <label for="chat-users">Пользователи</label>
                         </b-col>
                         <b-col cols="9">
-                            <b-form-select v-model="form.status_id" id="chat-users">
+                            <b-form-select v-model="form.user_ids" multiple id="chat-users">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
-                                    {{ status.name }}
-                                    <template v-if="status.channel_id">
-                                        (
-                                        {{ channels[status.channel_id].name }}
-                                        )
-                                    </template>
+                                <b-form-select-option :value="user.id" v-for="user in users" :key="user.id">
+                                    {{ user.short_name + ': ' + user.phone }}
                                 </b-form-select-option>
                             </b-form-select>
                         </b-col>
@@ -98,7 +96,7 @@
 
                     <b-row class="mb-2" v-if="!showMessageForm">
                         <b-col>
-                            <b-button @click="onCreateChat(null, null)" class="btn btn-success">Добавить чат</b-button>
+                            <b-button @click="onCreateChat(null, null)" class="btn btn-success">Создать чат</b-button>
                         </b-col>
                     </b-row>
                 </b-form>
@@ -115,15 +113,17 @@ import CommunicationChatMessage from "../communication-chat-message/communicatio
 export default {
     name: 'communication-chat-creator',
     components: {CommunicationChatMessage},
-    props: ['type','user_id'],
+    props: ['kind','user_id'],
     data() {
         return {
             channels: {},
+            users: {},
             statuses: {},
             types: {},
             form: {
                 channel_id: null,
                 theme: '',
+                user_ids: null,
                 status_id: null,
                 type_id: null,
             },
@@ -143,13 +143,11 @@ export default {
             this.showMessageForm = !this.showMessageForm;
         },
         initComponentVar() {
+            this.form.user_ids = null;
             this.showChatForm = true;
             this.showMessageForm = true;
         },
         initComponent() {
-            this.channels = {};
-            this.statuses = {};
-            this.types = {};
             this.form.channel_id = null;
             this.form.theme = '';
             this.form.status_id = null;
@@ -161,17 +159,18 @@ export default {
             Services.net().post(this.getRoute('communications.chats.create'), {}, {
                 channel_id: this.form.channel_id,
                 theme: this.form.theme,
-                user_ids: [this.user_id],
+                user_ids: this.form.user_ids,
                 direction: 2,
                 status_id: this.form.status_id,
                 type_id: this.form.type_id,
                 message: message,
                 files: files,
             }).then((data)=> {
-                // this.chats = data.chats;
-                // this.users = data.users;
-                // this.files = data.files;
-                Services.event().$emit('updateListEvent');
+                Services.event().$emit('updateListEvent', {
+                    'chats': data.chats,
+                    'users': data.users,
+                    'files': data.files,
+                });
                 Services.hideLoader();
                 this.initComponent();
             });
@@ -179,6 +178,13 @@ export default {
     },
     computed: {
         ...mapGetters(['getRoute']),
+        availableThemes() {
+            return Object.values(this.themes).filter(theme => {
+                return !this.form.channel_id ||
+                    !theme.channel_id ||
+                    Number(theme.channel_id) === Number(this.form.channel_id);
+            })
+        },
         availableStatuses() {
             return Object.values(this.statuses).filter(status => {
                 return !this.form.channel_id ||
@@ -198,16 +204,19 @@ export default {
         Services.showLoader();
         Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
             this.channels = data.channels;
+            this.themes = data.themes;
             this.statuses = data.statuses;
             this.types = data.types;
+            this.users = data.users;
             Services.hideLoader();
         });
-        switch (this.type) {
+        switch (this.kind) {
             case 'selectedUser':
                 this.showChatForm = false;
                 this.showUsersInput = false;
                 this.showMessageForm = false;
                 this.initComponentVar = () => {
+                    this.form.user_ids = [this.user_id];
                     this.showChatForm = false;
                     this.showMessageForm = false;
                 };

@@ -60,16 +60,20 @@
                     <th>Канал</th>
                     <th>Статус</th>
                     <th>Тип</th>
+                    <th>Действия</th>
                 </tr>
             </thead>
             <tbody>
                 <template v-for="chat in chats">
-                    <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;" @click="openChat(chat)">
-                        <td>{{ chat.theme }}</td>
-                        <td>{{ users[chat.user_id].short_name }}</td>
-                        <td>{{ channels[chat.channel_id].name }}</td>
-                        <td>{{ statuses[chat.status_id].name }}</td>
-                        <td>{{ chat.type_id ? types[chat.type_id].name : '-' }}</td>
+                    <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;">
+                        <td @click="openChat(chat)">{{ chat.theme }}</td>
+                        <td @click="openChat(chat)">{{ users[chat.user_id].short_name }}</td>
+                        <td @click="openChat(chat)">{{ channels[chat.channel_id].name }}</td>
+                        <td @click="openChat(chat)">{{ statuses[chat.status_id].name }}</td>
+                        <td @click="openChat(chat)">{{ chat.type_id ? types[chat.type_id].name : '-' }}</td>
+                        <td>
+                            <b-button class="btn btn-info btn-sm" v-b-modal.modal-edit @click="onShowModalEdit(chat.id, chat.channel_id, chat.theme, chat.status_id, chat.type_id)"><fa-icon icon="pencil-alt"/></b-button>
+                        </td>
                     </tr>
                     <tr v-for="message in chat.messages" v-if="showChat === chat.id">
                         <td>{{ users[message.user_id].short_name }}</td>
@@ -86,6 +90,14 @@
                 </template>
             </tbody>
         </table>
+        <b-modal id="modal-edit" title="Редактирование чата" hide-footer>
+            <communication-chat-editor :chat_id="modal.chat_id"
+                                       :channel_id="modal.channel_id"
+                                       :theme="modal.theme"
+                                       :status_id="modal.status_id"
+                                       :type_id="modal.type_id">
+            </communication-chat-editor>
+        </b-modal>
     </div>
 </template>
 
@@ -93,10 +105,11 @@
 import { mapGetters } from 'vuex';
 import Services from '../../../scripts/services/services.js';
 import CommunicationChatMessage from '../communication-chat-message/communication-chat-message.vue';
+import CommunicationChatEditor from "../communication-chat-editor/communication-chat-editor.vue";
 
 export default {
     name: 'communication-chat-list',
-    components: {CommunicationChatMessage},
+    components: {CommunicationChatMessage, CommunicationChatEditor},
     props: {
         filter: Object,
     },
@@ -114,6 +127,13 @@ export default {
             },
             chats: [],
             users: {},
+            modal: {
+                chat_id: null,
+                channel_id: null,
+                theme: '',
+                status_id: null,
+                type_id: null,
+            },
         };
     },
     watch: {
@@ -170,28 +190,32 @@ export default {
                 files: files,
                 chat_ids: [chat_id],
             }).then(data => {
-                this.users = Object.assign(this.users, data.users);
-                this.files = Object.assign(this.files, data.files);
-                data.chats.forEach(data_chat => {
-                    this.chats.forEach((chat, key) => {
-                        if (chat.id === data_chat.id) {
-                            this.$set(this.chats, key, data_chat);
-                        }
-                    })
-                });
+                this.updateChatsList(data.chats, data.users, data.files);
             });
         },
-        updateList() {
-            this.test = this.test + 'before';
-            this.filterChats();
-            this.test = this.test + 'after';
-            Services.showLoader();
-            Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
-                this.channels = data.channels;
-                this.statuses = data.statuses;
-                this.types = data.types;
-                this.filterChats();
+        updateChatsList(chats, users, files) {
+            this.users = Object.assign(this.users, users);
+            this.files = Object.assign(this.files, files);
+            chats.forEach(data_chat => {
+                let keyAdd = false;
+                this.chats.forEach((chat, key) => {
+                    if (chat.id === data_chat.id) {
+                        this.$set(this.chats, key, data_chat);
+                        keyAdd = true;
+                    }
+                })
+                if (!keyAdd) {
+                    this.chats.push(data_chat);
+                }
             });
+        },
+        onShowModalEdit(chat_id, channel_id, theme, status_id, type_id) {
+            this.modal.chat_id = chat_id;
+            this.modal.channel_id = channel_id;
+            this.modal.theme = theme;
+            this.modal.status_id = status_id;
+            this.modal.type_id = type_id;
+            this.$bvModal.show('modal-edit')
         },
     },
     computed: {
@@ -212,10 +236,11 @@ export default {
         },
     },
     created() {
-        Services.event().$on('updateListEvent', this.updateList);
+        Services.event().$on('updateListEvent', ({chats, users, files}) => {this.updateChatsList(chats, users, files)});
         Services.showLoader();
         Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
             this.channels = data.channels;
+            this.themes = data.themes;
             this.statuses = data.statuses;
             this.types = data.types;
             this.filterChats();

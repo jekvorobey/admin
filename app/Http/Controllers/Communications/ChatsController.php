@@ -30,17 +30,33 @@ class ChatsController extends Controller
     public function directories(
         CommunicationService $communicationService,
         CommunicationStatusService $communicationStatusService,
-        CommunicationTypeService $communicationTypeService
+        CommunicationTypeService $communicationTypeService,
+        RequestInitiator $user,
+        CommunicationTypeService $communicationThemeService
     ) {
 
         $channels = $communicationService->channels()->keyBy('id');
+        $themes = $communicationThemeService->themes()->keyBy('id');
         $statuses = $communicationStatusService->statuses()->keyBy('id');
         $types = $communicationTypeService->types()->keyBy('id');
 
+        $userService = resolve(UserService::class);
+        $users = $userService
+            ->users($userService
+                ->newQuery()
+                ->include('profile')
+                ->setFilter('id', '!=', $user->userId())
+            )
+            ->keyBy('id');
+
+
+
         return response()->json([
             'channels' => $channels,
+            'themes' => $themes,
             'statuses' => $statuses,
             'types' => $types,
+            'users' => $users,
         ]);
     }
 
@@ -117,11 +133,30 @@ class ChatsController extends Controller
         $message = request('message');
         $files = request('files');
 
-        if ($message OR $files) {
+        if ($message || $files) {
             $communicationService->createMessage($chatIds, $user->userId(), $message, $files);
         }
 
-        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setUserIds($userIds));
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
+    }
+
+    public function update(CommunicationService $communicationService, RequestInitiator $user)
+    {
+        $chatId = request('chat_id');
+
+        $communicationService->updateChat(
+            $chatId,
+            request('theme'),
+            request('status_id'),
+            request('type_id')
+        );
+
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds([$chatId]));
         return response()->json([
             'chats' => $chats,
             'users' => $users,

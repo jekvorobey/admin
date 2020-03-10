@@ -274,6 +274,7 @@ Route::middleware('auth')->group(function () {
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
+            Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
         });
     });
