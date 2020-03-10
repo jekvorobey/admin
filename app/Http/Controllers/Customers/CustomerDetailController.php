@@ -16,6 +16,7 @@ use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\OrderDto;
@@ -45,18 +46,30 @@ class CustomerDetailController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var UserDto $user */
-        $user = $userService->users((new RestQuery())->setFilter('id', $customer->user_id))->first();
-        if (!$user) {
+        $user_ids = [$customer->user_id];
+        $referrer = null;
+        if ($customer->referrer_id) {
+            /** @var CustomerDto $referrer */
+            $referrer = $customerService->customers((new RestQuery())->setFilter('id', $customer->referrer_id))->first();
+            if ($referrer) {
+                $user_ids[] = $referrer->user_id;
+            }
+        }
+
+        $users = $userService->users((new RestQuery())->setFilter('id', $user_ids))->keyBy('id');
+        if (!$users->has($customer->user_id)) {
             throw new NotFoundHttpException();
         }
+        /** @var UserDto $user */
+        $user = $users[$customer->user_id];
+
         $portfolios = $customerService->portfolios($customer->id);
 
         $socials = $userService->socials($customer->user_id);
 
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
 
-        $this->title = $user->full_name ?: $user->phone ?: "Пользователь: {$customer->id}";
+        $this->title = $user->getTitle();
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
 
@@ -66,6 +79,8 @@ class CustomerDetailController extends Controller
             $avatar = $fileService->getFiles([$customer->avatar])->first();
         }
 
+        /** @var UserDto $referrer_user */
+        $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
@@ -94,6 +109,10 @@ class CustomerDetailController extends Controller
                     ];
                 }),
                 'referral' => $referral,
+                'referrer' => $referrer_user ? [
+                    'id' => $referrer->id,
+                    'title' => $referrer_user->getTitle(),
+                ] : null,
                 'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
@@ -185,25 +204,17 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function referral($id, $user_id, CustomerService $customerService, UserService $userService)
+    public function referral($id, ReferralService $referralService)
     {
-        $updateCustomer = new CustomerDto();
-        $updateCustomer->status = CustomerDto::STATUS_ACTIVE;
-        $customerService->updateCustomer($id, $updateCustomer);
+        $referralService->makeReferral($id);
 
-        $userService->deleteRole($user_id, UserDto::SHOWCASE__PROFESSIONAL);
-        $userService->addRoles($user_id, [UserDto::SHOWCASE__REFERRAL_PARTNER]);
         return response('', 204);
     }
 
-    public function professional($id, $user_id, CustomerService $customerService, UserService $userService)
+    public function professional($id, ReferralService $referralService)
     {
-        $updateCustomer = new CustomerDto();
-        $updateCustomer->status = CustomerDto::STATUS_ACTIVE;
-        $customerService->updateCustomer($id, $updateCustomer);
+        $referralService->makeProfessional($id);
 
-        $userService->deleteRole($user_id, UserDto::SHOWCASE__REFERRAL_PARTNER);
-        $userService->addRoles($user_id, [UserDto::SHOWCASE__PROFESSIONAL]);
         return response('', 204);
     }
 
