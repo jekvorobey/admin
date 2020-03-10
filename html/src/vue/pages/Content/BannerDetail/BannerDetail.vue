@@ -23,7 +23,6 @@
                         v-model="banner.active"
                         :value="1"
                         :unchecked-value="0"
-                        required
                 />
             </b-form-group>
 
@@ -35,6 +34,7 @@
             <file-input
                     @uploaded="onUploadDesktopImage"
                     class="preview-photo-input"
+                    required
             />
 
             Планшетное изображение<br>
@@ -64,6 +64,7 @@
                 <b-form-select
                         v-model="banner.type_id"
                         id="group-type"
+                        required
                 >
                     <b-form-select-option
                             :value="type.id"
@@ -76,30 +77,85 @@
             </b-form-group>
 
             <b-form-group
-                    label="Ссылка*"
-                    label-for="group-button-url"
+                    label="С кнопкой?"
+                    label-for="group-has-button"
             >
-                <b-form-input
-                        id="group-button-url"
-                        v-model="button.url"
-                        type="text"
-                        required
-                        placeholder="Введите ссылку"
+                <b-form-checkbox
+                        id="group-has-button"
+                        v-model="hasButton"
+                        :value="1"
+                        :unchecked-value="0"
                 />
             </b-form-group>
 
-            <b-form-group
-                    label="Текст*"
-                    label-for="group-button-text"
-            >
-                <b-form-input
-                        id="group-button-text"
-                        v-model="button.text"
-                        type="text"
-                        required
-                        placeholder="Введите текст"
-                />
-            </b-form-group>
+            <div v-show="hasButton">
+                Кнопка
+            </div>
+            <div v-show="hasButton" class="border border-dark rounded p-2">
+                <b-form-group
+                        label="Ссылка*"
+                        label-for="group-button-url"
+                >
+                    <b-form-input
+                            id="group-button-url"
+                            v-model="banner.button.url"
+                            type="text"
+                            :required="!!hasButton"
+                            placeholder="Введите ссылку"
+                    />
+                </b-form-group>
+
+                <b-form-group
+                        label="Текст*"
+                        label-for="group-button-text"
+                >
+                    <b-form-input
+                            id="group-button-text"
+                            v-model="banner.button.text"
+                            type="text"
+                            :required="!!hasButton"
+                            placeholder="Введите текст"
+                    />
+                </b-form-group>
+
+                <b-form-group
+                        label="Тип*"
+                        label-for="group-button-type"
+                >
+                    <b-form-select
+                            v-model="banner.button.type"
+                            id="group-button-type"
+                            :required="!!hasButton"
+                    >
+                        <b-form-select-option
+                                :value="bannerButtonType.code"
+                                v-for="bannerButtonType in bannerButtonTypes"
+                                :key="bannerButtonType.code"
+                        >
+                            {{ bannerButtonType.name }}
+                        </b-form-select-option>
+                    </b-form-select>
+                </b-form-group>
+
+                <b-form-group
+                        label="Местоположение*"
+                        label-for="group-button-location"
+                >
+                    <b-form-select
+                            v-model="banner.button.location"
+                            id="group-button-location"
+                            :required="!!hasButton"
+                    >
+                        <b-form-select-option
+                                :value="bannerButtonLocation.code"
+                                v-for="bannerButtonLocation in bannerButtonLocations"
+                                :key="bannerButtonLocation.code"
+                        >
+                            {{ bannerButtonLocation.name }}
+                        </b-form-select-option>
+                    </b-form-select>
+                </b-form-group>
+            </div>
 
             <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
@@ -118,15 +174,19 @@
         props: {
             iBanner: {},
             iBannerTypes: {},
+            iBannerButtonTypes: [],
+            iBannerButtonLocations: [],
             iBannerImages: {},
             options: {}
         },
         data() {
             return {
-                banner: this.normalizeProductGroup(this.iBanner),
-                button: [],
+                banner: this.normalizeBanner(this.iBanner),
                 bannerTypes: this.iBannerTypes,
+                bannerButtonTypes: this.iBannerButtonTypes,
+                bannerButtonLocations: this.iBannerButtonLocations,
                 bannerImages: this.iBannerImages,
+                hasButton: 1,
             };
         },
 
@@ -134,7 +194,7 @@
             ...mapActions({
                 showMessageBox: 'modal/showMessageBox',
             }),
-            normalizeProductGroup(source) {
+            normalizeBanner(source) {
                 return {
                     id: source.id ? source.id : null,
                     name: source.name ? source.name : null,
@@ -143,6 +203,16 @@
                     desktop_image_id: source.desktop_image_id ? source.desktop_image_id : null,
                     tablet_image_id: source.tablet_image_id ? source.tablet_image_id : null,
                     mobile_image_id: source.mobile_image_id ? source.mobile_image_id : null,
+                    button: this.normalizeButton(source.button || {}),
+                };
+            },
+            normalizeButton(source) {
+                return {
+                    id: source.id ? source.id : null,
+                    url: source.url ? source.url : null,
+                    text: source.text ? source.text : null,
+                    type: source.type ? source.type : null,
+                    location: source.location ? source.location : null,
                 };
             },
             submit() {
@@ -155,24 +225,34 @@
             update() {
                 let model = this.banner;
 
+                if (!this.hasButton) {
+                    model.button = this.normalizeButton({});
+                    model.button_id = null;
+                }
+
                 Services.net()
                     .put(this.getRoute('banner.update', {id: this.banner.id,}), {}, model)
                     .then((data) => {
                         this.showMessageBox({title: 'Изменения сохранены'});
-                        window.location.href = this.route('banner.list');
+                        window.location.href = this.route('banner.listPage');
                     })
-                    .catch(() => {
+                    .catch((e) => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
             },
             create() {
                 let model = this.banner;
 
+                if (!this.hasButton) {
+                    model.button = this.normalizeButton({});
+                    model.button_id = null;
+                }
+
                 Services.net()
                     .post(this.getRoute('banner.create'), {}, model)
                     .then((data) => {
                         this.showMessageBox({title: 'Страница сохранена'});
-                        window.location.href = this.route('banner.list');
+                        window.location.href = this.route('banner.listPage');
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
