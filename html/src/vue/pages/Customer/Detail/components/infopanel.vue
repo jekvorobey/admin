@@ -35,6 +35,9 @@
             <td colspan="3">
                 {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
                 ({{ datetimePrint(customer.role_date) }})
+                <span v-if="customer.referrer">
+                    (РП: <a :href="getRoute('customers.detail', {id: customer.referrer.id})">{{customer.referrer.title}}</a>)
+                </span>
             </td>
         </tr>
         <tr>
@@ -202,7 +205,7 @@ export default {
         },
         makeReferral() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.referral', {id: this.customer.id, user_id: this.customer.user_id})).then(data => {
+            Services.net().put(this.getRoute('customers.detail.referral', {id: this.customer.id})).then(data => {
                 this.customer.status = this.customerStatus.active;
                 this.customer.referral = true;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -215,7 +218,7 @@ export default {
         },
         makeProfessional() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.professional', {id: this.customer.id, user_id: this.customer.user_id})).then(data => {
+            Services.net().put(this.getRoute('customers.detail.professional', {id: this.customer.id})).then(data => {
                 this.customer.status = this.customerStatus.active;
                 this.customer.referral = false;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');

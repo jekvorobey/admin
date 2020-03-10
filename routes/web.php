@@ -271,8 +271,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'CustomerDetailController@detail')->name('detail');
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
-            Route::put('referral/{user_id}', 'CustomerDetailController@referral')->name('detail.referral');
-            Route::put('professional/{user_id}', 'CustomerDetailController@professional')->name('detail.professional');
+            Route::put('referral', 'CustomerDetailController@referral')->name('detail.referral');
+            Route::put('professional', 'CustomerDetailController@professional')->name('detail.professional');
             Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
             Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
