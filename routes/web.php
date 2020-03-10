@@ -311,4 +311,11 @@ Route::middleware('auth')->group(function () {
 
     });
 
+    Route::prefix('referral')->namespace('Referral')->name('referral.')->group(function () {
+        Route::prefix('levels')->group(function () {
+            Route::get('', 'LevelsController@list')->name('levels');
+        });
+
+    });
+
 });

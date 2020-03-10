@@ -191,6 +191,15 @@ class Menu
                         'title' => 'Вознаграждения',
                         'route' => '#',
                     ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Уровни',
+                                'route' => route('referral.levels'),
+                            ],
+                        ]
+                    ],
                 ],
             ],
             [
