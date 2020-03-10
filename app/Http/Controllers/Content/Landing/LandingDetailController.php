@@ -24,6 +24,8 @@ class LandingDetailController extends Controller
 
         return $this->render('Content/LandingDetail', [
             'iLanding' => $landing,
+            'iWidgetsList' => [],
+            'iAllWidgetsNames' => [],
             'options' => [],
         ]);
     }
