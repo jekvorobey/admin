@@ -75,9 +75,9 @@
                     <shadow-card
                             title="Изображение"
                             :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
-                            @onEdit="startUploadImage(5, howToImage.id)"
-                            @onDelete="onDeleteImage(5, howToImage.id)">
-                        <img :src="howToImage.url" class="big-image">
+                            @onEdit="startUploadImage(4, descriptionImage.id)"
+                            @onDelete="onDeleteImage(4, descriptionImage.id)">
+                        <img :src="descriptionImage.url" class="big-image">
                     </shadow-card>
                 </div>
             </div>
@@ -115,9 +115,9 @@
                     <shadow-card
                             title="Изображение"
                             :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
-                            @onEdit="startUploadImage(4, descriptionImage.id)"
-                            @onDelete="onDeleteImage(4, descriptionImage.id)">
-                        <img :src="descriptionImage.url" class="big-image">
+                            @onEdit="startUploadImage(5, howToImage.id)"
+                            @onDelete="onDeleteImage(5, howToImage.id)">
+                        <img :src="howToImage.url" class="big-image">
                     </shadow-card>
                 </div>
             </div>
