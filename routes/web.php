@@ -192,6 +192,17 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', 'BannerDetailController@update')->where(['id' => '[0-9]+'])->name('banner.update');
             Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
         });
+
+        Route::prefix('landing')->namespace('Landing')->group(function () {
+            Route::get('/', 'LandingListController@listPage')->name('lending.listPage');
+            Route::get('/{id}', 'LandingDetailController@updatePage')->where(['id' => '[0-9]+'])->name('landing.updatePage');
+            Route::get('/create', 'LandingDetailController@createPage')->name('landing.createPage');
+
+            Route::get('/page', 'LandingListController@page')->name('landing.page');
+            Route::post('/', 'LandingDetailController@create')->where(['id' => '[0-9]+'])->name('landing.create');
+            Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
+            Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
@@ -278,8 +289,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'CustomerDetailController@detail')->name('detail');
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
-            Route::put('referral/{user_id}', 'CustomerDetailController@referral')->name('detail.referral');
-            Route::put('professional/{user_id}', 'CustomerDetailController@professional')->name('detail.professional');
+            Route::put('referral', 'CustomerDetailController@referral')->name('detail.referral');
+            Route::put('professional', 'CustomerDetailController@professional')->name('detail.professional');
             Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
             Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
