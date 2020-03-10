@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Content\Landing;
 use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\LandingDto;
+use Cms\Dto\LandingWidgetDto;
 use Cms\Services\LandingService\LandingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class LandingDetailController extends Controller
 {
@@ -21,11 +23,12 @@ class LandingDetailController extends Controller
         LandingService $landingService
     ) {
         $landing = $this->getLanding($id, $landingService);
+        $widgets = $this->getWidgets($landingService);
 
         return $this->render('Content/LandingDetail', [
             'iLanding' => $landing,
-            'iWidgetsList' => [],
-            'iAllWidgetsNames' => [],
+            'iWidgetsList' => $widgets,
+            'iAllWidgetsNames' => $widgets->pluck('widgetCode')->all(),
             'options' => [],
         ]);
     }
@@ -34,7 +37,8 @@ class LandingDetailController extends Controller
      * @return mixed
      * @throws CmsException
      */
-    public function createPage() {
+    public function createPage()
+    {
         return $this->render('Content/LandingDetail', [
             'iLanding' => [],
             'options' => [],
@@ -83,5 +87,15 @@ class LandingDetailController extends Controller
         $query->setFilter('id', $id);
 
         return $landingService->landings($query)->first();
+    }
+
+    /**
+     * @param LandingService $landingService
+     * @return LandingWidgetDto[]|Collection
+     * @throws CmsException
+     */
+    private function getWidgets(LandingService $landingService)
+    {
+        return $landingService->widgets($landingService->newQuery());
     }
 }
