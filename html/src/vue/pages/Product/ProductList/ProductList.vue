@@ -94,8 +94,9 @@
         </div>
 
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <div v-if="!massEmpty(massProductsType)" class="action-bar d-flex justify-content-start">
-                <dropdown :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
+            <div class="action-bar d-flex justify-content-start">
+                <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                <dropdown v-if="!massEmpty(massProductsType)" :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
                     Сменить статус
                 </dropdown>
             </div>
@@ -121,10 +122,11 @@
             <tbody>
                 <tr v-for="product in products">
                     <td>
-                        <input
+                        <input v-if="product.ready"
                                 type="checkbox"
                                 :checked="massHas({type:massProductsType, id:product.id})"
                                 @change="e => massCheckbox(e, massProductsType, product.id)">
+                        <fa-icon v-else icon="exclamation-triangle" class="text-warning" title="Товар помечен для обновления"></fa-icon>
                     </td>
                     <td>{{product.id}}</td>
                     <td><img :src="imageUrl(product.catalogImageId, 100, 100)" class="preview"></td>
@@ -170,6 +172,19 @@
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('StatusCommentModal')">
+                <div slot="header">
+                    Комментарий
+                </div>
+                <div slot="body">
+                    <v-input tag="textarea" v-model="$v.statusComment.$model">
+                        Комментарий
+                    </v-input>
+                    <button @click="applyStatus" class="btn btn-dark mt-3" :disabled="!$v.$anyDirty">Сохранить</button>
+                </div>
+            </modal>
+        </transition>
     </layout-main>
 </template>
 
@@ -179,21 +194,30 @@
     import FSelect from "../../../components/filter/f-select.vue";
     import FInput from "../../../components/filter/f-input.vue";
     import FDate from "../../../components/filter/f-date.vue";
+    import VInput from "../../../components/controls/VInput/VInput.vue";
     import Dropdown from "../../../components/dropdown/dropdown.vue";
+    import Modal from "../../../components/controls/modal/modal.vue";
     import {mapActions, mapGetters} from "vuex";
 
     import {
         NAMESPACE,
+        GET_LIST,
         GET_PAGE_NUMBER,
         GET_TOTAL,
         GET_PAGE_SIZE,
         GET_NUM_PAGES,
         SET_PAGE,
-        ACT_LOAD_PAGE, GET_LIST
+        ACT_LOAD_PAGE,
+        ACT_UPDATE_APPROVAL,
+        ACT_UPDATE_ARCHIVE,
+        ACT_UPDATE_PRODUCTION
     } from "../../../store/modules/products";
 
+    import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
+    import {validationMixin} from "vuelidate";
+    import {required} from 'vuelidate/lib/validators';
     import Helpers from "../../../../scripts/helpers";
 
     const TYPE_ARCHIVE = 'archive';
@@ -201,8 +225,6 @@
     const TYPE_APPROVAL = 'approval';
 
     const cleanHiddenFilter = {
-        active: null,
-        archive: null,
         brand: '',
         category: '',
         approvalStatus: '',
@@ -219,15 +241,24 @@
         id: '',
         name: '',
         vendorCode: '',
+        active: null,
+        archive: null,
     }, cleanHiddenFilter);
 
     export default {
-        mixins: [mediaMixin, massSelectionMixin],
+        mixins: [
+            modalMixin,
+            mediaMixin,
+            massSelectionMixin,
+            validationMixin
+        ],
         components: {
+            Modal,
             FSelect,
             FInput,
             FDate,
             Dropdown,
+            VInput,
         },
         props: {
             iProducts: {},
@@ -269,17 +300,27 @@
                 opened: false,
                 statusItems: statusDropdown,
 
+                statusComment: '',
+                massActionType: null,
+                massStatus: null,
+
                 massProductsType: 'products',
             };
         },
+        validations: {
+            statusComment: {required},
+        },
         methods: {
             ...mapActions(NAMESPACE, [
-                ACT_LOAD_PAGE
+                ACT_LOAD_PAGE,
+                ACT_UPDATE_PRODUCTION,
+                ACT_UPDATE_ARCHIVE,
+                ACT_UPDATE_APPROVAL
             ]),
             loadPage(page) {
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
-                    if (value) {
+                    if (value !== undefined && value !== null && value !== '') {
                         cleanFilter[key] = value;
                     }
                 }
@@ -288,9 +329,9 @@
                     filter: cleanFilter,
                 }));
 
-                this[ACT_LOAD_PAGE]({
+                return this[ACT_LOAD_PAGE]({
                     page: page,
-                    filter: this.filter
+                    filter: cleanFilter
                 });
             },
 
@@ -341,15 +382,51 @@
                 return new Date(date).toLocaleDateString();
             },
             startChangeStatus(action) {
-                console.log(action, this.massAll(this.massProductsType));
+                this.massActionType = action.type;
+                this.massStatus = action.value;
+                this.statusComment = '';
                 switch (action.type) {
                     case TYPE_ARCHIVE:
+                        if (action.value) {
+                            this.openModal('StatusCommentModal');
+                            return;
+                        }
                         break;
                     case TYPE_PRODUCTION:
+                        if (action.value === this.options.productionCancel) {
+                            this.openModal('StatusCommentModal');
+                            return;
+                        }
                         break;
                     case TYPE_APPROVAL:
+                        if (action.value === this.options.approvalCancel) {
+                            this.openModal('StatusCommentModal');
+                            return;
+                        }
                         break;
                 }
+                this.applyStatus();
+            },
+            applyStatus() {
+                this.closeModal();
+                let ids = this.massAll(this.massProductsType);
+                let promise;
+                switch (this.massActionType) {
+                    case TYPE_ARCHIVE:
+                        promise = this[ACT_UPDATE_ARCHIVE]({ids, status: this.massStatus, comment: this.statusComment});
+                        break;
+                    case TYPE_PRODUCTION:
+                        promise = this[ACT_UPDATE_PRODUCTION]({ids, status: this.massStatus, comment: this.statusComment});
+                        break;
+                    case TYPE_APPROVAL:
+                        promise = this[ACT_UPDATE_APPROVAL]({ids, status: this.massStatus, comment: this.statusComment});
+                        break;
+                }
+                promise.then(() => {
+                    this.loadPage(this.page).then(() => {
+                        this.massClear(this.massProductsType);
+                    });
+                });
             }
         },
         created() {

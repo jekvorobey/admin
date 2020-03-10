@@ -18,6 +18,7 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ProductListController extends Controller
 {
@@ -41,8 +42,10 @@ class ProductListController extends Controller
                 'categories' => $categoryService->categories($categoryService->newQuery()),
                 'productionStatuses' => ProductProductionStatus::allStatuses(),
                 'productionDone' => ProductProductionStatus::DONE,
+                'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
+                'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ]
         ]);
     }
@@ -61,6 +64,47 @@ class ProductListController extends Controller
         return response()->json($data);
     }
     
+    public function updateApprovalStatus(Request $request, ProductService $productService)
+    {
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
+        }
+        
+        $productService->changeApprovalStatus($ids, $status, $comment);
+        
+        return response()->json();
+    }
+    
+    public function updateProductionStatus(Request $request, ProductService $productService)
+    {
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
+        }
+        
+        $productService->changeProductionStatus($ids, $status, $comment);
+        
+        return response()->json();
+    }
+    
+    public function updateArchiveStatus(Request $request, ProductService $productService)
+    {
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
+        }
+        
+        $productService->changeArchiveStatus($ids, $status, $comment);
+        
+        return response()->json();
+    }
     protected function makeQuery(Request $request): ProductQuery
     {
         $query = new ProductQuery();
@@ -80,14 +124,21 @@ class ProductListController extends Controller
             ProductQuery::ARCHIVE,
             ProductQuery::PRODUCTION_STATUS,
             ProductQuery::APPROVAL_STATUS,
+            ProductQuery::INDEX_MARK,
         ]);
         
         $filter = $request->get('filter', []);
         $query->name = data_get($filter, 'name');
         $query->id = data_get($filter, 'id');
         $query->vendorCode = data_get($filter, 'vendorCode');
-        $query->active = to_boolean(data_get($filter, 'active'));
-        $query->archive = to_boolean(data_get($filter, 'archive'));
+        $active = data_get($filter, 'active');
+        if ($active !== null) {
+            $query->active = to_boolean($active);
+        }
+        $archive = data_get($filter, 'archive');
+        if ($archive !== null) {
+            $query->archive = to_boolean($archive);
+        }
         $query->brandCode = data_get($filter, 'brand');
         $query->categoryCode = data_get($filter, 'category');
         $query->approvalStatus = data_get($filter, 'approvalStatus');

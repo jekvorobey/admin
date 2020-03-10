@@ -4,6 +4,7 @@ export const NAMESPACE = 'massSelection';
 
 export const SET_SELECT = 'set_select';
 export const SET_DESELECT = 'set_deselect';
+export const SET_CLEAR = 'set_clear';
 
 export const GET_EMPTY = 'get_empty';
 export const GET_HAS = 'get_has';
@@ -30,6 +31,9 @@ export default {
             if (index !== -1) {
                 state.selection[type].splice(index, 1);
             }
+        },
+        [SET_CLEAR](state, type) {
+            state.selection = {...state.selection, [type]: []}
         }
     },
     getters: {

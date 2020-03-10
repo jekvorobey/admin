@@ -140,6 +140,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', 'ProductListController@index')->name('products.list');
         Route::get('page', 'ProductListController@page')->name('products.listPage');
+        
+        Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
+        Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
+        Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
+        
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');

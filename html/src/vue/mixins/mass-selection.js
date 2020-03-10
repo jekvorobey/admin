@@ -5,7 +5,8 @@ import {
     GET_EMPTY,
     GET_HAS,
     SET_SELECT,
-    SET_DESELECT
+    SET_DESELECT,
+    SET_CLEAR
 } from "../store/modules/mass-selection";
 
 export default {
@@ -19,7 +20,8 @@ export default {
     methods: {
         ...mapMutations(NAMESPACE, {
             massSet: SET_SELECT,
-            massUnset: SET_DESELECT
+            massUnset: SET_DESELECT,
+            massClear: SET_CLEAR
         }),
         massCheckbox(e, type, id) {
             if (e.target.checked) {
