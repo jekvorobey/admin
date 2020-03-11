@@ -117,12 +117,10 @@ class Controller extends BaseController
         }
     }
     
-    protected function validate(Request $request, array $rules): array
+    protected function validate(Request $request, array $rules, array $customAttributes = []): array
     {
         $data = $request->all();
-        $validator = Validator::make($data, $rules, [
-            'required' => 'required :attribute'
-        ]);
+        $validator = Validator::make($data, $rules, [], $customAttributes);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }

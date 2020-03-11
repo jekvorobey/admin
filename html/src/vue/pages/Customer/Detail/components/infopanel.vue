@@ -195,9 +195,7 @@ export default {
                 this.customer.avatar = this.form.avatar;
                 this.customer.comment_status = "";
                 Services.msg("Изменения сохранены");
-            }).catch(errorMsg => {
-                Services.msg(errorMsg || "Ошибка сохранения", 'danger');
-            }).then(data => {
+            }).finally(data => {
                 Services.hideLoader();
             })
         },
@@ -208,9 +206,7 @@ export default {
                 this.customer.referral = true;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
                 Services.msg("Изменения сохранены");
-            }).catch(errorMsg => {
-                Services.msg(errorMsg || "Ошибка сохранения", 'danger');
-            }).then(data => {
+            }).finally(data => {
                 Services.hideLoader();
             })
         },
@@ -221,9 +217,7 @@ export default {
                 this.customer.referral = false;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
                 Services.msg("Изменения сохранены");
-            }).catch(errorMsg => {
-                Services.msg(errorMsg || "Ошибка сохранения", 'danger');
-            }).then(data => {
+            }).finally(data => {
                 Services.hideLoader();
             })
         },

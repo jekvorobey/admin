@@ -314,8 +314,16 @@ Route::middleware('auth')->group(function () {
     Route::prefix('referral')->namespace('Referral')->name('referral.')->group(function () {
         Route::prefix('levels')->group(function () {
             Route::get('', 'LevelsController@list')->name('levels');
+            Route::prefix('{level_id}')->group(function () {
+                Route::post('', 'LevelsController@detail')->name('levels.detail');
+                Route::put('', 'LevelsController@putLevel')->name('levels.save');
+                Route::put('commission', 'LevelsController@putCommission')->name('levels.commission.save');
+                Route::prefix('special-commission')->group(function () {
+                    Route::put('', 'LevelsController@putSpecialCommission')->name('levels.special-commission.save');
+                    Route::delete('', 'LevelsController@removeSpecialCommission')->name('levels.special-commission.remove');
+                });
+            });
         });
-
     });
 
 });
