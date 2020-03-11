@@ -187,6 +187,10 @@ class Menu
                         'title' => 'Вознаграждения',
                         'route' => route('referral.levels'),
                     ],
+                    [
+                        'title' => 'Параметры отображения',
+                        'route' => route('referral.options'),
+                    ],
                 ],
             ],
             [

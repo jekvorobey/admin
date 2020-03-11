@@ -324,6 +324,11 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
+
+        Route::prefix('options')->group(function () {
+            Route::get('', 'OptionsController@index')->name('options');
+            Route::put('', 'OptionsController@save')->name('options.save');
+        });
     });
 
 });
