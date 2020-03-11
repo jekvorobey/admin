@@ -31,7 +31,6 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
 import FormModal from './components/form-modal.vue';
 import modalMixin from '../../../../mixins/modal';
 import Services from '../../../../../scripts/services/services.js';
@@ -45,9 +44,6 @@ export default {
             activities: this.iActivities,
             activity: {}
         };
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     methods: {
         fillActivity(activity) {

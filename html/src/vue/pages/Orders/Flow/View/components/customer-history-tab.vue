@@ -23,15 +23,11 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 
 export default {
     props: {
         history: Array,
         pager: Object
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     mounted() {
     }

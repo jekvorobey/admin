@@ -149,8 +149,6 @@ import Service from '../../../../../scripts/services/services';
 import withQuery from 'with-query';
 import qs from 'qs';
 
-import { mapGetters } from 'vuex';
-
 import FInput from '../../../../components/filter/f-input.vue';
 import FDate from '../../../../components/filter/f-date.vue';
 import FSelect from '../../../../components/filter/f-select.vue';
@@ -410,7 +408,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         statusOptions() {
             return Object.values(this.orderStatuses).map(status => ({
                 value: status.id,

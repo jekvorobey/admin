@@ -42,7 +42,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 
 export default {
     name: 'modal-portfolios',
@@ -55,9 +54,6 @@ export default {
                 name: "",
             }
         }
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     methods: {
         savePortfolios() {

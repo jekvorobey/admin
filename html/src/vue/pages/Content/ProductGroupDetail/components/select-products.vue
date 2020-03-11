@@ -34,7 +34,6 @@
 
 <script>
     import Services from '../../../../../scripts/services/services';
-    import {mapGetters} from 'vuex';
 
     export default {
         components: {},
@@ -68,9 +67,6 @@
                         });
                 }
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
         watch: {
             selectedProductIds(val) {

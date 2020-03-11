@@ -235,14 +235,13 @@
 
 <script>
     import Service from '../../../../../scripts/services/services';
-    import {mapGetters} from 'vuex';
     import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import DatePicker from 'vue2-datepicker';
 
-    import {validationMixin} from 'vuelidate';
-    import {integer, required, requiredIf} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { integer, required, requiredIf } from 'vuelidate/lib/validators';
 
     export default {
     name: 'page-stores-detail',
@@ -440,7 +439,6 @@
 
     },
     computed: {
-        ...mapGetters(['getRoute']),
         merchantOptions() {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
         },

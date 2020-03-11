@@ -178,9 +178,8 @@
     import VideoEditModal from './product-video-modal.vue';
     import TipForm from './tip-form.vue';
 
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
-    import Media from "../../../../../scripts/media";
+    import Services from '../../../../../scripts/services/services';
+    import Media from '../../../../../scripts/media';
 
     export default {
         components: {
@@ -277,7 +276,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             mainImage() {
                 let mainImages = this.images.filter(image => image.type === 1);
                 return mainImages.length > 0 ? mainImages[0] : {

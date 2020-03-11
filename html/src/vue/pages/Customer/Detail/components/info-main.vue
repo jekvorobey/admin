@@ -105,7 +105,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
@@ -133,7 +132,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},

@@ -58,7 +58,6 @@
 
 <script>
 
-import { mapGetters } from 'vuex';
 import VTabs from '../../../../components/tabs/tabs.vue';
 
 import BasketItemsTab from './components/basket-items-tab.vue';
@@ -120,7 +119,6 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         tooltipOrderCost() {
             return 'С учётом всех скидок и доставки';
         },

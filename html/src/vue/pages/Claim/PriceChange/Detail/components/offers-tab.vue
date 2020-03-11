@@ -67,7 +67,6 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
     import Services from '../../../../../../scripts/services/services';
     import OfferPriceRejectModal from './offer-price-reject-modal.vue';
     import modalMixin from '../../../../../mixins/modal';
@@ -133,7 +132,6 @@
             },
         },
         computed: {
-            ...mapGetters(['getRoute']),
             isWorkStatus() {
                 return this.isStatus(2);
             },

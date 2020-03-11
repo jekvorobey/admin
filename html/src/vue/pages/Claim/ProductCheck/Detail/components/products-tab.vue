@@ -40,7 +40,6 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
 
     export default {
     props: [
@@ -55,7 +54,6 @@
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         isWorkStatus() {
             return this.isStatus(2);
         },

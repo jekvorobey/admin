@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 
 export default {
@@ -53,9 +52,6 @@ export default {
         return {
             orders: [],
         }
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     created() {
         Services.showLoader();

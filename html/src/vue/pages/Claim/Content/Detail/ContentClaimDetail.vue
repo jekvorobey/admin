@@ -42,8 +42,6 @@
 
 <script>
 
-    import {mapGetters} from 'vuex';
-
     export default {
     props: {
         claim: {},
@@ -70,9 +68,6 @@
             }
         },
     },
-    computed: {
-        ...mapGetters(['getRoute']),
-    }
 };
 </script>
 

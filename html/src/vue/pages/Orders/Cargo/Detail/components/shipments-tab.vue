@@ -71,11 +71,9 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-
 import Dropdown from '../../../../../components/dropdown/dropdown.vue';
 import modal from '../../../../../components/controls/modal/modal.vue';
-import VSelect from "../../../../../components/controls/VSelect/VSelect.vue";
+import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
 import AddShipmentsForm from './forms/add-shipments-form.vue';
 
 import modalMixin from '../../../../../mixins/modal';
@@ -130,7 +128,6 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         isCreatedStatus() {
             return this.isStatus(1);
         },

@@ -15,17 +15,15 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
 
     import Helpers from '../../../../../scripts/helpers';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
-    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
 
@@ -67,9 +65,6 @@
                     });
             }
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>
 

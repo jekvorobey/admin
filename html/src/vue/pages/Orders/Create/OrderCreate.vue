@@ -68,20 +68,15 @@
 
 <script>
 
-import Services from "../../../../scripts/services/services";
-import qs from 'qs';
-
-import {mapGetters} from "vuex";
+import Services from '../../../../scripts/services/services';
 
 import FInput from '../../../components/filter/f-input.vue';
 import FDate from '../../../components/filter/f-date.vue';
 import FSelect from '../../../components/filter/f-select.vue';
 import FMultiSelect from '../../../components/filter/f-multi-select.vue';
 import Dropdown from '../../../components/dropdown/dropdown.vue';
-import Helpers from "../../../../scripts/helpers";
 
 import modalMixin from '../../../mixins/modal.js';
-
 
 export default {
     name: 'page-order-create',
@@ -190,8 +185,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
-
         avaliableCities() {
             return [
                 {

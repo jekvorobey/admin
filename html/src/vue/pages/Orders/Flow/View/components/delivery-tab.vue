@@ -32,7 +32,6 @@
     </div>
 </template>
 <script>
-    import {mapGetters} from "vuex";
 
     export default {
         data() {
@@ -66,9 +65,6 @@
                 let service = this.services[id];
                 return service ? service.name : 'N/A';
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
         mounted() {
         }

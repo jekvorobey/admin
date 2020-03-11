@@ -14,7 +14,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 
 export default {
     name: 'modal-mark-status',
@@ -32,7 +31,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},

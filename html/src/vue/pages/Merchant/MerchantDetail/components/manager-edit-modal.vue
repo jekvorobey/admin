@@ -17,14 +17,13 @@
 
 <script>
     import modal from '../../../../components/controls/modal/modal.vue';
-    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
     export default {
         mixins: [modalMixin, validationMixin],
@@ -68,7 +67,6 @@
             },
         },
         computed: {
-            ...mapGetters(['getRoute']),
             managerOptions() {
                 return this.managers.map(manager => ({value: manager.id, text: manager.name}));
             }

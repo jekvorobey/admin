@@ -37,7 +37,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 import ModalBrands from './modal-brands.vue';
 import ModalCategories from './modal-categories.vue';
@@ -55,9 +54,6 @@ export default {
                 categories: [],
             },
         };
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     methods: {
         categoryName(category_id) {

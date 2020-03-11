@@ -118,8 +118,8 @@
 </template>
 
 <script>
-    import {mapActions, mapGetters} from "vuex";
-    import Services from "../../../../scripts/services/services";
+    import { mapActions } from 'vuex';
+    import Services from '../../../../scripts/services/services';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
     import SelectProducts from './components/select-products.vue';
@@ -228,7 +228,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             previewPhoto() {
                 const fileId = this.productGroup.preview_photo_id;
 

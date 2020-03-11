@@ -90,7 +90,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../scripts/services/services.js';
 import CommunicationChatMessage from '../communication-chat-message/communication-chat-message.vue';
 
@@ -183,7 +182,6 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         availableStatuses() {
             return Object.values(this.statuses).filter(status => {
                 return !this.form.channel_id ||

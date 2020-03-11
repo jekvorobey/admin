@@ -122,7 +122,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import moment from 'moment';
@@ -151,7 +150,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},

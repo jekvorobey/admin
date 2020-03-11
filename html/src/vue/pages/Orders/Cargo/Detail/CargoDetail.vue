@@ -73,7 +73,6 @@
 
 <script>
 
-import {mapGetters} from "vuex";
 import Services from '../../../../../scripts/services/services';
 import modalMixin from '../../../../mixins/modal.js';
 
@@ -146,7 +145,6 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         tooltipShipmentCost() {
             return 'С учётом скидки';
         },

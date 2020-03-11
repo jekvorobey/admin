@@ -17,6 +17,7 @@ import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts
 import OrderStatus from './components/order-status.vue';
 import Media from '../scripts/media.js';
 import * as moment from 'moment';
+import { mapGetters } from 'vuex';
 
 Vue.use(BootstrapVue);
 
@@ -74,6 +75,7 @@ Vue.mixin({
         },
     },
     computed: {
+        ...mapGetters(['getRoute']),
         staticText() {
             return this.$store.state.layout.staticBlock;
         },

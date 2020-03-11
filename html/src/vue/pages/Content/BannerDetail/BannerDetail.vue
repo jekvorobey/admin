@@ -163,8 +163,8 @@
 </template>
 
 <script>
-    import {mapActions, mapGetters} from "vuex";
-    import Services from "../../../../scripts/services/services";
+    import { mapActions } from 'vuex';
+    import Services from '../../../../scripts/services/services';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
 
     export default {
@@ -272,7 +272,6 @@
             },
         },
         computed: {
-            ...mapGetters(['getRoute']),
             desktopImage() {
                 const fileId = this.banner.desktop_image_id;
 

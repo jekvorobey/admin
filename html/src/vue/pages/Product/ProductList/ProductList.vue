@@ -189,36 +189,36 @@
 </template>
 
 <script>
-    import withQuery from "with-query";
+    import withQuery from 'with-query';
 
-    import FSelect from "../../../components/filter/f-select.vue";
-    import FInput from "../../../components/filter/f-input.vue";
-    import FDate from "../../../components/filter/f-date.vue";
-    import VInput from "../../../components/controls/VInput/VInput.vue";
-    import Dropdown from "../../../components/dropdown/dropdown.vue";
-    import Modal from "../../../components/controls/modal/modal.vue";
-    import {mapActions, mapGetters} from "vuex";
+    import FSelect from '../../../components/filter/f-select.vue';
+    import FInput from '../../../components/filter/f-input.vue';
+    import FDate from '../../../components/filter/f-date.vue';
+    import VInput from '../../../components/controls/VInput/VInput.vue';
+    import Dropdown from '../../../components/dropdown/dropdown.vue';
+    import Modal from '../../../components/controls/modal/modal.vue';
+    import { mapActions, mapGetters } from 'vuex';
 
     import {
-        NAMESPACE,
-        GET_LIST,
-        GET_PAGE_NUMBER,
-        GET_TOTAL,
-        GET_PAGE_SIZE,
-        GET_NUM_PAGES,
-        SET_PAGE,
         ACT_LOAD_PAGE,
         ACT_UPDATE_APPROVAL,
         ACT_UPDATE_ARCHIVE,
-        ACT_UPDATE_PRODUCTION
-    } from "../../../store/modules/products";
+        ACT_UPDATE_PRODUCTION,
+        GET_LIST,
+        GET_NUM_PAGES,
+        GET_PAGE_NUMBER,
+        GET_PAGE_SIZE,
+        GET_TOTAL,
+        NAMESPACE,
+        SET_PAGE,
+    } from '../../../store/modules/products';
 
     import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
-    import {validationMixin} from "vuelidate";
-    import {required} from 'vuelidate/lib/validators';
-    import Helpers from "../../../../scripts/helpers";
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
+    import Helpers from '../../../../scripts/helpers';
 
     const TYPE_ARCHIVE = 'archive';
     const TYPE_PRODUCTION = 'production';
@@ -439,7 +439,6 @@
             this.opened = this.isHiddenFilterDefaultOpen();
         },
         computed: {
-            ...mapGetters(['getRoute']),
             ...mapGetters(NAMESPACE, {
                 GET_PAGE_NUMBER,
                 total: GET_TOTAL,

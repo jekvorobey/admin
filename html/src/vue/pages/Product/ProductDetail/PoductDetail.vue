@@ -47,7 +47,6 @@
 
 <script>
 
-    import {mapGetters} from 'vuex';
     import VTabs from '../../../components/tabs/tabs.vue';
 
     import PropertyTab from './components/property-tab.vue';
@@ -125,7 +124,6 @@
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         title() {
             return this.$store.state.title;
         },

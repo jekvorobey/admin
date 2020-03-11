@@ -93,7 +93,6 @@
     </div>
 </template>
 <script>
-    import {mapGetters} from 'vuex';
 
     export default {
     data() {
@@ -117,9 +116,6 @@
         deleteProduct(id) {
 
         }
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     mounted() {
     }

@@ -14,7 +14,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 import NestedSets from '../../../../../scripts/nestedSets.js';
 import ModalCategoriesCheckbox from './modal-categories-checkbox.vue';
 
@@ -30,7 +29,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         formCategories() {
             return NestedSets.process(Object.values(this.categories));
         },
