@@ -194,7 +194,7 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('landing')->namespace('Landing')->group(function () {
-            Route::get('/', 'LandingListController@listPage')->name('lending.listPage');
+            Route::get('/', 'LandingListController@listPage')->name('landing.listPage');
             Route::get('/{id}', 'LandingDetailController@updatePage')->where(['id' => '[0-9]+'])->name('landing.updatePage');
             Route::get('/create', 'LandingDetailController@createPage')->name('landing.createPage');
 

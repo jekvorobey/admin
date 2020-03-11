@@ -2,7 +2,7 @@
     <layout-main back>
         <div class="container-fluid">
             <h2 v-if="!isFullScreenMode">{{ title }}</h2>
-            <form method="POST" :action="action">
+            <form method="POST" @submit="submit">
 
                 <input type="hidden" name="_method" value="PUT" v-if="isEditMode"/>
                 <input type="hidden" name="preview_uniqid" :value="landingPreview.uniqid" />
@@ -246,14 +246,7 @@
                             successCallback();
                         }
                     } else if ($('.validation-error-message:visible').length) {
-                        const errorOffset = $('.validation-error-message:visible').offset().top;
-                        if (scope === 'content') {
-                            const parentBlock = $('.widget-settings');
-                            const parentOffset = parentBlock.scrollTop() - parentBlock.offset().top;
-                            parentBlock.animate({scrollTop: parentOffset + errorOffset - 75 }, 0);
-                        } else {
-                            $('html, body').animate({ scrollTop: errorOffset }, 0);
-                        }
+                        // todo Тут можно сделать скрол window.scroll до элемента с ошибкой $('.validation-error-message:visible')
                     }
                 });
             },
@@ -433,6 +426,7 @@
             updatePreviewLanding(callback) {
                 let vm = this;
                 if (this.landing && this.landing.name) {
+                    // todo Переделать на нормальный запрос
                     axios.post(`/ajax/landings-preview/`, {
                         landing: this.landing,
                         landingPreview: this.landingPreview,
@@ -453,26 +447,33 @@
 
                 this.validateFormAndRun(this.tab, () => {
                     this.updatePreviewLanding((previewData) => {
-                        $(event.target).attr('data-content', `<a href="${previewData.link}" target="_blank">${previewData.link}</a>`);
-                        $(event.target)
-                            .popover({
-                                html: true,
-                                placement: 'left',
-                                trigger: 'focus',
-                                delay: {
-                                    'show': 0,
-                                    'hide': 1000
-                                }
-                            })
-                            .popover('show');
+                        // todo Тут сделать отображение тултипа с актуальной ссылкой на превью-просмотр
                     });
                 });
             },
+            submit() {
+                // todo сделать раздиление на update/create
+                let model = this.landing;
+                model.contentItems = this.contentItems;
+
+                Services.net()
+                    .put(this.getRoute('lending.update', {id: this.landing.id,}), {}, model)
+                    .then((data) => {
+                        this.showMessageBox({title: 'Изменения сохранены'});
+                        window.location.href = this.route('lending.listPage');
+                    })
+                    .catch(() => {
+                        this.notificationError('Попробуйте позже');
+                    });
+            },
             deleteLanding() {
+                // todo Переделать на нормальную модалку
                 swalConfirm(result => {
                     if (result.value && this.id) {
+                        // todo Переделать на нормальный запрос
                         axios.delete(`/landings/${this.id}`)
                             .then((response) => {
+                                // todo Переделать на нормальный роут
                                 window.location = '/landings';
                             })
                             .catch((err) => this.notificateAndLogError(err));
@@ -480,8 +481,10 @@
                 }, 'Вы действительно хотите безвозвратно удалить лэндинг?')
             },
             cancel() {
+                // todo Переделать на нормальную модалку
                 swalConfirm(result => {
                     if (result.value) {
+                        // todo Переделать на нормальный роут
                         window.location = '/landings';
                     }
                 }, 'Вы действительно хотите безвозвратно отменить изменения?')
@@ -510,16 +513,13 @@
         },
         computed: {
             isEditMode() {
-                return !!this.id;
+                return !!this.landing.id;
             },
             isFullScreenMode() {
                 return this.tab === 'content';
             },
             title() {
                 return this.isEditMode ? `Редактирование лэндинга "${this.landing.name}"` : 'Добавление нового лэндинга';
-            },
-            action() {
-                return this.isEditMode ? `/landings/${this.id}` : `/landings`;
             },
             widgetsListFiltered() {
                 return this.widgetsList.filter(widget => {
