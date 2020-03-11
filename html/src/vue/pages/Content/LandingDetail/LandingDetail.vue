@@ -460,7 +460,7 @@
                     .put(this.getRoute('lending.update', {id: this.landing.id,}), {}, model)
                     .then((data) => {
                         this.showMessageBox({title: 'Изменения сохранены'});
-                        window.location.href = this.route('lending.listPage');
+                        window.location.href = this.route('landing.listPage');
                     })
                     .catch(() => {
                         this.notificationError('Попробуйте позже');

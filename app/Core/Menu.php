@@ -88,7 +88,7 @@ class Menu
                     ],
                     [
                         'title' => 'Управление страницами',
-                        'route' => route('lending.listPage'),
+                        'route' => route('landing.listPage'),
                     ],
                     [
                         'title' => 'Шаблоны страниц',
