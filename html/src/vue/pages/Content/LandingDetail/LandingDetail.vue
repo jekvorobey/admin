@@ -97,6 +97,7 @@
                                     </div>
                                     <widget-settings
                                             :widget.sync="selectedWidget"
+                                            @resetSelectedWidget="resetSelectedWidget"
                                     ></widget-settings>
                                 </div>
                             </div>
@@ -135,6 +136,8 @@
 </template>
 
 <script>
+    import './style.css';
+
     import Services from "../../../../scripts/services/services";
     import Datepicker from 'vue2-datepicker';
     import LandingFieldsStorage from "./landing-fields-storage";
@@ -150,6 +153,7 @@
     import WidgetsList from "./widgets/WidgetsList.vue";
     import WidgetsSequence from "./widgets/WidgetsSequence.vue";
     import _ from "lodash";
+    import modalMixin from "../../../mixins/modal";
 
     export default {
         components: {
@@ -159,6 +163,7 @@
             WidgetsList,
             WidgetsSequence
         },
+        mixins: [modalMixin],
         props: [
             'iLanding',
             'iWidgetsList',
@@ -405,11 +410,25 @@
                 this.landing.content = this.parser.convertToJSX(this.contentItems);
                 this.updatePreviewLanding();
             },
-            handleChangeLandingContent: _.debounce((e) => {
-                vueBus.$emit('refreshContentAndWidgets', e.target.value);
+            refreshContentAndWidgets(newContent) {
+                this.loadContentItems(newContent);
+                this.loadUsedWidgets();
+
+                const updatedSelectedWidget = this.selectedWidget
+                    ? this.usedWidgets.find((widget) => widget.id === this.selectedWidget.id)
+                    : null;
+                this.selectedWidget = null;
+                if (updatedSelectedWidget) {
+                    this.selectedWidget = updatedSelectedWidget;
+                }
+                LandingFieldsStorage.set(this.id, 'selectedWidgetId',
+                    this.selectedWidget && this.selectedWidget.id ? this.selectedWidget.id : '');
+            },
+            handleChangeLandingContent: _.debounce(function(e) {
+                this.refreshContentAndWidgets(e.target.value);
             }, 700),
             onErrorJsxParser: _.debounce((error) => {
-                notificationError("Допущена ошибка в разметке");
+                this.notificationError("Допущена ошибка в разметке");
             }, 3000),
             updatePreviewLanding(callback) {
                 let vm = this;
@@ -423,12 +442,12 @@
                         if (callback) {
                             callback(previewData);
                         }
-                    }).catch((err) => notificationError(err.message));
+                    }).catch((err) => this.notificationError(err.message));
                 }
             },
             clickPreviewLandingButton(event) {
                 if(!this.landing.name){
-                    notificationError('Обязательное поле "Название" не заполнено');
+                    this.notificationError('Обязательное поле "Название" не заполнено');
                     return;
                 }
 
@@ -469,7 +488,7 @@
             },
             notificateAndLogError(error) {
                 console.error(error);
-                notificationError(error.message);
+                this.notificationError(error.message);
             },
             restoreSelectedTabs() {
                 if (LandingFieldsStorage.get(this.id, 'tab')) {
@@ -484,6 +503,9 @@
                     this.selectedWidget = this.usedWidgets
                         .find((widget) => widget.id === LandingFieldsStorage.get(this.id, 'selectedWidgetId'));
                 }
+            },
+            notificationError(message) {
+                this.showMessageBox({title: 'Ошибка', text: message});
             },
         },
         computed: {
@@ -507,11 +529,12 @@
         },
         watch: {
             'selectedWidget': {
-                handler: _.debounce((newValue, oldValue) => {
+                handler: _.debounce(function (newValue, oldValue) {
                     if (!newValue || !oldValue || (newValue.id !== oldValue.id)) return;
 
                     const item = transform_widget_to_content_item(newValue);
-                    vueBus.$emit('updateContentItem', item);
+
+                    this.updateContentItem(item);
                 }, 700),
                 deep: true,
             },
@@ -536,26 +559,6 @@
                 this.loadUsedWidgets();
                 this.restoreSelectedWidget();
             }
-
-            /*
-            TODO
-            this.$on('resetSelectedWidget', (validate) => this.resetSelectedWidget(validate));
-            this.$on('updateContentItem', this.updateContentItem);
-            this.$on('refreshContentAndWidgets', (newContent) => {
-                this.loadContentItems(newContent);
-                this.loadUsedWidgets();
-
-                const updatedSelectedWidget = this.selectedWidget
-                    ? this.usedWidgets.find((widget) => widget.id === this.selectedWidget.id)
-                    : null;
-                this.selectedWidget = null;
-                if (updatedSelectedWidget) {
-                    this.selectedWidget = updatedSelectedWidget;
-                }
-                LandingFieldsStorage.set(this.id, 'selectedWidgetId',
-                    this.selectedWidget && this.selectedWidget.id ? this.selectedWidget.id : '');
-            });
-            */
 
             this.restoreSelectedTabs();
         },

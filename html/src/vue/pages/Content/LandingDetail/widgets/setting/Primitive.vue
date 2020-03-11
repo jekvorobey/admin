@@ -1,6 +1,6 @@
 <template>
     <div class="form-group"
-         :class="{ 'required': prop.required, 'validation-error': validationErrors.has(validationName(prop, true)) }">
+         :class="{ 'required': prop.required, 'validation-error': errors.has(validationName(prop, true)) }">
         <a class="spoiler"
            :class="{ 'spoiler-checked': showProp }"
            @click="toggleCollapse"
@@ -93,23 +93,20 @@
                 </div>
             </div>
 
-            <div class="validation-error-message" v-show="validationErrors.has(validationName(prop, true))">
-                {{ validationErrors.first(validationName(prop, true)) }}
+            <div class="validation-error-message" v-show="errors.has(validationName(prop, true))">
+                {{ errors.first(validationName(prop, true)) }}
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import JsxParser from "../../../utils/jsxparser";
-
     export default {
         inject: ['$validator'],
         props: ['prop'],
         data() {
             return {
                 showProp: true,
-                parser: null,
             };
         },
         methods: {
@@ -129,8 +126,6 @@
         created() {
             let vm = this;
 
-            this.parser = new JsxParser([], true);
-
             this.$validator.extend('isPrice', {
                 getMessage: field => 'Цена должна иметь формат 199,99',
                 validate: value => /^(\d+),(\d+)$/.test(value),
@@ -142,12 +137,8 @@
                 },
                 validate(value) {
                     let isCorrect = true, errorMessage = '';
-                    try {
-                        vm.parser.parseJSX(value);
-                    } catch (error) {
-                        isCorrect = false;
-                        errorMessage = error.message;
-                    }
+
+                    // todo Какая-нибудь валидация, если понадобится
 
                     return new Promise(resolve => {
                         resolve({
