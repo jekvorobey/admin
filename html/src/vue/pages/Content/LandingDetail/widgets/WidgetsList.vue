@@ -5,22 +5,26 @@
                    v-bind="dragOptions"
                    :sort="false"
                    :group="{ name: 'widgets', pull: 'clone', put: false }"
-                   @start="hideTooltips"
-                   @end="reloadTooltips"
                    @change="handleChange"
                    :clone="cloneWidget">
             <li v-for="widget in dragList" :key="widget.id">
                 <button type="button"
+                        :id="widget.widgetCode"
                         class="btn btn-primary widgets-list__item"
                         data-toggle="tooltip"
-                        :title="'<img src=\'' + widget.previewBig + '\' class=\'widgets-list__item__src\' />'"
                 >
                     {{ widget.name }}
                 </button>
             </li>
         </draggable>
 
-        <div id="widgets-list-tooltip"></div>
+        <b-popover v-for="widget in dragList"
+                   :key="widget.id"
+                   :target="widget.widgetCode"
+                   triggers="hover"
+                   placement="left">
+            <img :src="widget.previewBig" class='widgets-list__item__src'>
+        </b-popover>
     </div>
 </template>
 
@@ -35,24 +39,6 @@
             };
         },
         methods: {
-            reloadTooltips() {
-                /*
-                TODO
-                $('.widgets-list button[data-toggle="tooltip"]').tooltip('dispose').tooltip({
-                    placement: 'right',
-                    html: true,
-                    boundary: 'window',
-                    container: '#widgets-list-tooltip',
-                });
-                $('#widgets-list-tooltip').show();
-                */
-            },
-            hideTooltips() {
-                /*
-                TODO
-                $('#widgets-list-tooltip').hide();
-                */
-            },
             handleChange(event) {
                 const { moved } = event;
                 const oldDragOrder = moved.element.dragWidgetsListOrder;
@@ -94,11 +80,9 @@
             }
         },
         updated() {
-            this.reloadTooltips();
         },
         mounted() {
             this.dragList = this.widgetsList;
-            this.reloadTooltips();
         },
         components: {
             draggable,

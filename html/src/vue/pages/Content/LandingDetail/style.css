@@ -1,0 +1,244 @@
+.landing-content {
+    textarea {
+        max-height: 73vh;
+    }
+}
+
+.landing-structure {
+    &__right {
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        height: auto;
+        max-height: 77vh;
+    }
+}
+
+.widgets-list {
+    height: 72vh;
+    max-height: 72vh;
+    overflow: auto;
+    padding-right: 10px;
+
+    & ul {
+        padding: 0;
+    }
+
+    & li {
+        list-style: none;
+        position: relative;
+    }
+
+    &__item {
+        margin-bottom: 8px;
+        width: 100%;
+
+        &__src {
+            max-width: 600px;
+            max-height: 600px;
+            border: 1px solid #babec2;
+        }
+    }
+
+    & .tooltip {
+        opacity: 1 !important;
+
+        .tooltip-inner {
+            max-width: initial !important;
+            padding: 0 !important;
+        }
+    }
+}
+
+.widgets-sequence {
+    border-bottom: 1px solid #dee2e6;
+    height: 25%;
+    max-height: 25%;
+    overflow: auto;
+
+    & ul {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 20px 20px;
+        position: relative;
+    }
+
+    & li {
+        list-style: none;
+        position: relative;
+        margin-bottom: 0;
+        margin-right: 20px;
+    }
+}
+
+.widget-preview {
+    display: block;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+
+    &__picture {
+        margin-bottom: 8px;
+
+        img {
+            max-width: 200px;
+            max-height: 100px;
+            border: 1px solid #babec2;
+        }
+    }
+
+    &__name {
+        margin-bottom: 0;
+        color: #333;
+        text-align: center;
+    }
+
+    &__remove {
+        position: absolute;
+        line-height: 0;
+        top: -10px;
+        right: -10px;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #000;
+        padding: 0;
+    }
+
+    &.is-active {
+        img {
+            border: 4px solid #e3342fb0;
+            border-radius: 0.25rem;
+        }
+    }
+}
+
+.widget-settings {
+    display: block;
+    height: 75%;
+    max-height: 75%;
+    overflow: auto;
+    padding: 20px;
+
+    &__block {
+        &-label {
+            font-weight: bold;
+        }
+    }
+
+    &__mapping {
+        &-parent {
+            position: relative;
+        }
+        &-image{
+            width: 100%;
+            display: block;
+        }
+
+        &-marker {
+            position: absolute;
+            width: 9px;
+            height: 9px;
+            border: 1px solid white;
+            background: #000000;
+        }
+    }
+
+    &__item {
+        &-radio {
+            &__option {
+                display: inline;
+                margin: 0 10px;
+            }
+        }
+    }
+}
+
+.widget-setting-complex {
+    padding: 0.5rem;
+    background-color: #f8fafc;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+
+    &__block {
+        margin-bottom: 10px;
+
+        &-label {
+            font-weight: bold;
+        }
+    }
+
+    &__btn {
+        &-add {
+            margin-bottom: 5px;
+        }
+
+        &-hide {
+            float: right;
+            font-size: 0.75rem;
+            padding: 1px 8px;
+            margin: -0.5rem 0.5rem;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        &-remove {
+            float: right;
+            font-size: 0.75rem;
+            padding: 1px 8px;
+            margin: -0.5rem;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+}
+
+.widget-setting-array {
+    &__item {
+        padding: 0.5rem;
+        background-color: #f8fafc;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+
+        &__block {
+            &-label {
+                font-weight: bold;
+            }
+        }
+
+        &__btn {
+            &-remove {
+                float: right;
+                font-size: 0.75rem;
+                padding: 1px 8px;
+                margin: -0.5rem;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+        }
+    }
+
+    &__btn {
+        &-add {
+            float: right;
+            padding: 1px 8px;
+        }
+    }
+}

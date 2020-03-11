@@ -85,7 +85,7 @@
         fill_prop_recursively_with_default,
         fill_props_is_in_shown_list,
         is_primitive,
-    } from "../../../utils/widgets-helpers";
+    } from "../../widgets-helpers";
 
     export default {
         inject: ['$validator'],
