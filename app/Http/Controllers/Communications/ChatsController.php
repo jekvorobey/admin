@@ -9,6 +9,7 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
+use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
@@ -29,10 +30,10 @@ class ChatsController extends Controller
 
     public function directories(
         CommunicationService $communicationService,
+        CommunicationThemeService $communicationThemeService,
         CommunicationStatusService $communicationStatusService,
         CommunicationTypeService $communicationTypeService,
-        RequestInitiator $user,
-        CommunicationTypeService $communicationThemeService
+        RequestInitiator $user
     ) {
 
         $channels = $communicationService->channels()->keyBy('id');

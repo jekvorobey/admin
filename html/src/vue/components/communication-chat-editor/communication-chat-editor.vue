@@ -8,7 +8,10 @@
                             <label for="chat-theme">Тема</label>
                         </b-col>
                         <b-col cols="9">
-                            <b-form-input id="chat-theme" v-model="form.theme" placeholder="Введите тему чата"/>
+                            <b-form-input id="chat-theme" v-model="form.theme" placeholder="Введите тему чата" list="list-theme"/>
+                            <datalist id="list-theme">
+                                <option v-for="theme in availableThemes">{{ theme.name }}</option>
+                            </datalist>
                         </b-col>
                     </b-row>
 
@@ -71,6 +74,7 @@ export default {
     props: ['chat_id', 'channel_id', 'theme', 'status_id', 'type_id'],
     data() {
         return {
+            themes: {},
             statuses: {},
             types: {},
             form: {
@@ -94,7 +98,7 @@ export default {
                     'users': data.users,
                     'files': data.files,
                 });
-                Services.event().$root.$emit('bv::hide::modal', 'modal-edit');
+                Services.event().$emit('closeModalEdit');
                 Services.hideLoader();
 
             });
@@ -102,6 +106,13 @@ export default {
     },
     computed: {
         ...mapGetters(['getRoute']),
+        availableThemes() {
+            return Object.values(this.themes).filter(theme => {
+                return !this.channel_id ||
+                    !theme.channel_id ||
+                    Number(theme.channel_id) === Number(this.channel_id);
+            })
+        },
         availableStatuses() {
             return Object.values(this.statuses).filter(status => {
                 return !this.channel_id ||

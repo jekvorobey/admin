@@ -203,7 +203,7 @@ export default {
                         this.$set(this.chats, key, data_chat);
                         keyAdd = true;
                     }
-                })
+                });
                 if (!keyAdd) {
                     this.chats.push(data_chat);
                 }
@@ -215,8 +215,11 @@ export default {
             this.modal.theme = theme;
             this.modal.status_id = status_id;
             this.modal.type_id = type_id;
-            this.$bvModal.show('modal-edit')
+            this.$bvModal.show('modal-edit');
         },
+        onCloseModalEdit() {
+            this.$bvModal.hide('modal-edit');
+        }
     },
     computed: {
         ...mapGetters(['getRoute']),
@@ -237,6 +240,7 @@ export default {
     },
     created() {
         Services.event().$on('updateListEvent', ({chats, users, files}) => {this.updateChatsList(chats, users, files)});
+        Services.event().$on('closeModalEdit', this.onCloseModalEdit);
         Services.showLoader();
         Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
             this.channels = data.channels;

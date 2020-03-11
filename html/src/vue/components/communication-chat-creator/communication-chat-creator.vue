@@ -84,19 +84,7 @@
 
                     <b-row class="mb-2">
                         <b-col>
-                            <b-button @click="showHideMessageForm()" type="submit" variant="dark" v-if="!showMessageForm">Добавить сообщение к чату</b-button>
-                        </b-col>
-                    </b-row>
-
-                    <b-row class="mb-2" v-if="showMessageForm">
-                        <b-col>
                             <communication-chat-message :type="'createChat'" @createChat="({message, files}) => onCreateChat(message, files)"/>
-                        </b-col>
-                    </b-row>
-
-                    <b-row class="mb-2" v-if="!showMessageForm">
-                        <b-col>
-                            <b-button @click="onCreateChat(null, null)" class="btn btn-success">Создать чат</b-button>
                         </b-col>
                     </b-row>
                 </b-form>
@@ -129,7 +117,6 @@ export default {
             },
             showChatForm: true,
             showUsersInput: true,
-            showMessageForm: true,
         }
     },
     methods: {
@@ -139,13 +126,9 @@ export default {
             }
             this.showChatForm = !this.showChatForm;
         },
-        showHideMessageForm(chat) {
-            this.showMessageForm = !this.showMessageForm;
-        },
         initComponentVar() {
             this.form.user_ids = null;
             this.showChatForm = true;
-            this.showMessageForm = true;
         },
         initComponent() {
             this.form.channel_id = null;
@@ -214,16 +197,17 @@ export default {
             case 'selectedUser':
                 this.showChatForm = false;
                 this.showUsersInput = false;
-                this.showMessageForm = false;
+                this.test1 = 'new1';
                 this.initComponentVar = () => {
+                    this.test2 = 'new2';
                     this.form.user_ids = [this.user_id];
                     this.showChatForm = false;
-                    this.showMessageForm = false;
                 };
                 break;
             default:
                 break;
         }
+        this.initComponent();
     }
 };
 </script>
