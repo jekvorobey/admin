@@ -49,6 +49,9 @@
                 <b-tab title="Логи">
                     <info-log :id="customer.id"/>
                 </b-tab>
+                <b-tab title="Документы">
+                    <info-doc :id="customer.id"/>
+                </b-tab>
             </b-tabs>
         </b-card>
         <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
@@ -66,6 +69,7 @@ import InfoPreference from './components/info-preference.vue';
 import InfoOrder from './components/info-order.vue';
 import InfoSubscribe from './components/info-subscribe.vue';
 import InfoLog from './components/info-log.vue';
+import InfoDoc from './components/info-doc.vue';
 import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
 import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
@@ -76,7 +80,7 @@ export default {
     components: {
         ModalMarkStatus,
         ModalPortfolios,
-        Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+        Infopanel, CommunicationChatList, InfoLog, InfoDoc, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
     props: ['iCustomer', 'order'],
     data() {
         return {
