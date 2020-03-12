@@ -32,6 +32,9 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+use Pim\Dto\Product\ProductDto;
+use Pim\Services\ProductService\ProductService;
 
 class CustomerDetailController extends Controller
 {
@@ -315,17 +318,59 @@ class CustomerDetailController extends Controller
         ]);
     }
 
+    protected function loadItems(
+        RestQuery $query,
+        ProductService $productService
+    )
+    {
+        /** @var Collection $products */
+        $products = $productService->products($query);
+        $productIds = $products->pluck('id')->all();
+        $images = collect();
+        if ($productIds) {
+            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
+        }
+        $products = $products->map(function (ProductDto $product) use ($images) {
+            $data = $product->toArray();
+            $data['approvalStatusName'] = $product->approvalStatus()->name;
+            $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
+            $data['photo'] = $images[$product->id] ?? '';
+
+            return $data;
+        });
+        return $products;
+    }
+
+    protected function makeQuery(Request $request, $favoriteItems)
+    {
+        $query = new RestQuery();
+        $page = $request->get('page', 1);
+        $query->pageNumber($page, 10);
+
+        $query->include(BrandDto::entity(), CategoryDto::entity());
+        $query->addFields(BrandDto::entity(), 'id', 'name');
+        $query->addFields(CategoryDto::entity(), 'id', 'name');
+        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
+
+        $query->setFilter('id', $favoriteItems);
+        return $query;
+    }
+
     public function infoPreference(
         $id,
         BrandService $brandService,
         CategoryService $categoryService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        ProductService $productService,
+        Request $request
     )
     {
         $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
+        $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
+        $query = $this->makeQuery($request, $favoriteItems);
 
         return response()->json([
             'brands' => $brands->keyBy('id'),
@@ -334,6 +379,7 @@ class CustomerDetailController extends Controller
                 'brands' => $customer->brands,
                 'categories' => $customer->categories,
             ],
+            'favorites' => $favoriteItems ? $this->loadItems($query, $productService) : null,
         ]);
     }
 
