@@ -248,8 +248,9 @@
                         if (successCallback) {
                             successCallback();
                         }
-                    } else if ($('.validation-error-message:visible').length) {
-                        // todo Тут можно сделать скрол window.scroll до элемента с ошибкой $('.validation-error-message:visible')
+                    } else {
+                        // Тут можно сделать скрол (window.scroll) до элемента с ошибкой $('.validation-error-message:visible')
+                        // if ($('.validation-error-message:visible').length) {}
                     }
                 });
             },
@@ -429,7 +430,7 @@
             updatePreviewLanding(callback) {
                 let vm = this;
                 if (this.landing && this.landing.name) {
-                    // todo Переделать на нормальный запрос
+                    // todo Реализовать в рамках #55634
                     axios.post(`/ajax/landings-preview/`, {
                         landing: this.landing,
                         landingPreview: this.landingPreview,
@@ -450,7 +451,7 @@
 
                 this.validateFormAndRun(this.tab, () => {
                     this.updatePreviewLanding((previewData) => {
-                        // todo Тут сделать отображение тултипа с актуальной ссылкой на превью-просмотр
+                        // todo Реализовать в рамках #55634
                     });
                 });
             },
@@ -486,27 +487,20 @@
                 return false;
             },
             deleteLanding() {
-                // todo Переделать на нормальную модалку
-                swalConfirm(result => {
-                    if (result.value && this.landing.id) {
-                        // todo Переделать на нормальный запрос
-                        axios.delete(`/landings/${this.landing.id}`)
-                            .then((response) => {
-                                // todo Переделать на нормальный роут
-                                window.location = '/landings';
-                            })
-                            .catch((err) => this.notificateAndLogError(err));
-                    }
-                }, 'Вы действительно хотите безвозвратно удалить лэндинг?')
+                if (this.landing.id) {
+                    Services.net()
+                        .delete(this.getRoute('landing.delete', {id: this.landing.id}))
+                        .then((data) => {
+                            this.showMessageBox({title: 'Элемент удалён'});
+                            window.location.href = this.route('landing.listPage');
+                        })
+                        .catch(() => {
+                            this.notificationError('Попробуйте позже')
+                        });
+                }
             },
             cancel() {
-                // todo Переделать на нормальную модалку
-                swalConfirm(result => {
-                    if (result.value) {
-                        // todo Переделать на нормальный роут
-                        window.location = '/landings';
-                    }
-                }, 'Вы действительно хотите безвозвратно отменить изменения?')
+                window.location.href = this.route('landing.listPage');
             },
             notificateAndLogError(error) {
                 console.error(error);
