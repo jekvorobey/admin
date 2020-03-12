@@ -77,7 +77,7 @@
                     </tr>
                     <tr v-for="message in chat.messages" v-if="showChat === chat.id">
                         <td>{{ users[message.user_id].short_name }}</td>
-                        <td colspan="3">{{ message.message }}</td>
+                        <td colspan="4">{{ message.message }}</td>
                         <td>
                             <div v-for="file in message.files">
                                 <a :href="files[file].url" target="_blank">{{ files[file].name }}</a>

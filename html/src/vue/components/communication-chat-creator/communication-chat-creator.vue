@@ -11,7 +11,7 @@
                         <b-col cols="9">
                             <b-form-select v-model="form.channel_id" id="chat-channel">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="channel.id" v-for="channel in channels" :key="channel.id">
+                                <b-form-select-option :value="channel.id" v-for="channel in availableChannels" :key="channel.id">
                                     {{ channel.name }}
                                 </b-form-select-option>
                             </b-form-select>
@@ -101,7 +101,7 @@ import CommunicationChatMessage from "../communication-chat-message/communicatio
 export default {
     name: 'communication-chat-creator',
     components: {CommunicationChatMessage},
-    props: ['kind','user_id'],
+    props: ['kind','customer'],
     data() {
         return {
             channels: {},
@@ -161,6 +161,11 @@ export default {
     },
     computed: {
         ...mapGetters(['getRoute']),
+        availableChannels() {
+            return Object.values(this.channels).filter(channel => {
+                return Number(channel.id) !== 8 || this.customer.email;
+            })
+        },
         availableThemes() {
             return Object.values(this.themes).filter(theme => {
                 return !this.form.channel_id ||
@@ -200,7 +205,7 @@ export default {
                 this.test1 = 'new1';
                 this.initComponentVar = () => {
                     this.test2 = 'new2';
-                    this.form.user_ids = [this.user_id];
+                    this.form.user_ids = [this.customer.user_id];
                     this.showChatForm = false;
                 };
                 break;
