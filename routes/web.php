@@ -199,7 +199,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', 'LandingDetailController@createPage')->name('landing.createPage');
 
             Route::get('/page', 'LandingListController@page')->name('landing.page');
-            Route::post('/', 'LandingDetailController@create')->where(['id' => '[0-9]+'])->name('landing.create');
+            Route::post('/', 'LandingDetailController@create')->name('landing.create');
             Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
         });

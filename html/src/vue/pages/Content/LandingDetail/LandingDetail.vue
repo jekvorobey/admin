@@ -2,7 +2,7 @@
     <layout-main back>
         <div class="container-fluid">
             <h2 v-if="!isFullScreenMode">{{ title }}</h2>
-            <form method="POST" @submit="submit">
+            <form method="POST" @submit.prevent="submit">
 
                 <input type="hidden" name="_method" value="PUT" v-if="isEditMode"/>
                 <input type="hidden" name="preview_uniqid" :value="landingPreview.uniqid" />
@@ -21,7 +21,6 @@
                     </div>
                     <div class="col-md-3 pr-0">
                         <button v-if="isEditMode" type="button" class="btn btn-danger" @click="deleteLanding" style="float:right">Удалить</button>
-                        <a v-if="isEditMode" :href="'/landings/create?from=' + id" target="_blank" class="btn btn-success" role="button" style="float:right; margin-right:10px">Копировать</a>
                         <button type="button" class="btn btn-link" @click="clickPreviewLandingButton" style="float:right; margin-right:10px">Превью</button>
                     </div>
                 </div>
@@ -171,14 +170,18 @@
         ],
         data() {
             return {
-                parser: null,
                 searchQuery: '',
                 widgetsList: this.iWidgetsList,
                 allWidgetsNames: this.iAllWidgetsNames,
                 usedWidgets: [],
                 contentItems: [],
                 selectedWidget: null,
-                landing: this.iLanding,
+                landing: {
+                    id: this.iLanding.id || '',
+                    name: this.iLanding.name || '',
+                    code: this.iLanding.code || '',
+                    widgets: this.iLanding.widgets || [],
+                },
                 landingPreview: {
                     uniqid: '',
                 },
@@ -187,7 +190,7 @@
             }
         },
         methods: {
-            loadContentItems(newContent = []) {
+            loadContentItems(newContent = '') {
                 newContent = newContent
                     ? newContent
                     : (this.landing && this.landing.widgets ? this.landing.widgets : []);
@@ -322,7 +325,7 @@
             },
             setSelectedWidgetId() {
                 const value = (this.selectedWidget && this.selectedWidget.id) ? this.selectedWidget.id : '';
-                LandingFieldsStorage.set(this.id, 'selectedWidgetId', value);
+                LandingFieldsStorage.set(this.landing.id, 'selectedWidgetId', value);
             },
             resetSelectedWidget(validate = true) {
                 if (validate) {
@@ -414,7 +417,7 @@
                 if (updatedSelectedWidget) {
                     this.selectedWidget = updatedSelectedWidget;
                 }
-                LandingFieldsStorage.set(this.id, 'selectedWidgetId',
+                LandingFieldsStorage.set(this.landing.id, 'selectedWidgetId',
                     this.selectedWidget && this.selectedWidget.id ? this.selectedWidget.id : '');
             },
             handleChangeLandingContent: _.debounce(function(e) {
@@ -452,26 +455,42 @@
                 });
             },
             submit() {
-                // todo сделать раздиление на update/create
                 let model = this.landing;
-                model.contentItems = this.contentItems;
+                model.widgets = this.contentItems;
 
-                Services.net()
-                    .put(this.getRoute('lending.update', {id: this.landing.id,}), {}, model)
-                    .then((data) => {
-                        this.showMessageBox({title: 'Изменения сохранены'});
-                        window.location.href = this.route('landing.listPage');
-                    })
-                    .catch(() => {
-                        this.notificationError('Попробуйте позже');
-                    });
+                if (this.isEditMode) {
+                    // Update
+                    Services.net()
+                        .put(this.getRoute('landing.update', {id: this.landing.id,}), {}, model)
+                        .then((data) => {
+                            this.showMessageBox({title: 'Изменения сохранены'});
+                            window.location.href = this.route('landing.listPage');
+                        })
+                        .catch(() => {
+                            this.notificationError('Попробуйте позже');
+                        });
+                }
+                else {
+                    // Create
+                    Services.net()
+                        .post(this.getRoute('landing.create'), {}, model)
+                        .then((data) => {
+                            this.showMessageBox({title: 'Страница сохранена'});
+                            window.location.href = this.route('landing.listPage');
+                        })
+                        .catch(() => {
+                            this.notificationError('Попробуйте позже');
+                        });
+                }
+
+                return false;
             },
             deleteLanding() {
                 // todo Переделать на нормальную модалку
                 swalConfirm(result => {
-                    if (result.value && this.id) {
+                    if (result.value && this.landing.id) {
                         // todo Переделать на нормальный запрос
-                        axios.delete(`/landings/${this.id}`)
+                        axios.delete(`/landings/${this.landing.id}`)
                             .then((response) => {
                                 // todo Переделать на нормальный роут
                                 window.location = '/landings';
@@ -494,15 +513,15 @@
                 this.notificationError(error.message);
             },
             restoreSelectedTabs() {
-                if (LandingFieldsStorage.get(this.id, 'tab')) {
-                    this.tab = LandingFieldsStorage.get(this.id, 'tab');
+                if (LandingFieldsStorage.get(this.landing.id, 'tab')) {
+                    this.tab = LandingFieldsStorage.get(this.landing.id, 'tab');
                 }
-                if (LandingFieldsStorage.get(this.id, 'contentTab')) {
-                    this.contentTab = LandingFieldsStorage.get(this.id, 'contentTab');
+                if (LandingFieldsStorage.get(this.landing.id, 'contentTab')) {
+                    this.contentTab = LandingFieldsStorage.get(this.landing.id, 'contentTab');
                 }
             },
             restoreSelectedWidget() {
-                if (LandingFieldsStorage.get(this.id, 'selectedWidgetId')) {
+                if (LandingFieldsStorage.get(this.landing.id, 'selectedWidgetId')) {
                     this.selectedWidget = this.usedWidgets
                         .find((widget) => widget.id === LandingFieldsStorage.get(this.id, 'selectedWidgetId'));
                 }
@@ -539,10 +558,10 @@
                 deep: true,
             },
             tab(newTab) {
-                LandingFieldsStorage.set(this.id, 'tab', newTab);
+                LandingFieldsStorage.set(this.landing.id, 'tab', newTab);
             },
             contentTab(newTab) {
-                LandingFieldsStorage.set(this.id, 'contentTab', newTab);
+                LandingFieldsStorage.set(this.landing.id, 'contentTab', newTab);
             },
         },
         created() {
@@ -554,7 +573,7 @@
         mounted() {
             LandingFieldsStorage.init();
 
-            if (this.id) {
+            if (this.landing.id) {
                 this.loadContentItems();
                 this.loadUsedWidgets();
                 this.restoreSelectedWidget();
