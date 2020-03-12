@@ -317,7 +317,10 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{level_id}')->group(function () {
                 Route::post('', 'LevelsController@detail')->name('levels.detail');
                 Route::put('', 'LevelsController@putLevel')->name('levels.save');
-                Route::put('commission', 'LevelsController@putCommission')->name('levels.commission.save');
+                Route::prefix('commission')->group(function () {
+                    Route::put('', 'LevelsController@putCommission')->name('levels.commission.save');
+                    Route::delete('', 'LevelsController@removeCommission')->name('levels.commission.remove');
+                });
                 Route::prefix('special-commission')->group(function () {
                     Route::put('', 'LevelsController@putSpecialCommission')->name('levels.special-commission.save');
                     Route::delete('', 'LevelsController@removeSpecialCommission')->name('levels.special-commission.remove');
