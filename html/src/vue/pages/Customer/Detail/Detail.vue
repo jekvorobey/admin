@@ -41,6 +41,7 @@
                     <info-order :id="customer.id"/>
                 </b-tab>
                 <b-tab title="Коммуникации">
+                    <communication-chat-creator :kind="'selectedUser'" :customer="customer"/>
                     <communication-chat-list :filter="{user_id: customer.user_id}"/>
                 </b-tab>
                 <b-tab title="Подписки">
@@ -67,6 +68,7 @@ import InfoOrder from './components/info-order.vue';
 import InfoSubscribe from './components/info-subscribe.vue';
 import InfoLog from './components/info-log.vue';
 import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
+import CommunicationChatCreator from '../../../components/communication-chat-creator/communication-chat-creator.vue';
 import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
@@ -76,7 +78,7 @@ export default {
     components: {
         ModalMarkStatus,
         ModalPortfolios,
-        Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+        Infopanel, CommunicationChatList, CommunicationChatCreator, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
     props: ['iCustomer', 'order'],
     data() {
         return {
@@ -92,6 +94,11 @@ export default {
                 log: 5,
             }
         };
+    },
+    methods: {
+        updateList() {
+            this.$refs.chatList.updateList()
+        }
     },
     created() {
         Services.event().$on('showTab', (tab) => {

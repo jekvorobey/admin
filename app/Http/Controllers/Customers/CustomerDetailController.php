@@ -42,6 +42,7 @@ class CustomerDetailController extends Controller
     {
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
+        $this->loadChannelTypes = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();

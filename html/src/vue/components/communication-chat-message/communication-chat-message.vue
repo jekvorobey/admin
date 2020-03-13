@@ -13,7 +13,7 @@
         </div>
         <button type="button" @click="onAdd()" class="btn btn-success"><fa-icon icon="plus"/></button>
         <hr/>
-        <button type="button" @click="onSend()" class="btn btn-success">Отправить сообщение</button>
+        <button type="button" @click="onClick()" class="btn btn-success">{{ sendButtonName }}</button>
     </div>
 </template>
 
@@ -24,8 +24,10 @@ import VDeleteButton from '../controls/VDeleteButton/VDeleteButton.vue';
 export default {
     name: 'communication-chat-message',
     components: {VDeleteButton, FileInput},
+    props: ['kind'],
     data() {
         return {
+            sendButtonName: 'Отправить сообщение',
             form: {
                 message: '',
                 files: [
@@ -51,7 +53,16 @@ export default {
         onAdd() {
             this.$set(this.form.files, this.form.files.length, this.initNewFile());
         },
-        onSend() {
+        initComponent() {
+            this.form.message = '';
+            this.form.files = [
+                this.initNewFile(),
+            ];
+        },
+        onClickEmit(files) {
+            this.$emit('send', {message: this.form.message, files});
+        },
+        onClick() {
             const files = [];
             this.form.files.forEach(file => {
                 if (file.is_load && file.file.id) {
@@ -59,12 +70,21 @@ export default {
                 }
             });
 
-            this.$emit('send', {files, message: this.form.message});
-            this.form.files = [
-                this.initNewFile(),
-            ];
-            this.form.message = '';
+            this.onClickEmit(files);
+            this.initComponent();
         },
+    },
+    created() {
+        switch (this.kind) {
+            case 'createChat':
+                this.sendButtonName = 'Создать чат';
+                this.onClickEmit = (files) => {
+                    this.$emit('createChat', { message: this.form.message, files});
+                };
+                break;
+            default:
+                break;
+        }
     }
 };
 </script>

@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
+            Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
     });
@@ -279,6 +280,9 @@ Route::middleware('auth')->group(function () {
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
+            Route::post('create', 'ChatsController@create')->name('communications.chats.create');
+            Route::post('update', 'ChatsController@update')->name('communications.chats.update');
+            Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
         });
     });
 

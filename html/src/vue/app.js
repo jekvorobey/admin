@@ -97,6 +97,10 @@ Vue.mixin({
         customerStatus() {
             return this.$store.state.layout.customerStatus;
         },
+        /** @return {ChannelTypes} */
+        channelTypes() {
+            return this.$store.state.layout.channelTypes;
+        },
         /** @return {Media} */
         media() {
             return Media;
@@ -155,4 +159,17 @@ Vue.mixin({
  @property {number} manager_merchant
  @property {number} admin
  @property {number} super
+ */
+
+/**
+ @typedef ChannelTypes
+ @type {Object}
+ @property {number} internal_message
+ @property {number} infinity
+ @property {number} smsc
+ @property {number} livetex_viber
+ @property {number} livetex_telegram
+ @property {number} livetex_fb
+ @property {number} livetex_vk
+ @property {number} internal_email
  */
