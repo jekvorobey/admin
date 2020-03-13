@@ -62,7 +62,6 @@
 
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
-    import {mapGetters} from 'vuex';
 
     const cleanFilter = {
         name: '',
@@ -166,7 +165,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             statusOptions() {
                 return Object.values(this.options.statuses)
                     .map(status => ({value: status.id, text: status.name}))

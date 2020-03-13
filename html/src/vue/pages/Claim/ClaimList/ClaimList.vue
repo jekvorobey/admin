@@ -77,8 +77,6 @@
     import withQuery from 'with-query';
     import qs from 'qs';
 
-    import {mapGetters} from 'vuex';
-
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
@@ -273,7 +271,6 @@ export default {
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         statusOptions() {
             let statusOptions = [];
             for (let [key, value] of Object.entries(this.claimStatuses)) {

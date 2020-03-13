@@ -17,14 +17,13 @@
 </template>
 
 <script>
-    //list_columns
-    import {mapGetters} from "vuex";
-    import Helpers from '../../../scripts/helpers';
+                //list_columns
+                import Helpers from '../../../scripts/helpers';
 
-    import Modal from '../controls/modal/modal.vue';
-    import modalMixin from '../../mixins/modal.js';
+                import Modal from '../controls/modal/modal.vue';
+                import modalMixin from '../../mixins/modal.js';
 
-    export default {
+                export default {
         name: "modal-columns",
         components: {
             Modal,
@@ -44,7 +43,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             chunkedColumns() {
                 return Helpers.chunkSize(this.columns, 3);
             }

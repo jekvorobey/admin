@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../scripts/services/services.js';
 
 export default {
@@ -22,9 +21,6 @@ export default {
                 this.count = data.count;
             });
         }
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     created() {
         this.loadCount();

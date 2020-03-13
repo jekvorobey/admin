@@ -55,7 +55,7 @@
         </tr>
         <tr>
             <th>Дата регистрации</th>
-            <td>{{ customer.created_at }}</td>
+            <td>{{ datetimePrint(customer.created_at) }}</td>
         </tr>
         <tr>
             <th>Профили в социальных сетях</th>
@@ -105,7 +105,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
@@ -133,7 +132,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},

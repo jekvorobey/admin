@@ -32,13 +32,14 @@ import {
     faTimes,
     faTrashAlt,
     faTruck,
+    faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
 library.add(faPlus);
 library.add(faEye);
 library.add(faArrowUp);
-library.add(faStop);
+library.add(faStop, faExclamationTriangle);
 library.add(faEdit, faPencilAlt);
 library.add(faDownload, faFileDownload);
 library.add(faCheck, faCheckCircle);

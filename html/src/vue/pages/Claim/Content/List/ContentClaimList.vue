@@ -74,7 +74,6 @@
     import withQuery from 'with-query';
     import qs from 'qs';
     import Services from '../../../../../scripts/services/services';
-    import {mapGetters} from 'vuex';
     import FInput from '../../../../components/filter/f-input.vue';
     import FCheckbox from '../../../../components/filter/f-checkbox.vue';
     import FDate from '../../../../components/filter/f-date.vue';
@@ -178,9 +177,6 @@ export default {
                 default: return 'badge-light';
             }
         },
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     created() {
         window.onpopstate = () => {

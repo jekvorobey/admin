@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 
 export default {
     data() {
@@ -77,9 +76,6 @@ export default {
         addAddition() {
 
         }
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     mounted() {
     }

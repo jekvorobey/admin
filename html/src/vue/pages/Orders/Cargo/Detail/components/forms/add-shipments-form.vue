@@ -15,10 +15,9 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
+    import { validationMixin } from 'vuelidate';
 
-    import Services from "../../../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../../../scripts/services/services';
 
     import VInput from '../../../../../../components/controls/VInput/VInput.vue';
 
@@ -59,8 +58,5 @@
                     });
             },
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>

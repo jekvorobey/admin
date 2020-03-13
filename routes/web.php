@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
+            Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
     });
@@ -140,6 +141,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', 'ProductListController@index')->name('products.list');
         Route::get('page', 'ProductListController@page')->name('products.listPage');
+        
+        Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
+        Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
+        Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
+        
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
@@ -183,7 +189,20 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', 'BannerDetailController@createPage')->name('banner.createPage');
 
             Route::get('/page', 'BannerListController@page')->name('banner.page');
+            Route::post('/', 'BannerDetailController@create')->where(['id' => '[0-9]+'])->name('banner.create');
+            Route::put('/{id}', 'BannerDetailController@update')->where(['id' => '[0-9]+'])->name('banner.update');
             Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
+        });
+
+        Route::prefix('landing')->namespace('Landing')->group(function () {
+            Route::get('/', 'LandingListController@listPage')->name('landing.listPage');
+            Route::get('/{id}', 'LandingDetailController@updatePage')->where(['id' => '[0-9]+'])->name('landing.updatePage');
+            Route::get('/create', 'LandingDetailController@createPage')->name('landing.createPage');
+
+            Route::get('/page', 'LandingListController@page')->name('landing.page');
+            Route::post('/', 'LandingDetailController@create')->name('landing.create');
+            Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
+            Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
         });
     });
 
@@ -261,6 +280,9 @@ Route::middleware('auth')->group(function () {
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
+            Route::post('create', 'ChatsController@create')->name('communications.chats.create');
+            Route::post('update', 'ChatsController@update')->name('communications.chats.update');
+            Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
         });
     });
 
@@ -271,6 +293,8 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'CustomerDetailController@detail')->name('detail');
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
+            Route::put('referral', 'CustomerDetailController@referral')->name('detail.referral');
+            Route::put('professional', 'CustomerDetailController@professional')->name('detail.professional');
             Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
             Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
@@ -289,6 +313,29 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'ActivitiesController@save')->name('activities.save');
         });
 
+    });
+
+    Route::prefix('referral')->namespace('Referral')->name('referral.')->group(function () {
+        Route::prefix('levels')->group(function () {
+            Route::get('', 'LevelsController@list')->name('levels');
+            Route::prefix('{level_id}')->group(function () {
+                Route::post('', 'LevelsController@detail')->name('levels.detail');
+                Route::put('', 'LevelsController@putLevel')->name('levels.save');
+                Route::prefix('commission')->group(function () {
+                    Route::put('', 'LevelsController@putCommission')->name('levels.commission.save');
+                    Route::delete('', 'LevelsController@removeCommission')->name('levels.commission.remove');
+                });
+                Route::prefix('special-commission')->group(function () {
+                    Route::put('', 'LevelsController@putSpecialCommission')->name('levels.special-commission.save');
+                    Route::delete('', 'LevelsController@removeSpecialCommission')->name('levels.special-commission.remove');
+                });
+            });
+        });
+
+        Route::prefix('options')->group(function () {
+            Route::get('', 'OptionsController@index')->name('options');
+            Route::put('', 'OptionsController@save')->name('options.save');
+        });
     });
 
 });

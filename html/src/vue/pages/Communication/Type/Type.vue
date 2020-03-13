@@ -33,7 +33,6 @@
 <script>
 import modalMixin from '../../../mixins/modal';
 import FormModal from './components/form-modal.vue';
-import { mapGetters } from 'vuex';
 import Services from '../../../../scripts/services/services.js';
 import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
 
@@ -90,8 +89,5 @@ export default {
             });
         },
     },
-    computed: {
-        ...mapGetters(['getRoute']),
-    }
 };
 </script>

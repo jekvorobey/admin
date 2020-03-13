@@ -8,13 +8,12 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
-    import Services from "../../../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../../../scripts/services/services';
 
-    import VSelect from "../../../../../../components/controls/VSelect/VSelect.vue";
+    import VSelect from '../../../../../../components/controls/VSelect/VSelect.vue';
 
     export default {
         components: {
@@ -52,7 +51,6 @@
             },
         },
         computed: {
-            ...mapGetters(['getRoute']),
             packageOptions() {
                 return Object.values(this.packages).map(item => ({value: item.id, text: item.name}));
             },

@@ -3,6 +3,8 @@ import Vue from 'vue';
 import NetService from '../../scripts/services/net';
 
 import ModalModule from './modules/modal.js';
+import products from './modules/products.js';
+import massSelection from './modules/mass-selection.js';
 
 Vue.use(Vuex);
 
@@ -16,6 +18,8 @@ export default new Vuex.Store({
     },
     modules: {
         modal: ModalModule(),
+        products,
+        massSelection,
     },
     mutations: {
         loaderShow(state, loaderShow) {

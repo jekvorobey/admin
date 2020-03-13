@@ -5,13 +5,15 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-02-14 15:41:20.
+    * Generated on 2020-03-05 16:24:01.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
     */
     override(new \Illuminate\Contracts\Container\Container, map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -38,6 +40,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -83,6 +86,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -205,6 +209,8 @@ namespace PHPSTORM_META {
     ]));
     override(\Illuminate\Container\Container::makeWith(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -231,6 +237,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -276,6 +283,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -398,6 +406,8 @@ namespace PHPSTORM_META {
     ]));
     override(\Illuminate\Contracts\Container\Container::make(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -424,6 +434,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -469,6 +480,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -591,6 +603,8 @@ namespace PHPSTORM_META {
     ]));
     override(\Illuminate\Contracts\Container\Container::makeWith(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -617,6 +631,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -662,6 +677,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -784,6 +800,8 @@ namespace PHPSTORM_META {
     ]));
     override(\App::make(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -810,6 +828,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -855,6 +874,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -977,6 +997,8 @@ namespace PHPSTORM_META {
     ]));
     override(\App::makeWith(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -1003,6 +1025,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -1048,6 +1071,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -1170,6 +1194,8 @@ namespace PHPSTORM_META {
     ]));
     override(\app(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -1196,6 +1222,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -1241,6 +1268,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,
@@ -1363,6 +1391,8 @@ namespace PHPSTORM_META {
     ]));
     override(\resolve(0), map([
         '' => '@',
+        'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
+        'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
@@ -1389,6 +1419,7 @@ namespace PHPSTORM_META {
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationThemeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationThemeService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationTypeService' => \Greensight\Message\Services\CommunicationService\RestCommunicationTypeService::class,
+        'Greensight\Message\Services\MailService\MailService' => \Greensight\Message\Services\MailService\RestMailService::class,
         'Greensight\Message\Services\NotificationService\NotificationService' => \Greensight\Message\Services\NotificationService\RestNotificationService::class,
         'Greensight\Message\Services\SmsCentreService\SmsCentreService' => \Greensight\Message\Services\SmsCentreService\RestSmsCentreService::class,
         'Greensight\Oms\Services\BasketService\BasketService' => \Greensight\Oms\Services\BasketService\RestBasketService::class,
@@ -1434,6 +1465,7 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
         'auth.password' => \Illuminate\Auth\Passwords\PasswordBrokerManager::class,

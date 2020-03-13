@@ -123,7 +123,6 @@
     import Service from '../../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
-    import {mapGetters} from 'vuex';
     import FCheckbox from '../../../../components/filter/f-checkbox.vue';
     import FInput from '../../../../components/filter/f-input.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
@@ -294,7 +293,6 @@
             fixDateTooltip() {
                 return 'Искать точное совпадание с датой начала и/или окончания скидки';
             },
-            ...mapGetters(['getRoute'])
         },
         mounted() {
             this.initFilter();

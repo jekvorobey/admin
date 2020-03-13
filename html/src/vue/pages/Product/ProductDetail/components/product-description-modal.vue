@@ -16,16 +16,15 @@
     import CKEditor from '@ckeditor/ckeditor5-vue';
     import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
     import Helpers from '../../../../../scripts/helpers';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
 
@@ -73,9 +72,6 @@
                     });
             }
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>
 

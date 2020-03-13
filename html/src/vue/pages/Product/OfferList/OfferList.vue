@@ -46,12 +46,11 @@
 
 <script>
 
-    import Services from "../../../../scripts/services/services";
-    import withQuery from "with-query";
+    import Services from '../../../../scripts/services/services';
+    import withQuery from 'with-query';
 
-    import FMultiSelect from "../../../components/filter/f-multi-select.vue";
-    import FInput from "../../../components/filter/f-input.vue";
-    import {mapGetters} from "vuex";
+    import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+    import FInput from '../../../components/filter/f-input.vue';
 
     const cleanFilter = {
         saleStatus: []
@@ -126,7 +125,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             statusOptions () {
                 return Object.values(this.options.saleStatus).map(status => ({text: status.name, value: status.id}));
             }

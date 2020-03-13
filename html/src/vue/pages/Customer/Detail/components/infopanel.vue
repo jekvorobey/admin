@@ -8,9 +8,24 @@
                     Сохранить
                 </button>
                 <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
-                <button class="btn btn-danger btn-sm" v-if="customer.status != statusProblem" v-b-modal.modal-mark-problem>
-                    Пометить проблемным
-                </button>
+
+                <b-dropdown text="Действия" class="float-right" size="sm">
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-problem>
+                        Пометить проблемным
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp && !customer.referral" @click="makeReferral">
+                        Сделать реферальным партнером
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.referral" @click="makeProfessional">
+                        Сделать профессионалом
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
+                        Приостановить сотрудничество
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.block" v-b-modal.modal-mark-status-block>
+                        Заблокировать
+                    </b-dropdown-item-button>
+                </b-dropdown>
             </th>
         </tr>
         </thead>
@@ -19,7 +34,10 @@
             <th>Роль</th>
             <td colspan="3">
                 {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
-                ({{ customer.role_date }})
+                ({{ datetimePrint(customer.role_date) }})
+                <span v-if="customer.referrer">
+                    (РП: <a :href="getRoute('customers.detail', {id: customer.referrer.id})">{{customer.referrer.title}}</a>)
+                </span>
             </td>
         </tr>
         <tr>
@@ -27,12 +45,16 @@
             <td>
                 <div class="input-group input-group-sm">
                     <select class="form-control form-control-sm" v-model="form.status">
-                        <option v-for="(title, id) in statuses" :value="id" :disabled="id == statusProblem">
-                            {{ title }}
+                        <option
+                            v-for="id in customerStatusByRole[customer.referral ? userRoles.showcase.referral_partner : userRoles.showcase.professional]"
+                            :value="id"
+                            :disabled="disableStatus(id)"
+                        >
+                            {{ customerStatusName[id] }}
                         </option>
                     </select>
-                    <div class="input-group-append" v-if="form.status == statusProblem">
-                        <button class="btn btn-outline-info" v-b-tooltip.hover :title="customer.comment_problem_status">
+                    <div class="input-group-append" v-if="customer.comment_status">
+                        <button class="btn btn-outline-info" v-b-tooltip.hover :title="customer.comment_status">
                             <fa-icon icon="info"/>
                         </button>
                     </div>
@@ -100,14 +122,14 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+import moment from 'moment';
 
 export default {
     name: 'infopanel',
     components: {VDeleteButton, FileInput},
-    props: ['model', 'statuses', 'statusProblem'],
+    props: ['model'],
     data() {
         return {
             editStatus: false,
@@ -128,7 +150,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
@@ -153,7 +174,7 @@ export default {
             Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
                 customer: {
                     status: this.form.status,
-                    comment_problem_status: "",
+                    comment_status: "",
                     avatar: this.form.avatar ? this.form.avatar.id : null,
                 },
                 user: {
@@ -172,11 +193,31 @@ export default {
                 this.customer.email = this.form.email;
                 this.customer.phone = this.form.phone;
                 this.customer.avatar = this.form.avatar;
-                this.customer.comment_problem_status = "";
+                this.customer.comment_status = "";
                 Services.msg("Изменения сохранены");
-            }).catch(errorMsg => {
-                Services.msg(errorMsg || "Ошибка сохранения", 'danger');
-            }).then(data => {
+            }).finally(data => {
+                Services.hideLoader();
+            })
+        },
+        makeReferral() {
+            Services.showLoader();
+            Services.net().put(this.getRoute('customers.detail.referral', {id: this.customer.id})).then(data => {
+                this.customer.status = this.customerStatus.active;
+                this.customer.referral = true;
+                this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
+                Services.msg("Изменения сохранены");
+            }).finally(data => {
+                Services.hideLoader();
+            })
+        },
+        makeProfessional() {
+            Services.showLoader();
+            Services.net().put(this.getRoute('customers.detail.professional', {id: this.customer.id})).then(data => {
+                this.customer.status = this.customerStatus.active;
+                this.customer.referral = false;
+                this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
+                Services.msg("Изменения сохранены");
+            }).finally(data => {
                 Services.hideLoader();
             })
         },
@@ -189,6 +230,11 @@ export default {
             this.form.phone = this.customer.phone;
             this.form.avatar = this.customer.avatar;
         },
+        disableStatus(status_id) {
+            return Number(status_id) === Number(this.customerStatus.problem) ||
+                Number(status_id) === Number(this.customerStatus.temporarily_suspended) ||
+                Number(status_id) === Number(this.customerStatus.block);
+        }
     }
 };
 </script>

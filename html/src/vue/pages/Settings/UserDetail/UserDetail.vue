@@ -43,8 +43,6 @@
 <script>
 
     import Services from '../../../../scripts/services/services';
-
-    import { mapGetters } from 'vuex';
     import modalMixin from '../../../mixins/modal.js';
 
     import ShadowCard from '../../../components/shadow-card.vue';
@@ -115,7 +113,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             userInfo() {
                 return {
                     id: this.user.id,

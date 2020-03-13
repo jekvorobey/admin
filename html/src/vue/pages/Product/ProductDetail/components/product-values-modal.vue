@@ -59,20 +59,18 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required, integer} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { integer, required } from 'vuelidate/lib/validators';
 
     import Helpers from '../../../../../scripts/helpers';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
-    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-
 
     const formFields = ['has_battery', 'explosive', 'is_new', 'name', 'brand_id', 'category_id', 'approval_status',
         'vendor_code', 'width', 'height', 'length', 'weight'];
@@ -124,7 +122,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             brandOptions() {
                 return this.options.brands.map(brand => ({value: brand.id, text: brand.name}));
             },

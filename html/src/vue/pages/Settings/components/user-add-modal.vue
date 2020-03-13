@@ -35,7 +35,6 @@
     import { validationMixin } from 'vuelidate';
     import { minLength, required } from 'vuelidate/lib/validators';
     import Services from '../../../../scripts/services/services';
-    import { mapGetters } from 'vuex';
 
     export default {
         mixins: [modalMixin, validationMixin],
@@ -96,7 +95,6 @@
             },
         },
         computed: {
-            ...mapGetters(['getRoute']),
             frontOptions() {
                 return Object.values(this.fronts).map(front => ({value: front.id, text: front.name}));
             },

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Core\Menu;
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\Message\Dto\Communication\CommunicationChannelDto;
+use Greensight\Customer\Dto\CustomerDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
@@ -18,9 +20,68 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class Controller extends BaseController
 {
     protected $title = '';
+    protected $loadUserRoles = false;
+    protected $loadCustomerStatus = false;
+    protected $loadChannelTypes = false;
 
     public function render($componentName, $props = [])
     {
+        $userRoles = [];
+        if ($this->loadUserRoles) {
+            $userRoles = [
+                'admin' => [
+                    'super' => UserDto::ADMIN__SUPER,
+                    'admin' => UserDto::ADMIN__ADMIN,
+                    'manager_merchant' => UserDto::ADMIN__MANAGER_MERCHANT,
+                    'manager_client' => UserDto::ADMIN__MANAGER_CLIENT,
+                ],
+                'mas' => [
+                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
+                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
+                ],
+                'i_commerce_ml' => [
+                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
+                ],
+                'showcase' => [
+                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
+                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
+                ],
+            ];
+        }
+
+        $customerStatus = [];
+        $customerStatusName = [];
+        $customerStatusByRole = [];
+        if ($this->loadCustomerStatus) {
+            $customerStatus = [
+                'created' => CustomerDto::STATUS_CREATED,
+                'new' => CustomerDto::STATUS_NEW,
+                'consideration' => CustomerDto::STATUS_CONSIDERATION,
+                'rejected' => CustomerDto::STATUS_REJECTED,
+                'active' => CustomerDto::STATUS_ACTIVE,
+                'problem' => CustomerDto::STATUS_PROBLEM,
+                'block' => CustomerDto::STATUS_BLOCK,
+                'potential_rp' => CustomerDto::STATUS_POTENTIAL_RP,
+                'temporarily_suspended' => CustomerDto::STATUS_TEMPORARILY_SUSPENDED,
+            ];
+            $customerStatusName = CustomerDto::statusesName();
+            $customerStatusByRole = CustomerDto::statusesByRole();
+        }
+
+        $channelTypes = [];
+        if ($this->loadChannelTypes) {
+            $channelTypes = [
+                'internal_message' => CommunicationChannelDto::CHANNEL_INTERNAL_MESSAGE,
+                'infinity' => CommunicationChannelDto::CHANNEL_INFINITY,
+                'smsc' => CommunicationChannelDto::CHANNEL_SMSC,
+                'livetex_viber' => CommunicationChannelDto::CHANNEL_LIVETEX_VIBER,
+                'livetex_telegram' => CommunicationChannelDto::CHANNEL_LIVETEX_TELEGRAM,
+                'livetex_fb' => CommunicationChannelDto::CHANNEL_LIVETEX_FB,
+                'livetex_vk' => CommunicationChannelDto::CHANNEL_LIVETEX_VK,
+                'internal_email' => CommunicationChannelDto::CHANNEL_INTERNAL_EMAIL,
+            ];
+        }
+
         return View::component(
             $componentName,
             $props,
@@ -30,6 +91,14 @@ class Controller extends BaseController
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
                 ],
+
+                'userRoles' => $userRoles,
+
+                'customerStatusByRole' => $customerStatusByRole,
+                'customerStatusName' => $customerStatusName,
+                'customerStatus' => $customerStatus,
+
+                'channelTypes' => $channelTypes,
             ],
             [
                 'title' => $this->title,
@@ -67,12 +136,10 @@ class Controller extends BaseController
         }
     }
     
-    protected function validate(Request $request, array $rules): array
+    protected function validate(Request $request, array $rules, array $customAttributes = []): array
     {
         $data = $request->all();
-        $validator = Validator::make($data, $rules, [
-            'required' => 'required :attribute'
-        ]);
+        $validator = Validator::make($data, $rules, [], $customAttributes);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }

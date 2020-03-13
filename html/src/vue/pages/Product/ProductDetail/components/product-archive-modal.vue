@@ -18,20 +18,18 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {requiredIf} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { requiredIf } from 'vuelidate/lib/validators';
 
     import Helpers from '../../../../../scripts/helpers';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
-    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-
 
     const formFields = ['archive', 'archive_comment'];
     export default {
@@ -74,8 +72,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
-
             booleanOptions() {
                 return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
             },

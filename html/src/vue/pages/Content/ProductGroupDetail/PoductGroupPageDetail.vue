@@ -82,6 +82,7 @@
             </b-form-group>
 
             <b-form-group
+                    v-show="isBasedOnFilters || isNotBasedOn"
                     label="Категория"
                     label-for="group-categories"
             >
@@ -100,13 +101,15 @@
             </b-form-group>
 
             <select-filters
-                    :i-selected-filters="productGroup.filters"
+                    v-show="isBasedOnFilters || isNotBasedOn"
+                    :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
             >
             </select-filters>
 
             <select-products
+                    v-show="isBasedOnProducts || isNotBasedOn"
                     :i-selected-product-ids="pluckSelectedProductIds()"
                     @update="onUpdateSelectedProducts"
             >
@@ -118,8 +121,8 @@
 </template>
 
 <script>
-    import {mapActions, mapGetters} from "vuex";
-    import Services from "../../../../scripts/services/services";
+    import { mapActions } from 'vuex';
+    import Services from '../../../../scripts/services/services';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
     import SelectProducts from './components/select-products.vue';
@@ -143,9 +146,9 @@
                 productGroupTypes: this.iProductGroupTypes,
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
-                selectedFilters: [],
+                selectedFilters: this.iProductGroup.filters || [],
                 selectedProductIds: [],
-                selectedProducts: [],
+                selectedProducts: this.iProductGroup.products || [],
             };
         },
 
@@ -219,8 +222,8 @@
             pluckSelectedProductIds() {
                 let ids = [];
 
-                for (let productKey in this.productGroup.products) {
-                    let product = this.productGroup.products[productKey];
+                for (let productKey in this.selectedProducts) {
+                    let product = this.selectedProducts[productKey];
                     ids.push(product.product_id);
                 }
 
@@ -228,7 +231,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             previewPhoto() {
                 const fileId = this.productGroup.preview_photo_id;
 
@@ -242,6 +244,15 @@
             },
             isCreatingMode() {
                 return this.productGroup.id === null;
+            },
+            isBasedOnProducts() {
+                return this.selectedProducts.length != 0;
+            },
+            isBasedOnFilters() {
+                return this.selectedFilters.length != 0;
+            },
+            isNotBasedOn() {
+                return !this.isBasedOnProducts && !this.isBasedOnFilters;
             },
         },
     };

@@ -43,13 +43,11 @@
 
 <script>
     import modal from '../../../../components/controls/modal/modal.vue';
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import { validationMixin } from 'vuelidate';
+    import Services from '../../../../../scripts/services/services';
 
     export default {
         mixins: [modalMixin, validationMixin],
@@ -98,9 +96,6 @@
                         this.closeModal();
                     });
             }
-        },
-        computed: {
-            ...mapGetters(['getRoute'])
         },
         watch: {
             '$store.state.modal.currentModal': function(newValue) {

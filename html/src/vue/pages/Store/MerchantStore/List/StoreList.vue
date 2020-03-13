@@ -70,11 +70,9 @@
     import Service from '../../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
-    import {mapGetters} from 'vuex';
     import FInput from '../../../../components/filter/f-input.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
-
 
     const cleanFilter = {
     id: '',
@@ -159,7 +157,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         merchantOptions() {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
         },

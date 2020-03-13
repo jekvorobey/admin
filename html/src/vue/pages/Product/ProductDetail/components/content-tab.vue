@@ -75,9 +75,9 @@
                     <shadow-card
                             title="Изображение"
                             :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
-                            @onEdit="startUploadImage(5, howToImage.id)"
-                            @onDelete="onDeleteImage(5, howToImage.id)">
-                        <img :src="howToImage.url" class="big-image">
+                            @onEdit="startUploadImage(4, descriptionImage.id)"
+                            @onDelete="onDeleteImage(4, descriptionImage.id)">
+                        <img :src="descriptionImage.url" class="big-image">
                     </shadow-card>
                 </div>
             </div>
@@ -115,9 +115,9 @@
                     <shadow-card
                             title="Изображение"
                             :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
-                            @onEdit="startUploadImage(4, descriptionImage.id)"
-                            @onDelete="onDeleteImage(4, descriptionImage.id)">
-                        <img :src="descriptionImage.url" class="big-image">
+                            @onEdit="startUploadImage(5, howToImage.id)"
+                            @onDelete="onDeleteImage(5, howToImage.id)">
+                        <img :src="howToImage.url" class="big-image">
                     </shadow-card>
                 </div>
             </div>
@@ -178,9 +178,8 @@
     import VideoEditModal from './product-video-modal.vue';
     import TipForm from './tip-form.vue';
 
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
-    import Media from "../../../../../scripts/media";
+    import Services from '../../../../../scripts/services/services';
+    import Media from '../../../../../scripts/media';
 
     export default {
         components: {
@@ -277,7 +276,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             mainImage() {
                 let mainImages = this.images.filter(image => image.type === 1);
                 return mainImages.length > 0 ? mainImages[0] : {

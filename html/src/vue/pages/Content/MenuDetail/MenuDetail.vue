@@ -15,8 +15,7 @@
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
-    import Services from "../../../../scripts/services/services";
+    import Services from '../../../../scripts/services/services';
     import MenuItems from './components/menu-items.vue';
     import modalMixin from '../../../mixins/modal';
 
@@ -54,9 +53,6 @@
             onUpdateMenuItems(data) {
                 this.selectedMenuItems = data;
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
     };
 </script>

@@ -34,7 +34,6 @@
 <script>
     import inputMixin from '../../../mixins/input-mixin';
     import Services from '../../../../scripts/services/services';
-    import { mapGetters } from 'vuex';
 
     export default {
         name: "FileInput",
@@ -88,7 +87,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             fileError() {
                 return this.uploadError || this.error;
             },

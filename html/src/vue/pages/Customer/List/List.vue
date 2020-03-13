@@ -61,7 +61,6 @@
 import VInput from '../../../components/controls/VInput/VInput.vue';
 import { telMask } from '../../../../scripts/mask.js';
 import Services from '../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 
 export default {
     components: {VInput},
@@ -88,7 +87,6 @@ export default {
         'pager.page': 'filterUsers',
     },
     computed: {
-        ...mapGetters(['getRoute']),
         telMask() {
             return telMask;
         }

@@ -23,7 +23,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 
 export default {
     name: 'modal-brands',
@@ -36,7 +35,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         sortBrands() {
             return Object.values(this.brands).sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         },

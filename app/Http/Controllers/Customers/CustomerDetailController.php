@@ -16,6 +16,7 @@ use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\OrderDto;
@@ -31,29 +32,48 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
+use Pim\Dto\Product\ProductDto;
+use Pim\Services\ProductService\ProductService;
 
 class CustomerDetailController extends Controller
 {
     public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
     {
+        $this->loadUserRoles = true;
+        $this->loadCustomerStatus = true;
+        $this->loadChannelTypes = true;
+
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
         if (!$customer) {
             throw new NotFoundHttpException();
         }
 
-        /** @var UserDto $user */
-        $user = $userService->users((new RestQuery())->setFilter('id', $customer->user_id))->first();
-        if (!$user) {
+        $user_ids = [$customer->user_id];
+        $referrer = null;
+        if ($customer->referrer_id) {
+            /** @var CustomerDto $referrer */
+            $referrer = $customerService->customers((new RestQuery())->setFilter('id', $customer->referrer_id))->first();
+            if ($referrer) {
+                $user_ids[] = $referrer->user_id;
+            }
+        }
+
+        $users = $userService->users((new RestQuery())->setFilter('id', $user_ids))->keyBy('id');
+        if (!$users->has($customer->user_id)) {
             throw new NotFoundHttpException();
         }
+        /** @var UserDto $user */
+        $user = $users[$customer->user_id];
+
         $portfolios = $customerService->portfolios($customer->id);
 
         $socials = $userService->socials($customer->user_id);
 
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
 
-        $this->title = $user->full_name ?: $user->phone ?: "Пользователь: {$customer->id}";
+        $this->title = $user->getTitle();
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
         $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
 
@@ -63,13 +83,15 @@ class CustomerDetailController extends Controller
             $avatar = $fileService->getFiles([$customer->avatar])->first();
         }
 
+        /** @var UserDto $referrer_user */
+        $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
                 'avatar' => $avatar ? $avatar->id : null,
                 'user_id' => $customer->user_id,
                 'status' => $customer->status,
-                'comment_problem_status' => $customer->comment_problem_status,
+                'comment_status' => $customer->comment_status,
                 'last_name' => $user->last_name,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -91,12 +113,14 @@ class CustomerDetailController extends Controller
                     ];
                 }),
                 'referral' => $referral,
+                'referrer' => $referrer_user ? [
+                    'id' => $referrer->id,
+                    'title' => $referrer_user->getTitle(),
+                ] : null,
                 'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
             ],
-            'statuses' => CustomerDto::statuses(),
-            'statusProblem' => CustomerDto::STATUS_PROBLEM,
             'order' => [
                 'count' => $orders->count(),
                 'price' => number_format($orders->sum('price'), 2, '.', ' '),
@@ -113,8 +137,8 @@ class CustomerDetailController extends Controller
             'customer.manager_id' => 'nullable',
             'customer.gender' => ['nullable', Rule::in([CustomerDto::GENDER_MALE, CustomerDto::GENDER_FEMALE])],
             'customer.birthday' => 'nullable|date_format:Y-m-d',
-            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statuses()))],
-            'customer.comment_problem_status' => 'nullable',
+            'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statusesName()))],
+            'customer.comment_status' => 'nullable',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
@@ -181,6 +205,20 @@ class CustomerDetailController extends Controller
         if ($activities) {
             $customerService->putActivities($id, $activities);
         }
+        return response('', 204);
+    }
+
+    public function referral($id, ReferralService $referralService)
+    {
+        $referralService->makeReferral($id);
+
+        return response('', 204);
+    }
+
+    public function professional($id, ReferralService $referralService)
+    {
+        $referralService->makeProfessional($id);
+
         return response('', 204);
     }
 
@@ -281,17 +319,59 @@ class CustomerDetailController extends Controller
         ]);
     }
 
+    protected function loadItems(
+        RestQuery $query,
+        ProductService $productService
+    )
+    {
+        /** @var Collection $products */
+        $products = $productService->products($query);
+        $productIds = $products->pluck('id')->all();
+        $images = collect();
+        if ($productIds) {
+            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
+        }
+        $products = $products->map(function (ProductDto $product) use ($images) {
+            $data = $product->toArray();
+            $data['approvalStatusName'] = $product->approvalStatus()->name;
+            $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
+            $data['photo'] = $images[$product->id] ?? '';
+
+            return $data;
+        });
+        return $products;
+    }
+
+    protected function makeQuery(Request $request, $favoriteItems)
+    {
+        $query = new RestQuery();
+        $page = $request->get('page', 1);
+        $query->pageNumber($page, 10);
+
+        $query->include(BrandDto::entity(), CategoryDto::entity());
+        $query->addFields(BrandDto::entity(), 'id', 'name');
+        $query->addFields(CategoryDto::entity(), 'id', 'name');
+        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
+
+        $query->setFilter('id', $favoriteItems);
+        return $query;
+    }
+
     public function infoPreference(
         $id,
         BrandService $brandService,
         CategoryService $categoryService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        ProductService $productService,
+        Request $request
     )
     {
         $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
+        $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
+        $query = $this->makeQuery($request, $favoriteItems);
 
         return response()->json([
             'brands' => $brands->keyBy('id'),
@@ -300,6 +380,7 @@ class CustomerDetailController extends Controller
                 'brands' => $customer->brands,
                 'categories' => $customer->categories,
             ],
+            'favorites' => $favoriteItems ? $this->loadItems($query, $productService) : null,
         ]);
     }
 

@@ -32,12 +32,23 @@
                 <modal-categories :model.sync="customer.categories" :categories="categories" :customer-id="id"/>
             </td>
         </tr>
+        <tr>
+            <th>
+                Избранное
+            </th>
+            <td>
+                <div v-for="favorite_item in favorites">
+                    <a :href="'/products/' + favorite_item.id">
+                        {{ favorite_item.name }}
+                    </a>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 import ModalBrands from './modal-brands.vue';
 import ModalCategories from './modal-categories.vue';
@@ -54,10 +65,8 @@ export default {
                 brands: [],
                 categories: [],
             },
+            favorites: [],
         };
-    },
-    computed: {
-        ...mapGetters(['getRoute']),
     },
     methods: {
         categoryName(category_id) {
@@ -79,6 +88,7 @@ export default {
             this.categories = data.categories;
             this.customer.brands = data.customer.brands;
             this.customer.categories = data.customer.categories;
+            this.favorites = data.favorites;
             Services.hideLoader();
         })
     }
