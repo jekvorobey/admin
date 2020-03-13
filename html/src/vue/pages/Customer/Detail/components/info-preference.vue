@@ -32,6 +32,18 @@
                 <modal-categories :model.sync="customer.categories" :categories="categories" :customer-id="id"/>
             </td>
         </tr>
+        <tr>
+            <th>
+                Избранное
+            </th>
+            <td>
+                <div v-for="favorite_item in favorites">
+                    <a :href="'/products/' + favorite_item.id">
+                        {{ favorite_item.name }}
+                    </a>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -53,6 +65,7 @@ export default {
                 brands: [],
                 categories: [],
             },
+            favorites: [],
         };
     },
     methods: {
@@ -75,6 +88,7 @@ export default {
             this.categories = data.categories;
             this.customer.brands = data.customer.brands;
             this.customer.categories = data.customer.categories;
+            this.favorites = data.favorites;
             Services.hideLoader();
         })
     }
