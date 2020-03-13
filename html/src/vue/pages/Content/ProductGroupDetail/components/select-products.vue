@@ -8,7 +8,8 @@
             </b-input-group-append>
         </b-input-group>
 
-        <div>
+        <div v-show="products.length">
+            Добавленные продукты<br>
             <b-card v-for="product in products"
                     no-body
                     class="overflow-hidden"
@@ -59,6 +60,13 @@
                             this.inputVendorCode = '';
                         }
                     });
+            },
+            removeProduct(id) {
+                const idx = this.selectedProductIds.indexOf(id);
+
+                if (idx !== -1) {
+                    this.selectedProductIds.splice(idx, 1);
+                }
             },
             fetchProducts(ids) {
                 if (ids) {
