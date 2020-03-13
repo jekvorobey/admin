@@ -1,7 +1,8 @@
 <template>
     <div>
+        Продукты<br>
         <b-input-group>
-            <b-form-input v-model="inputVendorCode"/>
+            <b-form-input v-model="inputVendorCode" placeholder="Введите артикул"/>
             <b-input-group-append>
                 <b-button v-on:click="addProduct" variant="info">Добавить</b-button>
             </b-input-group-append>

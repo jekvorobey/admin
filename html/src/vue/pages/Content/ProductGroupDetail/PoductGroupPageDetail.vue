@@ -100,7 +100,7 @@
             </b-form-group>
 
             <select-filters
-                    :i-selected-filters="productGroup.filters"
+                    :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
             >
@@ -143,9 +143,9 @@
                 productGroupTypes: this.iProductGroupTypes,
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
-                selectedFilters: [],
+                selectedFilters: this.iProductGroup.filters,
                 selectedProductIds: [],
-                selectedProducts: [],
+                selectedProducts: this.iProductGroup.products,
             };
         },
 
@@ -219,8 +219,8 @@
             pluckSelectedProductIds() {
                 let ids = [];
 
-                for (let productKey in this.productGroup.products) {
-                    let product = this.productGroup.products[productKey];
+                for (let productKey in this.selectedProducts) {
+                    let product = this.selectedProducts[productKey];
                     ids.push(product.product_id);
                 }
 
