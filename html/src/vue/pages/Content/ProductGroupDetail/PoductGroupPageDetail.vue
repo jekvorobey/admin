@@ -82,6 +82,7 @@
             </b-form-group>
 
             <b-form-group
+                    v-show="isBasedOnFilters || isNotBasedOn"
                     label="Категория"
                     label-for="group-categories"
             >
@@ -100,6 +101,7 @@
             </b-form-group>
 
             <select-filters
+                    v-show="isBasedOnFilters || isNotBasedOn"
                     :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
@@ -107,6 +109,7 @@
             </select-filters>
 
             <select-products
+                    v-show="isBasedOnProducts || isNotBasedOn"
                     :i-selected-product-ids="pluckSelectedProductIds()"
                     @update="onUpdateSelectedProducts"
             >
@@ -143,9 +146,9 @@
                 productGroupTypes: this.iProductGroupTypes,
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
-                selectedFilters: this.iProductGroup.filters,
+                selectedFilters: this.iProductGroup.filters || [],
                 selectedProductIds: [],
-                selectedProducts: this.iProductGroup.products,
+                selectedProducts: this.iProductGroup.products || [],
             };
         },
 
@@ -241,6 +244,15 @@
             },
             isCreatingMode() {
                 return this.productGroup.id === null;
+            },
+            isBasedOnProducts() {
+                return this.selectedProducts.length != 0;
+            },
+            isBasedOnFilters() {
+                return this.selectedFilters.length != 0;
+            },
+            isNotBasedOn() {
+                return !this.isBasedOnProducts && !this.isBasedOnFilters;
             },
         },
     };
