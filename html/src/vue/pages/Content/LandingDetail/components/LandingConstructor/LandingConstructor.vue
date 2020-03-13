@@ -137,14 +137,14 @@
 
     import Services from "../../../../../../scripts/services/services";
     import Datepicker from 'vue2-datepicker';
-    import LandingFieldsStorage from "./landing-fields-storage";
+    import LandingFieldsStorage from "./scripts/landing-fields-storage";
     import {
         fill_prop_recursively_with_default,
         fill_prop_recursively,
         fill_props_is_in_shown_list_recursively,
         swap_items,
         transform_widget_to_content_item
-    } from './widgets-helpers';
+    } from './scripts/widgets-helpers';
     import CsrfField from "./components/CsrfField.vue";
     import WidgetSettings from "./components/WidgetSettings.vue";
     import WidgetsList from "./components/WidgetsList.vue";

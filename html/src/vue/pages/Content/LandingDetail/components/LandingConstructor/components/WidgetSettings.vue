@@ -68,12 +68,12 @@
         fetch_fieldsets_from_props,
         fill_props_is_in_shown_list,
         is_primitive,
-    } from "../widgets-helpers";
+    } from "../scripts/widgets-helpers";
 
-    import WidgetSettingArray from "./setting/Array.vue";
-    import WidgetSettingComplex from "./setting/Complex.vue";
-    import WidgetSettingMapping from "./setting/Mapping.vue";
-    import WidgetSettingPrimitive from "./setting/Primitive.vue";
+    import WidgetSettingArray from "./ArrayField.vue";
+    import WidgetSettingComplex from "./ComplexField.vue";
+    import WidgetSettingMapping from "./MappingField.vue";
+    import WidgetSettingPrimitive from "./PrimitiveField.vue";
 
     export default {
         components: {
