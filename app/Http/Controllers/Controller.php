@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Core\Menu;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\Message\Dto\Communication\CommunicationChannelDto;
+use Greensight\Customer\Dto\CustomerDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
