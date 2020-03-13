@@ -3,7 +3,7 @@
         <b-row class="mb-2">
             <b-col>
                 <b-card>
-                    <infopanel :model.sync="customer" :statuses="statuses" :status-problem="statusProblem"/>
+                    <infopanel :model.sync="customer"/>
                 </b-card>
             </b-col>
             <b-col>
@@ -49,10 +49,15 @@
                 <b-tab title="Логи">
                     <info-log :id="customer.id"/>
                 </b-tab>
+                <b-tab title="Документы">
+                    <info-doc :id="customer.id"/>
+                </b-tab>
             </b-tabs>
         </b-card>
         <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
-        <modal-mark-problem :model.sync="customer" :status-problem="statusProblem"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.problem" id="modal-mark-status-problem"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.temporarily_suspended" id="modal-mark-status-temporarily-suspended"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-block"/>
     </layout-main>
 </template>
 
@@ -64,18 +69,19 @@ import InfoPreference from './components/info-preference.vue';
 import InfoOrder from './components/info-order.vue';
 import InfoSubscribe from './components/info-subscribe.vue';
 import InfoLog from './components/info-log.vue';
+import InfoDoc from './components/info-doc.vue';
 import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
 import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
-import ModalMarkProblem from './components/modal-mark-problem.vue';
+import ModalMarkStatus from './components/modal-mark-status.vue';
 
 export default {
     components: {
-        ModalMarkProblem,
+        ModalMarkStatus,
         ModalPortfolios,
-        Infopanel, CommunicationChatList, InfoLog, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
-    props: ['iCustomer', 'statuses', 'order', 'statusProblem'],
+        Infopanel, CommunicationChatList, InfoLog, InfoDoc, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+    props: ['iCustomer', 'order'],
     data() {
         return {
             editStatus: false,
