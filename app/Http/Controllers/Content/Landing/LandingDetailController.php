@@ -58,6 +58,7 @@ class LandingDetailController extends Controller
     public function create(Request $request, LandingService $landingService)
     {
         $validatedData = $request->validate([
+            'active' => 'integer|required',
             'code' => 'string|required',
             'name' => 'string|required',
             'widgets' => 'array|nullable|required',
@@ -79,6 +80,7 @@ class LandingDetailController extends Controller
     {
         $validatedData = $request->validate([
             'id' => 'integer|required',
+            'active' => 'integer|required',
             'code' => 'string|required',
             'name' => 'string|required',
             'widgets' => 'array|nullable|required',

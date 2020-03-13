@@ -26,8 +26,17 @@
 
 
                 <div v-show="tab === 'general'">
+                    <div class="form-group">
+                        <label class="control-label" for="landing-name">Активность</label><br>
+                        <input type="checkbox"
+                               v-model="landing.active"
+                               name="active"
+                               value="1"
+                               id="landing-active">
+                    </div>
+
                     <div class="form-group required" :class="{ 'validation-error': errors.has('general.name') }">
-                        <label class="control-label" for="landing-name">Название</label>
+                        <label class="control-label" for="landing-name">Название*</label>
                         <input type="text"
                                v-model="landing.name"
                                data-vv-scope="general"
@@ -44,7 +53,7 @@
                     </div>
 
                     <div class="form-group required" :class="{ 'validation-error': errors.has('general.code') }">
-                        <label class="control-label" for="landing-code">Символьный код</label>
+                        <label class="control-label" for="landing-code">Ссылка*</label>
                         <input type="text"
                                v-model="landing.code"
                                data-vv-scope="general"
@@ -54,20 +63,17 @@
                                id="landing-code"
                                required
                                v-validate="{ required: true, isCode: true }"
-                               placeholder="Введите символьный код"
+                               placeholder="Введите ссылку"
                                aria-describedby="codeHelp"
                         >
                         <div class="validation-error-message" v-show="errors.has('general.code')">
                             {{ errors.first('general.code') }}
                         </div>
-                        <small id="codeHelp" class="form-text text-muted">
-                            Будет использован в ссылке лэндинга - /promo/{code}/
-                        </small>
                     </div>
                 </div>
 
                 <div v-show="tab === 'content'">
-                    <div class="mb-3" v-show="contentTab === 'structure'">
+                    <div class="mb-3">
                         <div class="container-fluid pl-0">
                             <div class="row landing-structure">
                                 <div class="col-md-2 landing-structure__left">
@@ -101,33 +107,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group landing-content" v-show="contentTab === 'raw'">
-                        <label class="control-label" for="landing-content">Контент лэндинга</label>
-                        <textarea class="form-control"
-                                  name="content"
-                                  rows="50"
-                                  id="landing-content"
-                                  v-model="landing.content"
-                                  @input="handleChangeLandingContent"
-                        ></textarea>
-                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <button type="button" class="btn" @click="cancel">Отменить</button>
-
-                <div v-if="tab === 'content'" class="btn-group" style="float: right;">
-                    <button type="button" class="btn btn-outline-dark"
-                            :class="{'active': contentTab === 'structure'}"
-                            @click="switchContentTab('structure')">
-                        Структура
-                    </button>
-                    <button type="button" class="btn btn-outline-dark"
-                            :class="{'active': contentTab === 'raw'}"
-                            @click="switchContentTab('raw')">
-                        Raw
-                    </button>
-                </div>
             </form>
         </div>
 </template>
@@ -176,6 +159,7 @@
                 selectedWidget: null,
                 landing: {
                     id: this.iLanding.id || '',
+                    active: this.iLanding.active || true,
                     name: this.iLanding.name || '',
                     code: this.iLanding.code || '',
                     widgets: this.iLanding.widgets || [],
@@ -184,7 +168,6 @@
                     uniqid: '',
                 },
                 tab: 'general',
-                contentTab: 'structure',
             }
         },
         methods: {
@@ -218,7 +201,7 @@
                         // fill by values from content
                         for (let k in widget.props) {
                             if (widget.props.hasOwnProperty(k)) {
-                                fill_prop_recursively(widget.props[k], values[k], k, this.parser);
+                                fill_prop_recursively(widget.props[k], values[k], k);
                             }
                         }
 
@@ -255,11 +238,6 @@
             switchTab(newTab) {
                 this.validateFormAndRun(this.tab, () => {
                     this.tab = newTab;
-                });
-            },
-            switchContentTab(newTab) {
-                this.validateFormAndRun('content', () => {
-                    this.contentTab = newTab;
                 });
             },
             swapWidgetsListItems(moved) {
@@ -364,12 +342,10 @@
 
                 this.contentItems.sort((itemA, itemB) => itemA.contentOrder - itemB.contentOrder);
                 this.updateUsedWidgetsContentOrder();
-                this.updateContent();
             },
             swapContentItems(moved) {
                 this.contentItems = swap_items(this.contentItems, moved, 'contentOrder');
                 this.updateUsedWidgetsContentOrder();
-                this.updateContent();
             },
             removeUsedWidget(widgetToRemove) {
                 this.resetSelectedWidget(false);
@@ -378,7 +354,6 @@
                     .filter((item) => item.contentId !== widgetToRemove.contentId)
                     .map((item, index) => ({ ...item, contentOrder: index }));
                 this.updateUsedWidgetsContentOrder();
-                this.updateContent();
             },
             updateContentItem(updatedItem) {
                 const index = this.contentItems.findIndex((item) => item.contentId === updatedItem.contentId);
@@ -397,13 +372,6 @@
                     });
                 }
                 this.contentItems[index] = updatedItem;
-                this.updateContent();
-            },
-            updateContent() {
-                if (!this.parser) return;
-
-                this.landing.content = this.parser.convertToJSX(this.contentItems);
-                this.updatePreviewLanding();
             },
             refreshContentAndWidgets(newContent) {
                 this.loadContentItems(newContent);
@@ -419,12 +387,6 @@
                 LandingFieldsStorage.set(this.landing.id, 'selectedWidgetId',
                     this.selectedWidget && this.selectedWidget.id ? this.selectedWidget.id : '');
             },
-            handleChangeLandingContent: _.debounce(function(e) {
-                this.refreshContentAndWidgets(e.target.value);
-            }, 700),
-            onErrorJsxParser: _.debounce((error) => {
-                this.notificationError("Допущена ошибка в разметке");
-            }, 3000),
             updatePreviewLanding(callback) {
                 let vm = this;
                 if (this.landing && this.landing.name) {
@@ -508,9 +470,6 @@
                 if (LandingFieldsStorage.get(this.landing.id, 'tab')) {
                     this.tab = LandingFieldsStorage.get(this.landing.id, 'tab');
                 }
-                if (LandingFieldsStorage.get(this.landing.id, 'contentTab')) {
-                    this.contentTab = LandingFieldsStorage.get(this.landing.id, 'contentTab');
-                }
             },
             restoreSelectedWidget() {
                 if (LandingFieldsStorage.get(this.landing.id, 'selectedWidgetId')) {
@@ -551,9 +510,6 @@
             },
             tab(newTab) {
                 LandingFieldsStorage.set(this.landing.id, 'tab', newTab);
-            },
-            contentTab(newTab) {
-                LandingFieldsStorage.set(this.landing.id, 'contentTab', newTab);
             },
         },
         created() {

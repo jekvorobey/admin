@@ -6,9 +6,8 @@ import {escape_html} from "./helpers";
  * @param prop
  * @param value
  * @param propCode
- * @param parser {JsxParser}
  */
-export const fill_prop_recursively = (prop, value, propCode, parser = null) => {
+export const fill_prop_recursively = (prop, value, propCode) => {
     if (typeof value === "undefined") {
         if (prop && prop.multiple) {
             prop.array = [];
@@ -46,7 +45,7 @@ export const fill_prop_recursively = (prop, value, propCode, parser = null) => {
                         childComponentValue = childComponentsValues[i];
                     }
 
-                    fill_prop_recursively(childComplex[k], childComponentValue, k, parser);
+                    fill_prop_recursively(childComplex[k], childComponentValue, k);
                 }
             }
         });
@@ -57,7 +56,7 @@ export const fill_prop_recursively = (prop, value, propCode, parser = null) => {
 
         for (let k in prop.complex) {
             if (prop.complex.hasOwnProperty(k)) {
-                fill_prop_recursively(prop.complex[k], value[k], k, parser);
+                fill_prop_recursively(prop.complex[k], value[k], k);
             }
         }
     } else if (prop.type === "widget") {
@@ -71,7 +70,7 @@ export const fill_prop_recursively = (prop, value, propCode, parser = null) => {
 
         for (let k in prop.widget.props) {
             if (prop.widget.props.hasOwnProperty(k)) {
-                fill_prop_recursively(prop.widget.props[k], value[k], k, parser);
+                fill_prop_recursively(prop.widget.props[k], value[k], k);
             }
         }
     } else {
@@ -83,10 +82,6 @@ export const fill_prop_recursively = (prop, value, propCode, parser = null) => {
         } else {
             prop.value = value;
         }
-    }
-
-    if (propCode === 'children' && prop.value && parser) {
-        prop.value = parser.convertToJSX(prop.value);
     }
 };
 
