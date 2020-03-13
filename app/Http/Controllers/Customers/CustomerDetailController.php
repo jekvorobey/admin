@@ -36,6 +36,8 @@ class CustomerDetailController extends Controller
 {
     public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
     {
+        $this->loadChannelTypes = true;
+
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
         if (!$customer) {

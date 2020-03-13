@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
@@ -24,6 +25,8 @@ class ChatsController extends Controller
 
     public function broadcast()
     {
+        $this->loadChannelTypes = true;
+
         $this->title = 'Массовая рассылка';
         return $this->render('Communication/Broadcast');
     }
@@ -32,8 +35,7 @@ class ChatsController extends Controller
         CommunicationService $communicationService,
         CommunicationThemeService $communicationThemeService,
         CommunicationStatusService $communicationStatusService,
-        CommunicationTypeService $communicationTypeService,
-        RequestInitiator $user
+        CommunicationTypeService $communicationTypeService
     ) {
 
         $channels = $communicationService->channels()->keyBy('id');
@@ -41,23 +43,11 @@ class ChatsController extends Controller
         $statuses = $communicationStatusService->statuses()->keyBy('id');
         $types = $communicationTypeService->types()->keyBy('id');
 
-        $userService = resolve(UserService::class);
-        $users = $userService
-            ->users($userService
-                ->newQuery()
-                ->include('profile')
-                ->setFilter('id', '!=', $user->userId())
-            )
-            ->keyBy('id');
-
-
-
         return response()->json([
             'channels' => $channels,
             'themes' => $themes,
             'statuses' => $statuses,
             'types' => $types,
-            'users' => $users,
         ]);
     }
 
@@ -126,7 +116,7 @@ class ChatsController extends Controller
             request('channel_id'),
             request('theme'),
             $userIds,
-            request('direction'),
+            CommunicationChatDto::DIRECTION_OUT,
             request('status_id'),
             request('type_id')
         );

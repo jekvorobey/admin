@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413"
+                "reference": "acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413",
-                "reference": "0ab8ae4c5a7993d29bda3acd68ed5aa42a50a413",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8",
+                "reference": "acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-02-28T10:03:55+00:00"
+            "time": "2020-03-13T07:29:50+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -480,12 +480,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "ed628022f7fea07a8f4922f8fdb2f7755bf24c65"
+                "reference": "e7af65fb28fa76f93577ae6c55044be82ab1b343"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=ed628022f7fea07a8f4922f8fdb2f7755bf24c65",
-                "reference": "ed628022f7fea07a8f4922f8fdb2f7755bf24c65",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=e7af65fb28fa76f93577ae6c55044be82ab1b343",
+                "reference": "e7af65fb28fa76f93577ae6c55044be82ab1b343",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +509,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-03-04T10:06:26+00:00"
+            "time": "2020-03-13T10:23:00+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -517,12 +517,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "b28356eb8a414520e91046fb201ff59d3299ae7c"
+                "reference": "5480f7faa126bb552219dc06f5204feaa3249a63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=b28356eb8a414520e91046fb201ff59d3299ae7c",
-                "reference": "b28356eb8a414520e91046fb201ff59d3299ae7c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=5480f7faa126bb552219dc06f5204feaa3249a63",
+                "reference": "5480f7faa126bb552219dc06f5204feaa3249a63",
                 "shasum": ""
             },
             "require": {
@@ -566,7 +566,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-02-27T13:54:26+00:00"
+            "time": "2020-03-13T09:57:58+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -574,12 +574,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "586088d3a10e604c0f1f022137889888c545dc04"
+                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=586088d3a10e604c0f1f022137889888c545dc04",
-                "reference": "586088d3a10e604c0f1f022137889888c545dc04",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=b075335723eb0a19b2870eb95bb3c743b72abd01",
+                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01",
                 "shasum": ""
             },
             "require": {
@@ -614,7 +614,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-02-28T12:38:09+00:00"
+            "time": "2020-03-12T15:33:27+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -622,12 +622,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "34350a370d8d0352cda3bda90cba24ca87218c03"
+                "reference": "57966c4bbcb3b765228e727f15753404ce4454a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=34350a370d8d0352cda3bda90cba24ca87218c03",
-                "reference": "34350a370d8d0352cda3bda90cba24ca87218c03",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=57966c4bbcb3b765228e727f15753404ce4454a0",
+                "reference": "57966c4bbcb3b765228e727f15753404ce4454a0",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-02-27T13:57:30+00:00"
+            "time": "2020-03-11T14:42:20+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -755,12 +755,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "7fd9d191eed2492fb0009b8a2ab9276581c38cc6"
+                "reference": "9156c1eeae7535ebfa708317a9ada6f8023d7d78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=7fd9d191eed2492fb0009b8a2ab9276581c38cc6",
-                "reference": "7fd9d191eed2492fb0009b8a2ab9276581c38cc6",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=9156c1eeae7535ebfa708317a9ada6f8023d7d78",
+                "reference": "9156c1eeae7535ebfa708317a9ada6f8023d7d78",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +795,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-02-28T11:28:03+00:00"
+            "time": "2020-03-12T13:59:33+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -803,12 +803,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "a850de4f758f21e073e0a39ec73a0402644e3803"
+                "reference": "cc46405b2467b67dfc9c504a882a0dc79460b3be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=a850de4f758f21e073e0a39ec73a0402644e3803",
-                "reference": "a850de4f758f21e073e0a39ec73a0402644e3803",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=cc46405b2467b67dfc9c504a882a0dc79460b3be",
+                "reference": "cc46405b2467b67dfc9c504a882a0dc79460b3be",
                 "shasum": ""
             },
             "require": {
@@ -832,7 +832,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-03-03T06:50:35+00:00"
+            "time": "2020-03-13T10:17:17+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -840,12 +840,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "80d3308d7f436379bbc30a9711e5f254b5cbb73a"
+                "reference": "ab380566c0e310fb2ef0394c4f83d7da94e74e78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=80d3308d7f436379bbc30a9711e5f254b5cbb73a",
-                "reference": "80d3308d7f436379bbc30a9711e5f254b5cbb73a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=ab380566c0e310fb2ef0394c4f83d7da94e74e78",
+                "reference": "ab380566c0e310fb2ef0394c4f83d7da94e74e78",
                 "shasum": ""
             },
             "require": {
@@ -880,7 +880,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2020-03-02T09:40:35+00:00"
+            "time": "2020-03-12T15:32:35+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3818,16 +3818,16 @@
         },
         {
             "name": "vlucas/phpdotenv",
-            "version": "v3.6.0",
+            "version": "v3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlucas/phpdotenv.git",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156"
+                "reference": "8f7961f7b9deb3b432452c18093cf16f88205902"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/1bdf24f065975594f6a117f0f1f6cabf1333b156",
-                "reference": "1bdf24f065975594f6a117f0f1f6cabf1333b156",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/8f7961f7b9deb3b432452c18093cf16f88205902",
+                "reference": "8f7961f7b9deb3b432452c18093cf16f88205902",
                 "shasum": ""
             },
             "require": {
@@ -3836,7 +3836,11 @@
                 "symfony/polyfill-ctype": "^1.9"
             },
             "require-dev": {
+                "ext-filter": "*",
                 "phpunit/phpunit": "^4.8.35 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "suggest": {
+                "ext-filter": "Required to use the boolean validator."
             },
             "type": "library",
             "extra": {
@@ -3871,7 +3875,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2019-09-10T21:37:39+00:00"
+            "time": "2020-03-12T13:44:00+00:00"
         }
     ],
     "packages-dev": [
@@ -4114,16 +4118,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.9.3",
+            "version": "1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "1291a16ce3f48bfdeca39d64fca4875098af4d7b"
+                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/1291a16ce3f48bfdeca39d64fca4875098af4d7b",
-                "reference": "1291a16ce3f48bfdeca39d64fca4875098af4d7b",
+                "url": "https://api.github.com/repos/composer/composer/zipball/472c917b2a083ec7d2fa25c55fd099d1300e2515",
+                "reference": "472c917b2a083ec7d2fa25c55fd099d1300e2515",
                 "shasum": ""
             },
             "require": {
@@ -4136,17 +4140,17 @@
                 "psr/log": "^1.0",
                 "seld/jsonlint": "^1.4",
                 "seld/phar-utils": "^1.0",
-                "symfony/console": "^2.7 || ^3.0 || ^4.0",
-                "symfony/filesystem": "^2.7 || ^3.0 || ^4.0",
-                "symfony/finder": "^2.7 || ^3.0 || ^4.0",
-                "symfony/process": "^2.7 || ^3.0 || ^4.0"
+                "symfony/console": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/filesystem": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/finder": "^2.7 || ^3.0 || ^4.0 || ^5.0",
+                "symfony/process": "^2.7 || ^3.0 || ^4.0 || ^5.0"
             },
             "conflict": {
                 "symfony/console": "2.8.38"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7",
-                "phpunit/phpunit-mock-objects": "^2.3 || ^3.0"
+                "phpspec/prophecy": "^1.10",
+                "symfony/phpunit-bridge": "^3.4"
             },
             "suggest": {
                 "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages",
@@ -4159,7 +4163,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.9-dev"
+                    "dev-master": "1.10-dev"
                 }
             },
             "autoload": {
@@ -4190,7 +4194,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-02-04T11:58:49+00:00"
+            "time": "2020-03-10T13:08:05+00:00"
         },
         {
             "name": "composer/semver",
@@ -5320,16 +5324,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.10.2",
+            "version": "v1.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9"
+                "reference": "451c3cd1418cf640de218914901e51b064abb093"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
-                "reference": "b4400efc9d206e83138e2bb97ed7f5b14b831cd9",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/451c3cd1418cf640de218914901e51b064abb093",
+                "reference": "451c3cd1418cf640de218914901e51b064abb093",
                 "shasum": ""
             },
             "require": {
@@ -5379,7 +5383,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2020-01-20T15:57:02+00:00"
+            "time": "2020-03-05T15:02:03+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -6378,26 +6382,26 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v4.4.5",
+            "version": "v5.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "266c9540b475f26122b61ef8b23dd9198f5d1cfd"
+                "reference": "3afadc0f57cd74f86379d073e694b0f2cda2a88c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/266c9540b475f26122b61ef8b23dd9198f5d1cfd",
-                "reference": "266c9540b475f26122b61ef8b23dd9198f5d1cfd",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/3afadc0f57cd74f86379d073e694b0f2cda2a88c",
+                "reference": "3afadc0f57cd74f86379d073e694b0f2cda2a88c",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1.3",
+                "php": "^7.2.5",
                 "symfony/polyfill-ctype": "~1.8"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.4-dev"
+                    "dev-master": "5.0-dev"
                 }
             },
             "autoload": {
@@ -6424,7 +6428,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2020-01-21T08:20:44+00:00"
+            "time": "2020-01-21T08:40:24+00:00"
         },
         {
             "name": "theseer/tokenizer",

@@ -24,7 +24,7 @@ import VDeleteButton from '../controls/VDeleteButton/VDeleteButton.vue';
 export default {
     name: 'communication-chat-message',
     components: {VDeleteButton, FileInput},
-    props: ['type'],
+    props: ['kind'],
     data() {
         return {
             sendButtonName: 'Отправить сообщение',
@@ -59,6 +59,9 @@ export default {
                 this.initNewFile(),
             ];
         },
+        onClickEmit(files) {
+            this.$emit('send', {message: this.form.message, files});
+        },
         onClick() {
             const files = [];
             this.form.files.forEach(file => {
@@ -67,22 +70,17 @@ export default {
                 }
             });
 
-            switch (this.type) {
-                case 'createChat':
-                    this.$emit('createChat', { message: this.form.message, files});
-                    break;
-                default:
-                    this.$emit('send', {message: this.form.message, files});
-                    break;
-            }
-
+            this.onClickEmit(files);
             this.initComponent();
         },
     },
     created() {
-        switch (this.type) {
+        switch (this.kind) {
             case 'createChat':
                 this.sendButtonName = 'Создать чат';
+                this.onClickEmit = (files) => {
+                    this.$emit('createChat', { message: this.form.message, files});
+                };
                 break;
             default:
                 break;

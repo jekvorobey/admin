@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Core\Menu;
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Http\Request;
@@ -18,9 +19,24 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class Controller extends BaseController
 {
     protected $title = '';
+    protected $loadChannelTypes = false;
 
     public function render($componentName, $props = [])
     {
+        $channelTypes = [];
+        if ($this->loadChannelTypes) {
+            $channelTypes = [
+                'internal_message' => CommunicationChannelDto::CHANNEL_INTERNAL_MESSAGE,
+                'infinity' => CommunicationChannelDto::CHANNEL_INFINITY,
+                'smsc' => CommunicationChannelDto::CHANNEL_SMSC,
+                'livetex_viber' => CommunicationChannelDto::CHANNEL_LIVETEX_VIBER,
+                'livetex_telegram' => CommunicationChannelDto::CHANNEL_LIVETEX_TELEGRAM,
+                'livetex_fb' => CommunicationChannelDto::CHANNEL_LIVETEX_FB,
+                'livetex_vk' => CommunicationChannelDto::CHANNEL_LIVETEX_VK,
+                'internal_email' => CommunicationChannelDto::CHANNEL_INTERNAL_EMAIL,
+            ];
+        }
+
         return View::component(
             $componentName,
             $props,
@@ -30,6 +46,7 @@ class Controller extends BaseController
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
                 ],
+                'channelTypes' => $channelTypes,
             ],
             [
                 'title' => $this->title,

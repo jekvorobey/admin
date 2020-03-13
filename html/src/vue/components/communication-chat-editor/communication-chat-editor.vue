@@ -21,7 +21,6 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.status_id" id="chat-status">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
                                 <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
@@ -40,7 +39,6 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.type_id" id="chat-type">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
                                 <b-form-select-option :value="type.id" v-for="type in availableTypes" :key="type.id">
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
@@ -53,7 +51,7 @@
                         </b-col>
                     </b-row>
 
-                    <b-row class="mb-2" v-if="!showMessageForm">
+                    <b-row class="mb-2">
                         <b-col>
                             <b-button @click="onEditChat(null, null)" class="btn btn-success">Редактировать чат</b-button>
                         </b-col>
@@ -67,7 +65,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import Services from "../../../scripts/services/services";
-import CommunicationChatMessage from "../communication-chat-message/communication-chat-message.vue";
 
 export default {
     name: 'communication-chat-editor',
@@ -85,7 +82,7 @@ export default {
         }
     },
     methods: {
-        onEditChat(message, files) {
+        onEditChat() {
             Services.showLoader();
             Services.net().post(this.getRoute('communications.chats.update'), {}, {
                 chat_id: this.chat_id,

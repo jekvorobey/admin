@@ -10,7 +10,6 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.channel_id" id="chat-channel">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
                                 <b-form-select-option :value="channel.id" v-for="channel in availableChannels" :key="channel.id">
                                     {{ channel.name }}
                                 </b-form-select-option>
@@ -36,9 +35,8 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.user_ids" multiple id="chat-users">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="user.id" v-for="user in users" :key="user.id">
-                                    {{ user.short_name + ': ' + user.phone }}
+                                <b-form-select-option :value="user.id" v-for="user in availableUsers" :key="user.id">
+                                    {{ user.title }}
                                 </b-form-select-option>
                             </b-form-select>
                         </b-col>
@@ -50,7 +48,6 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.status_id" id="chat-status">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
                                 <b-form-select-option :value="status.id" v-for="status in availableStatuses" :key="status.id">
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
@@ -69,7 +66,6 @@
                         </b-col>
                         <b-col cols="9">
                             <b-form-select v-model="form.type_id" id="chat-type">
-                                <b-form-select-option :value="null">Все</b-form-select-option>
                                 <b-form-select-option :value="type.id" v-for="type in availableTypes" :key="type.id">
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
@@ -84,7 +80,7 @@
 
                     <b-row class="mb-2">
                         <b-col>
-                            <communication-chat-message :type="'createChat'" @createChat="({message, files}) => onCreateChat(message, files)"/>
+                            <communication-chat-message :kind="'createChat'" @createChat="({message, files}) => onCreateChat(message, files)"/>
                         </b-col>
                     </b-row>
                 </b-form>
@@ -120,10 +116,7 @@ export default {
         }
     },
     methods: {
-        showHideChatForm(chat) {
-            if (this.showChatForm) {
-                this.showMessageForm = !this.showMessageForm;
-            }
+        showHideChatForm() {
             this.showChatForm = !this.showChatForm;
         },
         initComponentVar() {
@@ -143,7 +136,6 @@ export default {
                 channel_id: this.form.channel_id,
                 theme: this.form.theme,
                 user_ids: this.form.user_ids,
-                direction: 2,
                 status_id: this.form.status_id,
                 type_id: this.form.type_id,
                 message: message,
@@ -157,14 +149,15 @@ export default {
                 Services.hideLoader();
                 this.initComponent();
             });
-        }
+        },
+        availableChannelsVar() {
+            return this.channels;
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
         availableChannels() {
-            return Object.values(this.channels).filter(channel => {
-                return Number(channel.id) !== 8 || this.customer.email;
-            })
+            return this.availableChannelsVar();
         },
         availableThemes() {
             return Object.values(this.themes).filter(theme => {
@@ -172,6 +165,11 @@ export default {
                     !theme.channel_id ||
                     Number(theme.channel_id) === Number(this.form.channel_id);
             })
+        },
+        availableUsers() {
+            return Object.values(this.users).filter(user => {
+                return Number(this.form.channel_id) !== this.channelTypes.internal_email || user.email;
+            });
         },
         availableStatuses() {
             return Object.values(this.statuses).filter(status => {
@@ -195,6 +193,8 @@ export default {
             this.themes = data.themes;
             this.statuses = data.statuses;
             this.types = data.types;
+        });
+        Services.net().get(this.getRoute('settings.userListTitle')).then(data => {
             this.users = data.users;
             Services.hideLoader();
         });
@@ -202,11 +202,14 @@ export default {
             case 'selectedUser':
                 this.showChatForm = false;
                 this.showUsersInput = false;
-                this.test1 = 'new1';
                 this.initComponentVar = () => {
-                    this.test2 = 'new2';
                     this.form.user_ids = [this.customer.user_id];
                     this.showChatForm = false;
+                };
+                this.availableChannelsVar = () => {
+                    return Object.values(this.channels).filter(channel => {
+                        return Number(channel.id) !== this.channelTypes.internal_email || this.customer.email;
+                    });
                 };
                 break;
             default:

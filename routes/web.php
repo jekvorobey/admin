@@ -72,6 +72,7 @@ Route::middleware('auth')->group(function () {
                 Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
+            Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
     });

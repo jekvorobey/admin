@@ -76,6 +76,10 @@ Vue.mixin({
         user() {
             return this.$store.state.layout.user;
         },
+        /** @return {ChannelTypes} */
+        channelTypes() {
+            return this.$store.state.layout.channelTypes;
+        },
         /** @return {Media} */
         media() {
             return Media;
@@ -88,4 +92,16 @@ Vue.mixin({
  @type {Object}
  @property {boolean} isGuest - isGuest
  @property {boolean} isSuper - isSuper
+ */
+/**
+ @typedef ChannelTypes
+ @type {Object}
+ @property {number} internal_message
+ @property {number} infinity
+ @property {number} smsc
+ @property {number} livetex_viber
+ @property {number} livetex_telegram
+ @property {number} livetex_fb
+ @property {number} livetex_vk
+ @property {number} internal_email
  */
