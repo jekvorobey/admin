@@ -40,6 +40,7 @@ class DiscountController extends Controller
         $params = DiscountHelper::getParams($request, $pager);
         $countParams = DiscountHelper::getParams($request);
         $discounts = DiscountHelper::load($params, $discountService);
+        $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService);
         $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
         return $this->render('Marketing/Discount/List', [
@@ -49,6 +50,10 @@ class DiscountController extends Controller
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
             'discountTypes' => DiscountTypeDto::allTypes(),
+            'merchantNames' => DiscountHelper::getMerchantNames(),
+            'userNames' => DiscountHelper::getUserNames(),
+            'authors' => $discountUserInfo['authors'],
+            'initiators' => $discountUserInfo['initiators'],
             'iPager' => $pager,
         ]);
     }

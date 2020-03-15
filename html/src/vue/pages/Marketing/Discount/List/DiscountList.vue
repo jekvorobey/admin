@@ -34,7 +34,25 @@
                                     Скидка на
                                 </f-multi-select>
 
-                                <v-select v-model="filter.role_id" :options="roles" class="col-6">Роль</v-select>
+                                <v-select v-model="filter.role_id" :options="roles" class="col-3">Роль</v-select>
+
+                                <f-date v-model="filter.created_at" class="col-3">
+                                    Дата создания
+                                </f-date>
+                            </div>
+                            <div class="row mt-3">
+                                <f-multi-select v-model="filter.merchant_id"
+                                                :options="initiatorsOptions"
+                                                :name="'initiators'"
+                                                class="col-6">
+                                    Инициатор
+                                </f-multi-select>
+                                <f-multi-select v-model="filter.user_id"
+                                                :options="authorsOptions"
+                                                :name="'authors'"
+                                                class="col-6">
+                                    Автор
+                                </f-multi-select>
                             </div>
                             <div class="row mt-3">
                                 <f-date v-model="filter.start_date" class="col-3">
@@ -80,9 +98,12 @@
             <thead class="thead-light">
             <tr>
                 <th>ID</th>
+                <th>Дата создания</th>
                 <th>Название</th>
                 <th>Скидка</th>
-                <th>Срок действия</th>
+                <th>Период действия</th>
+                <th>Инициатор</th>
+                <th>Автор</th>
                 <th>Статус</th>
                 <th></th>
             </tr>
@@ -93,11 +114,14 @@
             </tr>
             <tr v-if="discounts" v-for="(discount, index) in discounts">
                 <td>{{ discount.id }}</td>
+                <td>{{ datePrint(discount.created_at) }}</td>
                 <td>{{ discount.name }}</td>
-                <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? ' руб.' : '%' }} на<br/>
+                <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? '₽' : '%' }} на<br/>
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
                 <td>{{ discount.validityPeriod }}</td>
+                <td>{{ initiatorName(discount.merchant_id) }}</td>
+                <td>{{ userName(discount.user_id) }}</td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
                 </td>
@@ -134,6 +158,9 @@
         name: '',
         type: [],
         status: [],
+        user_id: [],
+        merchant_id: [],
+        created_at: [],
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -158,6 +185,10 @@
             iPager: Object,
             roles: Array,
             iFilter: Object|Array,
+            merchantNames: Object|Array,
+            userNames: Object|Array,
+            authors: Array,
+            initiators: Array,
         },
         data() {
             return {
@@ -182,8 +213,20 @@
                 DISCOUNT_VALUE_TYPE_PERCENT: 1,
                 DISCOUNT_VALUE_TYPE_RUB: 2,
             };
-        },
+    },
         methods: {
+            userName(id) {
+                let user = this.userNames[id];
+                return user ? user : 'N/A';
+            },
+            initiatorName(id) {
+                if (!id) {
+                    return 'Платформа';
+                }
+
+                let merchant = this.merchantNames[id];
+                return merchant ? merchant : 'N/A';
+            },
             changePage(newPage) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: newPage,
@@ -284,6 +327,16 @@
             },
         },
         computed: {
+            initiatorsOptions() {
+                return this.initiators.map(initiatorId => ({
+                    value: initiatorId, text: this.initiatorName(initiatorId)
+                }));
+            },
+            authorsOptions() {
+                return this.authors.map(authorId => ({
+                    value: authorId, text: this.userName(authorId)
+                }));
+            },
             discountTypesOptions() {
                 return Object.values(this.discountTypes).map(type => ({value: type.id, text: type.name}));
             },

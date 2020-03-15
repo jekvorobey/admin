@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
@@ -16,6 +17,8 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 
 class DiscountHelper
 {
@@ -34,6 +37,9 @@ class DiscountHelper
             'fix_start_date',
             'end_date',
             'fix_end_date',
+            'user_id',
+            'merchant_id',
+            'created_at',
             'type',
             'role_id',
         ];
@@ -74,6 +80,15 @@ class DiscountHelper
         });
 
         return $discounts;
+    }
+
+    public static function getDiscountUsersInfo(DiscountService $discountService)
+    {
+        return $discountService->usersInfo([
+            'filter' => [
+                '!status' => DiscountStatusDto::STATUS_CREATED
+            ]
+        ]);
     }
 
     /**
@@ -309,9 +324,34 @@ class DiscountHelper
     }
 
     /**
+     * @return array|Collection
+     */
+    public static function getMerchantNames()
+    {
+        $merchantService = resolve(MerchantService::class);
+        $merchants = $merchantService->newQuery()
+            ->addFields(MerchantDto::entity(), 'id', 'display_name')
+            ->merchants();
+
+        return collect($merchants)->pluck('display_name', 'id');
+    }
+
+    /**
+     * @return array|Collection
+     */
+    public static function getUserNames()
+    {
+        $userService = resolve(UserService::class);
+        $query = $userService->newQuery();
+        $users = $userService->users($query);
+
+        return collect($users)->pluck('login', 'id');
+    }
+
+    /**
      * @return array
      */
-    static public function getOptionRoles()
+    public static function getOptionRoles()
     {
         return [
             ['value' => null, 'text' => 'Все'],
@@ -325,7 +365,7 @@ class DiscountHelper
      * @param int $perPage
      * @return array
      */
-    static public function getDefaultPager(Request $request, int $perPage = 20)
+    public static function getDefaultPager(Request $request, int $perPage = 20)
     {
         return [
             'page' =>  (int) $request->get('page', 1),
