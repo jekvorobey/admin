@@ -35,13 +35,10 @@
                                 </f-multi-select>
 
                                 <v-select v-model="filter.role_id" :options="roles" class="col-3">Роль</v-select>
-
-                                <f-date v-model="filter.created_at" class="col-3">
-                                    Дата создания
-                                </f-date>
                             </div>
                             <div class="row mt-3">
                                 <div class="col-6">
+                                    <label>Инициатор</label>
                                     <v-select2 v-model="filter.merchant_id"
                                                class="form-control"
                                                :multiple="true"
@@ -51,6 +48,7 @@
                                     </v-select2>
                                 </div>
                                 <div class="col-6">
+                                    <label>Автор</label>
                                     <v-select2 v-model="filter.user_id"
                                                class="form-control"
                                                :allowClear="true"
@@ -60,9 +58,19 @@
                                     </v-select2>
                                 </div>
                             </div>
-                            <div class="row mt-3">
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Дата создания</b></label>
+                                </div>
+                                <f-date v-model="filter.created_at_from" class="col-3">От</f-date>
+                                <f-date v-model="filter.created_at_to" class="col-3">До</f-date>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Период действия скидки</b></label>
+                                </div>
                                 <f-date v-model="filter.start_date" class="col-3">
-                                    Начало действия скидки
+                                    От
                                 </f-date>
                                 <div class="col-3">
                                     <label>Точная дата
@@ -75,7 +83,7 @@
                             </div>
                             <div class="row mt-2">
                                 <f-date v-model="filter.end_date" class="col-3">
-                                    Конец действия скидки
+                                    До
                                 </f-date>
                                 <div class="col-3">
                                     <label>&nbsp;</label>
@@ -167,7 +175,8 @@
         status: [],
         user_id: [],
         merchant_id: [],
-        created_at: [],
+        created_at_from: [],
+        created_at_to: [],
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -229,7 +238,7 @@
             },
             initiatorName(id) {
                 if (!id) {
-                    return 'Платформа';
+                    return 'Маркетплейс';
                 }
 
                 let merchant = this.merchantNames[id];
