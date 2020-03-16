@@ -41,7 +41,7 @@
                     <info-order :id="customer.id"/>
                 </b-tab>
                 <b-tab title="Коммуникации">
-                    <communication-chat-creator :kind="'selectedUser'" :customer="customer"/>
+                    <communication-chat-creator kind='selectedUser' :customer="customer"/>
                     <communication-chat-list :filter="{user_id: customer.user_id}"/>
                 </b-tab>
                 <b-tab title="Подписки">

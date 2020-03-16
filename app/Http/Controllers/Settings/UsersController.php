@@ -125,12 +125,17 @@ class UsersController extends Controller
         ]);
     }
 
+    public function rolesList()
+    {
+        return response()->json(['roles' => UserDTO::roles()]);
+    }
+
     public function userListTitle(UserService $userService, RequestInitiator $user)
     {
         $users = $userService->users(
             $userService->newQuery()
-                ->include('profile')
                 ->setFilter('id', '!=', $user->userId())
+                ->setFilter('role', request('role_id'))
         )
             ->keyBy('id')
             ->map(function (UserDto $user) {

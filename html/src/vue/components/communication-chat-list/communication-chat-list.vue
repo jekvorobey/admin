@@ -180,7 +180,7 @@ export default {
             this.showChat = this.showChat === chat.id ? null : chat.id;
             if (this.showChat && chat.unread_admin) {
                 chat.unread_admin = false;
-                //Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
+                Services.net().put(this.getRoute('communications.chats.read'), {id: chat.id});
             }
         },
         onSend(message, files, chat_id) {

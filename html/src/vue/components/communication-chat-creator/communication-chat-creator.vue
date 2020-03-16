@@ -9,11 +9,35 @@
                             <label for="chat-channel">Канал</label>
                         </b-col>
                         <b-col cols="9">
-                            <b-form-select v-model="form.channel_id" id="chat-channel">
+                            <b-form-select v-model="form.channel_id" id="chat-channel" @input="initUserThemeStatusType">
                                 <b-form-select-option :value="channel.id" v-for="channel in availableChannels" :key="channel.id">
                                     {{ channel.name }}
                                 </b-form-select-option>
                             </b-form-select>
+                        </b-col>
+                    </b-row>
+
+                    <b-row class="mb-2" v-if="showUserRoleAndIdInput">
+                        <b-col cols="3">
+                            <label for="chat-users-role">Роль пользователей</label>
+                        </b-col>
+                        <b-col cols="9">
+                            <b-form-select v-model="form.role_id" id="chat-users-role" @input="getUsersByRole">
+                                <b-form-select-option :value="role_id" v-for="(role_name, role_id) in roles" :key="role_id">
+                                    {{ role_name }}
+                                </b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                    </b-row>
+
+                    <b-row class="mb-2" v-if="showUserRoleAndIdInput">
+                        <b-col cols="3">
+                            <label for="chat-users">Пользователи</label>
+                        </b-col>
+                        <b-col cols="9">
+                            <v-select2 v-model="form.user_ids" class="form-control form-control-sm" multiple>
+                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
+                            </v-select2>
                         </b-col>
                     </b-row>
 
@@ -26,19 +50,6 @@
                             <datalist id="list-theme">
                                 <option v-for="theme in availableThemes">{{ theme.name }}</option>
                             </datalist>
-                        </b-col>
-                    </b-row>
-
-                    <b-row class="mb-2" v-if="showUsersInput">
-                        <b-col cols="3">
-                            <label for="chat-users">Пользователи</label>
-                        </b-col>
-                        <b-col cols="9">
-                            <b-form-select v-model="form.user_ids" multiple id="chat-users">
-                                <b-form-select-option :value="user.id" v-for="user in availableUsers" :key="user.id">
-                                    {{ user.title }}
-                                </b-form-select-option>
-                            </b-form-select>
                         </b-col>
                     </b-row>
 
@@ -80,7 +91,7 @@
 
                     <b-row class="mb-2">
                         <b-col>
-                            <communication-chat-message :kind="'createChat'" @createChat="({message, files}) => onCreateChat(message, files)"/>
+                            <communication-chat-message kind='createChat' @createChat="({message, files}) => onCreateChat(message, files)"/>
                         </b-col>
                     </b-row>
                 </b-form>
@@ -93,26 +104,30 @@
 import { mapGetters } from 'vuex';
 import Services from "../../../scripts/services/services";
 import CommunicationChatMessage from "../communication-chat-message/communication-chat-message.vue";
+import VSelect2 from '../controls/VSelect2/v-select2.vue';
 
 export default {
     name: 'communication-chat-creator',
-    components: {CommunicationChatMessage},
+    components: {VSelect2, CommunicationChatMessage},
     props: ['kind','customer'],
     data() {
         return {
             channels: {},
+            roles: {},
             users: {},
+            themes: {},
             statuses: {},
             types: {},
             form: {
                 channel_id: null,
-                theme: '',
+                users_role: null,
                 user_ids: null,
+                theme: '',
                 status_id: null,
                 type_id: null,
             },
             showChatForm: true,
-            showUsersInput: true,
+            showUserRoleAndIdInput: true,
         }
     },
     methods: {
@@ -125,10 +140,17 @@ export default {
         },
         initComponent() {
             this.form.channel_id = null;
+            this.form.role_id = null;
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
             this.initComponentVar();
+        },
+        initUserThemeStatusType() {
+            this.form.user_ids = null;
+            this.form.theme = '';
+            this.form.status_id = null;
+            this.form.type_id = null;
         },
         onCreateChat(message, files) {
             Services.showLoader();
@@ -153,11 +175,28 @@ export default {
         availableChannelsVar() {
             return this.channels;
         },
+        getUsersByRole() {
+            Services.showLoader();
+            Services.net().get(this.getRoute('settings.userListTitle'), {
+                'role_id': this.form.role_id
+            }).then(data => {
+                this.users = data.users;
+            }).finally(() => {
+                Services.hideLoader();
+            });
+
+            this.initUserThemeStatusType();
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
         availableChannels() {
             return this.availableChannelsVar();
+        },
+        availableUsers() {
+            return Object.values(this.users).filter(user => {
+                return Number(this.form.channel_id) !== this.channelTypes.internal_email || user.email;
+            });
         },
         availableThemes() {
             return Object.values(this.themes).filter(theme => {
@@ -165,11 +204,6 @@ export default {
                     !theme.channel_id ||
                     Number(theme.channel_id) === Number(this.form.channel_id);
             })
-        },
-        availableUsers() {
-            return Object.values(this.users).filter(user => {
-                return Number(this.form.channel_id) !== this.channelTypes.internal_email || user.email;
-            });
         },
         availableStatuses() {
             return Object.values(this.statuses).filter(status => {
@@ -186,6 +220,9 @@ export default {
             })
         },
     },
+    watch: {
+
+    },
     created() {
         Services.showLoader();
         Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
@@ -194,14 +231,15 @@ export default {
             this.statuses = data.statuses;
             this.types = data.types;
         });
-        Services.net().get(this.getRoute('settings.userListTitle')).then(data => {
-            this.users = data.users;
+        Services.net().get(this.getRoute('settings.users.roles')).then(data => {
+            this.roles = data.roles;
+        }).finally(() => {
             Services.hideLoader();
         });
         switch (this.kind) {
             case 'selectedUser':
                 this.showChatForm = false;
-                this.showUsersInput = false;
+                this.showUserRoleAndIdInput = false;
                 this.initComponentVar = () => {
                     this.form.user_ids = [this.customer.user_id];
                     this.showChatForm = false;
