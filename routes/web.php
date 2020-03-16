@@ -192,6 +192,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'BannerDetailController@create')->where(['id' => '[0-9]+'])->name('banner.create');
             Route::put('/{id}', 'BannerDetailController@update')->where(['id' => '[0-9]+'])->name('banner.update');
             Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
+
+            Route::get('/initialDate', 'BannerDetailController@bannerInitialDate')->name('banner.initialData');
         });
 
         Route::prefix('landing')->namespace('Landing')->group(function () {
