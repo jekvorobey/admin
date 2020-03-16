@@ -26,6 +26,12 @@
                 :options="options"
                 @onSave="refresh"
         ></property-tab>
+        <delivery-tab
+                v-if="nav.currentTab === 'delivery'"
+                :product="product"
+                :options="options"
+                @onSave="refresh"
+        ></delivery-tab>
         <content-tab
                 v-if="nav.currentTab === 'content'"
                 :images="images"
@@ -50,6 +56,7 @@
     import VTabs from '../../../components/tabs/tabs.vue';
 
     import PropertyTab from './components/property-tab.vue';
+    import DeliveryTab from './components/delivery-tab.vue';
     import ContentTab from './components/content-tab.vue';
     import HistoryTab from './components/history-tab.vue';
     import ProductRejectModal from './components/product-reject-modal.vue';
@@ -61,6 +68,7 @@
         VTabs,
 
         PropertyTab,
+        DeliveryTab,
         ContentTab,
         HistoryTab,
         ProductRejectModal,
@@ -82,6 +90,7 @@
                 currentTab: 'props',
                 tabs: [
                     {value: 'props', text: 'Мастер-данные'},
+                    {value: 'delivery', text: 'Хранение и доставка'},
                     {value: 'content', text: 'Контент'},
                     {value: 'history', text: 'История'},
                 ]

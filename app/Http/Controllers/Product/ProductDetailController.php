@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Oms\Dto\PaymentMethod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
+use Pim\Dto\Product\ProductConstraintType;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
@@ -40,7 +43,7 @@ class ProductDetailController extends Controller
         $approvalStatuses = collect(ProductApprovalStatus::allStatuses())->pluck('name', 'id')->all();
         $brands = $brandService->newQuery()->prepare($brandService)->brands();
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
-        
+
         return $this->render('Product/ProductDetail', [
             'iProduct' => $product,
             'iImages' => $images,
@@ -51,7 +54,7 @@ class ProductDetailController extends Controller
                 
                 'approval' => $approvalStatuses,
                 'brands' => $brands,
-                'categories' => $categories
+                'categories' => $categories,
             ]
         ]);
     }
@@ -200,7 +203,7 @@ class ProductDetailController extends Controller
         /** @var Collection|ProductDto[] $products */
         $products = $productService
             ->newQuery()
-            ->include('tips')
+            ->include('tips', 'constraints')
             ->setFilter('id', $id)
             ->include('properties')
             ->products();
