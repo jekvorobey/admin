@@ -63,6 +63,11 @@
                     class="preview-photo-input"
             />
 
+            Баннер<br>
+            <b-button v-show="productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Изменить баннер</b-button>
+            <b-button v-show="productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="removeBanner">Удалить баннер</b-button>
+            <b-button v-show="!productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Создать баннер</b-button>
+
             <b-form-group
                     label="Тип*"
                     label-for="group-type"
@@ -117,6 +122,8 @@
 
             <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
+
+        <banner-modal modal-name="FormTheme" @accept="onModalAccept" :id="productGroup.banner_id"/>
     </layout-main>
 </template>
 
@@ -126,12 +133,16 @@
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
     import SelectProducts from './components/select-products.vue';
+    import modalMixin from '../../../mixins/modal';
+    import BannerModal from './components/banner-modal.vue';
 
     export default {
+        mixins: [modalMixin],
         components: {
             SelectFilters,
             SelectProducts,
-            FileInput
+            FileInput,
+            BannerModal
         },
         props: {
             iProductGroup: {},
@@ -165,6 +176,7 @@
                     is_shown: source.is_shown ? source.is_shown : false,
                     type_id: source.type_id ? source.type_id : null,
                     preview_photo_id: source.preview_photo_id ? source.preview_photo_id : null,
+                    banner_id: source.banner_id ? source.banner_id : null,
                 };
             },
             submit() {
@@ -217,6 +229,25 @@
                         product_id: productId,
                         product_group_id: this.productGroup.id,
                     });
+                }
+            },
+            onModalAccept(id) {
+                this.productGroup.banner_id = id;
+                this.closeModal('FormTheme');
+            },
+            openBannerModal() {
+                this.openModal('FormTheme');
+            },
+            removeBanner() {
+                if (this.productGroup.banner_id) {
+                    Services.net()
+                        .delete(this.getRoute('productGroup.delete', {id: this.productGroup.banner_id,}))
+                        .then((data) => {
+                            this.productGroup.banner_id = null;
+                        })
+                        .catch((e) => {
+                            console.error(e);
+                        });
                 }
             },
             pluckSelectedProductIds() {
