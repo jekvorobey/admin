@@ -34,7 +34,7 @@
             <file-input
                     @uploaded="onUploadDesktopImage"
                     class="preview-photo-input"
-                    required
+                    :required="!desktopImage"
             />
 
             Планшетное изображение<br>
