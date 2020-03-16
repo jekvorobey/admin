@@ -69,9 +69,7 @@
                                 <div class="col-12">
                                     <label><b>Период действия скидки</b></label>
                                 </div>
-                                <f-date v-model="filter.start_date" class="col-3">
-                                    От
-                                </f-date>
+                                <f-date v-model="filter.start_date" class="col-3">От</f-date>
                                 <div class="col-3">
                                     <label>Точная дата
                                         <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
@@ -82,9 +80,7 @@
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <f-date v-model="filter.end_date" class="col-3">
-                                    До
-                                </f-date>
+                                <f-date v-model="filter.end_date" class="col-3">До</f-date>
                                 <div class="col-3">
                                     <label>&nbsp;</label>
                                     <div>
@@ -175,8 +171,8 @@
         status: [],
         user_id: [],
         merchant_id: [],
-        created_at_from: [],
-        created_at_to: [],
+        created_at_from: '',
+        created_at_to: '',
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -310,6 +306,9 @@
                     'fix_start_date',
                     'fix_end_date',
                     'role_id',
+                    'created_at',
+                    'user_id',
+                    'merchant_id',
                 ];
 
                 let filter = {};
@@ -319,8 +318,17 @@
                         continue;
                     }
 
-                    this.opened = this.opened || ['type', 'start_date', 'end_date', 'role_id'].includes(field);
+                    this.opened = this.opened || [
+                        'type',
+                        'start_date',
+                        'end_date',
+                        'role_id',
+                        'created_at',
+                        'user_id',
+                        'merchant_id',
+                    ].includes(field);
 
+                    console.log(field);
                     switch (field) {
                         case 'id':
                         case 'name':
@@ -329,6 +337,8 @@
                         case 'fix_start_date':
                         case 'fix_end_date':
                         case 'role_id':
+                        case 'user_id':
+                        case 'merchant_id':
                             filter[field] = this.iFilter[field];
                             break;
                         case 'type':
@@ -336,6 +346,10 @@
                             let value = this.iFilter[field].map(v => parseInt(v));
                             filter[field] = value;
                             Service.event().$emit('set-filter-' + field, value);
+                            break;
+                        case 'created_at':
+                            filter['created_at_from'] = this.iFilter[field]['from'];
+                            filter['created_at_to'] = this.iFilter[field]['to'];
                             break;
                     }
                 }
