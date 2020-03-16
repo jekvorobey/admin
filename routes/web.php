@@ -193,6 +193,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'BannerDetailController@create')->where(['id' => '[0-9]+'])->name('banner.create');
             Route::put('/{id}', 'BannerDetailController@update')->where(['id' => '[0-9]+'])->name('banner.update');
             Route::delete('/{id}', 'BannerDetailController@delete')->where(['id' => '[0-9]+'])->name('banner.delete');
+
+            Route::get('/initialDate', 'BannerDetailController@bannerInitialDate')->name('banner.initialData');
         });
 
         Route::prefix('landing')->namespace('Landing')->group(function () {
@@ -301,6 +303,7 @@ Route::middleware('auth')->group(function () {
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
             Route::put('brands', 'CustomerDetailController@putBrands')->name('detail.brand.save');
             Route::put('categories', 'CustomerDetailController@putCategories')->name('detail.category.save');
+            Route::delete('favorite/{product_id}', 'CustomerDetailController@deleteFavoriteItem')->name('favorite.delete');
 
             Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
             Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');

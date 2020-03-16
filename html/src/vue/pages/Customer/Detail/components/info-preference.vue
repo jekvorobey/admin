@@ -37,10 +37,13 @@
                 Избранное
             </th>
             <td>
-                <div v-for="favorite_item in favorites">
+                <div v-for="(favorite_item, index) in favorites">
                     <a :href="'/products/' + favorite_item.id">
                         {{ favorite_item.name }}
                     </a>
+                    <span @click="removeFavItem(id, favorite_item.id, index)">
+                        <fa-icon icon="times"/>
+                    </span>
                 </div>
             </td>
         </tr>
@@ -80,6 +83,13 @@ export default {
 
             return name.join(': ');
         },
+        removeFavItem(id, itemId, index) {
+            Services.showLoader();
+            Services.net().delete(this.getRoute('customers.favorite.delete', {id: id, product_id: itemId})).then(data => {
+                this.favorites.splice(index, 1);
+                Services.hideLoader();
+            });
+        }
     },
     created() {
         Services.showLoader();

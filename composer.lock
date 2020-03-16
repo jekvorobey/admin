@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8"
+                "reference": "c68f85ffc155742f5ca629fed029b0a886d545fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8",
-                "reference": "acaf9d2f572c0cb6f86dcd6dcae2996e50c926a8",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=c68f85ffc155742f5ca629fed029b0a886d545fe",
+                "reference": "c68f85ffc155742f5ca629fed029b0a886d545fe",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-13T07:29:50+00:00"
+            "time": "2020-03-16T13:57:32+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -480,12 +480,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "e7af65fb28fa76f93577ae6c55044be82ab1b343"
+                "reference": "f0ca63d5296581286acabbec0756e4daa5d1750d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=e7af65fb28fa76f93577ae6c55044be82ab1b343",
-                "reference": "e7af65fb28fa76f93577ae6c55044be82ab1b343",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=f0ca63d5296581286acabbec0756e4daa5d1750d",
+                "reference": "f0ca63d5296581286acabbec0756e4daa5d1750d",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +509,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-03-13T10:23:00+00:00"
+            "time": "2020-03-16T08:05:52+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -622,12 +622,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "184427c2b4ddebf86960af5c3e0ef1bd9f2c98dd"
+                "reference": "1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=184427c2b4ddebf86960af5c3e0ef1bd9f2c98dd",
-                "reference": "184427c2b4ddebf86960af5c3e0ef1bd9f2c98dd",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2",
+                "reference": "1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,10 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-03-15T21:46:15+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
+            "time": "2020-03-16T17:18:58+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -803,12 +806,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "2f17c3aba27363a07e0f2c6005547fe37f8d43c3"
+                "reference": "ecff369a808019df2a927eebd6d50a4188ab3d9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=2f17c3aba27363a07e0f2c6005547fe37f8d43c3",
-                "reference": "2f17c3aba27363a07e0f2c6005547fe37f8d43c3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=ecff369a808019df2a927eebd6d50a4188ab3d9d",
+                "reference": "ecff369a808019df2a927eebd6d50a4188ab3d9d",
                 "shasum": ""
             },
             "require": {
@@ -832,7 +835,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-03-13T13:56:05+00:00"
+            "time": "2020-03-16T10:30:42+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1372,28 +1375,28 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.46",
+            "version": "1.0.65",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2"
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
                 "shasum": ""
             },
             "require": {
+                "ext-fileinfo": "*",
                 "php": ">=5.5.9"
             },
             "conflict": {
                 "league/flysystem-sftp": "<1.0.6"
             },
             "require-dev": {
-                "ext-fileinfo": "*",
                 "phpspec/phpspec": "^3.4",
-                "phpunit/phpunit": "^5.7.10"
+                "phpunit/phpunit": "^5.7.26"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -1452,7 +1455,17 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2018-08-22T07:45:22+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-03-08T18:53:20+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",
@@ -4194,6 +4207,16 @@
                 "dependency",
                 "package"
             ],
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-03-13T19:34:27+00:00"
         },
         {
@@ -6539,5 +6562,6 @@
         "php": "^7.1.3",
         "ext-json": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }

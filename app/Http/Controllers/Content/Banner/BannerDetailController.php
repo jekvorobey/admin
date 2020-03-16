@@ -60,12 +60,56 @@ class BannerDetailController extends Controller
         BannerTypeService $bannerTypeService
     ) {
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
+        $bannerButtonTypes = $this->getBannerButtonTypes();
+        $bannerButtonLocations = $this->getBannerButtonLocations();
 
         return $this->render('Content/BannerDetail', [
             'iBanner' => [],
             'iBannerTypes' => $bannerTypes,
+            'iBannerButtonTypes' => $bannerButtonTypes,
+            'iBannerButtonLocations' => $bannerButtonLocations,
             'iBannerImages' => [],
             'options' => [],
+        ]);
+    }
+
+    /**
+     * @param BannerTypeService $bannerTypeService
+     * @return mixed
+     * @throws CmsException
+     */
+    public function bannerInitialDate(
+        Request $request,
+        BannerService $bannerService,
+        BannerTypeService $bannerTypeService,
+        FileService $fileService
+    ) {
+        $validatedData = $request->validate([
+            'id' => 'integer|nullable',
+        ]);
+        $id = $validatedData['id'] ?? null;
+
+        if (!is_null($id)) {
+            $banner = $this->getBanner($id, $bannerService);
+            $bannerImages = $this->getBannerImages([
+                $banner['desktop_image_id'],
+                $banner['tablet_image_id'],
+                $banner['mobile_image_id']
+            ], $fileService);
+        } else {
+            $banner = null;
+            $bannerImages = [];
+        }
+        $bannerTypes = $this->getBannerTypes($bannerTypeService);
+        $bannerButtonTypes = $this->getBannerButtonTypes();
+        $bannerButtonLocations = $this->getBannerButtonLocations();
+
+        return response()->json([
+            'banner' => $banner,
+            'bannerTypes' => $bannerTypes,
+            'bannerButtonTypes' => $bannerButtonTypes,
+            'bannerButtonLocations' => $bannerButtonLocations,
+            'bannerImages' => $bannerImages,
         ]);
     }
 
@@ -85,12 +129,12 @@ class BannerDetailController extends Controller
             'mobile_image_id' => 'integer|nullable',
             'type_id' => 'integer|required',
             'button_id' => 'integer|nullable',
-            'button' => 'array',
+            'button' => 'array|nullable',
         ]);
 
-        $bannerService->createBanner(new BannerDto($validatedData));
+        $id = $bannerService->createBanner(new BannerDto($validatedData));
 
-        return response()->json([], 204);
+        return response()->json($id, 200);
     }
 
     /**
@@ -111,7 +155,7 @@ class BannerDetailController extends Controller
             'mobile_image_id' => 'integer|nullable',
             'type_id' => 'integer|required',
             'button_id' => 'integer|nullable',
-            'button' => 'array',
+            'button' => 'array|nullable',
         ]);
 
         $validatedData['id'] = $id;

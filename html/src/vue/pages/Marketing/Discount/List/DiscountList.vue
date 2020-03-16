@@ -35,29 +35,41 @@
                                 </f-multi-select>
 
                                 <v-select v-model="filter.role_id" :options="roles" class="col-3">Роль</v-select>
-
-                                <f-date v-model="filter.created_at" class="col-3">
-                                    Дата создания
-                                </f-date>
                             </div>
                             <div class="row mt-3">
-                                <f-multi-select v-model="filter.merchant_id"
-                                                :options="initiatorsOptions"
-                                                :name="'initiators'"
-                                                class="col-6">
-                                    Инициатор
-                                </f-multi-select>
-                                <f-multi-select v-model="filter.user_id"
-                                                :options="authorsOptions"
-                                                :name="'authors'"
-                                                class="col-6">
-                                    Автор
-                                </f-multi-select>
+                                <div class="col-6">
+                                    <label>Инициатор</label>
+                                    <v-select2 v-model="filter.merchant_id"
+                                               class="form-control"
+                                               :multiple="true"
+                                               :selectOnClose="true"
+                                               width="100%">
+                                        <option v-for="initiator in initiatorsOptions" :value="initiator.value">{{ initiator.text }}</option>
+                                    </v-select2>
+                                </div>
+                                <div class="col-6">
+                                    <label>Автор</label>
+                                    <v-select2 v-model="filter.user_id"
+                                               class="form-control"
+                                               :allowClear="true"
+                                               :multiple="true"
+                                               width="100%">
+                                        <option v-for="author in authorsOptions" :value="author.value">{{ author.text }}</option>
+                                    </v-select2>
+                                </div>
                             </div>
-                            <div class="row mt-3">
-                                <f-date v-model="filter.start_date" class="col-3">
-                                    Начало действия скидки
-                                </f-date>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Дата создания</b></label>
+                                </div>
+                                <f-date v-model="filter.created_at_from" class="col-3">От</f-date>
+                                <f-date v-model="filter.created_at_to" class="col-3">До</f-date>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Период действия скидки</b></label>
+                                </div>
+                                <f-date v-model="filter.start_date" class="col-3">От</f-date>
                                 <div class="col-3">
                                     <label>Точная дата
                                         <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
@@ -68,9 +80,7 @@
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <f-date v-model="filter.end_date" class="col-3">
-                                    Конец действия скидки
-                                </f-date>
+                                <f-date v-model="filter.end_date" class="col-3">До</f-date>
                                 <div class="col-3">
                                     <label>&nbsp;</label>
                                     <div>
@@ -152,6 +162,7 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
+    import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
     const cleanFilter = {
         id: '',
@@ -160,7 +171,8 @@
         status: [],
         user_id: [],
         merchant_id: [],
-        created_at: [],
+        created_at_from: '',
+        created_at_to: '',
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -176,6 +188,7 @@
             FMultiSelect,
             FCheckbox,
             FDate,
+            VSelect2,
         },
         props: {
             iDiscounts: [Array, null],
@@ -221,7 +234,7 @@
             },
             initiatorName(id) {
                 if (!id) {
-                    return 'Платформа';
+                    return 'Маркетплейс';
                 }
 
                 let merchant = this.merchantNames[id];
@@ -293,6 +306,9 @@
                     'fix_start_date',
                     'fix_end_date',
                     'role_id',
+                    'created_at',
+                    'user_id',
+                    'merchant_id',
                 ];
 
                 let filter = {};
@@ -302,8 +318,17 @@
                         continue;
                     }
 
-                    this.opened = this.opened || ['type', 'start_date', 'end_date', 'role_id'].includes(field);
+                    this.opened = this.opened || [
+                        'type',
+                        'start_date',
+                        'end_date',
+                        'role_id',
+                        'created_at',
+                        'user_id',
+                        'merchant_id',
+                    ].includes(field);
 
+                    console.log(field);
                     switch (field) {
                         case 'id':
                         case 'name':
@@ -312,6 +337,8 @@
                         case 'fix_start_date':
                         case 'fix_end_date':
                         case 'role_id':
+                        case 'user_id':
+                        case 'merchant_id':
                             filter[field] = this.iFilter[field];
                             break;
                         case 'type':
@@ -319,6 +346,10 @@
                             let value = this.iFilter[field].map(v => parseInt(v));
                             filter[field] = value;
                             Service.event().$emit('set-filter-' + field, value);
+                            break;
+                        case 'created_at':
+                            filter['created_at_from'] = this.iFilter[field]['from'];
+                            filter['created_at_to'] = this.iFilter[field]['to'];
                             break;
                     }
                 }
@@ -329,7 +360,7 @@
         computed: {
             initiatorsOptions() {
                 return this.initiators.map(initiatorId => ({
-                    value: initiatorId, text: this.initiatorName(initiatorId)
+                    value: initiatorId ? initiatorId : -1, text: this.initiatorName(initiatorId)
                 }));
             },
             authorsOptions() {
