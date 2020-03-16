@@ -60,10 +60,14 @@ class BannerDetailController extends Controller
         BannerTypeService $bannerTypeService
     ) {
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
+        $bannerButtonTypes = $this->getBannerButtonTypes();
+        $bannerButtonLocations = $this->getBannerButtonLocations();
 
         return $this->render('Content/BannerDetail', [
             'iBanner' => [],
             'iBannerTypes' => $bannerTypes,
+            'iBannerButtonTypes' => $bannerButtonTypes,
+            'iBannerButtonLocations' => $bannerButtonLocations,
             'iBannerImages' => [],
             'options' => [],
         ]);
