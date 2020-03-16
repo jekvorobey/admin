@@ -2,10 +2,10 @@
     <div>
         <b-form-group
                 label="Наименование*"
-                label-for="group-name"
+                label-for="banner-group-name"
         >
             <b-form-input
-                    id="group-name"
+                    id="banner-group-name"
                     v-model="banner.name"
                     type="text"
                     required
@@ -15,10 +15,10 @@
 
         <b-form-group
                 label="Активность"
-                label-for="group-active"
+                label-for="banner-group-active"
         >
             <b-form-checkbox
-                    id="group-active"
+                    id="banner-group-active"
                     v-model="banner.active"
                     :value="1"
                     :unchecked-value="0"
@@ -58,11 +58,11 @@
 
         <b-form-group
                 label="Тип*"
-                label-for="group-type"
+                label-for="banner-group-type"
         >
             <b-form-select
                     v-model="banner.type_id"
-                    id="group-type"
+                    id="banner-group-type"
                     required
             >
                 <b-form-select-option
@@ -77,10 +77,10 @@
 
         <b-form-group
                 label="С кнопкой?"
-                label-for="group-has-button"
+                label-for="banner-group-has-button"
         >
             <b-form-checkbox
-                    id="group-has-button"
+                    id="banner-group-has-button"
                     v-model="hasButton"
                     :value="1"
                     :unchecked-value="0"
@@ -93,10 +93,10 @@
         <div v-show="hasButton" class="border border-dark rounded p-2">
             <b-form-group
                     label="Ссылка*"
-                    label-for="group-button-url"
+                    label-for="banner-group-button-url"
             >
                 <b-form-input
-                        id="group-button-url"
+                        id="banner-group-button-url"
                         v-model="banner.button.url"
                         type="text"
                         :required="!!hasButton"
@@ -106,10 +106,10 @@
 
             <b-form-group
                     label="Текст*"
-                    label-for="group-button-text"
+                    label-for="banner-group-button-text"
             >
                 <b-form-input
-                        id="group-button-text"
+                        id="banner-group-button-text"
                         v-model="banner.button.text"
                         type="text"
                         :required="!!hasButton"
@@ -119,11 +119,11 @@
 
             <b-form-group
                     label="Тип*"
-                    label-for="group-button-type"
+                    label-for="banner-group-button-type"
             >
                 <b-form-select
                         v-model="banner.button.type"
-                        id="group-button-type"
+                        id="banner-group-button-type"
                         :required="!!hasButton"
                 >
                     <b-form-select-option
@@ -138,11 +138,11 @@
 
             <b-form-group
                     label="Местоположение*"
-                    label-for="group-button-location"
+                    label-for="banner-group-button-location"
             >
                 <b-form-select
                         v-model="banner.button.location"
-                        id="group-button-location"
+                        id="banner-group-button-location"
                         :required="!!hasButton"
                 >
                     <b-form-select-option

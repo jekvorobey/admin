@@ -239,16 +239,7 @@
                 this.openModal('FormTheme');
             },
             removeBanner() {
-                if (this.productGroup.banner_id) {
-                    Services.net()
-                        .delete(this.getRoute('productGroup.delete', {id: this.productGroup.banner_id,}))
-                        .then((data) => {
-                            this.productGroup.banner_id = null;
-                        })
-                        .catch((e) => {
-                            console.error(e);
-                        });
-                }
+                this.productGroup.banner_id = null;
             },
             pluckSelectedProductIds() {
                 let ids = [];
