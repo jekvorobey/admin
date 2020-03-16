@@ -177,6 +177,7 @@
                     type_id: source.type_id ? source.type_id : null,
                     preview_photo_id: source.preview_photo_id ? source.preview_photo_id : null,
                     banner_id: source.banner_id ? source.banner_id : null,
+                    category_code:  source.category_code ? source.category_code : null,
                 };
             },
             submit() {
