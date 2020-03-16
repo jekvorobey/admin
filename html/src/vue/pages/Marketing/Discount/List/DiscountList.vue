@@ -41,18 +41,24 @@
                                 </f-date>
                             </div>
                             <div class="row mt-3">
-                                <f-multi-select v-model="filter.merchant_id"
-                                                :options="initiatorsOptions"
-                                                :name="'initiators'"
-                                                class="col-6">
-                                    Инициатор
-                                </f-multi-select>
-                                <f-multi-select v-model="filter.user_id"
-                                                :options="authorsOptions"
-                                                :name="'authors'"
-                                                class="col-6">
-                                    Автор
-                                </f-multi-select>
+                                <div class="col-6">
+                                    <v-select2 v-model="filter.merchant_id"
+                                               class="form-control"
+                                               :multiple="true"
+                                               :selectOnClose="true"
+                                               width="100%">
+                                        <option v-for="initiator in initiatorsOptions" :value="initiator.value">{{ initiator.text }}</option>
+                                    </v-select2>
+                                </div>
+                                <div class="col-6">
+                                    <v-select2 v-model="filter.user_id"
+                                               class="form-control"
+                                               :allowClear="true"
+                                               :multiple="true"
+                                               width="100%">
+                                        <option v-for="author in authorsOptions" :value="author.value">{{ author.text }}</option>
+                                    </v-select2>
+                                </div>
                             </div>
                             <div class="row mt-3">
                                 <f-date v-model="filter.start_date" class="col-3">
@@ -152,6 +158,7 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
+    import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
     const cleanFilter = {
         id: '',
@@ -176,6 +183,7 @@
             FMultiSelect,
             FCheckbox,
             FDate,
+            VSelect2,
         },
         props: {
             iDiscounts: [Array, null],
@@ -329,7 +337,7 @@
         computed: {
             initiatorsOptions() {
                 return this.initiators.map(initiatorId => ({
-                    value: initiatorId, text: this.initiatorName(initiatorId)
+                    value: initiatorId ? initiatorId : -1, text: this.initiatorName(initiatorId)
                 }));
             },
             authorsOptions() {

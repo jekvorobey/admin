@@ -20,6 +20,10 @@ export default {
             if (this.dropdownPosition) {
                 options.dropdownPosition = this.dropdownPosition; // below or above
             }
+            $(this.$el).select2(options).val(this.value).trigger('change').on('select2:unselect', (e) => {
+                vm.$emit('input', $(this.$el).val());
+                vm.$emit('change');
+            });
             $(this.$el).select2(options).val(this.value).trigger('change').on('select2:select', (e) => {
                 vm.$emit('input', $(this.$el).val());
                 vm.$emit('change');
