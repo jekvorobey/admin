@@ -384,6 +384,12 @@ class CustomerDetailController extends Controller
         ]);
     }
 
+    public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
+    {
+        $customerService->deleteFromFavorites($id, $product_id);
+        return response('', 204);
+    }
+
     public function infoOrder($id, OrderService $orderService, PaymentService $paymentService, DeliveryService $deliveryService)
     {
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));

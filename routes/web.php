@@ -302,6 +302,7 @@ Route::middleware('auth')->group(function () {
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
             Route::put('brands', 'CustomerDetailController@putBrands')->name('detail.brand.save');
             Route::put('categories', 'CustomerDetailController@putCategories')->name('detail.category.save');
+            Route::delete('favorite/{product_id}', 'CustomerDetailController@deleteFavoriteItem')->name('favorite.delete');
 
             Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
             Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');
