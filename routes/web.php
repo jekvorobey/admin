@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
-            Route::get('roles', 'UsersController@rolesList')->name('settings.users.roles');
+            Route::get('roles', 'UsersController@rolesClientMerchantList')->name('settings.users.rolesClientMerchant');
         });
     });
 

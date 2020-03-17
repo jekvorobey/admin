@@ -19,14 +19,14 @@
 
                     <b-row class="mb-2" v-if="showUserRoleAndIdInput">
                         <b-col cols="3">
-                            <label for="chat-users-role">Роль пользователей</label>
+                            <label for="chat-users-role">Роли пользователей</label>
                         </b-col>
                         <b-col cols="9">
-                            <b-form-select v-model="form.role_id" id="chat-users-role" @input="getUsersByRole">
+                            <v-select2 v-model="form.role_ids" class="form-control form-control-sm" @input="getUsersByRole" multiple>
                                 <b-form-select-option :value="role_id" v-for="(role_name, role_id) in roles" :key="role_id">
                                     {{ role_name }}
                                 </b-form-select-option>
-                            </b-form-select>
+                            </v-select2>
                         </b-col>
                     </b-row>
 
@@ -120,7 +120,7 @@ export default {
             types: {},
             form: {
                 channel_id: null,
-                users_role: null,
+                role_ids: null,
                 user_ids: null,
                 theme: '',
                 status_id: null,
@@ -140,7 +140,7 @@ export default {
         },
         initComponent() {
             this.form.channel_id = null;
-            this.form.role_id = null;
+            this.form.role_ids = null;
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
@@ -178,7 +178,7 @@ export default {
         getUsersByRole() {
             Services.showLoader();
             Services.net().get(this.getRoute('settings.userListTitle'), {
-                'role_id': this.form.role_id
+                'role_ids': this.form.role_ids
             }).then(data => {
                 this.users = data.users;
             }).finally(() => {
@@ -231,7 +231,7 @@ export default {
             this.statuses = data.statuses;
             this.types = data.types;
         });
-        Services.net().get(this.getRoute('settings.users.roles')).then(data => {
+        Services.net().get(this.getRoute('settings.users.rolesClientMerchant')).then(data => {
             this.roles = data.roles;
         }).finally(() => {
             Services.hideLoader();

@@ -125,26 +125,39 @@ class UsersController extends Controller
         ]);
     }
 
-    public function rolesList()
+    public function rolesClientMerchantList()
     {
-        return response()->json(['roles' => UserDTO::roles()]);
+        $rolesCollection = collect(UserDTO::roles());
+        $rolesCollection = $rolesCollection->filter(function ($value, $key) {
+            $balance = intval($key / 100);
+            return (($balance == 2) || ($balance == 4));
+        });
+
+        return response()->json(['roles' => $rolesCollection->toArray()]);
     }
 
     public function userListTitle(UserService $userService, RequestInitiator $user)
     {
-        $users = $userService->users(
-            $userService->newQuery()
-                ->setFilter('id', '!=', $user->userId())
-                ->setFilter('role', request('role_id'))
-        )
-            ->keyBy('id')
-            ->map(function (UserDto $user) {
-                return [
-                    'id' => $user->id,
-                    'title' => $user->getTitle(),
-                    'email' => $user->email,
-                ];
-            });
+        $roleIds = request('role_ids');
+        $users = [];
+
+        foreach ($roleIds as $roleId) {
+            $usersByRole = $userService->users(
+                $userService->newQuery()
+                    ->setFilter('id', '!=', $user->userId())
+                    ->setFilter('role', $roleId)
+            )
+                ->keyBy('id')
+                ->map(function (UserDto $user) {
+                    return [
+                        'id' => $user->id,
+                        'title' => $user->getTitle(),
+                        'email' => $user->email,
+                    ];
+                })
+                ->toArray();
+            $users = array_merge($users, $usersByRole);
+        }
 
         return response()->json([
             'users' => $users,
