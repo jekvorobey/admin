@@ -71,6 +71,7 @@ class ProductGroupDetailController extends Controller
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
             'category_code' => 'string|nullable',
+            'banner_id' => 'integer|nullable',
             'filters' => 'array',
             'products' => 'array',
         ]);
@@ -91,6 +92,7 @@ class ProductGroupDetailController extends Controller
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
             'category_code' => 'string|nullable',
+            'banner_id' => 'integer|nullable',
             'filters' => 'array',
             'products' => 'array',
         ]);

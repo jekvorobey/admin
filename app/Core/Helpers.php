@@ -12,7 +12,7 @@ class Helpers
      * @param iterable $collections
      * @return Collection
      */
-    static public function getSelectOptions(iterable $collections)
+    public static function getSelectOptions(iterable $collections)
     {
         $collections = is_array($collections) ? collect($collections) : $collections;
         return $collections->map(function ($item) {

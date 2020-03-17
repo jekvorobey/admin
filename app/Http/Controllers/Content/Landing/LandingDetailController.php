@@ -37,10 +37,14 @@ class LandingDetailController extends Controller
      * @return mixed
      * @throws CmsException
      */
-    public function createPage()
+    public function createPage(LandingService $landingService)
     {
+        $widgets = $this->getWidgets($landingService);
+
         return $this->render('Content/LandingDetail', [
             'iLanding' => [],
+            'iWidgetsList' => $widgets,
+            'iAllWidgetsNames' => $widgets->pluck('widgetCode')->all(),
             'options' => [],
         ]);
     }
@@ -53,6 +57,15 @@ class LandingDetailController extends Controller
      */
     public function create(Request $request, LandingService $landingService)
     {
+        $validatedData = $request->validate([
+            'active' => 'integer|required',
+            'code' => 'string|required',
+            'name' => 'string|required',
+            'widgets' => 'array|nullable|required',
+        ]);
+
+        $landingService->createLanding(new LandingDto($validatedData));
+
         return response()->json([], 204);
     }
 
@@ -65,11 +78,25 @@ class LandingDetailController extends Controller
      */
     public function update(int $id, Request $request, LandingService $landingService)
     {
+        $validatedData = $request->validate([
+            'id' => 'integer|required',
+            'active' => 'integer|required',
+            'code' => 'string|required',
+            'name' => 'string|required',
+            'widgets' => 'array|nullable|required',
+        ]);
+
+        $validatedData['id'] = $id;
+
+        $landingService->updateLanding($validatedData['id'], new LandingDto($validatedData));
+
         return response()->json([], 204);
     }
 
     public function delete(int $id, LandingService $landingService)
     {
+        $landingService->deleteLanding($id);
+
         return response()->json([], 204);
     }
 
@@ -83,9 +110,7 @@ class LandingDetailController extends Controller
         int $id,
         LandingService $landingService
     ) {
-        $query = $landingService->newQuery();
-        $query->setFilter('id', $id);
-
+        $query = $landingService->newQuery()->setFilter('id', $id);
         return $landingService->landings($query)->first();
     }
 

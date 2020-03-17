@@ -32,6 +32,23 @@
                 <modal-categories :model.sync="customer.categories" :categories="categories" :customer-id="id"/>
             </td>
         </tr>
+        <tr>
+            <th>
+                Избранное
+                <button class="btn btn-success btn-sm" v-b-modal.modal-find-product><fa-icon icon="plus"/></button>
+                <modal-find-product v-bind:id="id"/>
+            </th>
+            <td>
+                <div v-for="(favorite_item, index) in favorites">
+                    <a :href="'/products/' + favorite_item.id">
+                        {{ favorite_item.name }}
+                    </a>
+                    <span @click="removeFavItem(id, favorite_item.id, index)">
+                        <fa-icon icon="times"/>
+                    </span>
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -40,10 +57,11 @@
 import Services from '../../../../../scripts/services/services.js';
 import ModalBrands from './modal-brands.vue';
 import ModalCategories from './modal-categories.vue';
+import ModalFindProduct from './modal-find-product.vue';
 
 export default {
-    name: 'info-preference',
-    components: {ModalCategories, ModalBrands},
+    name: 'tab-preference',
+    components: {ModalCategories, ModalBrands, ModalFindProduct},
     props: ['id'],
     data() {
         return {
@@ -53,6 +71,7 @@ export default {
                 brands: [],
                 categories: [],
             },
+            favorites: [],
         };
     },
     methods: {
@@ -67,6 +86,13 @@ export default {
 
             return name.join(': ');
         },
+        removeFavItem(id, itemId, index) {
+            Services.showLoader();
+            Services.net().delete(this.getRoute('customers.detail.preference.favorite.delete', {id: id, product_id: itemId})).then(data => {
+                this.favorites.splice(index, 1);
+                Services.hideLoader();
+            });
+        }
     },
     created() {
         Services.showLoader();
@@ -75,6 +101,7 @@ export default {
             this.categories = data.categories;
             this.customer.brands = data.customer.brands;
             this.customer.categories = data.customer.categories;
+            this.favorites = data.favorites;
             Services.hideLoader();
         })
     }

@@ -34,12 +34,42 @@
                                     Скидка на
                                 </f-multi-select>
 
-                                <v-select v-model="filter.role_id" :options="roles" class="col-6">Роль</v-select>
+                                <v-select v-model="filter.role_id" :options="roles" class="col-3">Роль</v-select>
                             </div>
                             <div class="row mt-3">
-                                <f-date v-model="filter.start_date" class="col-3">
-                                    Начало действия скидки
-                                </f-date>
+                                <div class="col-6">
+                                    <label>Инициатор</label>
+                                    <v-select2 v-model="filter.merchant_id"
+                                               class="form-control"
+                                               :multiple="true"
+                                               :selectOnClose="true"
+                                               width="100%">
+                                        <option v-for="initiator in initiatorsOptions" :value="initiator.value">{{ initiator.text }}</option>
+                                    </v-select2>
+                                </div>
+                                <div class="col-6">
+                                    <label>Автор</label>
+                                    <v-select2 v-model="filter.user_id"
+                                               class="form-control"
+                                               :allowClear="true"
+                                               :multiple="true"
+                                               width="100%">
+                                        <option v-for="author in authorsOptions" :value="author.value">{{ author.text }}</option>
+                                    </v-select2>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Дата создания</b></label>
+                                </div>
+                                <f-date v-model="filter.created_at_from" class="col-3">От</f-date>
+                                <f-date v-model="filter.created_at_to" class="col-3">До</f-date>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <label><b>Период действия скидки</b></label>
+                                </div>
+                                <f-date v-model="filter.start_date" class="col-3">От</f-date>
                                 <div class="col-3">
                                     <label>Точная дата
                                         <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
@@ -50,9 +80,7 @@
                                 </div>
                             </div>
                             <div class="row mt-2">
-                                <f-date v-model="filter.end_date" class="col-3">
-                                    Конец действия скидки
-                                </f-date>
+                                <f-date v-model="filter.end_date" class="col-3">До</f-date>
                                 <div class="col-3">
                                     <label>&nbsp;</label>
                                     <div>
@@ -80,9 +108,12 @@
             <thead class="thead-light">
             <tr>
                 <th>ID</th>
+                <th>Дата создания</th>
                 <th>Название</th>
                 <th>Скидка</th>
-                <th>Срок действия</th>
+                <th>Период действия</th>
+                <th>Инициатор</th>
+                <th>Автор</th>
                 <th>Статус</th>
                 <th></th>
             </tr>
@@ -93,11 +124,14 @@
             </tr>
             <tr v-if="discounts" v-for="(discount, index) in discounts">
                 <td>{{ discount.id }}</td>
+                <td>{{ datePrint(discount.created_at) }}</td>
                 <td>{{ discount.name }}</td>
-                <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? ' руб.' : '%' }} на<br/>
+                <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? '₽' : '%' }} на<br/>
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
                 <td>{{ discount.validityPeriod }}</td>
+                <td>{{ initiatorName(discount.merchant_id) }}</td>
+                <td>{{ userName(discount.user_id) }}</td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
                 </td>
@@ -128,12 +162,17 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
+    import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
     const cleanFilter = {
         id: '',
         name: '',
         type: [],
         status: [],
+        user_id: [],
+        merchant_id: [],
+        created_at_from: '',
+        created_at_to: '',
         start_date: '',
         end_date: '',
         fix_start_date: false,
@@ -149,6 +188,7 @@
             FMultiSelect,
             FCheckbox,
             FDate,
+            VSelect2,
         },
         props: {
             iDiscounts: [Array, null],
@@ -158,6 +198,10 @@
             iPager: Object,
             roles: Array,
             iFilter: Object|Array,
+            merchantNames: Object|Array,
+            userNames: Object|Array,
+            authors: Array,
+            initiators: Array,
         },
         data() {
             return {
@@ -182,8 +226,20 @@
                 DISCOUNT_VALUE_TYPE_PERCENT: 1,
                 DISCOUNT_VALUE_TYPE_RUB: 2,
             };
-        },
+    },
         methods: {
+            userName(id) {
+                let user = this.userNames[id];
+                return user ? user : 'N/A';
+            },
+            initiatorName(id) {
+                if (!id) {
+                    return 'Маркетплейс';
+                }
+
+                let merchant = this.merchantNames[id];
+                return merchant ? merchant : 'N/A';
+            },
             changePage(newPage) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: newPage,
@@ -250,6 +306,9 @@
                     'fix_start_date',
                     'fix_end_date',
                     'role_id',
+                    'created_at',
+                    'user_id',
+                    'merchant_id',
                 ];
 
                 let filter = {};
@@ -259,8 +318,17 @@
                         continue;
                     }
 
-                    this.opened = this.opened || ['type', 'start_date', 'end_date', 'role_id'].includes(field);
+                    this.opened = this.opened || [
+                        'type',
+                        'start_date',
+                        'end_date',
+                        'role_id',
+                        'created_at',
+                        'user_id',
+                        'merchant_id',
+                    ].includes(field);
 
+                    console.log(field);
                     switch (field) {
                         case 'id':
                         case 'name':
@@ -269,6 +337,8 @@
                         case 'fix_start_date':
                         case 'fix_end_date':
                         case 'role_id':
+                        case 'user_id':
+                        case 'merchant_id':
                             filter[field] = this.iFilter[field];
                             break;
                         case 'type':
@@ -277,6 +347,10 @@
                             filter[field] = value;
                             Service.event().$emit('set-filter-' + field, value);
                             break;
+                        case 'created_at':
+                            filter['created_at_from'] = this.iFilter[field]['from'];
+                            filter['created_at_to'] = this.iFilter[field]['to'];
+                            break;
                     }
                 }
 
@@ -284,6 +358,16 @@
             },
         },
         computed: {
+            initiatorsOptions() {
+                return this.initiators.map(initiatorId => ({
+                    value: initiatorId ? initiatorId : -1, text: this.initiatorName(initiatorId)
+                }));
+            },
+            authorsOptions() {
+                return this.authors.map(authorId => ({
+                    value: authorId, text: this.userName(authorId)
+                }));
+            },
             discountTypesOptions() {
                 return Object.values(this.discountTypes).map(type => ({value: type.id, text: type.name}));
             },

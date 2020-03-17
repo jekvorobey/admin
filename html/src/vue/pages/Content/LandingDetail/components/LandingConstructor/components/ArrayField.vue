@@ -31,34 +31,34 @@
                         :link="childProp.tooltip_href"
                 ></vue-tooltip>
 
-                <vue-widget-setting-array
+                <array-field
                         v-if="childProp.multiple"
                         v-show="childProp.isInShownList"
                         :prop.sync="childProp"
                         :depth-level="depthLevel + 1"
-                ></vue-widget-setting-array>
+                ></array-field>
 
-                <vue-widget-setting-complex
+                <complex-field
                         v-else-if="childProp.type === 'complex'"
                         v-show="childProp.isInShownList"
                         :parent-prop="childProp"
                         :props.sync="childProp.complex"
                         :depth-level="depthLevel + 1"
-                ></vue-widget-setting-complex>
+                ></complex-field>
 
-                <vue-widget-setting-complex
+                <complex-field
                         v-else-if="childProp.type === 'widget'"
                         v-show="childProp.isInShownList"
                         :parent-prop="childProp"
                         :props.sync="childProp.widget.props"
                         :depth-level="depthLevel + 1"
-                ></vue-widget-setting-complex>
+                ></complex-field>
 
-                <vue-widget-setting-primitive
+                <primitive-field
                         v-else
                         v-show="childProp.isInShownList"
                         :prop.sync="childProp"
-                ></vue-widget-setting-primitive>
+                ></primitive-field>
             </div>
         </div>
 
@@ -85,9 +85,17 @@
         fill_prop_recursively_with_default,
         fill_props_is_in_shown_list,
         is_primitive,
-    } from "../../widgets-helpers";
+    } from "../scripts/widgets-helpers";
+    import MappingField from './MappingField.vue';
+    import ComplexField from './ComplexField.vue';
+    import PrimitiveField from "./PrimitiveField.vue";
 
     export default {
+        components: {
+            MappingField,
+            ComplexField,
+            PrimitiveField,
+        },
         inject: ['$validator'],
         props: ['prop', 'depthLevel'],
         data() {

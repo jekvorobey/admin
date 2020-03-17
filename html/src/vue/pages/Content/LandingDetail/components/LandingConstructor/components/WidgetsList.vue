@@ -17,14 +17,6 @@
                 </button>
             </li>
         </draggable>
-
-        <b-popover v-for="widget in dragList"
-                   :key="widget.id"
-                   :target="widget.widgetCode"
-                   triggers="hover"
-                   placement="left">
-            <img :src="widget.previewBig" class='widgets-list__item__src'>
-        </b-popover>
     </div>
 </template>
 

@@ -8,7 +8,9 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
+use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
@@ -21,18 +23,29 @@ class ChatsController extends Controller
         return $this->render('Communication/ChatsUnread');
     }
 
+    public function broadcast()
+    {
+        $this->loadChannelTypes = true;
+
+        $this->title = 'Массовая рассылка';
+        return $this->render('Communication/Broadcast');
+    }
+
     public function directories(
         CommunicationService $communicationService,
+        CommunicationThemeService $communicationThemeService,
         CommunicationStatusService $communicationStatusService,
         CommunicationTypeService $communicationTypeService
     ) {
 
         $channels = $communicationService->channels()->keyBy('id');
+        $themes = $communicationThemeService->themes()->keyBy('id');
         $statuses = $communicationStatusService->statuses()->keyBy('id');
         $types = $communicationTypeService->types()->keyBy('id');
 
         return response()->json([
             'channels' => $channels,
+            'themes' => $themes,
             'statuses' => $statuses,
             'types' => $types,
         ]);
@@ -89,6 +102,52 @@ class ChatsController extends Controller
         $communicationService->createMessage($chatIds, $user->userId(), request('message'), request('files'));
 
         [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
+    }
+
+    public function create(CommunicationService $communicationService, RequestInitiator $user)
+    {
+        $userIds = request('user_ids');
+        $chatIds = $communicationService->createChat(
+            request('channel_id'),
+            request('theme'),
+            $userIds,
+            CommunicationChatDto::DIRECTION_OUT,
+            request('status_id'),
+            request('type_id')
+        );
+
+        $message = request('message');
+        $files = request('files');
+
+        if ($message || $files) {
+            $communicationService->createMessage($chatIds, $user->userId(), $message, $files);
+        }
+
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        return response()->json([
+            'chats' => $chats,
+            'users' => $users,
+            'files' => $files,
+        ]);
+    }
+
+    public function update(CommunicationService $communicationService, RequestInitiator $user)
+    {
+        $chatId = request('chat_id');
+
+        $communicationService->updateChat(
+            $chatId,
+            request('theme'),
+            request('status_id'),
+            request('type_id')
+        );
+
+        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds([$chatId]));
         return response()->json([
             'chats' => $chats,
             'users' => $users,

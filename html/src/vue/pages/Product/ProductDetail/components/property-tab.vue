@@ -10,42 +10,18 @@
             <shadow-card title="Свойства товара" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productValuesEdit')">
                 <table class="values-table">
                     <tbody>
-                    <tr>
-                        <th>Категория:</th>
-                        <td>{{ categoryName }}</td>
-                    </tr>
-                    <tr>
-                        <th>Бренд:</th>
-                        <td>{{ brandName }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ширина:</th>
-                        <td>{{ product.width }} мм</td>
-                    </tr>
-                    <tr>
-                        <th>Высота:</th>
-                        <td>{{ product.height }} мм</td>
-                    </tr>
-                    <tr>
-                        <th>Глубина:</th>
-                        <td>{{ product.length }} мм</td>
-                    </tr>
-                    <tr>
-                        <th>Вес:</th>
-                        <td>{{ product.weight }} гр</td>
-                    </tr>
-                    <tr>
-                        <th>Легковоспламеняющееся:</th>
-                        <td>{{ product.explosive ? 'Да' : 'Нет' }}</td>
-                    </tr>
-                    <tr>
-                        <th>В составе элемент питания:</th>
-                        <td>{{ product.has_battery ? 'Да' : 'Нет' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Новинка:</th>
-                        <td>{{ product.is_new ? 'Да' : 'Нет' }}</td>
-                    </tr>
+                        <tr>
+                            <th>Категория:</th>
+                            <td>{{ categoryName }}</td>
+                        </tr>
+                        <tr>
+                            <th>Бренд:</th>
+                            <td>{{ brandName }}</td>
+                        </tr>
+                        <tr>
+                            <th>Новинка:</th>
+                            <td>{{ product.is_new ? 'Да' : 'Нет' }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </shadow-card>
@@ -145,21 +121,6 @@
     .value {
         margin: 0;
         padding: 0;
-    }
-    .card-head {
-        height: 48px;
-        padding: 8px 16px;
-    }
-    .corner-edit-btn {
-        position: relative;
-        float: right;
-        top: 5px;
-        color: gray;
-        transition: 0.3s all;
-        cursor: pointer;
-    }
-    .corner-edit-btn:hover {
-        color: black;
     }
     .values-table th {
         text-align: end;

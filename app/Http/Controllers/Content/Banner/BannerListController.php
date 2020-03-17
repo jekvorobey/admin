@@ -13,6 +13,7 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BannerListController extends Controller
 {
@@ -45,11 +46,51 @@ class BannerListController extends Controller
         $data = [
             'banners' => $this->loadItems($query, $bannerService, $fileService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $bannerService->bannersCount($query);
         }
 
         return response()->json($data);
+    }
+
+    public function widgetBanners(
+        BannerService $bannerService,
+        BannerTypeService $bannerTypeService
+    ) {
+        $type = $this->loadTypes($bannerTypeService)
+            ->keyBy('code')
+            ->get(BannerTypeDto::WIDGET_CODE);
+
+        if (is_null($type)) {
+            throw new NotFoundHttpException('type not found');
+        }
+
+        $query = $bannerService->newQuery()
+            ->setFilter('type_id', $type['id']);
+
+        $banners = $bannerService->banners($query);
+
+        return response()->json($banners);
+    }
+
+    public function productGroupBanners(
+        BannerService $bannerService,
+        BannerTypeService $bannerTypeService
+    ) {
+        $type = $this->loadTypes($bannerTypeService)
+            ->keyBy('code')
+            ->get(BannerTypeDto::PRODUCT_GROUP_CODE);
+
+        if (is_null($type)) {
+            throw new NotFoundHttpException('type not found');
+        }
+
+        $query = $bannerService->newQuery()
+            ->setFilter('type_id', $type['id']);
+
+        $banners = $bannerService->banners($query);
+
+        return response()->json($banners);
     }
 
     /**

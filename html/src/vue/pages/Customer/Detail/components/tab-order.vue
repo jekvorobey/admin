@@ -46,7 +46,7 @@
 import Services from '../../../../../scripts/services/services.js';
 
 export default {
-    name: 'info-order',
+    name: 'tab-order',
     props: ['id'],
     data() {
         return {

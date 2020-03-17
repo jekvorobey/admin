@@ -70,6 +70,9 @@ Vue.mixin({
         route(name) {
             return '/' + this.$store.state.routes[name].replace(/^\//, '');
         },
+        datePrint(date) {
+            return moment(date, "YYYY-MM-DD").format('LL');
+        },
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
         },
@@ -96,6 +99,10 @@ Vue.mixin({
         /** @return {CustomerStatus} */
         customerStatus() {
             return this.$store.state.layout.customerStatus;
+        },
+        /** @return {ChannelTypes} */
+        channelTypes() {
+            return this.$store.state.layout.channelTypes;
         },
         /** @return {Media} */
         media() {
@@ -155,4 +162,17 @@ Vue.mixin({
  @property {number} manager_merchant
  @property {number} admin
  @property {number} super
+ */
+
+/**
+ @typedef ChannelTypes
+ @type {Object}
+ @property {number} internal_message
+ @property {number} infinity
+ @property {number} smsc
+ @property {number} livetex_viber
+ @property {number} livetex_telegram
+ @property {number} livetex_fb
+ @property {number} livetex_vk
+ @property {number} internal_email
  */

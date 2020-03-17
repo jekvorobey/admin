@@ -10,6 +10,7 @@
                 v-on="$listeners"
                 :value="value"
                 :lang="lang"
+                :first-day-of-week="1"
                 input-class="form-control form-control-sm"
                 value-type="format"
         >

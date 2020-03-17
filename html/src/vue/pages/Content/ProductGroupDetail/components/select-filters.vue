@@ -1,6 +1,7 @@
 <template>
     <div role="tablist">
-        <div>
+        Фильтры<br>
+        <div class="mb-2">
             <template v-for="filter in filters">
                 <template v-for="filterValue in filter.values">
                     <b-badge v-if="isChecked(filter.code, filterValue.code)"
