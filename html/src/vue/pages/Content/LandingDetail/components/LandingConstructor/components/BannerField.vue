@@ -21,11 +21,14 @@
                     :link="prop.tooltip_href"
             ></vue-tooltip>
 
-            <b-button v-show="prop.value" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Изменить баннер</b-button>
-            <b-button v-show="prop.value" class="my-3" variant="outline-primary" @click.prevent="removeBanner">Удалить баннер</b-button>
-            <b-button v-show="!prop.value" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Создать баннер</b-button>
-
-            <banner-modal modal-name="FormTheme" @accept="onModalAccept" :id="prop.value"/>
+            <v-select2 v-model="prop.value"
+                       class="form-control"
+                       :multiple="false"
+                       :selectOnClose="true"
+                       :aria-required="prop.required"
+                       width="100%">
+                <option v-for="initiator in banners" :value="initiator.id">{{ initiator.name }}</option>
+            </v-select2>
 
             <div class="validation-error-message" v-show="errors.has(validationName(prop, true))">
                 {{ errors.first(validationName(prop, true)) }}
@@ -37,9 +40,12 @@
 <script>
     import BannerModal from "../../../../ProductGroupDetail/components/banner-modal.vue";
     import modalMixin from "../../../../../../mixins/modal";
+    import VSelect2 from "../../../../../../components/controls/VSelect2/v-select2.vue";
+    import Services from "../../../../../../../scripts/services/services";
 
     export default {
         components: {
+            VSelect2,
             BannerModal
         },
         mixins: [modalMixin],
@@ -48,6 +54,7 @@
         data() {
             return {
                 showProp: true,
+                banners: [],
             };
         },
         methods: {
@@ -68,11 +75,22 @@
             removeBanner() {
                 this.prop.value = null;
             },
+            loadBanners() {
+                Services.net()
+                    .get(this.getRoute('banner.widgetBanners'))
+                    .then((data) => {
+                        this.banners = data;
+                    })
+                    .catch((e) => {
+                        console.error(e);
+                    });
+            },
         },
-        computed: {
-        },
+        computed: {},
         mounted() {
             this.showProp = !this.prop.hidden && !this.prop.spoiler;
+
+            this.loadBanners();
         }
     }
 </script>
