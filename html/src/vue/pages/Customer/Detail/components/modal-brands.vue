@@ -42,7 +42,7 @@ export default {
     methods: {
         saveBrands() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.brand.save', {id: this.customerId}), null, {
+            Services.net().put(this.getRoute('customers.detail.preference.brand.save', {id: this.customerId}), null, {
                 brands: this.form.brands
             }).then(data => {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.form.brands)));

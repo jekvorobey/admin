@@ -36,7 +36,7 @@ export default {
     methods: {
         saveCategories() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.category.save', {id: this.customerId}), null, {
+            Services.net().put(this.getRoute('customers.detail.preference.category.save', {id: this.customerId}), null, {
                 categories: this.form.categories
             }).then(data => {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.form.categories)));

@@ -31,27 +31,15 @@
 
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
-                <b-tab title="Основная информация">
-                    <info-main :model.sync="customer" :order="order"/>
-                </b-tab>
-                <b-tab title="Предпочтения">
-                    <info-preference :id="customer.id"/>
-                </b-tab>
-                <b-tab title="Заказы">
-                    <info-order :id="customer.id"/>
-                </b-tab>
-                <b-tab title="Коммуникации">
-                    <communication-chat-creator kind='selectedUser' :customer="customer"/>
-                    <communication-chat-list :filter="{user_id: customer.user_id}"/>
-                </b-tab>
-                <b-tab title="Подписки">
-                    <info-subscribe :id="customer.id"/>
-                </b-tab>
-                <b-tab title="Логи">
-                    <info-log :id="customer.id"/>
-                </b-tab>
-                <b-tab title="Документы">
-                    <info-doc :id="customer.id"/>
+                <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
+                    <tab-main v-if="key === 'main'" :model.sync="customer" :order="order"/>
+                    <tab-preference v-else-if="key === 'preference'" :id="customer.id"/>
+                    <tab-order v-else-if="key === 'order'" :id="customer.id"/>
+                    <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
+                    <tab-document v-else-if="key === 'document'" :id="customer.id"/>
+                    <template v-else>
+                        Заглушка
+                    </template>
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -65,14 +53,13 @@
 <script>
 
 import VInput from '../../../components/controls/VInput/VInput.vue';
-import InfoMain from './components/info-main.vue';
-import InfoPreference from './components/info-preference.vue';
-import InfoOrder from './components/info-order.vue';
-import InfoSubscribe from './components/info-subscribe.vue';
-import InfoLog from './components/info-log.vue';
-import InfoDoc from './components/info-doc.vue';
-import CommunicationChatList from '../../../components/communication-chat-list/communication-chat-list.vue';
-import CommunicationChatCreator from '../../../components/communication-chat-creator/communication-chat-creator.vue';
+
+import TabMain from './components/tab-main.vue';
+import TabPreference from './components/tab-preference.vue';
+import TabOrder from './components/tab-order.vue';
+import TabDocument from './components/tab-document.vue';
+import TabCommunication from './components/tab-communication.vue';
+
 import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
@@ -80,24 +67,55 @@ import ModalMarkStatus from './components/modal-mark-status.vue';
 
 export default {
     components: {
+        TabCommunication, TabOrder, TabPreference, TabMain,
         ModalMarkStatus,
         ModalPortfolios,
-        Infopanel, CommunicationChatList, CommunicationChatCreator, InfoLog, InfoDoc, InfoSubscribe, InfoOrder, InfoPreference, InfoMain, VInput},
+        Infopanel, TabDocument, VInput},
     props: ['iCustomer', 'order'],
     data() {
         return {
             editStatus: false,
             customer: this.iCustomer,
             tabIndex: 0,
-            tabs: {
-                main: 0,
-                preference: 1,
-                order: 2,
-                'chat-list': 3,
-                subscribe: 4,
-                log: 5,
-            }
         };
+    },
+    computed: {
+        tabs() {
+            let tabs = {};
+            let i = -1;
+
+            tabs.main = {i: i++, title: 'Информация'};
+            if (this.customer.referral) {
+                tabs.referralActive = {i: i++, title: 'Реферальная активность'};
+                tabs.promoPage = {i: i++, title: 'Промостраница'};
+                tabs.promoProduct = {i: i++, title: 'Товары  для продвижения'};
+                tabs.orderReferrer = {i: i++, title: 'Реферальные заказы'};
+                tabs.document = {i: i++, title: 'Акты'};
+            }
+            tabs.preference = {i: i++, title: 'Предпочтения'};
+            tabs.subscribe = {i: i++, title: 'Подписки'};
+            if (!this.customer.referral) {
+                tabs.transaction = {i: i++, title: 'Транзакции'};
+            }
+            if (this.customer.referral) {
+                tabs.billing = {i: i++, title: 'Биллинг'};
+            }
+            tabs.order = {i: i++, title: 'Заказы'};
+            tabs.educationEvents = {i: i++, title: 'Образовательные события'};
+            tabs.orderBack = {i: i++, title: 'Возвраты'};
+            tabs.communication = {i: i++, title: 'Коммуникации'};
+            tabs.review = {i: i++, title: 'Отзывы'};
+            tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
+            if (this.customer.referral) {
+                tabs.referralPromocodes = {i: i++, title: 'Промокоды Реферального Партнера'};
+            }
+            tabs.gifts = {i: i++, title: 'Подарки'};
+            tabs.sertificates = {i: i++, title: 'Сертификаты'};
+            tabs.logSegment = {i: i++, title: 'Сегмент'};
+            tabs.log = {i: i++, title: 'Логи'};
+
+            return tabs;
+        }
     },
     methods: {
         updateList() {

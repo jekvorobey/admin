@@ -298,18 +298,21 @@ Route::middleware('auth')->group(function () {
             Route::put('', 'CustomerDetailController@save')->name('detail.save');
             Route::put('referral', 'CustomerDetailController@referral')->name('detail.referral');
             Route::put('professional', 'CustomerDetailController@professional')->name('detail.professional');
-            Route::delete('certificate/{certificate_id}', 'CustomerDetailController@deleteCertificate')->name('detail.certificate.delete');
-            Route::post('certificate/{file_id}', 'CustomerDetailController@createCertificate')->name('detail.certificate.create');
             Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
-            Route::put('brands', 'CustomerDetailController@putBrands')->name('detail.brand.save');
-            Route::put('categories', 'CustomerDetailController@putCategories')->name('detail.category.save');
-            Route::delete('favorite/{product_id}', 'CustomerDetailController@deleteFavoriteItem')->name('favorite.delete');
 
-            Route::get('main', 'CustomerDetailController@infoMain')->name('detail.main');
-            Route::get('subscribe', 'CustomerDetailController@infoSubscribe')->name('detail.subscribe');
-            Route::get('preference', 'CustomerDetailController@infoPreference')->name('detail.preference');
+            Route::prefix('main')->namespace('Detail')->group(function () {
+                Route::get('', 'TabMainController@load')->name('detail.main');
+                Route::delete('certificate/{certificate_id}', 'TabMainController@deleteCertificate')->name('detail.main.certificate.delete');
+                Route::post('certificate/{file_id}', 'TabMainController@createCertificate')->name('detail.main.certificate.create');
+            });
+            Route::prefix('preference')->namespace('Detail')->group(function () {
+                Route::get('', 'TabPreferenceController@load')->name('detail.preference');
+                Route::put('brands', 'TabPreferenceController@putBrands')->name('detail.preference.brand.save');
+                Route::put('categories', 'TabPreferenceController@putCategories')->name('detail.preference.category.save');
+                Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('detail.preference.favorite.delete');
+            });
+
             Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
-            Route::get('log', 'CustomerDetailController@infoLog')->name('detail.log');
         });
 
         Route::prefix('activities')->group(function () {

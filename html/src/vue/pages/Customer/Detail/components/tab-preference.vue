@@ -57,7 +57,7 @@ import ModalBrands from './modal-brands.vue';
 import ModalCategories from './modal-categories.vue';
 
 export default {
-    name: 'info-preference',
+    name: 'tab-preference',
     components: {ModalCategories, ModalBrands},
     props: ['id'],
     data() {
@@ -85,7 +85,7 @@ export default {
         },
         removeFavItem(id, itemId, index) {
             Services.showLoader();
-            Services.net().delete(this.getRoute('customers.favorite.delete', {id: id, product_id: itemId})).then(data => {
+            Services.net().delete(this.getRoute('customers.detail.preference.favorite.delete', {id: id, product_id: itemId})).then(data => {
                 this.favorites.splice(index, 1);
                 Services.hideLoader();
             });

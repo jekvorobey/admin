@@ -111,7 +111,7 @@ import VDeleteButton from '../../../../components/controls/VDeleteButton/VDelete
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 
 export default {
-    name: 'info-main',
+    name: 'tab-main',
     components: {FileInput, VDeleteButton},
     props: ['model', 'order'],
     data() {
@@ -181,7 +181,7 @@ export default {
         },
         deleteCertificate(certificate_id, index) {
             Services.showLoader();
-            Services.net().delete(this.getRoute('customers.detail.certificate.delete', {
+            Services.net().delete(this.getRoute('customers.detail.main.certificate.delete', {
                 id: this.customer.id,
                 certificate_id: certificate_id
             })).then(data => {
@@ -192,7 +192,7 @@ export default {
         },
         createCertificate() {
             Services.showLoader();
-            Services.net().post(this.getRoute('customers.detail.certificate.create', {
+            Services.net().post(this.getRoute('customers.detail.main.certificate.create', {
                 id: this.customer.id,
                 file_id: this.form.file.id,
             })).then(data => {
