@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-find-product" title="Поиск товара" size="lg">
+    <b-modal id="modal-find-product" title="Поиск товара" size="lg" ok-only>
         <b-form @submit.prevent="findItems()">
             <label for="find-product-name">Название</label>
             <b-input-group>
@@ -9,7 +9,7 @@
                 </b-input-group-append>
             </b-input-group>
         </b-form>
-        <div class="pb-3">
+        <div class="pt-3">
             <ul>
                 <li v-for="item in items">
                     <a :href="'/products/' + item.id">{{ item.name }}</a>
