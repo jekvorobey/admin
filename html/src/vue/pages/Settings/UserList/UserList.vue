@@ -48,8 +48,6 @@
     import withQuery from 'with-query';
 
     import UserAddModal from '../components/user-add-modal.vue';
-
-    import { mapGetters } from 'vuex';
     import modalMixin from '../../../mixins/modal.js';
 
     export default {
@@ -125,8 +123,5 @@
                 this.loadPage();
             }
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     };
 </script>

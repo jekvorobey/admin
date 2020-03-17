@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Marketing\Dto\Price\PriceDto;
+use Greensight\Marketing\Dto\Price\OfferPriceDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\PriceChangeClaimDto;
@@ -235,11 +235,11 @@ class PriceChangeClaimController extends Controller
                     $offer['comment'] = $data['comment'] ?? '';
 
                     if ($data['action'] == 'accept') {
-                        $priceDto = new PriceDto();
-                        $priceDto->offer_id = $offer['offerId'];
-                        $priceDto->price = $offer['newPrice'];
+                        $offerPriceDto = new OfferPriceDto();
+                        $offerPriceDto->offer_id = $offer['offerId'];
+                        $offerPriceDto->price = $offer['newPrice'];
 
-                        $newPrices->push($priceDto);
+                        $newPrices->push($offerPriceDto);
                     }
                 }
             }

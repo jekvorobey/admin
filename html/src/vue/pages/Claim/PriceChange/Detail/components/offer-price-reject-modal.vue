@@ -15,10 +15,8 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
-
-    import {mapGetters} from 'vuex';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
     import modal from '../../../../../components/controls/modal/modal.vue';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
@@ -59,8 +57,5 @@
                 this.closeModal();
             },
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>

@@ -8,13 +8,12 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
-    import Services from "../../../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../../../scripts/services/services';
 
-    import VInput from "../../../../../../components/controls/VInput/VInput.vue";
+    import VInput from '../../../../../../components/controls/VInput/VInput.vue';
 
     export default {
         components: {
@@ -56,8 +55,5 @@
                 });
             },
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>

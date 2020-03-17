@@ -55,7 +55,7 @@
         </tr>
         <tr>
             <th>Дата регистрации</th>
-            <td>{{ customer.created_at }}</td>
+            <td>{{ datetimePrint(customer.created_at) }}</td>
         </tr>
         <tr>
             <th>Профили в социальных сетях</th>
@@ -105,14 +105,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Services from '../../../../../scripts/services/services.js';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 
 export default {
-    name: 'info-main',
+    name: 'tab-main',
     components: {FileInput, VDeleteButton},
     props: ['model', 'order'],
     data() {
@@ -133,7 +132,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
@@ -183,7 +181,7 @@ export default {
         },
         deleteCertificate(certificate_id, index) {
             Services.showLoader();
-            Services.net().delete(this.getRoute('customers.detail.certificate.delete', {
+            Services.net().delete(this.getRoute('customers.detail.main.certificate.delete', {
                 id: this.customer.id,
                 certificate_id: certificate_id
             })).then(data => {
@@ -194,7 +192,7 @@ export default {
         },
         createCertificate() {
             Services.showLoader();
-            Services.net().post(this.getRoute('customers.detail.certificate.create', {
+            Services.net().post(this.getRoute('customers.detail.main.certificate.create', {
                 id: this.customer.id,
                 file_id: this.form.file.id,
             })).then(data => {

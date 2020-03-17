@@ -63,6 +63,11 @@
                     class="preview-photo-input"
             />
 
+            Баннер<br>
+            <b-button v-show="productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Изменить баннер</b-button>
+            <b-button v-show="productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="removeBanner">Удалить баннер</b-button>
+            <b-button v-show="!productGroup.banner_id" class="my-3" variant="outline-primary" @click.prevent="openBannerModal">Создать баннер</b-button>
+
             <b-form-group
                     label="Тип*"
                     label-for="group-type"
@@ -82,6 +87,7 @@
             </b-form-group>
 
             <b-form-group
+                    v-show="isBasedOnFilters || isNotBasedOn"
                     label="Категория"
                     label-for="group-categories"
             >
@@ -100,13 +106,15 @@
             </b-form-group>
 
             <select-filters
-                    :i-selected-filters="productGroup.filters"
+                    v-show="isBasedOnFilters || isNotBasedOn"
+                    :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
             >
             </select-filters>
 
             <select-products
+                    v-show="isBasedOnProducts || isNotBasedOn"
                     :i-selected-product-ids="pluckSelectedProductIds()"
                     @update="onUpdateSelectedProducts"
             >
@@ -114,21 +122,27 @@
 
             <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
+
+        <banner-modal modal-name="FormTheme" @accept="onModalAccept" :id="productGroup.banner_id"/>
     </layout-main>
 </template>
 
 <script>
-    import {mapActions, mapGetters} from "vuex";
-    import Services from "../../../../scripts/services/services";
+    import { mapActions } from 'vuex';
+    import Services from '../../../../scripts/services/services';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';
     import SelectProducts from './components/select-products.vue';
+    import modalMixin from '../../../mixins/modal';
+    import BannerModal from './components/banner-modal.vue';
 
     export default {
+        mixins: [modalMixin],
         components: {
             SelectFilters,
             SelectProducts,
-            FileInput
+            FileInput,
+            BannerModal
         },
         props: {
             iProductGroup: {},
@@ -143,9 +157,9 @@
                 productGroupTypes: this.iProductGroupTypes,
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
-                selectedFilters: [],
+                selectedFilters: this.iProductGroup.filters || [],
                 selectedProductIds: [],
-                selectedProducts: [],
+                selectedProducts: this.iProductGroup.products || [],
             };
         },
 
@@ -162,6 +176,8 @@
                     is_shown: source.is_shown ? source.is_shown : false,
                     type_id: source.type_id ? source.type_id : null,
                     preview_photo_id: source.preview_photo_id ? source.preview_photo_id : null,
+                    banner_id: source.banner_id ? source.banner_id : null,
+                    category_code:  source.category_code ? source.category_code : null,
                 };
             },
             submit() {
@@ -216,11 +232,21 @@
                     });
                 }
             },
+            onModalAccept(id) {
+                this.productGroup.banner_id = id;
+                this.closeModal('FormTheme');
+            },
+            openBannerModal() {
+                this.openModal('FormTheme');
+            },
+            removeBanner() {
+                this.productGroup.banner_id = null;
+            },
             pluckSelectedProductIds() {
                 let ids = [];
 
-                for (let productKey in this.productGroup.products) {
-                    let product = this.productGroup.products[productKey];
+                for (let productKey in this.selectedProducts) {
+                    let product = this.selectedProducts[productKey];
                     ids.push(product.product_id);
                 }
 
@@ -228,7 +254,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             previewPhoto() {
                 const fileId = this.productGroup.preview_photo_id;
 
@@ -242,6 +267,15 @@
             },
             isCreatingMode() {
                 return this.productGroup.id === null;
+            },
+            isBasedOnProducts() {
+                return this.selectedProducts.length != 0;
+            },
+            isBasedOnFilters() {
+                return this.selectedFilters.length != 0;
+            },
+            isNotBasedOn() {
+                return !this.isBasedOnProducts && !this.isBasedOnFilters;
             },
         },
     };

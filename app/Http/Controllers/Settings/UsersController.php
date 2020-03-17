@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\RoleService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -121,6 +122,44 @@ class UsersController extends Controller
         $userService->deleteRole($id, $data['role']);
         return response()->json([
             'roles' => $userService->userRoles($id)
+        ]);
+    }
+
+    public function rolesForMessage()
+    {
+        return response()->json([
+            'roles' => UserDTO::rolesByFrontId([
+                Front::FRONT_MAS,
+                Front::FRONT_SHOWCASE,
+            ]),
+        ]);
+    }
+
+    public function userListTitle(UserService $userService, RequestInitiator $user)
+    {
+        $roleIds = request('role_ids');
+        $users = [];
+
+        foreach ($roleIds as $roleId) {
+            $usersByRole = $userService->users(
+                $userService->newQuery()
+                    ->setFilter('id', '!=', $user->userId())
+                    ->setFilter('role', $roleId)
+            )
+                ->keyBy('id')
+                ->map(function (UserDto $user) {
+                    return [
+                        'id' => $user->id,
+                        'title' => $user->getTitle(),
+                        'email' => $user->email,
+                    ];
+                })
+                ->toArray();
+            $users = array_merge($users, $usersByRole);
+        }
+
+        return response()->json([
+            'users' => $users,
         ]);
     }
 

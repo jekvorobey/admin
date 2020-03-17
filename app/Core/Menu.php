@@ -88,7 +88,7 @@ class Menu
                     ],
                     [
                         'title' => 'Управление страницами',
-                        'route' => '#',
+                        'route' => route('landing.listPage'),
                     ],
                     [
                         'title' => 'Шаблоны страниц',
@@ -177,19 +177,19 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Амбассадоры',
+                'title' => 'Реферальные партнеры',
                 'items' => [
                     [
-                        'title' => 'Заявки на регистрацию',
-                        'route' => '#',
-                    ],
-                    [
-                        'title' => 'Список амбассадоров',
+                        'title' => 'Список реферальных партнеров',
                         'route' => '#',
                     ],
                     [
                         'title' => 'Вознаграждения',
-                        'route' => '#',
+                        'route' => route('referral.levels'),
+                    ],
+                    [
+                        'title' => 'Параметры отображения',
+                        'route' => route('referral.options'),
                     ],
                 ],
             ],
@@ -284,6 +284,10 @@ class Menu
                     [
                         'title' => 'Типы',
                         'route' => route('communications.types.list'),
+                    ],
+                    [
+                        'title' => 'Массовая рассылка',
+                        'route' => route('communications.chats.broadcast'),
                     ],
                 ],
             ],

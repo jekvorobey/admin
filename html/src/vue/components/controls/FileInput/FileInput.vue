@@ -10,6 +10,7 @@
                         class="custom-file-input"
                         :class="{'is-invalid': fileError, 'form-control-sm': sm}"
                         :disabled="disabled"
+                        :required="required"
                         @change="change"
                 >
                 <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
@@ -34,13 +35,16 @@
 <script>
     import inputMixin from '../../../mixins/input-mixin';
     import Services from '../../../../scripts/services/services';
-    import { mapGetters } from 'vuex';
 
     export default {
         name: "FileInput",
         mixins: [inputMixin],
         props: {
             disabled: {
+                type: Boolean,
+                default: false,
+            },
+            required: {
                 type: Boolean,
                 default: false,
             },
@@ -88,7 +92,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             fileError() {
                 return this.uploadError || this.error;
             },

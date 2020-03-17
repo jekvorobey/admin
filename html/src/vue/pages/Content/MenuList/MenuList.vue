@@ -37,9 +37,8 @@
 
 <script>
 
-    import Services from "../../../../scripts/services/services";
-    import withQuery from "with-query";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../scripts/services/services';
+    import withQuery from 'with-query';
 
     export default {
         components: {
@@ -90,9 +89,6 @@
                 this.loadPage();
             }
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     };
 </script>
 

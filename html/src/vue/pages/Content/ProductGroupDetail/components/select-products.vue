@@ -1,13 +1,15 @@
 <template>
     <div>
+        Продукты<br>
         <b-input-group>
-            <b-form-input v-model="inputVendorCode"/>
+            <b-form-input v-model="inputVendorCode" placeholder="Введите артикул"/>
             <b-input-group-append>
                 <b-button v-on:click="addProduct" variant="info">Добавить</b-button>
             </b-input-group-append>
         </b-input-group>
 
-        <div>
+        <div v-show="products.length">
+            Добавленные продукты<br>
             <b-card v-for="product in products"
                     no-body
                     class="overflow-hidden"
@@ -34,7 +36,6 @@
 
 <script>
     import Services from '../../../../../scripts/services/services';
-    import {mapGetters} from 'vuex';
 
     export default {
         components: {},
@@ -60,6 +61,13 @@
                         }
                     });
             },
+            removeProduct(id) {
+                const idx = this.selectedProductIds.indexOf(id);
+
+                if (idx !== -1) {
+                    this.selectedProductIds.splice(idx, 1);
+                }
+            },
             fetchProducts(ids) {
                 if (ids) {
                     Services.net().get(this.getRoute('productGroup.getProducts'), {id: ids})
@@ -68,9 +76,6 @@
                         });
                 }
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
         watch: {
             selectedProductIds(val) {

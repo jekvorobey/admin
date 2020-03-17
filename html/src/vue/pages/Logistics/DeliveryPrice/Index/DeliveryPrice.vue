@@ -78,11 +78,9 @@
 <script>
     import Service from '../../../../../scripts/services/services';
 
-    import {validationMixin} from 'vuelidate';
-    import {decimal, minValue} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { decimal, minValue } from 'vuelidate/lib/validators';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
-    import {mapGetters} from 'vuex';
-
 
     export default {
         name: 'page-delivery-price',
@@ -260,9 +258,6 @@
                     }
                 }
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
     };
 </script>

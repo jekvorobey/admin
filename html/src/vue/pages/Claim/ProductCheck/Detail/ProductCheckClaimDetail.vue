@@ -42,8 +42,6 @@
 
 <script>
 
-    import {mapGetters} from 'vuex';
-
     import VTabs from '../../../../components/tabs/tabs.vue';
     import ProductsTab from './components/products-tab.vue';
     import Services from '../../../../../scripts/services/services';
@@ -105,7 +103,6 @@
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         isNewStatus() {
             return this.isStatus(1);
         },

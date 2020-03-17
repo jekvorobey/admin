@@ -77,12 +77,12 @@
 
 <script>
 
-    import Services from "../../../../scripts/services/services";
-    import withQuery from "with-query";
+    import Services from '../../../../scripts/services/services';
+    import withQuery from 'with-query';
 
-    import FSelect from "../../../components/filter/f-select.vue";
-    import FInput from "../../../components/filter/f-input.vue";
-    import {mapActions, mapGetters} from "vuex";
+    import FSelect from '../../../components/filter/f-select.vue';
+    import FInput from '../../../components/filter/f-input.vue';
+    import { mapActions } from 'vuex';
 
     const cleanFilter = {
         id: '',
@@ -177,7 +177,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             typeOptions() {
                 return this.options.types.map(type => ({value: type.id, text: type.name}));
             },

@@ -63,11 +63,10 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {integer} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { integer } from 'vuelidate/lib/validators';
 
     import Services from '../../../../../scripts/services/services';
-    import {mapGetters} from 'vuex';
 
     import modal from '../../../../components/controls/modal/modal.vue';
 
@@ -164,9 +163,6 @@
                 });
             }
         },
-        computed: {
-            ...mapGetters(['getRoute']),
-        }
     }
 </script>
 

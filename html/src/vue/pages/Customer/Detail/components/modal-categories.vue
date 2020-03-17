@@ -14,7 +14,6 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
-import { mapGetters } from 'vuex';
 import NestedSets from '../../../../../scripts/nestedSets.js';
 import ModalCategoriesCheckbox from './modal-categories-checkbox.vue';
 
@@ -30,7 +29,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getRoute']),
         formCategories() {
             return NestedSets.process(Object.values(this.categories));
         },
@@ -38,7 +36,7 @@ export default {
     methods: {
         saveCategories() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.category.save', {id: this.customerId}), null, {
+            Services.net().put(this.getRoute('customers.detail.preference.category.save', {id: this.customerId}), null, {
                 categories: this.form.categories
             }).then(data => {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.form.categories)));

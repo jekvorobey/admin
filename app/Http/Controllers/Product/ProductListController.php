@@ -9,100 +9,146 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Product\ProductProductionStatus;
+use Pim\Dto\Search\ProductQuery;
+use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\SearchService\SearchService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ProductListController extends Controller
 {
     public function index(
         Request $request,
-        ProductService $productService,
+        SearchService $searchService,
         CategoryService $categoryService,
         BrandService $brandService
     )
     {
         $this->title = 'Товары';
         $query = $this->makeQuery($request);
+        $productSearchResult = $searchService->products($query);
         return $this->render('Product/ProductList', [
-            'iProducts' => $this->loadItems($query, $productService),
-            'iPager' => $productService->productsCount($query),
+            'iProducts' => $productSearchResult->products,
+            'iTotal' => $productSearchResult->total,
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'brands' => $brandService->brands($brandService->newQuery()),
-                'categories' => $categoryService->categories($categoryService->newQuery())
+                'categories' => $categoryService->categories($categoryService->newQuery()),
+                'productionStatuses' => ProductProductionStatus::allStatuses(),
+                'productionDone' => ProductProductionStatus::DONE,
+                'productionCancel' => ProductProductionStatus::REJECTED,
+                'approvalStatuses' => ProductApprovalStatus::allStatuses(),
+                'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
+                'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ]
         ]);
     }
     
     public function page(
         Request $request,
-        ProductService $productService
+        SearchService $searchService
     )
     {
         $query = $this->makeQuery($request);
+        $productSearchResult = $searchService->products($query);
         $data = [
-            'products' => $this->loadItems($query, $productService),
+            'products' => $productSearchResult->products,
+            'total' => $productSearchResult->total
         ];
-        if (1 == $request->get('page', 1)) {
-            $data['pager'] = $productService->productsCount($query);
-        }
         return response()->json($data);
     }
     
-    protected function makeQuery(Request $request)
+    public function updateApprovalStatus(Request $request, ProductService $productService)
     {
-        $query = new RestQuery();
-        $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
-    
-        $query->include(BrandDto::entity(), CategoryDto::entity());
-        $query->addFields(BrandDto::entity(), 'id', 'name');
-        $query->addFields(CategoryDto::entity(), 'id', 'name');
-        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
-        
-        $filter = $request->get('filter', []);
-    
-        if (isset($filter['id']) && $filter['id']) {
-            $query->setFilter('id', $filter['id']);
-        }
-        if (isset($filter['vendorCode']) && $filter['vendorCode']) {
-            $query->setFilter('vendor_code', $filter['vendorCode']);
-        }
-    
-        if (isset($filter['category'])) {
-            $query->setFilter('category_id', $filter['category']);
-        }
-    
-        if (isset($filter['brand'])) {
-            $query->setFilter('brand_id', $filter['brand']);
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
         }
         
-        return $query;
+        $productService->changeApprovalStatus($ids, $status, $comment);
+        
+        return response()->json();
     }
     
-    protected function loadItems(
-        RestQuery $query,
-        ProductService $productService
-    )
+    public function updateProductionStatus(Request $request, ProductService $productService)
     {
-        /** @var Collection $products */
-        $products = $productService->products($query);
-        $productIds = $products->pluck('id')->all();
-        $images = collect();
-        if ($productIds) {
-            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
         }
-        $products = $products->map(function (ProductDto $product) use ($images) {
-            $data = $product->toArray();
-            $data['approvalStatusName'] = $product->approvalStatus()->name;
-            $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
-            $data['photo'] = $images[$product->id] ?? '';
         
-            return $data;
-        });
-        return $products;
+        $productService->changeProductionStatus($ids, $status, $comment);
+        
+        return response()->json();
+    }
+    
+    public function updateArchiveStatus(Request $request, ProductService $productService)
+    {
+        $ids = $request->get('productIds');
+        $status = $request->get('status');
+        $comment = $request->get('comment');
+        if (!$ids || $status === null) {
+            throw new BadRequestHttpException('productIds and status required');
+        }
+        
+        $productService->changeArchiveStatus($ids, $status, $comment);
+        
+        return response()->json();
+    }
+    protected function makeQuery(Request $request): ProductQuery
+    {
+        $query = new ProductQuery();
+        $page = $request->get('page', 1);
+        $query->page($page, 10);
+        $query->fields([
+            ProductQuery::ID,
+            ProductQuery::DATE_ADD,
+            ProductQuery::CATALOG_IMAGE_ID,
+            ProductQuery::NAME,
+            ProductQuery::VENDOR_CODE,
+            ProductQuery::CATEGORY_NAME,
+            ProductQuery::BRAND_NAME,
+            ProductQuery::PRICE,
+            ProductQuery::QTY,
+            ProductQuery::ACTIVE,
+            ProductQuery::ARCHIVE,
+            ProductQuery::PRODUCTION_STATUS,
+            ProductQuery::APPROVAL_STATUS,
+            ProductQuery::INDEX_MARK,
+        ]);
+        
+        $filter = $request->get('filter', []);
+        $query->name = data_get($filter, 'name');
+        $query->id = data_get($filter, 'id');
+        $query->vendorCode = data_get($filter, 'vendorCode');
+        $active = data_get($filter, 'active');
+        if ($active !== null) {
+            $query->active = to_boolean($active);
+        }
+        $archive = data_get($filter, 'archive');
+        if ($archive !== null) {
+            $query->archive = to_boolean($archive);
+        }
+        $query->brandCode = data_get($filter, 'brand');
+        $query->categoryCode = data_get($filter, 'category');
+        $query->approvalStatus = data_get($filter, 'approvalStatus');
+        $query->productionStatus = data_get($filter, 'productionStatus');
+        $query->priceFrom = data_get($filter, 'priceFrom');
+        $query->priceTo = data_get($filter, 'priceTo');
+        $query->qtyFrom = data_get($filter, 'qtyFrom');
+        $query->qtyTo = data_get($filter, 'qtyTo');
+        $query->dateFrom = data_get($filter, 'dateFrom');
+        $query->dateTo = data_get($filter, 'dateTo');
+        return $query;
     }
 }

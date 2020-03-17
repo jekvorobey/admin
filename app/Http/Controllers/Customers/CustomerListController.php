@@ -17,7 +17,7 @@ class CustomerListController extends Controller
     {
         $this->title = 'Клиентская база';
         return $this->render('Customer/List', [
-            'statuses' => CustomerDto::statuses(),
+            'statuses' => CustomerDto::statusesName(),
             'perPage' => static::PER_PAGE
         ]);
     }

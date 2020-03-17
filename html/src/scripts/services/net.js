@@ -56,24 +56,24 @@ export default class NetService {
         return config;
     }
 
-    get(uri, params = {}, options={}) {
-        return this.request(this.params('get', uri, params, {}, options));
+    get(uri, params = {}, options={}, disableErrorAlert = false) {
+        return this.request(this.params('get', uri, params, {}, options), disableErrorAlert);
     }
 
-    post(uri, params = {}, data = {}, options={}) {
-        return this.request(this.params('post', uri, params, data, options))
+    post(uri, params = {}, data = {}, options={}, disableErrorAlert = false) {
+        return this.request(this.params('post', uri, params, data, options), disableErrorAlert)
 
     }
 
-    put(uri, params = {}, data = {}, options={}) {
-        return this.request(this.params('put', uri, params, data, options));
+    put(uri, params = {}, data = {}, options={}, disableErrorAlert = false) {
+        return this.request(this.params('put', uri, params, data, options), disableErrorAlert);
     }
 
-    delete(uri, params = {}, options={}) {
-        return this.request(this.params('delete', uri, params, {}, options));
+    delete(uri, params = {}, options={}, disableErrorAlert = false) {
+        return this.request(this.params('delete', uri, params, {}, options), disableErrorAlert);
     }
 
-    request(params) {
+    request(params, disableErrorAlert = false) {
         return axios.request(params).then(resp => {
             if (resp.status >= 200 && resp.status < 300) {
                 return resp.data;
@@ -97,6 +97,10 @@ export default class NetService {
                 console.log('Error', error.message);
             }
             console.log(error.config);
+
+            if (!disableErrorAlert && errorMsg) {
+                Services.msg(errorMsg, 'danger');
+            }
 
             return Promise.reject(errorMsg);
         });

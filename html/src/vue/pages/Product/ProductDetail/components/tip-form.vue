@@ -15,15 +15,15 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
 
-    import Services from "../../../../../scripts/services/services";
-    import {mapGetters} from "vuex";
+    import Services from '../../../../../scripts/services/services';
 
-    import VInput from "../../../../components/controls/VInput/VInput.vue";
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
     import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
-    import Media from "../../../../../scripts/media";
+    import Media from '../../../../../scripts/media';
+
     export default {
         components: {
             VInput,
@@ -69,7 +69,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             errorDescription() {
                 if (this.$v.form.description.$dirty) {
                     if (this.$v.form.description.required === false) return "Обязательное поле!";

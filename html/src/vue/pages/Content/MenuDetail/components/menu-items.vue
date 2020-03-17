@@ -76,8 +76,7 @@
 
 <script>
     import draggable from 'vuedraggable';
-    import {mapGetters} from 'vuex';
-    import NewMenuItem from "./new-menu-item.vue";
+    import NewMenuItem from './new-menu-item.vue';
     import modalMixin from '../../../../mixins/modal';
     import FormModal from './form-modal.vue';
 
@@ -195,9 +194,6 @@
                 this.closeModal('FormTheme');
                 this.activeItem = null;
             },
-        },
-        computed: {
-            ...mapGetters(['getRoute']),
         },
     }
 </script>

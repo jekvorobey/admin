@@ -1,6 +1,7 @@
 /* eslint-disable require-jsdoc */
 
 import NetService from './net';
+import RouteService from './route.js';
 
 let services_instance;
 export default class Services {
@@ -9,6 +10,10 @@ export default class Services {
 
         this.register('net', function() {
             return new NetService();
+        });
+
+        this.register('route', function () {
+            return new RouteService();
         });
     }
 
@@ -53,6 +58,13 @@ export default class Services {
      */
     static net() {
         return Services.instance().get('net');
+    }
+
+    /**
+     * @return {RouteService}
+     */
+    static route() {
+        return Services.instance().get('route');
     }
 
     /**

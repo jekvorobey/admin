@@ -171,8 +171,6 @@
 </template>
 
 <script>
-    import {mapGetters} from 'vuex';
-
     import Dropdown from '../../../../../components/dropdown/dropdown.vue';
     import modal from '../../../../../components/controls/modal/modal.vue';
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
@@ -283,7 +281,6 @@
             }
         },
         computed: {
-            ...mapGetters(['getRoute']),
             basketItems() {
                 let basketItems = {};
                 for (let [id, basketItem] of Object.entries(this.shipment.basketItems)) {

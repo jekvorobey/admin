@@ -3,10 +3,12 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
+use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
@@ -16,46 +18,47 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 
 class DiscountHelper
 {
     /**
      * @param Request $request
-     * @param array $pager
+     * @param array   $pager
+     *
      * @return array
      */
     public static function getParams(Request $request, array $pager = [])
     {
-        $whiteListFilters = [
-            'id',
-            'name',
-            'status',
-            'start_date',
-            'fix_start_date',
-            'end_date',
-            'fix_end_date',
-            'type',
-            'role_id',
-        ];
+        $discountInDto = new DiscountInDto();
 
-        $params = [];
-        $params['sort'] = 'desc';
-        $params['filter'] = [];
         if (!empty($pager)) {
-            $params['page'] = $pager['page'];
-            $params['perPage'] = $pager['perPage'];
+            $discountInDto->pagination($pager['page'], $pager['perPage']);
         }
 
         $filter = $request->get('filter', []);
-        foreach ($filter as $key => $value) {
-            if (in_array($key, $whiteListFilters)) {
-                $params['filter'][$key] = $value;
-            }
-        }
+        isset($filter['id']) ? $discountInDto->id($filter['id']) : null;
+        isset($filter['name']) ? $discountInDto->name($filter['name']) : null;
+        isset($filter['status']) ? $discountInDto->status($filter['status']) : null;
+        isset($filter['user_id']) ? $discountInDto->user($filter['user_id']) : null;
+        isset($filter['merchant_id']) ? $discountInDto->merchant($filter['merchant_id']) : null;
+        isset($filter['type']) ? $discountInDto->type($filter['type']) : null;
+        isset($filter['role_id']) ? $discountInDto->role($filter['role_id']) : null;
+        (isset($filter['created_at_from']) || isset($filter['created_at_to']))
+            ? $discountInDto->createdAt($filter['created_at_from'] ?? null, $filter['created_at_to'] ?? null)
+            : null;
+        isset($filter['start_date'])
+            ? $discountInDto->periodFrom($filter['start_date'], $filter['fix_start_date'] ?? false)
+            : null;
+        isset($filter['end_date'])
+            ? $discountInDto->periodTo($filter['end_date'], $filter['fix_end_date'] ?? false)
+            : null;
 
-        $params['filter']['!status'] = DiscountStatusDto::STATUS_CREATED;
-
-        return $params;
+        return $discountInDto
+            ->status(DiscountStatusDto::STATUS_CREATED, true)
+            ->sortDirection('desc')
+            ->toQuery();
     }
 
     /**
@@ -74,6 +77,15 @@ class DiscountHelper
         });
 
         return $discounts;
+    }
+
+    public static function getDiscountUsersInfo(DiscountService $discountService)
+    {
+        return $discountService->usersInfo([
+            'filter' => [
+                '!status' => DiscountStatusDto::STATUS_CREATED
+            ]
+        ]);
     }
 
     /**
@@ -309,9 +321,34 @@ class DiscountHelper
     }
 
     /**
+     * @return array|Collection
+     */
+    public static function getMerchantNames()
+    {
+        $merchantService = resolve(MerchantService::class);
+        $merchants = $merchantService->newQuery()
+            ->addFields(MerchantDto::entity(), 'id', 'display_name')
+            ->merchants();
+
+        return collect($merchants)->pluck('display_name', 'id');
+    }
+
+    /**
+     * @return array|Collection
+     */
+    public static function getUserNames()
+    {
+        $userService = resolve(UserService::class);
+        $query = $userService->newQuery();
+        $users = $userService->users($query);
+
+        return collect($users)->pluck('login', 'id');
+    }
+
+    /**
      * @return array
      */
-    static public function getOptionRoles()
+    public static function getOptionRoles()
     {
         return [
             ['value' => null, 'text' => 'Все'],
@@ -325,7 +362,7 @@ class DiscountHelper
      * @param int $perPage
      * @return array
      */
-    static public function getDefaultPager(Request $request, int $perPage = 20)
+    public static function getDefaultPager(Request $request, int $perPage = 20)
     {
         return [
             'page' =>  (int) $request->get('page', 1),

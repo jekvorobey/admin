@@ -69,7 +69,6 @@
 
 <script>
 
-    import {mapGetters} from 'vuex';
     import Services from '../../../../../scripts/services/services';
     import FSelect from '../../../../components/filter/f-select.vue';
 
@@ -142,7 +141,6 @@
         },
     },
     computed: {
-        ...mapGetters(['getRoute']),
         avaliableServices() {
             return this.mapForSelect(this.deliveryServices, 'name');
         },
