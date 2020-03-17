@@ -12,7 +12,6 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -20,15 +19,8 @@ use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
-use Pim\Dto\BrandDto;
-use Pim\Dto\CategoryDto;
-use Pim\Services\BrandService\BrandService;
-use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Http\Request;
-use Pim\Dto\Product\ProductDto;
-use Pim\Services\ProductService\ProductService;
 
 class CustomerDetailController extends Controller
 {
@@ -216,24 +208,6 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function createCertificate(int $id, int $file_id, CustomerService $customerService)
-    {
-        $certificateDto = new CustomerCertificateDto();
-        $certificateDto->file_id = $file_id;
-        $id = $customerService->createCertificate($id, $certificateDto);
-
-        return response()->json([
-            'id' => $id,
-        ]);
-    }
-
-    public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
-    {
-        $customerService->deleteCertificate($id, $certificate_id);
-
-        return response('', 204);
-    }
-
     public function putPortfolios(int $id, CustomerService $customerService)
     {
         $portfolios = request('portfolios');
@@ -247,201 +221,5 @@ class CustomerDetailController extends Controller
         $customerService->updatePortfolio($id, $portfolioDtos);
 
         return response('', 204);
-    }
-
-    public function putBrands(int $id, CustomerService $customerService)
-    {
-        $this->validate(request(), [
-            'brands' => 'array',
-            'brands.*' => 'numeric',
-        ]);
-
-        $customerService->updateBrands($id, request('brands'));
-
-        return response('', 204);
-    }
-
-    public function putCategories(int $id, CustomerService $customerService)
-    {
-        $this->validate(request(), [
-            'categories' => 'array',
-            'categories.*' => 'numeric',
-        ]);
-
-        $customerService->updateCategories($id, request('categories'));
-
-        return response('', 204);
-    }
-
-    public function infoMain(int $id, CustomerService $customerService, FileService $fileService, UserService $userService)
-    {
-        $certificates = $customerService->certificates($id);
-        $files = [];
-        if ($certificates) {
-            $files = $fileService->getFiles($certificates->pluck('file_id')->all())->keyBy('id');
-        }
-
-        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
-
-        $activities = $customerService->activities()->setCustomerIds([$id])->load();
-        $activitiesAll = $customerService->activities()->load();
-
-        return response()->json([
-            'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
-                /** @var FileDto $file */
-                $file = $files->get($certificate->file_id);
-                if (!$file) {
-                    return false;
-                }
-                return [
-                    'id' => $certificate->id,
-                    'url' => $file->absoluteUrl(),
-                    'name' => $file->original_name,
-                ];
-            })->filter(),
-            'managers' => $managers->mapWithKeys(function (UserDto $user) {
-                return [$user->id => $user->full_name];
-            }),
-            'activities' => $activities->pluck('id'),
-            'activitiesAll' => $activitiesAll,
-        ]);
-    }
-
-    public function infoSubscribe($id)
-    {
-        return response()->json([
-        ]);
-    }
-
-    protected function loadItems(
-        RestQuery $query,
-        ProductService $productService
-    )
-    {
-        /** @var Collection $products */
-        $products = $productService->products($query);
-        $productIds = $products->pluck('id')->all();
-        $images = collect();
-        if ($productIds) {
-            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
-        }
-        $products = $products->map(function (ProductDto $product) use ($images) {
-            $data = $product->toArray();
-            $data['approvalStatusName'] = $product->approvalStatus()->name;
-            $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
-            $data['photo'] = $images[$product->id] ?? '';
-
-            return $data;
-        });
-        return $products;
-    }
-
-    protected function makeQuery(Request $request, $favoriteItems)
-    {
-        $query = new RestQuery();
-        $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
-
-        $query->include(BrandDto::entity(), CategoryDto::entity());
-        $query->addFields(BrandDto::entity(), 'id', 'name');
-        $query->addFields(CategoryDto::entity(), 'id', 'name');
-        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code', 'approval_status', 'updated_at');
-
-        $query->setFilter('id', $favoriteItems);
-        return $query;
-    }
-
-    public function infoPreference(
-        $id,
-        BrandService $brandService,
-        CategoryService $categoryService,
-        CustomerService $customerService,
-        ProductService $productService,
-        Request $request
-    )
-    {
-        $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
-        $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
-        /** @var CustomerDto $customer */
-        $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
-        $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
-        $query = $this->makeQuery($request, $favoriteItems);
-
-        return response()->json([
-            'brands' => $brands->keyBy('id'),
-            'categories' => $categories->keyBy('id'),
-            'customer' => [
-                'brands' => $customer->brands,
-                'categories' => $customer->categories,
-            ],
-            'favorites' => $favoriteItems ? $this->loadItems($query, $productService) : null,
-        ]);
-    }
-
-    public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
-    {
-        $customerService->deleteFromFavorites($id, $product_id);
-        return response('', 204);
-    }
-
-    public function searchItem(
-        Request $request,
-        SearchService $searchService
-    )
-    {
-        $query = $this->makeQuery($request);
-        $productSearchResult = $searchService->products($query);
-        $data = [
-            'products' => $productSearchResult->products,
-            'total' => $productSearchResult->total
-        ];
-        return response()->json($data);
-    }
-
-    public function infoOrder($id, OrderService $orderService, PaymentService $paymentService, DeliveryService $deliveryService)
-    {
-        $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
-        if ($orders) {
-            $orderIds = $orders->pluck('id')->all();
-            $payments = $paymentService->payments($orderIds)->groupBy('order_id');
-
-            $deliveries = $deliveryService
-                ->deliveries((new RestQuery())->setFilter('order_id', $orderIds))
-                ->groupBy('order_id');
-
-            $orders = $orders->map(function (OrderDto $order) use ($payments, $deliveries) {
-                /** @var Collection|PaymentDto[] $ps */
-                $ps = $payments->get($order->id, collect());
-                /** @var Collection|DeliveryDto[] $ds */
-                $ds = $deliveries->get($order->id, collect());
-                $ar = $order->toArray();
-                $ar['status'] = $order->status();
-                $ar['isPayed'] = $order->isPayed();
-                $ar['deliveryType'] = $order->deliveryType();
-                $ar['paymentMethod'] = $ps->map(function (PaymentDto $payment) {
-                    return $payment->paymentMethod()->name;
-                })->unique()->join(', ');
-                $ar['deliveryMethod'] = $ds->map(function (DeliveryDto $delivery) {
-                    return DeliveryMethod::methodById($delivery->delivery_method)->name;
-                })->unique()->join(', ');
-                $ar['deliverySystems'] = $ds->map(function (DeliveryDto $delivery) {
-                    return \Greensight\Logistics\Dto\Lists\DeliveryService::serviceById($delivery->delivery_service)->name;
-                })->unique()->join(', ');
-                $ar['deliveryCount'] = $ds->count();
-                $ar['deliveryDate'] = $ds->map(function (DeliveryDto $delivery) {
-                    return explode(' ', $delivery->delivery_at)[0];
-                })->unique()->join(', ');
-                return $ar;
-            });
-        }
-        return response()->json([
-            'orders' => $orders,
-        ]);
-    }
-
-    public function infoLog($id)
-    {
-        return response()->json([
-        ]);
     }
 }
