@@ -13,6 +13,9 @@
             <ul>
                 <li v-for="item in items">
                     <a :href="'/products/' + item.id">{{ item.name }}</a>
+                    <span @click="addToFavorites(id, item.id, item.name)">
+                        <fa-icon icon="plus"/>
+                    </span>
                 </li>
             </ul>
         </div>
@@ -27,9 +30,10 @@
         data() {
             return {
                 searchString: '',
-                items: []
+                items: [],
             }
         },
+        props: ['id'],
         methods: {
             findItems() {
                 let filter;
@@ -37,7 +41,15 @@
                 let page = 1;
                 Services.net().get(this.getRoute('products.listPage'), {page, filter})
                     .then(data => { this.items = data.products });
-            }
+            },
+            addToFavorites(id, product_Id, name) {
+                Services.net().post(this.getRoute('customers.detail.preference.favorite.add', {id: id,
+                    product_id: product_Id})).then(data => {
+                    this.$bvModal.hide("modal-find-product");
+                    Services.msg(name + "добавлено в избранное пользователя");
+                    location.reload();
+                });
+            },
         }
     }
 </script>

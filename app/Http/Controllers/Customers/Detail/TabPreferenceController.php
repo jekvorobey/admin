@@ -106,6 +106,12 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
+    public function addFavoriteItem(CustomerService $customerService, $id, $product_id)
+    {
+        $customerService->addToFavorites($id, $product_id);
+        return response('', 204);
+    }
+
     public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
     {
         $customerService->deleteFromFavorites($id, $product_id);

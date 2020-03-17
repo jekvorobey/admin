@@ -36,7 +36,7 @@
             <th>
                 Избранное
                 <button class="btn btn-success btn-sm" v-b-modal.modal-find-product><fa-icon icon="plus"/></button>
-                <modal-find-product/>
+                <modal-find-product v-bind:id="id"/>
             </th>
             <td>
                 <div v-for="(favorite_item, index) in favorites">
