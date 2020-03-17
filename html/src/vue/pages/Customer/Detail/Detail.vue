@@ -37,6 +37,7 @@
                     <tab-order v-else-if="key === 'order'" :id="customer.id"/>
                     <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
                     <tab-document v-else-if="key === 'document'" :id="customer.id"/>
+                    <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -69,9 +70,11 @@ import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
 import ModalMarkStatus from './components/modal-mark-status.vue';
+import TabPromoProduct from './components/tab-promo-product.vue';
 
 export default {
     components: {
+        TabPromoProduct,
         TabCommunication, TabOrder, TabPreference, TabMain,
         ModalMarkStatus,
         ModalPortfolios,
@@ -85,10 +88,14 @@ export default {
             showAllTabs: false,
         };
     },
+    watch: {
+        'tabIndex': 'pushRoute',
+        'showAllTabs': 'pushRoute',
+    },
     computed: {
         tabs() {
             let tabs = {};
-            let i = -1;
+            let i = 0;
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
@@ -121,12 +128,41 @@ export default {
             tabs.log = {i: i++, title: 'Логи'};
 
             return tabs;
+        },
+        currentTabName() {
+            let tabName = 'main';
+            for (let key in this.tabs) {
+                if (!this.tabs.hasOwnProperty(key)) {
+                    continue;
+                }
+                if (this.tabs[key].i === this.tabIndex) {
+                    tabName = key;
+                }
+            }
+
+            return tabName;
         }
+    },
+    methods: {
+        pushRoute() {
+            let route = {};
+            if (this.level_id) {
+                route.level_id = this.level_id;
+            }
+            Services.route().push({
+                tab: this.currentTabName,
+                allTab: this.showAllTabs ? 1 : 0,
+            }, this.getRoute('customers.detail', {id: this.customer.id}));
+        },
     },
     created() {
         Services.event().$on('showTab', (tab) => {
             this.tabIndex = this.tabs[tab];
         });
+
+        let currentTab = Services.route().get('tab', 'main');
+        this.showAllTabs = !!Number(Services.route().get('allTab', 0));
+        this.tabIndex = this.tabs[currentTab].i;
     }
 };
 </script>

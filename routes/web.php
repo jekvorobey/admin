@@ -311,10 +311,15 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'TabPreferenceController@load')->name('detail.preference');
                 Route::put('brands', 'TabPreferenceController@putBrands')->name('detail.preference.brand.save');
                 Route::put('categories', 'TabPreferenceController@putCategories')->name('detail.preference.category.save');
+                Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('detail.preference.favorite.add');
                 Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('detail.preference.favorite.delete');
             });
+            Route::prefix('promo-product')->namespace('Detail')->group(function () {
+                Route::get('', 'TabPromoProductController@load')->name('detail.promoProduct');
+                Route::put('', 'TabPromoProductController@save')->name('detail.promoProduct.save');
+            });
 
-            Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
+            Route::get('order', 'Detail\\TabOrderController@load')->name('detail.order');
         });
 
         Route::prefix('activities')->group(function () {

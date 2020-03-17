@@ -16,6 +16,7 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\SearchService\SearchService;
 
 class TabPreferenceController extends Controller
 {
@@ -33,7 +34,7 @@ class TabPreferenceController extends Controller
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
         $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
-        $query = $this->makeFavoriteQuery($request, $favoriteItems);
+        $query = $this->makeFavoriteProductQuery($request, $favoriteItems);
 
         return response()->json([
             'brands' => $brands->keyBy('id'),
@@ -66,7 +67,7 @@ class TabPreferenceController extends Controller
         return $products;
     }
 
-    protected function makeFavoriteQuery(Request $request, $favoriteItems)
+    protected function makeFavoriteProductQuery(Request $request, $favoriteItems)
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);
@@ -105,9 +106,29 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
+    public function addFavoriteItem(CustomerService $customerService, $id, $product_id)
+    {
+        $customerService->addToFavorites($id, $product_id);
+        return response('', 204);
+    }
+
     public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
     {
         $customerService->deleteFromFavorites($id, $product_id);
         return response('', 204);
+    }
+
+    public function searchItem(
+        Request $request,
+        SearchService $searchService
+    )
+    {
+        $query = $this->makeFavoriteProductQuery($request);
+        $productSearchResult = $searchService->products($query);
+        $data = [
+            'products' => $productSearchResult->products,
+            'total' => $productSearchResult->total
+        ];
+        return response()->json($data);
     }
 }
