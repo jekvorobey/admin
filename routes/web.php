@@ -309,6 +309,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'TabPreferenceController@load')->name('detail.preference');
                 Route::put('brands', 'TabPreferenceController@putBrands')->name('detail.preference.brand.save');
                 Route::put('categories', 'TabPreferenceController@putCategories')->name('detail.preference.category.save');
+                Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('detail.preference.favorite.add');
                 Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('detail.preference.favorite.delete');
             });
             Route::prefix('promo-product')->namespace('Detail')->group(function () {
