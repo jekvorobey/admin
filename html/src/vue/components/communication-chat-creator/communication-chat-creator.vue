@@ -225,17 +225,20 @@ export default {
     },
     created() {
         Services.showLoader();
-        Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
-            this.channels = data.channels;
-            this.themes = data.themes;
-            this.statuses = data.statuses;
-            this.types = data.types;
-        });
-        Services.net().get(this.getRoute('settings.users.rolesClientMerchant')).then(data => {
-            this.roles = data.roles;
+
+        Promise.all([
+            Services.net().get(this.getRoute('communications.chats.directories')),
+            Services.net().get(this.getRoute('settings.users.rolesForMessage'))
+        ]).then(data => {
+            this.channels = data[0].channels;
+            this.themes = data[0].themes;
+            this.statuses = data[0].statuses;
+            this.types = data[0].types;
+            this.roles = data[1].roles;
         }).finally(() => {
             Services.hideLoader();
         });
+
         switch (this.kind) {
             case 'selectedUser':
                 this.showChatForm = false;

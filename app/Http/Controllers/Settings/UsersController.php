@@ -125,15 +125,14 @@ class UsersController extends Controller
         ]);
     }
 
-    public function rolesClientMerchantList()
+    public function rolesForMessage()
     {
-        $rolesCollection = collect(UserDTO::roles());
-        $rolesCollection = $rolesCollection->filter(function ($value, $key) {
-            $balance = intval($key / 100);
-            return (($balance == 2) || ($balance == 4));
-        });
-
-        return response()->json(['roles' => $rolesCollection->toArray()]);
+        return response()->json([
+            'roles' => UserDTO::rolesByFrontId([
+                Front::FRONT_MAS,
+                Front::FRONT_SHOWCASE,
+            ]),
+        ]);
     }
 
     public function userListTitle(UserService $userService, RequestInitiator $user)
