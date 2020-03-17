@@ -167,12 +167,12 @@
             FileInput
         },
         props: {
-            iBanner: {},
-            iBannerTypes: [],
-            iBannerButtonTypes: [],
-            iBannerButtonLocations: [],
-            iBannerImages: {},
-            options: {}
+            iBanner: Object,
+            iBannerTypes: Array,
+            iBannerButtonTypes: Array,
+            iBannerButtonLocations: Array,
+            iBannerImages: [Object, Array],
+            options: Object
         },
         data() {
             return {
