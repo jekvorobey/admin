@@ -37,6 +37,7 @@
                     <tab-order v-else-if="key === 'order'" :id="customer.id"/>
                     <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
                     <tab-document v-else-if="key === 'document'" :id="customer.id"/>
+                    <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -69,9 +70,11 @@ import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
 import ModalMarkStatus from './components/modal-mark-status.vue';
+import TabPromoProduct from './components/tab-promo-product.vue';
 
 export default {
     components: {
+        TabPromoProduct,
         TabCommunication, TabOrder, TabPreference, TabMain,
         ModalMarkStatus,
         ModalPortfolios,
