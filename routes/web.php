@@ -318,6 +318,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'TabPromoProductController@load')->name('detail.promoProduct');
                 Route::put('', 'TabPromoProductController@save')->name('detail.promoProduct.save');
             });
+            Route::prefix('document')->namespace('Detail')->group(function () {
+                Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('detail.document.delete');
+                Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('detail.document.create');
+            });
 
             Route::get('order', 'Detail\\TabOrderController@load')->name('detail.order');
         });
