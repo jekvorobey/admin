@@ -312,7 +312,7 @@ Route::middleware('auth')->group(function () {
                 Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('detail.preference.favorite.delete');
             });
 
-            Route::get('order', 'CustomerDetailController@infoOrder')->name('detail.order');
+            Route::get('order', 'Detail\\TabOrderController@load')->name('detail.order');
         });
 
         Route::prefix('activities')->group(function () {

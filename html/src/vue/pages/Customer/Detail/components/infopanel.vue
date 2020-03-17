@@ -81,10 +81,10 @@
             <th>Фото</th>
             <td>
                 <template v-if="!form.avatar">
-                    <file-input v-if="!form.avatar" @uploaded="(data) => form.avatar = data" size="sm"/>
+                    <file-input v-if="!form.avatar" @uploaded="(data) => form.avatar = data.id" size="sm"/>
                 </template>
                 <template v-else>
-                    <a :href="form.avatar.url">Посмотреть</a>
+                    <a :href="media.file(form.avatar)">Посмотреть</a>
                     <v-delete-button @delete="form.avatar = null" btn-class="btn-danger btn-sm"/>
                 </template>
             </td>
@@ -161,11 +161,7 @@ export default {
                 (this.customer.middle_name || '') !== (this.form.middle_name || '') ||
                 (this.customer.email || '') !== (this.form.email || '') ||
                 (this.customer.phone || '') !== (this.form.phone || '') ||
-                (
-                    (!this.customer.avatar && this.form.avatar) ||
-                    (this.customer.avatar && !this.form.avatar) ||
-                    (this.customer.avatar && this.form.avatar && this.customer.avatar.id !== this.form.avatar.id)
-                );
+                (this.customer.avatar !== this.form.avatar);
         },
     },
     methods: {
@@ -175,7 +171,7 @@ export default {
                 customer: {
                     status: this.form.status,
                     comment_status: "",
-                    avatar: this.form.avatar ? this.form.avatar.id : null,
+                    avatar: this.form.avatar,
                 },
                 user: {
                     id: this.customer.user_id,
