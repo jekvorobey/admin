@@ -432,12 +432,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "c68f85ffc155742f5ca629fed029b0a886d545fe"
+                "reference": "c6bdcdd226e8b2ac6231da285d3313fbcd5a818d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=c68f85ffc155742f5ca629fed029b0a886d545fe",
-                "reference": "c68f85ffc155742f5ca629fed029b0a886d545fe",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=c6bdcdd226e8b2ac6231da285d3313fbcd5a818d",
+                "reference": "c6bdcdd226e8b2ac6231da285d3313fbcd5a818d",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-16T13:57:32+00:00"
+            "time": "2020-03-17T13:53:37+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -662,6 +662,9 @@
                 }
             ],
             "description": "iBT marketing client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
             "time": "2020-03-16T17:18:58+00:00"
         },
         {
@@ -803,12 +806,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "ecff369a808019df2a927eebd6d50a4188ab3d9d"
+                "reference": "0880efd8e613876180915a6c6865fe26d9bf7214"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=ecff369a808019df2a927eebd6d50a4188ab3d9d",
-                "reference": "ecff369a808019df2a927eebd6d50a4188ab3d9d",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=0880efd8e613876180915a6c6865fe26d9bf7214",
+                "reference": "0880efd8e613876180915a6c6865fe26d9bf7214",
                 "shasum": ""
             },
             "require": {
@@ -832,7 +835,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-03-16T10:30:42+00:00"
+            "time": "2020-03-17T13:34:55+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1372,28 +1375,28 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.46",
+            "version": "1.0.65",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2"
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
-                "reference": "f3e0d925c18b92cf3ce84ea5cc58d62a1762a2b2",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
+                "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
                 "shasum": ""
             },
             "require": {
+                "ext-fileinfo": "*",
                 "php": ">=5.5.9"
             },
             "conflict": {
                 "league/flysystem-sftp": "<1.0.6"
             },
             "require-dev": {
-                "ext-fileinfo": "*",
                 "phpspec/phpspec": "^3.4",
-                "phpunit/phpunit": "^5.7.10"
+                "phpunit/phpunit": "^5.7.26"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -1452,7 +1455,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2018-08-22T07:45:22+00:00"
+            "time": "2020-03-08T18:53:20+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",
