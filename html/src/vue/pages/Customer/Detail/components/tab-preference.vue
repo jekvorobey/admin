@@ -35,8 +35,8 @@
         <tr>
             <th>
                 Избранное
-                <button class="btn btn-success btn-sm" v-b-modal.modal-find-item><fa-icon icon="plus"/></button>
-                <modal-find-item/>
+                <button class="btn btn-success btn-sm" v-b-modal.modal-find-product><fa-icon icon="plus"/></button>
+                <modal-find-product/>
             </th>
             <td>
                 <div v-for="(favorite_item, index) in favorites">
@@ -57,11 +57,11 @@
 import Services from '../../../../../scripts/services/services.js';
 import ModalBrands from './modal-brands.vue';
 import ModalCategories from './modal-categories.vue';
-import ModalFindItem from './modal-find-item.vue';
+import ModalFindProduct from './modal-find-product.vue';
 
 export default {
     name: 'tab-preference',
-    components: {ModalCategories, ModalBrands, ModalFindItem},
+    components: {ModalCategories, ModalBrands, ModalFindProduct},
     props: ['id'],
     data() {
         return {
