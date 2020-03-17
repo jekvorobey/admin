@@ -47,3 +47,21 @@ function is_null_or_empty($str){
 function to_boolean($str) {
     return !($str === 'false' || $str === '0' || !$str);
 }
+
+/**
+ * Преобразование PHP массива в ассоциативный массив (или в пустой объект).
+ * Метод нужен чтобы его результат кодировать в json и гарантированно получить js-объект, а не массив (как это иногда бывает)
+ * @param array $source
+ * @return array|object
+ */
+function php_arr_to_js_object(array $source)
+{
+    if (empty($source)) {
+        return (object)null;
+    }
+
+    // При необходимости реализовать тут преобразование простого массива в ассоциаивный массив,
+    // чтобы в json получился объект.
+
+    return $source;
+}

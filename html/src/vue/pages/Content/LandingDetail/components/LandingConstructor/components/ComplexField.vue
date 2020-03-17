@@ -29,34 +29,40 @@
                     :link="prop.tooltip_href"
             ></vue-tooltip>
 
-            <vue-widget-setting-array
+            <array-field
                     v-if="prop.multiple"
                     v-show="prop.isInShownList"
                     :prop.sync="prop"
                     :depth-level="depthLevel + 1"
-            ></vue-widget-setting-array>
+            ></array-field>
 
-            <vue-widget-setting-complex
+            <complex-field
                     v-else-if="prop.type === 'complex'"
                     v-show="prop.isInShownList"
                     :parent-prop="prop"
                     :props.sync="prop.complex"
                     :depth-level="depthLevel + 1"
-            ></vue-widget-setting-complex>
+            ></complex-field>
 
-            <vue-widget-setting-complex
+            <complex-field
                     v-else-if="prop.type === 'widget'"
                     v-show="prop.isInShownList"
                     :parent-prop="prop"
                     :props.sync="prop.widget.props"
                     :depth-level="depthLevel + 1"
-            ></vue-widget-setting-complex>
+            ></complex-field>
 
-            <vue-widget-setting-primitive
+            <banner-field
+                    v-else-if="prop.type === 'banner'"
+                    v-show="prop.isInShownList"
+                    :prop.sync="prop"
+            ></banner-field>
+
+            <primitive-field
                     v-else
                     v-show="prop.isInShownList"
                     :prop.sync="prop"
-            ></vue-widget-setting-primitive>
+            ></primitive-field>
         </div>
     </div>
     <button class="btn btn-success widget-setting-complex__btn-add" v-else-if="props && !show"
@@ -74,8 +80,18 @@
         fill_props_is_in_shown_list,
         is_primitive,
     } from "../scripts/widgets-helpers";
+    import MappingField from './MappingField.vue';
+    import PrimitiveField from "./PrimitiveField.vue";
+    import ArrayField from "./ArrayField.vue";
+    import BannerField from "./BannerField.vue";
 
     export default {
+        components: {
+            MappingField,
+            PrimitiveField,
+            ArrayField,
+            BannerField,
+        },
         inject: ['$validator'],
         props: ['props', 'parentProp', 'depthLevel'],
         data() {
