@@ -159,7 +159,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Клиентская база',
-                        'route' => route('customers.list'),
+                        'route' => route('professional.list'),
                     ],
                     [
                         'title' => 'Сегментация',
@@ -181,7 +181,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Список реферальных партнеров',
-                        'route' => '#',
+                        'route' => route('referralPartner.list'),
                     ],
                     [
                         'title' => 'Вознаграждения',
