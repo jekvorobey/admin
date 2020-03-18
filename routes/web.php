@@ -34,6 +34,10 @@ Route::middleware('auth')->group(function () {
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DiscountController@detail')->name('discount.edit');
             });
+
+            Route::put('/{id}', 'DiscountController@update')
+                ->where(['id' => '[0-9]+'])
+                ->name('discount.update');
         });
     });
 

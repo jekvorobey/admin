@@ -700,12 +700,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "285c9a2562843d71c8b6a617c148bd5ea079c11e"
+                "reference": "ce21b6985e96b9c05733bd2d5daf3c157b2b35bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=285c9a2562843d71c8b6a617c148bd5ea079c11e",
-                "reference": "285c9a2562843d71c8b6a617c148bd5ea079c11e",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=ce21b6985e96b9c05733bd2d5daf3c157b2b35bd",
+                "reference": "ce21b6985e96b9c05733bd2d5daf3c157b2b35bd",
                 "shasum": ""
             },
             "require": {
@@ -743,7 +743,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
             },
-            "time": "2020-03-18T11:15:16+00:00"
+            "time": "2020-03-18T15:18:33+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",

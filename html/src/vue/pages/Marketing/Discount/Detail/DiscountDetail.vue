@@ -107,8 +107,8 @@
                 this.processing = true;
                 let err = 'Произошла ошибка при сохранении скидки.';
                 let success = 'Скидка успешно обновлена.';
-                Services.net().post(
-                    this.route('discount.save'),
+                Services.net().put(
+                    this.getRoute('discount.update', {id: discount.id}),
                     {},
                     data
                 ).then(data => {

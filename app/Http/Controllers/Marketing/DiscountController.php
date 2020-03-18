@@ -119,20 +119,37 @@ class DiscountController extends Controller
      * Запрос на создание заявки на скидки
      *
      * @param Request $request
-     * @param MerchantService $merchantService
      * @param DiscountService $discountService
      * @return JsonResponse
      */
-    public function create(Request $request, MerchantService $merchantService, DiscountService $discountService)
+    public function create(Request $request, DiscountService $discountService)
     {
         try {
-            $discount = DiscountHelper::validate($request, $merchantService);
+            $discount = DiscountHelper::validate($request);
             $result = $discountService->create($discount);
         } catch (\Exception $ex) {
             return response()->json(['status' => $ex->getMessage()]);
         }
 
         return response()->json(['status' => $result ? 'ok' : 'fail']);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param DiscountService $discountService
+     * @return JsonResponse
+     */
+    public function update(int $id, Request $request, DiscountService $discountService)
+    {
+        try {
+            $discount = DiscountHelper::validate($request);
+            $discountService->update($id, $discount);
+        } catch (\Exception $ex) {
+            return response()->json(['status' => $ex->getMessage()]);
+        }
+
+        return response()->json(['status' => 'ok']);
     }
 
     /**

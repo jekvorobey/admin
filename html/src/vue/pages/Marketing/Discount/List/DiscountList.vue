@@ -105,7 +105,7 @@
                 <button class="btn btn-secondary" disabled v-if="discountId <= 0">Редактировать скидку</button>
                 <a :href="getRoute('discount.edit', {id: discountId})" class="btn btn-secondary" v-else>Редактировать скидку</a>
 
-                <button class="btn btn-secondary" :disabled="countSelected < 1">Удалить скидку</button>
+                <button class="btn btn-danger" :disabled="countSelected < 1">Удалить скидку</button>
                 <button class="btn btn-secondary" :disabled="countSelected < 1">Изменить статус скидки</button>
                 <button class="btn btn-info">Сгенерировать отчет</button>
             </div>
