@@ -99,14 +99,19 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-12">
-                <a :href="getRoute('discount.create')" class="btn btn-success mt-3">Создать скидку</a>
+            <div class="col-12 mt-3">
+                <a :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
+                <button class="btn btn-secondary" :disabled="countSelected !== 1">Редактировать скидку</button>
+                <button class="btn btn-secondary" :disabled="countSelected < 1">Удалить скидку</button>
+                <button class="btn btn-secondary" :disabled="countSelected < 1">Изменить статус скидки</button>
+                <button class="btn btn-info">Сгенерировать отчет</button>
             </div>
         </div>
 
         <table class="table table-hover">
             <thead class="thead-light">
             <tr>
+                <th><input type="checkbox" v-model="selectAll" @click="changeSelectAll()"></th>
                 <th>ID</th>
                 <th>Дата создания</th>
                 <th>Название</th>
@@ -115,7 +120,6 @@
                 <th>Инициатор</th>
                 <th>Автор</th>
                 <th>Статус</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -123,6 +127,7 @@
                 <td colspan="8" class="text-center">Скидки не найдены!</td>
             </tr>
             <tr v-if="discounts" v-for="(discount, index) in discounts">
+                <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
                 <td>{{ discount.name }}</td>
@@ -134,11 +139,6 @@
                 <td>{{ userName(discount.user_id) }}</td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
-                </td>
-                <td>
-                    <a :href="getRoute('discount.edit', {id: discount.id})" class="btn btn-info">
-                        <fa-icon icon="eye"></fa-icon>
-                    </a>
                 </td>
             </tr>
             </tbody>
@@ -212,6 +212,8 @@
                 options: [],
                 appliedFilter: {},
                 opened: false,
+                selectAll: false,
+                checkboxes: {},
 
                 // Статус скидки
                 STATUS_CREATED: 1,
@@ -328,7 +330,6 @@
                         'merchant_id',
                     ].includes(field);
 
-                    console.log(field);
                     switch (field) {
                         case 'id':
                         case 'name':
@@ -356,6 +357,19 @@
 
                 this.filter = filter;
             },
+            forAllDiscount(callback) {
+                for (let i in this.discounts) {
+                    callback(this.discounts[i]['id']);
+                }
+            },
+            changeSelectAll() {
+                let newValue = !this.selectAll;
+                let checkboxes = {};
+                this.forAllDiscount((discountId) => {
+                    checkboxes[discountId] = newValue;
+                });
+                this.checkboxes = checkboxes;
+            }
         },
         computed: {
             initiatorsOptions() {
@@ -377,6 +391,9 @@
             fixDateTooltip() {
                 return 'Искать точное совпадание с датой начала и/или окончания скидки';
             },
+            countSelected() {
+                return Object.values(this.checkboxes).reduce((acc, val) => { return acc + val; }, 0);
+            }
         },
         mounted() {
             this.initFilter();
@@ -393,6 +410,23 @@
             // this.opened = this.isHiddenFilterDefaultOpen();
         },
         watch: {
+            checkboxes: {
+                deep: true,
+                handler() {
+                    for (let i in this.discounts) {
+                        let discountId = this.discounts[i]['id'];
+                        if (!(discountId in this.checkboxes && this.checkboxes[discountId])) {
+                            this.selectAll = false;
+                            console.log("FALSE");
+                            return true;
+                        }
+                    }
+
+                    this.selectAll = true;
+                    console.log('TRUE');
+                    return true;
+                },
+            },
             currentPage() {
                 this.loadPage();
             }
