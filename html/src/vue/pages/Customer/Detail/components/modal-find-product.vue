@@ -19,6 +19,8 @@
                 </li>
             </ul>
         </div>
+        <b-button variant="dark" v-if="page > 1" v-on:click="prevItems()">Назад</b-button>
+        <b-button variant="dark" v-if="items.length === 10" v-on:click="nextItems()">Вперед</b-button>
     </b-modal>
 </template>
 
@@ -31,16 +33,25 @@
             return {
                 searchString: '',
                 items: [],
+                page: 1,
             }
         },
         props: ['id'],
         methods: {
             findItems() {
-                let filter;
+                let filter, page;
                 filter = {'name' : this.searchString};
-                let page = 1;
+                page = this.page;
                 Services.net().get(this.getRoute('products.listPage'), {page, filter})
                     .then(data => { this.items = data.products });
+            },
+            nextItems() {
+                this.page++;
+                this.findItems();
+            },
+            prevItems() {
+                this.page--;
+                this.findItems();
             },
             addToFavorites(id, product_Id, name) {
                 Services.net().post(this.getRoute('customers.detail.preference.favorite.add', {id: id,
