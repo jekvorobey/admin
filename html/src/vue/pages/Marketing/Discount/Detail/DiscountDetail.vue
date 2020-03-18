@@ -1,6 +1,7 @@
 <template>
     <layout-main>
         <discount-form
+            :i-discount="iDiscount"
             :discounts="discounts"
             :discount-types="discountTypes"
             :discount-statuses="discountStatuses"
@@ -11,13 +12,13 @@
             :brands="brands"
             :roles="roles"
             :iDistricts="iDistricts"
-            :action="add"
+            :action="save"
         ></discount-form>
 
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('AddDiscount')">
+            <modal :close="closeModal" v-if="isModalOpen('UpdateDiscount')">
                 <div slot="header">
-                    <b>Добавление скидки</b>
+                    <b>Обновление скидки</b>
                 </div>
                 <div slot="body">
                     {{ this.result }}
@@ -37,10 +38,11 @@
         name: 'page-discount-create',
         components: {
             modal,
-            DiscountForm,
+            DiscountForm
         },
         mixins: [modalMixin],
         props: {
+            iDiscount: Object,
             discounts: Array,
             discountTypes: Object,
             iConditionTypes: Object,
@@ -63,10 +65,13 @@
                 TYPE_CATEGORY: 4,
                 TYPE_DELIVERY: 5,
                 TYPE_CART_TOTAL: 6,
+
+                // Тип условия скидки
+                CONDITION_TYPE_USER: 9,
             };
         },
         methods: {
-            add(discount) {
+            save(discount) {
                 let data = {
                     name: discount.name,
                     type: discount.type,
@@ -100,19 +105,19 @@
                 }
 
                 this.processing = true;
-                let err = 'Произошла ошибка при добавлении скидки.';
-                let success = 'Скидка успешно добавлена.';
+                let err = 'Произошла ошибка при сохранении скидки.';
+                let success = 'Скидка успешно обновлена.';
                 Services.net().post(
                     this.route('discount.save'),
                     {},
                     data
                 ).then(data => {
                     this.result = (data.status === 'ok') ? success : err;
-                    this.openModal('AddDiscount');
+                    this.openModal('UpdateDiscount');
                     this.processing = false;
                 }, () => {
                     this.result = err;
-                    this.openModal('AddDiscount');
+                    this.openModal('UpdateDiscount');
                     this.processing = false;
                 });
             },
@@ -125,7 +130,7 @@
                     .split(',')
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
-            }
+            },
         },
     };
 </script>

@@ -22,17 +22,17 @@
 
                         <template v-if="condition.type === CONDITION_TYPE_MIN_PRICE_BRAND">
                             На бренды
-                                <ul>
-                                    <li v-for="id in condition.brands">{{ brandName(id) }}</li>
-                                </ul>
+                            <ul>
+                                <li v-for="id in condition.brands">{{ brandName(id) }}</li>
+                            </ul>
                             от {{ condition.sum }} руб.
                         </template>
 
                         <template v-if="condition.type === CONDITION_TYPE_MIN_PRICE_CATEGORY">
                             На категории
-                                <ul>
-                                    <li v-for="id in condition.categories">{{ categoryName(id) }}</li>
-                                </ul>
+                            <ul>
+                                <li v-for="id in condition.categories">{{ categoryName(id) }}</li>
+                            </ul>
                             от {{ condition.sum }} руб.
                         </template>
 
@@ -102,14 +102,16 @@
             </table>
         </div>
 
-        <v-select :options="conditionTypes" v-model="conditionType" class="col-6 mt-3">Условия предоставления скидки</v-select>
-        <div class="col-3 mt-3">
-            <label class="row">&nbsp;</label>
-            <button type="button btn-inline" class="btn"
-                    :class="valid ? 'btn-warning' : 'btn-light'"
-                    :disabled="!valid"
-                    @click="addCondition()">Добавить условие</button>
-        </div>
+        <template v-if="Object.values(conditionTypes).length > 0">
+            <v-select :options="conditionTypes" v-model="conditionType" class="col-6 mt-3">Условия предоставления скидки</v-select>
+            <div class="col-3 mt-3">
+                <label class="row">&nbsp;</label>
+                <button type="button btn-inline" class="btn"
+                        :class="valid ? 'btn-warning' : 'btn-light'"
+                        :disabled="!valid"
+                        @click="addCondition()">Добавить условие</button>
+            </div>
+        </template>
 
         <!-- На заказ от определенной суммы -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
@@ -212,10 +214,10 @@
 <script>
     import BrandsSearch from './brands-search.vue';
     import CategoriesSearch from './categories-search.vue';
-    import VInput from '../../../../../components/controls/VInput/VInput.vue';
-    import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
-    import Services from "../../../../../../scripts/services/services";
-    import FMultiSelect from '../../../../../components/filter/f-multi-select.vue';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import Services from "../../../../../scripts/services/services";
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
     export default {
         components: {
@@ -381,6 +383,9 @@
                     }
                 },
             },
-        }
+            conditions() {
+                this.updateConditionTypes();
+            },
+        },
     }
 </script>

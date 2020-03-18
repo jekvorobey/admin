@@ -7,6 +7,8 @@ use App\Core\DiscountHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Services\AuthService\RestRoleService;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
+use Greensight\Marketing\Dto\Discount\DiscountDto;
+use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -18,7 +20,8 @@ use Illuminate\Http\Request;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Pim\Core\PimException;
 
 /**
  * Class DiscountController
@@ -86,7 +89,7 @@ class DiscountController extends Controller
      * @param ListsService $listsService
      * @param BrandService $brandService
      * @return mixed
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function createPage(
         Request $request,
@@ -97,34 +100,16 @@ class DiscountController extends Controller
     )
     {
         $this->title = 'Создание скидки';
-
-        $discountTypes = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
-        $conditionTypes = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
-        $deliveryMethods = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
-        $paymentMethods = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
-        $roles = DiscountHelper::getOptionRoles();
-        $discountStatuses = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
-
-        $query = $listsService->newQuery()->include('regions');
-        $districts = $listsService->federalDistricts($query)->toArray();
-
-        $params = DiscountHelper::getParams($request);
-        $discounts = DiscountHelper::load($params, $discountService)
-            ->sortByDesc('created_at')
-            ->map(function ($item) {
-                return ['value' => $item['id'], 'text' => "{$item['name']} ({$item['validityPeriod']})"];
-            })
-            ->values();
-
+        $data = DiscountHelper::loadData($discountService, $listsService);
         return $this->render('Marketing/Discount/Create', [
-            'discounts' => $discounts,
-            'discountTypes' => $discountTypes,
-            'iConditionTypes' => $conditionTypes,
-            'deliveryMethods' => $deliveryMethods,
-            'discountStatuses' => $discountStatuses,
-            'paymentMethods' => $paymentMethods,
-            'roles' => $roles,
-            'iDistricts' => $districts,
+            'discounts' => $data['discounts'],
+            'discountTypes' => $data['discountTypes'],
+            'iConditionTypes' => $data['conditionTypes'],
+            'deliveryMethods' => $data['deliveryMethods'],
+            'discountStatuses' => $data['discountStatuses'],
+            'paymentMethods' => $data['paymentMethods'],
+            'roles' => $data['roles'],
+            'iDistricts' => $data['districts'],
             'categories' => $categoryService->categories($categoryService->newQuery()),
             'brands' => $brandService->brands($brandService->newQuery()),
         ]);
@@ -148,5 +133,52 @@ class DiscountController extends Controller
         }
 
         return response()->json(['status' => $result ? 'ok' : 'fail']);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @param DiscountService $discountService
+     * @param CategoryService $categoryService
+     * @param ListsService $listsService
+     * @param BrandService $brandService
+     * @return mixed
+     * @throws PimException
+     */
+    public function detail(int $id,
+                           Request $request,
+                           DiscountService $discountService,
+                           CategoryService $categoryService,
+                           ListsService $listsService,
+                           BrandService $brandService)
+    {
+        $params = (new DiscountInDto())
+            ->id($id)
+            ->status(DiscountStatusDto::STATUS_CREATED, true)
+            ->withAll()
+            ->toQuery();
+
+        /** @var DiscountDto $discount */
+        $discount = $discountService->discounts($params)->first();
+        if (!$discount) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->title = '#' . $discount->id . ' ' . $discount->name;
+
+        $data = DiscountHelper::loadData($discountService, $listsService);
+        return $this->render('Marketing/Discount/Detail', [
+            'iDiscount' => $discount,
+            'discounts' => $data['discounts'],
+            'discountTypes' => $data['discountTypes'],
+            'iConditionTypes' => $data['conditionTypes'],
+            'deliveryMethods' => $data['deliveryMethods'],
+            'discountStatuses' => $data['discountStatuses'],
+            'paymentMethods' => $data['paymentMethods'],
+            'roles' => $data['roles'],
+            'iDistricts' => $data['districts'],
+            'categories' => $categoryService->categories($categoryService->newQuery()),
+            'brands' => $brandService->brands($brandService->newQuery()),
+        ]);
     }
 }

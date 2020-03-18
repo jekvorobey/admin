@@ -30,6 +30,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'DiscountController@create')->name('discount.save');
             Route::get('/create', 'DiscountController@createPage')->name('discount.create');
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
+
+            Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'DiscountController@detail')->name('discount.edit');
+            });
         });
     });
 
@@ -142,11 +146,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', 'ProductListController@index')->name('products.list');
         Route::get('page', 'ProductListController@page')->name('products.listPage');
-        
+
         Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
         Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
-        
+
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
@@ -156,7 +160,7 @@ Route::middleware('auth')->group(function () {
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
-            
+
             Route::prefix('tips')->group(function () {
                 Route::post('', 'ProductDetailController@addTip')->name('product.addTip');
                 Route::post('{tipId}/update', 'ProductDetailController@editTip')->name('product.editTip');
