@@ -501,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "d8502f7eccb4f1f566923966908883d362d63a5d"
+                "reference": "673fd5b673ccda5fa35f2fed89e73aea274c650e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=d8502f7eccb4f1f566923966908883d362d63a5d",
-                "reference": "d8502f7eccb4f1f566923966908883d362d63a5d",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=673fd5b673ccda5fa35f2fed89e73aea274c650e",
+                "reference": "673fd5b673ccda5fa35f2fed89e73aea274c650e",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +541,10 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-18T12:49:56+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/14329212/issues"
+            },
+            "time": "2020-03-18T13:24:03+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -578,6 +581,9 @@
                 }
             ],
             "description": "iBT CMS service client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/16499696/issues"
+            },
             "time": "2020-03-18T09:40:12+00:00"
         },
         {
@@ -635,6 +641,9 @@
                 }
             ],
             "description": "iBT common code for all microservices",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
+            },
             "time": "2020-03-18T11:33:15+00:00"
         },
         {
@@ -731,6 +740,9 @@
                 }
             ],
             "description": "iBT marketing client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
             "time": "2020-03-18T11:15:16+00:00"
         },
         {
@@ -901,6 +913,9 @@
                 }
             ],
             "description": "iBT PIM service client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
+            },
             "time": "2020-03-18T11:34:21+00:00"
         },
         {
@@ -949,6 +964,9 @@
                 }
             ],
             "description": "iBT store client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
+            },
             "time": "2020-03-18T12:14:50+00:00"
         },
         {
