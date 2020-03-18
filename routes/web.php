@@ -324,6 +324,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('export', 'TabPromoProductController@export')->name('customers.detail.promoProduct.export');
                     });
                     Route::prefix('document')->group(function () {
+                        Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
                         Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
                         Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
