@@ -64,7 +64,7 @@ import Services from '../../../../scripts/services/services.js';
 
 export default {
     components: {VInput},
-    props: ['statuses', 'perPage'],
+    props: ['statuses', 'perPage', 'isReferral'],
     data() {
         return {
             filter: {
@@ -109,6 +109,7 @@ export default {
             if (this.filter.middle_name) {
                 filter.middle_name = this.filter.middle_name;
             }
+            filter.isReferral = this.isReferral ? 1 : 0;
             filter.page = this.pager.page;
             Services.net().get(this.getRoute('customers.filter'), filter).then((data)=> {
                 this.users = data.users;

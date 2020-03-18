@@ -13,11 +13,22 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 class CustomerListController extends Controller
 {
     const PER_PAGE = 10;
-    public function list()
+    public function listProfessional()
     {
-        $this->title = 'Клиентская база';
+        return $this->list('Клиентская база', false);
+    }
+
+    public function listReferralPartner()
+    {
+        return $this->list('Список реферальных партнеров', true);
+    }
+
+    protected function list($title, $isReferral)
+    {
+        $this->title = $title;
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
+            'isReferral' => $isReferral,
             'perPage' => static::PER_PAGE
         ]);
     }
@@ -30,6 +41,7 @@ class CustomerListController extends Controller
             'last_name' => 'nullable',
             'first_name' => 'nullable',
             'middle_name' => 'nullable',
+            'isReferral' => 'required|boolean',
             'page' => 'nullable'
         ]);
 
@@ -58,6 +70,7 @@ class CustomerListController extends Controller
         if (isset($filter['middle_name']) && $filter['middle_name']) {
             $restQueryUser->setFilter('middle_name', $filter['middle_name']);
         }
+        $restQueryUser->setFilter('role', request('isReferral') ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL);
         $users = $userService->users($restQueryUser)->keyBy('id');
 
         $result = $customers->map(function (CustomerDto $customer) use ($users) {
