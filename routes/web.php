@@ -317,6 +317,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('promo-product')->namespace('Detail')->group(function () {
                 Route::get('', 'TabPromoProductController@load')->name('detail.promoProduct');
                 Route::put('', 'TabPromoProductController@save')->name('detail.promoProduct.save');
+                Route::get('export', 'TabPromoProductController@export')->name('detail.promoProduct.export');
             });
             Route::prefix('document')->namespace('Detail')->group(function () {
                 Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('detail.document.delete');

@@ -4,8 +4,77 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad7451fe32369a92207f4b833b9ee20f",
+    "content-hash": "05c1b9e66ca9ab765c12813535fbac1f",
     "packages": [
+        {
+            "name": "box/spout",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/box/spout.git",
+                "reference": "7964dadc2128f3a00ffa393395b618ea115c8032"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/box/spout/zipball/7964dadc2128f3a00ffa393395b618ea115c8032",
+                "reference": "7964dadc2128f3a00ffa393395b618ea115c8032",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xmlreader": "*",
+                "ext-zip": "*",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2",
+                "phpunit/phpunit": "^7"
+            },
+            "suggest": {
+                "ext-iconv": "To handle non UTF-8 CSV files (if \"php-intl\" is not already installed or is too limited)",
+                "ext-intl": "To handle non UTF-8 CSV files (if \"iconv\" is not already installed)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Box\\Spout\\": "src/Spout"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Adrien Loison",
+                    "email": "adrien@box.com"
+                }
+            ],
+            "description": "PHP Library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way",
+            "homepage": "https://www.github.com/box/spout",
+            "keywords": [
+                "OOXML",
+                "csv",
+                "excel",
+                "memory",
+                "odf",
+                "ods",
+                "office",
+                "open",
+                "php",
+                "read",
+                "scale",
+                "spreadsheet",
+                "stream",
+                "write",
+                "xlsx"
+            ],
+            "time": "2019-12-02T21:21:41+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "v0.1.1",
@@ -432,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "c6bdcdd226e8b2ac6231da285d3313fbcd5a818d"
+                "reference": "fcbabf64a97d196925ff45d3456e98cab4622cd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=c6bdcdd226e8b2ac6231da285d3313fbcd5a818d",
-                "reference": "c6bdcdd226e8b2ac6231da285d3313fbcd5a818d",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=fcbabf64a97d196925ff45d3456e98cab4622cd1",
+                "reference": "fcbabf64a97d196925ff45d3456e98cab4622cd1",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +541,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-17T13:53:37+00:00"
+            "time": "2020-03-18T11:35:13+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -480,12 +549,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "f0ca63d5296581286acabbec0756e4daa5d1750d"
+                "reference": "25540c7ce41afbe6bb856a0902f7ec8846ca74a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=f0ca63d5296581286acabbec0756e4daa5d1750d",
-                "reference": "f0ca63d5296581286acabbec0756e4daa5d1750d",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=25540c7ce41afbe6bb856a0902f7ec8846ca74a9",
+                "reference": "25540c7ce41afbe6bb856a0902f7ec8846ca74a9",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +578,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-03-16T08:05:52+00:00"
+            "time": "2020-03-18T09:40:12+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -517,12 +586,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "8a0cedfbedb99d5b428198b525177054492ea73c"
+                "reference": "6fef7eb100b0543c451e512dc15a13313fb9feec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=8a0cedfbedb99d5b428198b525177054492ea73c",
-                "reference": "8a0cedfbedb99d5b428198b525177054492ea73c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=6fef7eb100b0543c451e512dc15a13313fb9feec",
+                "reference": "6fef7eb100b0543c451e512dc15a13313fb9feec",
                 "shasum": ""
             },
             "require": {
@@ -566,7 +635,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-03-17T09:46:45+00:00"
+            "time": "2020-03-18T11:33:15+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -622,12 +691,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2"
+                "reference": "285c9a2562843d71c8b6a617c148bd5ea079c11e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2",
-                "reference": "1eed0ae9b240fc7555085b2aa21eb46b8d10bbd2",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=285c9a2562843d71c8b6a617c148bd5ea079c11e",
+                "reference": "285c9a2562843d71c8b6a617c148bd5ea079c11e",
                 "shasum": ""
             },
             "require": {
@@ -662,10 +731,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
-            },
-            "time": "2020-03-16T17:18:58+00:00"
+            "time": "2020-03-18T11:15:16+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -806,12 +872,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "0880efd8e613876180915a6c6865fe26d9bf7214"
+                "reference": "016ae9334871ff902a1766639d001e6209a80513"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=0880efd8e613876180915a6c6865fe26d9bf7214",
-                "reference": "0880efd8e613876180915a6c6865fe26d9bf7214",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=016ae9334871ff902a1766639d001e6209a80513",
+                "reference": "016ae9334871ff902a1766639d001e6209a80513",
                 "shasum": ""
             },
             "require": {
@@ -835,7 +901,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-03-17T13:34:55+00:00"
+            "time": "2020-03-18T11:34:21+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",

@@ -22,6 +22,7 @@ import {
     faEye,
     faFileArchive,
     faFileDownload,
+    faFileExcel,
     faInfo,
     faPencilAlt,
     faPercentage,
@@ -60,3 +61,4 @@ library.add(faRubleSign);
 library.add(faSave);
 library.add(faInfo);
 library.add(faFileArchive);
+library.add(faFileExcel);
