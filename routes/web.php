@@ -295,68 +295,76 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('customers')->namespace('Customers')->name('customers.')->group(function () {
-        Route::get('', 'CustomerListController@list')->name('list');
-        Route::get('filter', 'CustomerListController@filter')->name('filter');
+    Route::namespace('Customers')->group(function () {
+        Route::get('professionals', 'CustomerListController@listProfessional')->name('professional.list');
+        Route::get('referral-partners', 'CustomerListController@listReferralPartner')->name('referralPartner.list');
 
-        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-            Route::get('', 'CustomerDetailController@detail')->name('detail');
-            Route::put('', 'CustomerDetailController@save')->name('detail.save');
-            Route::put('referral', 'CustomerDetailController@referral')->name('detail.referral');
-            Route::put('professional', 'CustomerDetailController@professional')->name('detail.professional');
-            Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('detail.portfolio.save');
+        Route::prefix('customers')->group(function () {
+            Route::get('filter', 'CustomerListController@filter')->name('customers.filter');
 
-            Route::prefix('main')->namespace('Detail')->group(function () {
-                Route::get('', 'TabMainController@load')->name('detail.main');
-                Route::delete('certificate/{certificate_id}', 'TabMainController@deleteCertificate')->name('detail.main.certificate.delete');
-                Route::post('certificate/{file_id}', 'TabMainController@createCertificate')->name('detail.main.certificate.create');
-            });
-            Route::prefix('preference')->namespace('Detail')->group(function () {
-                Route::get('', 'TabPreferenceController@load')->name('detail.preference');
-                Route::put('brands', 'TabPreferenceController@putBrands')->name('detail.preference.brand.save');
-                Route::put('categories', 'TabPreferenceController@putCategories')->name('detail.preference.category.save');
-                Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('detail.preference.favorite.add');
-                Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('detail.preference.favorite.delete');
-            });
-            Route::prefix('promo-product')->namespace('Detail')->group(function () {
-                Route::get('', 'TabPromoProductController@load')->name('detail.promoProduct');
-                Route::put('', 'TabPromoProductController@save')->name('detail.promoProduct.save');
-            });
-            Route::prefix('document')->namespace('Detail')->group(function () {
-                Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('detail.document.delete');
-                Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('detail.document.create');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'CustomerDetailController@detail')->name('customers.detail');
+                Route::put('', 'CustomerDetailController@save')->name('customers.detail.save');
+                Route::put('referral', 'CustomerDetailController@referral')->name('customers.detail.referral');
+                Route::put('professional', 'CustomerDetailController@professional')->name('customers.detail.professional');
+                Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('customers.detail.portfolio.save');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('main')->group(function () {
+                        Route::get('', 'TabMainController@load')->name('customers.detail.main');
+                        Route::delete('certificate/{certificate_id}', 'TabMainController@deleteCertificate')->name('customers.detail.main.certificate.delete');
+                        Route::post('certificate/{file_id}', 'TabMainController@createCertificate')->name('customers.detail.main.certificate.create');
+                    });
+                    Route::prefix('preference')->group(function () {
+                        Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');
+                        Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
+                        Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
+                        Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('customers.detail.preference.favorite.add');
+                        Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('customers.detail.preference.favorite.delete');
+                    });
+                    Route::prefix('promo-product')->group(function () {
+                        Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
+                        Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');
+                        Route::get('export', 'TabPromoProductController@export')->name('customers.detail.promoProduct.export');
+                    });
+                    Route::prefix('document')->group(function () {
+                        Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
+                        Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                    });
+                    Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
+                });
+
             });
 
-            Route::get('order', 'Detail\\TabOrderController@load')->name('detail.order');
+            Route::prefix('activities')->group(function () {
+                Route::get('', 'ActivitiesController@list')->name('customers.activities');
+                Route::post('', 'ActivitiesController@save')->name('customers.activities.save');
+            });
+
         });
-
-        Route::prefix('activities')->group(function () {
-            Route::get('', 'ActivitiesController@list')->name('activities');
-            Route::post('', 'ActivitiesController@save')->name('activities.save');
-        });
-
     });
 
-    Route::prefix('referral')->namespace('Referral')->name('referral.')->group(function () {
+    Route::prefix('referral')->namespace('Referral')->group(function () {
         Route::prefix('levels')->group(function () {
-            Route::get('', 'LevelsController@list')->name('levels');
+            Route::get('', 'LevelsController@list')->name('referral.levels');
             Route::prefix('{level_id}')->group(function () {
-                Route::post('', 'LevelsController@detail')->name('levels.detail');
-                Route::put('', 'LevelsController@putLevel')->name('levels.save');
+                Route::post('', 'LevelsController@detail')->name('referral.levels.detail');
+                Route::put('', 'LevelsController@putLevel')->name('referral.levels.save');
                 Route::prefix('commission')->group(function () {
-                    Route::put('', 'LevelsController@putCommission')->name('levels.commission.save');
-                    Route::delete('', 'LevelsController@removeCommission')->name('levels.commission.remove');
+                    Route::put('', 'LevelsController@putCommission')->name('referral.levels.commission.save');
+                    Route::delete('', 'LevelsController@removeCommission')->name('referral.levels.commission.remove');
                 });
                 Route::prefix('special-commission')->group(function () {
-                    Route::put('', 'LevelsController@putSpecialCommission')->name('levels.special-commission.save');
-                    Route::delete('', 'LevelsController@removeSpecialCommission')->name('levels.special-commission.remove');
+                    Route::put('', 'LevelsController@putSpecialCommission')->name('referral.levels.special-commission.save');
+                    Route::delete('', 'LevelsController@removeSpecialCommission')->name('referral.levels.special-commission.remove');
                 });
             });
         });
 
         Route::prefix('options')->group(function () {
-            Route::get('', 'OptionsController@index')->name('options');
-            Route::put('', 'OptionsController@save')->name('options.save');
+            Route::get('', 'OptionsController@index')->name('referral.options');
+            Route::put('', 'OptionsController@save')->name('referral.options.save');
         });
     });
 
