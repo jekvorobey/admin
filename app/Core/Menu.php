@@ -69,6 +69,15 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list')
                     ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Статусы заказов',
+                                'route' => route('orderStatuses.list'),
+                            ],
+                        ]
+                    ],
                 ],
             ],
             [
