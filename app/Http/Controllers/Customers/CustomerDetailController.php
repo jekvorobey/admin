@@ -24,8 +24,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
 {
-    public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
-    {
+    public function detail(
+        $id,
+        CustomerService $customerService,
+        UserService $userService,
+        OrderService $orderService,
+        FileService $fileService,
+        ReferralService $referralService
+    ) {
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadChannelTypes = true;
@@ -71,11 +77,25 @@ class CustomerDetailController extends Controller
 
         /** @var UserDto $referrer_user */
         $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
+
+        $referralLevels = [];
+        $commission_route = '';
+        if ($referral) {
+            $referralLevels = $referralService->getLevels();
+
+            $existCustomerCommission = $referralService->existCustomerCommission($customer->id);
+            if ($existCustomerCommission) {
+                $commission_route = route('referral.levels', ['level_id' => $existCustomerCommission[0]]);
+            }
+        }
+
+
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
                 'avatar' => $avatar ? $avatar->id : null,
                 'user_id' => $customer->user_id,
+                'referral_level_id' => $customer->referral_level_id,
                 'status' => $customer->status,
                 'comment_status' => $customer->comment_status,
                 'last_name' => $user->last_name,
@@ -84,6 +104,14 @@ class CustomerDetailController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'gender' => $customer->gender,
+                'legal_info_company_name' => $customer->legal_info_company_name,
+                'legal_info_company_address' => $customer->legal_info_company_address,
+                'legal_info_inn' => $customer->legal_info_inn,
+                'legal_info_payment_account' => $customer->legal_info_payment_account,
+                'legal_info_bik' => $customer->legal_info_bik,
+                'legal_info_bank' => $customer->legal_info_bank,
+                'legal_info_bank_correspondent_account' => $customer->legal_info_bank_correspondent_account,
+                'referral_code' => $customer->referral_code,
                 'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
                 'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
@@ -106,11 +134,13 @@ class CustomerDetailController extends Controller
                 'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
+                'commission_route' => $commission_route,
             ],
             'order' => [
                 'count' => $orders->count(),
                 'price' => number_format($orders->sum('price'), 2, '.', ' '),
             ],
+            'referralLevels' => $referralLevels,
         ]);
     }
 
@@ -125,6 +155,15 @@ class CustomerDetailController extends Controller
             'customer.birthday' => 'nullable|date_format:Y-m-d',
             'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statusesName()))],
             'customer.comment_status' => 'nullable',
+            'customer.referral_level_id' => 'nullable',
+            'customer.legal_info_company_name' => 'nullable',
+            'customer.legal_info_company_address' => 'nullable',
+            'customer.legal_info_inn' => 'nullable',
+            'customer.legal_info_payment_account' => 'nullable',
+            'customer.legal_info_bik' => 'nullable',
+            'customer.legal_info_bank' => 'nullable',
+            'customer.legal_info_bank_correspondent_account' => 'nullable',
+            'customer.referral_code' => 'nullable',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
@@ -198,7 +237,12 @@ class CustomerDetailController extends Controller
     {
         $referralService->makeReferral($id);
 
-        return response('', 204);
+        $referralLevels = $referralService->getLevels();
+        $defaultLevel = $referralLevels->sortBy('sort')->first()->id;
+
+        return response()->json([
+            'defaultLevel' => $defaultLevel,
+        ]);
     }
 
     public function professional($id, ReferralService $referralService)

@@ -40,6 +40,23 @@
                 </span>
             </td>
         </tr>
+        <tr v-if="customer.referral">
+            <th>Уровень</th>
+            <td colspan="3">
+                <div class="input-group input-group-sm">
+                    <select class="form-control form-control-sm" v-model="form.referral_level_id">
+                        <option v-for="referralLevel in referralLevels" :value="referralLevel.id">
+                            {{ referralLevel.name }}
+                        </option>
+                    </select>
+                    <div class="input-group-append" v-if="customer.commission_route">
+                        <a class="btn btn-outline-info" :href="customer.commission_route">
+                            <fa-icon icon="percent"/>
+                        </a>
+                    </div>
+                </div>
+            </td>
+        </tr>
         <tr>
             <th>Статус</th>
             <td>
@@ -129,7 +146,7 @@ import moment from 'moment';
 export default {
     name: 'infopanel',
     components: {VDeleteButton, FileInput},
-    props: ['model'],
+    props: ['model', 'referralLevels'],
     data() {
         return {
             editStatus: false,
@@ -141,6 +158,7 @@ export default {
                 email: this.model.email,
                 phone: this.model.phone,
                 avatar: this.model.avatar,
+                referral_level_id: this.model.referral_level_id,
             }
         };
     },
@@ -161,6 +179,7 @@ export default {
                 (this.customer.middle_name || '') !== (this.form.middle_name || '') ||
                 (this.customer.email || '') !== (this.form.email || '') ||
                 (this.customer.phone || '') !== (this.form.phone || '') ||
+                (this.customer.referral_level_id || '') !== (this.form.referral_level_id || '') ||
                 (this.customer.avatar !== this.form.avatar);
         },
     },
@@ -172,6 +191,7 @@ export default {
                     status: this.form.status,
                     comment_status: "",
                     avatar: this.form.avatar,
+                    referral_level_id: this.form.referral_level_id,
                 },
                 user: {
                     id: this.customer.user_id,
@@ -189,6 +209,7 @@ export default {
                 this.customer.email = this.form.email;
                 this.customer.phone = this.form.phone;
                 this.customer.avatar = this.form.avatar;
+                this.customer.referral_level_id = this.form.referral_level_id;
                 this.customer.comment_status = "";
                 Services.msg("Изменения сохранены");
             }).finally(data => {
@@ -200,6 +221,8 @@ export default {
             Services.net().put(this.getRoute('customers.detail.referral', {id: this.customer.id})).then(data => {
                 this.customer.status = this.customerStatus.active;
                 this.customer.referral = true;
+                this.customer.referral_level_id = data.defaultLevel;
+                this.form.referral_level_id = data.defaultLevel;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
                 Services.msg("Изменения сохранены");
             }).finally(data => {
@@ -211,6 +234,8 @@ export default {
             Services.net().put(this.getRoute('customers.detail.professional', {id: this.customer.id})).then(data => {
                 this.customer.status = this.customerStatus.active;
                 this.customer.referral = false;
+                this.customer.referral_level_id = null;
+                this.form.referral_level_id = null;
                 this.customer.role_date = moment().format('YYYY-MM-DD HH:mm:ss');
                 Services.msg("Изменения сохранены");
             }).finally(data => {
@@ -225,6 +250,7 @@ export default {
             this.form.email = this.customer.email;
             this.form.phone = this.customer.phone;
             this.form.avatar = this.customer.avatar;
+            this.form.referral_level_id = this.customer.referral_level_id;
         },
         disableStatus(status_id) {
             return Number(status_id) === Number(this.customerStatus.problem) ||
