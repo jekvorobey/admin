@@ -731,9 +731,6 @@
                 }
             ],
             "description": "iBT marketing client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
-            },
             "time": "2020-03-18T15:18:33+00:00"
         },
         {

@@ -1,14 +1,43 @@
 <template>
 <div>
-    <div>
-        Документы
-    </div>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th colspan="14">Документы</th>
+        </tr>
+        <tr>
+            <th>ID</th>
+            <th>Период</th>
+            <th>Дата документа</th>
+            <th>Сумма вознаграждения</th>
+            <th>Статус</th>
+            <th>Файл</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(document, i) in documents">
+            <td>{{ document.id }}</td>
+            <td>(заглушка)</td>
+            <td>{{ document.date }}</td>
+            <td>(заглушка)</td>
+            <td>(заглушка)</td>
+            <td>
+                <a :href="document.url" target="_blank">{{ document.name }}</a>
+                <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-    <div v-for="(document, i) in documents" class="mb-1">
+    <!--<div v-for="(document, i) in documents" class="mb-1">
         <a :href="document.url" target="_blank">{{ document.name }}</a>
         <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
-    </div>
+    </div> -->
     <div v-if="!documents.length">-</div>
+
+    <div>
+        Добавление документа
+    </div>
 
     <div>
         <file-input v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>

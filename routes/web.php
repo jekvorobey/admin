@@ -140,6 +140,11 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
+
+        Route::prefix('order-statuses')->namespace('Directory')->group(function () {
+            Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
+            Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
+        });
     });
 
     Route::prefix('offers')->namespace('Product')->group(function () {
