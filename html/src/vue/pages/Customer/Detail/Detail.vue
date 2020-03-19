@@ -36,7 +36,7 @@
                     <tab-preference v-else-if="key === 'preference'" :id="customer.id"/>
                     <tab-order v-else-if="key === 'order'" :id="customer.id"/>
                     <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
-                    <tab-document v-else-if="key === 'document'" :id="customer.id"/>
+                    <tab-document v-else-if="key === 'document'" :model.sync="customer"/>
                     <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <template v-else>
                         Заглушка

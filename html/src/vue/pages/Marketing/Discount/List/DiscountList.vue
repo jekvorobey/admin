@@ -101,8 +101,11 @@
         <div class="row mb-3">
             <div class="col-12 mt-3">
                 <a :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
-                <button class="btn btn-secondary" :disabled="countSelected !== 1">Редактировать скидку</button>
-                <button class="btn btn-secondary" :disabled="countSelected < 1">Удалить скидку</button>
+
+                <button class="btn btn-secondary" disabled v-if="discountId <= 0">Редактировать скидку</button>
+                <a :href="getRoute('discount.edit', {id: discountId})" class="btn btn-secondary" v-else>Редактировать скидку</a>
+
+                <button class="btn btn-danger" :disabled="countSelected < 1">Удалить скидку</button>
                 <button class="btn btn-secondary" :disabled="countSelected < 1">Изменить статус скидки</button>
                 <button class="btn btn-info">Сгенерировать отчет</button>
             </div>
@@ -357,7 +360,7 @@
 
                 this.filter = filter;
             },
-            forAllDiscount(callback) {
+            forEachDiscount(callback) {
                 for (let i in this.discounts) {
                     callback(this.discounts[i]['id']);
                 }
@@ -365,7 +368,7 @@
             changeSelectAll() {
                 let newValue = !this.selectAll;
                 let checkboxes = {};
-                this.forAllDiscount((discountId) => {
+                this.forEachDiscount((discountId) => {
                     checkboxes[discountId] = newValue;
                 });
                 this.checkboxes = checkboxes;
@@ -393,6 +396,20 @@
             },
             countSelected() {
                 return Object.values(this.checkboxes).reduce((acc, val) => { return acc + val; }, 0);
+            },
+            discountId() {
+                let discountId = 0;
+                if (this.countSelected !== 1) {
+                    return discountId;
+                }
+
+                this.forEachDiscount((id) => {
+                    if (id in this.checkboxes && this.checkboxes[id]) {
+                        discountId = id;
+                        return true;
+                    }
+                });
+                return discountId;
             }
         },
         mounted() {
