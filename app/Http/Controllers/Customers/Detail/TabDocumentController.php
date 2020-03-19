@@ -29,6 +29,7 @@ class TabDocumentController extends Controller
                 }
                 return [
                     'id' => $document->id,
+                    'date' => $document->updated_at,
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
