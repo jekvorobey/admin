@@ -25,6 +25,7 @@ import {
     faFileExcel,
     faInfo,
     faPencilAlt,
+    faPercent,
     faPercentage,
     faPlus,
     faPrint,
@@ -62,3 +63,4 @@ library.add(faSave);
 library.add(faInfo);
 library.add(faFileArchive);
 library.add(faFileExcel);
+library.add(faPercent);
