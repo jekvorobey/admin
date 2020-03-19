@@ -3,7 +3,7 @@
         <b-row class="mb-2">
             <b-col>
                 <b-card>
-                    <infopanel :model.sync="customer"/>
+                    <infopanel :model.sync="customer" :referral-levels="referralLevels"/>
                 </b-card>
             </b-col>
             <b-col>
@@ -79,7 +79,7 @@ export default {
         ModalMarkStatus,
         ModalPortfolios,
         Infopanel, TabDocument, VInput},
-    props: ['iCustomer', 'order'],
+    props: ['iCustomer', 'order', 'referralLevels'],
     data() {
         return {
             editStatus: false,

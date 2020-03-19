@@ -24,8 +24,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
 {
-    public function detail($id, CustomerService $customerService, UserService $userService, OrderService $orderService, FileService $fileService)
-    {
+    public function detail(
+        $id,
+        CustomerService $customerService,
+        UserService $userService,
+        OrderService $orderService,
+        FileService $fileService,
+        ReferralService $referralService
+    ) {
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadChannelTypes = true;
@@ -71,11 +77,25 @@ class CustomerDetailController extends Controller
 
         /** @var UserDto $referrer_user */
         $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
+
+        $referralLevels = [];
+        $commission_route = '';
+        if ($referral) {
+            $referralLevels = $referralService->getLevels();
+
+            $existCustomerCommission = $referralService->existCustomerCommission($customer->id);
+            if ($existCustomerCommission) {
+                $commission_route = route('referral.levels', ['level_id' => $existCustomerCommission[0]]);
+            }
+        }
+
+
         return $this->render('Customer/Detail', [
             'iCustomer' => [
                 'id' => $customer->id,
                 'avatar' => $avatar ? $avatar->id : null,
                 'user_id' => $customer->user_id,
+                'referral_level_id' => $customer->referral_level_id,
                 'status' => $customer->status,
                 'comment_status' => $customer->comment_status,
                 'last_name' => $user->last_name,
@@ -106,11 +126,13 @@ class CustomerDetailController extends Controller
                 'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
+                'commission_route' => $commission_route,
             ],
             'order' => [
                 'count' => $orders->count(),
                 'price' => number_format($orders->sum('price'), 2, '.', ' '),
             ],
+            'referralLevels' => $referralLevels,
         ]);
     }
 
@@ -125,6 +147,7 @@ class CustomerDetailController extends Controller
             'customer.birthday' => 'nullable|date_format:Y-m-d',
             'customer.status' => ['nullable', Rule::in(array_keys(CustomerDto::statusesName()))],
             'customer.comment_status' => 'nullable',
+            'customer.referral_level_id' => 'nullable',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
@@ -198,7 +221,12 @@ class CustomerDetailController extends Controller
     {
         $referralService->makeReferral($id);
 
-        return response('', 204);
+        $referralLevels = $referralService->getLevels();
+        $defaultLevel = $referralLevels->sortBy('sort')->first()->id;
+
+        return response()->json([
+            'defaultLevel' => $defaultLevel,
+        ]);
     }
 
     public function professional($id, ReferralService $referralService)
