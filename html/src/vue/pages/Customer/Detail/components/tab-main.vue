@@ -100,6 +100,59 @@
                 <textarea class="form-control" id="comment_internal" v-model="form.comment_internal"/>
             </td>
         </tr>
+        <tr v-if="customer.referral">
+            <th>Реферальный код</th>
+            <td>
+                <input class="form-control form-control-sm" v-model="form.referral_code"/>
+            </td>
+        </tr>
+        <template v-if="customer.referral">
+            <tr class="table-secondary">
+                <th colspan="2">Платежные реквизиты</th>
+            </tr>
+            <tr>
+                <th>Наименование ИП</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_company_name"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Юридический адрес</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_company_address"/>
+                </td>
+            </tr>
+            <tr>
+                <th>ИНН</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_inn"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Расчетный счет</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_payment_account"/>
+                </td>
+            </tr>
+            <tr>
+                <th>БИК</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_bik"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Банк</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_bank"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Корреспондентский счет банка</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_bank_correspondent_account"/>
+                </td>
+            </tr>
+        </template>
         </tbody>
     </table>
 </template>
@@ -127,7 +180,15 @@ export default {
                 gender: this.model.gender,
                 birthday: this.model.birthday,
                 activities: [],
-                file: null
+                file: null,
+                legal_info_company_name: this.model.legal_info_company_name,
+                legal_info_company_address: this.model.legal_info_company_address,
+                legal_info_inn: this.model.legal_info_inn,
+                legal_info_payment_account: this.model.legal_info_payment_account,
+                legal_info_bik: this.model.legal_info_bik,
+                legal_info_bank: this.model.legal_info_bank,
+                legal_info_bank_correspondent_account: this.model.legal_info_bank_correspondent_account,
+                referral_code: this.model.referral_code,
             }
         }
     },
@@ -147,6 +208,14 @@ export default {
             return this.customer.manager_id !== this.form.manager_id ||
                 this.customer.gender !== this.form.gender ||
                 (this.customer.comment_internal || '') !== (this.form.comment_internal || '') ||
+                (this.customer.legal_info_company_name || '') !== (this.form.legal_info_company_name || '') ||
+                (this.customer.legal_info_company_address || '') !== (this.form.legal_info_company_address || '') ||
+                (this.customer.legal_info_inn || '') !== (this.form.legal_info_inn || '') ||
+                (this.customer.legal_info_payment_account || '') !== (this.form.legal_info_payment_account || '') ||
+                (this.customer.legal_info_bik || '') !== (this.form.legal_info_bik || '') ||
+                (this.customer.legal_info_bank || '') !== (this.form.legal_info_bank || '') ||
+                (this.customer.legal_info_bank_correspondent_account || '') !== (this.form.legal_info_bank_correspondent_account || '') ||
+                (this.customer.referral_code || '') !== (this.form.referral_code || '') ||
                 JSON.stringify(this.savedActivities) !== JSON.stringify(this.form.activities) ||
                 (this.customer.birthday || '') !== (this.form.birthday || '');
         },
@@ -160,6 +229,14 @@ export default {
                     manager_id: this.form.manager_id,
                     gender: this.form.gender,
                     birthday: this.form.birthday,
+                    legal_info_company_name: this.form.legal_info_company_name,
+                    legal_info_company_address: this.form.legal_info_company_address,
+                    legal_info_inn: this.form.legal_info_inn,
+                    legal_info_payment_account: this.form.legal_info_payment_account,
+                    legal_info_bik: this.form.legal_info_bik,
+                    legal_info_bank: this.form.legal_info_bank,
+                    legal_info_bank_correspondent_account: this.form.legal_info_bank_correspondent_account,
+                    referral_code: this.form.referral_code,
                 },
                 activities: this.form.activities,
             }).then(data => {
@@ -167,9 +244,18 @@ export default {
                 this.customer.manager_id = this.form.manager_id;
                 this.customer.gender = this.form.gender;
                 this.customer.birthday = this.form.birthday;
+                this.customer.legal_info_company_name = this.form.legal_info_company_name;
+                this.customer.legal_info_company_address = this.form.legal_info_company_address;
+                this.customer.legal_info_inn = this.form.legal_info_inn;
+                this.customer.legal_info_payment_account = this.form.legal_info_payment_account;
+                this.customer.legal_info_bik = this.form.legal_info_bik;
+                this.customer.legal_info_bank = this.form.legal_info_bank;
+                this.customer.legal_info_bank_correspondent_account = this.form.legal_info_bank_correspondent_account;
+                this.customer.referral_code = this.form.referral_code;
                 this.savedActivities = this.form.activities;
-                Services.hideLoader();
                 Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
             })
         },
         cancel() {
@@ -177,6 +263,14 @@ export default {
             this.form.manager_id = this.customer.manager_id;
             this.form.gender = this.customer.gender;
             this.form.birthday = this.customer.birthday;
+            this.form.legal_info_company_name = this.customer.legal_info_company_name;
+            this.form.legal_info_company_address = this.customer.legal_info_company_address;
+            this.form.legal_info_inn = this.customer.legal_info_inn;
+            this.form.legal_info_payment_account = this.customer.legal_info_payment_account;
+            this.form.legal_info_bik = this.customer.legal_info_bik;
+            this.form.legal_info_bank = this.customer.legal_info_bank;
+            this.form.legal_info_bank_correspondent_account = this.customer.legal_info_bank_correspondent_account;
+            this.form.referral_code = this.customer.referral_code;
             this.form.activities = this.savedActivities;
         },
         deleteCertificate(certificate_id, index) {
@@ -186,8 +280,9 @@ export default {
                 certificate_id: certificate_id
             })).then(data => {
                 this.$delete(this.certificates, index);
-                Services.hideLoader();
                 Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
             })
         },
         createCertificate() {
@@ -202,8 +297,9 @@ export default {
                     url: this.form.file.url,
                 });
                 this.form.file = null;
-                Services.hideLoader();
                 Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
             })
         },
         openOrder() {
@@ -218,6 +314,7 @@ export default {
             this.activitiesAll = data.activitiesAll;
             this.form.activities = data.activities;
             this.savedActivities = data.activities;
+        }).finally(() => {
             Services.hideLoader();
         })
     }
