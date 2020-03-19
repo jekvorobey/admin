@@ -9,6 +9,7 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Customer\Services\ReferralService\Dto\GetPromotionDto;
 use Greensight\Customer\Services\ReferralService\Dto\PutPromotionDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
@@ -91,7 +92,7 @@ class TabPromoProductController extends Controller
         /** @var PriceService $priceService */
         $priceService = resolve(PriceService::class);
 
-        $promoProducts = $referralService->getPromotions($id);
+        $promoProducts = $referralService->getPromotions((new GetPromotionDto())->setReferralId($id));
 
         $product_ids = $promoProducts->pluck('product_id');
         $result = $promoProducts->toArray();
