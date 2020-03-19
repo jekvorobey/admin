@@ -38,6 +38,7 @@
                     <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
                     <tab-document v-else-if="key === 'document'" :model.sync="customer"/>
                     <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
+                    <tab-promo-page v-else-if="key === 'promoPage'" :model.sync="customer"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -71,9 +72,11 @@ import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
 import ModalMarkStatus from './components/modal-mark-status.vue';
 import TabPromoProduct from './components/tab-promo-product.vue';
+import TabPromoPage from './components/tab-promo-page.vue';
 
 export default {
     components: {
+        TabPromoPage,
         TabPromoProduct,
         TabCommunication, TabOrder, TabPreference, TabMain,
         ModalMarkStatus,
