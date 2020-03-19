@@ -36,17 +36,59 @@
     <div v-if="!documents.length">-</div>
 
     <div>
-        Добавление документа
+        Добавление документа пользователю
     </div>
 
-    <div>
-        <file-input v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
-        <div v-else class="alert alert-success py-1 px-3" role="alert">
-            Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-            <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-            <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
-        </div>
-    </div>
+    <table class="table table-sm">
+        <thead>
+        <tr>
+            <th colspan="2">
+                Действия:
+                <button  class="btn btn-success" :disabled="!showBtn">Добавить</button>
+                <button  class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th>Начало периода подсчета:</th>
+            <td><input type="date" class="form-control form-control-sm"/></td>
+        </tr>
+        <tr>
+            <th>Конец периода подсчета:</th>
+            <td><input type="date" class="form-control form-control-sm"/></td>
+        </tr>
+        <tr>
+            <th>Сумма вознаграждения</th>
+            <td>
+                <input type="number" class="form-control form-control-sm" />
+            </td>
+        </tr>
+        <tr>
+            <th>Статус</th>
+            <td>
+                <select class="form-control form-control-sm" >
+                    <option :value="null">-</option>
+                    <option :value="1">Доступен для просмотра</option>
+                    <option :value="2">Недоступен для просмотра</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Добавить файл</th>
+            <td>
+                <div>
+                    <file-input v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                    <div v-else class="alert alert-success py-1 px-3" role="alert">
+                        Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
+                        <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
+                        <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </template>
 
