@@ -2,22 +2,16 @@
 
 namespace App\Http\Controllers\Marketing;
 
-use App\Core\Helpers;
 use App\Core\DiscountHelper;
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Services\AuthService\RestRoleService;
-use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Logistics\Services\ListsService\ListsService;
-use Greensight\Logistics\Dto\Lists\DeliveryMethod;
-use Greensight\Oms\Dto\PaymentMethod;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -197,5 +191,42 @@ class DiscountController extends Controller
             'categories' => $categoryService->categories($categoryService->newQuery()),
             'brands' => $brandService->brands($brandService->newQuery()),
         ]);
+    }
+
+    /**
+     * @param Request         $request
+     * @param DiscountService $discountService
+     *
+     * @return JsonResponse
+     */
+    public function status(Request $request, DiscountService $discountService)
+    {
+        $data = $request->validate([
+            'ids' => 'array|required',
+            'ids.*' => 'integer|required',
+            'status' => 'integer|required',
+        ]);
+
+        /** @var DiscountDto $discount */
+        $discountService->updateStatuses($data['ids'], (int) $data['status']);
+        return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * @param Request         $request
+     * @param DiscountService $discountService
+     *
+     * @return JsonResponse
+     */
+    public function delete(Request $request, DiscountService $discountService)
+    {
+        $data = $request->validate([
+            'ids' => 'array|required',
+            'ids.*' => 'integer|required',
+        ]);
+
+        /** @var DiscountDto $discount */
+        $discountService->delete($data['ids']);
+        return response()->json(['status' => 'ok']);
     }
 }

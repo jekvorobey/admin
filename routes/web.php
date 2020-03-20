@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'DiscountController@create')->name('discount.save');
             Route::get('/create', 'DiscountController@createPage')->name('discount.create');
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
+            Route::put('/', 'DiscountController@status')->name('discount.status');
+            Route::delete('/', 'DiscountController@delete')->name('discount.delete');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DiscountController@detail')->name('discount.edit');

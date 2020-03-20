@@ -105,8 +105,14 @@
                 <button class="btn btn-secondary" disabled v-if="discountId <= 0">Редактировать скидку</button>
                 <a :href="getRoute('discount.edit', {id: discountId})" class="btn btn-secondary" v-else>Редактировать скидку</a>
 
-                <button class="btn btn-danger" :disabled="countSelected < 1">Удалить скидку</button>
-                <button class="btn btn-secondary" :disabled="countSelected < 1">Изменить статус скидки</button>
+                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteDiscount()">Удалить
+                    <template v-if="countSelected <= 1">скидку</template>
+                    <template v-else>скидки</template>
+                </button>
+                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">Изменить статус
+                    <template v-if="countSelected <= 1">скидки</template>
+                    <template v-else>скидок</template>
+                </button>
                 <button class="btn btn-info">Сгенерировать отчет</button>
             </div>
         </div>
@@ -153,6 +159,31 @@
                 :per-page="iPager.perPage"
                 @change="changePage"
         ></b-pagination>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('UpdateStatusDiscount')">
+                <div slot="header">
+                    <b>Обновление статуса</b>
+                </div>
+                <div slot="body">
+                    <DiscountList :discounts="selectedDiscounts"></DiscountList>
+                    <v-select v-model="newStatus" :options="discountStatusesOptions" class="mt-3">Новый статус</v-select>
+                    <button class="btn btn-success" type="button" @click="approveChangeStatus()" :disabled="processing">Изменить статус</button>
+                </div>
+            </modal>
+        </transition>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('DeleteDiscount')">
+                <div slot="header">
+                    <b>Удалить скидки</b>
+                </div>
+                <div slot="body">
+                    <DiscountList :discounts="selectedDiscounts"></DiscountList>
+                    <button class="btn btn-danger mt-3" type="button" @click="approveDelete()" :disabled="processing">Удалить</button>
+                </div>
+            </modal>
+        </transition>
     </layout-main>
 </template>
 
@@ -166,6 +197,9 @@
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
     import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
+    import DiscountList from '../components/discount-list.vue';
+    import modal from '../../../../components/controls/modal/modal.vue';
+    import modalMixin from "../../../../mixins/modal";
 
     const cleanFilter = {
         id: '',
@@ -192,7 +226,10 @@
             FCheckbox,
             FDate,
             VSelect2,
+            DiscountList,
+            modal,
         },
+        mixins: [modalMixin],
         props: {
             iDiscounts: [Array, null],
             iCurrentPage: Number,
@@ -217,6 +254,8 @@
                 opened: false,
                 selectAll: false,
                 checkboxes: {},
+                newStatus: 0,
+                processing: false,
 
                 // Статус скидки
                 STATUS_CREATED: 1,
@@ -233,6 +272,37 @@
             };
     },
         methods: {
+            deleteDiscount() {
+                this.openModal('DeleteDiscount');
+            },
+            approveDelete() {
+                this.processing = true;
+                Service.net().delete(this.route('discount.delete'), {
+                    ids: this.selectedIds,
+                }).then(data => {
+                    this.processing = false;
+                    this.closeModal('DeleteDiscount');
+                    window.location.reload();
+                });
+            },
+            changeStatus() {
+                this.openModal('UpdateStatusDiscount');
+            },
+            approveChangeStatus() {
+                if (!this.newStatus) {
+                    return;
+                }
+
+                this.processing = true;
+                Service.net().put(this.route('discount.status'), {
+                    ids: this.selectedIds,
+                    status: this.newStatus,
+                }).then(data => {
+                    this.processing = false;
+                    this.closeModal('UpdateStatusDiscount');
+                    window.location.reload();
+                });
+            },
             userName(id) {
                 let user = this.userNames[id];
                 return user ? user : 'N/A';
@@ -252,12 +322,14 @@
                 }));
             },
             loadPage() {
+                this.processing = true;
                 Service.net().get(this.route('discount.pagination'), {
                     page: this.currentPage,
                     filter: this.appliedFilter,
                 }).then(data => {
                     this.discounts = data.iDiscounts;
                     this.total = data.total;
+                    this.processing = false;
                 });
             },
             statusClass(discount) {
@@ -375,6 +447,16 @@
             }
         },
         computed: {
+            selectedIds() {
+                return this.iDiscounts.filter(discount => {
+                    return (discount.id in this.checkboxes) && this.checkboxes[discount.id];
+                }).map(discount => discount.id);
+            },
+            selectedDiscounts() {
+                return this.iDiscounts.filter((discount) => {
+                    return (discount.id in this.checkboxes) && this.checkboxes[discount.id];
+                });
+            },
             initiatorsOptions() {
                 return this.initiators.map(initiatorId => ({
                     value: initiatorId ? initiatorId : -1, text: this.initiatorName(initiatorId)
