@@ -16,7 +16,7 @@
                         </p>
 
                         <p class="text-secondary mt-3">
-                            Сумма заказа:<span class="float-right">{{preparePrice(order.cost)}} руб.</span>
+                            Сумма заказа:<span class="float-right">{{preparePrice(order.price)}} руб.</span>
                         </p>
                         <p class="text-secondary" v-if="order.customer">
                             Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
