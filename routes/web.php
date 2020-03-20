@@ -338,6 +338,8 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('promo-page')->group(function () {
                         Route::get('', 'TabPromoPageController@load')->name('customers.detail.promoPage');
+                        Route::post('', 'TabPromoPageController@add')->name('customers.detail.promoPage.add');
+                        Route::delete('', 'TabPromoPageController@delete')->name('customers.detail.promoPage.delete');
                     });
                     Route::prefix('document')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
