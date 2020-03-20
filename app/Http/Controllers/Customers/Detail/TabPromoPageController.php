@@ -12,6 +12,7 @@ use Greensight\Marketing\Services\PriceService\PriceService;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
+use Pim\Dto\Product\ProductImageType;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 
@@ -19,9 +20,29 @@ class TabPromoPageController extends Controller
 {
     public function load($id)
     {
-        return response()->json([
-            'products' => $this->loadPromPageProducts($id),
+        return response()->json(array_merge($this->loadPromPageProducts($id), [
+            'url' => url_showcase('/referrer/{code}'),
+        ]));
+    }
+
+    public function add($id, ReferralService $referralService)
+    {
+        $data = $this->validate(request(), [
+            'product_id' => 'numeric'
         ]);
+        $referralService->addPromoPageProduct($id, $data['product_id']);
+
+        return response()->json($this->loadPromPageProducts($id));
+    }
+
+    public function delete($id, ReferralService $referralService)
+    {
+        $data = $this->validate(request(), [
+            'product_id' => 'numeric'
+        ]);
+        $referralService->deletePromoPageProduct($id, $data['product_id']);
+
+        return response()->json($this->loadPromPageProducts($id));
     }
 
     protected function loadPromPageProducts($id)
@@ -38,46 +59,61 @@ class TabPromoPageController extends Controller
         $promoProducts = $referralService->getPromoPageProducts((new GetPromoPageProductsDto())->setReferralId($id));
 
         $result = [];
-        if ($promoProducts) {
+        $brands = collect();
+        $categories = collect();
+        if ($promoProducts->isNotEmpty()) {
             $products = $productService
                 ->products(
                     (new RestQuery())
-                        ->setFilter('id', $promoProducts)
+                        ->setFilter('id', $promoProducts->pluck('product_id')->all())
                         ->include('brand', 'category')
                         ->addFields(ProductDto::entity(), 'id', 'brand_id', 'category_id', 'name')
                         ->addFields(BrandDto::entity(), 'id', 'name')
                         ->addFields(CategoryDto::entity(), 'id', 'name')
                 )
                 ->keyBy('id');
-            $offers = $offerService->offersByProduct($promoProducts, null, true)->pluck('id', 'product_id');
+            $offers = $offerService->offersByProduct($promoProducts->pluck('product_id')->all(), null, true)->pluck('id', 'product_id');
 
             $prices = $priceService
                 ->prices((new PricesInDto())->setOffers($offers->values()->all()))
                 ->keyBy('offer_id');
 
-            foreach ($promoProducts as $product_id) {
-                if ($products->has($promoProduct['product_id'])) {
-                    if ($offers->has($promoProduct['product_id'])) {
-                        if ($prices->has($offers[$promoProduct['product_id']])) {
-                            $promoProduct['price'] = $prices[$offers[$promoProduct['product_id']]]->price;
+            $allImages = $productService
+                ->allImages($promoProducts->pluck('product_id')->all(), ProductImageType::TYPE_MAIN)
+                ->pluck('id', 'productId');
+
+            foreach ($promoProducts as $promoProduct) {
+                if ($products->has($promoProduct->product_id)) {
+                    $price = '';
+                    if ($offers->has($promoProduct->product_id)) {
+                        if ($prices->has($offers[$promoProduct->product_id])) {
+                            $price = $prices[$offers[$promoProduct->product_id]]->price;
                         }
                     }
-                    $productDto = $products[$promoProduct['product_id']];
+                    $productDto = $products[$promoProduct->product_id];
 
                     $result[] = [
-                        'id' => $product_id,
-                        'image' => '',
+                        'id' => $promoProduct->product_id,
+                        'image' => $allImages->get($promoProduct->product_id),
                         'name' => $productDto->name,
                         'category' => $productDto->category(),
                         'brand' => $productDto->brand(),
-                        'price' => '',
-                        'created_at' => '',
+                        'price' => $price,
+                        'status' => '',
+                        'created_at' => $promoProduct->created_at,
                     ];
+
+                    $brands->put($productDto->brand()->id, $productDto->brand()->toArray());
+                    $categories->put($productDto->category()->id, $productDto->category()->toArray());
                 }
             }
         }
 
 
-        return $result;
+        return [
+            'products' => $result,
+            'brands' => $brands->sortBy('name')->values(),
+            'categories' => $categories->sortBy('name')->values(),
+        ];
     }
 }

@@ -501,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "350882c0200563e0bf34e0ac4c0e79f1f9109f5c"
+                "reference": "6befb13bfbdd5b2d27d88ef40c36d36555c2dbb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=350882c0200563e0bf34e0ac4c0e79f1f9109f5c",
-                "reference": "350882c0200563e0bf34e0ac4c0e79f1f9109f5c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=6befb13bfbdd5b2d27d88ef40c36d36555c2dbb2",
+                "reference": "6befb13bfbdd5b2d27d88ef40c36d36555c2dbb2",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +541,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-19T10:36:32+00:00"
+            "time": "2020-03-20T11:40:52+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -643,12 +643,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01"
+                "reference": "9aa47141f14a58cd074d246ae52f1525311c3b2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=b075335723eb0a19b2870eb95bb3c743b72abd01",
-                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=9aa47141f14a58cd074d246ae52f1525311c3b2c",
+                "reference": "9aa47141f14a58cd074d246ae52f1525311c3b2c",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-03-12T15:33:27+00:00"
+            "time": "2020-03-19T16:31:00+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -731,6 +731,9 @@
                 }
             ],
             "description": "iBT marketing client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
             "time": "2020-03-18T15:18:33+00:00"
         },
         {
