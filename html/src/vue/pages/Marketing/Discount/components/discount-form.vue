@@ -100,7 +100,7 @@
 
         <div class="row">
             <div class="col-12 mt-3">
-                <button type="submit" class="btn btn-success" :disabled="!valid">{{ submitText }}</button>
+                <button type="submit" class="btn btn-success" :disabled="!valid || processing">{{ submitText }}</button>
             </div>
         </div>
     </form>
@@ -139,6 +139,7 @@
             roles: Array,
             iDistricts: Array,
             submitText: String,
+            processing: Boolean,
             action: Function,
         },
         data() {
