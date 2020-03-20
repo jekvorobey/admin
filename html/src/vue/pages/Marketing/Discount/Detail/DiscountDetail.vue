@@ -12,6 +12,7 @@
             :brands="brands"
             :roles="roles"
             :iDistricts="iDistricts"
+            :submit-text="'Сохранить скидку'"
             :action="save"
         ></discount-form>
 

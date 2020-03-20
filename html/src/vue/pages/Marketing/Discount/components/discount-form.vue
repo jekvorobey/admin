@@ -100,7 +100,7 @@
 
         <div class="row">
             <div class="col-12 mt-3">
-                <button type="submit" class="btn btn-success" :disabled="!valid">Сохранить скидку</button>
+                <button type="submit" class="btn btn-success" :disabled="!valid">{{ submitText }}</button>
             </div>
         </div>
     </form>
@@ -138,6 +138,7 @@
             brands: Array,
             roles: Array,
             iDistricts: Array,
+            submitText: String,
             action: Function,
         },
         data() {

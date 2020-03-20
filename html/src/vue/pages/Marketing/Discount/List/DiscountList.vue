@@ -168,7 +168,7 @@
                 <div slot="body">
                     <DiscountList :discounts="selectedDiscounts"></DiscountList>
                     <v-select v-model="newStatus" :options="discountStatusesOptions" class="mt-3">Новый статус</v-select>
-                    <button class="btn btn-success" type="button" @click="approveChangeStatus()" :disabled="processing">Изменить статус</button>
+                    <button class="btn btn-success mt-3" type="button" @click="approveChangeStatus()" :disabled="processing">Изменить статус</button>
                 </div>
             </modal>
         </transition>
@@ -176,7 +176,7 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('DeleteDiscount')">
                 <div slot="header">
-                    <b>Удалить скидки</b>
+                    <b>Вы уверены, что хотите удалить следующие скидки?</b>
                 </div>
                 <div slot="body">
                     <DiscountList :discounts="selectedDiscounts"></DiscountList>
@@ -506,7 +506,6 @@
                     this.currentPage = query.page;
                 }
             };
-            // this.opened = this.isHiddenFilterDefaultOpen();
         },
         watch: {
             checkboxes: {
@@ -516,13 +515,11 @@
                         let discountId = this.discounts[i]['id'];
                         if (!(discountId in this.checkboxes && this.checkboxes[discountId])) {
                             this.selectAll = false;
-                            console.log("FALSE");
                             return true;
                         }
                     }
 
                     this.selectAll = true;
-                    console.log('TRUE');
                     return true;
                 },
             },
