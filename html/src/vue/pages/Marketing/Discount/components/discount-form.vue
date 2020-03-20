@@ -41,7 +41,7 @@
                         classes="col-9 offset-3"
                         title="За исключением брендов"
                         :brands="brands"
-                        :i-brands="discount.exceptionBrands"
+                        :i-brands="discount.brands"
                         @update="updateBrands"
                 ></BrandsSearch>
 
@@ -204,12 +204,7 @@
 
                 let discount = {...this.iDiscount};
                 discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
-                discount.exceptionBrands = Object.values(discount.brands)
-                    .filter(brand => brand.except)
-                    .map(brand => brand.brand_id);
-                discount.brands = Object.values(discount.brands)
-                    .filter(brand => !brand.except)
-                    .map(brand => brand.brand_id);
+                discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
                 discount.categories = Object.values(discount.categories).map(category => category.category_id);
 
                 let roles = discount.roles.map(role => role.role_id);
