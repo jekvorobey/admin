@@ -36,6 +36,22 @@ class TabDocumentController extends Controller
                 if (!$file) {
                     return false;
                 }
+
+                switch ($document->status)
+                {
+                    case 1:
+                        $documentStatusVerbal = 'Сформирован';
+                        break;
+                    case 2:
+                        $documentStatusVerbal = 'Согласован';
+                        break;
+                    case 3:
+                        $documentStatusVerbal = 'Отклонен';
+                        break;
+                    default:
+                        $documentStatusVerbal = 'N/A';
+                }
+
                 return [
                     'id' => $document->id,
                     'period_since' => $document->period_since,
@@ -43,6 +59,7 @@ class TabDocumentController extends Controller
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
                     'status' => $document->status,
+                    'status_verbal' =>$documentStatusVerbal,
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];

@@ -17,10 +17,11 @@
         <tbody>
         <tr v-for="(document, i) in documents">
             <td>{{ document.id }}</td>
-            <td>(заглушка)</td>
-            <td>{{ document.date }}</td>
-            <td>(заглушка)</td>
-            <td>(заглушка)</td>
+            <td>{{ datePrint(document.period_since) }} — {{ datePrint(document.period_to) }}</td>
+            <td>{{ datePrint(document.date) }}</td>
+            <td>{{ document.amount_reward }} руб.</td>
+            <td>
+                <span class="badge" :class="statusClass(document.status)">{{ document.status_verbal }}</span></td>
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
@@ -29,10 +30,6 @@
         </tbody>
     </table>
 
-    <!--<div v-for="(document, i) in documents" class="mb-1">
-        <a :href="document.url" target="_blank">{{ document.name }}</a>
-        <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
-    </div> -->
     <div v-if="!documents.length">-</div>
 
     <div>
@@ -117,6 +114,14 @@
             },
         },
         methods: {
+            statusClass(statusId) {
+                switch (statusId) {
+                    case 1: return 'badge-secondary';
+                    case 2: return 'badge-success';
+                    case 3: return 'badge-danger';
+                    default: return 'badge-secondary';
+                }
+            },
             deleteDocument(document_id, index) {
                 Services.showLoader();
                 Services.net().delete(this.getRoute('customers.detail.document.delete', {
