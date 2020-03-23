@@ -109,15 +109,11 @@ import VSelect2 from '../controls/VSelect2/v-select2.vue';
 export default {
     name: 'communication-chat-creator',
     components: {VSelect2, CommunicationChatMessage},
-    props: ['kind','customer'],
+    props: ['kind','customer', 'channels', 'themes', 'statuses', 'types'],
     data() {
         return {
-            channels: {},
             roles: {},
             users: {},
-            themes: {},
-            statuses: {},
-            types: {},
             form: {
                 channel_id: null,
                 role_ids: null,
@@ -226,15 +222,19 @@ export default {
     created() {
         Services.showLoader();
 
-        Promise.all([
-            Services.net().get(this.getRoute('communications.chats.directories')),
-            Services.net().get(this.getRoute('settings.users.rolesForMessage'))
-        ]).then(data => {
-            this.channels = data[0].channels;
-            this.themes = data[0].themes;
-            this.statuses = data[0].statuses;
-            this.types = data[0].types;
-            this.roles = data[1].roles;
+        let promises = [Services.net().get(this.getRoute('settings.users.rolesForMessage'))];
+        if (!(this.channels || this.themes || this.statuses || this.types)) {
+            promises.push(Services.net().get(this.getRoute('communications.chats.directories')));
+        }
+
+        Promise.all(promises).then(data => {
+            this.roles = data[0].roles;
+            if (this.channels && this.themes && this.statuses && this.types) {
+                this.channels = data[1].channels;
+                this.themes = data[1].themes;
+                this.statuses = data[1].statuses;
+                this.types = data[1].types;
+            }
         }).finally(() => {
             Services.hideLoader();
         });
