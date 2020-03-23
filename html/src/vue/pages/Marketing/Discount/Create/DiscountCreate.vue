@@ -11,6 +11,8 @@
             :brands="brands"
             :roles="roles"
             :iDistricts="iDistricts"
+            :submit-text="'Создать скидку'"
+            :processing="processing"
             :action="add"
         ></discount-form>
 

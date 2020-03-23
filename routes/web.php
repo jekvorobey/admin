@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'DiscountController@create')->name('discount.save');
             Route::get('/create', 'DiscountController@createPage')->name('discount.create');
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
+            Route::put('/', 'DiscountController@status')->name('discount.status');
+            Route::delete('/', 'DiscountController@delete')->name('discount.delete');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DiscountController@detail')->name('discount.edit');
@@ -338,6 +340,13 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('promo-page')->group(function () {
                         Route::get('', 'TabPromoPageController@load')->name('customers.detail.promoPage');
+                        Route::post('', 'TabPromoPageController@add')->name('customers.detail.promoPage.add');
+                        Route::delete('', 'TabPromoPageController@delete')->name('customers.detail.promoPage.delete');
+                    });
+                    Route::prefix('order-referrer')->group(function () {
+                        Route::get('', 'TabOrderReferrerController@load')->name('customers.detail.orderReferrer');
+                        Route::get('excel', 'TabOrderReferrerController@export')->name('customers.detail.orderReferrer.export');
+                        Route::delete('{history_id}', 'TabOrderReferrerController@delete')->name('customers.detail.orderReferrer.delete');
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');

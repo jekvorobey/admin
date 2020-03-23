@@ -111,12 +111,13 @@ export default {
     components: {CommunicationChatMessage, CommunicationChatEditor},
     props: {
         filter: Object,
+        channels: Object,
+        themes: Object,
+        statuses: Object,
+        types: Object,
     },
     data() {
         return {
-            channels: {},
-            statuses: {},
-            types: {},
             showChat: null,
             form: {
                 theme: '',
@@ -169,10 +170,11 @@ export default {
                 filter.type_id = this.form.type_id;
             }
             filter = Object.assign(filter, this.filter);
-            Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data)=> {
+            Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data) => {
                 this.chats = data.chats;
                 this.users = data.users;
                 this.files = data.files;
+            }).finally(() => {
                 Services.hideLoader();
             });
         },
@@ -239,14 +241,19 @@ export default {
     created() {
         Services.event().$on('updateListEvent', ({chats, users, files}) => {this.updateChatsList(chats, users, files)});
         Services.event().$on('closeModalEdit', this.onCloseModalEdit);
-        Services.showLoader();
-        Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
-            this.channels = data.channels;
-            this.themes = data.themes;
-            this.statuses = data.statuses;
-            this.types = data.types;
+
+        if (!(this.channels || this.themes || this.statuses || this.types)) {
+            Services.showLoader();
+            Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
+                this.channels = data.channels;
+                this.themes = data.themes;
+                this.statuses = data.statuses;
+                this.types = data.types;
+                this.filterChats();
+            });
+        } else {
             this.filterChats();
-        });
+        }
     }
 };
 </script>

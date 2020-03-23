@@ -391,7 +391,7 @@ class DiscountHelper
         $query = $listsService->newQuery()->include('regions');
         $data['districts'] = $listsService->federalDistricts($query)->toArray();
 
-        $params = (new DiscountInDto())->status(DiscountStatusDto::STATUS_ACTIVE)->toQuery();
+        $params = (new DiscountInDto())->toQuery();
         $data['discounts'] = $discountService->discounts($params)
             ->sortByDesc('created_at')
             ->map(function (DiscountDto $item) {

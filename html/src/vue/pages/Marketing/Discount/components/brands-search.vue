@@ -59,5 +59,10 @@
         mounted() {
             this.brand = this.iBrands ? [...this.iBrands] : [];
         },
+        watch: {
+            iBrands(val) {
+                this.brand = this.iBrands ? [...this.iBrands] : [];
+            }
+        },
     }
 </script>

@@ -77,5 +77,10 @@
                 this.toggleCategory(categoryId);
             });
         },
+        watch: {
+            iCategories(val) {
+                this.category = this.iCategories ? [...this.iCategories] : [];
+            }
+        },
     }
 </script>

@@ -38,7 +38,7 @@
                             <a :href="getRoute('shipment.detail', {id: shipment.id})">{{ shipment.number }}</a>
                         </td>
                         <td>{{ shipment.created_at }}</td>
-                        <td>{{ shipment.cost }}</td>
+                        <td>{{ shipment.price }}</td>
                         <td>{{ shipment.required_shipping_at }}</td>
                         <td>{{ shipment.packages.length }}</td>
                         <td>

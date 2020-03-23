@@ -501,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "350882c0200563e0bf34e0ac4c0e79f1f9109f5c"
+                "reference": "76aaddb6c18e5d7548f23cee7d0231e8c0ed500e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=350882c0200563e0bf34e0ac4c0e79f1f9109f5c",
-                "reference": "350882c0200563e0bf34e0ac4c0e79f1f9109f5c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=76aaddb6c18e5d7548f23cee7d0231e8c0ed500e",
+                "reference": "76aaddb6c18e5d7548f23cee7d0231e8c0ed500e",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +541,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-19T10:36:32+00:00"
+            "time": "2020-03-23T12:58:06+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -643,12 +643,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01"
+                "reference": "db189b415829fb4b67d8c904e8cc1298098dee03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=b075335723eb0a19b2870eb95bb3c743b72abd01",
-                "reference": "b075335723eb0a19b2870eb95bb3c743b72abd01",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=db189b415829fb4b67d8c904e8cc1298098dee03",
+                "reference": "db189b415829fb4b67d8c904e8cc1298098dee03",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-03-12T15:33:27+00:00"
+            "time": "2020-03-20T13:03:30+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -691,12 +691,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "ce21b6985e96b9c05733bd2d5daf3c157b2b35bd"
+                "reference": "2ab7cd2d23d4d92e4c0f4669260226c07fb997a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=ce21b6985e96b9c05733bd2d5daf3c157b2b35bd",
-                "reference": "ce21b6985e96b9c05733bd2d5daf3c157b2b35bd",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=2ab7cd2d23d4d92e4c0f4669260226c07fb997a0",
+                "reference": "2ab7cd2d23d4d92e4c0f4669260226c07fb997a0",
                 "shasum": ""
             },
             "require": {
@@ -731,7 +731,10 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-03-18T15:18:33+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
+            "time": "2020-03-20T17:24:36+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -776,12 +779,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "3bb74a342b76a6ceef615b3a5ba9394bdc0ddb1a"
+                "reference": "a4072036c6c8b5979d0f819c10a865734d2b8968"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=3bb74a342b76a6ceef615b3a5ba9394bdc0ddb1a",
-                "reference": "3bb74a342b76a6ceef615b3a5ba9394bdc0ddb1a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=a4072036c6c8b5979d0f819c10a865734d2b8968",
+                "reference": "a4072036c6c8b5979d0f819c10a865734d2b8968",
                 "shasum": ""
             },
             "require": {
@@ -816,7 +819,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-03-13T14:49:48+00:00"
+            "time": "2020-03-21T18:21:58+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -1958,20 +1961,20 @@
         },
         {
             "name": "phpoption/phpoption",
-            "version": "1.7.2",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/php-option.git",
-                "reference": "77f7c4d2e65413aff5b5a8cc8b3caf7a28d81959"
+                "reference": "4acfd6a4b33a509d8c88f50e5222f734b6aeebae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/77f7c4d2e65413aff5b5a8cc8b3caf7a28d81959",
-                "reference": "77f7c4d2e65413aff5b5a8cc8b3caf7a28d81959",
+                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/4acfd6a4b33a509d8c88f50e5222f734b6aeebae",
+                "reference": "4acfd6a4b33a509d8c88f50e5222f734b6aeebae",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.5.9 || ^7.0"
+                "php": "^5.5.9 || ^7.0 || ^8.0"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.3",
@@ -2009,7 +2012,7 @@
                 "php",
                 "type"
             ],
-            "time": "2019-12-15T19:35:24+00:00"
+            "time": "2020-03-21T18:07:53+00:00"
         },
         {
             "name": "psr/container",

@@ -95,8 +95,10 @@
                             </ul>
                         </template>
                     </td>
-                    <td><fa-icon icon="times" title="Удалить" class="cursor-pointer text-danger"
-                                 @click="deleteCondition(condition.type)"></fa-icon></td>
+                    <td>
+                        <button class="btn btn-warning" type="button" @click="editCondition(condition.type)">Редактировать</button><br/>
+                        <button class="btn btn-danger mt-3" type="button" @click="deleteCondition(condition.type)">Удалить</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -129,6 +131,7 @@
                     title="Бренды"
                     key="brands-search-new-condition"
                     :brands="brands"
+                    :i-brands="values.brands"
                     @update="updateBrandList"
             ></BrandsSearch>
         </template>
@@ -144,6 +147,7 @@
                     title="Категории"
                     key="categories-search-new-condition"
                     :categories="categories"
+                    :i-categories="values.categories"
                     @update="updateCategoriesList"
             ></CategoriesSearch>
         </template>
@@ -174,6 +178,7 @@
             <f-multi-select
                     v-model="values.regions"
                     :options="regions"
+                    name="condition-type-region"
                     grouped
                     multiple>
                 Регионы
@@ -208,6 +213,8 @@
                       :selectSize="10"
             >Взаимодействие с другими скидками</v-select>
         </div>
+
+        <div class="col-12" id="conditions-scroll">&nbsp;</div>
     </div>
 </template>
 
@@ -226,6 +233,7 @@
             VInput,
             VSelect,
             FMultiSelect,
+            Services,
         },
         props: {
             discounts: Array,
@@ -267,6 +275,31 @@
                 this.$nextTick(function () {
                     this.conditionType = null;
                     this.updateConditionTypes();
+                });
+            },
+            editCondition(condType) {
+                let values = this.conditions.find(condition => {
+                    return condition.type === condType;
+                });
+                if (values) {
+                    values.users = values.users.join(',');
+                } else {
+                    values = {...this.values};
+                }
+
+                let event = Services.event();
+                event.$emit('discount-condition-delete', condType);
+                this.$nextTick(() => {
+                    this.updateConditionTypes();
+                    this.conditionType = condType;
+                    this.$nextTick(() =>  {
+                        this.values = values;
+                        event.$emit('set-filter-condition-type-region', this.values.regions);
+                        let scrollElem = document.getElementById("conditions-scroll");
+                        if (scrollElem) {
+                            scrollElem.scrollIntoView({block: "start", behavior: "smooth"});
+                        }
+                    });
                 });
             },
             deleteCondition(condType) {
