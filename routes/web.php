@@ -336,10 +336,13 @@ Route::middleware('auth')->group(function () {
                         Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');
                         Route::get('export', 'TabPromoProductController@export')->name('customers.detail.promoProduct.export');
                     });
-                    Route::prefix('document')->group(function () {
+                    Route::prefix('promo-page')->group(function () {
+                        Route::get('', 'TabPromoPageController@load')->name('customers.detail.promoPage');
+                    });
+                    Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
-                        Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::delete('documents/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::post('documents/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });
