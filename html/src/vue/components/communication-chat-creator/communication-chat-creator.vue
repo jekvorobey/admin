@@ -229,7 +229,7 @@ export default {
 
         Promise.all(promises).then(data => {
             this.roles = data[0].roles;
-            if (this.channels && this.themes && this.statuses && this.types) {
+            if (!(this.channels || this.themes || this.statuses || this.types)) {
                 this.channels = data[1].channels;
                 this.themes = data[1].themes;
                 this.statuses = data[1].statuses;

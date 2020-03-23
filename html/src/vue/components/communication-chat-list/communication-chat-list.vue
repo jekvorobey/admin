@@ -118,10 +118,6 @@ export default {
     },
     data() {
         return {
-            // channels: {},
-            // themes: {},
-            // statuses: {},
-            // types: {},
             showChat: null,
             form: {
                 theme: '',
