@@ -343,6 +343,11 @@ Route::middleware('auth')->group(function () {
                         Route::post('', 'TabPromoPageController@add')->name('customers.detail.promoPage.add');
                         Route::delete('', 'TabPromoPageController@delete')->name('customers.detail.promoPage.delete');
                     });
+                    Route::prefix('order-referrer')->group(function () {
+                        Route::get('', 'TabOrderReferrerController@load')->name('customers.detail.orderReferrer');
+                        Route::get('excel', 'TabOrderReferrerController@export')->name('customers.detail.orderReferrer.export');
+                        Route::delete('{history_id}', 'TabOrderReferrerController@delete')->name('customers.detail.orderReferrer.delete');
+                    });
                     Route::prefix('document')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
                         Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');

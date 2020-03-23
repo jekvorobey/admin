@@ -57,6 +57,7 @@ export default {
         Services.showLoader();
         Services.net().get(this.getRoute('customers.detail.order', {id: this.id})).then(data => {
             this.orders = data.orders;
+        }).finally(() => {
             Services.hideLoader();
         })
     }

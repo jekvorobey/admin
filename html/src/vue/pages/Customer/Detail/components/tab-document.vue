@@ -124,8 +124,9 @@
                     document_id: document_id
                 })).then(data => {
                     this.$delete(this.documents, index);
-                    Services.hideLoader();
                     Services.msg("Изменения сохранены");
+                }).finally(() => {
+                    Services.hideLoader();
                 })
             },
             createDocument() {
@@ -140,8 +141,9 @@
                         url: this.form.file.url,
                     });
                     this.form.file = null;
-                    Services.hideLoader();
                     Services.msg("Изменения сохранены");
+                }).finally(() => {
+                    Services.hideLoader();
                 })
             },
         },
@@ -149,6 +151,7 @@
             Services.showLoader();
             Services.net().get(this.getRoute('customers.detail.document', {id: this.model.id})).then(data => {
                 this.documents = data.documents;
+            }).finally(() => {
                 Services.hideLoader();
             })
         }
