@@ -57,9 +57,9 @@
                                 <small>{{ item.product.brand.name }}</small>
                             </td>
                             <td>{{ item.qty | integer }}</td>
-                            <td>{{ item.price }}</td>
-                            <td>{{ item.discount }}</td>
-                            <td>{{ item.cost }}</td>
+                            <td>{{ item.cost | integer }}</td>
+                            <td>{{ item.discount | integer }}</td>
+                            <td>{{ item.price | integer }}</td>
                             <td>
                             </td>
                         </tr>
@@ -80,9 +80,9 @@
                             <small>{{ item.product.brand.name }}</small>
                         </td>
                         <td>{{ item.qty | integer }}</td>
-                        <td>{{ item.price }}</td>
-                        <td>{{ item.discount }}</td>
-                        <td>{{ item.cost }}</td>
+                        <td>{{ item.cost | integer }}</td>
+                        <td>{{ item.discount | integer }}</td>
+                        <td>{{ item.price | integer }}</td>
                         <td>
                         </td>
                     </tr>

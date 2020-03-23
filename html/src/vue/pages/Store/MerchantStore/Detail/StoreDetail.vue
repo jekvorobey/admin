@@ -239,9 +239,11 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
 
-    import { validationMixin } from 'vuelidate';
-    import { integer, required, requiredIf } from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+    import {integer, required, requiredIf} from 'vuelidate/lib/validators';
 
     export default {
     name: 'page-stores-detail',

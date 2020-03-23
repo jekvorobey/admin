@@ -90,6 +90,7 @@ export default {
             Services.showLoader();
             Services.net().delete(this.getRoute('customers.detail.preference.favorite.delete', {id: id, product_id: itemId})).then(data => {
                 this.favorites.splice(index, 1);
+            }).finally(() => {
                 Services.hideLoader();
             });
         }
@@ -102,6 +103,7 @@ export default {
             this.customer.brands = data.customer.brands;
             this.customer.categories = data.customer.categories;
             this.favorites = data.favorites;
+        }).finally(() => {
             Services.hideLoader();
         })
     }

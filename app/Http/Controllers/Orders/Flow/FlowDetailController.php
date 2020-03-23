@@ -91,7 +91,6 @@ class FlowDetailController extends Controller
 
                 $basketItem['product'] = $product->toArray();
                 $basketItem['product']['photo'] = $images[$product->id] ?? '';
-                $basketItem['cost'] = $basketItem['qty'] * $basketItem['price'];
             }
 
             $basketItems = collect($basketItems);

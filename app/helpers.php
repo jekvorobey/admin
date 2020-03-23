@@ -65,3 +65,14 @@ function php_arr_to_js_object(array $source)
 
     return $source;
 }
+
+/**
+ * @param $path
+ */
+function url_showcase($path)
+{
+    return join('/', [
+        rtrim(config('app.showcase_host'), '/'),
+        ltrim($path, '/'),
+    ]);
+}

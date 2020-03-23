@@ -10,10 +10,10 @@
                 >{{ brand.name }} <fa-icon icon="trash-alt"></fa-icon></div>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle.brand-collapse>Выбрать бренд</button>
+                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'brand-collapse-' + _uid">Выбрать бренд</button>
             </div>
         </div>
-        <b-collapse id="brand-collapse" class="mt-2">
+        <b-collapse :id="'brand-collapse-' + _uid" class="mt-2">
             <b-card>
                 <div v-for="brand in brands"
                      @click="toggleBrand(brand.id)"
@@ -30,6 +30,7 @@
             title: String,
             classes: String,
             brands: Array,
+            iBrands: Array,
         },
         data() {
             return {
@@ -54,6 +55,14 @@
                 let selected = new Set(this.brand);
                 return this.brands.filter(brand => selected.has(brand.id));
             },
-        }
+        },
+        mounted() {
+            this.brand = this.iBrands ? [...this.iBrands] : [];
+        },
+        watch: {
+            iBrands(val) {
+                this.brand = this.iBrands ? [...this.iBrands] : [];
+            }
+        },
     }
 </script>

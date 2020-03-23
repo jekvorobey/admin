@@ -12,11 +12,11 @@
                 </div>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle.category-collapse>Выбрать категорию</button>
+                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'category-collapse-' + _uid">Выбрать категорию</button>
             </div>
         </div>
 
-        <b-collapse id="category-collapse" class="mt-2">
+        <b-collapse :id="'category-collapse-' + _uid" class="mt-2">
             <b-card>
                 <category-tree
                         v-for="category in categories"
@@ -32,8 +32,8 @@
 </template>
 
 <script>
-    import CategoryTree from '../../../../../components/category-tree/category-tree.vue';
-    import Services from "../../../../../../scripts/services/services";
+    import CategoryTree from '../../../../components/category-tree/category-tree.vue';
+    import Services from "../../../../../scripts/services/services";
 
     export default {
         components: {
@@ -43,10 +43,11 @@
             title: String,
             classes: String,
             categories: Array,
+            iBrands: Array,
+            iCategories: Array,
         },
         data() {
             return {
-                brand: [],
                 category: [],
             }
         },
@@ -68,10 +69,18 @@
                 return this.categories.filter(category => selected.has(category.id));
             },
         },
+        mounted() {
+            this.category = this.iCategories ? [...this.iCategories] : [];
+        },
         created() {
             Services.event().$on('select-category', categoryId => {
                 this.toggleCategory(categoryId);
             });
+        },
+        watch: {
+            iCategories(val) {
+                this.category = this.iCategories ? [...this.iCategories] : [];
+            }
         },
     }
 </script>

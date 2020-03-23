@@ -17,11 +17,15 @@ import {
     faDownload,
     faEdit,
     faEnvelope,
+    faExclamationTriangle,
     faExpandArrowsAlt,
     faEye,
+    faFileArchive,
     faFileDownload,
+    faFileExcel,
     faInfo,
     faPencilAlt,
+    faPercent,
     faPercentage,
     faPlus,
     faPrint,
@@ -32,7 +36,6 @@ import {
     faTimes,
     faTrashAlt,
     faTruck,
-    faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -58,3 +61,6 @@ library.add(faTruck);
 library.add(faRubleSign);
 library.add(faSave);
 library.add(faInfo);
+library.add(faFileArchive);
+library.add(faFileExcel);
+library.add(faPercent);

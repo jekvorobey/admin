@@ -262,9 +262,9 @@ export default {
                 },
                 {
                     name: 'Сумма',
-                    code: 'cost',
+                    code: 'price',
                     value: function(order) {
-                        return self.preparePrice(order.cost);
+                        return self.preparePrice(order.price);
                     },
                     isShown: true,
                     isAlwaysShown: false,

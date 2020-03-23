@@ -22,17 +22,17 @@
 
                         <template v-if="condition.type === CONDITION_TYPE_MIN_PRICE_BRAND">
                             На бренды
-                                <ul>
-                                    <li v-for="id in condition.brands">{{ brandName(id) }}</li>
-                                </ul>
+                            <ul>
+                                <li v-for="id in condition.brands">{{ brandName(id) }}</li>
+                            </ul>
                             от {{ condition.sum }} руб.
                         </template>
 
                         <template v-if="condition.type === CONDITION_TYPE_MIN_PRICE_CATEGORY">
                             На категории
-                                <ul>
-                                    <li v-for="id in condition.categories">{{ categoryName(id) }}</li>
-                                </ul>
+                            <ul>
+                                <li v-for="id in condition.categories">{{ categoryName(id) }}</li>
+                            </ul>
                             от {{ condition.sum }} руб.
                         </template>
 
@@ -95,21 +95,25 @@
                             </ul>
                         </template>
                     </td>
-                    <td><fa-icon icon="times" title="Удалить" class="cursor-pointer text-danger"
-                                 @click="deleteCondition(condition.type)"></fa-icon></td>
+                    <td>
+                        <button class="btn btn-warning" type="button" @click="editCondition(condition.type)">Редактировать</button><br/>
+                        <button class="btn btn-danger mt-3" type="button" @click="deleteCondition(condition.type)">Удалить</button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <v-select :options="conditionTypes" v-model="conditionType" class="col-6 mt-3">Условия предоставления скидки</v-select>
-        <div class="col-3 mt-3">
-            <label class="row">&nbsp;</label>
-            <button type="button btn-inline" class="btn"
-                    :class="valid ? 'btn-warning' : 'btn-light'"
-                    :disabled="!valid"
-                    @click="addCondition()">Добавить условие</button>
-        </div>
+        <template v-if="Object.values(conditionTypes).length > 0">
+            <v-select :options="conditionTypes" v-model="conditionType" class="col-6 mt-3">Условия предоставления скидки</v-select>
+            <div class="col-3 mt-3">
+                <label class="row">&nbsp;</label>
+                <button type="button btn-inline" class="btn"
+                        :class="valid ? 'btn-warning' : 'btn-light'"
+                        :disabled="!valid"
+                        @click="addCondition()">Добавить условие</button>
+            </div>
+        </template>
 
         <!-- На заказ от определенной суммы -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
@@ -127,6 +131,7 @@
                     title="Бренды"
                     key="brands-search-new-condition"
                     :brands="brands"
+                    :i-brands="values.brands"
                     @update="updateBrandList"
             ></BrandsSearch>
         </template>
@@ -142,6 +147,7 @@
                     title="Категории"
                     key="categories-search-new-condition"
                     :categories="categories"
+                    :i-categories="values.categories"
                     @update="updateCategoriesList"
             ></CategoriesSearch>
         </template>
@@ -172,6 +178,7 @@
             <f-multi-select
                     v-model="values.regions"
                     :options="regions"
+                    name="condition-type-region"
                     grouped
                     multiple>
                 Регионы
@@ -206,16 +213,18 @@
                       :selectSize="10"
             >Взаимодействие с другими скидками</v-select>
         </div>
+
+        <div class="col-12" id="conditions-scroll">&nbsp;</div>
     </div>
 </template>
 
 <script>
     import BrandsSearch from './brands-search.vue';
     import CategoriesSearch from './categories-search.vue';
-    import VInput from '../../../../../components/controls/VInput/VInput.vue';
-    import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
-    import Services from "../../../../../../scripts/services/services";
-    import FMultiSelect from '../../../../../components/filter/f-multi-select.vue';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import Services from "../../../../../scripts/services/services";
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
     export default {
         components: {
@@ -224,6 +233,7 @@
             VInput,
             VSelect,
             FMultiSelect,
+            Services,
         },
         props: {
             discounts: Array,
@@ -265,6 +275,31 @@
                 this.$nextTick(function () {
                     this.conditionType = null;
                     this.updateConditionTypes();
+                });
+            },
+            editCondition(condType) {
+                let values = this.conditions.find(condition => {
+                    return condition.type === condType;
+                });
+                if (values) {
+                    values.users = values.users.join(',');
+                } else {
+                    values = {...this.values};
+                }
+
+                let event = Services.event();
+                event.$emit('discount-condition-delete', condType);
+                this.$nextTick(() => {
+                    this.updateConditionTypes();
+                    this.conditionType = condType;
+                    this.$nextTick(() =>  {
+                        this.values = values;
+                        event.$emit('set-filter-condition-type-region', this.values.regions);
+                        let scrollElem = document.getElementById("conditions-scroll");
+                        if (scrollElem) {
+                            scrollElem.scrollIntoView({block: "start", behavior: "smooth"});
+                        }
+                    });
                 });
             },
             deleteCondition(condType) {
@@ -381,6 +416,9 @@
                     }
                 },
             },
-        }
+            conditions() {
+                this.updateConditionTypes();
+            },
+        },
     }
 </script>

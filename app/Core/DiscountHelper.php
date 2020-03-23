@@ -4,6 +4,8 @@ namespace App\Core;
 
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
@@ -15,6 +17,7 @@ use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
+use Greensight\Oms\Dto\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -346,15 +349,15 @@ class DiscountHelper
     }
 
     /**
+     * @param bool $showDefault
      * @return array
      */
-    public static function getOptionRoles()
+    public static function getOptionRoles($showDefault = true)
     {
-        return [
-            ['value' => null, 'text' => 'Все'],
-            ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'],
-            ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'],
-        ];
+        $roles = $showDefault ? [['value' => null, 'text' => 'Все']] : [];
+        $roles[] = ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'];
+        $roles[] = ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'];
+        return $roles;
     }
 
     /**
@@ -368,5 +371,34 @@ class DiscountHelper
             'page' =>  (int) $request->get('page', 1),
             'perPage' => $perPage,
         ];
+    }
+
+    /**
+     * @param DiscountService $discountService
+     * @param ListsService $listsService
+     * @return array
+     */
+    public static function loadData(DiscountService $discountService, ListsService $listsService)
+    {
+        $data = [];
+        $data['discountTypes'] = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
+        $data['conditionTypes'] = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
+        $data['deliveryMethods'] = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
+        $data['paymentMethods'] = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
+        $data['roles'] = DiscountHelper::getOptionRoles(false);
+        $data['discountStatuses'] = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
+
+        $query = $listsService->newQuery()->include('regions');
+        $data['districts'] = $listsService->federalDistricts($query)->toArray();
+
+        $params = (new DiscountInDto())->toQuery();
+        $data['discounts'] = $discountService->discounts($params)
+            ->sortByDesc('created_at')
+            ->map(function (DiscountDto $item) {
+                return ['value' => $item['id'], 'text' => "{$item['name']} ({$item->validityPeriod()})"];
+            })
+            ->values();
+
+        return $data;
     }
 }
