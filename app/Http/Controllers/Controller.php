@@ -8,6 +8,10 @@ use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\Message\Services\CommunicationService\CommunicationService;
+use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
+use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
+use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
@@ -22,7 +26,11 @@ class Controller extends BaseController
     protected $title = '';
     protected $loadUserRoles = false;
     protected $loadCustomerStatus = false;
-    protected $loadChannelTypes = false;
+    protected $loadCommunicationChannelTypes = false;
+    protected $loadCommunicationChannels = false;
+    protected $loadCommunicationThemes = false;
+    protected $loadCommunicationStatuses = false;
+    protected $loadCommunicationTypes = false;
 
     public function render($componentName, $props = [])
     {
@@ -68,9 +76,9 @@ class Controller extends BaseController
             $customerStatusByRole = CustomerDto::statusesByRole();
         }
 
-        $channelTypes = [];
-        if ($this->loadChannelTypes) {
-            $channelTypes = [
+        $communicationChannelTypes = [];
+        if ($this->loadCommunicationChannelTypes) {
+            $communicationChannelTypes = [
                 'internal_message' => CommunicationChannelDto::CHANNEL_INTERNAL_MESSAGE,
                 'infinity' => CommunicationChannelDto::CHANNEL_INFINITY,
                 'smsc' => CommunicationChannelDto::CHANNEL_SMSC,
@@ -80,6 +88,30 @@ class Controller extends BaseController
                 'livetex_vk' => CommunicationChannelDto::CHANNEL_LIVETEX_VK,
                 'internal_email' => CommunicationChannelDto::CHANNEL_INTERNAL_EMAIL,
             ];
+        }
+
+        $communicationChannels = [];
+        $communicationService = resolve(CommunicationService::class);
+        if ($this->loadCommunicationChannels) {
+            $communicationChannels = $communicationService->channels()->keyBy('id');
+        }
+
+        $communicationThemes = [];
+        $communicationThemeService = resolve(CommunicationThemeService::class);
+        if ($this->loadCommunicationThemes) {
+            $communicationThemes = $communicationThemeService->themes()->keyBy('id');
+        }
+
+        $communicationStatuses = [];
+        $communicationStatusService = resolve(CommunicationStatusService::class);
+        if ($this->loadCommunicationStatuses) {
+            $communicationStatuses = $communicationStatusService->statuses()->keyBy('id');
+        }
+
+        $communicationTypes = [];
+        $communicationTypeService = resolve(CommunicationTypeService::class);
+        if ($this->loadCommunicationTypes) {
+            $communicationTypes = $communicationTypeService->types()->keyBy('id');
         }
 
         return View::component(
@@ -98,7 +130,11 @@ class Controller extends BaseController
                 'customerStatusName' => $customerStatusName,
                 'customerStatus' => $customerStatus,
 
-                'channelTypes' => $channelTypes,
+                'communicationChannelTypes' => $communicationChannelTypes,
+                'communicationChannels' => $communicationChannels,
+                'communicationThemes' => $communicationThemes,
+                'communicationStatuses' => $communicationStatuses,
+                'communicationTypes' => $communicationTypes,
             ],
             [
                 'title' => $this->title,

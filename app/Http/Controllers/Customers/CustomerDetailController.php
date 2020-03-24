@@ -34,7 +34,11 @@ class CustomerDetailController extends Controller
     ) {
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
-        $this->loadChannelTypes = true;
+        $this->loadCommunicationChannelTypes = true;
+        $this->loadCommunicationChannels = true;
+        $this->loadCommunicationThemes = true;
+        $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
