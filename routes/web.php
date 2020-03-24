@@ -269,6 +269,21 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
+        Route::prefix('delivery-services')->namespace('DeliveryService')->group(function () {
+            Route::get('/', 'DeliveryServiceListController@index')->name('deliveryService.list');
+            Route::get('/page', 'DeliveryServiceListController@page')->name('deliveryService.pagination');
+
+            Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'DeliveryServiceDetailController@index')->name('deliveryService.detail');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('settings')->group(function () {
+                        Route::get('', 'TabSettingsController@load')->name('deliveryService.detail.settings');
+                    });
+                });
+            });
+        });
+
         Route::prefix('delivery-prices')->group(function () {
             Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
             Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
@@ -341,10 +356,18 @@ Route::middleware('auth')->group(function () {
                         Route::post('', 'TabPromoPageController@add')->name('customers.detail.promoPage.add');
                         Route::delete('', 'TabPromoPageController@delete')->name('customers.detail.promoPage.delete');
                     });
-                    Route::prefix('document')->group(function () {
+                    Route::prefix('order-referrer')->group(function () {
+                        Route::get('', 'TabOrderReferrerController@load')->name('customers.detail.orderReferrer');
+                        Route::get('excel', 'TabOrderReferrerController@export')->name('customers.detail.orderReferrer.export');
+                        Route::delete('{history_id}', 'TabOrderReferrerController@delete')->name('customers.detail.orderReferrer.delete');
+                    });
+                    Route::prefix('billing')->group(function () {
+                        Route::get('', 'TabBillingController@load')->name('customers.detail.billing');
+                    });
+                    Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        Route::delete('document/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
-                        Route::post('document/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::delete('documents/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::post('documents/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

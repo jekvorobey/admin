@@ -39,6 +39,8 @@
                     <tab-document v-else-if="key === 'document'" :model.sync="customer"/>
                     <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <tab-promo-page v-else-if="key === 'promoPage'" :model.sync="customer"/>
+                    <tab-order-referrer v-else-if="key === 'orderReferrer'" :id="customer.id"/>
+                    <tab-billing v-else-if="key === 'billing'" :model.sync="customer"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -61,27 +63,37 @@
 
 import VInput from '../../../components/controls/VInput/VInput.vue';
 
+import Services from '../../../../scripts/services/services.js';
+import Infopanel from './components/infopanel.vue';
+import ModalPortfolios from './components/modal-portfolios.vue';
+import ModalMarkStatus from './components/modal-mark-status.vue';
+
 import TabMain from './components/tab-main.vue';
 import TabPreference from './components/tab-preference.vue';
 import TabOrder from './components/tab-order.vue';
 import TabDocument from './components/tab-document.vue';
 import TabCommunication from './components/tab-communication.vue';
-
-import Services from '../../../../scripts/services/services.js';
-import Infopanel from './components/infopanel.vue';
-import ModalPortfolios from './components/modal-portfolios.vue';
-import ModalMarkStatus from './components/modal-mark-status.vue';
 import TabPromoProduct from './components/tab-promo-product.vue';
 import TabPromoPage from './components/tab-promo-page.vue';
+import TabOrderReferrer from './components/tab-order-referrer.vue';
+import TabBilling from './components/tab-billing.vue';
 
 export default {
     components: {
+        TabBilling,
+        TabCommunication,
+        TabMain,
+        TabOrder,
+        TabOrderReferrer,
+        TabPreference,
         TabPromoPage,
         TabPromoProduct,
-        TabCommunication, TabOrder, TabPreference, TabMain,
         ModalMarkStatus,
         ModalPortfolios,
-        Infopanel, TabDocument, VInput},
+        Infopanel,
+        TabDocument,
+        VInput
+    },
     props: ['iCustomer', 'order', 'referralLevels'],
     data() {
         return {
@@ -106,10 +118,14 @@ export default {
                 tabs.promoPage = {i: i++, title: 'Промостраница'};
                 tabs.promoProduct = {i: i++, title: 'Товары  для продвижения'};
                 tabs.orderReferrer = {i: i++, title: 'Реферальные заказы'};
-                tabs.document = {i: i++, title: 'Акты'};
+                if (this.showAllTabs) {
+                    tabs.document = {i: i++, title: 'Акты'};
+                }
             }
-            tabs.preference = {i: i++, title: 'Предпочтения'};
-            tabs.subscribe = {i: i++, title: 'Подписки'};
+            if (this.showAllTabs) {
+                tabs.preference = {i: i++, title: 'Предпочтения'};
+                tabs.subscribe = {i: i++, title: 'Подписки'};
+            }
             if (!this.customer.referral) {
                 tabs.transaction = {i: i++, title: 'Транзакции'};
             }
@@ -117,18 +133,22 @@ export default {
                 tabs.billing = {i: i++, title: 'Биллинг'};
             }
             tabs.order = {i: i++, title: 'Заказы'};
-            tabs.educationEvents = {i: i++, title: 'Образовательные события'};
-            tabs.orderBack = {i: i++, title: 'Возвраты'};
-            tabs.communication = {i: i++, title: 'Коммуникации'};
-            tabs.review = {i: i++, title: 'Отзывы'};
-            tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
+            if (this.showAllTabs) {
+                tabs.educationEvents = {i: i++, title: 'Образовательные события'};
+                tabs.orderBack = {i: i++, title: 'Возвраты'};
+                tabs.communication = {i: i++, title: 'Коммуникации'};
+                tabs.review = {i: i++, title: 'Отзывы'};
+                tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
+            }
             if (this.customer.referral) {
                 tabs.referralPromocodes = {i: i++, title: 'Промокоды Реферального Партнера'};
             }
-            tabs.gifts = {i: i++, title: 'Подарки'};
-            tabs.sertificates = {i: i++, title: 'Сертификаты'};
-            tabs.logSegment = {i: i++, title: 'Сегмент'};
-            tabs.log = {i: i++, title: 'Логи'};
+            if (this.showAllTabs) {
+                tabs.gifts = {i: i++, title: 'Подарки'};
+                tabs.sertificates = {i: i++, title: 'Сертификаты'};
+                tabs.logSegment = {i: i++, title: 'Сегмент'};
+                tabs.log = {i: i++, title: 'Логи'};
+            }
 
             return tabs;
         },
