@@ -112,6 +112,7 @@ class CustomerDetailController extends Controller
                 'legal_info_bank' => $customer->legal_info_bank,
                 'legal_info_bank_correspondent_account' => $customer->legal_info_bank_correspondent_account,
                 'referral_code' => $customer->referral_code,
+                'referral_bill' => $customer->referral_bill,
                 'promo_page_name' => $customer->promo_page_name,
                 'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
