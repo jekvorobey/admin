@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <communication-chat-creator/>
+        <communication-chat-creator :roles="roles"/>
     </layout-main>
 </template>
 
@@ -9,5 +9,6 @@ import CommunicationChatCreator from '../../../components/communication-chat-cre
 
 export default {
     components: {CommunicationChatCreator},
+    props: ['roles'],
 };
 </script>

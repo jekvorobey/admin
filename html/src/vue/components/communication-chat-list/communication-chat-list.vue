@@ -12,7 +12,7 @@
                             <label for="filter-channel">Канал</label>
                             <b-form-select v-model="form.channel_id" id="filter-channel">
                                 <b-form-select-option :value="null">Все</b-form-select-option>
-                                <b-form-select-option :value="channel.id" v-for="channel in channels" :key="channel.id">
+                                <b-form-select-option :value="channel.id" v-for="channel in communicationChannels" :key="channel.id">
                                     {{ channel.name }}
                                 </b-form-select-option>
                             </b-form-select>
@@ -25,7 +25,7 @@
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
                                         (
-                                        {{ channels[status.channel_id].name }}
+                                        {{ communicationChannels[status.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -39,7 +39,7 @@
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
                                         (
-                                        {{ channels[type.channel_id].name }}
+                                        {{ communicationChannels[type.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -68,9 +68,9 @@
                     <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;">
                         <td @click="openChat(chat)">{{ chat.theme }}</td>
                         <td @click="openChat(chat)">{{ users[chat.user_id].short_name }}</td>
-                        <td @click="openChat(chat)">{{ channels[chat.channel_id].name }}</td>
-                        <td @click="openChat(chat)">{{ statuses[chat.status_id].name }}</td>
-                        <td @click="openChat(chat)">{{ chat.type_id ? types[chat.type_id].name : '-' }}</td>
+                        <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
+                        <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
+                        <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
                         <td>
                             <b-button class="btn btn-info btn-sm" v-b-modal.modal-edit @click="onShowModalEdit(chat.id, chat.channel_id, chat.theme, chat.status_id, chat.type_id)"><fa-icon icon="pencil-alt"/></b-button>
                         </td>
@@ -111,10 +111,6 @@ export default {
     components: {CommunicationChatMessage, CommunicationChatEditor},
     props: {
         filter: Object,
-        channels: Object,
-        themes: Object,
-        statuses: Object,
-        types: Object,
     },
     data() {
         return {
@@ -224,14 +220,14 @@ export default {
     },
     computed: {
         availableStatuses() {
-            return Object.values(this.statuses).filter(status => {
+            return Object.values(this.communicationStatuses).filter(status => {
                 return !this.form.channel_id ||
                     !status.channel_id ||
                     Number(status.channel_id) === Number(this.form.channel_id);
             })
         },
         availableTypes() {
-            return Object.values(this.types).filter(type => {
+            return Object.values(this.communicationTypes).filter(type => {
                 return !this.form.channel_id ||
                     !type.channel_id ||
                     Number(type.channel_id) === Number(this.form.channel_id);
@@ -241,19 +237,7 @@ export default {
     created() {
         Services.event().$on('updateListEvent', ({chats, users, files}) => {this.updateChatsList(chats, users, files)});
         Services.event().$on('closeModalEdit', this.onCloseModalEdit);
-
-        if (!(this.channels || this.themes || this.statuses || this.types)) {
-            Services.showLoader();
-            Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
-                this.channels = data.channels;
-                this.themes = data.themes;
-                this.statuses = data.statuses;
-                this.types = data.types;
-                this.filterChats();
-            });
-        } else {
-            this.filterChats();
-        }
+        this.filterChats();
     }
 };
 </script>

@@ -84,7 +84,6 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
-            Route::get('rolesForMessage', 'UsersController@rolesForMessage')->name('settings.users.rolesForMessage');
         });
     });
 
@@ -311,7 +310,6 @@ Route::middleware('auth')->group(function () {
         Route::prefix('chats')->group(function () {
             Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
-            Route::get('directories', 'ChatsController@directories')->name('communications.chats.directories');
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
