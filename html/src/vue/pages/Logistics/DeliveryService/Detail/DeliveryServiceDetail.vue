@@ -32,7 +32,7 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <template v-else>
+                    <template>
                         Заглушка
                     </template>
                 </b-tab>
