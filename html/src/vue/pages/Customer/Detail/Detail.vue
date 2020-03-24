@@ -40,6 +40,7 @@
                     <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <tab-promo-page v-else-if="key === 'promoPage'" :model.sync="customer"/>
                     <tab-order-referrer v-else-if="key === 'orderReferrer'" :id="customer.id"/>
+                    <tab-billing v-else-if="key === 'billing'" :model.sync="customer"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -75,9 +76,11 @@ import TabCommunication from './components/tab-communication.vue';
 import TabPromoProduct from './components/tab-promo-product.vue';
 import TabPromoPage from './components/tab-promo-page.vue';
 import TabOrderReferrer from './components/tab-order-referrer.vue';
+import TabBilling from './components/tab-billing.vue';
 
 export default {
     components: {
+        TabBilling,
         TabCommunication,
         TabMain,
         TabOrder,

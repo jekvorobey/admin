@@ -348,6 +348,9 @@ Route::middleware('auth')->group(function () {
                         Route::get('excel', 'TabOrderReferrerController@export')->name('customers.detail.orderReferrer.export');
                         Route::delete('{history_id}', 'TabOrderReferrerController@delete')->name('customers.detail.orderReferrer.delete');
                     });
+                    Route::prefix('billing')->group(function () {
+                        Route::get('', 'TabBillingController@load')->name('customers.detail.billing');
+                    });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
                         Route::delete('documents/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
