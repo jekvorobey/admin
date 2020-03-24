@@ -18,7 +18,6 @@
                     </f-input>
                     <f-multi-select v-model="filter.status"
                                     :options="discountStatusesOptions"
-                                    :name="'status'"
                                     class="col-3">
                         Статус
                     </f-multi-select>
@@ -199,9 +198,10 @@
     import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
     import DiscountList from '../components/discount-list.vue';
     import modal from '../../../../components/controls/modal/modal.vue';
-    import modalMixin from "../../../../mixins/modal";
+    import modalMixin from '../../../../mixins/modal';
 
-    const cleanFilter = {
+    const cleanHiddenFilter = {};
+    const cleanFilter = Object.assign({
         id: '',
         name: '',
         type: [],
@@ -215,7 +215,23 @@
         fix_start_date: false,
         fix_end_date: false,
         role_id: null,
-    };
+    }, cleanHiddenFilter);
+
+    const serverKeys = [
+        'id',
+        'name',
+        'type',
+        'status',
+        'user_id',
+        'merchant_id',
+        'created_at_from',
+        'created_at_to',
+        'start_date',
+        'end_date',
+        'fix_start_date',
+        'fix_end_date',
+        'role_id',
+    ];
 
     export default {
         name: 'page-discounts-list',
@@ -244,11 +260,16 @@
             initiators: Array,
         },
         data() {
+            let filter = Object.assign({}, cleanFilter, this.iFilter);
+            filter.status = filter.status.map(value => parseInt(value));
+            filter.created_at_from = this.iFilter['created_at'] ? this.iFilter['created_at']['from'] : '';
+            filter.created_at_to = this.iFilter['created_at'] ? this.iFilter['created_at']['to'] : '';
+
             return {
                 total: 0,
                 currentPage: this.iCurrentPage,
                 discounts: this.iDiscounts,
-                filter: {},
+                filter,
                 options: [],
                 appliedFilter: {},
                 opened: false,
@@ -350,7 +371,7 @@
             applyFilter() {
                 let tmpFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
-                    if (value && Object.keys(cleanFilter).indexOf(key) !== -1) {
+                    if (value && serverKeys.indexOf(key) !== -1) {
                         tmpFilter[key] = value;
                     }
                 }
@@ -366,71 +387,10 @@
                 for (let entry of Object.entries(cleanFilter)) {
                     this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
                 }
-                Service.event().$emit('clear-filter');
                 this.applyFilter();
             },
             discountTypeName(type) {
                 return (type in this.discountTypes) ? this.discountTypes[type].name : 'N/A';
-            },
-            initFilter() {
-                let fields = [
-                    'id',
-                    'name',
-                    'type',
-                    'status',
-                    'start_date',
-                    'end_date',
-                    'fix_start_date',
-                    'fix_end_date',
-                    'role_id',
-                    'created_at',
-                    'user_id',
-                    'merchant_id',
-                ];
-
-                let filter = {};
-                for (let i in fields) {
-                    let field = fields[i];
-                    if (!(field in this.iFilter)) {
-                        continue;
-                    }
-
-                    this.opened = this.opened || [
-                        'type',
-                        'start_date',
-                        'end_date',
-                        'role_id',
-                        'created_at',
-                        'user_id',
-                        'merchant_id',
-                    ].includes(field);
-
-                    switch (field) {
-                        case 'id':
-                        case 'name':
-                        case 'start_date':
-                        case 'end_date':
-                        case 'fix_start_date':
-                        case 'fix_end_date':
-                        case 'role_id':
-                        case 'user_id':
-                        case 'merchant_id':
-                            filter[field] = this.iFilter[field];
-                            break;
-                        case 'type':
-                        case 'status':
-                            let value = this.iFilter[field].map(v => parseInt(v));
-                            filter[field] = value;
-                            Service.event().$emit('set-filter-' + field, value);
-                            break;
-                        case 'created_at':
-                            filter['created_at_from'] = this.iFilter[field]['from'];
-                            filter['created_at_to'] = this.iFilter[field]['to'];
-                            break;
-                    }
-                }
-
-                this.filter = filter;
             },
             forEachDiscount(callback) {
                 for (let i in this.discounts) {
@@ -495,7 +455,6 @@
             }
         },
         mounted() {
-            this.initFilter();
             this.appliedFilter = this.filter;
         },
         created() {
