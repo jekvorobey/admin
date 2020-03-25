@@ -58,7 +58,7 @@
                             </td>
                             <td>{{ item.qty | integer }}</td>
                             <td>{{ item.cost | integer }}</td>
-                            <td>{{ item.discount | integer }}</td>
+                            <td>{{ (item.cost - item.price) | integer }}</td>
                             <td>{{ item.price | integer }}</td>
                             <td>
                             </td>
@@ -81,7 +81,7 @@
                         </td>
                         <td>{{ item.qty | integer }}</td>
                         <td>{{ item.cost | integer }}</td>
-                        <td>{{ item.discount | integer }}</td>
+                        <td>{{ (item.cost - item.price) | integer }}</td>
                         <td>{{ item.price | integer }}</td>
                         <td>
                         </td>
