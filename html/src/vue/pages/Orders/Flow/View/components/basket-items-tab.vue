@@ -61,7 +61,7 @@
                     </td>
                     <td>{{ basketItem.qty | integer }}</td>
                     <td>{{ basketItem.price }}</td>
-                    <td>{{ basketItem.discount }}</td>
+                    <td>{{ basketItem.cost - basketItem.price }}</td>
                     <td>{{ basketItem.cost }}</td>
                     <td></td>
                 </tr>
