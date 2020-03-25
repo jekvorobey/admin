@@ -57,7 +57,6 @@
     components: {
         Infopanel,
         VInput,
-        TabMain,
     },
     props: [
         'iDeliveryService',

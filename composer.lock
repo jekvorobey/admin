@@ -501,12 +501,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "6ade92c8e2336da93d0f32a9f3776d602bb529bf"
+                "reference": "504f6850c64834042f8e11b686aff95002753b9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=6ade92c8e2336da93d0f32a9f3776d602bb529bf",
-                "reference": "6ade92c8e2336da93d0f32a9f3776d602bb529bf",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=504f6850c64834042f8e11b686aff95002753b9c",
+                "reference": "504f6850c64834042f8e11b686aff95002753b9c",
                 "shasum": ""
             },
             "require": {
@@ -541,7 +541,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-03-24T13:58:32+00:00"
+            "time": "2020-03-25T08:39:49+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -586,12 +586,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "11c90a8a529756855fd2123765e36fba8e2c2abb"
+                "reference": "0f7c874b40de7a84bbbf69e79de0bf2447f9bbda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=11c90a8a529756855fd2123765e36fba8e2c2abb",
-                "reference": "11c90a8a529756855fd2123765e36fba8e2c2abb",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=0f7c874b40de7a84bbbf69e79de0bf2447f9bbda",
+                "reference": "0f7c874b40de7a84bbbf69e79de0bf2447f9bbda",
                 "shasum": ""
             },
             "require": {
@@ -635,7 +635,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-03-18T15:43:19+00:00"
+            "time": "2020-03-25T08:37:16+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -643,12 +643,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "64b38f2c8f99b88d97964b90eb329d2c8225fb6c"
+                "reference": "5a1cfb3243ece0bdc1e415f483cbb560b43da264"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=64b38f2c8f99b88d97964b90eb329d2c8225fb6c",
-                "reference": "64b38f2c8f99b88d97964b90eb329d2c8225fb6c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=5a1cfb3243ece0bdc1e415f483cbb560b43da264",
+                "reference": "5a1cfb3243ece0bdc1e415f483cbb560b43da264",
                 "shasum": ""
             },
             "require": {
@@ -683,7 +683,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-03-24T16:32:36+00:00"
+            "time": "2020-03-25T08:55:29+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",

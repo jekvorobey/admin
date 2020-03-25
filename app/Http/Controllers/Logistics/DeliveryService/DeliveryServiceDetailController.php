@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Logistics\DeliveryService;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryServiceStatus;
@@ -52,7 +53,13 @@ class DeliveryServiceDetailController extends Controller
 
 
         return $this->render('Logistics/DeliveryService/Detail', [
-            'iDeliveryService' => $deliveryService,
+            'iDeliveryService' => [
+                'id' => $deliveryService->id,
+                'name' => $deliveryService->name,
+                'registered_at' => $deliveryService->registered_at->format(AbstractDto::DATE_FORMAT),
+                'status' => $deliveryService->status,
+                'priority' => $deliveryService->priority,
+            ],
             'deliveryServiceStatuses' => DeliveryServiceStatus::allStatuses(),
             'shipmentsInfo' => [
                 'allCount' => $shipments->count(),
@@ -74,7 +81,7 @@ class DeliveryServiceDetailController extends Controller
             'name' => ['required', 'string'],
             'registered_at' => ['required', 'date'],
             'status' => ['required', Rule::in(array_keys(DeliveryServiceStatus::allStatuses()))],
-            'priority' => ['required', 'integer|min:1'],
+            'priority' => ['required', 'integer', 'min:1'],
         ]);
         $deliveryService = new DeliveryService();
         $deliveryService->name = $data['name'];

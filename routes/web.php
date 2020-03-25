@@ -271,10 +271,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
         Route::prefix('delivery-services')->namespace('DeliveryService')->group(function () {
             Route::get('/', 'DeliveryServiceListController@index')->name('deliveryService.list');
-            Route::get('/page', 'DeliveryServiceListController@page')->name('deliveryService.pagination');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DeliveryServiceDetailController@index')->name('deliveryService.detail');
+                Route::put('', 'DeliveryServiceDetailController@save')->name('deliveryService.detail.save');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('settings')->group(function () {
