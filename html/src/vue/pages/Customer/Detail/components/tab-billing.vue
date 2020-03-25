@@ -5,16 +5,21 @@
             <tr>
                 <th>ID заказа/транзакции</th>
                 <th>Дата</th>
+                <th>Комментарий</th>
                 <th>Сумма</th>
                 <th>Операция</th>
             </tr>
         </thead>
         <tbody>
             <tr class="table-info">
-                <td colspan="2">Всего</td>
-                <td colspan="2">{{ customer.referral_bill }}</td>
+                <td colspan="3">Всего</td>
+                <td>{{ customer.referral_bill }}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" v-b-modal="modalIdBillCorrect">Корректировка</button>
+                </td>
             </tr>
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -28,19 +33,23 @@
             <tr v-for="operation in filterOperations">
                 <td>{{ operation.action_id }}</td>
                 <td>{{ operation.created_at }}</td>
+                <td>{{ operation.comment }}</td>
                 <td>{{ operation.value }}</td>
                 <td>{{ operation.type_name }}</td>
             </tr>
         </tbody>
         </table>
+        <modal-bill-correct :id="modalIdBillCorrect" @save="saveOperation"/>
     </div>
 </template>
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
+import ModalBillCorrect from './modal-bill-correct.vue';
 
 export default {
     name: 'tab-billing',
+    components: {ModalBillCorrect},
     props: ['model'],
     data() {
         return {
@@ -48,7 +57,8 @@ export default {
             types: {},
             filter: {
                 type: null,
-            }
+            },
+            modalIdBillCorrect: 'modal-bill-correct',
         }
     },
     computed: {
@@ -66,6 +76,21 @@ export default {
 
                 return true;
             });
+        },
+    },
+    methods: {
+        saveOperation({comment, value}) {
+            Services.showLoader();
+            Services.net().post(this.getRoute('customers.detail.billing.correct', {id: this.customer.id}), {
+                comment: comment,
+                value: value,
+            }).then((data) => {
+                this.operations = data.operations;
+                this.customer.referral_bill = data.referral_bill;
+                this.$bvModal.hide(this.modalIdBillCorrect);
+            }).finally(() => {
+                Services.hideLoader();
+            })
         },
     },
     created() {

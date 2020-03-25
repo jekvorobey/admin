@@ -363,6 +363,7 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('billing')->group(function () {
                         Route::get('', 'TabBillingController@load')->name('customers.detail.billing');
+                        Route::post('correct', 'TabBillingController@correct')->name('customers.detail.billing.correct');
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
