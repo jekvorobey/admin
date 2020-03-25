@@ -8,23 +8,27 @@
             </b-col>
             <b-col>
                 <b-card>
-                    <table class="table table-sm">
-                        <thead>
-                        <tr>
-                            <th colspan="4">KPIs</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Количество отправлений</th>
-                            <td>{{ shipmentsInfo.allCount }}</td>
-                        </tr>
-                        <tr>
-                            <th>Сумма отправлений</th>
-                            <td>{{ shipmentsInfo.allPrice }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col">
+                            <p class="font-weight-bold">KPIs</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="font-weight-bold">Количество отправлений</p>
+                        </div>
+                        <div class="col">
+                            <div class="float-right">{{ shipmentsInfo.allCount }}</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p class="font-weight-bold">Сумма отправлений</p>
+                        </div>
+                        <div class="col">
+                            <div class="float-right">{{ shipmentsInfo.allPrice }}</div>
+                        </div>
+                    </div>
                 </b-card>
             </b-col>
         </b-row>
@@ -32,7 +36,8 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <template>
+                    <tab-settings v-if="key === 'settings'" :model.sync="deliveryService"/>
+                    <template v-else>
                         Заглушка
                     </template>
                 </b-tab>
@@ -47,16 +52,17 @@
 </template>
 
 <script>
-
     import VInput from '../../../../components/controls/VInput/VInput.vue';
 
     import Services from '../../../../../scripts/services/services.js';
     import Infopanel from './components/infopanel.vue';
+    import TabSettings from './components/tab-settings.vue';
 
     export default {
     components: {
         Infopanel,
         VInput,
+        TabSettings,
     },
     props: [
         'iDeliveryService',

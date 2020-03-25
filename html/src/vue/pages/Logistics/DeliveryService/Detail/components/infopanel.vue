@@ -6,7 +6,7 @@
             </div>
             <div class="col">
                 <div class="float-right">
-                    <button class="btn btn-success btn-sm" @click="saveDeliveryService" :disabled="!$v.form.$anyDirty">
+                    <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
                     </button>
                     <button @click="cancel" class="btn btn-outline-danger btn-sm mr-1" :disabled="!$v.form.$anyDirty">
@@ -15,6 +15,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col">
                 <v-input v-model="$v.form.name.$model" :error="errorName">
@@ -44,8 +45,6 @@
 
 <script>
     import Services from '../../../../../../scripts/services/services.js';
-    import FileInput from '../../../../../components/controls/FileInput/FileInput.vue';
-    import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
     import VDate from '../../../../../components/controls/VDate/VDate.vue';
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
@@ -56,8 +55,6 @@
     export default {
     name: 'infopanel',
     components: {
-        VDeleteButton,
-        FileInput,
         VInput,
         VSelect,
         VDate,
@@ -71,8 +68,12 @@
     ],
     data() {
         return {
-            editStatus: false,
-            form: Object.assign({}, this.model),
+            form: {
+                name: this.model.name,
+                registered_at: this.model.registered_at,
+                status: this.model.status,
+                priority: this.model.priority,
+            },
         };
     },
     validations: {
@@ -84,7 +85,7 @@
         }
     },
     methods: {
-        saveDeliveryService() {
+        save() {
             this.$v.$touch();
             if (this.$v.$invalid) {
                 return;

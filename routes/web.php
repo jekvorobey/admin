@@ -279,6 +279,7 @@ Route::middleware('auth')->group(function () {
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('settings')->group(function () {
                         Route::get('', 'TabSettingsController@load')->name('deliveryService.detail.settings');
+                        Route::put('', 'TabSettingsController@save')->name('deliveryService.detail.settings.save');
                     });
                 });
             });
