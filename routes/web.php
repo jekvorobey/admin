@@ -271,14 +271,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
         Route::prefix('delivery-services')->namespace('DeliveryService')->group(function () {
             Route::get('/', 'DeliveryServiceListController@index')->name('deliveryService.list');
-            Route::get('/page', 'DeliveryServiceListController@page')->name('deliveryService.pagination');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DeliveryServiceDetailController@index')->name('deliveryService.detail');
+                Route::put('', 'DeliveryServiceDetailController@save')->name('deliveryService.detail.save');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('settings')->group(function () {
                         Route::get('', 'TabSettingsController@load')->name('deliveryService.detail.settings');
+                        Route::put('', 'TabSettingsController@save')->name('deliveryService.detail.settings.save');
                     });
                 });
             });
@@ -363,11 +364,12 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('billing')->group(function () {
                         Route::get('', 'TabBillingController@load')->name('customers.detail.billing');
+                        Route::post('correct', 'TabBillingController@correct')->name('customers.detail.billing.correct');
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        Route::delete('documents/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
-                        Route::post('documents/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

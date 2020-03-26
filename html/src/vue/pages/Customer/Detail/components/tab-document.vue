@@ -18,10 +18,10 @@
         <tr v-for="(document, i) in documents">
             <td>{{ document.id }}</td>
             <td>{{ datePrint(document.period_since) }} — {{ datePrint(document.period_to) }}</td>
-            <td>{{ datePrint(document.date) }}</td>
+            <td>{{ datetimePrint(document.date) }}</td>
             <td>{{ document.amount_reward }} руб.</td>
             <td>
-                <span class="badge" :class="statusClass(document.status)">{{ document.status_verbal }}</span></td>
+                <span class="badge" :class="statusClass(document.status)">{{ document.status}}</span></td>
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
@@ -49,25 +49,25 @@
         <tbody>
         <tr>
             <th>Начало периода подсчета:</th>
-            <td><input type="date" class="form-control form-control-sm"/></td>
+            <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_since"/></td>
         </tr>
         <tr>
             <th>Конец периода подсчета:</th>
-            <td><input type="date" class="form-control form-control-sm"/></td>
+            <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_to"/></td>
         </tr>
         <tr>
             <th>Сумма вознаграждения</th>
             <td>
-                <input type="number" class="form-control form-control-sm" />
+                <input type="number" class="form-control form-control-sm" v-model="newDocument.amount_reward"/>
             </td>
         </tr>
         <tr>
             <th>Статус</th>
             <td>
-                <select class="form-control form-control-sm" >
-                    <option :value="null">-</option>
-                    <option :value="1">Доступен для просмотра</option>
-                    <option :value="2">Недоступен для просмотра</option>
+                <select class="form-control form-control-sm" v-model="newDocument.status">
+                    <option :value="1">Сформирован</option>
+                    <option :value="2">Согласован</option>
+                    <option :value="3">Отклонен</option>
                 </select>
             </td>
         </tr>
@@ -75,11 +75,11 @@
             <th>Добавить файл</th>
             <td>
                 <div>
-                    <file-input v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                    <file-input v-if="!newDocument.file" @uploaded="(data) => newDocument.file = data" class="mb-3"></file-input>
                     <div v-else class="alert alert-success py-1 px-3" role="alert">
-                        Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-                        <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-                        <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                        Файл <a :href="newDocument.file.url" target="_blank" class="alert-link">{{ newDocument.file.name }}</a> загружен
+                        <v-delete-button @delete="newDocument.file = null" btn-class="btn-danger btn-sm"/>
+                        <button class="btn btn-success btn-sm" @click="createDocument(newDocument)"><fa-icon icon="plus"/></button>
                     </div>
                 </div>
             </td>
@@ -101,10 +101,13 @@
         data() {
             return {
                 documents: [],
-
-                form: {
-                    file: null
-                }
+                newDocument: {
+                    period_since: '',
+                    period_to: '',
+                    amount_reward: '',
+                    status: '',
+                    file: null,
+                },
             }
         },
         computed: {
@@ -114,11 +117,11 @@
             },
         },
         methods: {
-            statusClass(statusId) {
-                switch (statusId) {
-                    case 1: return 'badge-secondary';
-                    case 2: return 'badge-success';
-                    case 3: return 'badge-danger';
+            statusClass(status) {
+                switch (status) {
+                    case 'Сформирован': return 'badge-secondary';
+                    case 'Согласован': return 'badge-success';
+                    case 'Отклонен': return 'badge-danger';
                     default: return 'badge-secondary';
                 }
             },
@@ -134,18 +137,22 @@
                     Services.hideLoader();
                 })
             },
-            createDocument() {
+            createDocument(newDocument) {
                 Services.showLoader();
                 Services.net().post(this.getRoute('customers.detail.document.create', {
                     id: this.customer.id,
-                    file_id: this.form.file.id,
-                })).then(data => {
+                }), newDocument).then(data => {
                     this.$set(this.documents, this.documents.length, {
                         id: data.id,
-                        name: this.form.file.name,
-                        url: this.form.file.url,
+                        period_since: data.period_since,
+                        period_to: data.period_to,
+                        date: data.date,
+                        amount_reward: data.amount_reward,
+                        status: data.status,
+                        name: this.newDocument.file.name,
+                        url: this.newDocument.file.url,
                     });
-                    this.form.file = null;
+                    this.newDocument.file = null;
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
