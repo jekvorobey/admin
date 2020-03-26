@@ -350,8 +350,8 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        Route::delete('documents/{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
-                        Route::post('documents/{file_id}', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });
