@@ -64,13 +64,14 @@ class MainController extends Controller
 
     public function uploadFile(Request $request, FileService $fileService)
     {
+        $destination = request('destination');
         /** @var UploadedFile $file */
         $file = $request->file('file');
         if (!$file) {
             throw new BadRequestHttpException();
         }
 
-        $id = $fileService->uploadFile('catalog', $file->getClientOriginalName(), $file->path());
+        $id = $fileService->uploadFile($destination, $file->getClientOriginalName(), $file->path());
         $fileDto = $fileService->getFiles([$id])->first();
         if (!$fileDto) {
             throw new HttpException(500);

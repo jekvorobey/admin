@@ -52,7 +52,11 @@
             size: {
                 type: String,
                 default: 'normal',
-            }
+            },
+            destination: {
+                type: String,
+                default: 'catalog',
+            },
         },
         data() {
             return {
@@ -72,7 +76,9 @@
                     this.showProgress = true;
                     this.uploadProgress = 0;
                     this.uploadError = '';
-                    Services.net().post(this.getRoute('uploadFile'), {}, formData, {
+                    Services.net().post(this.getRoute('uploadFile'), {
+                        'destination': this.destination,
+                    }, formData, {
                         onUploadProgress: progressEvent => {
                             this.uploadProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total)
                         }
