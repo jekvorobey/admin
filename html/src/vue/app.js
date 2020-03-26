@@ -100,14 +100,30 @@ Vue.mixin({
         customerStatus() {
             return this.$store.state.layout.customerStatus;
         },
-        /** @return {ChannelTypes} */
-        channelTypes() {
-            return this.$store.state.layout.channelTypes;
-        },
         /** @return {Media} */
         media() {
             return Media;
-        }
+        },
+        /** @return {CommunicationChannelTypes} */
+        communicationChannelTypes() {
+            return this.$store.state.layout.communicationChannelTypes;
+        },
+        /** @return {CommunicationChannels} */
+        communicationChannels() {
+            return this.$store.state.layout.communicationChannels;
+        },
+        /** @return {CommunicationThemes} */
+        communicationThemes() {
+            return this.$store.state.layout.communicationThemes;
+        },
+        /** @return {CommunicationStatuses} */
+        communicationStatuses() {
+            return this.$store.state.layout.communicationStatuses;
+        },
+        /** @return {CommunicationTypes} */
+        communicationTypes() {
+            return this.$store.state.layout.communicationTypes;
+        },
     },
 });
 
@@ -163,9 +179,8 @@ Vue.mixin({
  @property {number} admin
  @property {number} super
  */
-
 /**
- @typedef ChannelTypes
+ @typedef CommunicationChannelTypes
  @type {Object}
  @property {number} internal_message
  @property {number} infinity
@@ -175,4 +190,63 @@ Vue.mixin({
  @property {number} livetex_fb
  @property {number} livetex_vk
  @property {number} internal_email
+ */
+/**
+ @typedef CommunicationChannels
+ @type {Object}
+ @property {CommunicationChannel} {number}
+ */
+/**
+ @typedef CommunicationChannel
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {string} created_at
+ @property {string} updated_at
+ */
+/**
+ @typedef CommunicationThemes
+ @type {Object}
+ @property {CommunicationTheme} {number}
+ */
+/**
+ @typedef CommunicationTheme
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {boolean} active
+ @property {number|null} channel_id
+ @property {string} created_at
+ @property {string} updated_at
+ */
+/**
+ @typedef CommunicationStatuses
+ @type {Object}
+ @property {CommunicationStatus} {number}
+ */
+/**
+ @typedef CommunicationStatus
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {boolean} active
+ @property {boolean} default
+ @property {number|null} channel_id
+ @property {string} created_at
+ @property {string} updated_at
+ */
+/**
+ @typedef CommunicationTypes
+ @type {Object}
+ @property {CommunicationType} {number}
+ */
+/**
+ @typedef CommunicationType
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {boolean} active
+ @property {number|null} channel_id
+ @property {string} created_at
+ @property {string} updated_at
  */

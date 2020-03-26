@@ -25,7 +25,7 @@
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
                                         (
-                                        {{ channels[status.channel_id].name }}
+                                        {{ communicationChannels[status.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -43,7 +43,7 @@
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
                                         (
-                                        {{ channels[type.channel_id].name }}
+                                        {{ communicationChannels[type.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -71,9 +71,6 @@ export default {
     props: ['chat_id', 'channel_id', 'theme', 'status_id', 'type_id'],
     data() {
         return {
-            themes: {},
-            statuses: {},
-            types: {},
             form: {
                 theme: this.theme,
                 status_id: this.status_id,
@@ -104,37 +101,27 @@ export default {
     computed: {
         ...mapGetters(['getRoute']),
         availableThemes() {
-            return Object.values(this.themes).filter(theme => {
+            return Object.values(this.communicationThemes).filter(theme => {
                 return !this.channel_id ||
                     !theme.channel_id ||
                     Number(theme.channel_id) === Number(this.channel_id);
             })
         },
         availableStatuses() {
-            return Object.values(this.statuses).filter(status => {
+            return Object.values(this.communicationStatuses).filter(status => {
                 return !this.channel_id ||
                     !status.channel_id ||
                     Number(status.channel_id) === Number(this.channel_id);
             })
         },
         availableTypes() {
-            return Object.values(this.types).filter(type => {
+            return Object.values(this.communicationTypes).filter(type => {
                 return !this.channel_id ||
                     !type.channel_id ||
                     Number(type.channel_id) === Number(this.channel_id);
             })
         },
     },
-    created() {
-        Services.showLoader();
-        Services.net().get(this.getRoute('communications.chats.directories')).then(data => {
-            this.channels = data.channels;
-            this.themes = data.themes;
-            this.statuses = data.statuses;
-            this.types = data.types;
-            Services.hideLoader();
-        });
-    }
 };
 </script>
 

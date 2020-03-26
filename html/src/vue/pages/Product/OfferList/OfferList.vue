@@ -17,6 +17,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Товар</th>
                     <th>Мерчант</th>
                     <th>Статус продажи</th>
@@ -24,6 +25,7 @@
             </thead>
             <tbody>
                 <tr v-for="offer in offers">
+                    <td>{{offer.id}}</td>
                     <td>{{offer.productName}}</td>
                     <td>{{offer.merchantName}}</td>
                     <td>{{saleStatusName(offer.sale_status)}}</td>

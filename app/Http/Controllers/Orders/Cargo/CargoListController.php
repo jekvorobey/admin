@@ -39,7 +39,7 @@ class CargoListController extends Controller
         MerchantService $merchantService
     ) {
         $this->title = 'Грузы';
-        $restQuery = $this->makeRestQuery($cargoService, $request);
+        $restQuery = $this->makeRestQuery($cargoService, $request, true);
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);
         
@@ -50,7 +50,7 @@ class CargoListController extends Controller
             'cargoStatuses' => CargoStatus::allStatuses(),
             'deliveryServices' => DeliveryService::allServices(),
             'stores' => $this->loadStores(),
-            'iFilter' => $this->getFilter(),
+            'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
         ]);
@@ -79,18 +79,20 @@ class CargoListController extends Controller
     }
     
     /**
+     * @param bool $withDefault
      * @return array
      */
-    protected function getFilter(): array
+    protected function getFilter(bool $withDefault = false): array
     {
         return Validator::make(request('filter') ??
-            [
-                'status' => [
-                    CargoStatus::STATUS_CREATED,
-                    CargoStatus::STATUS_REQUEST_SEND,
-                    CargoStatus::STATUS_SHIPPING_PROBLEM,
-                ],
-            ],
+            ($withDefault ?
+                [
+                    'status' => [
+                        CargoStatus::STATUS_CREATED,
+                        CargoStatus::STATUS_REQUEST_SEND,
+                        CargoStatus::STATUS_SHIPPING_PROBLEM,
+                    ],
+                ] : []),
             [
                 'id' => 'integer|someone',
                 'merchant_id' => 'array|someone',
@@ -145,10 +147,11 @@ class CargoListController extends Controller
     /**
      * @param  CargoService $cargoService
      * @param  Request  $request
+     * @param bool $withDefaultFilter
      * @return DataQuery
      * @throws \Exception
      */
-    protected function makeRestQuery(CargoService $cargoService, Request $request): DataQuery
+    protected function makeRestQuery(CargoService $cargoService, Request $request, bool $withDefaultFilter = false): DataQuery
     {
         /** @var RestQuery $restQuery */
         $restQuery = $cargoService->newQuery();
@@ -156,7 +159,7 @@ class CargoListController extends Controller
         $page = $request->get('page', 1);
         $restQuery->pageNumber($page, 20);
         
-        $filter = $this->getFilter();
+        $filter = $this->getFilter($withDefaultFilter);
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {

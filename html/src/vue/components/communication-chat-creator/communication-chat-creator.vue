@@ -63,7 +63,7 @@
                                     {{ status.name }}
                                     <template v-if="status.channel_id">
                                         (
-                                        {{ channels[status.channel_id].name }}
+                                        {{ communicationChannels[status.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -81,7 +81,7 @@
                                     {{ type.name }}
                                     <template v-if="type.channel_id">
                                         (
-                                        {{ channels[type.channel_id].name }}
+                                        {{ communicationChannels[type.channel_id].name }}
                                         )
                                     </template>
                                 </b-form-select-option>
@@ -91,7 +91,7 @@
 
                     <b-row class="mb-2">
                         <b-col>
-                            <communication-chat-message kind='createChat' @createChat="({message, files}) => onCreateChat(message, files)"/>
+                            <communication-chat-message kind='createChat' @send="({message, files}) => onCreateChat(message, files)"/>
                         </b-col>
                     </b-row>
                 </b-form>
@@ -109,10 +109,9 @@ import VSelect2 from '../controls/VSelect2/v-select2.vue';
 export default {
     name: 'communication-chat-creator',
     components: {VSelect2, CommunicationChatMessage},
-    props: ['kind','customer', 'channels', 'themes', 'statuses', 'types'],
+    props: ['kind','customer', 'roles'],
     data() {
         return {
-            roles: {},
             users: {},
             form: {
                 channel_id: null,
@@ -142,11 +141,14 @@ export default {
             this.form.type_id = null;
             this.initComponentVar();
         },
-        initUserThemeStatusType() {
+        initUserThemeStatusTypeVar() {
             this.form.user_ids = null;
+        },
+        initUserThemeStatusType() {
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
+            this.initUserThemeStatusTypeVar();
         },
         onCreateChat(message, files) {
             Services.showLoader();
@@ -169,17 +171,19 @@ export default {
             });
         },
         availableChannelsVar() {
-            return this.channels;
+            return this.communicationChannels;
         },
         getUsersByRole() {
-            Services.showLoader();
-            Services.net().get(this.getRoute('settings.userListTitle'), {
-                'role_ids': this.form.role_ids
-            }).then(data => {
-                this.users = data.users;
-            }).finally(() => {
-                Services.hideLoader();
-            });
+            if (this.form.role_ids.length > 0) {
+                Services.showLoader();
+                Services.net().get(this.getRoute('settings.userListTitle'), {
+                    'role_ids': this.form.role_ids
+                }).then(data => {
+                    this.users = data.users;
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            }
 
             this.initUserThemeStatusType();
         },
@@ -191,25 +195,25 @@ export default {
         },
         availableUsers() {
             return Object.values(this.users).filter(user => {
-                return Number(this.form.channel_id) !== this.channelTypes.internal_email || user.email;
+                return Number(this.form.channel_id) !== this.communicationChannelTypes.internal_email || user.email;
             });
         },
         availableThemes() {
-            return Object.values(this.themes).filter(theme => {
+            return Object.values(this.communicationThemes).filter(theme => {
                 return !this.form.channel_id ||
                     !theme.channel_id ||
                     Number(theme.channel_id) === Number(this.form.channel_id);
             })
         },
         availableStatuses() {
-            return Object.values(this.statuses).filter(status => {
+            return Object.values(this.communicationStatuses).filter(status => {
                 return !this.form.channel_id ||
                     !status.channel_id ||
                     Number(status.channel_id) === Number(this.form.channel_id);
             })
         },
         availableTypes() {
-            return Object.values(this.types).filter(type => {
+            return Object.values(this.communicationTypes).filter(type => {
                 return !this.form.channel_id ||
                     !type.channel_id ||
                     Number(type.channel_id) === Number(this.form.channel_id);
@@ -220,25 +224,6 @@ export default {
 
     },
     created() {
-        Services.showLoader();
-
-        let promises = [Services.net().get(this.getRoute('settings.users.rolesForMessage'))];
-        if (!(this.channels || this.themes || this.statuses || this.types)) {
-            promises.push(Services.net().get(this.getRoute('communications.chats.directories')));
-        }
-
-        Promise.all(promises).then(data => {
-            this.roles = data[0].roles;
-            if (!(this.channels || this.themes || this.statuses || this.types)) {
-                this.channels = data[1].channels;
-                this.themes = data[1].themes;
-                this.statuses = data[1].statuses;
-                this.types = data[1].types;
-            }
-        }).finally(() => {
-            Services.hideLoader();
-        });
-
         switch (this.kind) {
             case 'selectedUser':
                 this.showChatForm = false;
@@ -247,9 +232,12 @@ export default {
                     this.form.user_ids = [this.customer.user_id];
                     this.showChatForm = false;
                 };
+                this.initUserThemeStatusTypeVar = () => {
+                    ;
+                },
                 this.availableChannelsVar = () => {
-                    return Object.values(this.channels).filter(channel => {
-                        return Number(channel.id) !== this.channelTypes.internal_email || this.customer.email;
+                    return Object.values(this.communicationChannels).filter(channel => {
+                        return Number(channel.id) !== this.communicationChannelTypes.internal_email || this.customer.email;
                     });
                 };
                 break;

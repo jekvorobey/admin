@@ -129,6 +129,10 @@ class Menu
                 'title' => 'Логистика',
                 'items' => [
                     [
+                        'title' => 'Логистические операторы',
+                        'route' => route('deliveryService.list')
+                    ],
+                    [
                         'title' => 'Статусы доставки',
                         'route' => '#',
                     ],

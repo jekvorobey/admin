@@ -84,7 +84,6 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
-            Route::get('rolesForMessage', 'UsersController@rolesForMessage')->name('settings.users.rolesForMessage');
         });
     });
 
@@ -270,6 +269,22 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
+        Route::prefix('delivery-services')->namespace('DeliveryService')->group(function () {
+            Route::get('/', 'DeliveryServiceListController@index')->name('deliveryService.list');
+
+            Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'DeliveryServiceDetailController@index')->name('deliveryService.detail');
+                Route::put('', 'DeliveryServiceDetailController@save')->name('deliveryService.detail.save');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('settings')->group(function () {
+                        Route::get('', 'TabSettingsController@load')->name('deliveryService.detail.settings');
+                        Route::put('', 'TabSettingsController@save')->name('deliveryService.detail.settings.save');
+                    });
+                });
+            });
+        });
+
         Route::prefix('delivery-prices')->group(function () {
             Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
             Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
@@ -296,7 +311,6 @@ Route::middleware('auth')->group(function () {
         Route::prefix('chats')->group(function () {
             Route::get('unread', 'ChatsController@unread')->name('communications.chats.unread');
             Route::get('unread/count', 'ChatsController@unreadCount')->name('communications.chats.unread.count');
-            Route::get('directories', 'ChatsController@directories')->name('communications.chats.directories');
             Route::get('filter', 'ChatsController@filter')->name('communications.chats.filter');
             Route::put('read', 'ChatsController@read')->name('communications.chats.read');
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
@@ -347,6 +361,10 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabOrderReferrerController@load')->name('customers.detail.orderReferrer');
                         Route::get('excel', 'TabOrderReferrerController@export')->name('customers.detail.orderReferrer.export');
                         Route::delete('{history_id}', 'TabOrderReferrerController@delete')->name('customers.detail.orderReferrer.delete');
+                    });
+                    Route::prefix('billing')->group(function () {
+                        Route::get('', 'TabBillingController@load')->name('customers.detail.billing');
+                        Route::post('correct', 'TabBillingController@correct')->name('customers.detail.billing.correct');
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
