@@ -32,7 +32,7 @@ class TabBillingController extends Controller
             'value' => 'Сумма',
         ]);
 
-        $referralService->createReferralBillOperations(
+        $referralService->correctReferralBillOperations(
             (new CorrectReferralBillOperationDto())
                 ->setReferralId($id)
                 ->setValue($data['value'])
