@@ -590,12 +590,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "948a0aa8ce55dace2678531f17089d0cda7e6228"
+                "reference": "d24411819d9ea2dae9ecaf7472b8c172dcf915d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=948a0aa8ce55dace2678531f17089d0cda7e6228",
-                "reference": "948a0aa8ce55dace2678531f17089d0cda7e6228",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=d24411819d9ea2dae9ecaf7472b8c172dcf915d6",
+                "reference": "d24411819d9ea2dae9ecaf7472b8c172dcf915d6",
                 "shasum": ""
             },
             "require": {
@@ -639,7 +639,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-03-25T13:52:07+00:00"
+            "time": "2020-03-26T13:55:52+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -780,12 +780,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "a4072036c6c8b5979d0f819c10a865734d2b8968"
+                "reference": "d63d3ef76840bc240d81b3a860b663e68e708c00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=a4072036c6c8b5979d0f819c10a865734d2b8968",
-                "reference": "a4072036c6c8b5979d0f819c10a865734d2b8968",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=d63d3ef76840bc240d81b3a860b663e68e708c00",
+                "reference": "d63d3ef76840bc240d81b3a860b663e68e708c00",
                 "shasum": ""
             },
             "require": {
@@ -820,7 +820,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-03-21T18:21:58+00:00"
+            "time": "2020-03-26T14:03:54+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
