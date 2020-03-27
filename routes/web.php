@@ -41,6 +41,11 @@ Route::middleware('auth')->group(function () {
                 ->where(['id' => '[0-9]+'])
                 ->name('discount.update');
         });
+
+        Route::prefix('promo-code')->group(function () {
+            Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
+            Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
+        });
     });
 
     Route::prefix('claims')->namespace('Claim')->group(function () {
