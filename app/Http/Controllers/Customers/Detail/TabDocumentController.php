@@ -11,6 +11,7 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
+use Illuminate\Validation\Rule;
 
 /**
  * Class TabDocumentController
@@ -53,12 +54,20 @@ class TabDocumentController extends Controller
         ]);
     }
 
-    public function exportXLSX(int $customerId, CustomerService $customerService, FileService $fileService)
+    public function export(int $customerId, CustomerService $customerService, FileService $fileService)
     {
-        $writer = WriterFactory::createFromType(Type::XLSX);
+        $this->validate(request(), [
+            'format' => [
+                'required',
+                'string',
+                // Using available types in Box\Spout\Common\Type //
+                Rule::in(['csv', 'xlsx', 'ods']),
+            ]
+        ]);
+        $format = request('format');
 
-        $writer->openToBrowser("Акты о реферальных зачислениях реферрера {$customerId}.xlsx");
-
+        $writer = WriterFactory::createFromType($format);
+        $writer->openToBrowser("Акты о реферальных зачислениях реферрера {$customerId}.{$format}");
         $writer->addRow(WriterEntityFactory::createRowFromArray([
             'Номер акта',
             'Начало периода',
@@ -77,17 +86,16 @@ class TabDocumentController extends Controller
         }
 
         foreach ($documents as $document) {
-            foreach ($files as $file) {
+            $file = $files->get($document->file_id);
                 $writer->addRow(WriterEntityFactory::createRowFromArray([
                     $document->id,
                     $document->period_since,
                     $document->period_to,
                     $document->updated_at,
                     $document->amount_reward,
-                    $document->status,
+                    $document->statusName($document->status),
                     $file->absoluteUrl(),
                 ], null));
-            }
 
         }
 

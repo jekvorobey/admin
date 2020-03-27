@@ -3,10 +3,19 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="5">Документы</th>
-            <th colspan="1">
-                <a :href="getRoute('customers.detail.document.xlsx', {id: this.model.id})" class="btn btn-info btn-sm">
+            <th colspan="4">Документы</th>
+            <th colspan="4">
+                Экспорт XLSX:
+                <a :href="getRoute('customers.detail.document.export', {id: this.model.id,},) + '?format=xlsx'" class="btn btn-success btn-sm" title="Экспорт XLSX">
                 <fa-icon icon="file-excel"/>
+                </a>
+                Экспорт ODS:
+                <a :href="getRoute('customers.detail.document.export', {id: this.model.id,},) + '?format=ods'" class="btn btn-info btn-sm" data-title="Экспорт ODS">
+                    <fa-icon icon="file-download"/>
+                </a>
+                Экспорт CSV:
+                <a :href="getRoute('customers.detail.document.export', {id: this.model.id,},) + '?format=csv'" class="btn btn-secondary btn-sm" data-title="Экспорт CSV">
+                    <fa-icon icon="file-archive"/>
                 </a>
             </th>
         </tr>
@@ -17,6 +26,7 @@
             <th>Сумма вознаграждения</th>
             <th>Статус</th>
             <th>Файл</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
@@ -29,6 +39,8 @@
                 <span class="badge" :class="statusClass(document.status)">{{ document.status}}</span></td>
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
+            </td>
+            <td>
                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
             </td>
         </tr>
@@ -47,7 +59,7 @@
             <!-- TODO: нужно переделать это представление, чтобы оно было в модалке-->
             <th colspan="2">
                 Действия:
-                <button  class="btn btn-success" :disabled="!showBtn">Добавить</button>
+                <button  class="btn btn-success" @click="createNewDocument">Добавить</button>
                 <button  class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
             </th>
         </tr>
@@ -92,17 +104,29 @@
         </tr>
         </tbody>
     </table>
+
+    <document-create-modal
+            modal-name="CreateDocumentModal"/>
+
 </div>
 </template>
 
 <script>
+    import modalMixin from '../../../../mixins/modal';
+    import Modal from '../../../../components/controls/modal/modal.vue';
+    import DocumentCreateModal from './modal-document-create.vue';
     import Services from '../../../../../scripts/services/services.js';
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 
     export default {
         name: 'tab-document',
-        components: {FileInput, VDeleteButton},
+        components: {FileInput,
+            VDeleteButton,
+            DocumentCreateModal,
+            Modal,
+        },
+        mixins: [modalMixin],
         props: ['model'],
         data() {
             return {
@@ -123,6 +147,9 @@
             },
         },
         methods: {
+            createNewDocument(){
+                this.openModal('CreateDocumentModal');
+            },
             statusClass(status) {
                 switch (status) {
                     case 'Сформирован': return 'badge-secondary';
