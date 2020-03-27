@@ -7,14 +7,17 @@
                         <h4>Доставка {{ delivery.number }}</h4>
 
                         <div class="row align-items-center">
-                            <p class="col-10 text-secondary mt-4 mb-0">Последнее изменение:</p>
-                            <p class="col-2">{{ delivery.updated_at }}</p>
+                            <p class="col-3 text-secondary mt-4 mb-0">Получатель:</p>
+                            <p class="col-9">{{ [delivery.receiver_name, delivery.receiver_phone, delivery.receiver_email].filter(v => !!v).join(', ') }}</p>
 
-                            <p class="col-10 text-secondary mt-4 mb-0">Статус:</p>
-                            <f-select class="col-2" v-model="delivery.status" :options="avaliableDeliveryStatuses" />
+                            <p class="col-3 text-secondary mt-4 mb-0">Последнее изменение:</p>
+                            <p class="col-9">{{ delivery.updated_at }}</p>
 
-                            <p class="col-10 text-secondary mt-4 mb-0">Служба:</p>
-                            <f-select class="col-2 float-right" v-model="delivery.delivery_service" :options="avaliableServices" />
+                            <p class="col-3 text-secondary mt-4 mb-0">Статус:</p>
+                            <f-select class="col-9" v-model="delivery.status" :options="avaliableDeliveryStatuses" />
+
+                            <p class="col-3 text-secondary mt-4 mb-0">Служба:</p>
+                            <f-select class="col-9 float-right" v-model="delivery.delivery_service" :options="avaliableServices" />
                         </div>
                         <button @click="saveDelivery" class="btn btn-sm btn-dark float-right mt-3">Сохранить</button>
                     </div>
