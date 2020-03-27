@@ -37,7 +37,7 @@ class ChatsController extends Controller
         $this->title = 'Массовая рассылка';
 
         return $this->render('Communication/Broadcast', [
-            'roles' => UserDto::rolesByFrontId([
+            'roles' => UserDto::rolesByFrontIds([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),

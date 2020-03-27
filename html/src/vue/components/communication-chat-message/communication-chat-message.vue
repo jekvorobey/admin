@@ -5,7 +5,11 @@
         <hr/>
         <h3>Файлы</h3>
         <div v-for="(file, key) in form.files">
-            <file-input v-if="!file.is_load" @uploaded="(data) => onFileUpload(data, file)" class="mb-3"></file-input>
+            <file-input v-if="!file.is_load"
+                        @uploaded="(data) => onFileUpload(data, file)"
+                        class="mb-3"
+                        destination='communications'
+            ></file-input>
             <div v-else class="alert alert-success py-1 px-3" role="alert">
                 Файл <a :href="file.file.url" target="_blank" class="alert-link">{{ file.file.name }}</a> загружен
                 <v-delete-button @delete="onFileDelete(key)" btn-class="btn-danger btn-sm"/>
