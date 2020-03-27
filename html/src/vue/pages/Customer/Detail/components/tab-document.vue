@@ -3,7 +3,12 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="14">Документы</th>
+            <th colspan="5">Документы</th>
+            <th colspan="1">
+                <a :href="getRoute('customers.detail.document.xlsx', {id: this.model.id})" class="btn btn-info btn-sm">
+                <fa-icon icon="file-excel"/>
+                </a>
+            </th>
         </tr>
         <tr>
             <th>ID</th>
@@ -39,6 +44,7 @@
     <table class="table table-sm">
         <thead>
         <tr>
+            <!-- TODO: нужно переделать это представление, чтобы оно было в модалке-->
             <th colspan="2">
                 Действия:
                 <button  class="btn btn-success" :disabled="!showBtn">Добавить</button>

@@ -8,6 +8,9 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerDocumentDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterFactory;
 
 /**
  * Class TabDocumentController
@@ -48,6 +51,47 @@ class TabDocumentController extends Controller
                 ];
             })->filter(),
         ]);
+    }
+
+    public function exportXLSX(int $customerId, CustomerService $customerService, FileService $fileService)
+    {
+        $writer = WriterFactory::createFromType(Type::XLSX);
+
+        $writer->openToBrowser("Акты о реферальных зачислениях реферрера {$customerId}.xlsx");
+
+        $writer->addRow(WriterEntityFactory::createRowFromArray([
+            'Номер акта',
+            'Начало периода',
+            'Окончание периода',
+            'Дата документа',
+            'Сумма вознаграждения',
+            'Статус',
+            'Файл',
+        ], null));
+
+        //TODO: сделать корректный отбор файлов
+        $documents = $customerService->documents($customerId);
+        $files = [];
+        if ($documents) {
+            $files = $fileService->getFiles($documents->pluck('file_id')->all())->keyBy('id');
+        }
+
+        foreach ($documents as $document) {
+            foreach ($files as $file) {
+                $writer->addRow(WriterEntityFactory::createRowFromArray([
+                    $document->id,
+                    $document->period_since,
+                    $document->period_to,
+                    $document->updated_at,
+                    $document->amount_reward,
+                    $document->status,
+                    $file->absoluteUrl(),
+                ], null));
+            }
+
+        }
+
+        $writer->close();
     }
 
     /**
