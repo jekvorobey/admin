@@ -237,7 +237,7 @@ class Menu
                     ],
                     [
                         'title' => 'Промокоды',
-                        'route' => '#',
+                        'route' => route('promo-code.list'),
                     ],
                     [
                         'title' => 'Скидки',
