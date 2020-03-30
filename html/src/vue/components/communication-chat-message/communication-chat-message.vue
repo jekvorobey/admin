@@ -5,15 +5,19 @@
         <hr/>
         <h3>Файлы</h3>
         <div v-for="(file, key) in form.files">
-            <file-input v-if="!file.is_load" @uploaded="(data) => onUpload(data, file)" class="mb-3"></file-input>
+            <file-input v-if="!file.is_load"
+                        @uploaded="(data) => onFileUpload(data, file)"
+                        class="mb-3"
+                        destination='communications'
+            ></file-input>
             <div v-else class="alert alert-success py-1 px-3" role="alert">
                 Файл <a :href="file.file.url" target="_blank" class="alert-link">{{ file.file.name }}</a> загружен
-                <v-delete-button @delete="onDelete(key)" btn-class="btn-danger btn-sm"/>
+                <v-delete-button @delete="onFileDelete(key)" btn-class="btn-danger btn-sm"/>
             </div>
         </div>
-        <button type="button" @click="onAdd()" class="btn btn-success"><fa-icon icon="plus"/></button>
+        <button type="button" @click="onFileAdd()" class="btn btn-success"><fa-icon icon="plus"/></button>
         <hr/>
-        <button type="button" @click="onClick()" class="btn btn-success">{{ sendButtonName }}</button>
+        <button type="button" @click="onClickSend()" class="btn btn-success">{{ sendButtonName }}</button>
     </div>
 </template>
 
@@ -26,8 +30,17 @@ export default {
     components: {VDeleteButton, FileInput},
     props: ['kind'],
     data() {
+        let sendButtonName;
+        switch (this.kind) {
+            case 'createChat':
+                sendButtonName = 'Создать чат';
+                break;
+            default:
+                sendButtonName = 'Отправить сообщение';
+                break;
+        }
         return {
-            sendButtonName: 'Отправить сообщение',
+            sendButtonName: sendButtonName,
             form: {
                 message: '',
                 files: [
@@ -43,14 +56,14 @@ export default {
                 file: null
             }
         },
-        onUpload(data, file) {
+        onFileUpload(data, file) {
             file.is_load = true;
             file.file = data;
         },
-        onDelete(key) {
+        onFileDelete(key) {
             this.$delete(this.form.files, key);
         },
-        onAdd() {
+        onFileAdd() {
             this.$set(this.form.files, this.form.files.length, this.initNewFile());
         },
         initComponent() {
@@ -59,10 +72,7 @@ export default {
                 this.initNewFile(),
             ];
         },
-        onClickEmit(files) {
-            this.$emit('send', {message: this.form.message, files});
-        },
-        onClick() {
+        onClickSend() {
             const files = [];
             this.form.files.forEach(file => {
                 if (file.is_load && file.file.id) {
@@ -70,22 +80,11 @@ export default {
                 }
             });
 
-            this.onClickEmit(files);
+            this.$emit('send', { message: this.form.message, files});
+
             this.initComponent();
         },
     },
-    created() {
-        switch (this.kind) {
-            case 'createChat':
-                this.sendButtonName = 'Создать чат';
-                this.onClickEmit = (files) => {
-                    this.$emit('createChat', { message: this.form.message, files});
-                };
-                break;
-            default:
-                break;
-        }
-    }
 };
 </script>
 

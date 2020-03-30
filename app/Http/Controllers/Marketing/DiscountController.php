@@ -75,7 +75,7 @@ class DiscountController extends Controller
     }
 
     /**
-     * Страница для создания мерчантом заявки на скидку
+     * Страница для создания скидки
      *
      * @param Request $request
      * @param DiscountService $discountService

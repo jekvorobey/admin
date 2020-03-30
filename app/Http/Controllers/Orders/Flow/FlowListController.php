@@ -48,7 +48,7 @@ class FlowListController extends Controller
         DeliveryService $deliveryService
     )
     {
-        $this->title = 'Поток сборки';
+        $this->title = 'Список заказов';
 
         $restQuery = $this->makeRestQuery($orderService, $request);
         $pager = $orderService->ordersCount($restQuery);

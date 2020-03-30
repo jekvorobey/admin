@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Communications;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -15,6 +17,7 @@ use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 
+
 class ChatsController extends Controller
 {
     public function unread()
@@ -25,29 +28,19 @@ class ChatsController extends Controller
 
     public function broadcast()
     {
-        $this->loadChannelTypes = true;
+        $this->loadCommunicationChannelTypes = true;
+        $this->loadCommunicationChannels = true;
+        $this->loadCommunicationThemes = true;
+        $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
 
         $this->title = 'Массовая рассылка';
-        return $this->render('Communication/Broadcast');
-    }
 
-    public function directories(
-        CommunicationService $communicationService,
-        CommunicationThemeService $communicationThemeService,
-        CommunicationStatusService $communicationStatusService,
-        CommunicationTypeService $communicationTypeService
-    ) {
-
-        $channels = $communicationService->channels()->keyBy('id');
-        $themes = $communicationThemeService->themes()->keyBy('id');
-        $statuses = $communicationStatusService->statuses()->keyBy('id');
-        $types = $communicationTypeService->types()->keyBy('id');
-
-        return response()->json([
-            'channels' => $channels,
-            'themes' => $themes,
-            'statuses' => $statuses,
-            'types' => $types,
+        return $this->render('Communication/Broadcast', [
+            'roles' => UserDto::rolesByFrontIds([
+                Front::FRONT_MAS,
+                Front::FRONT_SHOWCASE,
+            ]),
         ]);
     }
 

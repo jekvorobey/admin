@@ -111,7 +111,7 @@ class ProductListController extends Controller
         $page = $request->get('page', 1);
         $query->page($page, 10);
         $query->fields([
-            ProductQuery::ID,
+            ProductQuery::PRODUCT_ID,
             ProductQuery::DATE_ADD,
             ProductQuery::CATALOG_IMAGE_ID,
             ProductQuery::NAME,

@@ -125,16 +125,6 @@ class UsersController extends Controller
         ]);
     }
 
-    public function rolesForMessage()
-    {
-        return response()->json([
-            'roles' => UserDTO::rolesByFrontId([
-                Front::FRONT_MAS,
-                Front::FRONT_SHOWCASE,
-            ]),
-        ]);
-    }
-
     public function userListTitle(UserService $userService, RequestInitiator $user)
     {
         $roleIds = request('role_ids');
