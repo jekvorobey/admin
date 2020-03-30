@@ -43,7 +43,7 @@
         </tr>
         <tr>
             <th>Город</th>
-            <td></td>
+            <td><input v-model="form.city" class="form-control form-control-sm"/></td>
         </tr>
         <tr>
             <th>Сумма покупок накопительным итогом</th>
@@ -178,6 +178,7 @@ export default {
                 comment_internal: this.model.comment_internal,
                 manager_id: this.model.manager_id,
                 gender: this.model.gender,
+                city: this.model.city,
                 birthday: this.model.birthday,
                 activities: [],
                 file: null,
@@ -207,6 +208,7 @@ export default {
         showBtn() {
             return this.customer.manager_id !== this.form.manager_id ||
                 this.customer.gender !== this.form.gender ||
+                (this.customer.city || '') !== (this.form.city || '') ||
                 (this.customer.comment_internal || '') !== (this.form.comment_internal || '') ||
                 (this.customer.legal_info_company_name || '') !== (this.form.legal_info_company_name || '') ||
                 (this.customer.legal_info_company_address || '') !== (this.form.legal_info_company_address || '') ||
@@ -228,6 +230,7 @@ export default {
                     comment_internal: this.form.comment_internal,
                     manager_id: this.form.manager_id,
                     gender: this.form.gender,
+                    city: this.form.city,
                     birthday: this.form.birthday,
                     legal_info_company_name: this.form.legal_info_company_name,
                     legal_info_company_address: this.form.legal_info_company_address,
@@ -243,6 +246,7 @@ export default {
                 this.customer.comment_internal = this.form.comment_internal;
                 this.customer.manager_id = this.form.manager_id;
                 this.customer.gender = this.form.gender;
+                this.customer.city = this.form.city;
                 this.customer.birthday = this.form.birthday;
                 this.customer.legal_info_company_name = this.form.legal_info_company_name;
                 this.customer.legal_info_company_address = this.form.legal_info_company_address;
@@ -262,6 +266,7 @@ export default {
             this.form.comment_internal = this.customer.comment_internal;
             this.form.manager_id = this.customer.manager_id;
             this.form.gender = this.customer.gender;
+            this.form.city = this.customer.city;
             this.form.birthday = this.customer.birthday;
             this.form.legal_info_company_name = this.customer.legal_info_company_name;
             this.form.legal_info_company_address = this.customer.legal_info_company_address;
