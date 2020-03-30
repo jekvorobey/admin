@@ -330,6 +330,8 @@ Route::middleware('auth')->group(function () {
         Route::get('referral-partners', 'CustomerListController@listReferralPartner')->name('referralPartner.list');
 
         Route::prefix('customers')->group(function () {
+            Route::post('', 'CustomerListController@create')->name('customers.create');
+
             Route::get('filter', 'CustomerListController@filter')->name('customers.filter');
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
