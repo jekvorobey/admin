@@ -209,10 +209,10 @@ class Menu
                         'title' => 'Заявки на регистрацию',
                         'route' => route('merchant.registrationList'),
                     ],
-//                    [
-//                        'title' => 'Список мерчантов',
-//                        'route' => '#',
-//                    ],
+                    [
+                        'title' => 'Список мерчантов',
+                        'route' => route('merchant.activeList'),
+                    ],
 //                    [
 //                        'title' => 'Взаиморасчёты',
 //                        'route' => '#',

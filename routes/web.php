@@ -14,13 +14,14 @@ Route::middleware('auth')->group(function () {
     Route::get('available-managers', 'Merchant\\MerchantDetailController@availableManagers')->name('managers.all');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
-        Route::prefix('registration')->group(function () {
-            Route::get('page', 'RegistrationRequestController@page')->name('merchant.registrationListPage');
-            Route::get('', 'RegistrationRequestController@index')->name('merchant.registrationList');
-            Route::prefix('{id}')->group(function () {
-                Route::get('', 'MerchantDetailController@index')->name('merchant.registrationDetail');
-                Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
-            });
+        Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
+        Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
+
+        Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+
+        Route::prefix('{id}')->group(function () {
+            Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
+            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
         });
     });
 
