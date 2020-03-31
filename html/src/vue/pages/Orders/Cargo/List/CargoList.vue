@@ -115,7 +115,7 @@
     const cleanHiddenFilter = {
     shipment_number: '',
     created_at: [],
-    is_canceled: 0,
+    is_canceled: '',
 };
 
 const cleanFilter = Object.assign({
