@@ -133,6 +133,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'CargoDetailController@index')->name('cargo.detail');
                 Route::put('changeStatus', 'CargoDetailController@changeStatus')->name('cargo.changeStatus');
+                Route::put('cancel', 'CargoDetailController@cancel')->name('cargo.cancel');
                 Route::get('/unshipped-shipments', 'CargoDetailController@getUnshippedShipments')->name('cargo.unshippedShipments');
 
                 Route::prefix('/shipments')->group(function () {

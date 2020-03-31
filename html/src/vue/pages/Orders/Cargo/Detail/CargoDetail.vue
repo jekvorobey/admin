@@ -8,10 +8,11 @@
                         <span class="badge" :class="statusClass(cargo.status.id)">
                             {{ cargo.status.name || 'N/A' }}
                         </span>
-                        <button class="btn btn-primary" v-if="isRequestSendStatus"
-                                @click="changeCargoStatus(3)">Груз передан курьеру</button>
-                        <button class="btn btn-primary" v-if="!isCancelStatus"
-                                @click="changeCargoStatus(5)">Отменить</button>
+                        <span class="badge badge-danger" v-if="isCancel">Отменен</span>
+                        <button class="btn btn-primary" v-if="isRequestSend"
+                                @click="changeCargoStatus(2)">Груз передан курьеру</button>
+                        <button class="btn btn-primary" v-if="!isCancel"
+                                @click="cancelCargo()">Отменить</button>
                     </div>
 
                     <p class="text-secondary mt-3">
@@ -20,7 +21,7 @@
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
                     </p>
-                    <p class="text-secondary mt-3" v-if="isShippingProblemStatus">
+                    <p class="text-secondary mt-3" v-if="isShippingProblem">
                         Описание проблемы:<span class="float-right">{{ cargo.shipping_problem_comment }}</span>
                     </p>
                 </div>
@@ -73,15 +74,15 @@
 
 <script>
 
-import Services from '../../../../../scripts/services/services';
-import modalMixin from '../../../../mixins/modal.js';
+    import Services from '../../../../../scripts/services/services';
+    import modalMixin from '../../../../mixins/modal.js';
 
-import VTabs from '../../../../components/tabs/tabs.vue';
-import ShipmentsTab from './components/shipments-tab.vue';
-import HistoryTab from './components/history-tab.vue';
-import Modal from '../../../../components/controls/modal/modal.vue';
+    import VTabs from '../../../../components/tabs/tabs.vue';
+    import ShipmentsTab from './components/shipments-tab.vue';
+    import HistoryTab from './components/history-tab.vue';
+    import Modal from '../../../../components/controls/modal/modal.vue';
 
-export default {
+    export default {
     components: {
         VTabs,
         Modal,
@@ -113,8 +114,6 @@ export default {
                 case 1: return 'badge-info';
                 case 2: return 'badge-primary';
                 case 3: return 'badge-success';
-                case 4: return 'badge-danger';
-                case 5: return 'badge-warning';
                 default: return 'badge-light';
             }
         },
@@ -126,6 +125,19 @@ export default {
 
             Services.net().put(this.getRoute('cargo.changeStatus', {id: this.cargo.id}), null,
                 {'status': statusId}).then(data => {
+                if (data.result === 'ok') {
+                    this.cargo = data.cargo;
+                } else {
+                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
+                }
+            }, () => {
+                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+            });
+        },
+        cancelCargo() {
+            let errorMessage = 'Ошибка при изменении отмене груза.';
+
+            Services.net().put(this.getRoute('cargo.cancel', {id: this.cargo.id})).then(data => {
                 if (data.result === 'ok') {
                     this.cargo = data.cargo;
                 } else {
@@ -148,14 +160,14 @@ export default {
         tooltipShipmentCost() {
             return 'С учётом скидки';
         },
-        isRequestSendStatus() {
-            return this.isStatus(2);
+        isRequestSend() {
+            return this.cargo.xml_id;
         },
-        isShippingProblemStatus() {
-            return this.isStatus(4);
+        isShippingProblem() {
+            return this.cargo.is_problem;
         },
-        isCancelStatus() {
-            return this.isStatus(5);
+        isCancel() {
+            return this.cargo.is_canceled;
         },
     },
 };
