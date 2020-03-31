@@ -105,6 +105,8 @@ class RegistrationRequestController extends Controller
             $query->setFilter('display_name', 'like', "%{$filter['name']}%");
         }
 
+        $query->addSort('id', 'desc');
+
         return $query;
     }
 }
