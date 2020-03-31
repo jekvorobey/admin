@@ -13,7 +13,7 @@
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
-            Всего заявок: {{ pager.total }}. <span v-if="selectedMerchants.length">Выбрано: {{selectedMerchants.length}}</span>
+            Всего: {{ pager.total }}. <span v-if="selectedMerchants.length">Выбрано: {{selectedMerchants.length}}</span>
         </div>
         <table class="table">
             <thead>
@@ -33,7 +33,7 @@
                            @change="e => selectMerchant(e, merchant.id)">
                 </td>
                 <td>{{ merchant.id }}</td>
-                <td><a :href="getRoute('merchant.registrationDetail', {id: merchant.id})">{{ merchant.display_name }}</a></td>
+                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.display_name }}</a></td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.created_at }}</td>
                 <td><span class="badge" :class="statusClass(merchant.status)">{{ statusName(merchant.status) }}</span>
@@ -75,6 +75,7 @@
             FInput,
         },
         props: {
+            done: {},
             iMerchants: {},
             iPager: {},
             iFilter: {},
@@ -100,7 +101,8 @@
                 }));
             },
             loadPage() {
-                Services.net().get(this.route('merchant.registrationListPage'), {
+                Services.net().get(this.route('merchant.listPage'), {
+                    done: this.done,
                     page: this.currentPage,
                     filter: this.filter,
                     //sort: this.sort,

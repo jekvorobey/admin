@@ -3,12 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 
-use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
+use App\Http\Controllers\Controller;use Greensight\CommonMsa\Dto\Front;use Greensight\CommonMsa\Dto\UserDto;use Greensight\CommonMsa\Rest\RestQuery;use Greensight\CommonMsa\Services\AuthService\UserService;use Greensight\Customer\Dto\CustomerDto;use Greensight\Customer\Services\CustomerService\CustomerService;use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
 {
@@ -86,11 +81,47 @@ class CustomerListController extends Controller
                 'phone' => $user->phone,
                 'status' => $customer->status
             ];
-        })->filter();
+        })->filter()->sortByDesc('id')->values();
 
         return response()->json([
             'users' => $result->forPage(request('page', 1), static::PER_PAGE),
             'count' => $result->count()
+        ]);
+    }
+
+    public function create(UserService $userService, CustomerService $customerService)
+    {
+        $data = $this->validate(request(), [
+            'phone' => 'required|regex:/^\+7\d{10}$/',
+            'password' => 'required|confirmed',
+        ]);
+        $customerId = null;
+
+        $exists = $userService->exists($data['phone'], Front::FRONT_SHOWCASE);
+        if ($exists) {
+            throw new BadRequestHttpException('Пользователь с таким номером телефона уже сущетсвует');
+        }
+
+        $user = new UserDto();
+        $user->login = $data['phone'];
+        $user->phone = $data['phone'];
+        $user->password = $data['password'];
+        $user->front = Front::FRONT_SHOWCASE;
+
+
+        $id = $userService->create($user);
+        if ($id) {
+            $userService->addRoles($id, [UserDto::SHOWCASE__PROFESSIONAL]);
+
+            $customerId = $customerService->createCustomer(new CustomerDto(['user_id' => $id]));
+        }
+
+        if (!$customerId) {
+            throw new BadRequestHttpException('Ошибка создания пользователя');
+        }
+
+        return response()->json([
+            'redirect' => route('customers.detail', ['id' => $customerId]),
         ]);
     }
 }

@@ -14,7 +14,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <div>
-                        <button class="btn btn-primary" v-if="isCreatedStatus || isRequestSendStatus"
+                        <button class="btn btn-primary" v-if="(isCreatedStatus || isRequestSend) && !isCancel"
                                 @click="openModal('addShipment2Cargo')">
                             + Добавить заказы
                         </button>
@@ -44,7 +44,7 @@
                         <td>
                             <fa-icon icon="times" title="Удалить из груза" class="cursor-pointer"
                                     @click="deleteShipmentFromCargo(shipment.id)"
-                                    v-if="isCreatedStatus || isRequestSendStatus"></fa-icon>
+                                    v-if="isCreatedStatus || isRequestSend"></fa-icon>
                         </td>
                     </tr>
                     <tr v-if="!cargo.shipments || !cargo.shipments.length">
@@ -71,15 +71,15 @@
 </template>
 
 <script>
-import Dropdown from '../../../../../components/dropdown/dropdown.vue';
-import modal from '../../../../../components/controls/modal/modal.vue';
-import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
-import AddShipmentsForm from './forms/add-shipments-form.vue';
+    import Dropdown from '../../../../../components/dropdown/dropdown.vue';
+    import modal from '../../../../../components/controls/modal/modal.vue';
+    import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
+    import AddShipmentsForm from './forms/add-shipments-form.vue';
 
-import modalMixin from '../../../../../mixins/modal';
-import Services from '../../../../../../scripts/services/services';
+    import modalMixin from '../../../../../mixins/modal';
+    import Services from '../../../../../../scripts/services/services';
 
-export default {
+    export default {
     props: [
         'cargo',
     ],
@@ -131,8 +131,11 @@ export default {
         isCreatedStatus() {
             return this.isStatus(1);
         },
-        isRequestSendStatus() {
-            return this.isStatus(2);
+        isRequestSend() {
+            return this.cargo.xml_id;
+        },
+        isCancel() {
+            return this.cargo.is_canceled;
         },
     },
 };

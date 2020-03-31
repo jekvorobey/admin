@@ -2,12 +2,13 @@
 namespace App\Http\Controllers\Orders\Flow;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
-use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Exception;
 
 /**
  * Class FlowDeliveryController
@@ -44,12 +44,6 @@ class FlowDeliveryController extends Controller
 
         $this->title = 'Доставка '.$delivery->number;
 
-        // Статусы отправления, когда уже нельзя изменять доставку для нулевой мили
-        $shipmentNotEditableStatuses = [
-            ShipmentStatus::STATUS_ASSEMBLED,
-            ShipmentStatus::STATUS_CANCEL,
-        ];
-
         return $this->render('Orders/Flow/Delivery', [
             'iDelivery' => $delivery,
             'iShipments' => $shipments,
@@ -57,8 +51,6 @@ class FlowDeliveryController extends Controller
             'deliveryStatuses' => DeliveryStatus::allStatuses(),
             'deliveryServices' => DeliveryServiceDto::allServices(),
             'shipmentStatuses' => ShipmentStatus::allStatuses(),
-            'shipmentNotEditableStatuses' => $shipmentNotEditableStatuses,
-
         ]);
     }
 

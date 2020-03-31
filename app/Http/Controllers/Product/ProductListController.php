@@ -3,17 +3,10 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Pim\Dto\BrandDto;
-use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductApprovalStatus;
-use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
-use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
@@ -111,7 +104,7 @@ class ProductListController extends Controller
         $page = $request->get('page', 1);
         $query->page($page, 10);
         $query->fields([
-            ProductQuery::ID,
+            ProductQuery::PRODUCT_ID,
             ProductQuery::DATE_ADD,
             ProductQuery::CATALOG_IMAGE_ID,
             ProductQuery::NAME,
@@ -149,6 +142,7 @@ class ProductListController extends Controller
         $query->qtyTo = data_get($filter, 'qtyTo');
         $query->dateFrom = data_get($filter, 'dateFrom');
         $query->dateTo = data_get($filter, 'dateTo');
+        $query->orderBy(ProductQuery::DATE_ADD, 'desc');
         return $query;
     }
 }

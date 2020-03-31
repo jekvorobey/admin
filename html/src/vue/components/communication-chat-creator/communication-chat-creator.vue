@@ -111,6 +111,17 @@ export default {
     components: {VSelect2, CommunicationChatMessage},
     props: ['kind','customer', 'roles'],
     data() {
+        let showChatForm;
+        let showUserRoleAndIdInput;
+        switch (this.kind) {
+            case 'selectedUser':
+                showChatForm = false;
+                showUserRoleAndIdInput = false;
+                break;
+            default:
+                showChatForm = true;
+                showUserRoleAndIdInput = true;
+        }
         return {
             users: {},
             form: {
@@ -121,17 +132,13 @@ export default {
                 status_id: null,
                 type_id: null,
             },
-            showChatForm: true,
-            showUserRoleAndIdInput: true,
+            showChatForm: showChatForm,
+            showUserRoleAndIdInput: showUserRoleAndIdInput,
         }
     },
     methods: {
         showHideChatForm() {
             this.showChatForm = !this.showChatForm;
-        },
-        initComponentVar() {
-            this.form.user_ids = null;
-            this.showChatForm = true;
         },
         initComponent() {
             this.form.channel_id = null;
@@ -139,16 +146,26 @@ export default {
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
-            this.initComponentVar();
-        },
-        initUserThemeStatusTypeVar() {
-            this.form.user_ids = null;
+            switch (this.kind) {
+                case 'selectedUser':
+                    this.form.user_ids = [this.customer.user_id];
+                    this.showChatForm = false;
+                    break;
+                default:
+                    this.form.user_ids = null;
+                    this.showChatForm = true;
+            }
         },
         initUserThemeStatusType() {
             this.form.theme = '';
             this.form.status_id = null;
             this.form.type_id = null;
-            this.initUserThemeStatusTypeVar();
+            switch (this.kind) {
+                case 'selectedUser':
+                    break;
+                default:
+                    this.form.user_ids = null;
+            }
         },
         onCreateChat(message, files) {
             Services.showLoader();
@@ -170,9 +187,6 @@ export default {
                 this.initComponent();
             });
         },
-        availableChannelsVar() {
-            return this.communicationChannels;
-        },
         getUsersByRole() {
             if (this.form.role_ids.length > 0) {
                 Services.showLoader();
@@ -191,7 +205,14 @@ export default {
     computed: {
         ...mapGetters(['getRoute']),
         availableChannels() {
-            return this.availableChannelsVar();
+            switch (this.kind) {
+                case 'selectedUser':
+                    return Object.values(this.communicationChannels).filter(channel => {
+                        return Number(channel.id) !== this.communicationChannelTypes.internal_email || this.customer.email;
+                    });
+                default:
+                    return this.communicationChannels;
+            }
         },
         availableUsers() {
             return Object.values(this.users).filter(user => {
@@ -220,30 +241,7 @@ export default {
             })
         },
     },
-    watch: {
-
-    },
     created() {
-        switch (this.kind) {
-            case 'selectedUser':
-                this.showChatForm = false;
-                this.showUserRoleAndIdInput = false;
-                this.initComponentVar = () => {
-                    this.form.user_ids = [this.customer.user_id];
-                    this.showChatForm = false;
-                };
-                this.initUserThemeStatusTypeVar = () => {
-                    ;
-                },
-                this.availableChannelsVar = () => {
-                    return Object.values(this.communicationChannels).filter(channel => {
-                        return Number(channel.id) !== this.communicationChannelTypes.internal_email || this.customer.email;
-                    });
-                };
-                break;
-            default:
-                break;
-        }
         this.initComponent();
     }
 };

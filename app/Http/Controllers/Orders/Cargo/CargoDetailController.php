@@ -58,12 +58,37 @@ class CargoDetailController extends Controller
             $cargo = $page->loadCargo()['cargo'];
         } catch (\Exception $e) {
             $result = 'fail';
-            if ($request->get('status') == CargoStatus::STATUS_SHIPPED) {
+            if ($request->get('status') == CargoStatus::SHIPPED) {
                 $error = 'Груз не содержит заказов';
             }
             $systemError = $e->getMessage();
         }
     
+        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
+    }
+
+    /**
+     * Отменить груз
+     * @param  int  $id
+     * @param  CargoService  $cargoService
+     * @return JsonResponse
+     */
+    public function cancel(int $id, CargoService $cargoService): JsonResponse
+    {
+        $result = 'ok';
+        $cargo = [];
+        $error = '';
+        $systemError = '';
+        try {
+            $cargoService->cancelCargo($id);
+
+            $page = new CargoPage($id);
+            $cargo = $page->loadCargo()['cargo'];
+        } catch (\Exception $e) {
+            $result = 'fail';
+            $systemError = $e->getMessage();
+        }
+
         return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
     }
     

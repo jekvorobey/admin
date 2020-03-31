@@ -88,10 +88,9 @@ class CargoListController extends Controller
             ($withDefault ?
                 [
                     'status' => [
-                        CargoStatus::STATUS_CREATED,
-                        CargoStatus::STATUS_REQUEST_SEND,
-                        CargoStatus::STATUS_SHIPPING_PROBLEM,
+                        CargoStatus::CREATED,
                     ],
+                    'is_canceled' => 0,
                 ] : []),
             [
                 'id' => 'integer|someone',
@@ -101,6 +100,7 @@ class CargoListController extends Controller
                 'store_id' => 'array|someone',
                 'shipment_number' => 'integer|someone',
                 'created_at' => 'array|someone',
+                'is_canceled' => 'boolean|someone',
             ]
         )->attributes();
     }

@@ -24,6 +24,7 @@
                     </div>
 
                     <b-button type="submit" variant="dark">Искать</b-button>
+                    <b-button type="button" variant="outline-dark" v-if="!isReferral" v-b-modal="modalIdCreateUser">Создать</b-button>
                 </b-form>
             </div>
         </div>
@@ -53,6 +54,8 @@
                 :per-page="pager.perPage"
                 class="mt-3 float-right"
         />
+
+        <modal-create-user v-if="!isReferral" :id="modalIdCreateUser"/>
     </layout-main>
 </template>
 
@@ -61,12 +64,14 @@
 import VInput from '../../../components/controls/VInput/VInput.vue';
 import { telMask } from '../../../../scripts/mask.js';
 import Services from '../../../../scripts/services/services.js';
+import ModalCreateUser from './components/modal-create-user.vue';
 
 export default {
-    components: {VInput},
+    components: {ModalCreateUser, VInput},
     props: ['statuses', 'perPage', 'isReferral'],
     data() {
         return {
+            modalIdCreateUser: 'modalIdCreateUser',
             filter: {
                 status: null,
                 phone: '',

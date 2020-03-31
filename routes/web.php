@@ -14,13 +14,14 @@ Route::middleware('auth')->group(function () {
     Route::get('available-managers', 'Merchant\\MerchantDetailController@availableManagers')->name('managers.all');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
-        Route::prefix('registration')->group(function () {
-            Route::get('page', 'RegistrationRequestController@page')->name('merchant.registrationListPage');
-            Route::get('', 'RegistrationRequestController@index')->name('merchant.registrationList');
-            Route::prefix('{id}')->group(function () {
-                Route::get('', 'MerchantDetailController@index')->name('merchant.registrationDetail');
-                Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
-            });
+        Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
+        Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
+
+        Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+
+        Route::prefix('{id}')->group(function () {
+            Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
+            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
         });
     });
 
@@ -133,6 +134,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'CargoDetailController@index')->name('cargo.detail');
                 Route::put('changeStatus', 'CargoDetailController@changeStatus')->name('cargo.changeStatus');
+                Route::put('cancel', 'CargoDetailController@cancel')->name('cargo.cancel');
                 Route::get('/unshipped-shipments', 'CargoDetailController@getUnshippedShipments')->name('cargo.unshippedShipments');
 
                 Route::prefix('/shipments')->group(function () {
@@ -330,6 +332,8 @@ Route::middleware('auth')->group(function () {
         Route::get('referral-partners', 'CustomerListController@listReferralPartner')->name('referralPartner.list');
 
         Route::prefix('customers')->group(function () {
+            Route::post('', 'CustomerListController@create')->name('customers.create');
+
             Route::get('filter', 'CustomerListController@filter')->name('customers.filter');
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
