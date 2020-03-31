@@ -3,7 +3,11 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="4">Документы</th>
+            <th colspan="4">Документы
+                <button class="btn btn-success btn-sm" @click="createNewDocument">
+                    Добавить новый <fa-icon icon="plus"/>
+                </button>
+            </th>
             <th colspan="4">
                 Экспорт XLSX:
                 <a :href="getRoute('customers.detail.document.export', {id: this.model.id,},) + '?format=xlsx'" class="btn btn-success btn-sm" title="Экспорт XLSX">
@@ -36,7 +40,7 @@
             <td>{{ datetimePrint(document.date) }}</td>
             <td>{{ document.amount_reward }} руб.</td>
             <td>
-                <span class="badge" :class="statusClass(document.status)">{{ document.status}}</span></td>
+                <span class="badge" :class="statusClass(document.statusId)">{{ document.statusVerbal || 'N/A'}}</span></td>
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
             </td>
@@ -49,63 +53,8 @@
 
     <div v-if="!documents.length">-</div>
 
-    <div>
-        Добавление документа пользователю
-    </div>
-
-    <table class="table table-sm">
-        <thead>
-        <tr>
-            <!-- TODO: нужно переделать это представление, чтобы оно было в модалке-->
-            <th colspan="2">
-                Действия:
-                <button  class="btn btn-success" @click="createNewDocument">Добавить</button>
-                <button  class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th>Начало периода подсчета:</th>
-            <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_since"/></td>
-        </tr>
-        <tr>
-            <th>Конец периода подсчета:</th>
-            <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_to"/></td>
-        </tr>
-        <tr>
-            <th>Сумма вознаграждения</th>
-            <td>
-                <input type="number" class="form-control form-control-sm" v-model="newDocument.amount_reward"/>
-            </td>
-        </tr>
-        <tr>
-            <th>Статус</th>
-            <td>
-                <select class="form-control form-control-sm" v-model="newDocument.status">
-                    <option :value="1">Сформирован</option>
-                    <option :value="2">Согласован</option>
-                    <option :value="3">Отклонен</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Добавить файл</th>
-            <td>
-                <div>
-                    <file-input v-if="!newDocument.file" @uploaded="(data) => newDocument.file = data" class="mb-3"></file-input>
-                    <div v-else class="alert alert-success py-1 px-3" role="alert">
-                        Файл <a :href="newDocument.file.url" target="_blank" class="alert-link">{{ newDocument.file.name }}</a> загружен
-                        <v-delete-button @delete="newDocument.file = null" btn-class="btn-danger btn-sm"/>
-                        <button class="btn btn-success btn-sm" @click="createDocument(newDocument)"><fa-icon icon="plus"/></button>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
     <document-create-modal
+            @add="createDocument"
             modal-name="CreateDocumentModal"/>
 
 </div>
@@ -131,13 +80,6 @@
         data() {
             return {
                 documents: [],
-                newDocument: {
-                    period_since: '',
-                    period_to: '',
-                    amount_reward: '',
-                    status: '',
-                    file: null,
-                },
             }
         },
         computed: {
@@ -150,11 +92,11 @@
             createNewDocument(){
                 this.openModal('CreateDocumentModal');
             },
-            statusClass(status) {
-                switch (status) {
-                    case 'Сформирован': return 'badge-secondary';
-                    case 'Согласован': return 'badge-success';
-                    case 'Отклонен': return 'badge-danger';
+            statusClass(statusId) {
+                switch (statusId) {
+                    case 1: return 'badge-secondary';
+                    case 2: return 'badge-success';
+                    case 3: return 'badge-danger';
                     default: return 'badge-secondary';
                 }
             },
@@ -181,11 +123,12 @@
                         period_to: data.period_to,
                         date: data.date,
                         amount_reward: data.amount_reward,
-                        status: data.status,
-                        name: this.newDocument.file.name,
-                        url: this.newDocument.file.url,
+                        statusId: data.statusId,
+                        statusVerbal: data.statusVerbal,
+                        name: newDocument.file.name,
+                        url: newDocument.file.url,
                     });
-                    this.newDocument.file = null;
+                    this.closeModal();
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
