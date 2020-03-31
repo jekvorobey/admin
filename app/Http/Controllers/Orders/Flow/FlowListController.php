@@ -202,6 +202,8 @@ class FlowListController extends Controller
             $restQuery->setFilter('deliveryCount', $filter['deliveryCount']);
         }
 
+        $restQuery->addSort('id', 'desc');
+
         return $restQuery;
     }
 }
