@@ -58,7 +58,7 @@ class CargoDetailController extends Controller
             $cargo = $page->loadCargo()['cargo'];
         } catch (\Exception $e) {
             $result = 'fail';
-            if ($request->get('status') == CargoStatus::STATUS_SHIPPED) {
+            if ($request->get('status') == CargoStatus::SHIPPED) {
                 $error = 'Груз не содержит заказов';
             }
             $systemError = $e->getMessage();

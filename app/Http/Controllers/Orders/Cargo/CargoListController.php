@@ -88,9 +88,7 @@ class CargoListController extends Controller
             ($withDefault ?
                 [
                     'status' => [
-                        CargoStatus::STATUS_CREATED,
-                        CargoStatus::STATUS_REQUEST_SEND,
-                        CargoStatus::STATUS_SHIPPING_PROBLEM,
+                        CargoStatus::CREATED,
                     ],
                 ] : []),
             [
