@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
         });
+
+        Route::post('', 'MerchantDetailController@createMerchant')->name('merchant.create');
     });
 
     Route::prefix('marketing')->namespace('Marketing')->group(function () {

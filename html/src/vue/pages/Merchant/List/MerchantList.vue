@@ -1,6 +1,9 @@
 <template>
     <layout-main>
         <div class="mt-3 mb-3 shadow p-3">
+            <button @click="openModal('merchantCreate')" class="btn btn-dark">Создать мерчанта</button>
+        </div>
+        <div class="mt-3 mb-3 shadow p-3">
             <div class="row">
                 <f-input v-model="filter.name" class="col-lg-6 col-md-12">Компания</f-input>
                 <f-multi-select
@@ -52,6 +55,8 @@
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
+
+        <merchant-create-modal></merchant-create-modal>
     </layout-main>
 </template>
 
@@ -63,6 +68,10 @@
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
 
+    import MerchantCreateModal from "./components/merchant-create-modal.vue";
+
+    import modalMixin from "../../../mixins/modal.js";
+
     const cleanFilter = {
         name: '',
         status: []
@@ -70,9 +79,12 @@
 
     export default {
         name: 'page-index',
+        mixins: [modalMixin],
         components: {
             FMultiSelect,
             FInput,
+
+            MerchantCreateModal,
         },
         props: {
             done: {},

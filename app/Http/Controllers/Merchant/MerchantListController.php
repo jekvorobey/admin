@@ -2,7 +2,19 @@
 
 namespace App\Http\Controllers\Merchant;
 
-use App\Http\Controllers\Controller;use Greensight\CommonMsa\Rest\RestQuery;use Greensight\CommonMsa\Services\AuthService\UserService;use Illuminate\Support\Collection;use MerchantManagement\Dto\MerchantDto;use MerchantManagement\Dto\MerchantStatus;use MerchantManagement\Dto\OperatorDto;use MerchantManagement\Services\MerchantService\MerchantService;use MerchantManagement\Services\OperatorService\OperatorService;
+use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use MerchantManagement\Core\MerchantException;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Dto\MerchantStatus;
+use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
+use MerchantManagement\Services\OperatorService\OperatorService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MerchantListController extends Controller
 {
@@ -111,5 +123,46 @@ class MerchantListController extends Controller
         $query->addSort('id', 'desc');
 
         return $query;
+    }
+
+    /**
+     * Создать нового мерчанта
+     * @param Request $request
+     * @param MerchantService $merchantService
+     * @return \Illuminate\Http\JsonResponse
+     * @throws MerchantException
+     */
+    public function createMerchant(
+        Request $request,
+        MerchantService $merchantService
+    )
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'company' => 'required|string',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'middle_name' => 'required|string',
+            'login' => 'required|email',
+            'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            throw new BadRequestHttpException($validator->errors()->first());
+        }
+
+        $merchantService->registerNewMerchant(
+            $data['company'],
+            $data['first_name'],
+            $data['last_name'],
+            $data['middle_name'],
+            $data['login'],
+            $data['login'],
+            phone_format($data['phone']),
+            $data['password']
+        );
+
+        return response()->json([]);
     }
 }
