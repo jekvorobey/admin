@@ -45,7 +45,9 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('promo-code')->group(function () {
             Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
+            Route::post('/', 'PromoCodeController@create')->name('promo-code.save');
             Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
+            Route::get('/generate', 'PromoCodeController@generate')->name('promo-code.generate');
         });
     });
 

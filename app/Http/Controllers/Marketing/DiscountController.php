@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Core\DiscountHelper;
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
@@ -43,7 +44,7 @@ class DiscountController extends Controller
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => $pager['page'],
-            'roles' => DiscountHelper::getOptionRoles(),
+            'roles' => Helpers::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
             'discountTypes' => DiscountTypeDto::allTypes(),

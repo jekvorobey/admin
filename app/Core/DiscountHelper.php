@@ -330,10 +330,10 @@ class DiscountHelper
     {
         $merchantService = resolve(MerchantService::class);
         $merchants = $merchantService->newQuery()
-            ->addFields(MerchantDto::entity(), 'id', 'display_name')
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
             ->merchants();
 
-        return collect($merchants)->pluck('display_name', 'id');
+        return collect($merchants)->pluck('legal_name', 'id');
     }
 
     /**
@@ -346,18 +346,6 @@ class DiscountHelper
         $users = $userService->users($query);
 
         return collect($users)->pluck('login', 'id');
-    }
-
-    /**
-     * @param bool $showDefault
-     * @return array
-     */
-    public static function getOptionRoles($showDefault = true)
-    {
-        $roles = $showDefault ? [['value' => null, 'text' => 'Все']] : [];
-        $roles[] = ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'];
-        $roles[] = ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'];
-        return $roles;
     }
 
     /**
@@ -385,7 +373,7 @@ class DiscountHelper
         $data['conditionTypes'] = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
         $data['deliveryMethods'] = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
         $data['paymentMethods'] = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
-        $data['roles'] = DiscountHelper::getOptionRoles(false);
+        $data['roles'] = Helpers::getOptionRoles(false);
         $data['discountStatuses'] = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
 
         $query = $listsService->newQuery()->include('regions');

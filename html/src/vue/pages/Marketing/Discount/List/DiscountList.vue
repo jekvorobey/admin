@@ -132,7 +132,7 @@
             </thead>
             <tbody>
             <tr v-if="discounts && Object.keys(discounts).length < 1">
-                <td colspan="8" class="text-center">Скидки не найдены!</td>
+                <td colspan="9" class="text-center">Скидки не найдены!</td>
             </tr>
             <tr v-if="discounts" v-for="(discount, index) in discounts">
                 <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
@@ -291,7 +291,7 @@
                 DISCOUNT_VALUE_TYPE_PERCENT: 1,
                 DISCOUNT_VALUE_TYPE_RUB: 2,
             };
-    },
+        },
         methods: {
             deleteDiscount() {
                 this.openModal('DeleteDiscount');
