@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Core\Menu;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\Message\Dto\Communication\CommunicationChannelDto;
-use Greensight\Customer\Dto\CustomerDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -31,6 +32,7 @@ class Controller extends BaseController
     protected $loadCommunicationThemes = false;
     protected $loadCommunicationStatuses = false;
     protected $loadCommunicationTypes = false;
+    protected $loadMerchantStatuses = false;
 
     public function render($componentName, $props = [])
     {
@@ -114,6 +116,20 @@ class Controller extends BaseController
             $communicationTypes = $communicationTypeService->types()->keyBy('id');
         }
 
+        $merchantStatuses = [];
+        if ($this->loadMerchantStatuses) {
+            $merchantStatuses = [
+                'created' => MerchantStatus::STATUS_CREATED,
+                'review' => MerchantStatus::STATUS_REVIEW,
+                'cancel' => MerchantStatus::STATUS_CANCEL,
+                'terms' => MerchantStatus::STATUS_TERMS,
+                'activation' => MerchantStatus::STATUS_ACTIVATION,
+                'work' => MerchantStatus::STATUS_WORK,
+                'stop' => MerchantStatus::STATUS_STOP,
+                'close' => MerchantStatus::STATUS_CLOSE,
+            ];
+        }
+
         return View::component(
             $componentName,
             $props,
@@ -135,6 +151,8 @@ class Controller extends BaseController
                 'communicationThemes' => $communicationThemes,
                 'communicationStatuses' => $communicationStatuses,
                 'communicationTypes' => $communicationTypes,
+
+                'merchantStatuses' => $merchantStatuses,
             ],
             [
                 'title' => $this->title,
