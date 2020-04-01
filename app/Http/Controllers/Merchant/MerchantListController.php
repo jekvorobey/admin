@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Merchant;
 
+
 use App\Http\Controllers\Controller;use Greensight\CommonMsa\Rest\RestQuery;use Greensight\CommonMsa\Services\AuthService\UserService;use Illuminate\Support\Collection;use MerchantManagement\Dto\MerchantDto;use MerchantManagement\Dto\MerchantStatus;use MerchantManagement\Dto\OperatorDto;use MerchantManagement\Services\MerchantService\MerchantService;use MerchantManagement\Services\OperatorService\OperatorService;
 
 class MerchantListController extends Controller
@@ -22,6 +23,7 @@ class MerchantListController extends Controller
 
     protected function list($done)
     {
+        $this->loadMerchantStatuses = true;
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
 
@@ -34,7 +36,8 @@ class MerchantListController extends Controller
             'iCurrentPage' => request()->get('page', 1),
             'iFilter' => request()->get('filter', []),
             'options' => [
-                'statuses' => MerchantStatus::allStatuses(),
+                'statuses' => MerchantStatus::statusesByMode(!$done),
+                'ratings' => $merchantService->ratings(),
             ],
         ]);
     }
@@ -95,7 +98,8 @@ class MerchantListController extends Controller
     {
         $query = new RestQuery();
         $page = request()->get('page', 1);
-        $query->setFilter('status', $done ? '=' : '!=', MerchantStatus::STATUS_DONE);
+        $query->setFilter('status', array_keys(MerchantStatus::statusesByMode(!$done)));
+        $query->include('rating');
         $query->pageNumber($page, 10);
 
         $filter = request()->get('filter');
@@ -103,9 +107,12 @@ class MerchantListController extends Controller
         if (isset($filter['status'])) {
             $query->setFilter('status', $filter['status']);
         }
+        if (isset($filter['rating'])) {
+            $query->setFilter('rating_id', $filter['rating']);
+        }
 
         if (isset($filter['name'])) {
-            $query->setFilter('display_name', 'like', "%{$filter['name']}%");
+            $query->setFilter('legal_name', 'like', "%{$filter['name']}%");
         }
 
         $query->addSort('id', 'desc');
