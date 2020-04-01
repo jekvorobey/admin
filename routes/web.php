@@ -185,6 +185,10 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
+    
+    Route::prefix('brands')->namespace('Product')->group(function () {
+        Route::get('', 'BrandController@list')->name('band.list');
+    });
 
     Route::prefix('content')->namespace('Content')->group(function () {
         Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
