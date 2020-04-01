@@ -377,7 +377,6 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        //TODO: нужно сделать отдельный префикс 'export', чтобы у него были роуты xlsx, cvs и т.д.
                         Route::get('export', 'TabDocumentController@export')->name('customers.detail.document.export');
                         Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');

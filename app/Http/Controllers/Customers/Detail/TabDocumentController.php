@@ -8,7 +8,6 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerDocumentDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Illuminate\Validation\Rule;
@@ -46,7 +45,8 @@ class TabDocumentController extends Controller
                     'period_to' => $document->period_to,
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
-                    'status' => $document->statusName($document->status),
+                    'statusId' => $document->status,
+                    'statusVerbal' => $document->statusName($document->status),
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
@@ -78,7 +78,6 @@ class TabDocumentController extends Controller
             'Файл',
         ], null));
 
-        //TODO: сделать корректный отбор файлов
         $documents = $customerService->documents($customerId);
         $files = [];
         if ($documents) {
@@ -110,6 +109,14 @@ class TabDocumentController extends Controller
      */
     public function createDocument(int $customerId, CustomerService $customerService)
     {
+        $this->validate(request(), [
+            'file' => 'required|max:4000',
+            'period_since' => 'required|date',
+            'period_to' => 'required|date',
+            'amount_reward' => 'required|numeric',
+            'status' => 'required|numeric',
+        ]);
+
         $documentFile = request('file');
         $documentDto = new CustomerDocumentDto();
         $documentDto->file_id = $documentFile['id'];
@@ -127,7 +134,8 @@ class TabDocumentController extends Controller
             'period_to' => $createdDocument->period_to,
             'date' => $createdDocument->updated_at,
             'amount_reward' => $createdDocument->amount_reward,
-            'status' => $documentDto->statusName($createdDocument->status),
+            'statusId' => $createdDocument->status,
+            'statusVerbal' => $documentDto->statusName($createdDocument->status),
         ]);
     }
 
