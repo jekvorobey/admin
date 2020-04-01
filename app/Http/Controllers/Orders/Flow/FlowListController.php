@@ -3,14 +3,14 @@ namespace App\Http\Controllers\Orders\Flow;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Oms\Dto\DeliveryCity;
-use Greensight\Oms\Dto\DeliveryMethod;
-use Greensight\Oms\Dto\DeliveryStore;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\PaymentMethod;
@@ -59,8 +59,6 @@ class FlowListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iPager' => $pager,
             'orderStatuses' => OrderStatus::allStatuses(),
-            'deliveryStores' => DeliveryStore::allStores(), //todo
-            'deliveryCities' => DeliveryCity::allCities(), //todo
             'deliveryMethods' => DeliveryMethod::allMethods(),
             'paymentMethods' => PaymentMethod::allMethods(),
             'brands' => $brandService->newQuery()->addFields('brand', 'id', 'name')->brands(),
@@ -145,8 +143,9 @@ class FlowListController extends Controller
             $data['deliveries'] = $deliveries->where('order_id', $order->id)->values()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['updated_at'] = (new Carbon($order->updated_at))->format('h:i:s Y-m-d');
-            $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
-            $data['delivery_city'] = DeliveryCity::allCities()[array_rand(DeliveryCity::allCities())]->toArray(); //todo
+            $data['deliveryDate'] = $deliveries->where('order_id', $order->id)->map(function (DeliveryDto $delivery) {
+                return Carbon::createFromFormat(AbstractDto::DATE_TIME_FORMAT, $delivery->delivery_at)->format(AbstractDto::DATE_FORMAT);
+            })->unique()->join(', ');
 
             return $data;
         });
@@ -191,11 +190,6 @@ class FlowListController extends Controller
 
         if(isset($filter['customer'])) {
             $restQuery->setFilter('customer', $filter['customer']);
-        }
-
-        if (isset($filter['deliveryTime'])) {
-            $restQuery->setFilter('deliveryTime', '>=', $filter['deliveryTime'][0]);
-            $restQuery->setFilter('deliveryTime', '<=', $filter['deliveryTime'][1]);
         }
 
         if (isset($filter['deliveryCount'])) {
