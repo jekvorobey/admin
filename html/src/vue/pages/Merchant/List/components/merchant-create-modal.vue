@@ -125,12 +125,9 @@
                 if (this.$v.$invalid) {
                     return;
                 }
-                Services.net().post(this.getRoute('merchant.edit', {id: this.source.id}), {}, {
-                    display_name: this.form.display_name,
-                    status: this.form.status,
-                })
-                    .then((data)=> {
-                        this.$emit('edited', data.merchant);
+                Services.net().post(this.getRoute('merchant.create'), {}, this.form)
+                    .then(data => {
+                        this.$emit('created');
                         this.closeModal();
                     });
             }

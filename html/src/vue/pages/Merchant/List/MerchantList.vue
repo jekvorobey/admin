@@ -56,7 +56,7 @@
             ></b-pagination>
         </div>
 
-        <merchant-create-modal></merchant-create-modal>
+        <merchant-create-modal @created="applyFilter"></merchant-create-modal>
     </layout-main>
 </template>
 

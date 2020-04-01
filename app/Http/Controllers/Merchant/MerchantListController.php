@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Support\Collection;
@@ -143,7 +144,7 @@ class MerchantListController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'middle_name' => 'required|string',
-            'login' => 'required|email',
+            'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
             'password' => 'required|string|min:8',
         ]);
@@ -157,12 +158,26 @@ class MerchantListController extends Controller
             $data['first_name'],
             $data['last_name'],
             $data['middle_name'],
-            $data['login'],
-            $data['login'],
+            $data['email'],
+            $data['email'],
             phone_format($data['phone']),
             $data['password']
         );
 
         return response()->json([]);
+    }
+
+    public function checkEmailExists(Request $request, UserService $userService)
+    {
+        $email = $request->get('email', false);
+        if (!$email) {
+            throw new BadRequestHttpException('email is empty');
+        }
+
+        $exists = $userService->exists($email, Front::FRONT_MAS);
+
+        return response()->json([
+            'exists' => $exists
+        ]);
     }
 }
