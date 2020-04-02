@@ -880,12 +880,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "820db8439687fcd0723b256ebd11aefed0ca15e8"
+                "reference": "e910d94a18a4e20370aab8a73558c61c65b3efd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=820db8439687fcd0723b256ebd11aefed0ca15e8",
-                "reference": "820db8439687fcd0723b256ebd11aefed0ca15e8",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=e910d94a18a4e20370aab8a73558c61c65b3efd1",
+                "reference": "e910d94a18a4e20370aab8a73558c61c65b3efd1",
                 "shasum": ""
             },
             "require": {
@@ -909,7 +909,10 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-04-01T09:39:30+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
+            },
+            "time": "2020-04-02T16:58:49+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1528,6 +1531,12 @@
                 "s3",
                 "sftp",
                 "storage"
+            ],
+            "funding": [
+                {
+                    "url": "https://offset.earth/frankdejonge",
+                    "type": "other"
+                }
             ],
             "time": "2020-03-17T18:58:12+00:00"
         },

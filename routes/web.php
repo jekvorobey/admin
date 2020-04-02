@@ -189,7 +189,9 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {
-        Route::get('', 'BrandController@list')->name('band.list');
+        Route::get('', 'BrandController@list')->name('brand.list');
+        Route::get('page', 'BrandController@page')->name('brand.listPage');
+        Route::post('save', 'BrandController@save')->name('brand.save');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
