@@ -311,8 +311,6 @@
                 massStatus: null,
 
                 massProductsType: 'products',
-
-                bufferIds: [],
             };
         },
         validations: {
@@ -437,7 +435,7 @@
                 });
             },
             copyIdsToClipBoard() {
-                let text = this.bufferIds.join(',');
+                let text = this.massAll(this.massProductsType).join(',');
                 clipboard.writeText(text).then();
             },
         },
