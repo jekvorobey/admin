@@ -15,6 +15,8 @@ use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Carbon;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 
 /**
  * Class PromoCodeController
@@ -56,10 +58,15 @@ class PromoCodeController extends Controller
      *
      * @param PromoCodeService $promoCodeService
      *
+     * @param MerchantService  $merchantService
+     *
      * @return mixed
      */
-    public function createPage(Request $request, DiscountService $discountService, PromoCodeService $promoCodeService)
-    {
+    public function createPage(Request $request,
+        DiscountService $discountService,
+        PromoCodeService $promoCodeService,
+        MerchantService $merchantService
+    ) {
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
@@ -75,17 +82,26 @@ class PromoCodeController extends Controller
         $discounts = $discountService->discounts($params)
             ->sortByDesc('created_at')
             ->map(function (DiscountDto $item) {
-                return ['value' => $item['id'], 'text' => "{$item['name']} ({$item->validityPeriod()})"];
+                return [
+                    'merchant_id' => $item->merchant_id,
+                    'value' => $item->id,
+                    'text' => "{$item->name} ({$item->validityPeriod()})"
+                ];
             })
             ->values();
+
+        $merchants = $merchantService->merchants()->map(function (MerchantDto $merchant) {
+            return ['id' => $merchant->id, 'name' => $merchant->legal_name];
+        });
 
         return $this->render('Marketing/PromoCode/Create', [
             'iPromoCodes' => $promoCodes,
             'promoCodeTypes' => Helpers::getSelectOptions($promoCodeTypes),
             'promoCodeStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
-            'discounts' => $discounts,
+            'iDiscounts' => $discounts,
             'gifts' => [],
             'bonuses' => [],
+            'merchants' => Helpers::getSelectOptions($merchants),
             'iRoles' => Helpers::getOptionRoles(false),
             'iSegments' => [['text' => 'A', 'value' => 1], ['text' => 'B', 'value' => 2]], // todo
         ]);
@@ -101,6 +117,7 @@ class PromoCodeController extends Controller
     {
         $data = $request->validate([
             'owner_id' => 'numeric|nullable',
+            'merchant_id' => 'numeric|nullable',
             'name' => 'string|required',
             'code' => 'string|required',
             'counter' => 'numeric|nullable',
