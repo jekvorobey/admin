@@ -4,7 +4,7 @@
             <v-input v-model="promoCode.name" class="col-12">Название</v-input>
         </div>
         <div class="form-row">
-            <v-input v-model="promoCode.code" class="col-3" maxlength="32">Код</v-input>
+            <v-input v-model="promoCode.code" class="col-3" maxlength="32" autocomplete="off">Код</v-input>
             <div class="col-auto">
                 <label>Сгенерировать случайный промокод</label>
                 <button type="button" class="btn btn-info btn-block" @click="generate()">Сгенерировать</button>
@@ -42,6 +42,17 @@
         </div>
 
         <div class="row">
+            <div class="col-12 mt-3">
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="merchantBtn" key="merchantBtn" v-model="merchantBtn">
+                    <label class="custom-control-label" for="merchantBtn">Спонсор</label>
+                </div>
+            </div>
+
+            <v-select v-model="promoCode.merchant_id" :options="merchants" class="col-3 mt-1" v-if="merchantBtn">Выберите мерчанта</v-select>
+        </div>
+
+        <div class="row mt-3">
             <div class="col-12">
                 <b>Ограничения на применение промокода</b>
             </div>
@@ -142,7 +153,8 @@
         props: {
             promoCodeTypes: Object,
             promoCodeStatuses: Object,
-            discounts: Object|Array,
+            merchants: Array,
+            iDiscounts: Object|Array,
             gifts: Object|Array,
             bonuses: Object|Array,
             iSegments: Array,
@@ -154,8 +166,10 @@
         },
         data() {
             return {
+                discounts: [],
                 promoCode: {
                     owner_id: null,
+                    merchant_id: null,
                     name: null,
                     code: null,
                     counter: null,
@@ -168,6 +182,7 @@
                     bonus_id: null,
                     conditions: null,
                 },
+                merchantBtn: false,
                 limitedBtn: false,
                 ownerBtn: false,
                 customersBtn: false,
@@ -201,6 +216,9 @@
                 if (this.synergyBtn) {
                     this.promoCode.conditions.synergy = this.promoCodes;
                 }
+                this.promoCode.owner_id = this.ownerBtn ? this.promoCode.owner_id : null;
+                this.promoCode.counter = this.limitedBtn ? this.promoCode.counter : null;
+                this.promoCode.merchant_id = this.merchantBtn ? this.promoCode.merchant_id : null;
                 this.action(this.promoCode);
             },
             generate() {
@@ -308,6 +326,19 @@
                     }
                 },
             },
+            'promoCode.merchant_id': {
+                handler(val, oldVal) {
+                    this.promoCode.discount_id = null;
+                    this.discounts = this.promoCode.merchant_id
+                        ? Object.values(this.iDiscounts).filter(
+                            discount => discount.merchant_id === this.promoCode.merchant_id
+                        )
+                        : [...this.iDiscounts];
+                }
+            }
+        },
+        mounted() {
+            this.discounts = [...this.iDiscounts];
         }
     }
 </script>

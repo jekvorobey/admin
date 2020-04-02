@@ -1,9 +1,10 @@
 <template>
     <layout-main>
         <promo-code-form
-            :discounts="discounts"
+            :iDiscounts="iDiscounts"
             :gifts="gifts"
             :bonuses="bonuses"
+            :merchants="merchants"
             :i-segments="iSegments"
             :i-roles="iRoles"
             :i-promo-codes="iPromoCodes"
@@ -29,12 +30,13 @@
         props: {
             promoCodeTypes: Object,
             promoCodeStatuses: Object,
-            discounts: Object|Array,
+            iDiscounts: Object|Array,
             gifts: Object|Array,
             bonuses: Object|Array,
             iSegments: Array,
             iRoles: Array,
             iPromoCodes: Array,
+            merchants: Array,
         },
         data() {
             return {
