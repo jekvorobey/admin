@@ -5,11 +5,12 @@
             :gifts="gifts"
             :bonuses="bonuses"
             :merchants="merchants"
+            :i-types-for-merchant="iTypesForMerchant"
             :i-segments="iSegments"
             :i-roles="iRoles"
             :i-promo-codes="iPromoCodes"
-            :promo-code-types="promoCodeTypes"
-            :promo-code-statuses="promoCodeStatuses"
+            :i-types="iTypes"
+            :i-statuses="iStatuses"
             :submit-text="'Создать промокод'"
             :action="action"
             :processing="processing"
@@ -28,8 +29,8 @@
             Services
         },
         props: {
-            promoCodeTypes: Object,
-            promoCodeStatuses: Object,
+            iTypes: Object,
+            iStatuses: Object,
             iDiscounts: Object|Array,
             gifts: Object|Array,
             bonuses: Object|Array,
@@ -37,6 +38,7 @@
             iRoles: Array,
             iPromoCodes: Array,
             merchants: Array,
+            iTypesForMerchant: Array,
         },
         data() {
             return {
