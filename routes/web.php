@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
         Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
         Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');

@@ -110,7 +110,7 @@
         },
         merchantName(id) {
             let merchant = this.merchants[id];
-            return merchant ? merchant.display_name : 'N/A';
+            return merchant ? merchant.legal_name : 'N/A';
         },
         canEditShipmentDelivery(shipment) {
             return shipment.status < 6 && !shipment.is_canceled;

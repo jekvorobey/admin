@@ -98,10 +98,14 @@
             <th>Фото</th>
             <td>
                 <template v-if="!form.avatar">
-                    <file-input v-if="!form.avatar" @uploaded="(data) => form.avatar = data.id" size="sm"/>
+                    <file-input v-if="!form.avatar"
+                                @uploaded="(data) => form.avatar = data.id"
+                                size="sm"
+                                destination='avatar'
+                    />
                 </template>
                 <template v-else>
-                    <a :href="media.file(form.avatar)">Посмотреть</a>
+                    <a :href="media.file(form.avatar)" target="_blank">Посмотреть</a>
                     <v-delete-button @delete="form.avatar = null" btn-class="btn-danger btn-sm"/>
                 </template>
             </td>

@@ -44,7 +44,7 @@
             </tr>
             <tr v-if="stores" v-for="(store, index) in stores">
                 <td>{{ store.id }}</td>
-                <td>{{ store.merchant ? store.merchant.display_name : '' }}</td>
+                <td>{{ store.merchant ? store.merchant.legal_name : '' }}</td>
                 <td>
                     <a :href="getRoute('merchantStore.edit', {id: store.id})">{{ store.name }}</a>
                 </td>
@@ -158,7 +158,7 @@ export default {
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
     },
     created() {

@@ -90,7 +90,6 @@ class MerchantDetailController extends Controller
         $availableStatuses = array_keys(MerchantStatus::allStatuses());
         $data = $request->all();
         $fields = [
-            'display_name' => 'nullable',
             'legal_name' => 'nullable',
             'legal_address' => 'nullable',
             'inn' => 'nullable|numeric',

@@ -17,7 +17,7 @@
                     <p class="text-secondary mt-3">
                         Мерчант:
                         <span class="float-right">
-                            {{ claim.merchant.display_name ? claim.merchant.display_name : 'N/A' }}
+                            {{ claim.merchant.legal_name ? claim.merchant.legal_name : 'N/A' }}
                         </span>
                     </p>
                     <p class="text-secondary mt-3">

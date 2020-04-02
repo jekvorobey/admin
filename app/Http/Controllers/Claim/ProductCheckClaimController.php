@@ -58,7 +58,7 @@ class ProductCheckClaimController extends Controller
             'routePrefix' => 'productCheckClaims',
             'iClaims' => $claims,
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
             'iPager' => $pager,
             'iCurrentPage' => (int) $request->get('page', 1),
             'iFilter' => $this->getFilter(),
