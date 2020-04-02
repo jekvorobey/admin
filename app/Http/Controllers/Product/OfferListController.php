@@ -97,7 +97,7 @@ class OfferListController extends Controller
         $items = $offers->map(function (OfferDto $offer) use ($merchants, $products) {
             return [
                 'id' => $offer->id,
-                'merchantName' => isset($merchants[$offer->merchant_id]) ? $merchants[$offer->merchant_id]->display_name : 'N/A',
+                'merchantName' => isset($merchants[$offer->merchant_id]) ? $merchants[$offer->merchant_id]->legal_name : 'N/A',
                 'productName' => isset($products[$offer->product_id]) ? $products[$offer->product_id]->name : 'N/A',
                 'sale_status' => $offer->sale_status
             ];

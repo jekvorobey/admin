@@ -1,6 +1,7 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
+            <button class="btn btn-success" @click="createBrand">Создать бренд</button>
             <div class="action-bar d-flex justify-content-start">
                 <span class="mr-4">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
             </div>
@@ -12,6 +13,7 @@
                     <th>ID</th>
                     <th>Логотип</th>
                     <th>Название</th>
+                    <th>Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +26,12 @@
                     <td>{{brand.id}}</td>
                     <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
                     <td>{{brand.name}}</td>
+                    <td>
+                        <button class="btn btn-light float-right" @click="editBrand(brand)">
+                            <fa-icon icon="edit"></fa-icon>
+                            <v-delete-button @delete="deleteBrand(brand.id)"/>
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -37,6 +45,26 @@
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('BrandFormModal')">
+                <div slot="header">
+                    Бренд
+                </div>
+                <div slot="body">
+                    <div class="form-group">
+                        <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
+                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
+                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
+                        <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
+                        <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
+                    </div>
+                    <div class="form-group">
+                        <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+                        <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+                    </div>
+                </div>
+            </modal>
+        </transition>
     </layout-main>
 </template>
 
@@ -47,6 +75,7 @@
 
     import {
         ACT_LOAD_PAGE,
+        ACT_SAVE_BRAND,
         GET_LIST,
         GET_NUM_PAGES,
         GET_PAGE_NUMBER,
@@ -56,15 +85,30 @@
         SET_PAGE,
     } from '../../../store/modules/brands';
 
+    import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
+    import {validationMixin} from 'vuelidate';
+    import {required, helpers} from 'vuelidate/lib/validators';
+
+    import Modal from '../../../components/controls/modal/modal.vue';
+    import VInput from '../../../components/controls/VInput/VInput.vue';
+    import FileInput from '../../../components/controls/FileInput/FileInput.vue';
+    import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton';
 
     export default {
         mixins: [
+            modalMixin,
             mediaMixin,
             massSelectionMixin,
+            validationMixin,
         ],
-        components: {},
+        components: {
+            Modal,
+            VInput,
+            FileInput,
+            VDeleteButton
+        },
         props: {
             iBrands: {},
             iTotal: {},
@@ -78,12 +122,30 @@
             });
 
             return {
+                editBrandId: null,
+                form: {
+                    name: null,
+                    code: null,
+                    description: null,
+                    file_id: null,
+                },
                 massSelectionType: 'brands',
             };
+        },
+        validations: {
+            form: {
+                name: {required},
+                code: {
+                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
+                },
+                description: {required},
+                file_id: {required}
+            }
         },
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
+                ACT_SAVE_BRAND
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -92,6 +154,50 @@
 
                 return this[ACT_LOAD_PAGE]({page});
             },
+
+            createBrand() {
+                this.$v.form.$reset();
+                this.editBrandId = null;
+                this.form.name = null;
+                this.form.code = null;
+                this.form.description = null;
+                this.form.file_id = null;
+                this.openModal('BrandFormModal');
+            },
+
+            editBrand(brand) {
+                this.$v.form.$reset();
+                this.editBrandId = brand.id;
+                this.form.name = brand.name;
+                this.form.code = brand.code;
+                this.form.description = brand.description;
+                this.form.file_id = brand.file_id;
+                this.openModal('BrandFormModal');
+            },
+            onSave() {
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
+                this[ACT_SAVE_BRAND]({
+                    id: this.editBrandId,
+                    brand: this.form
+                }).then(() => {
+                    return this[ACT_LOAD_PAGE]({page: this.page});
+                }).finally(() => {
+                    this.closeModal();
+                });
+            },
+            onCancel() {
+                this.closeModal();
+            },
+            deleteBrand(id) {
+
+            },
+            onFileUpload(file) {
+                console.log(file);
+                this.$v.form.file_id.$model = file.id;
+            }
         },
         created() {
             window.onpopstate = () => {
@@ -100,7 +206,6 @@
                     this.page = query.page;
                 }
             };
-            this.opened = this.isHiddenFilterDefaultOpen();
         },
         computed: {
             ...mapGetters(NAMESPACE, {
@@ -116,6 +221,27 @@
                 },
                 set: function (page) {
                     this.loadPage(page);
+                }
+            },
+
+            errorName() {
+                if (this.$v.form.name.$dirty) {
+                    if (!this.$v.form.name.required) return "Обязательное поле!";
+                }
+            },
+            errorDescription() {
+                if (this.$v.form.description.$dirty) {
+                    if (!this.$v.form.description.required) return "Обязательное поле!";
+                }
+            },
+            errorFile() {
+                if (this.$v.form.file_id.$dirty) {
+                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
+                }
+            },
+            errorCode() {
+                if (this.$v.form.code.$dirty) {
+                    if (!this.$v.form.code.pattern) return "Только латиница, цифры и подчёркивание!";
                 }
             },
         }
@@ -135,8 +261,5 @@
     .preview {
         height: 50px;
         border-radius: 5px;
-    }
-    .additional-filter {
-        border-top: 1px solid #DFDFDF;
     }
 </style>

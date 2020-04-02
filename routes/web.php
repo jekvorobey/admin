@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
         Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
         Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
@@ -189,7 +190,9 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {
-        Route::get('', 'BrandController@list')->name('band.list');
+        Route::get('', 'BrandController@list')->name('brand.list');
+        Route::get('page', 'BrandController@page')->name('brand.listPage');
+        Route::post('save', 'BrandController@save')->name('brand.save');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {

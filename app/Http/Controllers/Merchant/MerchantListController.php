@@ -3,7 +3,17 @@
 namespace App\Http\Controllers\Merchant;
 
 
-use App\Http\Controllers\Controller;use Greensight\CommonMsa\Rest\RestQuery;use Greensight\CommonMsa\Services\AuthService\UserService;use Illuminate\Support\Collection;use MerchantManagement\Dto\MerchantDto;use MerchantManagement\Dto\MerchantStatus;use MerchantManagement\Dto\OperatorDto;use MerchantManagement\Services\MerchantService\MerchantService;use MerchantManagement\Services\OperatorService\OperatorService;
+use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Dto\MerchantStatus;
+use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
+use MerchantManagement\Services\OperatorService\OperatorService;
 
 class MerchantListController extends Controller
 {
@@ -26,15 +36,22 @@ class MerchantListController extends Controller
         $this->loadMerchantStatuses = true;
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
+        /** @var UserService $userService */
+        $userService = resolve(UserService::class);
+
+        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
         $query = $this->makeQuery($done);
 
         return $this->render('Merchant/List', [
             'done' => $done,
             'iMerchants' => $this->loadItems($query),
-            'iPager' => $merchantService->merchantsCount($query),
+            'iPager' => is_null($query) ? 0 : $merchantService->merchantsCount($query),
             'iCurrentPage' => request()->get('page', 1),
             'iFilter' => request()->get('filter', []),
+            'managers' => $managers->mapWithKeys(function (UserDto $user) {
+                return [$user->id => $user->full_name];
+            }),
             'options' => [
                 'statuses' => MerchantStatus::statusesByMode(!$done),
                 'ratings' => $merchantService->ratings(),
@@ -49,13 +66,31 @@ class MerchantListController extends Controller
             'items' => $this->loadItems($query),
         ];
         if (1 == request()->get('page', 1)) {
-            $data['pager'] = $merchantService->merchantsCount($query);
+            $data['pager'] = is_null($query) ? 0 : $merchantService->merchantsCount($query);
         }
 
         return response()->json($data);
     }
 
-    protected function loadItems(RestQuery $query)
+    public function status(MerchantService $merchantService)
+    {
+        $data = $this->validate(request(), [
+            'ids' => 'array',
+            'ids.' => 'numeric',
+            'status' => Rule::in(array_keys(MerchantStatus::allStatuses()))
+        ]);
+
+        foreach ($data['ids'] as $id) {
+            $merchantService->update(new MerchantDto([
+                'id' => $id,
+                'status' => $data['status']
+            ]));
+        }
+
+        return response('', 204);
+    }
+
+    protected function loadItems(?RestQuery $query)
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
@@ -63,6 +98,10 @@ class MerchantListController extends Controller
         $operatorService = resolve(OperatorService::class);
         /** @var UserService $userService */
         $userService = resolve(UserService::class);
+
+        if (is_null($query)) {
+            return collect();
+        }
 
 
         $merchants = $merchantService->merchants($query);
@@ -104,18 +143,73 @@ class MerchantListController extends Controller
 
         $filter = request()->get('filter');
 
-        if (isset($filter['status'])) {
-            $query->setFilter('status', $filter['status']);
+        if (isset($filter['created_at']) && array_filter($filter['created_at'])) {
+            $query->setFilter('created_at', '>=', $filter['created_at'][0]);
+            $query->setFilter('created_at', '<=', $filter['created_at'][1]);
         }
         if (isset($filter['rating'])) {
             $query->setFilter('rating_id', $filter['rating']);
         }
+        if (isset($filter['status'])) {
+            $query->setFilter('status', $filter['status']);
+        }
+        if (isset($filter['legal_name'])) {
+            $query->setFilter('legal_name', 'like', "%{$filter['legal_name']}%");
+        }
+        if (isset($filter['operator_first_name']) || isset($filter['operator_last_name']) || isset($filter['operator_middle_name']) || isset($filter['operator_email']) || isset($filter['operator_phone'])) {
+            $userQuery = new RestQuery();
 
-        if (isset($filter['name'])) {
-            $query->setFilter('legal_name', 'like', "%{$filter['name']}%");
+            if (isset($filter['operator_first_name'])) {
+                $userQuery->setFilter('first_name', 'like', "%{$filter['operator_first_name']}%");
+            }
+            if (isset($filter['operator_last_name'])) {
+                $userQuery->setFilter('last_name', 'like', "%{$filter['operator_last_name']}%");
+            }
+            if (isset($filter['operator_middle_name'])) {
+                $userQuery->setFilter('middle_name', 'like', "%{$filter['operator_middle_name']}%");
+            }
+            if (isset($filter['operator_email'])) {
+                $userQuery->setFilter('email', $filter['operator_email']);
+            }
+            if (isset($filter['operator_phone'])) {
+                $userQuery->setFilter('phone', phone_format($filter['operator_phone']));
+            }
+            /** @var UserService $userService */
+            $userService = resolve(UserService::class);
+            $users = $userService
+                ->users(
+                    $userQuery->setFilter('role', [UserDto::MAS__MERCHANT_ADMIN])
+                )
+                ->pluck('id')
+                ->all();
+
+            if (!$users) {
+                return null;
+            }
+
+            /** @var OperatorService $operatorService */
+            $operatorService = resolve(OperatorService::class);
+            $merchants = $operatorService
+                ->operators(
+                    (new RestQuery())->setFilter('user_id', $users)->addFields(OperatorDto::entity(), 'merchant_id')
+                )
+                ->pluck('merchant_id')
+                ->all();
+
+            if (!$merchants) {
+                return null;
+            }
+            $query->setFilter('id', $merchants);
+        }
+        if (isset($filter['id'])) {
+            $query->setFilter('id', $filter['id']);
         }
 
         $query->addSort('id', 'desc');
+
+        if (isset($filter['manager_id'])) {
+            $query->setFilter('manager_id', $filter['manager_id']);
+        }
 
         return $query;
     }

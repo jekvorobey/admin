@@ -190,7 +190,7 @@ export default {
                     name: 'Мерчант',
                     code: 'merchant',
                     value: function(cargo) {
-                        return cargo.merchant.display_name;
+                        return cargo.merchant.legal_name;
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -355,7 +355,7 @@ export default {
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
         statusOptions() {
             return Object.values(this.cargoStatuses).map(status => ({
@@ -366,7 +366,7 @@ export default {
         storeOptions() {
             return Object.values(this.stores).map(store => ({
                 value: store.id,
-                text: store.name + ' (' + store.merchant.display_name + ')'
+                text: store.name + ' (' + store.merchant.legal_name + ')'
             }));
         },
         deliveryServiceOptions() {

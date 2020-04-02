@@ -11,6 +11,8 @@ export const GET_PAGE_SIZE = 'get_page_size';
 export const GET_NUM_PAGES = 'get_num_pages';
 
 export const ACT_LOAD_PAGE = 'act_load_page';
+export const ACT_SAVE_BRAND = 'act_save_brand';
+export const ACT_DELETE_BRAND = 'act_delete_brand';
 
 const PAGE_SIZE = 10;
 
@@ -38,15 +40,21 @@ export default {
         [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE)
     },
     actions: {
-        [ACT_LOAD_PAGE]({commit, rootGetters}, {filter, page}) {
-            return Services.net().get(rootGetters.getRoute('products.listPage'), {page, filter})
+        [ACT_LOAD_PAGE]({commit, rootGetters}, {page}) {
+            return Services.net().get(rootGetters.getRoute('brand.listPage'), {page})
                 .then(data => {
                     commit(SET_PAGE, {
-                        list: data.products,
+                        list: data.brands,
                         total: data.total,
                         page
                     })
                 });
         },
+        [ACT_SAVE_BRAND]({rootGetters}, {id, brand}) {
+            return Services.net().post(rootGetters.getRoute('brand.save'), {}, {id, brand});
+        },
+        [ACT_DELETE_BRAND]({rootGetters}, {id}) {
+            return Services.net().post(rootGetters.getRoute('brand.delete'), {}, {id});
+        }
     }
 }
