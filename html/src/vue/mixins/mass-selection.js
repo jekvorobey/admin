@@ -26,10 +26,8 @@ export default {
         massCheckbox(e, type, id) {
             if (e.target.checked) {
                 this.massSet({type, id});
-                this.bufferIds.push(id);
             } else {
                 this.massUnset({type, id});
-                this.bufferIds = this.bufferIds.filter((bufferId, index, arr) => { return (bufferId !== id)});
             }
         },
     }
