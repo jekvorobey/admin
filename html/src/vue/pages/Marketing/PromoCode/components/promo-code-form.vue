@@ -11,13 +11,15 @@
             </div>
         </div>
         <div class="row">
-            <v-select v-model="promoCode.type" :options="promoCodeTypes" class="col-3">Тип промокода</v-select>
+            <v-select v-model="promoCode.type" :options="types" class="col-3">Тип промокода</v-select>
         </div>
         <div class="row">
             <div class="col-6" v-if="promoCode.type === PROMO_CODE_TYPE_DISCOUNT">
                 <label>Выберите скидку</label>
-                <v-select2 v-model="promoCode.discount_id" class="form-control" width="100%">
-                    <option v-for="discount in discounts" :value="discount.value">{{ discount.text }}</option>
+                <v-select2 v-model="promoCode.discount_id" class="form-control" width="100%" :options="discounts">
+                    <option v-for="discount in discounts" :value="discount.value" :key="discount.value">
+                        {{ discount.text }}
+                    </option>
                 </v-select2>
             </div>
             <div class="col-6" v-if="promoCode.type === PROMO_CODE_TYPE_GIFT">
@@ -38,7 +40,7 @@
             </div>
         </div>
         <div class="row">
-            <v-select v-model="promoCode.status" :options="promoCodeStatuses" class="col-3">Статус</v-select>
+            <v-select v-model="promoCode.status" :options="iStatuses" class="col-3">Статус</v-select>
         </div>
 
         <div class="row">
@@ -151,9 +153,10 @@
             Services,
         },
         props: {
-            promoCodeTypes: Object,
-            promoCodeStatuses: Object,
+            iTypes: Object,
+            iStatuses: Object,
             merchants: Array,
+            iTypesForMerchant: Array,
             iDiscounts: Object|Array,
             gifts: Object|Array,
             bonuses: Object|Array,
@@ -166,6 +169,7 @@
         },
         data() {
             return {
+                types: [],
                 discounts: [],
                 promoCode: {
                     owner_id: null,
@@ -239,6 +243,35 @@
                     .split(',')
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
+            },
+            updateMerchant() {
+                this.updateDiscounts();
+                this.updateTypes();
+            },
+            updateTypes() {
+                if (!this.promoCode.merchant_id) {
+                    this.types = this.iTypes;
+                    return;
+                }
+
+                if (!this.iTypesForMerchant.includes(this.promoCode.type)) {
+                    this.promoCode.type = null;
+                }
+
+                this.types = Object.fromEntries(this.iTypesForMerchant.map(typeId => [typeId, this.iTypes[typeId]]));
+            },
+            updateDiscounts() {
+                this.discounts = this.promoCode.merchant_id
+                    ? Object.values(this.iDiscounts).filter(
+                        discount => discount.merchant_id === this.promoCode.merchant_id
+                    )
+                    : [...this.iDiscounts];
+
+                if (this.promoCode.discount_id) {
+                    if (!this.discounts.find(discount => this.promoCode.discount_id === discount.id)) {
+                        this.promoCode.discount_id = null;
+                    }
+                }
             }
         },
         computed: {
@@ -278,6 +311,9 @@
                 if (this.segmentsBtn) {
                     res &= this.segments.length > 0;
                 }
+                if (this.merchantBtn) {
+                    res &= this.promoCode.merchant_id > 0;
+                }
                 return res;
             },
             valid() {
@@ -294,6 +330,10 @@
             },
         },
         watch: {
+            merchantBtn() {
+                this.promoCode.merchant_id = null;
+                this.updateMerchant();
+            },
             ownerBtn(val) {
                 if (val) {
                     this.customersBtn = false;
@@ -328,17 +368,14 @@
             },
             'promoCode.merchant_id': {
                 handler(val, oldVal) {
-                    this.promoCode.discount_id = null;
-                    this.discounts = this.promoCode.merchant_id
-                        ? Object.values(this.iDiscounts).filter(
-                            discount => discount.merchant_id === this.promoCode.merchant_id
-                        )
-                        : [...this.iDiscounts];
+                    if (val !== oldVal) {
+                        this.updateMerchant();
+                    }
                 }
             }
         },
         mounted() {
-            this.discounts = [...this.iDiscounts];
+            this.updateMerchant();
         }
     }
 </script>
