@@ -213,7 +213,7 @@ class Controller extends BaseController
             $merchantService = resolve(MerchantService::class);
             $merchantQuery = $merchantService->newQuery()
                 ->setFilter('id', $merchantIds)
-                ->addFields(MerchantDto::entity(), 'id', 'display_name');
+                ->addFields(MerchantDto::entity(), 'id', 'legal_name');
             $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
         }
         
