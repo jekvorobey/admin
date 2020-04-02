@@ -87,6 +87,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-1">
+                                <div class="col-3">
+                                    <label>Бессрочная</label>
+                                    <input class="ml-3 mt-3"
+                                           type="checkbox"
+                                           @change="e => indefinitelyCheck(e)"
+                                           :checked="iFilter.indefinitely"
+                                    >
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </transition>
@@ -214,6 +224,7 @@
         end_date: '',
         fix_start_date: false,
         fix_end_date: false,
+        indefinitely: null,
         role_id: null,
     }, cleanHiddenFilter);
 
@@ -230,6 +241,7 @@
         'end_date',
         'fix_start_date',
         'fix_end_date',
+        'indefinitely',
         'role_id',
     ];
 
@@ -404,7 +416,10 @@
                     checkboxes[discountId] = newValue;
                 });
                 this.checkboxes = checkboxes;
-            }
+            },
+            indefinitelyCheck(e) {
+                this.filter.indefinitely = e.target.checked;
+            },
         },
         computed: {
             selectedIds() {

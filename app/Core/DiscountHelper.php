@@ -57,6 +57,7 @@ class DiscountHelper
         isset($filter['end_date'])
             ? $discountInDto->periodTo($filter['end_date'], $filter['fix_end_date'] ?? false)
             : null;
+        isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
         return $discountInDto
             ->status(DiscountStatusDto::STATUS_CREATED, true)
