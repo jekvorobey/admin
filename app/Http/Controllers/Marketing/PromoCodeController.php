@@ -96,8 +96,9 @@ class PromoCodeController extends Controller
 
         return $this->render('Marketing/PromoCode/Create', [
             'iPromoCodes' => $promoCodes,
-            'promoCodeTypes' => Helpers::getSelectOptions($promoCodeTypes),
-            'promoCodeStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
+            'iTypesForMerchant' => PromoCodeOutDto::availableTypesForMerchant(),
+            'iTypes' => Helpers::getSelectOptions($promoCodeTypes),
+            'iStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
             'iDiscounts' => $discounts,
             'gifts' => [],
             'bonuses' => [],
