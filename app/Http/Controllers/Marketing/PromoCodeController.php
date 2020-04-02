@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Marketing\Builder\PromoCode\PromoCodeBuilder;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
@@ -93,8 +94,10 @@ class PromoCodeController extends Controller
     /**
      * @param Request          $request
      * @param PromoCodeService $promoCodeService
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create(Request $request, PromoCodeService $promoCodeService)
+    public function create(Request $request, PromoCodeService $promoCodeService, RequestInitiator $requestInitiator)
     {
         $data = $request->validate([
             'owner_id' => 'numeric|nullable',
@@ -119,7 +122,7 @@ class PromoCodeController extends Controller
             'conditions.synergy.*' => 'numeric|nullable'
         ]);
 
-        $data['creator_id'] = 1;
+        $data['creator_id'] = $requestInitiator->userId();
         try {
             $data['start_date'] = $data['start_date']
                 ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
