@@ -93,7 +93,7 @@
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
     import {validationMixin} from 'vuelidate';
-    import {required, helpers} from 'vuelidate/lib/validators';
+    import {required} from 'vuelidate/lib/validators';
 
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';

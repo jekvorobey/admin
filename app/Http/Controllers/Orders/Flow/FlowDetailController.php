@@ -22,6 +22,7 @@ use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class FlowDetailController
@@ -207,7 +208,7 @@ class FlowDetailController extends Controller
 
             $data['history'] = $history->sortByDesc('created_at')->values()->toArray();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $data['delivery_statuses'] = DeliveryStatus::allStatuses();
