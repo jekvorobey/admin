@@ -44,27 +44,54 @@ class CargoDetailController extends Controller
     public function changeStatus(int $id, Request $request, CargoService $cargoService): JsonResponse
     {
         $result = 'ok';
-        $cargo = [];
         $error = '';
         $systemError = '';
+        $data = $this->validate($request, [
+            'status' => ['required', Rule::in(array_keys(CargoStatus::allStatuses()))],
+        ]);
+
         try {
-            $data = $this->validate($request, [
-                'status' => Rule::in(array_keys(CargoStatus::allStatuses())),
-            ]);
-            $cargo = new CargoDto($data);
+            $cargo = new CargoDto();
+            $cargo->status = $data['status'];
             $cargoService->updateCargo($id, $cargo);
-    
-            $page = new CargoPage($id);
-            $cargo = $page->loadCargo()['cargo'];
         } catch (\Exception $e) {
             $result = 'fail';
-            if ($request->get('status') == CargoStatus::SHIPPED) {
+            if ($data['status'] == CargoStatus::SHIPPED) {
                 $error = 'Груз не содержит заказов';
             }
             $systemError = $e->getMessage();
         }
+
+        $page = new CargoPage($id);
+        $cargo = $page->loadCargo()['cargo'];
     
         return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
+    }
+
+    /**
+     * Создать задание на забор груза (заявку на вызов курьера)
+     * @param  int  $id
+     * @param  CargoService  $cargoService
+     * @return JsonResponse
+     */
+    public function createCourierCall(int $id, CargoService $cargoService): JsonResponse
+    {
+        return $this->abstractAction($id, function () use ($id, $cargoService) {
+            $cargoService->createCourierCall($id);
+        });
+    }
+
+    /**
+     * Отменить задание на забор груза (заявку на вызов курьера)
+     * @param  int  $id
+     * @param  CargoService  $cargoService
+     * @return JsonResponse
+     */
+    public function cancelCourierCall(int $id, CargoService $cargoService): JsonResponse
+    {
+        return $this->abstractAction($id, function () use ($id, $cargoService) {
+            $cargoService->cancelCourierCall($id);
+        });
     }
 
     /**
@@ -75,21 +102,9 @@ class CargoDetailController extends Controller
      */
     public function cancel(int $id, CargoService $cargoService): JsonResponse
     {
-        $result = 'ok';
-        $cargo = [];
-        $error = '';
-        $systemError = '';
-        try {
+        return $this->abstractAction($id, function () use ($id, $cargoService) {
             $cargoService->cancelCargo($id);
-
-            $page = new CargoPage($id);
-            $cargo = $page->loadCargo()['cargo'];
-        } catch (\Exception $e) {
-            $result = 'fail';
-            $systemError = $e->getMessage();
-        }
-
-        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
+        });
     }
     
     /**
@@ -152,17 +167,16 @@ class CargoDetailController extends Controller
     protected function abstractAction(int $id, Closure $action): JsonResponse
     {
         $result = 'ok';
-        $cargo = [];
         $systemError = '';
         try {
             $action();
-        
-            $page = new CargoPage($id);
-            $cargo = $page->loadCargo()['cargo'];
         } catch (\Exception $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
         }
+
+        $page = new CargoPage($id);
+        $cargo = $page->loadCargo()['cargo'];
     
         return response()->json(['result' => $result, 'cargo' => $cargo, 'systemErrors' => $systemError]);
     }

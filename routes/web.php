@@ -149,6 +149,11 @@ Route::middleware('auth')->group(function () {
                             ->name('cargo.deleteShipmentFromCargo');
                     });
                 });
+
+                Route::prefix('courier-call')->group(function () {
+                    Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
+                    Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
+                });
             });
         });
 
