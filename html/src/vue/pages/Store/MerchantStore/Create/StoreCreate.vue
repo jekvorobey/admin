@@ -99,14 +99,18 @@
                 return;
             }
 
+            Services.showLoader();
             Service.net().post(
                 this.getRoute('merchantStore.create'),
                 null,
                 this.store
             ).then(data => {
                 if (data.status === 'ok') {
+                    Services.msg("Изменения сохранены");
                     window.location.href = this.route('merchantStore.list');
                 }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
     },
