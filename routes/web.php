@@ -149,6 +149,11 @@ Route::middleware('auth')->group(function () {
                             ->name('cargo.deleteShipmentFromCargo');
                     });
                 });
+
+                Route::prefix('courier-call')->group(function () {
+                    Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
+                    Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
+                });
             });
         });
 
@@ -190,7 +195,10 @@ Route::middleware('auth')->group(function () {
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {
-        Route::get('', 'BrandController@list')->name('band.list');
+        Route::get('', 'BrandController@list')->name('brand.list');
+        Route::get('page', 'BrandController@page')->name('brand.listPage');
+        Route::post('save', 'BrandController@save')->name('brand.save');
+        Route::post('delete', 'BrandController@delete')->name('brand.delete');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {

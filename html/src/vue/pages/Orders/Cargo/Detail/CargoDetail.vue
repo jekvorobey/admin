@@ -9,14 +9,40 @@
                             {{ cargo.status.name || 'N/A' }}
                         </span>
                         <span class="badge badge-danger" v-if="isCancel">Отменен</span>
-                        <button class="btn btn-primary" v-if="isRequestSend"
-                                @click="changeCargoStatus(2)">Груз передан курьеру</button>
-                        <button class="btn btn-primary" v-if="!isCancel"
-                                @click="cancelCargo()">Отменить</button>
+
+                        <template v-if="isCreatedStatus && !isCancel">
+                            <button class="btn btn-primary" v-if="isRequestSend"
+                                    @click="changeCargoStatus(2)">Груз передан курьеру</button>
+                            <button class="btn btn-warning" v-else
+                                    title="Задание на забор груза не создано">Груз передан курьеру</button>
+                        </template>
+
+                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel">
+                            <template v-if="isCreatedStatus">
+                                <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
+                                    Отменить задание на забор груза
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button v-else @click="createCourierCall()">
+                                    Создать задание на забор груза
+                                </b-dropdown-item-button>
+                            </template>
+                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(3)">
+                                Принят Логистическим Оператором
+                            </b-dropdown-item-button>
+                            <b-dropdown-item-button v-if="isCreatedStatus" @click="cancelCargo()">
+                                Отменить груз
+                            </b-dropdown-item-button>
+                        </b-dropdown>
                     </div>
 
                     <p class="text-secondary mt-3">
                         Служба доставки:<span class="float-right">{{ cargo.delivery_service.name }}</span>
+                    </p>
+                    <p class="text-secondary mt-3">
+                        Номер задания на забор груза:<span class="float-right">{{ cargo.xml_id ? cargo.xml_id : 'N/A' }}</span>
+                    </p>
+                    <p class="text-danger mt-3" v-if="cargo.error_xml_id">
+                        Последняя ошибка при создании задания на забор груза:<span class="float-right">{{ cargo.error_xml_id}}</span>
                     </p>
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
@@ -53,7 +79,7 @@
                     </p>
                     <p class="text-secondary mt-3">
                         Склад отгрузки:
-                        <span class="float-right">{{cargo.store.name}}</span>
+                        <span class="float-right"><a :href="getRoute('merchantStore.edit', {id: cargo.store.id})">{{cargo.store.name}}</a></span>
                     </p>
                 </div>
             </div>
@@ -123,28 +149,70 @@
         changeCargoStatus(statusId) {
             let errorMessage = 'Ошибка при изменении статуса груза.';
 
+            Services.showLoader();
             Services.net().put(this.getRoute('cargo.changeStatus', {id: this.cargo.id}), null,
                 {'status': statusId}).then(data => {
-                if (data.result === 'ok') {
+                if (data.cargo) {
                     this.cargo = data.cargo;
-                } else {
-                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
                 }
-            }, () => {
-                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+                if (data.result === 'ok') {
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage + ' ' + data.error, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        createCourierCall() {
+            let errorMessage = 'Ошибка при создании задания на забор груза.';
+
+            Services.showLoader();
+            Services.net().post(this.getRoute('cargo.createCourierCall', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Задание на забор груза создано");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        cancelCourierCall() {
+            let errorMessage = 'Ошибка при отмене задания на забор груза.';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('cargo.cancelCourierCall', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Задание на забор груза отменено");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         cancelCargo() {
-            let errorMessage = 'Ошибка при изменении отмене груза.';
+            let errorMessage = 'Ошибка при отмене груза.';
 
+            Services.showLoader();
             Services.net().put(this.getRoute('cargo.cancel', {id: this.cargo.id})).then(data => {
-                if (data.result === 'ok') {
+                if (data.cargo) {
                     this.cargo = data.cargo;
-                } else {
-                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
                 }
-            }, () => {
-                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+                if (data.result === 'ok') {
+                    Services.msg("Груз отменен");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         onChange(data) {
@@ -168,6 +236,15 @@
         },
         isCancel() {
             return this.cargo.is_canceled;
+        },
+        isCreatedStatus() {
+            return this.isStatus(1);
+        },
+        isShippedStatus() {
+            return this.isStatus(2);
+        },
+        isTakenStatus() {
+            return this.isStatus(3);
         },
     },
 };

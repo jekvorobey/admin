@@ -124,6 +124,10 @@ Vue.mixin({
         communicationTypes() {
             return this.$store.state.layout.communicationTypes;
         },
+        /** @return {MerchantStatuses} */
+        merchantStatuses() {
+            return this.$store.state.layout.merchantStatuses;
+        },
     },
 });
 
@@ -249,4 +253,16 @@ Vue.mixin({
  @property {number|null} channel_id
  @property {string} created_at
  @property {string} updated_at
+ */
+/**
+ @typedef MerchantStatuses
+ @type {Object}
+ @property {string} created
+ @property {string} review
+ @property {string} cancel
+ @property {string} terms
+ @property {string} activation
+ @property {string} work
+ @property {string} stop
+ @property {string} close
  */

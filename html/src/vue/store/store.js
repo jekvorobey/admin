@@ -4,6 +4,7 @@ import NetService from '../../scripts/services/net';
 
 import ModalModule from './modules/modal.js';
 import products from './modules/products.js';
+import brands from './modules/brands.js';
 import massSelection from './modules/mass-selection.js';
 
 Vue.use(Vuex);
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     modules: {
         modal: ModalModule(),
         products,
+        brands,
         massSelection,
     },
     mutations: {

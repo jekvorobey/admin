@@ -19,6 +19,15 @@ class Menu
                         'title' => 'Предложения мерчантов',
                         'route' => route('offers.list'),
                     ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Бренды',
+                                'route' => route('brand.list'),
+                            ],
+                        ]
+                    ],
 //                    [
 //                        'title' => 'Подарки',
 //                        'route' => '#',

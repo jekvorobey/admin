@@ -14,7 +14,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <div>
-                        <button class="btn btn-primary" v-if="(isCreatedStatus || isRequestSend) && !isCancel"
+                        <button class="btn btn-primary" v-if="isCreatedStatus && !isCancel"
                                 @click="openModal('addShipment2Cargo')">
                             + Добавить заказы
                         </button>
@@ -44,7 +44,7 @@
                         <td>
                             <fa-icon icon="times" title="Удалить из груза" class="cursor-pointer"
                                     @click="deleteShipmentFromCargo(shipment.id)"
-                                    v-if="isCreatedStatus || isRequestSend"></fa-icon>
+                                    v-if="isCreatedStatus && !isCancel"></fa-icon>
                         </td>
                     </tr>
                     <tr v-if="!cargo.shipments || !cargo.shipments.length">
