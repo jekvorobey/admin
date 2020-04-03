@@ -71,7 +71,7 @@
 <script>
     import withQuery from 'with-query';
 
-    import { mapActions, mapGetters } from 'vuex';
+    import {mapActions, mapGetters} from 'vuex';
 
     import {
         ACT_LOAD_PAGE,
@@ -89,12 +89,12 @@
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
     import {validationMixin} from 'vuelidate';
-    import {required, helpers} from 'vuelidate/lib/validators';
+    import {required} from 'vuelidate/lib/validators';
 
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
-    import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton';
+    import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
 
     export default {
         mixins: [
