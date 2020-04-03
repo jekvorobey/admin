@@ -10,14 +10,14 @@
                         </span>
                         <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
-                        <template v-if="isCreatedStatus">
+                        <template v-if="isCreatedStatus && !isCancel">
                             <button class="btn btn-primary" v-if="isRequestSend"
                                     @click="changeCargoStatus(2)">Груз передан курьеру</button>
                             <button class="btn btn-warning" v-else
                                     title="Задание на забор груза не создано">Груз передан курьеру</button>
                         </template>
 
-                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus">
+                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel">
                             <template v-if="isCreatedStatus">
                                 <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
                                     Отменить задание на забор груза
@@ -26,10 +26,10 @@
                                     Создать задание на забор груза
                                 </b-dropdown-item-button>
                             </template>
-                            <b-dropdown-item-button v-if="!isCancel && isShippedStatus" @click="changeCargoStatus(3)">
+                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(3)">
                                 Принят Логистическим Оператором
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="!isCancel && isCreatedStatus" @click="cancelCargo()">
+                            <b-dropdown-item-button v-if="isCreatedStatus" @click="cancelCargo()">
                                 Отменить груз
                             </b-dropdown-item-button>
                         </b-dropdown>
