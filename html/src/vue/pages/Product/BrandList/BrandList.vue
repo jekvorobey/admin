@@ -2,8 +2,9 @@
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createBrand">Создать бренд</button>
-            <div class="action-bar d-flex justify-content-start">
-                <span class="mr-4">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
+            <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
+                <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
+                <v-delete-button @delete="() => deleteBrands(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -13,7 +14,8 @@
                     <th>ID</th>
                     <th>Логотип</th>
                     <th>Название</th>
-                    <th>Действия</th>
+                    <th>Код</th>
+                    <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,10 +28,11 @@
                     <td>{{brand.id}}</td>
                     <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
                     <td>{{brand.name}}</td>
+                    <td>{{brand.code}}</td>
                     <td>
-                        <button class="btn btn-light float-right" @click="editBrand(brand)">
+                        <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
+                        <button class="btn btn-warning float-right" @click="editBrand(brand)">
                             <fa-icon icon="edit"></fa-icon>
-                            <v-delete-button @delete="deleteBrand(brand.id)"/>
                         </button>
                     </td>
                 </tr>
@@ -71,9 +74,10 @@
 <script>
     import withQuery from 'with-query';
 
-    import {mapActions, mapGetters} from 'vuex';
+    import { mapActions, mapGetters } from 'vuex';
 
     import {
+        ACT_DELETE_BRAND,
         ACT_LOAD_PAGE,
         ACT_SAVE_BRAND,
         GET_LIST,
@@ -95,6 +99,7 @@
     import VInput from '../../../components/controls/VInput/VInput.vue';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
+    import Services from "../../../../scripts/services/services";
 
     export default {
         mixins: [
@@ -145,7 +150,8 @@
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
-                ACT_SAVE_BRAND
+                ACT_SAVE_BRAND,
+                ACT_DELETE_BRAND,
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -179,6 +185,7 @@
                 if (this.$v.$invalid) {
                     return;
                 }
+                Services.showLoader();
                 this[ACT_SAVE_BRAND]({
                     id: this.editBrandId,
                     brand: this.form
@@ -186,16 +193,24 @@
                     return this[ACT_LOAD_PAGE]({page: this.page});
                 }).finally(() => {
                     this.closeModal();
+                    Services.hideLoader();
                 });
             },
             onCancel() {
                 this.closeModal();
             },
-            deleteBrand(id) {
-
+            deleteBrands(ids) {
+                Services.showLoader();
+                this[ACT_DELETE_BRAND]({ids})
+                    .then(() => {
+                        return this[ACT_LOAD_PAGE]({page: this.page});
+                    })
+                    .finally(() => {
+                        Services.hideLoader();
+                        this.massClear(this.massSelectionType);
+                    });
             },
             onFileUpload(file) {
-                console.log(file);
                 this.$v.form.file_id.$model = file.id;
             }
         },

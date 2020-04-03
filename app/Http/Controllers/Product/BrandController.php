@@ -56,13 +56,13 @@ class BrandController extends Controller
     
     public function delete(Request $request, BrandService $brandService)
     {
-        $id = $request->get('id');
+        $ids = $request->get('ids');
         
-        if (!$id) {
-            throw new BadRequestHttpException('id required');
+        if (!$ids || !is_array($ids)) {
+            throw new BadRequestHttpException('ids required');
         }
         
-        $brandService->deleteBrand($id);
+        $brandService->deleteBrands($ids);
         
         return response()->json();
     }

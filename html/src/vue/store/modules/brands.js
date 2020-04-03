@@ -53,8 +53,8 @@ export default {
         [ACT_SAVE_BRAND]({rootGetters}, {id, brand}) {
             return Services.net().post(rootGetters.getRoute('brand.save'), {}, {id, brand});
         },
-        [ACT_DELETE_BRAND]({rootGetters}, {id}) {
-            return Services.net().post(rootGetters.getRoute('brand.delete'), {}, {id});
+        [ACT_DELETE_BRAND]({rootGetters}, {ids}) {
+            return Services.net().post(rootGetters.getRoute('brand.delete'), {}, {ids});
         }
     }
 }
