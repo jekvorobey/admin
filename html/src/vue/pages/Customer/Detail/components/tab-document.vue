@@ -46,6 +46,9 @@
             </td>
             <td>
                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
+                <button class="btn btn-info btn-sm" title="Отправить пользователю на Email" @click="sendEmail(document.id)">
+                    <fa-icon icon="envelope"/>
+                </button>
             </td>
         </tr>
         </tbody>
@@ -108,6 +111,16 @@
                 })).then(data => {
                     this.$delete(this.documents, index);
                     Services.msg("Изменения сохранены");
+                }).finally(() => {
+                    Services.hideLoader();
+                })
+            },
+            sendEmail(document_id) {
+                Services.showLoader();
+                Services.net().post(this.getRoute('customers.detail.document.send', {
+                    id: this.customer.id,
+                }),{document_id: document_id}).then(data => {
+                    Services.msg(`Акт о реферальном зачислении ${document_id} отправлен на Email пользователя ${data.email}`);
                 }).finally(() => {
                     Services.hideLoader();
                 })

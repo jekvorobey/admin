@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
         Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
         Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
@@ -45,7 +46,9 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('promo-code')->group(function () {
             Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
+            Route::post('/', 'PromoCodeController@create')->name('promo-code.save');
             Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
+            Route::get('/generate', 'PromoCodeController@generate')->name('promo-code.generate');
         });
     });
 
@@ -184,6 +187,10 @@ Route::middleware('auth')->group(function () {
                 Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
             });
         });
+    });
+    
+    Route::prefix('brands')->namespace('Product')->group(function () {
+        Route::get('', 'BrandController@list')->name('band.list');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
@@ -380,6 +387,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('export', 'TabDocumentController@export')->name('customers.detail.document.export');
                         Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });
