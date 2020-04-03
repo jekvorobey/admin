@@ -273,6 +273,15 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
+                    name: 'Город доставки',
+                    code: 'cities',
+                    value: function(order) {
+                        return order.cities;
+                    },
+                    isShown: true,
+                    isAlwaysShown: true,
+                },
+                {
                     name: 'Статус',
                     code: 'status',
                     isShown: true,
