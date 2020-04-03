@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-03-31 21:38:38.
+    * Generated on 2020-04-03 19:41:53.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -38,6 +38,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -236,6 +237,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -434,6 +436,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -632,6 +635,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -830,6 +834,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -1028,6 +1033,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -1226,6 +1232,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
@@ -1424,6 +1431,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\PriceService\PriceService' => \Greensight\Marketing\Services\PriceService\RestPriceService::class,
+        'Greensight\Marketing\Services\PromoCodeService\PromoCodeService' => \Greensight\Marketing\Services\PromoCodeService\RestPromoCodeService::class,
         'Greensight\Message\Services\ClaimService\ClaimService' => \Greensight\Message\Services\ClaimService\RestClaimService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationService' => \Greensight\Message\Services\CommunicationService\RestCommunicationService::class,
         'Greensight\Message\Services\CommunicationService\CommunicationStatusService' => \Greensight\Message\Services\CommunicationService\RestCommunicationStatusService::class,
