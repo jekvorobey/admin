@@ -1,4 +1,4 @@
 import boot from '../../../default-entry';
-import Page from './RegistrationList.vue';
+import Page from './MerchantList.vue';
 
 boot(Page);

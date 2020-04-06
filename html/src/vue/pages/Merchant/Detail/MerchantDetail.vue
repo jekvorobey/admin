@@ -3,7 +3,7 @@
         <div class="d-flex justify-contend-start align-items-stretch">
             <div>
                 <shadow-card title="Мерчант" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('merchantEdit')">
-                    <h3>{{ merchant.display_name }}</h3>
+                    <h3>{{ merchant.legal_name }}</h3>
                     <span class="badge" :class="[statusClass(merchant.status)]">{{ statusName(merchant.status) }}</span>
                 </shadow-card>
                 <shadow-card title="Назначенный менеджер" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('managerEdit')" :padding="3">

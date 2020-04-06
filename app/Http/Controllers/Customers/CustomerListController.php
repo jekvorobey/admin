@@ -81,7 +81,7 @@ class CustomerListController extends Controller
                 'phone' => $user->phone,
                 'status' => $customer->status
             ];
-        })->filter();
+        })->filter()->sortByDesc('id')->values();
 
         return response()->json([
             'users' => $result->forPage(request('page', 1), static::PER_PAGE),

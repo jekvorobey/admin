@@ -36,6 +36,9 @@
                             <f-date v-model="filter.created_at" class="col-2" range confirm>
                                 Дата создания
                             </f-date>
+                            <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-2">
+                                Отменен
+                            </f-select>
                         </div>
                     </div>
                 </transition>
@@ -112,6 +115,7 @@
     const cleanHiddenFilter = {
     shipment_number: '',
     created_at: [],
+    is_canceled: '',
 };
 
 const cleanFilter = Object.assign({
@@ -130,6 +134,7 @@ const serverKeys = [
     'store_id',
     'shipment_number',
     'created_at',
+    'is_canceled',
 ];
 
 export default {
@@ -185,7 +190,7 @@ export default {
                     name: 'Мерчант',
                     code: 'merchant',
                     value: function(cargo) {
-                        return cargo.merchant.display_name;
+                        return cargo.merchant.legal_name;
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -221,7 +226,12 @@ export default {
                     name: 'Статус',
                     code: 'status',
                     value: function(cargo) {
-                        return '<span class="badge ' + self.statusClass(cargo.status.id) + '">' + cargo.status.name + '</span>';
+                        let status = '<span class="badge ' + self.statusClass(cargo.status.id) + '">' + cargo.status.name + '</span>';
+                        if (cargo.is_canceled) {
+                            status += '<br><span class="badge badge-danger">Отменен</span>';
+                        }
+
+                        return status;
                     },
                     isShown: true,
                     isAlwaysShown: true,
@@ -310,8 +320,6 @@ export default {
                 case 1: return 'badge-info';
                 case 2: return 'badge-primary';
                 case 3: return 'badge-success';
-                case 4: return 'badge-danger';
-                case 5: return 'badge-warning';
                 default: return 'badge-light';
             }
         },
@@ -347,7 +355,7 @@ export default {
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
         statusOptions() {
             return Object.values(this.cargoStatuses).map(status => ({
@@ -358,11 +366,14 @@ export default {
         storeOptions() {
             return Object.values(this.stores).map(store => ({
                 value: store.id,
-                text: store.name + ' (' + store.merchant.display_name + ')'
+                text: store.name + ' (' + store.merchant.legal_name + ')'
             }));
         },
         deliveryServiceOptions() {
             return Object.values(this.deliveryServices).map(deliveryService => ({value: deliveryService.id, text: deliveryService.name}));
+        },
+        booleanOptions() {
+            return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
         },
         editedShowColumns() {
             return this.columns.filter(function(column) {

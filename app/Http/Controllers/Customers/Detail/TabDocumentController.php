@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Customers\Detail;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\Customer\Dto\CustomerDocumentDto;
+use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Box\Spout\Common\Type;
+use Greensight\Message\Dto\Mail\SendReferralDocumentMailDto;
+use Greensight\Message\Services\MailService;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Illuminate\Validation\Rule;
@@ -46,7 +51,8 @@ class TabDocumentController extends Controller
                     'period_to' => $document->period_to,
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
-                    'status' => $document->statusName($document->status),
+                    'statusId' => $document->status,
+                    'statusVerbal' => $document->statusName($document->status),
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
@@ -54,6 +60,14 @@ class TabDocumentController extends Controller
         ]);
     }
 
+    /**
+     * @param int $customerId
+     * @param CustomerService $customerService
+     * @param FileService $fileService
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     */
     public function export(int $customerId, CustomerService $customerService, FileService $fileService)
     {
         $this->validate(request(), [
@@ -78,7 +92,6 @@ class TabDocumentController extends Controller
             'Файл',
         ], null));
 
-        //TODO: сделать корректный отбор файлов
         $documents = $customerService->documents($customerId);
         $files = [];
         if ($documents) {
@@ -86,6 +99,7 @@ class TabDocumentController extends Controller
         }
 
         foreach ($documents as $document) {
+            /** @var FileDto $file */
             $file = $files->get($document->file_id);
                 $writer->addRow(WriterEntityFactory::createRowFromArray([
                     $document->id,
@@ -104,12 +118,74 @@ class TabDocumentController extends Controller
 
     /**
      * @param int $customerId
-     * @param int $file_id
+     * @param MailService\MailService $mailService
+     * @param CustomerService $customerService
+     * @param UserService $userService
+     * @param FileService $fileService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendEmail
+    (int $customerId,
+     MailService\MailService $mailService,
+     CustomerService $customerService,
+     UserService $userService,
+     FileService $fileService)
+    {
+        $this->validate(request(), [
+            'document_id' => 'required|numeric',
+        ]);
+
+        $document_id = request('document_id');
+
+        /** @var CustomerDto $customer */
+        $customer = $customerService->customers((new RestQuery())->setFilter('id', $customerId))->first();
+        $userId = $customer->user_id;
+        /** @var UserDto $user */
+        $user = $userService->users((new RestQuery())->setFilter('id', $userId))->first();
+        /** @var CustomerDocumentDto $document */
+        $document = $customerService->documents($customerId)->where('id', $document_id)->first();
+        /** @var FileDto $file */
+        $file = $fileService->getFiles([$document->file_id])->keyBy('id')->get($document->file_id);
+        // Проверка на отсутствие прикрепленного к акту файла //
+        !$file ? $attachment = null : $attachment = $file->absoluteUrl();
+
+        $arrayData = [
+            "u_first_name" => $user->first_name,
+            "u_mid_name" => $user->middle_name,
+            "d_id" => $document->id,
+            "d_period_since" => $document->period_since,
+            "d_period_to" => $document->period_to,
+            "d_creation_date" => $document->updated_at,
+            "d_amount_reward" => $document->amount_reward,
+            "d_status" => $document->statusName($document->status),
+            "file_url" => $attachment,
+        ];
+
+        $message = new SendReferralDocumentMailDto();
+        $message->addTo($user->email, $user->full_name);
+        $message->setData($arrayData);
+        $mailService->send($message);
+
+        return response()->json([
+            'email' => $user->email,
+        ]);
+    }
+
+    /**
+     * @param int $customerId
      * @param CustomerService $customerService
      * @return \Illuminate\Http\JsonResponse
      */
     public function createDocument(int $customerId, CustomerService $customerService)
     {
+        $this->validate(request(), [
+            'file' => 'required|max:4000',
+            'period_since' => 'required|date',
+            'period_to' => 'required|date',
+            'amount_reward' => 'required|numeric',
+            'status' => 'required|numeric',
+        ]);
+
         $documentFile = request('file');
         $documentDto = new CustomerDocumentDto();
         $documentDto->file_id = $documentFile['id'];
@@ -127,7 +203,8 @@ class TabDocumentController extends Controller
             'period_to' => $createdDocument->period_to,
             'date' => $createdDocument->updated_at,
             'amount_reward' => $createdDocument->amount_reward,
-            'status' => $documentDto->statusName($createdDocument->status),
+            'statusId' => $createdDocument->status,
+            'statusVerbal' => $documentDto->statusName($createdDocument->status),
         ]);
     }
 

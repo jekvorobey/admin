@@ -86,7 +86,6 @@
         deliveryStatuses: {},
         deliveryServices: {},
         shipmentStatuses: {},
-        shipmentNotEditableStatuses: {},
     },
     data() {
         return {
@@ -111,10 +110,10 @@
         },
         merchantName(id) {
             let merchant = this.merchants[id];
-            return merchant ? merchant.display_name : 'N/A';
+            return merchant ? merchant.legal_name : 'N/A';
         },
         canEditShipmentDelivery(shipment) {
-            return !this.shipmentNotEditableStatuses.includes(shipment.status);
+            return shipment.status < 6 && !shipment.is_canceled;
         },
         // Маппим объект для опций селекта
         mapForSelect(object, valueName) {

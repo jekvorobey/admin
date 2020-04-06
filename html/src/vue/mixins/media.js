@@ -6,7 +6,7 @@ export default {
             return id ? Media.compressed(id, w, h, type) : Media.empty(w, h);
         },
         fileUrl(id) {
-            Media.file(id)
+            return Media.file(id)
         }
     }
 }

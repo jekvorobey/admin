@@ -153,7 +153,7 @@ export default {
                     name: 'Мерчант',
                     code: 'merchant',
                     value: function(claim) {
-                        return claim.merchant.display_name ? claim.merchant.display_name : 'N/A';
+                        return claim.merchant.legal_name ? claim.merchant.legal_name : 'N/A';
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -283,7 +283,7 @@ export default {
             return statusOptions;
         },
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
         editedShowColumns() {
             return this.columns.filter(function(column) {

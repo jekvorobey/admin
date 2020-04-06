@@ -24,8 +24,8 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-    import { validationMixin } from 'vuelidate';
-    import { required } from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+    import {required} from 'vuelidate/lib/validators';
     import Services from '../../../../../scripts/services/services';
 
     export default {
@@ -46,7 +46,7 @@
         },
         validations: {
             form: {
-                display_name: {required},
+                legal_name: {required},
                 status: {required},
             }
         },
@@ -57,7 +57,7 @@
                     return;
                 }
                 Services.net().post(this.getRoute('merchant.edit', {id: this.source.id}), {}, {
-                    display_name: this.form.display_name,
+                    legal_name: this.form.legal_name,
                     status: this.form.status,
                 })
                     .then((data)=> {

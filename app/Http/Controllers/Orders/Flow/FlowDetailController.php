@@ -11,7 +11,6 @@ use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
-use Greensight\Oms\Dto\DeliveryStore;
 use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\PaymentMethod;
@@ -23,6 +22,7 @@ use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class FlowDetailController
@@ -208,7 +208,7 @@ class FlowDetailController extends Controller
 
             $data['history'] = $history->sortByDesc('created_at')->values()->toArray();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
         $data['delivery_statuses'] = DeliveryStatus::allStatuses();
@@ -220,8 +220,6 @@ class FlowDetailController extends Controller
         $data['delivery_cost'] = rand(0, (int)$data['cost'] / 4); //todo
         $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y H:i');
         $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d H:i');
-        $data['delivery_time'] = (new Carbon($order->delivery_time))->format('y.m.d H:i');
-        $data['delivery_store'] = DeliveryStore::allStores()[array_rand(DeliveryStore::allStores())]->toArray(); //todo
         $data['totalQty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
             return $sum + $item->qty;
         }, 0) : null;

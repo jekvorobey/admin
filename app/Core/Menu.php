@@ -19,6 +19,15 @@ class Menu
                         'title' => 'Предложения мерчантов',
                         'route' => route('offers.list'),
                     ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Бренды',
+                                'route' => route('brand.list'),
+                            ],
+                        ]
+                    ],
 //                    [
 //                        'title' => 'Подарки',
 //                        'route' => '#',
@@ -209,10 +218,10 @@ class Menu
                         'title' => 'Заявки на регистрацию',
                         'route' => route('merchant.registrationList'),
                     ],
-//                    [
-//                        'title' => 'Список мерчантов',
-//                        'route' => '#',
-//                    ],
+                    [
+                        'title' => 'Список мерчантов',
+                        'route' => route('merchant.activeList'),
+                    ],
 //                    [
 //                        'title' => 'Взаиморасчёты',
 //                        'route' => '#',

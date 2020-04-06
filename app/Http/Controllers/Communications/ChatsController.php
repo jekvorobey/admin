@@ -12,9 +12,6 @@ use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
-use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
-use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
-use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 
 
@@ -22,6 +19,12 @@ class ChatsController extends Controller
 {
     public function unread()
     {
+        $this->loadCommunicationChannelTypes = true;
+        $this->loadCommunicationChannels = true;
+        $this->loadCommunicationThemes = true;
+        $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
+
         $this->title = 'Непрочитанные сообщения';
         return $this->render('Communication/ChatsUnread');
     }
@@ -129,7 +132,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function update(CommunicationService $communicationService, RequestInitiator $user)
+    public function update(CommunicationService $communicationService)
     {
         $chatId = request('chat_id');
 

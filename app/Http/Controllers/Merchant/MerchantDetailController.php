@@ -40,7 +40,7 @@ class MerchantDetailController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $isRegistration = $request->routeIs('merchant.registrationDetail');
+        $isRegistration = $request->routeIs('merchant.detail');
         $this->title = $isRegistration ? "Заявка {$merchant->id}" : '';
 
         /** @var Collection|OperatorDto $operators */
@@ -66,7 +66,7 @@ class MerchantDetailController extends Controller
             }
         }
 
-        return $this->render('Merchant/MerchantDetail', [
+        return $this->render('Merchant/Detail', [
             'iMerchant' => $merchant,
             'iOperators' => $operators,
             'users' => $users,
@@ -90,7 +90,6 @@ class MerchantDetailController extends Controller
         $availableStatuses = array_keys(MerchantStatus::allStatuses());
         $data = $request->all();
         $fields = [
-            'display_name' => 'nullable',
             'legal_name' => 'nullable',
             'legal_address' => 'nullable',
             'inn' => 'nullable|numeric',

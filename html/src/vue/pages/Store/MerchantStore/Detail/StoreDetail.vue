@@ -234,7 +234,7 @@
 </template>
 
 <script>
-    import Service from '../../../../../scripts/services/services';
+    import Services from '../../../../../scripts/services/services';
     import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
@@ -374,15 +374,19 @@
                 return;
             }
 
-            Service.net().put(
+            Services.showLoader();
+            Services.net().put(
                 this.getRoute('merchantStore.update', {id: this.store.id}),
                 null,
                 this.store
             ).then(data => {
+                Services.msg("Изменения сохранены");
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         updateWorking(day) {
-            Service.net().put(
+            Services.net().put(
                 this.getRoute('merchantStore.updateWorking', {id: day.id}),
                 null,
                 day
@@ -390,12 +394,16 @@
             });
         },
         savePickupTime(pickupTime) {
-            Service.net().put(
+            Services.showLoader();
+            Services.net().put(
                 this.getRoute('merchantStore.savePickupTime'),
                 null,
                 pickupTime
             ).then(data => {
                 this.store.pickupTimes = data.pickupTimes;
+                Services.msg("Изменения сохранены");
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         createContact() {
@@ -406,7 +414,8 @@
                 store_id: this.store.id
             };
 
-            Service.net().post(
+            Services.showLoader();
+            Services.net().post(
                 this.getRoute('merchantStore.createContact', {id: contact.store_id}),
                 null,
                 contact
@@ -414,25 +423,36 @@
                 if(data.id) {
                     contact.id = data.id;
                     this.store.storeContact.push(contact);
+                    Services.msg("Изменения сохранены");
                 }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         updateContact(contact) {
-            Service.net().put(
+            Services.showLoader();
+            Services.net().put(
                 this.getRoute('merchantStore.updateContact', {id: contact.id}),
                 null,
                 contact
             ).then(data => {
+                Services.msg("Изменения сохранены");
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         deleteContact(index) {
             let id = this.store.storeContact[index].id;
             if(id) {
-                Service.net().delete(
+                Services.showLoader();
+                Services.net().delete(
                     this.getRoute('merchantStore.deleteContact', {id: id}),
                     null,
                     null
                 ).then(data => {
+                    Services.msg("Изменения сохранены");
+                }).finally(data => {
+                    Services.hideLoader();
                 });
             }
 
@@ -442,7 +462,7 @@
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
 
         error_merchant_id() {

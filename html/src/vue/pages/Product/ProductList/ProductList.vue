@@ -99,6 +99,11 @@
                 <dropdown v-if="!massEmpty(massProductsType)" :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
                     Сменить статус
                 </dropdown>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyIdsToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-4"
+                ><fa-icon icon="copy"></fa-icon> Копировать ID</button>
             </div>
         </div>
         <table class="table">
@@ -219,6 +224,7 @@
     import { validationMixin } from 'vuelidate';
     import { required } from 'vuelidate/lib/validators';
     import Helpers from '../../../../scripts/helpers';
+    import * as clipboard from "clipboard-polyfill/dist/clipboard-polyfill.promise";
 
     const TYPE_ARCHIVE = 'archive';
     const TYPE_PRODUCTION = 'production';
@@ -427,7 +433,11 @@
                         this.massClear(this.massProductsType);
                     });
                 });
-            }
+            },
+            copyIdsToClipBoard() {
+                let text = this.massAll(this.massProductsType).join(',');
+                clipboard.writeText(text).then();
+            },
         },
         created() {
             window.onpopstate = () => {

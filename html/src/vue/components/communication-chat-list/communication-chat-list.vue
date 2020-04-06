@@ -123,6 +123,7 @@ export default {
             },
             chats: [],
             users: {},
+            files: {},
             modal: {
                 chat_id: null,
                 channel_id: null,

@@ -8,19 +8,46 @@
                         <span class="badge" :class="statusClass(cargo.status.id)">
                             {{ cargo.status.name || 'N/A' }}
                         </span>
-                        <button class="btn btn-primary" v-if="isRequestSendStatus"
-                                @click="changeCargoStatus(3)">Груз передан курьеру</button>
-                        <button class="btn btn-primary" v-if="!isCancelStatus"
-                                @click="changeCargoStatus(5)">Отменить</button>
+                        <span class="badge badge-danger" v-if="isCancel">Отменен</span>
+
+                        <template v-if="isCreatedStatus && !isCancel">
+                            <button class="btn btn-primary" v-if="isRequestSend"
+                                    @click="changeCargoStatus(2)">Груз передан курьеру</button>
+                            <button class="btn btn-warning" v-else
+                                    title="Задание на забор груза не создано">Груз передан курьеру</button>
+                        </template>
+
+                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel">
+                            <template v-if="isCreatedStatus">
+                                <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
+                                    Отменить задание на забор груза
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button v-else @click="createCourierCall()">
+                                    Создать задание на забор груза
+                                </b-dropdown-item-button>
+                            </template>
+                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(3)">
+                                Принят Логистическим Оператором
+                            </b-dropdown-item-button>
+                            <b-dropdown-item-button v-if="isCreatedStatus" @click="cancelCargo()">
+                                Отменить груз
+                            </b-dropdown-item-button>
+                        </b-dropdown>
                     </div>
 
                     <p class="text-secondary mt-3">
                         Служба доставки:<span class="float-right">{{ cargo.delivery_service.name }}</span>
                     </p>
                     <p class="text-secondary mt-3">
+                        Номер задания на забор груза:<span class="float-right">{{ cargo.xml_id ? cargo.xml_id : 'N/A' }}</span>
+                    </p>
+                    <p class="text-danger mt-3" v-if="cargo.error_xml_id">
+                        Последняя ошибка при создании задания на забор груза:<span class="float-right">{{ cargo.error_xml_id}}</span>
+                    </p>
+                    <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
                     </p>
-                    <p class="text-secondary mt-3" v-if="isShippingProblemStatus">
+                    <p class="text-secondary mt-3" v-if="isShippingProblem">
                         Описание проблемы:<span class="float-right">{{ cargo.shipping_problem_comment }}</span>
                     </p>
                 </div>
@@ -52,7 +79,7 @@
                     </p>
                     <p class="text-secondary mt-3">
                         Склад отгрузки:
-                        <span class="float-right">{{cargo.store.name}}</span>
+                        <span class="float-right"><a :href="getRoute('merchantStore.edit', {id: cargo.store.id})">{{cargo.store.name}}</a></span>
                     </p>
                 </div>
             </div>
@@ -73,15 +100,15 @@
 
 <script>
 
-import Services from '../../../../../scripts/services/services';
-import modalMixin from '../../../../mixins/modal.js';
+    import Services from '../../../../../scripts/services/services';
+    import modalMixin from '../../../../mixins/modal.js';
 
-import VTabs from '../../../../components/tabs/tabs.vue';
-import ShipmentsTab from './components/shipments-tab.vue';
-import HistoryTab from './components/history-tab.vue';
-import Modal from '../../../../components/controls/modal/modal.vue';
+    import VTabs from '../../../../components/tabs/tabs.vue';
+    import ShipmentsTab from './components/shipments-tab.vue';
+    import HistoryTab from './components/history-tab.vue';
+    import Modal from '../../../../components/controls/modal/modal.vue';
 
-export default {
+    export default {
     components: {
         VTabs,
         Modal,
@@ -113,8 +140,6 @@ export default {
                 case 1: return 'badge-info';
                 case 2: return 'badge-primary';
                 case 3: return 'badge-success';
-                case 4: return 'badge-danger';
-                case 5: return 'badge-warning';
                 default: return 'badge-light';
             }
         },
@@ -124,15 +149,70 @@ export default {
         changeCargoStatus(statusId) {
             let errorMessage = 'Ошибка при изменении статуса груза.';
 
+            Services.showLoader();
             Services.net().put(this.getRoute('cargo.changeStatus', {id: this.cargo.id}), null,
                 {'status': statusId}).then(data => {
-                if (data.result === 'ok') {
+                if (data.cargo) {
                     this.cargo = data.cargo;
-                } else {
-                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
                 }
-            }, () => {
-                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+                if (data.result === 'ok') {
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage + ' ' + data.error, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        createCourierCall() {
+            let errorMessage = 'Ошибка при создании задания на забор груза.';
+
+            Services.showLoader();
+            Services.net().post(this.getRoute('cargo.createCourierCall', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Задание на забор груза создано");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        cancelCourierCall() {
+            let errorMessage = 'Ошибка при отмене задания на забор груза.';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('cargo.cancelCourierCall', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Задание на забор груза отменено");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        cancelCargo() {
+            let errorMessage = 'Ошибка при отмене груза.';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('cargo.cancel', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Груз отменен");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
         onChange(data) {
@@ -148,14 +228,23 @@ export default {
         tooltipShipmentCost() {
             return 'С учётом скидки';
         },
-        isRequestSendStatus() {
+        isRequestSend() {
+            return this.cargo.xml_id;
+        },
+        isShippingProblem() {
+            return this.cargo.is_problem;
+        },
+        isCancel() {
+            return this.cargo.is_canceled;
+        },
+        isCreatedStatus() {
+            return this.isStatus(1);
+        },
+        isShippedStatus() {
             return this.isStatus(2);
         },
-        isShippingProblemStatus() {
-            return this.isStatus(4);
-        },
-        isCancelStatus() {
-            return this.isStatus(5);
+        isTakenStatus() {
+            return this.isStatus(3);
         },
     },
 };
