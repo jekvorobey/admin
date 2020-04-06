@@ -23,6 +23,12 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
+
+            Route::namespace('Detail')->group(function () {
+                Route::prefix('operators')->group(function () {
+                    Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
+                });
+            });
         });
     });
 
