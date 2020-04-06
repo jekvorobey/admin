@@ -285,6 +285,8 @@ Route::middleware('auth')->group(function () {
                     ->name('merchantStore.deleteContact');
             });
 
+            Route::get('/pickup-times', 'MerchantStoreController@pickupTime')
+                ->name('merchantStore.pickupTime');
             Route::put('/pickup-times', 'MerchantStoreController@savePickupTime')
                 ->name('merchantStore.savePickupTime');
         });
