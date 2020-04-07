@@ -27,6 +27,12 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('operators')->group(function () {
                     Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
                 });
+                Route::prefix('main')->group(function () {
+                    Route::get('', 'TabMainController@load')->name('merchant.detail.main');
+
+                    Route::post('document', 'TabMainController@createDocument')->name('merchant.detail.main.document.create');
+                    Route::delete('document', 'TabMainController@deleteDocument')->name('merchant.detail.main.document.delete');
+                });
             });
         });
     });
@@ -117,6 +123,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
+                Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
 
                 Route::prefix('delivery')->group(function () {
                     Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');

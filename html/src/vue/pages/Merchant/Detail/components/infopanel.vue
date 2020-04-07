@@ -73,6 +73,7 @@
 
 <script>
 import Services from '../../../../../scripts/services/services.js';
+import moment from 'moment';
 
 export default {
     name: 'infopanel',
@@ -94,12 +95,17 @@ export default {
             Services.net().post(this.getRoute('merchant.detail.edit', {id: this.merchant.id}), {
                 merchant: this.form
             }).then(() => {
-                this.merchant.legal_name = this.form.legal_name;
-                this.merchant.status = this.form.status;
+                if (this.merchant.legal_name !== this.form.legal_name) {
+                    this.merchant.legal_name = this.form.legal_name;
+                    this.$store.commit('title', this.form.legal_name);
+                }
+                if (this.merchant.status !== this.form.status) {
+                    this.merchant.status = this.form.status;
+                    this.merchant.status_at = moment().format('YYYY-MM-DD HH:mm:ss');
+                }
                 this.merchant.city = this.form.city;
                 this.merchant.rating_id = this.form.rating_id;
                 this.merchant.manager_id = this.form.manager_id;
-                this.$store.commit('title', this.form.legal_name);
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
