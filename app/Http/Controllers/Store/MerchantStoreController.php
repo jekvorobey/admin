@@ -48,7 +48,7 @@ class MerchantStoreController extends Controller
             'iFilter' => $this->getFilter() ? : null,
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
     }
     
@@ -92,7 +92,7 @@ class MerchantStoreController extends Controller
         $this->title = 'Добавление склада мерчанта';
         
         return $this->render('Store/MerchantStore/Create', [
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
     }
     
@@ -108,7 +108,7 @@ class MerchantStoreController extends Controller
         return $this->render('Store/MerchantStore/Detail', [
             'iStore' => $this->getStore($id, $storeService),
             'iDeliveryServices' => DeliveryService::allServices(),
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'display_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
             'pickupTimes' => $this->getPickupTimes(),
         ]);
     }
@@ -242,6 +242,21 @@ class MerchantStoreController extends Controller
         
         return response()->json([]);
     }
+
+    /**
+     * @param  StoreService  $storeService
+     * @return JsonResponse
+     */
+    public function pickupTime(Request $request, StoreService $storeService): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'store_id' => 'integer|required',
+        ]);
+
+        return response()->json([
+            'pickupTimes' => $this->getStore($validatedData['store_id'], $storeService)['pickupTimes']
+        ]);
+    }
     
     /**
      * @param  Request  $request
@@ -268,9 +283,7 @@ class MerchantStoreController extends Controller
             $storeService->createStorePickupTime($storePickupTimeDto->store_id, $storePickupTimeDto);
         }
         
-        return response()->json([
-            'pickupTimes' => $this->getStore($storePickupTimeDto->store_id, $storeService)['pickupTimes']
-        ]);
+        return response()->json([]);
     }
     
     

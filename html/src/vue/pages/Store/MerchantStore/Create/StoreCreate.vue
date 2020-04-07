@@ -52,14 +52,14 @@
 </template>
 
 <script>
-import Service from '../../../../../scripts/services/services';
-import VInput from '../../../../components/controls/VInput/VInput.vue';
-import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import Service from '../../../../../scripts/services/services';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
-import { validationMixin } from 'vuelidate';
-import { integer, required } from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+    import {integer, required} from 'vuelidate/lib/validators';
 
-export default {
+    export default {
     name: 'page-stores-detail',
     components: {
         VInput,
@@ -99,20 +99,24 @@ export default {
                 return;
             }
 
+            Services.showLoader();
             Service.net().post(
                 this.getRoute('merchantStore.create'),
                 null,
                 this.store
             ).then(data => {
                 if (data.status === 'ok') {
+                    Services.msg("Изменения сохранены");
                     window.location.href = this.route('merchantStore.list');
                 }
+            }).finally(data => {
+                Services.hideLoader();
             });
         },
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.display_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
 
         error_merchant_id() {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
 use Illuminate\Http\Request;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
@@ -103,6 +104,8 @@ class ProductListController extends Controller
         $query = new ProductQuery();
         $page = $request->get('page', 1);
         $query->page($page, 10);
+        $query->segment = 1;// todo
+        $query->role = UserDto::SHOWCASE__GUEST;
         $query->fields([
             ProductQuery::PRODUCT_ID,
             ProductQuery::DATE_ADD,

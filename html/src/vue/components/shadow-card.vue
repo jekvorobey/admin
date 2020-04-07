@@ -11,15 +11,15 @@
 </template>
 
 <script>
-    export default {
-        props: {
-            title: String,
-            padding: {
-                default: 5
-            },
-            buttons: Object
-        }
+export default {
+    props: {
+        title: String,
+        padding: {
+            default: 5
+        },
+        buttons: Object
     }
+}
 </script>
 
 <style scoped>

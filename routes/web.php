@@ -11,20 +11,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/', 'MainController@home')->name('home');
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
-    Route::get('available-managers', 'Merchant\\MerchantDetailController@availableManagers')->name('managers.all');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
         Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
         Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
         Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
         Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.userExists');
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
-            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
+            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
+
+            Route::namespace('Detail')->group(function () {
+                Route::prefix('operators')->group(function () {
+                    Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
+                });
+            });
         });
     });
 
@@ -48,7 +54,9 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('promo-code')->group(function () {
             Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
+            Route::post('/', 'PromoCodeController@create')->name('promo-code.save');
             Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
+            Route::get('/generate', 'PromoCodeController@generate')->name('promo-code.generate');
         });
     });
 
@@ -149,6 +157,11 @@ Route::middleware('auth')->group(function () {
                             ->name('cargo.deleteShipmentFromCargo');
                     });
                 });
+
+                Route::prefix('courier-call')->group(function () {
+                    Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
+                    Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
+                });
             });
         });
 
@@ -187,6 +200,13 @@ Route::middleware('auth')->group(function () {
                 Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
             });
         });
+    });
+    
+    Route::prefix('brands')->namespace('Product')->group(function () {
+        Route::get('', 'BrandController@list')->name('brand.list');
+        Route::get('page', 'BrandController@page')->name('brand.listPage');
+        Route::post('save', 'BrandController@save')->name('brand.save');
+        Route::post('delete', 'BrandController@delete')->name('brand.delete');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
@@ -273,6 +293,8 @@ Route::middleware('auth')->group(function () {
                     ->name('merchantStore.deleteContact');
             });
 
+            Route::get('/pickup-times', 'MerchantStoreController@pickupTime')
+                ->name('merchantStore.pickupTime');
             Route::put('/pickup-times', 'MerchantStoreController@savePickupTime')
                 ->name('merchantStore.savePickupTime');
         });
@@ -380,10 +402,10 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
-                        //TODO: нужно сделать отдельный префикс 'export', чтобы у него были роуты xlsx, cvs и т.д.
                         Route::get('export', 'TabDocumentController@export')->name('customers.detail.document.export');
                         Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                        Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

@@ -1,46 +1,86 @@
 <template>
     <layout-main>
         <div class="mt-3 mb-3 shadow p-3">
-            <button @click="openModal('merchantCreate')" class="btn btn-dark">Создать мерчанта</button>
-        </div>
-        <div class="mt-3 mb-3 shadow p-3">
             <div class="row">
-                <f-input v-model="filter.name" class="col-lg-6 col-md-12">Компания</f-input>
-                <f-multi-select
-                        v-model="filter.status"
-                        :options="statusOptions"
-                        class="col-lg-6 col-md-12"
-                >Статус</f-multi-select>
+                <f-date v-model="filter.created_at" class="col-lg-3 col-md-6" range>
+                    Дата регистрации
+                </f-date>
+                <f-multi-select v-model="filter.rating" :options="ratingOptions" class="col-lg-3 col-md-6">
+                    Рейтинг
+                </f-multi-select>
+                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-lg-3 col-md-6">
+                    Статус
+                </f-multi-select>
+                <f-input v-model="filter.id" class="col-lg-3 col-md-6">ID</f-input>
+                <f-input v-model="filter.legal_name" class="col-lg-3 col-md-6">Название организации</f-input>
+                <f-input v-model="filter.operator_first_name" class="col-lg-3 col-md-6">Имя</f-input>
+                <f-input v-model="filter.operator_last_name" class="col-lg-3 col-md-6">Фамилия</f-input>
+                <f-input v-model="filter.operator_middle_name" class="col-lg-3 col-md-6">Отчество</f-input>
+                <f-input v-model="filter.operator_email" class="col-lg-3 col-md-6">Email</f-input>
+                <f-input v-model="filter.operator_phone" class="col-lg-3 col-md-6">Телефон</f-input>
+                <div class="form-group col-lg-3 col-md-6">
+                    <label for="manager_id">Менеджер</label>
+                    <div class="input-group input-group-sm">
+                        <select class="form-control" v-model="filter.manager_id" id="manager_id">
+                            <option :value="null">-</option>
+                            <option v-for="(manager, id) in managers" :value="id">{{ manager }}</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <button @click="applyFilter" class="btn btn-dark">Применить</button>
+            <button @click="loadPage" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
             Всего: {{ pager.total }}. <span v-if="selectedMerchants.length">Выбрано: {{selectedMerchants.length}}</span>
         </div>
+
+        <div class="btn-toolbar mb-3">
+            <div class="input-group">
+                <select class="custom-select" v-model="newStatus">
+                    <option :value="null">Выбрать статус</option>
+                    <option v-for="status in options.statuses" :value="status.id">{{ status.name }}</option>
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" :disabled="!selectedMerchants.length || !newStatus" @click="changeStatus">
+                        <fa-icon icon="save"/>
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-success ml-2">Создать мерчанта</button>
+
+        </div>
+
         <table class="table">
             <thead>
             <tr>
                 <th></th>
-                <th>№</th>
-                <th>Компания</th>
-                <th>Заявитель</th>
-                <th>Дата подачи</th>
+                <th>ID</th>
+                <th>Дата регистрации</th>
+                <th>Название организации</th>
+                <th>ФИО контактного лица</th>
+                <th>Email</th>
+                <th>Телефона</th>
+                <th>Рейтинг</th>
                 <th>Статус</th>
+                <th>Менеджер</th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="merchant in merchants">
                 <td>
                     <input type="checkbox" :checked="merchantSelected(merchant.id)"
-                           @change="e => selectMerchant(e, merchant.id)">
+                            @change="e => selectMerchant(e, merchant.id)">
                 </td>
                 <td>{{ merchant.id }}</td>
-                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.display_name }}</a></td>
-                <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.created_at }}</td>
-                <td><span class="badge" :class="statusClass(merchant.status)">{{ statusName(merchant.status) }}</span>
-                </td>
+                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
+                <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
+                <td>{{ merchant.user ? merchant.user.email : '' }}</td>
+                <td>{{ merchant.user ? merchant.user.phone : '' }}</td>
+                <td>{{ merchant.rating ? merchant.rating.name : '-'}}</td>
+                <td><span class="badge" :class="statusClass(merchant.status)">{{ statusName(merchant.status) }}</span></td>
+                <td>{{ merchant.manager_id ? managers[merchant.manager_id] : '' }}</td>
             </tr>
             </tbody>
         </table>
@@ -50,7 +90,6 @@
                     v-model="currentPage"
                     :total-rows="pager.total"
                     :per-page="pager.pageSize"
-                    @change="changePage"
                     :hide-goto-end-buttons="pager.pages < 10"
                     class="mt-3 float-right"
             ></b-pagination>
@@ -62,128 +101,140 @@
 
 <script>
 
-    import Services from '../../../../scripts/services/services';
-    import withQuery from 'with-query';
+import Services from '../../../../scripts/services/services';
+import withQuery from 'with-query';
 
-    import FMultiSelect from '../../../components/filter/f-multi-select.vue';
-    import FInput from '../../../components/filter/f-input.vue';
+import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+import FInput from '../../../components/filter/f-input.vue';
 
-    import MerchantCreateModal from "./components/merchant-create-modal.vue";
+import FDate from '../../../components/filter/f-date.vue';
 
-    import modalMixin from "../../../mixins/modal.js";
+import MerchantCreateModal from "./components/merchant-create-modal.vue";
 
-    const cleanFilter = {
-        name: '',
-        status: []
-    };
+import modalMixin from "../../../mixins/modal.js";
 
-    export default {
-        name: 'page-index',
-        mixins: [modalMixin],
-        components: {
-            FMultiSelect,
-            FInput,
+const cleanFilter = {
+    id: '',
+    legal_name: '',
+    operator_first_name: '',
+    operator_last_name: '',
+    operator_middle_name: '',
+    operator_email: '',
+    operator_phone: '',
+    manager_id: '',
+    status: [],
+    rating: [],
+    created_at: []
+};
 
-            MerchantCreateModal,
+export default {
+    name: 'page-index',
+    mixins: [modalMixin],
+    components: {FDate, FMultiSelect, FInput, MerchantCreateModal},
+    props: ['done', 'iMerchants', 'iPager', 'iFilter', 'iCurrentPage', 'options', 'managers'],
+    data() {
+        let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+        filter.status = filter.status.map(status => parseInt(status));
+        filter.rating = filter.rating.map(rating => parseInt(rating));
+        return {
+            merchants: this.iMerchants,
+            pager: this.iPager,
+            currentPage: this.iCurrentPage || 1,
+            filter,
+            selectedMerchants: [],
+            newStatus: null,
+        };
+    },
+    methods: {
+        pushRoute() {
+            history.pushState(null, null, location.origin + location.pathname + withQuery('', {
+                page: this.currentPage,
+                filter: this.filter,
+            }));
         },
-        props: {
-            done: {},
-            iMerchants: {},
-            iPager: {},
-            iFilter: {},
-            options: {}
+        loadPage() {
+            Services.showLoader();
+            Services.net().get(this.route('merchant.listPage'), {
+                done: this.done ? 1 : 0,
+                page: this.currentPage,
+                filter: this.filter,
+            }).then(data => {
+                this.merchants = data.items;
+                if (data.pager) {
+                    this.pager = data.pager
+                }
+                this.selectedMerchants = [];
+                this.pushRoute(this.currentPage);
+            }).finally(() => {
+                Services.hideLoader();
+            });
         },
-        data() {
-            let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
-            filter.status = filter.status.map(status => parseInt(status));
-            return {
-                merchants: this.iMerchants,
-                pager: this.iPager,
-                currentPage: this.iCurrentPage || 1,
-                filter,
-                selectedMerchants: []
-            };
-        },
-        methods: {
-            changePage(newPage) {
-                history.pushState(null, null, location.origin + location.pathname + withQuery('', {
-                    page: newPage,
-                    filter: this.filter,
-                    //sort: this.sort
-                }));
-            },
-            loadPage() {
-                Services.net().get(this.route('merchant.listPage'), {
-                    done: this.done,
-                    page: this.currentPage,
-                    filter: this.filter,
-                    //sort: this.sort,
-                }).then(data => {
-                    this.merchants = data.items;
-                    if (data.pager) {
-                        this.pager = data.pager
-                    }
-                });
-            },
-            applyFilter() {
-                this.changePage(1);
+        changeStatus() {
+            Services.showLoader();
+            Services.net().put(this.route('merchant.listPage.changeStatus'), {
+                status: this.newStatus,
+                ids: this.selectedMerchants,
+            }).catch(() => {
+                Services.hideLoader();
+            }).then(data => {
+                this.newStatus = null;
                 this.loadPage();
-            },
-            clearFilter() {
-                this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
-                this.applyFilter();
-            },
-            statusName(id) {
-                let status = this.options.statuses[id];
-                return status ? status.name : 'N/A';
-            },
-            statusClass(id) {
-                switch (id) {
-                    case 1:
-                        return 'badge-secondary';
-                    case 2:
-                        return 'badge-info';
-                    case 3:
-                        return 'badge-warning';
-                    case 4:
-                        return 'badge-danger';
-                    case 5:
-                        return 'badge-success';
-                }
-            },
-            merchantSelected(id) {
-                return this.selectedMerchants.indexOf(id) !== -1;
-            },
-            selectMerchant(e, id) {
-                if (e.target.checked) {
-                    this.selectedMerchants.push(id);
-                } else {
-                    let index = this.selectedMerchants.indexOf(id);
-                    if (index !== -1) {
-                        this.selectedMerchants.splice(index, 1);
-                    }
-                }
+            });
+        },
+        clearFilter() {
+            this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
+            this.loadPage();
+        },
+        statusName(id) {
+            let status = this.options.statuses[id];
+            return status ? status.name : 'N/A';
+        },
+        statusClass(id) {
+            switch (id) {
+                case this.merchantStatuses.created:
+                    return 'badge-secondary';
+                case this.merchantStatuses.review:
+                    return 'badge-info';
+                case this.merchantStatuses.cancel:
+                    return 'badge-danger';
+                case this.merchantStatuses.terms:
+                    return 'badge-warning';
+                case this.merchantStatuses.activation:
+                    return 'badge-outline-success';
+                case this.merchantStatuses.work:
+                    return 'badge-success';
+                case this.merchantStatuses.stop:
+                    return 'badge-warning';
+                case this.merchantStatuses.close:
+                    return 'badge-danger';
             }
         },
-        created() {
-            window.onpopstate = () => {
-                let query = qs.parse(document.location.search.substr(1));
-                if (query.page) {
-                    this.currentPage = query.page;
+        merchantSelected(id) {
+            return this.selectedMerchants.indexOf(id) !== -1;
+        },
+        selectMerchant(e, id) {
+            if (e.target.checked) {
+                this.selectedMerchants.push(id);
+            } else {
+                let index = this.selectedMerchants.indexOf(id);
+                if (index !== -1) {
+                    this.selectedMerchants.splice(index, 1);
                 }
-            };
-        },
-        watch: {
-            currentPage() {
-                this.loadPage();
-            }
-        },
-        computed: {
-            statusOptions() {
-                return Object.values(this.options.statuses)
-                    .map(status => ({value: status.id, text: status.name}))
-                    .filter(status => status.value !== 6);
             }
         }
-    };
+    },
+    watch: {
+        currentPage() {
+            this.loadPage();
+        }
+    },
+    computed: {
+        statusOptions() {
+            return Object.values(this.options.statuses).map(status => ({value: status.id, text: status.name}));
+        },
+        ratingOptions() {
+            return Object.values(this.options.ratings).map(rating => ({value: rating.id, text: rating.name}));
+        },
+    },
+};
 </script>

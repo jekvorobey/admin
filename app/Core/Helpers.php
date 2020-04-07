@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\UserDto;
 use Illuminate\Support\Collection;
 
 class Helpers
@@ -18,5 +19,17 @@ class Helpers
         return $collections->map(function ($item) {
             return ['value' => $item['id'], 'text' => $item['name']];
         });
+    }
+
+    /**
+     * @param bool $showDefault
+     * @return array
+     */
+    public static function getOptionRoles($showDefault = true)
+    {
+        $roles = $showDefault ? [['value' => null, 'text' => 'Все']] : [];
+        $roles[] = ['value' => UserDto::SHOWCASE__PROFESSIONAL, 'text' => 'Профессионал'];
+        $roles[] = ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'];
+        return $roles;
     }
 }

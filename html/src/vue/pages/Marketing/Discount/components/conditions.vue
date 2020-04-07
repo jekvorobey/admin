@@ -89,7 +89,7 @@
                         </template>
 
                         <template v-if="condition.type === CONDITION_TYPE_DISCOUNT_SYNERGY">
-                            Взаимодействует со скидками:
+                            Суммируется со скидками:
                             <ul>
                                 <li v-for="id in condition.synergy">{{ discountName(id) }}</li>
                             </ul>
@@ -205,13 +205,13 @@
             <v-input v-model="values.sequenceNumber" type="number" min="0">Порядковый номер заказа</v-input>
         </div>
 
-        <!-- Взаимодействия с другими маркетинговыми инструментами -->
+        <!-- Суммируется с другими маркетинговыми инструментами -->
         <div class="col-6" v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
             <v-select v-model="values.synergy"
                       :options="discounts"
                       :multiple="true"
                       :selectSize="10"
-            >Взаимодействие с другими скидками</v-select>
+            >Суммируется с другими скидками</v-select>
         </div>
 
         <div class="col-12" id="conditions-scroll">&nbsp;</div>

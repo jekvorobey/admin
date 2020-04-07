@@ -1,16 +1,17 @@
 <?php
+
 namespace App\Http\Controllers\Orders\Flow;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Oms\Dto\DeliveryCity;
-use Greensight\Oms\Dto\DeliveryMethod;
-use Greensight\Oms\Dto\DeliveryStore;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\PaymentMethod;
@@ -28,39 +29,25 @@ use Pim\Services\BrandService\BrandService;
  */
 class FlowListController extends Controller
 {
-
     /**
      * @param Request $request
      * @param OrderService $orderService
      * @param BrandService $brandService
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param DeliveryService $deliveryService
      * @return mixed
      * @throws \Exception
      */
-    public function index(
-        Request $request,
-        OrderService $orderService,
-        BrandService $brandService,
-        CustomerService $customerService,
-        UserService $userService,
-        DeliveryService $deliveryService
-    )
-    {
+    public function index(Request $request, OrderService $orderService, BrandService $brandService) {
         $this->title = 'Список заказов';
 
-        $restQuery = $this->makeRestQuery($orderService, $request);
+        $restQuery = $this->makeRestQuery($request);
         $pager = $orderService->ordersCount($restQuery);
-        $orders = $this->loadOrders($restQuery, $orderService, $customerService, $userService, $deliveryService);
+        $orders = $this->loadOrders($restQuery);
 
         return $this->render('Orders/Flow/List', [
             'iOrders' => $orders,
             'iCurrentPage' => $request->get('page', 1),
             'iPager' => $pager,
             'orderStatuses' => OrderStatus::allStatuses(),
-            'deliveryStores' => DeliveryStore::allStores(), //todo
-            'deliveryCities' => DeliveryCity::allCities(), //todo
             'deliveryMethods' => DeliveryMethod::allMethods(),
             'paymentMethods' => PaymentMethod::allMethods(),
             'brands' => $brandService->newQuery()->addFields('brand', 'id', 'name')->brands(),
@@ -72,21 +59,13 @@ class FlowListController extends Controller
     /**
      * @param Request $request
      * @param OrderService $orderService
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function page(
-        Request $request,
-        OrderService $orderService,
-        CustomerService $customerService,
-        UserService $userService,
-        DeliveryService $deliveryService
-    ): JsonResponse {
-        $restQuery = $this->makeRestQuery($orderService, $request);
-        $orders = $this->loadOrders($restQuery, $orderService, $customerService, $userService, $deliveryService);
+    public function page(Request $request, OrderService $orderService): JsonResponse
+    {
+        $restQuery = $this->makeRestQuery($request);
+        $orders = $this->loadOrders($restQuery);
         $result = [
             'orders' => $orders,
         ];
@@ -99,20 +78,21 @@ class FlowListController extends Controller
 
     /**
      * @param DataQuery $restQuery
-     * @param OrderService $orderService
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param DeliveryService $deliveryService
      * @return Collection
      */
-    protected function loadOrders(
-        DataQuery $restQuery,
-        OrderService $orderService,
-        CustomerService $customerService,
-        UserService $userService,
-        DeliveryService $deliveryService
-    ): Collection
+    protected function loadOrders(DataQuery $restQuery): Collection
     {
+        /** @var OrderService $orderService */
+        $orderService = resolve(OrderService::class);
+        /** @var CustomerService $customerService */
+        $customerService = resolve(CustomerService::class);
+        /** @var UserService $userService */
+        $userService = resolve(UserService::class);
+        /** @var DeliveryService $deliveryService */
+        $deliveryService = resolve(DeliveryService::class);
+        /** @var ListsService $listsService */
+        $listsService = resolve(ListsService::class);
+
         $orders = $orderService->orders($restQuery);
 
         // Получаем покупателей заказов
@@ -133,20 +113,46 @@ class FlowListController extends Controller
         $deliveryQuery->setFilter('order_id', array_values($orders->pluck('id')->unique()->toArray()));
         $deliveries = $deliveryService->deliveries($deliveryQuery);
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveries) {
+        $points = collect();
+        $pointIds = $deliveries->pluck('point_id')->filter()->unique()->values()->all();
+        if ($pointIds) {
+            $points = $listsService->points((new RestQuery())->setFilter('id', $pointIds))->keyBy('id');
+        }
+
+        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveries, $points) {
             $data = $order->toArray();
 
-            if(isset($customers[$data['customer_id']]) && isset($users[$customers[$data['customer_id']]['user_id']])) {
+            if (isset($customers[$data['customer_id']]) && isset($users[$customers[$data['customer_id']]['user_id']])) {
                 $data['customer'] = $users[$customers[$data['customer_id']]['user_id']];
+            }
+
+            $deliveryDate = collect();
+            $cities = collect();
+            $data['deliveries'] = [];
+            foreach ($deliveries as $delivery) {
+                if ($delivery->order_id != $order->id) {
+                    continue;
+                }
+                $data['deliveries'][] = $delivery;
+                $deliveryDate->push(Carbon::createFromFormat(AbstractDto::DATE_TIME_FORMAT, $delivery->delivery_at)->format(AbstractDto::DATE_FORMAT));
+
+                if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
+                    if ($points->has($delivery->point_id)) {
+                        $cities->push($points[$delivery->point_id]->address['city']);
+                    }
+                } else {
+                    if (isset($delivery->delivery_address['city'])) {
+                        $cities->push($delivery->delivery_address['city']);
+                    }
+                }
             }
 
             $data['status'] = $order->status()->toArray();
             $data['delivery_method'] = [];// todo $order->deliveryMethod()->toArray();
-            $data['deliveries'] = $deliveries->where('order_id', $order->id)->values()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['updated_at'] = (new Carbon($order->updated_at))->format('h:i:s Y-m-d');
-            $data['delivery_time'] = (new Carbon($order->delivery_time))->format('h:i:s Y-m-d');
-            $data['delivery_city'] = DeliveryCity::allCities()[array_rand(DeliveryCity::allCities())]->toArray(); //todo
+            $data['deliveryDate'] = $deliveryDate->unique()->join(', ');
+            $data['cities'] = $cities->unique()->join(', ');
 
             return $data;
         });
@@ -155,16 +161,15 @@ class FlowListController extends Controller
     }
 
     /**
-     * @param OrderService $orderService
      * @param Request $request
      * @return DataQuery
      * @throws \Exception
      */
-    protected function makeRestQuery(
-        OrderService $orderService,
-        Request $request
-    ): DataQuery
+    protected function makeRestQuery(Request $request): DataQuery
     {
+        /** @var OrderService $orderService */
+        $orderService = resolve(OrderService::class);
+
         $restQuery = $orderService->newQuery();
 
         $page = $request->get('page', 1);
@@ -189,13 +194,8 @@ class FlowListController extends Controller
         }
 
 
-        if(isset($filter['customer'])) {
+        if (isset($filter['customer'])) {
             $restQuery->setFilter('customer', $filter['customer']);
-        }
-
-        if (isset($filter['deliveryTime'])) {
-            $restQuery->setFilter('deliveryTime', '>=', $filter['deliveryTime'][0]);
-            $restQuery->setFilter('deliveryTime', '<=', $filter['deliveryTime'][1]);
         }
 
         if (isset($filter['deliveryCount'])) {

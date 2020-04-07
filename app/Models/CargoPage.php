@@ -53,6 +53,8 @@ class CargoPage extends AbstractPage
                     CargoDto::entity(),
                     'id',
                     'store_id',
+                    'xml_id',
+                    'error_xml_id',
                     'status',
                     'delivery_service',
                     'package_qty',

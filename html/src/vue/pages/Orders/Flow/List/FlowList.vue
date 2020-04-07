@@ -4,7 +4,7 @@
             <div class="card-header">
                 Фильтр
                 <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
-                    {{ opened ? 'Меньше' : 'Больше' }} фильтров!
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
                     <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
                 </button>
             </div>
@@ -18,9 +18,6 @@
                     </f-input>
                     <f-date v-model="filter.created" class="col" range confirm>
                         Дата заказа
-                    </f-date>
-                    <f-date v-model="filter.deliveryTime" class="col" range confirm>
-                        Дата доставки
                     </f-date>
                     <f-select v-model="filter.orderStatus" :options="statusOptions" class="col">
                         Статус
@@ -60,9 +57,6 @@
                                 </f-multi-select>
                                 <f-multi-select v-model="filter.payType" :options="paymentMethodOptions" class="col-3">
                                     Способ оплаты
-                                </f-multi-select>
-                                <f-multi-select v-model="filter.deliveryCity" :options="deliveryCityOptions" class="col-3">
-                                    Город доставки
                                 </f-multi-select>
                                 <f-multi-select v-model="filter.deliveryMethod" :options="deliveryMethodOptions" class="col">
                                     Способ доставки
@@ -145,21 +139,21 @@
 
 <script>
 
-import Service from '../../../../../scripts/services/services';
-import withQuery from 'with-query';
-import qs from 'qs';
+    import Service from '../../../../../scripts/services/services';
+    import withQuery from 'with-query';
+    import qs from 'qs';
 
-import FInput from '../../../../components/filter/f-input.vue';
-import FDate from '../../../../components/filter/f-date.vue';
-import FSelect from '../../../../components/filter/f-select.vue';
-import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-import Dropdown from '../../../../components/dropdown/dropdown.vue';
-import Helpers from '../../../../../scripts/helpers';
-import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
+    import FSelect from '../../../../components/filter/f-select.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import Dropdown from '../../../../components/dropdown/dropdown.vue';
+    import Helpers from '../../../../../scripts/helpers';
+    import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
-import modalMixin from '../../../../mixins/modal.js';
+    import modalMixin from '../../../../mixins/modal.js';
 
-const cleanHiddenFilter = {
+    const cleanHiddenFilter = {
     number: '',
     brands: [],
     payType: [],
@@ -167,15 +161,18 @@ const cleanHiddenFilter = {
 
 const cleanFilter = Object.assign({
     created: '',
-    deliveryTime: '',
     orderStatus: [],
-    deliveryStore: [],
-    deliveryCity: [],
     deliveryMethod: [],
 }, cleanHiddenFilter);
 
 const serverKeys = [
-    'createdAtFrom', 'createdAtTo', 'orderStatus', 'deliveryTime', 'deliveryCount', 'deliveryMethod', 'number', 'customer'
+    'createdAtFrom',
+    'createdAtTo',
+    'orderStatus',
+    'deliveryCount',
+    'deliveryMethod',
+    'number',
+    'customer',
 ];
 
 export default {
@@ -186,8 +183,6 @@ export default {
         'iCurrentPage',
         'iPager',
         'orderStatuses',
-        'deliveryStores',
-        'deliveryCities',
         'deliveryMethods',
         'paymentMethods',
         'iFilter',
@@ -206,8 +201,6 @@ export default {
         let self = this;
         let filter = Object.assign({}, cleanFilter, this.iFilter);
         filter.orderStatus = filter.orderStatus.map(value => parseInt(value));
-        filter.deliveryStore = filter.deliveryStore.map(value => parseInt(value));
-        filter.deliveryCity = filter.deliveryCity.map(value => parseInt(value));
         filter.deliveryMethod = filter.deliveryMethod.map(value => parseInt(value));
         filter.payType = filter.payType.map(value => parseInt(value));
         filter.brands = filter.brands.map(value => parseInt(value));
@@ -253,9 +246,7 @@ export default {
                     name: 'Дата доставки',
                     code: 'delivery_at',
                     value: function(order) {
-                        return order.deliveries[0] ?
-                            order.deliveries[0].delivery_at :
-                            'Нет данных';
+                        return order.deliveryDate;
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -283,12 +274,12 @@ export default {
                 },
                 {
                     name: 'Город доставки',
-                    code: 'delivery_city',
+                    code: 'cities',
                     value: function(order) {
-                        return order.delivery_city.name; //todo
+                        return order.cities;
                     },
                     isShown: true,
-                    isAlwaysShown: false,
+                    isAlwaysShown: true,
                 },
                 {
                     name: 'Статус',
@@ -413,12 +404,6 @@ export default {
                 value: status.id,
                 text: status.name
             }));
-        },
-        deliveryStoreOptions() {
-            return Object.values(this.deliveryStores).map(store => ({value: store.id, text: store.name}));
-        },
-        deliveryCityOptions() {
-            return Object.values(this.deliveryCities).map(city => ({value: city.id, text: city.name}));
         },
         deliveryMethodOptions() {
             return Object.values(this.deliveryMethods).map(method => ({value: method.id, text: method.name}));
