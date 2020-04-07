@@ -64,7 +64,7 @@
             <tbody>
             <tr v-for="(day, index) in store.days" :class="!day.active ? 'inactive' : ''">
                 <td>
-                    <input type="checkbox" v-model="day.active" @change="updateWorking(day, index)"/>
+                    <input type="checkbox" v-model="day.active" @change="updateWorking(index)"/>
                 </td>
                 <td>
                     {{ dayName(index) }}
@@ -80,7 +80,7 @@
                             :lang="langFrom"
                             :time-picker-options="timePickerOptions"
                             :disabled="!day.active"
-                            @change="updateWorking(day, index)"
+                            @change="updateWorking(index)"
                         />
                         <date-picker
                             v-model="day.working_end_time"
@@ -91,7 +91,7 @@
                             :lang="langTo"
                             :time-picker-options="timePickerOptions"
                             :disabled="!day.active"
-                            @change="updateWorking(day, index)"
+                            @change="updateWorking(index)"
                         />
                     </div>
                 </td>
@@ -370,8 +370,8 @@
             this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
             this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
         },
-        updateWorking(day, index) {
-            this.changeStore.days[index] = day;
+        updateWorking(index) {
+            this.changeStore.days[index] = this.store.days[index];
         },
         savePickupTime(pickupTime) {
             let day = pickupTime.day;
@@ -479,7 +479,7 @@
 
             let workingPromisesLength = workingPromises.length;
             let pickupTimePromisesLength = pickupTimePromises.length;
-            let createContactsPromisesStartIndex = workingPromisesLength + pickupTimePromisesLength;
+            let createContactsPromisesStartIndex = workingPromisesLength + pickupTimePromisesLength + 1;
             let createContactsPromisesLastIndex = createContactsPromisesStartIndex + createContactsPromises.length;
 
             Services.showLoader();
@@ -491,9 +491,9 @@
                 ...updateContactsPromises,
                 ...deleteContactsPromises,
             ]).then(data => {
-                for (let i = createContactsPromisesStartIndex; i <= createContactsPromisesLastIndex; i++) {
+                for (let i = createContactsPromisesStartIndex; i < createContactsPromisesLastIndex; i++) {
                     if(data[i].id) {
-                        this.store.storeContact[createContactsPromisesIndexes[i - createContactsPromisesStartIndex]] = data[i].id;
+                        this.store.storeContact[createContactsPromisesIndexes[i - createContactsPromisesStartIndex]].id = data[i].id;
                     }
                 }
                 Services.net().get(
