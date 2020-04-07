@@ -121,7 +121,6 @@ class FlowListController extends Controller
 
         $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $deliveries, $points) {
             $data = $order->toArray();
-            $orderDeliveries = $deliveries->where('order_id', $order->id);
 
             if (isset($customers[$data['customer_id']]) && isset($users[$customers[$data['customer_id']]['user_id']])) {
                 $data['customer'] = $users[$customers[$data['customer_id']]['user_id']];
