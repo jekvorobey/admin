@@ -1,27 +1,57 @@
 <template>
     <layout-main back hide-title>
-        <div class="align-items-stretch justify-content-start order-header mt-3">
-            <div class="shadow p-3 height-100">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4>Заказ {{ order.number }}
-                            <order-status class="ml-2" :status='order.status'/>
-                        </h4>
+        <div class="row align-items-stretch justify-content-start order-header mt-3">
+            <div class="col-md-4">
+                <div class="shadow p-3 height-100">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h2>Заказ {{ order.number }}</h2>
+                            <div style="height: 40px">
+                                <order-status :status='order.status'/>
 
-                        <p class="text-secondary mt-3">
-                            Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
-                        </p>
-                        <p class="text-secondary mt-3">
-                            Дата заказа:<span class="float-right">{{ order.created_at }}</span>
-                        </p>
+                                <b-dropdown text="Действия" class="float-right" size="sm" v-if="isPreOrderStatus || isCreatedStatus">
+                                    <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(4)">
+                                        Ожидает подтверждения Мерчантом
+                                    </b-dropdown-item-button>
+                                </b-dropdown>
+                            </div>
 
-                        <p class="text-secondary mt-3">
-                            Сумма заказа:<span class="float-right">{{preparePrice(order.price)}} руб.</span>
-                        </p>
-                        <p class="text-secondary" v-if="order.customer">
-                            Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
-                        </p>
+                            <p class="text-secondary mt-3">
+                                Последнее изменение:<span class="float-right">{{ order.updated_at }}</span>
+                            </p>
+                            <p class="text-secondary mt-3">
+                                Дата заказа:<span class="float-right">{{ order.created_at }}</span>
+                            </p>
+
+                            <p class="text-secondary" v-if="order.customer">
+                                Покупатель:<span class="float-right">{{ order.customer.last_name }} {{ order.customer.first_name }} {{ order.customer.middle_name }}</span>
+                            </p>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="shadow p-3 height-100">
+                    <h2>
+                        Сумма заказа {{preparePrice(order.price)}} руб.
+                        <fa-icon icon="question-circle" v-b-popover.hover="tooltipOrderCost"></fa-icon>
+                    </h2>
+                    <p class="text-secondary" v-if="order.discount">
+                        Скидка:  <span class="float-right text-danger measure">руб. </span>
+                        <span class="float-right text-danger">-{{order.discount}}</span>
+                    </p>
+                    <p class="text-secondary mt-3">
+                        Сумма без скидки: <span class="float-right text-danger measure">руб.</span>
+                        <span class="float-right text-danger">{{preparePrice(order.cost)}}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="shadow p-3 height-100">
+                    <h2>{{order.total_qty}} ед. товара</h2>
+                    <p class="text-secondary">
+                        Вес:<span class="float-right">{{ order.weight }} г</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -58,16 +88,16 @@
 
 <script>
 
-import VTabs from '../../../../components/tabs/tabs.vue';
+    import Services from '../../../../../scripts/services/services';
+    import VTabs from '../../../../components/tabs/tabs.vue';
+    import BasketItemsTab from './components/basket-items-tab.vue';
+    import HistoryTab from './components/history-tab.vue';
+    import CustomerHistoryTab from './components/customer-history-tab.vue';
+    import MainTab from './components/main-tab.vue';
+    import DeliveryTab from './components/delivery-tab.vue';
+    import ShipmentTab from './components/shipment-tab.vue';
 
-import BasketItemsTab from './components/basket-items-tab.vue';
-import HistoryTab from './components/history-tab.vue';
-import CustomerHistoryTab from './components/customer-history-tab.vue';
-import MainTab from './components/main-tab.vue';
-import DeliveryTab from './components/delivery-tab.vue';
-import ShipmentTab from './components/shipment-tab.vue';
-
-export default {
+    export default {
     components: {
         VTabs,
 
@@ -110,17 +140,37 @@ export default {
                 default: return 'badge-secondary';
             }
         },
-        deliveryMethodClass(deliveryMethodId) {
-            switch (deliveryMethodId) {
-                case 1: return 'badge-success';
-                case 2: return 'badge-warning';
-                default: return 'badge-secondary';
-            }
+        changeOrderStatus(statusId) {
+            let errorMessage = 'Ошибка при изменении статуса заказа.';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.changeStatus', {id: this.order.id}), null,
+                {'status': statusId}).then(data => {
+                if (data.status) {
+                    this.order.status = data.status;
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage + ' ' + data.error, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        isStatus(statusId) {
+            return this.order.status.id === statusId;
         },
     },
     computed: {
         tooltipOrderCost() {
             return 'С учётом всех скидок и доставки';
+        },
+        isPreOrderStatus() {
+            return this.isStatus(0);
+        },
+        isCreatedStatus() {
+            return this.isStatus(1);
         },
     },
     mounted() {
