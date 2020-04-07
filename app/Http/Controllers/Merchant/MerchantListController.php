@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Merchant;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use MerchantManagement\Services\MerchantService\Dto\RegisterNewMerchantDto;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MerchantListController extends Controller
 {
@@ -216,56 +220,86 @@ class MerchantListController extends Controller
 
     /**
      * Создать нового мерчанта
-     * @param Request $request
      * @param MerchantService $merchantService
+     * @param UserService $userService
      * @return \Illuminate\Http\JsonResponse
-     * @throws MerchantException
      */
-//    public function createMerchant(
-//        Request $request,
-//        MerchantService $merchantService
-//    )
-//    {
-//        $data = $request->all();
-//        $validator = Validator::make($data, [
-//            'company' => 'required|string',
-//            'first_name' => 'required|string',
-//            'last_name' => 'required|string',
-//            'middle_name' => 'required|string',
-//            'email' => 'required|email',
-//            'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
-//            'password' => 'required|string|min:8',
-//        ]);
-//
-//        if ($validator->fails()) {
-//            throw new BadRequestHttpException($validator->errors()->first());
-//        }
-//
-//        $merchantService->registerNewMerchant(
-//            $data['company'],
-//            $data['first_name'],
-//            $data['last_name'],
-//            $data['middle_name'],
-//            $data['email'],
-//            $data['email'],
-//            phone_format($data['phone']),
-//            $data['password']
-//        );
-//
-//        return response()->json([]);
-//    }
-//
-//    public function checkEmailExists(Request $request, UserService $userService)
-//    {
-//        $email = $request->get('email', false);
-//        if (!$email) {
-//            throw new BadRequestHttpException('email is empty');
-//        }
-//
-//        $exists = $userService->exists($email, Front::FRONT_MAS);
-//
-//        return response()->json([
-//            'exists' => $exists
-//        ]);
-//    }
+    public function createMerchant(
+        MerchantService $merchantService,
+        UserService $userService
+    )
+    {
+        $data = $this->validate(request(), [
+            'legal_name' => 'required|string',
+            'inn' => 'required|string|size:10',
+            'kpp' => 'required|string|size:9',
+            'legal_address' => 'required|string',
+            'fact_address' => 'required|string',
+
+            'payment_account' => 'required|string|size:20',
+            'bank' => 'required|string',
+            'bank_address' => 'required|string',
+            'bank_bik' => 'required|string|size:9',
+            'correspondent_account' => 'required|string|size:20',
+
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'middle_name' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
+            'password' => 'required|string|min:8|confirmed',
+
+            'storage_address' => 'required|string',
+            'site' => 'required|string',
+            'can_integration' => 'boolean',
+            'sale_info' => 'required|string',
+        ]);
+
+        $merchantId = $merchantService->createMerchant(
+            (new RegisterNewMerchantDto())
+                ->setLegalName($data['legal_name'])
+                ->setInn($data['inn'])
+                ->setKpp($data['kpp'])
+                ->setLegalAddress($data['legal_address'])
+                ->setFactAddress($data['fact_address'])
+                ->setPaymentAccount($data['payment_account'])
+                ->setBank($data['bank'])
+                ->setBankAddress($data['bank_address'])
+                ->setBankBik($data['bank_bik'])
+                ->setCorrespondentAccount($data['correspondent_account'])
+                ->setFirstName($data['first_name'])
+                ->setLastName($data['last_name'])
+                ->setMiddleName($data['middle_name'])
+                ->setEmail($data['email'])
+                ->setPhone(phone_format($data['phone']))
+                ->setPassword($data['password'])
+                ->setStorageAddress($data['storage_address'])
+                ->setSite($data['site'])
+                ->setCanIntegration((bool)$data['can_integration'])
+                ->setSaleInfo($data['sale_info'])
+        );
+
+        $query = $this->makeQuery(true)
+            ->setFilter('id', $merchantId);
+
+        $this->loadItems($query);
+
+        return response()->json([
+            'merchant' => $this->loadItems($query),
+        ]);
+    }
+
+    public function checkEmailExists(Request $request, UserService $userService)
+    {
+        $email = $request->get('email', false);
+        if (!$email) {
+            throw new BadRequestHttpException('email is empty');
+        }
+
+        $exists = $userService->exists($email, Front::FRONT_MAS);
+
+        return response()->json([
+            'exists' => $exists
+        ]);
+    }
 }

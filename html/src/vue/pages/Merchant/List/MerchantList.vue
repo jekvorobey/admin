@@ -47,7 +47,7 @@
                     </button>
                 </div>
             </div>
-            <button class="btn btn-success ml-2">Создать мерчанта</button>
+            <b-button class="btn btn-success ml-2" v-b-modal="modalIdCreateMerchant">Создать мерчанта</b-button>
 
         </div>
 
@@ -95,7 +95,7 @@
             ></b-pagination>
         </div>
 
-        <merchant-create-modal @created="applyFilter"></merchant-create-modal>
+        <modal-create-merchant :id="modalIdCreateMerchant" @create="addToMerchants"/>
     </layout-main>
 </template>
 
@@ -109,9 +109,7 @@ import FInput from '../../../components/filter/f-input.vue';
 
 import FDate from '../../../components/filter/f-date.vue';
 
-import MerchantCreateModal from "./components/merchant-create-modal.vue";
-
-import modalMixin from "../../../mixins/modal.js";
+import ModalCreateMerchant from "./components/modal-create-merchant.vue";
 
 const cleanFilter = {
     id: '',
@@ -129,14 +127,14 @@ const cleanFilter = {
 
 export default {
     name: 'page-index',
-    mixins: [modalMixin],
-    components: {FDate, FMultiSelect, FInput, MerchantCreateModal},
+    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant},
     props: ['done', 'iMerchants', 'iPager', 'iFilter', 'iCurrentPage', 'options', 'managers'],
     data() {
         let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
         filter.status = filter.status.map(status => parseInt(status));
         filter.rating = filter.rating.map(rating => parseInt(rating));
         return {
+            modalIdCreateMerchant: 'modalIdCreateMerchant',
             merchants: this.iMerchants,
             pager: this.iPager,
             currentPage: this.iCurrentPage || 1,
@@ -221,6 +219,9 @@ export default {
                     this.selectedMerchants.splice(index, 1);
                 }
             }
+        },
+        addToMerchants(merchant) {
+            this.merchants.push(merchant);
         }
     },
     watch: {

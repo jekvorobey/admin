@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
         Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
         Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
-        Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.userExists');
+        Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
