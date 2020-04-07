@@ -11,7 +11,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/', 'MainController@home')->name('home');
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
-    Route::get('available-managers', 'Merchant\\MerchantDetailController@availableManagers')->name('managers.all');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
@@ -22,7 +21,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
-            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.edit');
+            Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('operators')->group(function () {

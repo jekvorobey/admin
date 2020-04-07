@@ -35,6 +35,7 @@ import Services from '../../../../../scripts/services/services.js';
 
 export default {
     name: 'tab-operator',
+    props: ['id'],
     data() {
         return {
             operators: [],

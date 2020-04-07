@@ -3,7 +3,13 @@
         <b-row class="mb-2">
             <b-col>
                 <b-card>
-                    <infopanel :model.sync="merchant" :statuses="statuses" :ratings="ratings" :managers="managers"/>
+                    <infopanel
+                        :model.sync="merchant"
+                        :statuses="statuses"
+                        :ratings="ratings"
+                        :managers="managers"
+                        :is-request="isRequest"
+                    />
                 </b-card>
             </b-col>
             <b-col>

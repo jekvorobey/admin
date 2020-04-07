@@ -4,6 +4,13 @@
         <tr>
             <th colspan="4">
                 Инфопанель
+                <button class="btn btn-success btn-sm" @click="saveMerchant" :disabled="!showBtn">
+                    Сохранить
+                </button>
+                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
+                <button class="btn btn-outline-success btn-sm" @click="activateMerchant" v-if="isRequest">
+                    Активировать
+                </button>
             </th>
         </tr>
         </thead>
@@ -22,7 +29,7 @@
         </tr>
         <tr>
             <th>ФИО</th>
-            <td>
+            <td colspan="3">
                 {{ merchant.main_operator.last_name }}
                 {{ merchant.main_operator.first_name }}
                 {{ merchant.main_operator.middle_name }}
@@ -65,9 +72,11 @@
 </template>
 
 <script>
+import Services from '../../../../../scripts/services/services.js';
+
 export default {
     name: 'infopanel',
-    props: ['model', 'statuses', 'ratings', 'managers'],
+    props: ['model', 'statuses', 'ratings', 'managers', 'isRequest'],
     data() {
         return {
             form: {
@@ -79,10 +88,52 @@ export default {
             }
         }
     },
+    methods: {
+        saveMerchant() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('merchant.detail.edit', {id: this.merchant.id}), {
+                merchant: this.form
+            }).then(() => {
+                this.merchant.legal_name = this.form.legal_name;
+                this.merchant.status = this.form.status;
+                this.merchant.city = this.form.city;
+                this.merchant.rating_id = this.form.rating_id;
+                this.merchant.manager_id = this.form.manager_id;
+                this.$store.commit('title', this.form.legal_name);
+                Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
+            })
+        },
+        activateMerchant() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('merchant.detail.edit', {id: this.merchant.id}), {
+                merchant: {
+                    status: this.merchantStatuses.activation
+                },
+            }).then(() => {
+                window.location.reload();
+            });
+        },
+        cancel() {
+            this.form.legal_name = this.merchant.legal_name;
+            this.form.status = this.merchant.status;
+            this.form.city = this.merchant.city;
+            this.form.rating_id = this.merchant.rating_id;
+            this.form.manager_id = this.merchant.manager_id;
+        }
+    },
     computed: {
         merchant: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
+        },
+        showBtn() {
+            return this.merchant.legal_name !== this.form.legal_name ||
+                this.merchant.status !== this.form.status ||
+                (this.merchant.city || '') !== (this.form.city || '') ||
+                (this.merchant.rating_id || '') !== (this.form.rating_id || '') ||
+                (this.merchant.manager_id || '') !== (this.form.manager_id || '');
         },
     },
 };

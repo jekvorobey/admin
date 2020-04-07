@@ -29,6 +29,7 @@ export default new Vuex.Store({
         },
         title(state, data) {
             state.title = data;
+            document.title = data;
         },
         env(state, data) {
             state.env = data;
