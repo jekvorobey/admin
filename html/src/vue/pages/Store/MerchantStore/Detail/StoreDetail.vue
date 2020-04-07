@@ -370,23 +370,6 @@
             this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
             this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
         },
-        update() {
-            this.$v.$touch();
-            if (this.$v.$invalid) {
-                return;
-            }
-
-            Services.showLoader();
-            Services.net().put(
-                this.getRoute('merchantStore.update', {id: this.store.id}),
-                null,
-                this.store
-            ).then(data => {
-                Services.msg("Изменения сохранены");
-            }).finally(data => {
-                Services.hideLoader();
-            });
-        },
         updateWorking(day, index) {
             this.changeStore.days[index] = day;
         },
@@ -403,18 +386,6 @@
                 this.changeStore.pickupTimes[day] = {};
             }
             this.changeStore.pickupTimes[day][delivery_service] = pickupTime;
-
-            // Services.showLoader();
-            // Services.net().put(
-            //     this.getRoute('merchantStore.savePickupTime'),
-            //     null,
-            //     pickupTime
-            // ).then(data => {
-            //     this.store.pickupTimes = data.pickupTimes;
-            //     Services.msg("Изменения сохранены");
-            // }).finally(data => {
-            //     Services.hideLoader();
-            // });
         },
         createContact() {
             let contact = {
@@ -425,37 +396,11 @@
             };
 
             this.store.storeContact.push(contact);
-
-            // Services.showLoader();
-            // Services.net().post(
-            //     this.getRoute('merchantStore.createContact', {id: contact.store_id}),
-            //     null,
-            //     contact
-            // ).then(data => {
-            //     if(data.id) {
-            //         contact.id = data.id;
-            //         this.store.storeContact.push(contact);
-            //         Services.msg("Изменения сохранены");
-            //     }
-            // }).finally(data => {
-            //     Services.hideLoader();
-            // });
         },
         updateContact(index) {
             if (this.store.storeContact[index].id) {
                 this.store.storeContact[index].update = true;
             }
-
-            // Services.showLoader();
-            // Services.net().put(
-            //     this.getRoute('merchantStore.updateContact', {id: contact.id}),
-            //     null,
-            //     contact
-            // ).then(data => {
-            //     Services.msg("Изменения сохранены");
-            // }).finally(data => {
-            //     Services.hideLoader();
-            // });
         },
         deleteContact(index) {
             if (this.store.storeContact[index].id) {
@@ -463,20 +408,6 @@
             }
 
             this.store.storeContact.splice(index, 1);
-
-            // let id = this.store.storeContact[index].id;
-            // if(id) {
-            //     Services.showLoader();
-            //     Services.net().delete(
-            //         this.getRoute('merchantStore.deleteContact', {id: id}),
-            //         null,
-            //         null
-            //     ).then(data => {
-            //         Services.msg("Изменения сохранены");
-            //     }).finally(data => {
-            //         Services.hideLoader();
-            //     });
-            // }
         },
         initChangeStore() {
             this.changeStore.days = {};
