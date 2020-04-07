@@ -20,7 +20,8 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-operator v-if="key === 'operator'" :id="merchant.id"/>
+                    <tab-main v-if="key === 'main'" :model.sync="merchant"/>
+                    <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -33,17 +34,21 @@
 <script>
 import TabOperator from './components/tab-operator.vue';
 import Infopanel from './components/infopanel.vue';
+import TabMain from './components/tab-main.vue';
+
+import tabsMixin from '../../../mixins/tabs.js';
 
 export default {
+    mixins: [tabsMixin],
+    props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
     components: {
+        TabMain,
         Infopanel,
         TabOperator,
     },
-    props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
     data() {
         return {
             merchant: this.iMerchant,
-            tabIndex: 0,
         };
     },
     computed: {
@@ -70,6 +75,6 @@ export default {
 
             return tabs;
         },
-    }
+    },
 };
 </script>

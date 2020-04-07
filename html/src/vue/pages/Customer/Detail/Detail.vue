@@ -63,7 +63,6 @@
 
 import VInput from '../../../components/controls/VInput/VInput.vue';
 
-import Services from '../../../../scripts/services/services.js';
 import Infopanel from './components/infopanel.vue';
 import ModalPortfolios from './components/modal-portfolios.vue';
 import ModalMarkStatus from './components/modal-mark-status.vue';
@@ -78,7 +77,11 @@ import TabPromoPage from './components/tab-promo-page.vue';
 import TabOrderReferrer from './components/tab-order-referrer.vue';
 import TabBilling from './components/tab-billing.vue';
 
+import tabsMixin from '../../../mixins/tabs.js';
+
 export default {
+    mixins: [tabsMixin],
+    props: ['iCustomer', 'order', 'referralLevels'],
     components: {
         TabBilling,
         TabCommunication,
@@ -94,18 +97,11 @@ export default {
         TabDocument,
         VInput
     },
-    props: ['iCustomer', 'order', 'referralLevels'],
     data() {
         return {
             editStatus: false,
             customer: this.iCustomer,
-            tabIndex: 0,
-            showAllTabs: false,
         };
-    },
-    watch: {
-        'tabIndex': 'pushRoute',
-        'showAllTabs': 'pushRoute',
     },
     computed: {
         tabs() {
@@ -152,40 +148,6 @@ export default {
 
             return tabs;
         },
-        currentTabName() {
-            let tabName = 'main';
-            for (let key in this.tabs) {
-                if (!this.tabs.hasOwnProperty(key)) {
-                    continue;
-                }
-                if (this.tabs[key].i === this.tabIndex) {
-                    tabName = key;
-                }
-            }
-
-            return tabName;
-        }
     },
-    methods: {
-        pushRoute() {
-            let route = {};
-            if (this.level_id) {
-                route.level_id = this.level_id;
-            }
-            Services.route().push({
-                tab: this.currentTabName,
-                allTab: this.showAllTabs ? 1 : 0,
-            }, this.getRoute('customers.detail', {id: this.customer.id}));
-        },
-    },
-    created() {
-        Services.event().$on('showTab', (tab) => {
-            this.tabIndex = this.tabs[tab];
-        });
-
-        let currentTab = Services.route().get('tab', 'main');
-        this.showAllTabs = !!Number(Services.route().get('allTab', 0));
-        this.tabIndex = this.tabs[currentTab].i;
-    }
 };
 </script>

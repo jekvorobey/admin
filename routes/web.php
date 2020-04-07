@@ -27,6 +27,12 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('operators')->group(function () {
                     Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
                 });
+                Route::prefix('main')->group(function () {
+                    Route::get('', 'TabMainController@load')->name('merchant.detail.main');
+
+                    Route::post('document', 'TabMainController@createDocument')->name('merchant.detail.main.document.create');
+                    Route::delete('document', 'TabMainController@deleteDocument')->name('merchant.detail.main.document.delete');
+                });
             });
         });
     });

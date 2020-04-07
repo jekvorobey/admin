@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -56,6 +57,25 @@ class MerchantDetailController extends Controller
                 'city' => $merchant->city,
                 'rating_id' => $merchant->rating_id,
                 'manager_id' => $merchant->manager_id,
+                'created_at' => $merchant->created_at,
+                'legal_address' => $merchant->legal_address,
+                'inn' => $merchant->inn,
+                'kpp' => $merchant->kpp,
+                'fact_address' => $merchant->fact_address,
+                'ceo_last_name' => $merchant->ceo_last_name,
+                'ceo_first_name' => $merchant->ceo_first_name,
+                'ceo_middle_name' => $merchant->ceo_middle_name,
+                'payment_account' => $merchant->payment_account,
+                'correspondent_account' => $merchant->correspondent_account,
+                'bank' => $merchant->bank,
+                'bank_address' => $merchant->bank_address,
+                'bank_bik' => $merchant->bank_bik,
+                'storage_address' => $merchant->storage_address,
+                'sale_info' => $merchant->sale_info,
+                'vat_info' => $merchant->vat_info,
+                'commercial_info' => $merchant->commercial_info,
+                'contract_number' => $merchant->contract_number,
+                'contract_at' => $merchant->contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->contract_at)->format('Y-m-d') : null,
                 'main_operator' => [
                     'first_name' => $userMain->first_name,
                     'last_name' => $userMain->last_name,
@@ -89,6 +109,29 @@ class MerchantDetailController extends Controller
             'merchant.city' => 'nullable',
             'merchant.rating_id' => 'nullable|integer',
             'merchant.manager_id' => 'nullable|integer',
+
+            'merchant.inn' => 'nullable|string|size:10',
+            'merchant.kpp' => 'nullable|string|size:9',
+            'merchant.fact_address' => 'nullable|string',
+            'merchant.legal_address' => 'nullable|string',
+
+            'merchant.ceo_last_name' => 'nullable|string',
+            'merchant.ceo_first_name' => 'nullable|string',
+            'merchant.ceo_middle_name' => 'nullable|string',
+
+            'merchant.payment_account' => 'nullable|string|size:20',
+            'merchant.correspondent_account' => 'nullable|string|size:20',
+            'merchant.bank' => 'nullable|string',
+            'merchant.bank_address' => 'nullable|string',
+            'merchant.bank_bik' => 'nullable|string|size:9',
+
+            'merchant.storage_address' => 'nullable|string',
+            'merchant.sale_info' => 'nullable|string',
+            'merchant.vat_info' => 'nullable|string',
+            'merchant.commercial_info' => 'nullable|string',
+
+            'merchant.contract_number' => 'nullable|string',
+            'merchant.contract_at' => 'nullable|date_format:Y-m-d',
         ]);
 
         $editedMerchant = new MerchantDto($data['merchant']);
