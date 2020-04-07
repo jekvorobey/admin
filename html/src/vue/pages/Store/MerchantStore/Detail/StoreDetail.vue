@@ -6,52 +6,48 @@
                         v-model="$v.store.merchant_id.$model"
                         :options="merchantOptions"
                         :error="error_merchant_id"
-                        class="col-lg-6 col-12">
-                    Мерчант
-                </v-select>
+                        class="col-lg-6 col-12"
+                >Мерчант</v-select>
             </div>
             <div class="row">
                 <v-input
                         v-model="$v.store.name.$model"
                         :error="error_store_name"
                         class="col-lg-4 col-8"
-                        @change="update">Название склада</v-input>
+                >Название склада</v-input>
                 <v-input
                         v-model="store.xml_id"
                         class="col-lg-2 col-4"
-                        @change="update">
-                    Внешний код
-                </v-input>
+                >Внешний код</v-input>
             </div>
             <div class="row">
                 <v-dadata
                         :value="$v.store.address.address_string.$model"
                         :error="error_store_address"
                         @onSelect="onStoreAddressAdd"
-                        class="col-lg-6 col-12">
-                    Адрес
-                </v-dadata>
+                        class="col-lg-6 col-12"
+                >Адрес</v-dadata>
             </div>
             <div class="row">
                 <v-input
                         v-model="store.address.porch"
-                        @change="update"
-                        class="col-lg-2 col-4">Подъезд</v-input>
+                        class="col-lg-2 col-4"
+                >Подъезд</v-input>
                 <v-input
                         v-model="store.address.floor"
-                        @change="update"
-                        class="col-lg-2 col-4">Этаж</v-input>
+                        class="col-lg-2 col-4"
+                >Этаж</v-input>
                 <v-input
                         v-model="store.address.intercom"
-                        @change="update"
-                        class="col-lg-2 col-4">Домофон</v-input>
+                        class="col-lg-2 col-4"
+                >Домофон</v-input>
             </div>
             <div class="row">
                 <v-input
                         type="textarea"
                         v-model="store.address.comment"
-                        @change="update"
-                        class="col-lg-6 col-12">Комментарий к адресу</v-input>
+                        class="col-lg-6 col-12"
+                >Комментарий к адресу</v-input>
             </div>
         </form>
 
@@ -68,7 +64,7 @@
             <tbody>
             <tr v-for="(day, index) in store.days" :class="!day.active ? 'inactive' : ''">
                 <td>
-                    <input type="checkbox" v-model="day.active" @change="updateWorking(day)"/>
+                    <input type="checkbox" v-model="day.active" @change="updateWorking(day, index)"/>
                 </td>
                 <td>
                     {{ dayName(index) }}
@@ -84,7 +80,7 @@
                             :lang="langFrom"
                             :time-picker-options="timePickerOptions"
                             :disabled="!day.active"
-                            @change="updateWorking(day)"
+                            @change="updateWorking(day, index)"
                         />
                         <date-picker
                             v-model="day.working_end_time"
@@ -95,7 +91,7 @@
                             :lang="langTo"
                             :time-picker-options="timePickerOptions"
                             :disabled="!day.active"
-                            @change="updateWorking(day)"
+                            @change="updateWorking(day, index)"
                         />
                     </div>
                 </td>
@@ -199,7 +195,7 @@
                         v-model="contact.name"
                         class="form-control form-control-sm"
                         type="text"
-                        @change="updateContact(contact)"
+                        @change="updateContact(index)"
                     />
                 </td>
                 <td>
@@ -207,7 +203,7 @@
                         v-model="contact.phone"
                         class="form-control form-control-sm"
                         type="text"
-                        @change="updateContact(contact)"
+                        @change="updateContact(index)"
                     />
                 </td>
                 <td>
@@ -215,7 +211,7 @@
                         v-model="contact.email"
                         class="form-control form-control-sm"
                         type="text"
-                        @change="updateContact(contact)"
+                        @change="updateContact(index)"
                     />
                 </td>
                 <td>
@@ -230,6 +226,9 @@
             </tr>
             </tbody>
         </table>
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-success" @click="updateStore()">Сохранить изменения</button>
+        </div>
     </layout-main>
 </template>
 
@@ -263,6 +262,11 @@
     data() {
         return {
             store: this.iStore,
+            changeStore: {
+                days: {},
+                pickupTimes: {},
+                deleteContacts: [],
+            },
             langFrom: {
                 placeholder: {
                     date: 'от',
@@ -365,100 +369,144 @@
             this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
             this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
             this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
-
-            this.update();
         },
-        update() {
-            this.$v.$touch();
-            if (this.$v.$invalid) {
-                return;
-            }
-
-            Services.showLoader();
-            Services.net().put(
-                this.getRoute('merchantStore.update', {id: this.store.id}),
-                null,
-                this.store
-            ).then(data => {
-                Services.msg("Изменения сохранены");
-            }).finally(data => {
-                Services.hideLoader();
-            });
-        },
-        updateWorking(day) {
-            Services.net().put(
-                this.getRoute('merchantStore.updateWorking', {id: day.id}),
-                null,
-                day
-            ).then(data => {
-            });
+        updateWorking(day, index) {
+            this.changeStore.days[index] = day;
         },
         savePickupTime(pickupTime) {
-            Services.showLoader();
-            Services.net().put(
-                this.getRoute('merchantStore.savePickupTime'),
-                null,
-                pickupTime
-            ).then(data => {
-                this.store.pickupTimes = data.pickupTimes;
-                Services.msg("Изменения сохранены");
-            }).finally(data => {
-                Services.hideLoader();
-            });
+            let day = pickupTime.day;
+            let delivery_service;
+            if (pickupTime.delivery_service) {
+                delivery_service = pickupTime.delivery_service;
+            } else {
+                delivery_service = 'all';
+            }
+
+            if (!this.changeStore.pickupTimes[day]) {
+                this.changeStore.pickupTimes[day] = {};
+            }
+            this.changeStore.pickupTimes[day][delivery_service] = pickupTime;
         },
         createContact() {
             let contact = {
                 name: '',
                 email: '',
                 phone: '',
-                store_id: this.store.id
+                store_id: this.store.id,
             };
 
-            Services.showLoader();
-            Services.net().post(
-                this.getRoute('merchantStore.createContact', {id: contact.store_id}),
-                null,
-                contact
-            ).then(data => {
-                if(data.id) {
-                    contact.id = data.id;
-                    this.store.storeContact.push(contact);
-                    Services.msg("Изменения сохранены");
-                }
-            }).finally(data => {
-                Services.hideLoader();
-            });
+            this.store.storeContact.push(contact);
         },
-        updateContact(contact) {
-            Services.showLoader();
-            Services.net().put(
-                this.getRoute('merchantStore.updateContact', {id: contact.id}),
-                null,
-                contact
-            ).then(data => {
-                Services.msg("Изменения сохранены");
-            }).finally(data => {
-                Services.hideLoader();
-            });
+        updateContact(index) {
+            if (this.store.storeContact[index].id) {
+                this.store.storeContact[index].update = true;
+            }
         },
         deleteContact(index) {
-            let id = this.store.storeContact[index].id;
-            if(id) {
-                Services.showLoader();
-                Services.net().delete(
-                    this.getRoute('merchantStore.deleteContact', {id: id}),
-                    null,
-                    null
-                ).then(data => {
-                    Services.msg("Изменения сохранены");
-                }).finally(data => {
-                    Services.hideLoader();
-                });
+            if (this.store.storeContact[index].id) {
+                this.changeStore.deleteContacts.push(this.store.storeContact[index].id);
             }
 
             this.store.storeContact.splice(index, 1);
         },
+        initChangeStore() {
+            this.changeStore.days = {};
+            this.changeStore.pickupTimes = {};
+            this.changeStore.deleteContacts = [];
+        },
+        updateStore() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
 
+            let updatePromise = Services.net().put(
+                this.getRoute('merchantStore.update', {id: this.store.id}),
+                null,
+                this.store
+            );
+
+            let workingPromises = [];
+            for (let [key, day] of Object.entries(this.changeStore.days)) {
+                workingPromises.push(Services.net().put(
+                    this.getRoute('merchantStore.updateWorking', {id: day.id}),
+                    null,
+                    day
+                ));
+            }
+
+            let pickupTimePromises = [];
+            for (let [key, day] of Object.entries(this.changeStore.pickupTimes)) {
+                for (let [key, pickupTime] of Object.entries(day)) {
+                    pickupTimePromises.push(Services.net().put(
+                        this.getRoute('merchantStore.savePickupTime'),
+                        null,
+                        pickupTime
+                    ));
+                }
+            }
+
+            let createContactsPromises = [];
+            let createContactsPromisesIndexes = [];
+            let updateContactsPromises = [];
+            for (let [index, contact] of Object.entries(this.store.storeContact)) {
+                if (!contact.id) {
+                    createContactsPromises.push(Services.net().post(
+                        this.getRoute('merchantStore.createContact', {id: contact.store_id}),
+                        null,
+                        contact
+                    ));
+                    createContactsPromisesIndexes.push(index);
+                }
+                if (contact.update) {
+                    delete contact['update'];
+                    updateContactsPromises.push(Services.net().put(
+                        this.getRoute('merchantStore.updateContact', {id: contact.id}),
+                        null,
+                        contact
+                    ));
+                }
+            }
+
+            let deleteContactsPromises = [];
+            this.changeStore.deleteContacts.forEach(id => {
+                    deleteContactsPromises.push(Services.net().delete(
+                    this.getRoute('merchantStore.deleteContact', {id: id}),
+                    null,
+                    null
+                ));
+            });
+
+            let workingPromisesLength = workingPromises.length;
+            let pickupTimePromisesLength = pickupTimePromises.length;
+            let createContactsPromisesStartIndex = workingPromisesLength + pickupTimePromisesLength;
+            let createContactsPromisesLastIndex = createContactsPromisesStartIndex + createContactsPromises.length;
+
+            Services.showLoader();
+            Promise.all([
+                updatePromise,
+                ...workingPromises,
+                ...pickupTimePromises,
+                ...createContactsPromises,
+                ...updateContactsPromises,
+                ...deleteContactsPromises,
+            ]).then(data => {
+                for (let i = createContactsPromisesStartIndex; i <= createContactsPromisesLastIndex; i++) {
+                    if(data[i].id) {
+                        this.store.storeContact[createContactsPromisesIndexes[i - createContactsPromisesStartIndex]] = data[i].id;
+                    }
+                }
+                Services.net().get(
+                    this.getRoute('merchantStore.pickupTime'), {store_id: this.store.id}
+                ).then(data => {
+                    this.store.pickupTimes = data.pickupTimes;
+                    Services.msg("Изменения сохранены");
+                }).finally(() => {
+                    this.initChangeStore();
+                    Services.hideLoader();
+                });
+            });
+        },
     },
     computed: {
         merchantOptions() {

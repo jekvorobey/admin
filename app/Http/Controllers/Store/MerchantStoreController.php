@@ -242,6 +242,21 @@ class MerchantStoreController extends Controller
         
         return response()->json([]);
     }
+
+    /**
+     * @param  StoreService  $storeService
+     * @return JsonResponse
+     */
+    public function pickupTime(Request $request, StoreService $storeService): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'store_id' => 'integer|required',
+        ]);
+
+        return response()->json([
+            'pickupTimes' => $this->getStore($validatedData['store_id'], $storeService)['pickupTimes']
+        ]);
+    }
     
     /**
      * @param  Request  $request
@@ -268,9 +283,7 @@ class MerchantStoreController extends Controller
             $storeService->createStorePickupTime($storePickupTimeDto->store_id, $storePickupTimeDto);
         }
         
-        return response()->json([
-            'pickupTimes' => $this->getStore($storePickupTimeDto->store_id, $storeService)['pickupTimes']
-        ]);
+        return response()->json([]);
     }
     
     
