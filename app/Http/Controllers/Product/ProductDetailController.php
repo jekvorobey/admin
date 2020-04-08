@@ -20,6 +20,9 @@ use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Greensight\Store\Services\StockService\StockService;
+use Greensight\Marketing\Services\PriceService\PriceService;
+use Greensight\Marketing\Dto\Price\PriceInDto;
 
 class ProductDetailController extends Controller
 {
@@ -206,11 +209,31 @@ class ProductDetailController extends Controller
             ->include('tips', 'constraints')
             ->setFilter('id', $id)
             ->include('properties')
+            ->include('offers')
             ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
         }
         
+        $stockService = resolve(StockService::class);
+        $currentOffer = collect($products->first()->offers)
+            ->whereIn('sale_status', [1, 2])
+            ->pluck('id')
+            ->map(function ($item) use ($stockService) {
+                return ['offer_id' => $item, 'qty' => $stockService->qtyByOffer($item)];
+            })
+            ->sortByDesc('qty')
+            ->first();
+        if ($currentOffer) {
+            $priceIn = new PriceInDto($currentOffer['offer_id']);
+            $priceService = resolve(PriceService::class);
+            $priceDto = $priceService->price($priceIn);
+            $currentOffer['price'] = $priceDto->price;
+        } else {
+            $currentOffer['qty'] = 0;
+            $currentOffer['price'] = 0;
+        }
+        $products->first()->showCount = $currentOffer;
         /** @var ProductDto $product */
         $product = $products->first();
         $images = $productService->images($product->id);
