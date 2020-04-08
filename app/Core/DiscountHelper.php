@@ -2,7 +2,6 @@
 
 namespace App\Core;
 
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -23,6 +22,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Services\BrandService\BrandService;
+use Pim\Services\CategoryService\CategoryService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DiscountHelper
 {
@@ -66,17 +68,19 @@ class DiscountHelper
     }
 
     /**
-     * @param array $params
+     * @param array           $params
      * @param DiscountService $discountService
+     *
      * @return Collection
      */
     public static function load(array $params, DiscountService $discountService): Collection
     {
         $discounts = $discountService->discounts($params);
         $discounts = $discounts->map(function (DiscountDto $discount) use ($discountService) {
-            $data = $discount->toArray();
-            $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
+            $data                   = $discount->toArray();
+            $data['statusName']     = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
             $data['validityPeriod'] = $discount->validityPeriod();
+
             return $data;
         });
 
@@ -93,37 +97,40 @@ class DiscountHelper
     }
 
     /**
-     * @param array $params
+     * @param array           $params
      * @param DiscountService $discountService
+     *
      * @return int
      */
     public static function count(array $params, DiscountService $discountService)
     {
         $discounts = $discountService->discountsCount($params);
+
         return $discounts['total'] ?? 0;
     }
 
     /**
      * @param Request $request
+     *
      * @return DiscountDto
      */
     public static function validate(Request $request)
     {
         $data = $request->validate([
-            'name' => 'string|required',
-            'type' => 'numeric|required',
-            'value' => 'numeric|required',
-            'value_type' => 'numeric|required',
-            'start_date' => 'string|nullable',
-            'end_date' => 'string|nullable',
+            'name'            => 'string|required',
+            'type'            => 'numeric|required',
+            'value'           => 'numeric|required',
+            'value_type'      => 'numeric|required',
+            'start_date'      => 'string|nullable',
+            'end_date'        => 'string|nullable',
             'promo_code_only' => 'boolean|required',
-            'status' => 'numeric|required',
-            'offers' => 'array',
-            'bundles' => 'array',
-            'brands' => 'array',
-            'categories' => 'array',
-            'except' => 'array',
-            'conditions' => 'array',
+            'status'          => 'numeric|required',
+            'offers'          => 'array',
+            'bundles'         => 'array',
+            'brands'          => 'array',
+            'categories'      => 'array',
+            'except'          => 'array',
+            'conditions'      => 'array',
         ]);
 
         $data['start_date'] = $data['start_date']
@@ -135,14 +142,14 @@ class DiscountHelper
             : null;
 
         $discount = new DiscountDto([
-            'merchant_id' => null,
-            'type' => $data['type'],
-            'name' => $data['name'],
-            'value_type' => $data['value_type'],
-            'value' => $data['value'],
-            'status' => $data['status'],
-            'start_date' => $data['start_date'],
-            'end_date' => $data['end_date'],
+            'merchant_id'     => null,
+            'type'            => $data['type'],
+            'name'            => $data['name'],
+            'value_type'      => $data['value_type'],
+            'value'           => $data['value'],
+            'status'          => $data['status'],
+            'start_date'      => $data['start_date'],
+            'end_date'        => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
         ]);
 
@@ -165,15 +172,16 @@ class DiscountHelper
      * Возваращает необходимые связи для скидки
      *
      * @param array $data
+     *
      * @return array
      */
     public static function getDiscountRelations(array $data)
     {
         $relations = [
-            DiscountDto::DISCOUNT_OFFER_RELATION => [],
-            DiscountDto::DISCOUNT_BRAND_RELATION => [],
-            DiscountDto::DISCOUNT_CATEGORY_RELATION => [],
-            DiscountDto::DISCOUNT_SEGMENT_RELATION => [],
+            DiscountDto::DISCOUNT_OFFER_RELATION     => [],
+            DiscountDto::DISCOUNT_BRAND_RELATION     => [],
+            DiscountDto::DISCOUNT_CATEGORY_RELATION  => [],
+            DiscountDto::DISCOUNT_SEGMENT_RELATION   => [],
             DiscountDto::DISCOUNT_USER_ROLE_RELATION => [],
         ];
 
@@ -264,6 +272,7 @@ class DiscountHelper
      * Возвращает условия возникновения скидки
      *
      * @param array $data
+     *
      * @return array
      */
     public static function getDiscountCondition($data)
@@ -307,7 +316,7 @@ class DiscountHelper
                     $conditions[] = $model->setCustomers($condition['users']);
                     break;
                 case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
-                    $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
+                    $conditions[] = $model->setOrderSequenceNumber((int)$condition['sequenceNumber']);
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
                     if (!empty($condition['synergy'])) {
@@ -351,13 +360,14 @@ class DiscountHelper
 
     /**
      * @param Request $request
-     * @param int $perPage
+     * @param int     $perPage
+     *
      * @return array
      */
     public static function getDefaultPager(Request $request, int $perPage = 20)
     {
         return [
-            'page' =>  (int) $request->get('page', 1),
+            'page'    => (int)$request->get('page', 1),
             'perPage' => $perPage,
         ];
     }
@@ -389,5 +399,53 @@ class DiscountHelper
             ->values();
 
         return $data;
+    }
+
+    /**
+     * @param int             $id
+     * @param DiscountService $discountService
+     * @param CategoryService $categoryService
+     * @param ListsService    $listsService
+     * @param BrandService    $brandService
+     *
+     * @return array
+     * @throws \Pim\Core\PimException
+     */
+    public static function detail(
+        int $id,
+        DiscountService $discountService,
+        CategoryService $categoryService,
+        ListsService $listsService,
+        BrandService $brandService
+    ) {
+        $params = (new DiscountInDto())
+            ->id($id)
+            ->status(DiscountStatusDto::STATUS_CREATED, true)
+            ->withAll()
+            ->toQuery();
+
+        /** @var DiscountDto $discount */
+        $discount = $discountService->discounts($params)->first();
+        if (!$discount) {
+            throw new NotFoundHttpException();
+        }
+
+        $title = '#' . $discount->id . ' ' . $discount->name;
+        $data = DiscountHelper::loadData($discountService, $listsService);
+
+        return [
+            'title'            => $title,
+            'iDiscount'        => $discount,
+            'discounts'        => $data['discounts'],
+            'discountTypes'    => $data['discountTypes'],
+            'iConditionTypes'  => $data['conditionTypes'],
+            'deliveryMethods'  => $data['deliveryMethods'],
+            'discountStatuses' => $data['discountStatuses'],
+            'paymentMethods'   => $data['paymentMethods'],
+            'roles'            => $data['roles'],
+            'iDistricts'       => $data['districts'],
+            'categories'       => $categoryService->categories($categoryService->newQuery()),
+            'brands'           => $brandService->brands($brandService->newQuery()),
+        ];
     }
 }

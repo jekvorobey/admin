@@ -40,7 +40,7 @@
             <td>{{ datetimePrint(document.date) }}</td>
             <td>{{ document.amount_reward }} руб.</td>
             <td>
-                <span class="badge" :class="statusClass(document.statusId)">{{ document.statusVerbal || 'N/A'}}</span></td>
+                <span class="badge" :class="statusClass(document.statusId)">{{ statusName(document.statusId) || 'N/A'}}</span></td>
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
             </td>
@@ -58,7 +58,8 @@
 
     <document-create-modal
             @add="createDocument"
-            modal-name="CreateDocumentModal"/>
+            modal-name="CreateDocumentModal"
+            :statuses="statuses"/>
 
 </div>
 </template>
@@ -79,7 +80,10 @@
             Modal,
         },
         mixins: [modalMixin],
-        props: ['model'],
+        props: [
+            'model',
+            'statuses'
+        ],
         data() {
             return {
                 documents: [],
@@ -103,6 +107,9 @@
                     default: return 'badge-secondary';
                 }
             },
+            statusName(statusId) {
+                return this.statuses[statusId]
+            },
             deleteDocument(document_id, index) {
                 Services.showLoader();
                 Services.net().delete(this.getRoute('customers.detail.document.delete', {
@@ -119,7 +126,8 @@
                 Services.showLoader();
                 Services.net().post(this.getRoute('customers.detail.document.send', {
                     id: this.customer.id,
-                }),{document_id: document_id}).then(data => {
+                    document_id: document_id
+                })).then(data => {
                     Services.msg(`Акт о реферальном зачислении ${document_id} отправлен на Email пользователя ${data.email}`);
                 }).finally(() => {
                     Services.hideLoader();
@@ -152,6 +160,7 @@
             Services.showLoader();
             Services.net().get(this.getRoute('customers.detail.document', {id: this.model.id})).then(data => {
                 this.documents = data.documents;
+                this.statuses = data.statuses;
             }).finally(() => {
                 Services.hideLoader();
             })
