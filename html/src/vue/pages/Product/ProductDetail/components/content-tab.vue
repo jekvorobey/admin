@@ -55,7 +55,7 @@
             <div class="col">
                 <div class="d-flex flex-column justify-content-start align-items-start">
                     <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DescriptionEdit')">
-                        <div v-html="product.description"></div>
+                        {{ product.description }}
                     </shadow-card>
                 </div>
             </div>
@@ -169,149 +169,149 @@
 </template>
 
 <script>
-    import modalMixin from '../../../../mixins/modal';
+import modalMixin from '../../../../mixins/modal';
 
-    import Modal from '../../../../components/controls/modal/modal.vue';
-    import ShadowCard from '../../../../components/shadow-card.vue';
-    import FileUploadModal from './file-upload-modal.vue';
-    import DescriptionEditModal from './product-description-modal.vue';
-    import VideoEditModal from './product-video-modal.vue';
-    import TipForm from './tip-form.vue';
+import Modal from '../../../../components/controls/modal/modal.vue';
+import ShadowCard from '../../../../components/shadow-card.vue';
+import FileUploadModal from './file-upload-modal.vue';
+import DescriptionEditModal from './product-description-modal.vue';
+import VideoEditModal from './product-video-modal.vue';
+import TipForm from './tip-form.vue';
 
-    import Services from '../../../../../scripts/services/services';
-    import Media from '../../../../../scripts/media';
+import Services from '../../../../../scripts/services/services';
+import Media from '../../../../../scripts/media';
 
-    export default {
-        components: {
-            Modal,
-            ShadowCard,
-            FileUploadModal,
-            DescriptionEditModal,
-            VideoEditModal,
-            TipForm
+export default {
+    components: {
+        Modal,
+        ShadowCard,
+        FileUploadModal,
+        DescriptionEditModal,
+        VideoEditModal,
+        TipForm
+    },
+    mixins: [modalMixin],
+    props: {
+        images: {},
+        product: {},
+    },
+    data() {
+        return {
+            currentType: 0,
+            replaceFileId: undefined,
+            currentTip: {}
+        };
+    },
+    methods: {
+        startUploadImage(type, replaceFileId) {
+            this.currentType = type;
+            this.replaceFileId = replaceFileId;
+            this.openModal('ImageUpload');
         },
-        mixins: [modalMixin],
-        props: {
-            images: {},
-            product: {},
+        onAcceptImage(file) {
+            if (this.replaceFileId) {
+                this.onDeleteImage(this.currentType, this.replaceFileId);
+            }
+            Services.net().post(this.getRoute('products.saveImage', {id: this.product.id}), {}, {
+                id: file.id,
+                type: this.currentType,
+            })
+                .then(() => {
+                    this.$emit('onSave');
+                    this.closeModal();
+                });
         },
-        data() {
-            return {
-                currentType: 0,
-                replaceFileId: undefined,
-                currentTip: {}
+        onDeleteImage(type, fileId) {
+            if (!fileId) {
+                return;
+            }
+            Services.net().post(this.getRoute('products.deleteImage', {id: this.product.id}), {}, {
+                id: fileId,
+                type: type,
+            })
+                .then(() => {
+                    this.$emit('onSave');
+                });
+        },
+        onAcceptInstruction(file) {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {instruction_file_id: file.id})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        onDeleteInstruction() {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {instruction_file_id: null})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        imageUrl(id) {
+            return Media.compressed(id, 290, 290);
+        },
+        videoUrl(code) {
+            return Media.video(code);
+        },
+        createNewTip() {
+            this.currentTip = {
+                description: "",
+                fileId: 0
+            };
+            this.openModal('TipForm');
+        },
+        editTip(tip) {
+            this.currentTip = tip;
+            this.openModal('TipForm');
+        },
+        deleteTip(productId, tipId) {
+            Services.net().post(this.getRoute('product.deleteTip', {id: productId, tipId: tipId}))
+                .then(result => {
+                    this.$emit('onSave', result);
+                });
+        },
+        onTipSaved() {
+            this.closeModal('TipForm');
+            this.$emit('onSave');
+        }
+    },
+    computed: {
+        mainImage() {
+            let mainImages = this.images.filter(image => image.type === 1);
+            return mainImages.length > 0 ? mainImages[0] : {
+                id: 0,
+                url: Media.empty(150, 150),
             };
         },
-        methods: {
-            startUploadImage(type, replaceFileId) {
-                this.currentType = type;
-                this.replaceFileId = replaceFileId;
-                this.openModal('ImageUpload');
-            },
-            onAcceptImage(file) {
-                if (this.replaceFileId) {
-                    this.onDeleteImage(this.currentType, this.replaceFileId);
-                }
-                Services.net().post(this.getRoute('products.saveImage', {id: this.product.id}), {}, {
-                    id: file.id,
-                    type: this.currentType,
-                })
-                    .then(() => {
-                        this.$emit('onSave');
-                        this.closeModal();
-                    });
-            },
-            onDeleteImage(type, fileId) {
-                if (!fileId) {
-                    return;
-                }
-                Services.net().post(this.getRoute('products.deleteImage', {id: this.product.id}), {}, {
-                    id: fileId,
-                    type: type,
-                })
-                    .then(() => {
-                        this.$emit('onSave');
-                    });
-            },
-            onAcceptInstruction(file) {
-                let route = this.getRoute('products.saveProduct', {id: this.product.id});
-                Services.net().post(route, {}, {instruction_file_id: file.id})
-                    .then(()=> {
-                        this.$emit('onSave');
-                    });
-            },
-            onDeleteInstruction() {
-                let route = this.getRoute('products.saveProduct', {id: this.product.id});
-                Services.net().post(route, {}, {instruction_file_id: null})
-                    .then(()=> {
-                        this.$emit('onSave');
-                    });
-            },
-            imageUrl(id) {
-                return Media.compressed(id, 290, 290);
-            },
-            videoUrl(code) {
-                return Media.video(code);
-            },
-            createNewTip() {
-                this.currentTip = {
-                    description: "",
-                    fileId: 0
-                };
-                this.openModal('TipForm');
-            },
-            editTip(tip) {
-                this.currentTip = tip;
-                this.openModal('TipForm');
-            },
-            deleteTip(productId, tipId) {
-                Services.net().post(this.getRoute('product.deleteTip', {id: productId, tipId: tipId}))
-                    .then(result => {
-                        this.$emit('onSave', result);
-                    });
-            },
-            onTipSaved() {
-                this.closeModal('TipForm');
-                this.$emit('onSave');
-            }
+        catalogImage() {
+            let catalogImages = this.images.filter(image => image.type === 2);
+            return catalogImages.length > 0 ? catalogImages[0] : {
+                id: 0,
+                url: Media.empty(150, 150),
+            };
         },
-        computed: {
-            mainImage() {
-                let mainImages = this.images.filter(image => image.type === 1);
-                return mainImages.length > 0 ? mainImages[0] : {
-                    id: 0,
-                    url: Media.empty(150, 150),
-                };
-            },
-            catalogImage() {
-                let catalogImages = this.images.filter(image => image.type === 2);
-                return catalogImages.length > 0 ? catalogImages[0] : {
-                    id: 0,
-                    url: Media.empty(150, 150),
-                };
-            },
-            descriptionImage() {
-                let descriptionImages = this.images.filter(image => image.type === 4);
-                return descriptionImages.length > 0 ? descriptionImages[0] : {
-                    id: 0,
-                    url: Media.empty(150, 150),
-                };
-            },
-            howToImage() {
-                let howToImages = this.images.filter(image => image.type === 5);
-                return howToImages.length > 0 ? howToImages[0] : {
-                    id: 0,
-                    url: Media.empty(150, 150),
-                };
-            },
-            galleryImages() {
-                return this.images.filter(image => image.type === 3);
-            },
-            instructionUrl() {
-                return Media.file(this.product.instruction_file_id);
-            }
+        descriptionImage() {
+            let descriptionImages = this.images.filter(image => image.type === 4);
+            return descriptionImages.length > 0 ? descriptionImages[0] : {
+                id: 0,
+                url: Media.empty(150, 150),
+            };
+        },
+        howToImage() {
+            let howToImages = this.images.filter(image => image.type === 5);
+            return howToImages.length > 0 ? howToImages[0] : {
+                id: 0,
+                url: Media.empty(150, 150),
+            };
+        },
+        galleryImages() {
+            return this.images.filter(image => image.type === 3);
+        },
+        instructionUrl() {
+            return Media.file(this.product.instruction_file_id);
         }
     }
+}
 </script>
 
 <style scoped>
