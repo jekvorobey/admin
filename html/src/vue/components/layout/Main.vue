@@ -47,7 +47,7 @@
         },
         methods: {
             goBack() {
-                window.location = document.referrer;
+                window.location.href = document.referrer;
             }
         },
         computed: {
@@ -68,7 +68,14 @@
                     autoHideDelay: 5000,
                 });
             });
-        }
+
+            let back = this.back;
+            window.addEventListener("popstate", function() {
+                if (back) {
+                    window.location = document.referrer;
+                }
+            }, false);
+        },
     };
 </script>
 
