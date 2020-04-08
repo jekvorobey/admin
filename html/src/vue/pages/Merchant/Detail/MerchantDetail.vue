@@ -1,5 +1,5 @@
 <template>
-    <layout-main>
+    <layout-main back>
         <b-row class="mb-2">
             <b-col>
                 <b-card>

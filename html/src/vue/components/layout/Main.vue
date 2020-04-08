@@ -47,7 +47,7 @@
         },
         methods: {
             goBack() {
-                history.back();
+                window.location = document.referrer;
             }
         },
         computed: {
