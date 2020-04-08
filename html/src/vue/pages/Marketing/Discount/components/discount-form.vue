@@ -1,15 +1,31 @@
 <template>
     <form id="form" novalidate v-on:submit.prevent.stop="send">
-        <v-input v-model="discount.name">Название</v-input>
+        <v-input v-model="discount.name"
+                 :error="discountErrors.name"
+                 @change="initErrorName"
+        >Название</v-input>
         <div class="row">
-            <v-select v-model="discount.type" :options="discountTypes" class="col-3" @change="onTypeChange()">Скидка на</v-select>
+            <v-select v-model="discount.type"
+                      :options="discountTypes"
+                      class="col-3"
+                      :error="discountErrors.type"
+                      @change="onTypeChange()"
+            >Скидка на</v-select>
 
             <div v-if="discount.type === TYPE_OFFER" class="col-9">
-                <v-input v-model="discount.offers" :help="'ID офферов через запятую'">Офферы</v-input>
+                <v-input v-model="discount.offers"
+                         :help="'ID офферов через запятую'"
+                         :error="discountErrors.offers"
+                         @change="initErrorOffers"
+                >Офферы</v-input>
             </div>
 
             <div v-if="discount.type === TYPE_BUNDLE" class="col-9">
-                <v-input v-model="discount.bundles" :help="'ID бандлов через запятую'">Бандлы</v-input>
+                <v-input v-model="discount.bundles"
+                         :help="'ID бандлов через запятую'"
+                         :error="discountErrors.bundles"
+                         @change="initErrorBundles"
+                >Бандлы</v-input>
             </div>
 
             <template v-if="discount.type === TYPE_BRAND">
@@ -19,6 +35,7 @@
                         title="Бренды"
                         :brands="brands"
                         :i-brands="discount.brands"
+                        :error="discountErrors.brands"
                         @update="updateBrands"
                 ></BrandsSearch>
 
@@ -33,6 +50,7 @@
                         title="Категории"
                         :categories="categories"
                         :i-categories="discount.categories"
+                        :error="discountErrors.categories"
                         @update="updateCategories"
                 ></CategoriesSearch>
 
@@ -52,10 +70,20 @@
         </div>
 
         <div class="row">
-            <v-select v-model="discount.value_type" :options="discountSizeTypes" class="col-3">Тип значения</v-select>
-            <v-input v-model="discount.value" class="col-3" type="number" min="1"
-                     :help="isPercentType(discount.value_type) ? 'Значение от 1 до 100' : ''">
-                Значение в {{ isPercentType(discount.value_type) ? 'процентах' : 'рублях' }}
+            <v-select v-model="discount.value_type"
+                      :options="discountSizeTypes"
+                      class="col-3"
+                      :error="discountErrors.value_type"
+                      @change="initErrorValueType"
+            >Тип значения</v-select>
+            <v-input v-model="discount.value"
+                     class="col-3"
+                     type="number"
+                     min="1"
+                     :help="isPercentType(discount.value_type) ? 'Значение от 1 до 100' : ''"
+                     :error="discountErrors.value"
+                     @change="initErrorValue"
+            >Значение в {{ isPercentType(discount.value_type) ? 'процентах' : 'рублях' }}
             </v-input>
         </div>
 
@@ -66,7 +94,15 @@
             </div>
             <div class="col-3">
                 <label for="end_date">Дата окончания</label>
-                <b-form-input id="end_date" v-model="discount.end_date" type="date"></b-form-input>
+                <b-form-input id="end_date"
+                              v-model="discount.end_date"
+                              type="date"
+                              :state="checkEndDate"
+                              @change="initErrorEndDate"
+                ></b-form-input>
+                <b-form-invalid-feedback id="end_date-feedback">
+                    {{ discountErrors.end_date }}
+                </b-form-invalid-feedback>
             </div>
         </div>
 
@@ -100,7 +136,7 @@
 
         <div class="row">
             <div class="col-12 mt-3">
-                <button type="submit" class="btn btn-success" :disabled="!valid || processing">{{ submitText }}</button>
+                <button type="submit" class="btn btn-success">{{ submitText }}</button>
             </div>
         </div>
     </form>
@@ -159,6 +195,19 @@
                     conditions: [],
                 },
 
+                discountErrors: {
+                    name: null,
+                    type: null,
+                    offers: null,
+                    bundles: null,
+                    brands: null,
+                    categories: null,
+                    value_type: null,
+                    value: null,
+                    end_date: null,
+                    conditions: null,
+                },
+
                 // Тип скидки
                 TYPE_OFFER: 1,
                 TYPE_BUNDLE: 2,
@@ -173,7 +222,84 @@
         },
         methods: {
             send() {
-                this.action(this.discount);
+                if (!this.processing) {
+                    let bool = true;
+                    if (!(this.discount.name)) {
+                        this.discountErrors.name = 'Обязательное поле!';
+                        bool = false;
+                    }
+                    if (!(this.discount.type)) {
+                        this.discountErrors.type = 'Обязательное поле!';
+                        bool = false;
+                    }
+                    switch (this.discount.type) {
+                        case this.TYPE_OFFER:
+                            if (!(this.discount.offers)) {
+                                this.discountErrors.offers = "Введите значения ID офферов!";
+                                bool = false;
+                            } else if (!(!!this.discount.offers && this.formatIds(this.discount.offers).length > 0)) {
+                                this.discountErrors.offers = "Введите значения ID офферов через запятую!";
+                                bool = false;
+                            }
+                            break;
+                        case this.TYPE_BUNDLE:
+                            if (!(this.discount.bundles)) {
+                                this.discountErrors.bundles = "Введите значения ID бандлов!";
+                                bool = false;
+                            } else if (!(!!this.discount.bundles && this.formatIds(this.discount.bundles).length > 0)) {
+                                this.discountErrors.bundles = "Введите значения ID бандлов через запятую!";
+                                bool = false;
+                            }
+                            break;
+                        case this.TYPE_BRAND:
+                            if (!(this.discount.brands.length > 0)) {
+                                this.discountErrors.brands = "Выберите хотя бы один бренд!";
+                                bool = false;
+                            }
+                            break;
+                        case this.TYPE_CATEGORY:
+                            if (!(this.discount.categories.length > 0)) {
+                                this.discountErrors.categories = "Выберите хотя бы одну категорию!";
+                                bool = false;
+                            }
+                            break;
+                        case this.TYPE_DELIVERY:
+                        case this.TYPE_CART_TOTAL:
+                            break;
+                    }
+                    if (!(this.discount.value_type)) {
+                        this.discountErrors.value_type = 'Обязательное поле!';
+                        bool = false;
+                    }
+                    if (!(this.discount.value)) {
+                        this.discountErrors.value = "Обязательное поле!";
+                        bool = false;
+                    } else {
+                        switch (this.discount.value_type) {
+                            case 1:
+                                if (!(this.discount.value > 0 && this.discount.value <= 100)) {
+                                    this.discountErrors.value = "Значение должно быть в диапазоне от 1 до 100!";
+                                    bool = false;
+                                }
+                                break;
+                            case 2:
+                                if (!(this.discount.value > 0)) {
+                                    this.discountErrors.value = "Значение должно быть больше 0!";
+                                    bool = false;
+                                }
+                                break;
+                        }
+                    }
+                    let start = this.discount.start_date;
+                    let end = this.discount.end_date;
+                    if ((start && end) && !(moment(start).unix() <= moment(end).unix())) {
+                        this.discountErrors.end_date = "Дата окончания не может быть меньше даты начала!";
+                        bool = false;
+                    }
+                    if (bool) {
+                        this.action(this.discount);
+                    }
+                }
             },
             formatIds(ids) {
                 if (!ids) {
@@ -190,14 +316,17 @@
             },
             updateCategories(categories) {
                 this.discount = {...this.discount, categories};
+                this.initErrorCategories();
             },
             updateBrands(brands) {
                 this.discount = {...this.discount, brands};
+                this.initErrorBrands();
             },
             onTypeChange() {
                 this.discount.offers = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
+                this.initErrorType();
             },
             initDiscount() {
                 if (!this.iDiscount) {
@@ -245,47 +374,40 @@
                 }
 
                 this.discount = discount;
-            }
+            },
+            initErrorName() {
+                this.discountErrors.name = null;
+            },
+            initErrorType() {
+                this.discountErrors.type = null;
+                this.initErrorOffers();
+                this.initErrorBrands();
+                this.initErrorOffers();
+            },
+            initErrorOffers() {
+                this.discountErrors.offers = null;
+            },
+            initErrorBundles() {
+                this.discountErrors.bundles = null;
+            },
+            initErrorBrands() {
+                this.discountErrors.brands = null;
+            },
+            initErrorCategories() {
+                this.discountErrors.categories = null;
+            },
+            initErrorValueType() {
+                this.discountErrors.value_type = null;
+                this.initErrorValue();
+            },
+            initErrorValue() {
+                this.discountErrors.value = null;
+            },
+            initErrorEndDate() {
+                this.discountErrors.end_date = null;
+            },
         },
         computed: {
-            checkType() {
-                switch (this.discount.type) {
-                    case this.TYPE_OFFER:
-                        return !!this.discount.offers && this.formatIds(this.discount.offers).length > 0;
-                    case this.TYPE_BUNDLE:
-                        return !!this.discount.bundles && this.formatIds(this.discount.bundles).length > 0;
-                    case this.TYPE_BRAND:
-                        return this.discount.brands.length > 0;
-                    case this.TYPE_CATEGORY:
-                        return this.discount.categories.length > 0;
-                    case this.TYPE_DELIVERY:
-                    case this.TYPE_CART_TOTAL:
-                        return true;
-                }
-                return false;
-            },
-            checkSize() {
-                let value = this.discount.value;
-                let isPercent = this.discount.value_type === 1;
-                return value > 0 && (!isPercent || value <= 100);
-            },
-            checkDate() {
-                let start = this.discount.start_date;
-                let end = this.discount.end_date;
-                return !(start && end) || (moment(start).unix() <= moment(end).unix());
-            },
-            valid() {
-                let required = this.discount.name
-                    && this.discount.type
-                    && this.discount.value
-                    && this.discount.value_type
-                    && !this.processing;
-
-                return required
-                    && this.checkType
-                    && this.checkSize
-                    && this.checkDate;
-            },
             discountSizeTypes() {
                 return [
                     {text: 'Проценты', value: 1},
@@ -308,6 +430,9 @@
                     });
                 }
                 return regions;
+            },
+            checkEndDate() {
+                return (this.discountErrors.end_date) ? false : null;
             },
         },
         watch: {

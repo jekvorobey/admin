@@ -1,8 +1,8 @@
 <template>
     <div :class="classes">
         <label for="brand-select">{{ title }}</label>
-        <div class="input-group mb-3">
-            <div class="d-flex flex-row form-control">
+        <div class="input-group mb-1">
+            <div class="d-flex flex-row form-control" :class="{ 'input-error': error }">
                 <div v-for="brand in selectedBrands"
                      @click="toggleBrand(brand.id)"
                      class="badge badge-secondary mr-2 cursor-pointer"
@@ -12,6 +12,9 @@
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="button" v-b-toggle="'brand-collapse-' + _uid">Выбрать бренд</button>
             </div>
+        </div>
+        <div class="mb-2 error">
+            {{ error }}
         </div>
         <b-collapse :id="'brand-collapse-' + _uid" class="mt-2">
             <b-card>
@@ -31,6 +34,7 @@
             classes: String,
             brands: Array,
             iBrands: Array,
+            error: String,
         },
         data() {
             return {
@@ -66,3 +70,13 @@
         },
     }
 </script>
+
+<style>
+    .error {
+        color: red;
+        font-size: small;
+    }
+    .input-error {
+        border-color: red;
+    }
+</style>
