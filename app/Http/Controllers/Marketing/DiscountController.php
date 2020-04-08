@@ -6,7 +6,6 @@ use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
-use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -15,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pim\Core\PimException;
 
 /**
@@ -148,50 +146,48 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
+     * @param int             $id
      * @param DiscountService $discountService
      * @param CategoryService $categoryService
-     * @param ListsService $listsService
-     * @param BrandService $brandService
+     * @param ListsService    $listsService
+     * @param BrandService    $brandService
+     *
      * @return mixed
      * @throws PimException
      */
-    public function detail(int $id,
-                           Request $request,
-                           DiscountService $discountService,
-                           CategoryService $categoryService,
-                           ListsService $listsService,
-                           BrandService $brandService)
-    {
-        $params = (new DiscountInDto())
-            ->id($id)
-            ->status(DiscountStatusDto::STATUS_CREATED, true)
-            ->withAll()
-            ->toQuery();
+    public function edit(
+        int $id,
+        DiscountService $discountService,
+        CategoryService $categoryService,
+        ListsService $listsService,
+        BrandService $brandService
+    ) {
+        $data = DiscountHelper::detail($id, $discountService, $categoryService, $listsService, $brandService);
+        $this->title = $data['title'];
+        return $this->render('Marketing/Discount/Edit', $data);
+    }
 
-        /** @var DiscountDto $discount */
-        $discount = $discountService->discounts($params)->first();
-        if (!$discount) {
-            throw new NotFoundHttpException();
-        }
 
-        $this->title = '#' . $discount->id . ' ' . $discount->name;
-
-        $data = DiscountHelper::loadData($discountService, $listsService);
-        return $this->render('Marketing/Discount/Detail', [
-            'iDiscount' => $discount,
-            'discounts' => $data['discounts'],
-            'discountTypes' => $data['discountTypes'],
-            'iConditionTypes' => $data['conditionTypes'],
-            'deliveryMethods' => $data['deliveryMethods'],
-            'discountStatuses' => $data['discountStatuses'],
-            'paymentMethods' => $data['paymentMethods'],
-            'roles' => $data['roles'],
-            'iDistricts' => $data['districts'],
-            'categories' => $categoryService->categories($categoryService->newQuery()),
-            'brands' => $brandService->brands($brandService->newQuery()),
-        ]);
+    /**
+     * @param int             $id
+     * @param DiscountService $discountService
+     * @param CategoryService $categoryService
+     * @param ListsService    $listsService
+     * @param BrandService    $brandService
+     *
+     * @return mixed
+     * @throws PimException
+     */
+    public function detail(
+        int $id,
+        DiscountService $discountService,
+        CategoryService $categoryService,
+        ListsService $listsService,
+        BrandService $brandService
+    ) {
+        $data = DiscountHelper::detail($id, $discountService, $categoryService, $listsService, $brandService);
+        $this->title = $data['title'];
+        return $this->render('Marketing/Discount/Detail', $data);
     }
 
     /**

@@ -58,7 +58,8 @@ Route::middleware('auth')->group(function () {
             Route::delete('/', 'DiscountController@delete')->name('discount.delete');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'DiscountController@detail')->name('discount.edit');
+                Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
+                Route::get('', 'DiscountController@detail')->name('discount.detail');
             });
 
             Route::put('/{id}', 'DiscountController@update')

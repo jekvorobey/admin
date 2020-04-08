@@ -148,7 +148,7 @@
                 <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
-                <td>{{ discount.name }}</td>
+                <td><a :href="link(discount.id)">{{ discount.name }}</a></td>
                 <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? '₽' : '%' }} на<br/>
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
@@ -305,6 +305,9 @@
             };
         },
         methods: {
+            link(discountId) {
+                return this.getRoute('discount.detail', {id: parseInt(discountId)});
+            },
             deleteDiscount() {
                 this.openModal('DeleteDiscount');
             },
