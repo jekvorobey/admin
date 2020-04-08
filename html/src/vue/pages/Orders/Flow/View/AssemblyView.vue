@@ -8,8 +8,12 @@
                             <h2>Заказ {{ order.number }}</h2>
                             <div style="height: 40px">
                                 <order-status :status='order.status'/>
+                                <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
-                                <b-dropdown text="Действия" class="float-right" size="sm" v-if="isPreOrderStatus || isCreatedStatus">
+                                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || isPreOrderStatus || isCreatedStatus) && !isCancel">
+                                    <b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
+                                        Оплатить
+                                    </b-dropdown-item-button>
                                     <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(4)">
                                         Ожидает подтверждения Мерчантом
                                     </b-dropdown-item-button>
@@ -36,6 +40,10 @@
                         Сумма заказа {{preparePrice(order.price)}} руб.
                         <fa-icon icon="question-circle" v-b-popover.hover="tooltipOrderCost"></fa-icon>
                     </h2>
+                    <div style="height: 40px">
+                        <payment-status :status='order.payment_status'/>
+                    </div>
+
                     <p class="text-secondary" v-if="order.discount">
                         Скидка:  <span class="float-right text-danger measure">руб. </span>
                         <span class="float-right text-danger">-{{order.discount}}</span>
@@ -141,7 +149,7 @@
             }
         },
         changeOrderStatus(statusId) {
-            let errorMessage = 'Ошибка при изменении статуса заказа.';
+            let errorMessage = 'Ошибка при изменении статуса заказа';
 
             Services.showLoader();
             Services.net().put(this.getRoute('orders.changeStatus', {id: this.order.id}), null,
@@ -150,7 +158,24 @@
                     this.order.status = data.status;
                     Services.msg("Изменения сохранены");
                 } else {
-                    Services.msg(errorMessage + ' ' + data.error, 'danger');
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        payOrder() {
+            let errorMessage = 'Ошибка при оплате заказа';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.pay', {id: this.order.id})).then(data => {
+                if (data.order) {
+                    this.order = data.order;
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage, 'danger');
                 }
             }, () => {
                 Services.msg(errorMessage, 'danger');
@@ -171,6 +196,12 @@
         },
         isCreatedStatus() {
             return this.isStatus(1);
+        },
+        isNotPaid() {
+            return this.order.payment_status.id !== 2;
+        },
+        isCancel() {
+            return this.order.is_canceled;
         },
     },
     mounted() {

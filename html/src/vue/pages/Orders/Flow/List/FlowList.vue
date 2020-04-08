@@ -118,7 +118,13 @@
                 <tr v-for="order in orders">
                     <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
                     <td v-for="column in columns" v-if="column.isShown">
-                        <order-status v-if="column.code === 'status'" :status='order.status'/>
+                        <template v-if="column.code === 'status'">
+                            <order-status :status='order.status'/>
+                            <template v-if="order.is_canceled">
+                                <br><span class="badge badge-danger">Отменен</span>
+                            </template>
+                        </template>
+                        <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
                         <div v-else v-html="column.value(order)"></div>
                     </td>
                     <td></td>
@@ -284,6 +290,12 @@ export default {
                 {
                     name: 'Статус',
                     code: 'status',
+                    isShown: true,
+                    isAlwaysShown: true,
+                },
+                {
+                    name: 'Статус оплаты',
+                    code: 'payment_status',
                     isShown: true,
                     isAlwaysShown: true,
                 },

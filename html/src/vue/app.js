@@ -11,13 +11,14 @@ import 'lazysizes/plugins/respimg/ls.respimg';
 import store from './store/store';
 import Services from '../scripts/services/services';
 import BootstrapVue from 'bootstrap-vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import './fontawesome';
-import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts/filters';
-import OrderStatus from './components/order-status.vue';
+import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
+import OrderStatus from './components/status/order-status.vue';
+import PaymentStatus from './components/status/payment-status.vue';
 import Media from '../scripts/media.js';
 import * as moment from 'moment';
-import { mapGetters } from 'vuex';
+import {mapGetters} from 'vuex';
 
 Vue.use(BootstrapVue);
 
@@ -40,6 +41,7 @@ store.commit('title', root.dataset.title);
 store.commit('routes', JSON.parse(root.dataset.routes));
 
 Vue.component('order-status', OrderStatus);
+Vue.component('payment-status', PaymentStatus);
 
 Services.instance().register('store', () => {
     return store;

@@ -148,6 +148,7 @@ class FlowListController extends Controller
             }
 
             $data['status'] = $order->status()->toArray();
+            $data['payment_status'] = $order->paymentStatus()->toArray();
             $data['delivery_method'] = [];// todo $order->deliveryMethod()->toArray();
             $data['created_at'] = (new Carbon($order->created_at))->format('h:i:s Y-m-d');
             $data['updated_at'] = (new Carbon($order->updated_at))->format('h:i:s Y-m-d');
