@@ -222,7 +222,7 @@
                 Services.showLoader();
                 Services.net().post(this.route('merchant.create'), null, this.form
                 ).then(data => {
-                    this.$emit('create', data.merchant);
+                    window.location = data.redirect;
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -268,8 +268,8 @@
                 }
             },
             errorFactAddress() {
-                if (this.$v.form.legal_address.$dirty) {
-                    if (!this.$v.form.legal_address.required) return "Обязательное поле!";
+                if (this.$v.form.fact_address.$dirty) {
+                    if (!this.$v.form.fact_address.required) return "Обязательное поле!";
                 }
             },
             errorPaymentAccount() {

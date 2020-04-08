@@ -95,7 +95,7 @@
             ></b-pagination>
         </div>
 
-        <modal-create-merchant :id="modalIdCreateMerchant" @create="addToMerchants"/>
+        <modal-create-merchant :id="modalIdCreateMerchant"/>
     </layout-main>
 </template>
 
@@ -220,9 +220,6 @@ export default {
                 }
             }
         },
-        addToMerchants(merchant) {
-            this.merchants.push(merchant);
-        }
     },
     watch: {
         currentPage() {

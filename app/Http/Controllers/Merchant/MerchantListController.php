@@ -279,13 +279,12 @@ class MerchantListController extends Controller
                 ->setSaleInfo($data['sale_info'])
         );
 
-        $query = $this->makeQuery(true)
-            ->setFilter('id', $merchantId);
-
-        $this->loadItems($query);
+        if (!$merchantId) {
+            throw new BadRequestHttpException('Ошибка создания мерчанта');
+        }
 
         return response()->json([
-            'merchant' => $this->loadItems($query),
+            'redirect' => route('merchant.detail', ['id' => $merchantId]),
         ]);
     }
 
