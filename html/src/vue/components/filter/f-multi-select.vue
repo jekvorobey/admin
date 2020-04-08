@@ -8,7 +8,7 @@
             <div v-if="$slots.prepend" class="input-group-prepend">
                 <slot name="prepend"/>
             </div>
-            <div class="form-control" @click="toggleList">
+            <div class="form-control" :class="{ 'input-error': error }" @click="toggleList">
                 <span v-for="item in items" @click="e => {e.stopPropagation(); remove(item.value)}"
                       class="badge badge-secondary mr-2">
                     {{item.text}} <fa-icon icon="times"></fa-icon>
@@ -42,6 +42,9 @@
                 </template>
             </div>
         </transition>
+        <div class="mt-1 error">
+            {{ error }}
+        </div>
     </div>
 </template>
 
@@ -55,7 +58,8 @@
             grouped: {
                 type: Boolean,
                 default: false
-            }
+            },
+            error: String,
         },
         data() {
             return {
@@ -131,5 +135,12 @@
     }
     .select-item:not(:last-of-type) {
         border-bottom: 1px solid #DFDFDF;
+    }
+    .error {
+        color: red;
+        font-size: small;
+    }
+    .input-error {
+        border-color: red;
     }
 </style>

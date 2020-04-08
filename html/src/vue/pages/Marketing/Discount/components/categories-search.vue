@@ -1,7 +1,7 @@
 <template>
     <div :class="classes">
         <label for="category-select">{{ title }}</label>
-        <div class="input-group mb-3">
+        <div class="input-group mb-1" :class="{ 'input-error': error }">
             <div class="d-flex flex-row form-control">
                 <div v-for="category in selectedCategories"
                      @click="toggleCategory(category.id)"
@@ -15,7 +15,9 @@
                 <button class="btn btn-outline-secondary" type="button" v-b-toggle="'category-collapse-' + _uid">Выбрать категорию</button>
             </div>
         </div>
-
+        <div class="mb-2 error">
+            {{ error }}
+        </div>
         <b-collapse :id="'category-collapse-' + _uid" class="mt-2">
             <b-card>
                 <category-tree
@@ -45,6 +47,7 @@
             categories: Array,
             iBrands: Array,
             iCategories: Array,
+            error: String,
         },
         data() {
             return {
@@ -84,3 +87,13 @@
         },
     }
 </script>
+
+<style>
+    .error {
+        color: red;
+        font-size: small;
+    }
+    .input-error {
+        border-color: red;
+    }
+</style>
