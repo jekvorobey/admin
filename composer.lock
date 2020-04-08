@@ -505,12 +505,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "05a736d8b60474664d335966837d9618f0b651c1"
+                "reference": "9ffef83e693248ffcaec3594cae77f511e2acd90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=05a736d8b60474664d335966837d9618f0b651c1",
-                "reference": "05a736d8b60474664d335966837d9618f0b651c1",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=9ffef83e693248ffcaec3594cae77f511e2acd90",
+                "reference": "9ffef83e693248ffcaec3594cae77f511e2acd90",
                 "shasum": ""
             },
             "require": {
@@ -545,7 +545,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-04-06T20:16:22+00:00"
+            "time": "2020-04-08T17:45:05+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",

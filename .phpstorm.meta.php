@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-04-03 19:41:53.
+    * Generated on 2020-04-08 20:54:50.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -51,6 +51,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -250,6 +251,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -449,6 +451,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -648,6 +651,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -847,6 +851,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -1046,6 +1051,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -1245,6 +1251,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
@@ -1444,6 +1451,7 @@ namespace PHPSTORM_META {
         'Greensight\Oms\Services\CargoService\CargoService' => \Greensight\Oms\Services\CargoService\RestCargoService::class,
         'Greensight\Oms\Services\CheckoutService\CheckoutService' => \Greensight\Oms\Services\CheckoutService\RestCheckoutService::class,
         'Greensight\Oms\Services\DeliveryService\DeliveryService' => \Greensight\Oms\Services\DeliveryService\RestDeliveryService::class,
+        'Greensight\Oms\Services\DocumentTemplateService\DocumentTemplateService' => \Greensight\Oms\Services\DocumentTemplateService\RestDocumentTemplateService::class,
         'Greensight\Oms\Services\OrderService\OrderService' => \Greensight\Oms\Services\OrderService\RestOrderService::class,
         'Greensight\Oms\Services\PaymentService\PaymentService' => \Greensight\Oms\Services\PaymentService\RestPaymentService::class,
         'Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService' => \Greensight\Oms\Services\ShipmentPackageService\RestShipmentPackageService::class,
