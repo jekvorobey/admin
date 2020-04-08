@@ -420,9 +420,12 @@ Route::middleware('auth')->group(function () {
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
                         Route::get('export', 'TabDocumentController@export')->name('customers.detail.document.export');
-                        Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::prefix('{document_id}')->group(function () {
+                            Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
+                            Route::delete('delete', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        });
+
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
-                        Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });
