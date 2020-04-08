@@ -13,6 +13,8 @@
 
                 <p class="text-secondary">ID: <span class="float-right">{{ product.id }}</span></p>
                 <p class="text-secondary">Артикул: <span class="float-right">{{ product.vendor_code }}</span></p>
+                <p class="text-secondary">Текущая цена товара на витрине: <span class="float-right">{{ product.showCount.price }} ₽</span></p>
+                <p class="text-secondary">Текущий остаток товара на витрине: <span class="float-right">{{ product.showCount.qty }} шт.</span></p>
                 <p class="text-secondary">Дата создания товара: <span class="float-right">{{ product.created_at }}</span></p>
                 <p class="text-secondary">Дата последнего обновления товара: <span class="float-right">{{ product.updated_at }}</span></p>
 
