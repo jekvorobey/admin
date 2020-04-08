@@ -19,7 +19,11 @@ Route::middleware('auth')->group(function () {
 
             Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
             Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
+
+            Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
+            Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
         });
+
 
         Route::prefix('detail/{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
@@ -131,6 +135,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
                 Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
+                Route::put('pay', 'FlowDetailController@pay')->name('orders.pay');
 
                 Route::prefix('delivery')->group(function () {
                     Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
