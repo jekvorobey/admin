@@ -13,8 +13,8 @@
                     <div class="shadow mt-3 mr-3">
                         <img :src="catalogImage.url" class="big-image">
                         Фотография для каталога
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, mainImage.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(2, mainImage.id)"></fa-icon>
+                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, catalogImage.id)"></fa-icon>
+                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(2, catalogImage.id)"></fa-icon>
                     </div>
                 </div>
             </div>
