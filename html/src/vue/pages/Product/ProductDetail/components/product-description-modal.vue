@@ -5,7 +5,7 @@
                 {{ title }}
             </div>
             <div slot="body">
-                <ckeditor :editor="editor" v-model="$v.form[text_field].$model" :config="editorConfig"></ckeditor>
+                <textarea v-model="$v.form[text_field].$model" class="form-control" rows="20"></textarea>
                 <button @click="save" class="btn btn-dark mt-3" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -13,66 +13,59 @@
 </template>
 
 <script>
-    import CKEditor from '@ckeditor/ckeditor5-vue';
-    import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { validationMixin } from 'vuelidate';
+import { required } from 'vuelidate/lib/validators';
 
-    import { validationMixin } from 'vuelidate';
-    import { required } from 'vuelidate/lib/validators';
+import Helpers from '../../../../../scripts/helpers';
+import Services from '../../../../../scripts/services/services';
 
-    import Helpers from '../../../../../scripts/helpers';
-    import Services from '../../../../../scripts/services/services';
+import modal from '../../../../components/controls/modal/modal.vue';
 
-    import modal from '../../../../components/controls/modal/modal.vue';
+import VInput from '../../../../components/controls/VInput/VInput.vue';
 
-    import VInput from '../../../../components/controls/VInput/VInput.vue';
+import modalMixin from '../../../../mixins/modal.js';
 
-    import modalMixin from '../../../../mixins/modal.js';
-
-    export default {
-        components: {
-            modal,
-            VInput,
-            ckeditor: CKEditor.component
-        },
-        mixins: [modalMixin, validationMixin],
-        props: {
-            modalName: String,
-            text_field: String,
-            title: String,
-            source: Object,
-        },
-        data () {
-            return {
-                editor: ClassicEditor,
-                editorConfig: {
-                    toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
-                    height: 400
-                },
-                form: Object.assign({}, this.source),
-            };
-        },
-        validations() {
-            return {
-                form: {
-                    [this.text_field]: {required},
-                }
-            };
-        },
-        methods: {
-            save() {
-                this.$v.$touch();
-                if (this.$v.$invalid) {
-                    return;
-                }
-                let data = Helpers.filterObject(this.form, [this.text_field]);
-                Services.net().post(this.getRoute('products.saveProduct', {id: this.source.id}), {}, data)
-                    .then(()=> {
-                        this.$emit('onSave');
-                        this.closeModal();
-                    });
+export default {
+    components: {
+        modal,
+        VInput,
+    },
+    mixins: [modalMixin, validationMixin],
+    props: {
+        modalName: String,
+        text_field: String,
+        title: String,
+        source: Object,
+    },
+    data () {
+        return {
+            form: Object.assign({}, this.source),
+        };
+    },
+    validations() {
+        return {
+            form: {
+                [this.text_field]: {required},
             }
-        },
-    }
+        };
+    },
+    methods: {
+        save() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+            let data = Helpers.filterObject(this.form, [this.text_field]);
+            Services.showLoader();
+            Services.net().post(this.getRoute('products.saveProduct', {id: this.source.id}), {}, data).catch(() => {
+                Services.hideLoader();
+            }).then(()=> {
+                this.$emit('onSave');
+                this.closeModal();
+            });
+        }
+    },
+}
 </script>
 
 <style>

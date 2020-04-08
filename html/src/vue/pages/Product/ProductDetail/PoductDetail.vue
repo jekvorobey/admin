@@ -103,14 +103,16 @@
 
     methods: {
         refresh() {
-            Services.net().get(this.getRoute('products.detailData', {id: this.product.id}))
-                .then((data)=> {
-                    this.product = data.product;
-                    this.images = data.images;
-                    this.properties = data.properties;
-                    this.options.availableProperties = data.availableProperties;
-                    this.options.directoryValues = data.directoryValues;
-                });
+            Services.showLoader();
+            Services.net().get(this.getRoute('products.detailData', {id: this.product.id})).then((data)=> {
+                this.product = data.product;
+                this.images = data.images;
+                this.properties = data.properties;
+                this.options.availableProperties = data.availableProperties;
+                this.options.directoryValues = data.directoryValues;
+            }).finally(() => {
+                Services.hideLoader();
+            });
         },
         changeProductApproveStatus(statusId) {
             let errorMessage = 'Ошибка при изменении статуса согласования товара.';
