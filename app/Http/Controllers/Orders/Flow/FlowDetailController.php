@@ -36,23 +36,75 @@ class FlowDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param OrderService $orderService
-     * @param ProductService $productService
-     * @param UserService $userService
-     * @param DeliveryService $deliveryService
-     * @param ShipmentService $shipmentService
      * @return mixed
      * @throws \Exception
      */
-    public function detail(
-        int $id,
-        OrderService $orderService,
-        ProductService $productService,
-        UserService $userService,
-        DeliveryService $deliveryService,
-        ShipmentService $shipmentService
-    )
+    public function detail(int $id)
     {
+        $data = $this->getDetailData($id);
+        $this->title = 'Редактирование заказа ' . $data['number'];
+
+        return $this->render('Orders/Flow/View', [
+            'iOrder' => $data
+        ]);
+    }
+
+    /**
+     * Изменить статус заказа
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ShipmentService  $shipmentService
+     * @return JsonResponse
+     */
+    public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'status' => Rule::in(array_keys(OrderStatus::allStatuses())),
+        ]);
+        $order = new OrderDto();
+        $order->status = $data['status'];
+        $orderService->updateOrder($id, $order);
+
+        return response()->json([
+            'status' => OrderStatus::allStatuses()[$data['status']]->toArray(),
+        ]);
+    }
+
+    /**
+     * Вручную оплатить заказ
+     * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
+     * @param  int  $id
+     * @param  ShipmentService  $shipmentService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function pay(int $id, OrderService $orderService): JsonResponse
+    {
+        $orderService->payOrder($id);
+
+        return response()->json([
+            'order' => $this->getDetailData($id),
+        ]);
+    }
+
+    /**
+     * @param  int  $id
+     * @return array
+     * @throws \Exception
+     */
+    protected function getDetailData(int $id): array
+    {
+        /** @var OrderService $orderService */
+        $orderService = resolve(OrderService::class);
+        /** @var ProductService $productService */
+        $productService = resolve(ProductService::class);
+        /** @var UserService $userService */
+        $userService = resolve(UserService::class);
+        /** @var DeliveryService $deliveryService */
+        $deliveryService = resolve(DeliveryService::class);
+        /** @var ShipmentService $shipmentService */
+        $shipmentService = resolve(ShipmentService::class);
+
         $restQuery = $orderService
             ->newQuery()
             ->setFilter('id', $id)
@@ -65,8 +117,6 @@ class FlowDetailController extends Controller
         /** @var OrderDto $order */
         $order = $orders->first();
         $data = $order->toArray();
-
-        $this->title = 'Редактирование заказа ' . $data['number'];
 
         if (isset($data['basket']['items']) && !empty($data['basket']['items'])) {
             $basketItems = &$data['basket']['items'];
@@ -219,6 +269,7 @@ class FlowDetailController extends Controller
         $data['delivery_services'] = DeliveryServiceDto::allServices();
         $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
         $data['status'] = $order->status()->toArray();
+        $data['payment_status'] = $order->paymentStatus()->toArray();
         $data['delivery_type'] = $order->deliveryType()->toArray();
         $data['delivery_method'] = []; // todo
         $data['delivery_cost'] = $order->delivery_cost;
@@ -236,29 +287,6 @@ class FlowDetailController extends Controller
         $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
         $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
 
-        return $this->render('Orders/Flow/View', [
-            'iOrder' => $data
-        ]);
-    }
-
-    /**
-     * Изменить статус заказа
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
-     */
-    public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
-    {
-        $data = $this->validate($request, [
-            'status' => Rule::in(array_keys(OrderStatus::allStatuses())),
-        ]);
-        $order = new OrderDto();
-        $order->status = $data['status'];
-        $orderService->updateOrder($id, $order);
-
-        return response()->json([
-            'status' => OrderStatus::allStatuses()[$data['status']]->toArray(),
-        ]);
+        return $data;
     }
 }
