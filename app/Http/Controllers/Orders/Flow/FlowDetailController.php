@@ -13,11 +13,15 @@ use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
+use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\PaymentMethod;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -217,17 +221,18 @@ class FlowDetailController extends Controller
         $data['status'] = $order->status()->toArray();
         $data['delivery_type'] = $order->deliveryType()->toArray();
         $data['delivery_method'] = []; // todo
-        $data['delivery_cost'] = rand(0, (int)$data['cost'] / 4); //todo
+        $data['delivery_cost'] = $order->delivery_cost;
         $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y H:i');
         $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d H:i');
-        $data['totalQty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
+        $data['total_qty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
             return $sum + $item->qty;
         }, 0) : null;
         $data['payment_method'] = PaymentMethod::allMethods()[array_rand(PaymentMethod::allMethods())]->toArray(); //todo
-        $data['discount'] = rand(0, (int)$data['cost'] / 4); //todo
-        $data['cost_without_discount'] = $data['cost'] - $data['discount'];
-        $data['products_cost'] = $data['cost_without_discount'] - $data['delivery_cost'];
-        $data['weight'] = rand(100, 3000); //todo
+        $data['discount'] = $order->cost - $order->price;
+        $data['products_cost'] = $order->cost - $order->delivery_cost;
+        $data['weight'] = $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
+            return $sum + isset($item->product['weight']) ? $item->product['weight'] : 0;
+        }, 0);
         $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
         $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
 
@@ -236,4 +241,24 @@ class FlowDetailController extends Controller
         ]);
     }
 
+    /**
+     * Изменить статус заказа
+     * @param  int  $id
+     * @param  Request  $request
+     * @param  ShipmentService  $shipmentService
+     * @return JsonResponse
+     */
+    public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'status' => Rule::in(array_keys(OrderStatus::allStatuses())),
+        ]);
+        $order = new OrderDto();
+        $order->status = $data['status'];
+        $orderService->updateOrder($id, $order);
+
+        return response()->json([
+            'status' => OrderStatus::allStatuses()[$data['status']]->toArray(),
+        ]);
+    }
 }
