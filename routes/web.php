@@ -13,16 +13,19 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
-        Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
-        Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
+        Route::prefix('list')->group(function () {
+            Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
+            Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
-        Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
-        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
+            Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+            Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
-        Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
-        Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
+            Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
+            Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
+        });
 
-        Route::prefix('{id}')->group(function () {
+
+        Route::prefix('detail/{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
 
@@ -37,6 +40,11 @@ Route::middleware('auth')->group(function () {
                     Route::delete('document', 'TabMainController@deleteDocument')->name('merchant.detail.main.document.delete');
                 });
             });
+        });
+
+        Route::prefix('commission')->group(function () {
+            Route::get('', 'MerchantCommissionController@index')->name('merchant.commission');
+            Route::post('', 'MerchantCommissionController@save')->name('merchant.commission.save');
         });
     });
 

@@ -222,10 +222,10 @@ class Menu
                         'title' => 'Список мерчантов',
                         'route' => route('merchant.activeList'),
                     ],
-//                    [
-//                        'title' => 'Взаиморасчёты',
-//                        'route' => '#',
-//                    ],
+                    [
+                        'title' => 'Взаиморасчёты',
+                        'route' => route('merchant.commission'),
+                    ],
                 ],
             ],
 //            [
