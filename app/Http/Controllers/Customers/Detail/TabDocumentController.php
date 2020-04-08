@@ -53,12 +53,11 @@ class TabDocumentController extends Controller
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
                     'statusId' => $document->status,
-                    //'statusVerbal' => $document->statusName($document->status),
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
             })->filter(),
-            'statuses' => $documentDto->statusesName(),
+            'statuses' => $documentDto->statusesNames(),
         ]);
     }
 
