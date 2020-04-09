@@ -113,7 +113,7 @@
             >Условия предоставления скидки</v-select>
             <div class="col-3 mt-3">
                 <label class="row">&nbsp;</label>
-                <button type="button btn-inline" class="btn"
+                <button type="button" class="btn"
                         :class="'btn-warning'"
                         @click="addCondition()">Добавить условие</button>
             </div>
