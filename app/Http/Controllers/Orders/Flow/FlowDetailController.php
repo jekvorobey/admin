@@ -88,6 +88,22 @@ class FlowDetailController extends Controller
     }
 
     /**
+     * Отменить заказ
+     * @param  int  $id
+     * @param  ShipmentService  $shipmentService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function cancel(int $id, OrderService $orderService): JsonResponse
+    {
+        $orderService->cancelOrder($id);
+
+        return response()->json([
+            'order' => $this->getDetailData($id),
+        ]);
+    }
+
+    /**
      * @param  int  $id
      * @return array
      * @throws \Exception

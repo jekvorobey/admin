@@ -137,6 +137,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
                 Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
                 Route::put('pay', 'FlowDetailController@pay')->name('orders.pay');
+                Route::put('cancel', 'FlowDetailController@cancel')->name('orders.cancel');
 
                 Route::prefix('delivery')->group(function () {
                     Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');

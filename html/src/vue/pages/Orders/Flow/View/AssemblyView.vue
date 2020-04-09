@@ -10,12 +10,15 @@
                                 <order-status :status='order.status'/>
                                 <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
-                                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || isPreOrderStatus || isCreatedStatus) && !isCancel">
+                                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || this.order.status.id < 9) && !isCancel">
                                     <b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
                                         Оплатить
                                     </b-dropdown-item-button>
                                     <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(4)">
                                         Ожидает подтверждения Мерчантом
+                                    </b-dropdown-item-button>
+                                    <b-dropdown-item-button v-if="this.order.status.id < 9 && !isCancel" @click="cancelOrder()">
+                                        Отменить заказ
                                     </b-dropdown-item-button>
                                 </b-dropdown>
                             </div>
@@ -171,6 +174,23 @@
 
             Services.showLoader();
             Services.net().put(this.getRoute('orders.pay', {id: this.order.id})).then(data => {
+                if (data.order) {
+                    this.order = data.order;
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        cancelOrder() {
+            let errorMessage = 'Ошибка при отмене заказа';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.cancel', {id: this.order.id})).then(data => {
                 if (data.order) {
                     this.order = data.order;
                     Services.msg("Изменения сохранены");
