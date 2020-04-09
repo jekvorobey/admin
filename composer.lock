@@ -590,12 +590,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "64937304ebee28029b5d5cb9f317f104720e3e07"
+                "reference": "8a9e38279cbf5f361a82f0a6c9d94b5de7aff763"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=64937304ebee28029b5d5cb9f317f104720e3e07",
-                "reference": "64937304ebee28029b5d5cb9f317f104720e3e07",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=8a9e38279cbf5f361a82f0a6c9d94b5de7aff763",
+                "reference": "8a9e38279cbf5f361a82f0a6c9d94b5de7aff763",
                 "shasum": ""
             },
             "require": {
@@ -639,7 +639,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-04-09T12:07:50+00:00"
+            "time": "2020-04-09T15:03:24+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -687,6 +687,9 @@
                 }
             ],
             "description": "iBT logistics client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/15546031/issues"
+            },
             "time": "2020-04-08T11:15:20+00:00"
         },
         {
@@ -828,12 +831,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "e4927b7b3365e6e031360875310c07f4ea6574ff"
+                "reference": "94895f8f1893cf0965857bd48e46aad3d9709a46"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=e4927b7b3365e6e031360875310c07f4ea6574ff",
-                "reference": "e4927b7b3365e6e031360875310c07f4ea6574ff",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=94895f8f1893cf0965857bd48e46aad3d9709a46",
+                "reference": "94895f8f1893cf0965857bd48e46aad3d9709a46",
                 "shasum": ""
             },
             "require": {
@@ -868,7 +871,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-04-09T13:27:38+00:00"
+            "time": "2020-04-09T15:04:03+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -4196,16 +4199,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "1.10.2",
+            "version": "1.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "79c0806d465bf9b179fffeeea18f51e821bfdaad"
+                "reference": "1efa6850b4a1740980346ac3582edf7dfb7899ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/79c0806d465bf9b179fffeeea18f51e821bfdaad",
-                "reference": "79c0806d465bf9b179fffeeea18f51e821bfdaad",
+                "url": "https://api.github.com/repos/composer/composer/zipball/1efa6850b4a1740980346ac3582edf7dfb7899ee",
+                "reference": "1efa6850b4a1740980346ac3582edf7dfb7899ee",
                 "shasum": ""
             },
             "require": {
@@ -4272,7 +4275,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-04-09T14:13:34+00:00"
+            "time": "2020-04-09T15:05:50+00:00"
         },
         {
             "name": "composer/semver",
