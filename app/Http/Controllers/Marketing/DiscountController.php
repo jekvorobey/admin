@@ -6,7 +6,6 @@ use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
-use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -15,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pim\Core\PimException;
 
 /**
@@ -78,24 +76,16 @@ class DiscountController extends Controller
     /**
      * Страница для создания скидки
      *
-     * @param Request $request
-     * @param DiscountService $discountService
      * @param CategoryService $categoryService
-     * @param ListsService $listsService
-     * @param BrandService $brandService
+     * @param BrandService    $brandService
+     *
      * @return mixed
      * @throws PimException
      */
-    public function createPage(
-        Request $request,
-        DiscountService $discountService,
-        CategoryService $categoryService,
-        ListsService $listsService,
-        BrandService $brandService
-    )
+    public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
         $this->title = 'Создание скидки';
-        $data = DiscountHelper::loadData($discountService, $listsService);
+        $data = DiscountHelper::loadData();
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
             'discountTypes' => $data['discountTypes'],
@@ -148,50 +138,34 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param CategoryService $categoryService
-     * @param ListsService $listsService
-     * @param BrandService $brandService
+     * @param int             $id
+     *
      * @return mixed
      * @throws PimException
      */
-    public function detail(int $id,
-                           Request $request,
-                           DiscountService $discountService,
-                           CategoryService $categoryService,
-                           ListsService $listsService,
-                           BrandService $brandService)
+    public function edit(int $id)
     {
-        $params = (new DiscountInDto())
-            ->id($id)
-            ->status(DiscountStatusDto::STATUS_CREATED, true)
-            ->withAll()
-            ->toQuery();
+        $data = DiscountHelper::detail($id);
+        $this->title = $data['title'];
+        return $this->render('Marketing/Discount/Edit', $data);
+    }
 
-        /** @var DiscountDto $discount */
-        $discount = $discountService->discounts($params)->first();
-        if (!$discount) {
-            throw new NotFoundHttpException();
-        }
 
-        $this->title = '#' . $discount->id . ' ' . $discount->name;
-
-        $data = DiscountHelper::loadData($discountService, $listsService);
-        return $this->render('Marketing/Discount/Detail', [
-            'iDiscount' => $discount,
-            'discounts' => $data['discounts'],
-            'discountTypes' => $data['discountTypes'],
-            'iConditionTypes' => $data['conditionTypes'],
-            'deliveryMethods' => $data['deliveryMethods'],
-            'discountStatuses' => $data['discountStatuses'],
-            'paymentMethods' => $data['paymentMethods'],
-            'roles' => $data['roles'],
-            'iDistricts' => $data['districts'],
-            'categories' => $categoryService->categories($categoryService->newQuery()),
-            'brands' => $brandService->brands($brandService->newQuery()),
-        ]);
+    /**
+     * @param int             $id
+     * @param DiscountService $discountService
+     * @param CategoryService $categoryService
+     * @param ListsService    $listsService
+     * @param BrandService    $brandService
+     *
+     * @return mixed
+     * @throws PimException
+     */
+    public function detail(int $id)
+    {
+        $data = DiscountHelper::detail($id);
+        $this->title = $data['title'];
+        return $this->render('Marketing/Discount/Detail', $data);
     }
 
     /**

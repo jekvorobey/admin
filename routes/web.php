@@ -13,16 +13,19 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
-        Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
-        Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
+        Route::prefix('list')->group(function () {
+            Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
+            Route::get('active', 'MerchantListController@active')->name('merchant.activeList');
 
-        Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
-        Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
+            Route::get('page', 'MerchantListController@page')->name('merchant.listPage');
+            Route::put('status', 'MerchantListController@status')->name('merchant.listPage.changeStatus');
 
-        Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
-        Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
+            Route::post('', 'MerchantListController@createMerchant')->name('merchant.create');
+            Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
+        });
 
-        Route::prefix('{id}')->group(function () {
+
+        Route::prefix('detail/{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
 
@@ -38,6 +41,11 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
+
+        Route::prefix('commission')->group(function () {
+            Route::get('', 'MerchantCommissionController@index')->name('merchant.commission');
+            Route::post('', 'MerchantCommissionController@save')->name('merchant.commission.save');
+        });
     });
 
     Route::prefix('marketing')->namespace('Marketing')->group(function () {
@@ -50,7 +58,8 @@ Route::middleware('auth')->group(function () {
             Route::delete('/', 'DiscountController@delete')->name('discount.delete');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'DiscountController@detail')->name('discount.edit');
+                Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
+                Route::get('', 'DiscountController@detail')->name('discount.detail');
             });
 
             Route::put('/{id}', 'DiscountController@update')
@@ -128,6 +137,7 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
                 Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
                 Route::put('pay', 'FlowDetailController@pay')->name('orders.pay');
+                Route::put('cancel', 'FlowDetailController@cancel')->name('orders.cancel');
 
                 Route::prefix('delivery')->group(function () {
                     Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
@@ -411,9 +421,12 @@ Route::middleware('auth')->group(function () {
                     Route::prefix('documents')->group(function () {
                         Route::get('', 'TabDocumentController@load')->name('customers.detail.document');
                         Route::get('export', 'TabDocumentController@export')->name('customers.detail.document.export');
-                        Route::delete('{document_id}', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        Route::prefix('{document_id}')->group(function () {
+                            Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
+                            Route::delete('delete', 'TabDocumentController@deleteDocument')->name('customers.detail.document.delete');
+                        });
+
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
-                        Route::post('send', 'TabDocumentController@sendEmail')->name('customers.detail.document.send');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

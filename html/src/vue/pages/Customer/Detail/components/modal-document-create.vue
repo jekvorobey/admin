@@ -9,7 +9,7 @@
                     <tfoot>
                     <tr align="right">
                         <th colspan="2">
-                            <button  class="btn btn-success" @click="addDocument(newDocument)">Сохранить</button>
+                            <button  class="btn btn-success" @click="addDocument">Сохранить</button>
                             <button  class="btn btn-outline-danger" @click="cancel">Отмена</button>
                         </th>
                     </tr>
@@ -17,33 +17,34 @@
                     <tbody>
                     <tr>
                         <th>Начало периода подсчета:</th>
-                        <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_since" required/></td>
+                        <td>
+                            <v-date v-model="newDocument.period_since" :error="errPeriodSince"/>
+                        </td>
                     </tr>
                     <tr>
                         <th>Конец периода подсчета:</th>
-                        <td><input type="date" class="form-control form-control-sm" v-model="newDocument.period_to" required/></td>
+                        <td>
+                            <v-date v-model="newDocument.period_to" :error="errPeriodTo"/>
+                        </td>
                     </tr>
                     <tr>
                         <th>Сумма вознаграждения</th>
                         <td>
-                            <input type="number" class="form-control form-control-sm" v-model="newDocument.amount_reward" required/>
+                            <v-input v-model="newDocument.amount_reward" :error="errAmountReward"/>
                         </td>
                     </tr>
                     <tr>
                         <th>Статус</th>
                         <td>
-                            <select class="form-control form-control-sm" v-model="newDocument.status" required>
-                                <option :value="1">Сформирован</option>
-                                <option :value="2">Согласован</option>
-                                <option :value="3">Отклонен</option>
-                            </select>
+                            <v-select v-model="newDocument.status" :options="availableStatuses" :error="errStatus">
+                            </v-select>
                         </td>
                     </tr>
                     <tr>
                         <th>Добавить файл</th>
                         <td>
                             <div>
-                                <file-input v-if="!newDocument.file" @uploaded="(data) => newDocument.file = data" class="mb-3"></file-input>
+                                <file-input v-if="!newDocument.file" @uploaded="(data) => newDocument.file = data" class="mb-3" :error="errFile"></file-input>
                                 <div v-else class="alert alert-success py-1 px-3" role="alert">
                                     Файл <a :href="newDocument.file.url" target="_blank" class="alert-link">{{ newDocument.file.name }}</a> загружен
                                     <button class="btn btn-danger btn-sm" @click="nullifyUploaded"><fa-icon icon="trash-alt"/>
@@ -64,16 +65,29 @@
     import modalMixin from '../../../../mixins/modal.js';
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+    import VDate from "../../../../components/controls/VDate/VDate.vue";
+    import VInput from "../../../../components/controls/VInput/VInput.vue";
+    import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
+
+    import {validationMixin} from 'vuelidate';
+    import {required} from 'vuelidate/lib/validators';
 
     export default {
         components: {
+            VSelect,
+            VInput,
+            VDate,
             modal,
             FileInput,
             VDeleteButton,
         },
-        mixins: [modalMixin],
+        mixins: [
+            modalMixin,
+            validationMixin,
+        ],
         props: {
             modalName: String,
+            statuses: Object,
         },
         data () {
             return {
@@ -86,8 +100,21 @@
                 },
             };
         },
+        validations: {
+            newDocument: {
+                period_since: {required},
+                period_to: {required},
+                amount_reward: {required},
+                status: {required},
+                file: {required},
+            },
+        },
         methods: {
-            addDocument(newDocument) {
+            addDocument() {
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
                 this.$emit('add', this.newDocument);
             },
             clearFields() {
@@ -105,5 +132,49 @@
                 this.closeModal();
             },
         },
+        computed: {
+            availableStatuses() {
+                return Object.entries(this.statuses).map(status => ({
+                    value: status[0],
+                    text: status.slice(1,2),
+                }),);
+            },
+
+            errPeriodSince() {
+                if (this.$v.newDocument.period_since.$dirty) {
+                    if (!this.$v.newDocument.period_since.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+            errPeriodTo() {
+                if (this.$v.newDocument.period_to.$dirty) {
+                    if (!this.$v.newDocument.period_to.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+            errAmountReward() {
+                if (this.$v.newDocument.amount_reward.$dirty) {
+                    if (!this.$v.newDocument.amount_reward.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+            errStatus() {
+                if (this.$v.newDocument.status.$dirty) {
+                    if (!this.$v.newDocument.status.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+            errFile() {
+                if (this.$v.newDocument.file.$dirty) {
+                    if (!this.$v.newDocument.file.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+        }
     };
 </script>

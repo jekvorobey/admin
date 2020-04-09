@@ -32,6 +32,7 @@ class TabDocumentController extends Controller
      */
     public function load(int $customerId, CustomerService $customerService, FileService $fileService)
     {
+        $documentDto = new CustomerDocumentDto();
         $documents = $customerService->documents($customerId);
         $files = [];
         if ($documents) {
@@ -52,11 +53,11 @@ class TabDocumentController extends Controller
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
                     'statusId' => $document->status,
-                    'statusVerbal' => $document->statusName($document->status),
                     'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
             })->filter(),
+            'statuses' => $documentDto->statusesNames(),
         ]);
     }
 
@@ -118,6 +119,7 @@ class TabDocumentController extends Controller
 
     /**
      * @param int $customerId
+     * @param int $documentId
      * @param MailService\MailService $mailService
      * @param CustomerService $customerService
      * @param UserService $userService
@@ -126,24 +128,19 @@ class TabDocumentController extends Controller
      */
     public function sendEmail
     (int $customerId,
+     int $documentId,
      MailService\MailService $mailService,
      CustomerService $customerService,
      UserService $userService,
      FileService $fileService)
     {
-        $this->validate(request(), [
-            'document_id' => 'required|numeric',
-        ]);
-
-        $document_id = request('document_id');
-
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $customerId))->first();
         $userId = $customer->user_id;
         /** @var UserDto $user */
         $user = $userService->users((new RestQuery())->setFilter('id', $userId))->first();
         /** @var CustomerDocumentDto $document */
-        $document = $customerService->documents($customerId)->where('id', $document_id)->first();
+        $document = $customerService->documents($customerId)->where('id', $documentId)->first();
         /** @var FileDto $file */
         $file = $fileService->getFiles([$document->file_id])->keyBy('id')->get($document->file_id);
         // Проверка на отсутствие прикрепленного к акту файла //
