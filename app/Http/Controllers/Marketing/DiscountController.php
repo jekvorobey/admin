@@ -76,24 +76,16 @@ class DiscountController extends Controller
     /**
      * Страница для создания скидки
      *
-     * @param Request $request
-     * @param DiscountService $discountService
      * @param CategoryService $categoryService
-     * @param ListsService $listsService
-     * @param BrandService $brandService
+     * @param BrandService    $brandService
+     *
      * @return mixed
      * @throws PimException
      */
-    public function createPage(
-        Request $request,
-        DiscountService $discountService,
-        CategoryService $categoryService,
-        ListsService $listsService,
-        BrandService $brandService
-    )
+    public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
         $this->title = 'Создание скидки';
-        $data = DiscountHelper::loadData($discountService, $listsService);
+        $data = DiscountHelper::loadData();
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
             'discountTypes' => $data['discountTypes'],
@@ -147,22 +139,13 @@ class DiscountController extends Controller
 
     /**
      * @param int             $id
-     * @param DiscountService $discountService
-     * @param CategoryService $categoryService
-     * @param ListsService    $listsService
-     * @param BrandService    $brandService
      *
      * @return mixed
      * @throws PimException
      */
-    public function edit(
-        int $id,
-        DiscountService $discountService,
-        CategoryService $categoryService,
-        ListsService $listsService,
-        BrandService $brandService
-    ) {
-        $data = DiscountHelper::detail($id, $discountService, $categoryService, $listsService, $brandService);
+    public function edit(int $id)
+    {
+        $data = DiscountHelper::detail($id);
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Edit', $data);
     }
@@ -178,14 +161,9 @@ class DiscountController extends Controller
      * @return mixed
      * @throws PimException
      */
-    public function detail(
-        int $id,
-        DiscountService $discountService,
-        CategoryService $categoryService,
-        ListsService $listsService,
-        BrandService $brandService
-    ) {
-        $data = DiscountHelper::detail($id, $discountService, $categoryService, $listsService, $brandService);
+    public function detail(int $id)
+    {
+        $data = DiscountHelper::detail($id);
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Detail', $data);
     }

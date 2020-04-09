@@ -14,16 +14,86 @@
         <tbody>
             <tr>
                 <th>ID</th>
-                <td>{{ discount.id }}</td>
+                <td colspan="2">{{ discount.id }}</td>
             </tr>
             <tr>
                 <th>Дата создания</th>
-                <td>{{ discount.created_at }}</td>
+                <td colspan="2">{{ discount.created_at }}</td>
             </tr>
             <tr>
-                <th>Название</th>
+                <th><label for="discount-name-input">Название</label></th>
+                <td colspan="2">
+                    <input class="form-control form-control-sm" id="discount-name-input" v-model="discount.name"/>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="discount-value-input">Размер</label></th>
                 <td>
-                    <input class="form-control form-control-sm" v-model="discount.name"/>
+                    <input class="form-control form-control-sm" id="discount-value-input" v-model="discount.value"/>
+                </td>
+                <td>
+                    <select class="form-control form-control-sm" v-model="discount.value_type">
+                        <option v-for="sizeType in discountSizeTypes" :value="sizeType.value">
+                            {{ sizeType.text }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="discount-type-select">Скидка на</label></th>
+                <td colspan="2">
+                    <select class="form-control form-control-sm" id="discount-type-select" v-model="discount.type">
+                        <option v-for="type in discountTypes" :value="type.value">
+                            {{ type.text }}
+                        </option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Период действия скидки</th>
+                <td>
+                    <input type="date" v-model="discount.start_date" class="form-control form-control-sm"/>
+                </td>
+                <td>
+                    <input type="date" v-model="discount.end_date" class="form-control form-control-sm"/>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="discount-merchant-btn" key="merchantBtn" v-model="merchantBtn">
+                        <label class="custom-control-label" for="discount-merchant-btn"></label>
+                        <label for="discount-merchant-btn">Инициатор скидки</label>
+                    </span>
+                </th>
+                <td colspan="2">
+                    <template v-if="merchantBtn">
+                        <select class="form-control form-control-sm" id="discount-merchant-select" v-model="discount.merchant_id">
+                            <option v-for="merchant in merchants" :value="merchant.id">
+                                {{ merchant.name }}
+                            </option>
+                        </select>
+                    </template>
+                    <template v-else>
+                        Маркетплейс
+                    </template>
+                </td>
+
+            </tr>
+            <tr>
+                <th>Автор</th>
+                <td colspan="2">
+                    {{ author ? author.full_name : 'N/A' }}
+                </td>
+            </tr>
+            <tr>
+                <th><label for="discount-status-select">Статус</label></th>
+                <td colspan="2">
+                    <select class="form-control form-control-sm" id="discount-status-select" v-model="discount.status">
+                        <option v-for="status in discountStatuses" :value="status.value">
+                            {{ status.text }}
+                        </option>
+                    </select>
                 </td>
             </tr>
         </tbody>
@@ -38,26 +108,16 @@
         },
         mixins: [],
         props: {
-            iDiscount: Object,
+            model: Object,
+            discountTypes: Object,
+            discountStatuses: Object,
+            merchants: Array,
+            author: Object,
         },
         data() {
             return {
-                discount: {
-                    name: null,
-                    type: null,
-                    value: null,
-                    value_type: null,
-                    start_date: null,
-                    end_date: null,
-                    offers: null,
-                    bundles: null,
-                    status: 1, // STATUS_ACTIVE
-                    brands: [],
-                    categories: [],
-                    conditions: [],
-                    created_at: null,
-                },
                 showBtn: false,
+                merchantBtn: false,
             };
         },
         methods: {
@@ -67,56 +127,28 @@
             cancel() {
 
             },
-            initDiscount() {
-                if (!this.iDiscount) {
-                    return;
-                }
-
-                let discount = {...this.iDiscount};
-                discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
-                discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
-                discount.categories = Object.values(discount.categories).map(category => category.category_id);
-
-                let roles = discount.roles.map(role => role.role_id);
-                let segments = discount.segments.map(segment => segment.segment_id);
-                let conditionToObject = item => {
-                    let cond = item.condition ? item.condition : {};
-                    return  {
-                        categories: ('categories' in cond) ? cond.categories : [],
-                        deliveryMethods: ('deliveryMethods' in cond) ? cond.deliveryMethods : [],
-                        paymentMethods: ('paymentMethods' in cond) ? cond.paymentMethods : [],
-                        regions: ('regions' in cond) ? cond.regions : [],
-                        roles: (item.type === this.CONDITION_TYPE_USER) ? roles : [],
-                        segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],
-                        sum: ('minPrice' in cond) ? cond.minPrice : "",
-                        synergy: ('synergy' in cond) ? cond.synergy : [],
-                        type: item.type,
-                        users: ('customerIds' in cond) ? cond.customerIds : [],
-                        count: ('count' in cond) ? cond.count : '',
-                        offer: ('offer' in cond) ? cond.offer : '',
-                        brands: ('brands' in cond) ? cond.brands : '',
-                        sequenceNumber: ('orderSequenceNumber' in cond) ? cond.orderSequenceNumber : '',
-                    }
-                };
-
-                discount.conditions = Object.values(discount.conditions).map(item => conditionToObject(item));
-                if (discount.conditions.filter(item => item.type === this.CONDITION_TYPE_USER).length === 0) {
-                    if (roles.length > 0 || segments.length > 0) {
-                        discount.conditions.push(conditionToObject({
-                            'type': this.CONDITION_TYPE_USER,
-                            'condition': {
-                                'roles': roles,
-                                'segments': segments,
-                            }
-                        }));
-                    }
-                }
-
-                this.discount = discount;
+        },
+        computed: {
+            discount: {
+                get() {return this.model},
+                set(value) {this.$emit('update:discount', value)},
+            },
+            discountSizeTypes() {
+                return [
+                    {text: 'Проценты', value: 1},
+                    {text: 'Рубли', value: 2}
+                ];
+            },
+            segments() {
+                return [
+                    {text: 'A', value: 1},
+                    {text: 'B', value: 2},
+                    {text: 'C', value: 3}
+                ];
             },
         },
         mounted() {
-            this.initDiscount();
+            this.merchantBtn = this.discount.merchant_id > 0;
         },
     };
 </script>

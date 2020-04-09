@@ -4,7 +4,11 @@
             <b-col>
                 <b-card>
                     <infopanel
-                        :i-discount="iDiscount"
+                        :model.sync="discount"
+                        :discount-types="discountTypes"
+                        :discount-statuses="discountStatuses"
+                        :merchants="merchants"
+                        :author="author"
                     ></infopanel>
                 </b-card>
             </b-col>
@@ -42,7 +46,19 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <template>
+                    <tab-main v-if="key === 'main'"
+                      :model.sync="discount"
+                      :discounts="discounts"
+                      :i-condition-types="iConditionTypes"
+                      :delivery-methods="deliveryMethods"
+                      :payment-methods="paymentMethods"
+                      :regions="regions"
+                      :roles="roles"
+                      :segments="segments"
+                      :brands="brands"
+                      :categories="categories"
+                    />
+                    <template v-else>
                         Заглушка
                     </template>
                 </b-tab>
@@ -53,24 +69,111 @@
 
 <script>
     import Infopanel from './components/infopanel.vue';
+    import TabMain from './components/tab-main.vue';
     import tabsMixin from '../../../../mixins/tabs.js';
 
     export default {
         name: 'page-discount-detail',
         components: {
-            Infopanel
+            Infopanel,
+            TabMain
         },
         mixins: [tabsMixin],
         props: {
+            discounts: Array,
             iDiscount: Object,
+            discountTypes: Object,
+            discountStatuses: Object,
+            iConditionTypes: Object,
+            merchants: Array,
+            author: Object,
+            deliveryMethods: Array,
+            paymentMethods: Array,
+            iDistricts: Array,
+            brands: Array,
+            categories: Array,
+            roles: Array,
         },
         data() {
             return {
+                discount: {
+                    name: null,
+                    type: null,
+                    value: null,
+                    value_type: null,
+                    start_date: null,
+                    end_date: null,
+                    offers: null,
+                    bundles: null,
+                    status: 1, // STATUS_ACTIVE
+                    brands: [],
+                    categories: [],
+                    conditions: [],
+                    created_at: null,
+                },
 
+                // Тип условия на скидку
+                CONDITION_TYPE_FIRST_ORDER: 1,
+                CONDITION_TYPE_MIN_PRICE_ORDER: 2,
+                CONDITION_TYPE_MIN_PRICE_BRAND: 3,
+                CONDITION_TYPE_MIN_PRICE_CATEGORY: 4,
+                CONDITION_TYPE_EVERY_UNIT_PRODUCT: 5,
+                CONDITION_TYPE_DELIVERY_METHOD: 6,
+                CONDITION_TYPE_PAY_METHOD: 7,
+                CONDITION_TYPE_REGION: 8,
+                CONDITION_TYPE_USER: 9,
+                CONDITION_TYPE_ORDER_SEQUENCE_NUMBER: 10,
+                CONDITION_TYPE_DISCOUNT_SYNERGY: 11,
             };
         },
         methods: {
+            initDiscount() {
+                if (!this.iDiscount) {
+                    return;
+                }
 
+                let discount = {...this.iDiscount};
+                discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
+                discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
+                discount.categories = Object.values(discount.categories).map(category => category.category_id);
+
+                let roles = discount.roles.map(role => role.role_id);
+                let segments = discount.segments.map(segment => segment.segment_id);
+                let conditionToObject = item => {
+                    let cond = item.condition ? item.condition : {};
+                    return  {
+                        categories: ('categories' in cond) ? cond.categories : [],
+                        deliveryMethods: ('deliveryMethods' in cond) ? cond.deliveryMethods : [],
+                        paymentMethods: ('paymentMethods' in cond) ? cond.paymentMethods : [],
+                        regions: ('regions' in cond) ? cond.regions : [],
+                        roles: (item.type === this.CONDITION_TYPE_USER) ? roles : [],
+                        segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],
+                        sum: ('minPrice' in cond) ? cond.minPrice : "",
+                        synergy: ('synergy' in cond) ? cond.synergy : [],
+                        type: item.type,
+                        users: ('customerIds' in cond) ? cond.customerIds : [],
+                        count: ('count' in cond) ? cond.count : '',
+                        offer: ('offer' in cond) ? cond.offer : '',
+                        brands: ('brands' in cond) ? cond.brands : '',
+                        sequenceNumber: ('orderSequenceNumber' in cond) ? cond.orderSequenceNumber : '',
+                    }
+                };
+
+                discount.conditions = Object.values(discount.conditions).map(item => conditionToObject(item));
+                if (discount.conditions.filter(item => item.type === this.CONDITION_TYPE_USER).length === 0) {
+                    if (roles.length > 0 || segments.length > 0) {
+                        discount.conditions.push(conditionToObject({
+                            'type': this.CONDITION_TYPE_USER,
+                            'condition': {
+                                'roles': roles,
+                                'segments': segments,
+                            }
+                        }));
+                    }
+                }
+
+                this.discount = discount;
+            },
         },
         computed: {
             tabs() {
@@ -84,6 +187,26 @@
 
                 return tabs;
             },
+            segments() {
+                return [
+                    {text: 'A', value: 1},
+                    {text: 'B', value: 2},
+                    {text: 'C', value: 3}
+                ];
+            },
+            regions() {
+                let regions = [];
+                for (let i in this.iDistricts) {
+                    let district = this.iDistricts[i];
+                    district.regions.map(r => {
+                        regions.push({text: r.name, value: r.id, group: district.name});
+                    });
+                }
+                return regions;
+            },
+        },
+        mounted() {
+            this.initDiscount();
         },
     };
 </script>

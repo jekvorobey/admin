@@ -373,19 +373,23 @@ class DiscountHelper
     }
 
     /**
-     * @param DiscountService $discountService
-     * @param ListsService $listsService
      * @return array
      */
-    public static function loadData(DiscountService $discountService, ListsService $listsService)
-    {
-        $data = [];
-        $data['discountTypes'] = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
-        $data['conditionTypes'] = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
-        $data['deliveryMethods'] = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
-        $data['paymentMethods'] = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
-        $data['roles'] = Helpers::getOptionRoles(false);
+    public static function loadData() {
+        $discountService = resolve(DiscountService::class);
+        $listsService = resolve(ListsService::class);
+        $merchantService = resolve(MerchantService::class);
+
+        $data                     = [];
+        $data['discountTypes']    = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
+        $data['conditionTypes']   = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
+        $data['deliveryMethods']  = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
+        $data['paymentMethods']   = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
+        $data['roles']            = Helpers::getOptionRoles(false);
         $data['discountStatuses'] = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
+        $data['merchants']        = $merchantService->merchants()->map(function (MerchantDto $merchant) {
+            return ['id' => $merchant->id, 'name' => $merchant->legal_name];
+        });
 
         $query = $listsService->newQuery()->include('regions');
         $data['districts'] = $listsService->federalDistricts($query)->toArray();
@@ -403,21 +407,17 @@ class DiscountHelper
 
     /**
      * @param int             $id
-     * @param DiscountService $discountService
-     * @param CategoryService $categoryService
-     * @param ListsService    $listsService
-     * @param BrandService    $brandService
      *
      * @return array
      * @throws \Pim\Core\PimException
      */
-    public static function detail(
-        int $id,
-        DiscountService $discountService,
-        CategoryService $categoryService,
-        ListsService $listsService,
-        BrandService $brandService
-    ) {
+    public static function detail(int $id)
+    {
+        $discountService = resolve(DiscountService::class);
+        $categoryService = resolve(CategoryService::class);
+        $brandService = resolve(BrandService::class);
+        $userService = resolve(UserService::class);
+
         $params = (new DiscountInDto())
             ->id($id)
             ->status(DiscountStatusDto::STATUS_CREATED, true)
@@ -431,7 +431,9 @@ class DiscountHelper
         }
 
         $title = '#' . $discount->id . ' ' . $discount->name;
-        $data = DiscountHelper::loadData($discountService, $listsService);
+        $data = DiscountHelper::loadData();
+        $query = $userService->newQuery()->setFilter('id', $discount->user_id);
+        $author = $userService->users($query)->first();
 
         return [
             'title'            => $title,
@@ -444,6 +446,8 @@ class DiscountHelper
             'paymentMethods'   => $data['paymentMethods'],
             'roles'            => $data['roles'],
             'iDistricts'       => $data['districts'],
+            'merchants'        => $data['merchants'],
+            'author'           => $author,
             'categories'       => $categoryService->categories($categoryService->newQuery()),
             'brands'           => $brandService->brands($brandService->newQuery()),
         ];
