@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use Greensight\Logistics\Dto\Lists\DeliveryMethod;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Marketing\Dto\Price\PriceInDto;
+use Greensight\Marketing\Services\PriceService\PriceService;
+use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
-use Pim\Dto\Product\ProductConstraintType;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
@@ -20,9 +20,6 @@ use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Greensight\Store\Services\StockService\StockService;
-use Greensight\Marketing\Services\PriceService\PriceService;
-use Greensight\Marketing\Dto\Price\PriceInDto;
 
 class ProductDetailController extends Controller
 {
@@ -228,7 +225,7 @@ class ProductDetailController extends Controller
             $priceIn = new PriceInDto($currentOffer['offer_id']);
             $priceService = resolve(PriceService::class);
             $priceDto = $priceService->price($priceIn);
-            $currentOffer['price'] = $priceDto->price;
+            $currentOffer['price'] = $priceDto ? $priceDto->price : 0;
         } else {
             $currentOffer['qty'] = 0;
             $currentOffer['price'] = 0;
