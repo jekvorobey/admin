@@ -224,7 +224,7 @@
     import { validationMixin } from 'vuelidate';
     import { required } from 'vuelidate/lib/validators';
     import Helpers from '../../../../scripts/helpers';
-    import * as clipboard from "clipboard-polyfill/dist/clipboard-polyfill.promise";
+    import * as clipboard from "clipboard-polyfill";
 
     const TYPE_ARCHIVE = 'archive';
     const TYPE_PRODUCTION = 'production';
