@@ -106,6 +106,10 @@
                 <input class="form-control form-control-sm" v-model="form.referral_code"/>
             </td>
         </tr>
+        <tr v-if="customer.referral">
+            <th>Личный промокод</th>
+            <td>{{personalDiscount || '-'}}</td>
+        </tr>
         <template v-if="customer.referral">
             <tr class="table-secondary">
                 <th colspan="2">Платежные реквизиты</th>
@@ -173,6 +177,7 @@ export default {
             managers: [],
             activitiesAll: [],
             savedActivities: [],
+            personalDiscount: '',
 
             form: {
                 comment_internal: this.model.comment_internal,
@@ -313,12 +318,16 @@ export default {
     },
     created() {
         Services.showLoader();
-        Services.net().get(this.getRoute('customers.detail.main', {id: this.model.id}), {user_id: this.model.user_id}).then(data => {
+        Services.net().get(this.getRoute('customers.detail.main', {id: this.model.id}), {
+            user_id: this.model.user_id,
+            isReferral: this.model.referral,
+        }).then(data => {
             this.managers = data.managers;
             this.certificates = data.certificates;
             this.activitiesAll = data.activitiesAll;
             this.form.activities = data.activities;
             this.savedActivities = data.activities;
+            this.personalDiscount = data.personalDiscount;
         }).finally(() => {
             Services.hideLoader();
         })

@@ -11,11 +11,17 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Marketing\Services\MarketingService\MarketingService;
 
 class TabMainController extends Controller
 {
-    public function load(int $id, CustomerService $customerService, FileService $fileService, UserService $userService)
-    {
+    public function load(
+        int $id,
+        CustomerService $customerService,
+        FileService $fileService,
+        UserService $userService,
+        MarketingService $marketingService
+    ) {
         $certificates = $customerService->certificates($id);
         $files = [];
         if ($certificates) {
@@ -27,6 +33,17 @@ class TabMainController extends Controller
         $activities = $customerService->activities()->setCustomerIds([$id])->load();
         $activitiesAll = $customerService->activities()->load();
 
+        $personalDiscount = null;
+        if (request('isReferral')) {
+            $personalGlobalPercent = $marketingService->getPersonalGlobalPercent($id);
+            if ($personalGlobalPercent['percent']) {
+                $personalDiscount = $personalGlobalPercent['percent'] . '%';
+                if ($personalGlobalPercent['promoCode']) {
+                    $personalDiscount .= " ({$personalGlobalPercent['promoCode']})";
+                }
+            }
+        }
+
         return response()->json([
             'certificates' => $certificates->map(function (CustomerCertificateDto $certificate) use ($files) {
                 /** @var FileDto $file */
@@ -34,6 +51,7 @@ class TabMainController extends Controller
                 if (!$file) {
                     return false;
                 }
+
                 return [
                     'id' => $certificate->id,
                     'url' => $file->absoluteUrl(),
@@ -45,6 +63,7 @@ class TabMainController extends Controller
             }),
             'activities' => $activities->pluck('id'),
             'activitiesAll' => $activitiesAll,
+            'personalDiscount' => $personalDiscount,
         ]);
     }
 
