@@ -45,7 +45,7 @@ export default {
     validations() {
         return {
             form: {
-                [this.text_field]: {required},
+                [this.text_field]: {},
             }
         };
     },
