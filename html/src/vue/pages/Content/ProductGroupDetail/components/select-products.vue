@@ -69,11 +69,10 @@
                     });
             },
             removeProduct(id) {
-                const idx = this.selectedProductIds.indexOf(id);
+                this.selectedProductIds = this.selectedProductIds.filter((selectProductId) => {
+                    return selectProductId !== id
+                });
 
-                if (idx !== -1) {
-                    this.selectedProductIds.splice(idx, 1);
-                }
                 this.$emit('delete', id);
             },
             fetchProducts(ids) {
