@@ -116,7 +116,8 @@
             <select-products
                     v-show="isBasedOnProducts || isNotBasedOn"
                     :i-selected-product-ids="pluckSelectedProductIds()"
-                    @update="onUpdateSelectedProducts"
+                    @add="onAddToSelectedProducts"
+                    @delete="onDeleteFromSelectedProducts"
             >
             </select-products>
 
@@ -222,15 +223,16 @@
                 this.productGroupImages[file.id] = file;
                 this.productGroup.preview_photo_id = file.id;
             },
-            onUpdateSelectedProducts(data) {
-                for (let productKey in data) {
-                    let productId = data[productKey];
-
-                    this.selectedProducts.push({
-                        product_id: productId,
-                        product_group_id: this.productGroup.id,
-                    });
-                }
+            onAddToSelectedProducts(productId) {
+                this.selectedProducts.push({
+                    product_id: productId,
+                    product_group_id: this.productGroup.id,
+                });
+            },
+            onDeleteFromSelectedProducts(productId) {
+                this.selectedProducts = this.selectedProducts.filter((selectProduct) => {
+                    return selectProduct.product_id !== productId
+                });
             },
             onModalAccept(id) {
                 this.productGroup.banner_id = id;
