@@ -73,72 +73,72 @@ class OrganizationCardController extends Controller
             'email_for_claim' => 'email',
         ]);
 
-        if ($data['short_name']) {
+        if (array_key_exists('short_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME, $data['short_name']);
         }
-        if ($data['full_name']) {
+        if (array_key_exists('full_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME, $data['full_name']);
         }
 
-        if ($data['inn']) {
+        if (array_key_exists('inn', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_INN, $data['inn']);
         }
-        if ($data['kpp']) {
+        if (array_key_exists('kpp', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_KPP, $data['kpp']);
         }
-        if ($data['okpo']) {
+        if (array_key_exists('okpo', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_OKPO, $data['okpo']);
         }
-        if ($data['ogrn']) {
+        if (array_key_exists('ogrn', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_OGRN, $data['ogrn']);
         }
 
-        if ($data['fact_address']) {
+        if (array_key_exists('fact_address', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_FACT_ADDRESS, $data['fact_address']);
         }
-        if ($data['legal_address']) {
+        if (array_key_exists('legal_address', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_LEGAL_ADDRESS, $data['legal_address']);
         }
 
-        if ($data['payment_account']) {
+        if (array_key_exists('payment_account', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_PAYMENT_ACCOUNT, $data['payment_account']);
         }
-        if ($data['bank_bik']) {
+        if (array_key_exists('bank_bik', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_BANK_BIK, $data['bank_bik']);
         }
-        if ($data['bank_name']) {
+        if (array_key_exists('bank_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_BANK_NAME, $data['bank_name']);
         }
-        if ($data['correspondent_account']) {
+        if (array_key_exists('correspondent_account', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CORRESPONDENT_ACCOUNT, $data['correspondent_account']);
         }
 
-        if ($data['ceo_last_name']) {
+        if (array_key_exists('ceo_last_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_LAST_NAME, $data['ceo_last_name']);
         }
-        if ($data['ceo_first_name']) {
+        if (array_key_exists('ceo_first_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_FIRST_NAME, $data['ceo_first_name']);
         }
-        if ($data['ceo_middle_name']) {
+        if (array_key_exists('ceo_middle_name', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_MIDDLE_NAME, $data['ceo_middle_name']);
         }
-        if ($data['ceo_document_number']) {
+        if (array_key_exists('ceo_document_number', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_DOCUMENT_NUMBER, $data['ceo_document_number']);
         }
 
-        if ($data['contact_centre_phone']) {
+        if (array_key_exists('contact_centre_phone', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE, $data['contact_centre_phone']);
         }
-        if ($data['social_phone']) {
+        if (array_key_exists('social_phone', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_SOCIAL_PHONE, $data['social_phone']);
         }
-        if ($data['email_for_merchant']) {
+        if (array_key_exists('email_for_merchant', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_MERCHANT, $data['email_for_merchant']);
         }
-        if ($data['common_email']) {
+        if (array_key_exists('common_email', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_COMMON_EMAIL, $data['common_email']);
         }
-        if ($data['email_for_claim']) {
+        if (array_key_exists('email_for_claim', $data)) {
             $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_CLAIM, $data['email_for_claim']);
         }
 
