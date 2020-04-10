@@ -474,4 +474,10 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('public-events')->namespace('PublicEvent')->group(function () {
+        Route::prefix('{event_id}')->group(function () {
+            Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
+        });
+    });
+
 });
