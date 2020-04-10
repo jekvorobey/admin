@@ -316,6 +316,10 @@ class Menu
                         'title' => 'Пользователи и права',
                         'route' => route('settings.userList'),
                     ],
+                    [
+                        'title' => 'Карточка организации',
+                        'route' => route('settings.organizationCard'),
+                    ],
                 ],
             ],
         ];
