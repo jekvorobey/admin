@@ -1,5 +1,5 @@
 <template>
-    <layout-main back>
+    <layout-main back :back-url="getRoute('merchant.registrationList')">
         <b-row class="mb-2">
             <b-col>
                 <b-card>

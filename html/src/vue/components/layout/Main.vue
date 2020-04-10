@@ -33,6 +33,7 @@
         props: {
             onIndex: { type: Boolean, default: false },
             back: Boolean,
+            backUrl: String,
             customTitle: {
                 type: String,
                 default: ''
@@ -47,7 +48,27 @@
         },
         methods: {
             goBack() {
-                window.location.href = document.referrer;
+                if (this.backUrl) {
+                    if (document.referrer) {
+                        const referrer = new URL(document.referrer);
+                        window.location.href = (
+                            (referrer.host === location.host) &&
+                            (referrer.pathname === this.backUrl)
+                        )
+                            ? referrer
+                            : this.backUrl;
+                    } else {
+                        window.location.href = this.backUrl;
+                    }
+                } else {
+                    if (document.referrer) {
+                        const referrer = new URL(document.referrer);
+                        if (referrer.host === location.host) {
+                            window.location.href = referrer;
+                        }
+                    }
+                }
+
             }
         },
         computed: {
@@ -72,7 +93,7 @@
             let back = this.back;
             window.addEventListener("popstate", function() {
                 if (back) {
-                    window.location = document.referrer;
+                    window.location.href = document.referrer;
                 }
             }, false);
         },
