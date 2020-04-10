@@ -743,12 +743,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-merchant-management-lib.git",
-                "reference": "7a4c390908f0eee3469391bb6a4446e7db41ef6a"
+                "reference": "bd9fd756c0d32827a2b23684a1fff0d9198c5a5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=7a4c390908f0eee3469391bb6a4446e7db41ef6a",
-                "reference": "7a4c390908f0eee3469391bb6a4446e7db41ef6a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-merchant-management-lib/repository/archive.zip?sha=bd9fd756c0d32827a2b23684a1fff0d9198c5a5b",
+                "reference": "bd9fd756c0d32827a2b23684a1fff0d9198c5a5b",
                 "shasum": ""
             },
             "require": {
@@ -772,7 +772,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2020-04-08T13:19:45+00:00"
+            "time": "2020-04-10T08:38:59+00:00"
         },
         {
             "name": "greensight/ibt-message-lib",

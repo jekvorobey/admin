@@ -25,6 +25,7 @@ class MerchantDetailController extends Controller
         UserService $userService
     ) {
         $this->loadMerchantStatuses = true;
+        $this->loadMerchantCommissionTypes = true;
         /** @var MerchantDto $merchant */
         $merchant = $merchantService->merchants((new RestQuery())->setFilter('id', $id))->first();
         if (!$merchant) {

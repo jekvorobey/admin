@@ -22,6 +22,7 @@ class Controller extends BaseController
     protected $loadCommunicationStatuses = false;
     protected $loadCommunicationTypes = false;
     protected $loadMerchantStatuses = false;
+    protected $loadMerchantCommissionTypes = false;
 
     public function render($componentName, $props = [])
     {
@@ -35,6 +36,7 @@ class Controller extends BaseController
             ->loadCommunicationStatuses($this->loadCommunicationStatuses)
             ->loadCommunicationTypes($this->loadCommunicationTypes)
             ->loadMerchantStatuses($this->loadMerchantStatuses)
+            ->loadMerchantCommissionTypes($this->loadMerchantCommissionTypes)
             ->render();
     }
     

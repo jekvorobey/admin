@@ -39,6 +39,11 @@ Route::middleware('auth')->group(function () {
                     Route::post('document', 'TabMainController@createDocument')->name('merchant.detail.main.document.create');
                     Route::delete('document', 'TabMainController@deleteDocument')->name('merchant.detail.main.document.delete');
                 });
+                Route::prefix('commission')->group(function () {
+                    Route::get('', 'TabCommissionController@load')->name('merchant.detail.commission');
+                    Route::post('save', 'TabCommissionController@saveCommission')->name('merchant.detail.commission.save');
+                    Route::post('remove', 'TabCommissionController@removeCommission')->name('merchant.detail.commission.remove');
+                });
             });
         });
 
