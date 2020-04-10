@@ -14,6 +14,7 @@ use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 use Illuminate\Support\Facades\View;
+use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
 
 class ViewRender
@@ -35,6 +36,7 @@ class ViewRender
     private $communicationTypes = [];
 
     private $merchantStatuses = [];
+    private $merchantCommissionTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -169,6 +171,22 @@ class ViewRender
         return $this;
     }
 
+    public function loadMerchantCommissionTypes($load = false)
+    {
+        if ($load) {
+            $this->merchantCommissionTypes = [
+                'global' => CommissionDto::TYPE_GLOBAL,
+                'rating' => CommissionDto::TYPE_RATING,
+                'merchant' => CommissionDto::TYPE_MERCHANT,
+                'brand' => CommissionDto::TYPE_BRAND,
+                'category' => CommissionDto::TYPE_CATEGORY,
+                'sku' => CommissionDto::TYPE_SKU,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -194,6 +212,7 @@ class ViewRender
                 'communicationTypes' => $this->communicationTypes,
 
                 'merchantStatuses' => $this->merchantStatuses,
+                'merchantCommissionTypes' => $this->merchantCommissionTypes,
             ],
             [
                 'title' => $this->title,
