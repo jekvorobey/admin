@@ -117,6 +117,11 @@ Route::middleware('auth')->group(function () {
             Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
+
+        Route::prefix('organization-card')->group(function () {
+            Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
+            Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
+        });
     });
 
     Route::prefix('notifications')->group(function () {
