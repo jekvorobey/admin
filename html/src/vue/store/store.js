@@ -3,10 +3,11 @@ import Vue from 'vue';
 import NetService from '../../scripts/services/net';
 
 import ModalModule from './modules/modal.js';
-import products from './modules/products.js';
-import brands from './modules/brands.js';
 import massSelection from './modules/mass-selection.js';
 
+import products from './modules/products.js';
+import brands from './modules/brands.js';
+import publicEvents from './modules/public-events.js';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -19,9 +20,10 @@ export default new Vuex.Store({
     },
     modules: {
         modal: ModalModule(),
+        massSelection,
         products,
         brands,
-        massSelection,
+        publicEvents
     },
     mutations: {
         loaderShow(state, loaderShow) {
