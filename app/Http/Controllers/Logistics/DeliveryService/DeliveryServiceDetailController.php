@@ -32,15 +32,7 @@ class DeliveryServiceDetailController extends Controller
         ShipmentService $shipmentService
     ) {
         /** @var DeliveryService $deliveryService */
-        $deliveryServiceQuery = $listsService->newQuery()
-            ->addFields(
-                DeliveryService::entity(),
-                'id',
-                'name',
-                'registered_at',
-                'status',
-                'priority'
-            );
+        $deliveryServiceQuery = $listsService->newQuery();
         $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
         if (!$deliveryService) {
             throw new NotFoundHttpException();
@@ -53,11 +45,28 @@ class DeliveryServiceDetailController extends Controller
 
         return $this->render('Logistics/DeliveryService/Detail', [
             'iDeliveryService' => [
+                //Инфопанель
                 'id' => $deliveryService->id,
                 'name' => $deliveryService->name,
                 'registered_at' => $deliveryService->registered_at->format(AbstractDto::DATE_FORMAT),
                 'status' => $deliveryService->status,
                 'priority' => $deliveryService->priority,
+                //Вкладка "Настройки"
+                'do_consolidation' => $deliveryService->do_consolidation,
+                'do_deconsolidation' => $deliveryService->do_deconsolidation,
+                'do_zero_mile' => $deliveryService->do_zero_mile,
+                'do_express_delivery' => $deliveryService->do_express_delivery,
+                'do_return' => $deliveryService->do_return,
+                'max_cargo_export_time' => $deliveryService->max_cargo_export_time ?
+                    $deliveryService->max_cargo_export_time->format('H:i') : '',
+                'add_partial_reject_service' => $deliveryService->add_partial_reject_service,
+                'add_insurance_service' => $deliveryService->add_insurance_service,
+                'add_fitting_service' => $deliveryService->add_fitting_service,
+                'add_return_service' => $deliveryService->add_return_service,
+                'add_open_service' => $deliveryService->add_open_service,
+                //Вкладка "Ограничения"
+                'do_dangerous_products_delivery' => $deliveryService->do_dangerous_products_delivery,
+                'max_shipments_per_day' => $deliveryService->max_shipments_per_day,
             ],
             'deliveryServiceStatuses' => DeliveryServiceStatus::allStatuses(),
             'shipmentsInfo' => [
