@@ -231,6 +231,8 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $products->first()->showCount = $currentOffer;
+        $products->first()->publicEvents = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
+        //После реализации сервиса мастер классов - тут получение приаязанных
         /** @var ProductDto $product */
         $product = $products->first();
         $images = $productService->images($product->id);
