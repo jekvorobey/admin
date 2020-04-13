@@ -71,7 +71,7 @@ class TabPreferenceController extends Controller
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
+        $query->pageNumber($page, 12);
 
         $query->include(BrandDto::entity(), CategoryDto::entity());
         $query->addFields(BrandDto::entity(), 'id', 'name');

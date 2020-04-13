@@ -122,6 +122,26 @@
                 </div>
             </div>
         </div>
+        <hr>
+        <h3>Мастер-классы</h3>
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <th>
+                        Добавить
+                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
+                    </th>
+                    <td>
+                        <div v-for="(event, index) in product.publicEvents">
+                            {{ event.description }}
+                            <span>
+                                <fa-icon icon="times"/>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <file-upload-modal
                 @accept="onAcceptImage"
