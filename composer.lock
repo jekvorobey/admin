@@ -879,12 +879,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "8943dbb65df3649054b5aa34c742ad25b37cabd4"
+                "reference": "a7bf46f230266b102d94545bd0894aa0271ca156"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=8943dbb65df3649054b5aa34c742ad25b37cabd4",
-                "reference": "8943dbb65df3649054b5aa34c742ad25b37cabd4",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=a7bf46f230266b102d94545bd0894aa0271ca156",
+                "reference": "a7bf46f230266b102d94545bd0894aa0271ca156",
                 "shasum": ""
             },
             "require": {
@@ -911,7 +911,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
             },
-            "time": "2020-04-10T14:01:18+00:00"
+            "time": "2020-04-13T15:33:21+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",

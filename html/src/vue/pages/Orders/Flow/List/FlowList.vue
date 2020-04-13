@@ -72,30 +72,8 @@
             </div>
         </div>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <div class="action-bar d-flex justify-content-start">
-                <dropdown :items="dropdownItems" @select="downloadDoc" class="mr-4 order-btn">
-                    <fa-icon icon="file-download"></fa-icon>
-                    Скачать документы
-                </dropdown>
-                <dropdown :items="dropdownItems" @select="printDoc" class="mr-4 order-btn">
-                    <fa-icon icon="print"></fa-icon>
-                    Распечатать документы
-                </dropdown>
-                <div class="mr-4 order-btn">
-                    <fa-icon icon="comment-dots"></fa-icon>
-                    Добавить комментарий
-                </div>
-                <div class="mr-4 order-btn">
-                    <fa-icon icon="plus"></fa-icon>
-                    Создать заказ
-                </div>
-                <div class="mr-4 order-btn">
-                    <fa-icon icon="file-download"></fa-icon>
-                    Скачать таблицу
-                </div>
-            </div>
             <div>
-                <a :href="getRoute('orders.create')" class="btn btn-dark">Создать заказ</a>
+                <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
             </div>
         </div>
         <table class="table table-condensed">
@@ -145,9 +123,10 @@
 
 <script>
 
-    import Service from '../../../../../scripts/services/services';
+    import Services from '../../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
+    import {mapGetters} from 'vuex';
 
     import FInput from '../../../../components/filter/f-input.vue';
     import FDate from '../../../../components/filter/f-date.vue';
@@ -318,11 +297,6 @@ export default {
                     isAlwaysShown: false,
                 },
             ],
-            dropdownItems: [
-                {value: 1, text: 'Все'},
-                {value: 2, text: 'Покупателю'},
-                {value: 3, text: 'Курьеру'},
-            ],
         };
     },
     methods: {
@@ -334,7 +308,8 @@ export default {
             }));
         },
         loadPage() {
-            Service.net().get(this.route('orders.FlowPagination'), {
+            Services.showLoader();
+            Services.net().get(this.route('orders.FlowPagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
                 sort: this.sort,
@@ -343,6 +318,8 @@ export default {
                 if (data.pager) {
                     this.pager = data.pager
                 }
+            }).finally(() => {
+                Services.hideLoader();
             });
         },
         applyFilter() {
@@ -389,28 +366,9 @@ export default {
         showChangeColumns() {
             this.openModal('list_columns');
         },
-        downloadDoc(id) {
-            window.open('/manual/docs.pdf');
-        },
-        printDoc(id) {
-            let iframe = this._printIframe;
-            if (!this._printIframe) {
-                iframe = this._printIframe = document.createElement('iframe');
-                document.body.appendChild(iframe);
-
-                iframe.style.display = 'none';
-                iframe.onload = function() {
-                    setTimeout(function() {
-                        iframe.focus();
-                        iframe.contentWindow.print();
-                    }, 1);
-                };
-            }
-
-            iframe.src = '/manual/docs.pdf';
-        }
     },
     computed: {
+        ...mapGetters(['getRoute']),
         statusOptions() {
             return Object.values(this.orderStatuses).map(status => ({
                 value: status.id,
@@ -451,11 +409,5 @@ export default {
 <style scoped>
     .additional-filter {
         border-top: 1px solid #DFDFDF;
-    }
-    .action-bar {
-        padding: 10px 20px;
-    }
-    .order-btn {
-        cursor: pointer;
     }
 </style>

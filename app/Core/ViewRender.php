@@ -4,6 +4,7 @@
 namespace App\Core;
 
 
+use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
@@ -13,9 +14,12 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
+use Pim\Dto\PublicEvent\PublicEventTypeDto;
+use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
 class ViewRender
 {
@@ -37,7 +41,8 @@ class ViewRender
 
     private $merchantStatuses = [];
     private $merchantCommissionTypes = [];
-
+    private $publicEventTypes = [];
+    
     public function __construct($componentName, $props)
     {
         $this->componentName = $componentName;
@@ -186,7 +191,34 @@ class ViewRender
 
         return $this;
     }
-
+    
+    public function loadPublicEventsTypes(bool $load = false): self
+    {
+        if ($load) {
+            /** @var PublicEventTypeService $publicEventTypeService */
+            $publicEventTypeService = resolve(PublicEventTypeService::class);
+            /** @var Collection $typesCollection */
+            try {
+                $typesCollection = $publicEventTypeService
+                    ->query()
+                    ->get();
+            } catch (Exception $e) {
+                logger()->error('Error while load public event types', ['exception' => $e]);
+                $typesCollection = collect();
+            }
+            $this->publicEventTypes = $typesCollection
+                ->map(function (PublicEventTypeDto $type) {
+                    return [
+                        'id' => $type->id,
+                        'name' => $type->name,
+                        'code' => $type->code,
+                    ];
+                })
+                ->all();
+        }
+        return $this;
+    }
+    
     public function render()
     {
         return View::component(
@@ -213,6 +245,7 @@ class ViewRender
 
                 'merchantStatuses' => $this->merchantStatuses,
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
+                'publicEventTypes' => $this->publicEventTypes,
             ],
             [
                 'title' => $this->title,
@@ -220,7 +253,7 @@ class ViewRender
             ]
         );
     }
-
+    
     private function getAssets()
     {
         if (frontend()->isInDevMode()) {
