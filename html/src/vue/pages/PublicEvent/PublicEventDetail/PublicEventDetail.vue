@@ -2,40 +2,55 @@
     <layout-main back>
         <div class="d-flex flex-wrap align-items-stretch justify-content-start product-header">
             <div class="shadow flex-grow-3 mr-3 mt-3">
-                <h2>{{ event.name }}</h2>
-                <p class="text-secondary">ID: <span class="float-right">{{ event.id }}</span></p>
-                <p v-if="event.organizer" class="text-secondary">Организатор: <span class="float-right">{{ event.organizer.name }}</span></p>
-                <template v-if="event.actualSprint">
-                    <p class="text-secondary">Дата начала: <span class="float-right">{{ event.actualSprint.date_start }}</span></p>
-                    <p class="text-secondary">Дата окончания: <span class="float-right">{{ event.actualSprint.date_end }}</span></p>
-                    <p v-if="event.actualSprint.place" class="text-secondary">Место проведения: <span class="float-right">{{ event.actualSprint.place.name }}</span></p>
-                    <p class="text-secondary">Билеты: <span class="float-right">{{ event.actualSprint.ticketsSoldCount }} / {{ event.actualSprint.totalTicketsCount }}</span></p>
+                <h2>{{ publicEvent.name }}</h2>
+                <p class="text-secondary">ID: <span class="float-right">{{ publicEvent.id }}</span></p>
+                <p v-if="publicEvent.organizer" class="text-secondary">Организатор: <span class="float-right">{{ publicEvent.organizer.name }}</span></p>
+                <template v-if="publicEvent.actualSprint">
+                    <p class="text-secondary">Дата начала: <span class="float-right">{{ publicEvent.actualSprint.date_start }}</span></p>
+                    <p class="text-secondary">Дата окончания: <span class="float-right">{{ publicEvent.actualSprint.date_end }}</span></p>
+                    <p v-if="publicEvent.actualSprint.place" class="text-secondary">Место проведения: <span class="float-right">{{ publicEvent.actualSprint.place.name }}</span></p>
+                    <p class="text-secondary">Билеты: <span class="float-right">{{ publicEvent.actualSprint.ticketsSoldCount }} / {{ publicEvent.actualSprint.totalTicketsCount }}</span></p>
                 </template>
             </div>
-
         </div>
+        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
+        <main-tab v-if="nav.currentTab === 'main'" :public-event="publicEvent"/>
     </layout-main>
 </template>
 
 <script>
+    import {mapGetters} from "vuex";
 
     import VTabs from '../../../components/tabs/tabs.vue';
 
-    import Services from '../../../../scripts/services/services';
+    import MainTab from './components/main-tab.vue';
+
     import modalMixin from '../../../mixins/modal';
+    import {
+        NAMESPACE,
+        SET_DETAIL,
+        GET_DETAIL,
+    } from '../../../store/modules/public-events.js';
 
     export default {
     components: {
         VTabs,
-
+        MainTab,
     },
     mixins: [modalMixin],
     props: {
         iPublicEvent:{}
     },
     data() {
+        this.$store.commit(`${NAMESPACE}/${SET_DETAIL}`, {publicEvent: this.iPublicEvent});
+
         return {
-            event: this.iPublicEvent
+            nav: {
+                currentTab: 'main',
+                tabs: [
+                    {value: 'main', text: 'Основное'},
+                ]
+            }
         };
     },
 
@@ -43,10 +58,9 @@
 
     },
     computed: {
-        title() {
-            return this.$store.state.title;
-        },
-
+        ...mapGetters(NAMESPACE, {
+            publicEvent: GET_DETAIL
+        })
     },
 };
 </script>

@@ -116,14 +116,14 @@
                     </td>
                     <td>{{ promoCode.id }}</td>
                     <td>{{ datePrint(promoCode.created_at) }}</td>
+                    <td>{{ promoCode.name }}</td>
+                    <td>{{ promoCode.code }}</td>
                     <td>
                         {{ promoCodeTypeName(promoCode.type) }}
                         <span v-if="promoCode.discount_id">
                             (<a :href="getRoute('discount.detail', {id: promoCode.discount_id})">{{ promoCode.discount_id }}</a>)
                         </span>
                     </td>
-                    <td>{{ promoCode.name }}</td>
-                    <td>{{ promoCode.code }}</td>
                     <td>{{ promoCode.validityPeriod }}</td>
                     <td>
                         <a v-if="promoCode.merchant_id" :href="getRoute('merchant.detail', {id: promoCode.merchant_id})">

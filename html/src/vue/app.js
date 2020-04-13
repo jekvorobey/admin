@@ -134,6 +134,10 @@ Vue.mixin({
         merchantCommissionTypes() {
             return this.$store.state.layout.merchantCommissionTypes;
         },
+        /** @return {PublicEventType[]} */
+        publicEventTypes() {
+            return this.$store.state.layout.publicEventTypes;
+        }
     },
 });
 
@@ -281,4 +285,11 @@ Vue.mixin({
  @property {string} brand
  @property {string} category
  @property {string} sku
+ */
+/**
+ @typedef PublicEventType
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {string} code
  */
