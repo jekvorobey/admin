@@ -50,7 +50,7 @@ class PromoCodeController extends Controller
         $creatorIds = $promoCodes->pluck('creator_id')->unique();
         $userIds = collect($creatorIds);
 
-        $referralIds = $promoCodes->pluck('owner_id')->unique();
+        $referralIds = $promoCodes->pluck('owner_id')->filter()->unique();
         if ($referralIds->isNotEmpty()) {
             $referrals = $customerService->customers((new RestQuery())->setFilter('id', $referralIds->all()))->keyBy('id');
             $userIds = $userIds->merge($referrals->pluck('user_id'));
