@@ -101,7 +101,7 @@
                 Services.msg("Изменения сохранены");
             }).finally(data => {
                 Services.hideLoader();
-            })
+            });
         },
         cancel() {
             this.form.name = this.deliveryService.name;

@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class TabSettingsController
@@ -15,54 +14,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class TabSettingsController extends Controller
 {
-    /**
-     * @param $id
-     * @param  ListsService  $listsService
-     * @return mixed
-     */
-    public function load(
-        $id,
-        ListsService $listsService
-    ) {
-        /** @var DeliveryService $deliveryService */
-        $deliveryServiceQuery = $listsService->newQuery()
-            ->addFields(
-                DeliveryService::entity(),
-                'do_consolidation',
-                'do_deconsolidation',
-                'do_zero_mile',
-                'do_express_delivery',
-                'do_return',
-                'max_cargo_export_time',
-                'add_partial_reject_service',
-                'add_insurance_service',
-                'add_fitting_service',
-                'add_return_service',
-                'add_open_service'
-            );
-        $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
-        if (!$deliveryService) {
-            throw new NotFoundHttpException();
-        }
-
-        return response()->json([
-            'deliveryService' => [
-                'do_consolidation' => $deliveryService->do_consolidation,
-                'do_deconsolidation' => $deliveryService->do_deconsolidation,
-                'do_zero_mile' => $deliveryService->do_zero_mile,
-                'do_express_delivery' => $deliveryService->do_express_delivery,
-                'do_return' => $deliveryService->do_return,
-                'max_cargo_export_time' => $deliveryService->max_cargo_export_time ?
-                    $deliveryService->max_cargo_export_time->format('H:i') : '',
-                'add_partial_reject_service' => $deliveryService->add_partial_reject_service,
-                'add_insurance_service' => $deliveryService->add_insurance_service,
-                'add_fitting_service' => $deliveryService->add_fitting_service,
-                'add_return_service' => $deliveryService->add_return_service,
-                'add_open_service' => $deliveryService->add_open_service,
-            ],
-        ]);
-    }
-
     /**
      * @param $id
      * @param  ListsService  $listsService

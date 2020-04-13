@@ -37,6 +37,7 @@
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-settings v-if="key === 'settings'" :model.sync="deliveryService"/>
+                    <tab-limitations v-else-if="key === 'limitations'" :model.sync="deliveryService"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -57,12 +58,14 @@
     import Services from '../../../../../scripts/services/services.js';
     import Infopanel from './components/infopanel.vue';
     import TabSettings from './components/tab-settings.vue';
+    import TabLimitations from './components/tab-limitations.vue';
 
     export default {
     components: {
         Infopanel,
         VInput,
         TabSettings,
+        TabLimitations,
     },
     props: [
         'iDeliveryService',
