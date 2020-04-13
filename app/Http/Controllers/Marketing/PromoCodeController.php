@@ -4,7 +4,13 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Marketing\Builder\PromoCode\PromoCodeBuilder;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
@@ -13,7 +19,6 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -26,28 +31,119 @@ class PromoCodeController extends Controller
 {
     /**
      * Список промокодов
-     *
-     * @param Request          $request
      * @param PromoCodeService $promoCodeService
-     *
+     * @param UserService $userService
+     * @param CustomerService $customerService
      * @return mixed
      */
-    public function index(Request $request, PromoCodeService $promoCodeService)
-    {
+    public function index(
+        PromoCodeService $promoCodeService,
+        UserService $userService,
+        CustomerService $customerService
+    ) {
         $this->title = 'Промокоды';
         $promoCodeInDto = new PromoCodeInDto();
-        $promoCodes = $promoCodeService->promoCodes($promoCodeInDto)
+        $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
+
+        $users = collect();
+        $referrals = collect();
+        $creatorIds = $promoCodes->pluck('creator_id')->unique();
+        $userIds = collect($creatorIds);
+
+        $referralIds = $promoCodes->pluck('owner_id')->unique();
+        if ($referralIds->isNotEmpty()) {
+            $referrals = $customerService->customers((new RestQuery())->setFilter('id', $referralIds->all()))->keyBy('id');
+            $userIds = $userIds->merge($referrals->pluck('user_id'));
+        }
+
+        if ($userIds->isNotEmpty()) {
+            $users = $userService->users((new RestQuery())->setFilter('id', $userIds->all()))->keyBy('id');
+        }
+
+        $promoCodes = $promoCodes
             ->sortByDesc('created_at')
-            ->map(function (PromoCodeOutDto $promoCode) {
+            ->map(function (PromoCodeOutDto $promoCode) use ($users, $referrals) {
                 $promoCode['validityPeriod'] = $promoCode->validityPeriod();
+
+                /** @var UserDto $creatorUser */
+                $creatorUser = $users->get($promoCode->creator_id);
+                $promoCode['creator'] = $creatorUser ? [
+                    'id' => $creatorUser->id,
+                    'title' => $creatorUser->getTitle(),
+                ]: null;
+
+                $promoCode['owner'] = null;
+                if ($promoCode->owner_id) {
+                    /** @var CustomerDto $referral */
+                    $referral = $referrals->get($promoCode->owner_id);
+                    if ($referral) {
+                        /** @var UserDto $ownerUser */
+                        $ownerUser = $users->get($referral->user_id);
+                        $promoCode['owner'] = $ownerUser ? [
+                            'id' => $promoCode->owner_id,
+                            'title' => $ownerUser->getTitle(),
+                        ]: null;
+                    }
+                }
+
                 return $promoCode;
             })->values();
 
         return $this->render('Marketing/PromoCode/List', [
             'iPromoCodes' => $promoCodes,
-            'iStatuses' => PromoCodeOutDto::allStatuses(),
-            'iTypes' => PromoCodeOutDto::allTypes(),
+            'statuses' => PromoCodeOutDto::allStatuses(),
+            'types' => PromoCodeOutDto::allTypes(),
+            'creators' => $creatorIds->map(function ($creatorId) use ($users) {
+                /** @var UserDto $user */
+                $user = $users->get($creatorId);
+                return [
+                    'id' => $creatorId,
+                    'title' => $user ? $user->getTitle() : '-',
+                ];
+            })->sortBy('title')->values(),
+            'owners' => $referralIds->map(function ($owner_id) use ($users, $referrals) {
+                /** @var CustomerDto $referral */
+                $referral = $referrals->get($owner_id);
+
+                /** @var UserDto $user */
+                $user = null;
+                if ($referral) {
+                    $user = $users->get($referral->user_id);
+                }
+
+                if (!$user) {
+                    return false;
+                }
+
+                return [
+                    'id' => $owner_id,
+                    'title' => $user ? $user->getTitle() : '-',
+                ];
+            })->filter()->sortBy('title')->values(),
         ]);
+    }
+
+    public function status(PromoCodeService $promoCodeService)
+    {
+        $ids = request('ids');
+        $status = request('status');
+
+        foreach ($ids as $id) {
+            $promoCodeService->update($id, (new PromoCodeBuilder())->status($status));
+        }
+
+        return response('', 204);
+    }
+
+    public function delete(PromoCodeService $promoCodeService)
+    {
+        $ids = request('ids');
+
+        foreach ($ids as $id) {
+            $promoCodeService->delete($id);
+        }
+
+        return response('', 204);
     }
 
     /**
