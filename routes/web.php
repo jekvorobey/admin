@@ -73,10 +73,12 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('promo-code')->group(function () {
-            Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
-            Route::post('/', 'PromoCodeController@create')->name('promo-code.save');
-            Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
-            Route::get('/generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::get('', 'PromoCodeController@index')->name('promo-code.list');
+            Route::post('', 'PromoCodeController@create')->name('promo-code.save');
+            Route::get('create', 'PromoCodeController@createPage')->name('promo-code.create');
+            Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
+            Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });
     });
 

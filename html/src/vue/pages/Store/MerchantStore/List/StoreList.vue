@@ -62,17 +62,19 @@
                 :per-page="pager.pageSize"
                 :hide-goto-end-buttons="pager.pages < 10"
                 @change="changePage"
+                class="float-right"
         ></b-pagination>
     </layout-main>
 </template>
 
 <script>
-    import Service from '../../../../../scripts/services/services';
+    import Services from '../../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
     import FInput from '../../../../components/filter/f-input.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
+    import {mapGetters} from 'vuex';
 
     const cleanFilter = {
     id: '',
@@ -117,11 +119,14 @@ export default {
             }));
         },
         loadPage() {
-            Service.net().get(this.route('merchantStore.pagination'), {
+            Services.showLoader();
+            Services.net().get(this.route('merchantStore.pagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
             }).then(data => {
                 this.stores = data.iStores;
+            }).finally(() => {
+                Services.hideLoader();
             });
         },
         applyFilter() {
@@ -139,11 +144,15 @@ export default {
         deleteStore(index) {
             let id = this.stores[index].id;
             if(id) {
-                Service.net().delete(
+                Services.showLoader();
+                Services.net().delete(
                     this.getRoute('merchantStore.delete', {id: id}),
                     null,
                     null
-                ).then(data => {
+                ).then(() => {
+                    Services.msg("Склад удален");
+                }).finally(() => {
+                    Services.hideLoader();
                 });
             }
 
@@ -157,6 +166,7 @@ export default {
         }
     },
     computed: {
+        ...mapGetters(['getRoute']),
         merchantOptions() {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
         },
@@ -176,8 +186,3 @@ export default {
     }
 };
 </script>
-<style scoped>
-    .additional-filter {
-        border-top: 1px solid #DFDFDF;
-    }
-</style>

@@ -148,6 +148,7 @@ class MerchantStoreController extends Controller
         $validatedData = $request->validate([
             'merchant_id' => 'integer|required',
             'name' => 'string|required',
+            'xml_id' => 'string|nullable',
             'address.address_string' => 'string|required',
             'address.country_code' => 'string|required',
             'address.post_index' => 'string|required',
@@ -165,9 +166,9 @@ class MerchantStoreController extends Controller
             'address.comment' => 'string|nullable',
         ]);
         
-        $result = $storeService->createStore(new StoreDto($validatedData));
+        $storeId = $storeService->createStore(new StoreDto($validatedData));
         
-        return response()->json(['status' => $result ? 'ok' : 'fail']);
+        return response()->json(['id' => $storeId]);
     }
     
     /**
