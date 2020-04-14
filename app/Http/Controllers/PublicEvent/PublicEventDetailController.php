@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Dto\PublicEvent\OrganizerDto;
@@ -84,6 +85,22 @@ class PublicEventDetailController extends Controller
             ->get();
         
         return response()->json($organizers);
+    }
+    
+    public function addOrganizerById($event_id, Request $request, PublicEventService $publicEventService)
+    {
+        $organizerId = $request->get('organizerId');
+        $publicEventService->addOrganizerById($event_id, $organizerId);
+        return response()->json();
+    }
+    
+    public function addOrganizerByValue($event_id, Request $request, PublicEventService $publicEventService, RequestInitiator $user)
+    {
+        $organizerData = $request->all();
+        $organizerDto = new OrganizerDto($organizerData);
+        $organizerDto->owner_id = $user->userId();
+        $publicEventService->addOrganizerByValue($event_id, $organizerDto);
+        return response()->json();
     }
     
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto

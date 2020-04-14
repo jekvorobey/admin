@@ -31,7 +31,7 @@
                     </tr>
                     <tr>
                         <th>Телефон:</th>
-                        <td>{{ publicEvent.organizer.phone }}</td>
+                        <td>{{ formatPhone(publicEvent.organizer.phone) }}</td>
                     </tr>
                     <tr>
                         <th>E-mail:</th>
@@ -62,7 +62,10 @@
                     Редактирование организатора
                 </div>
                 <div slot="body">
-                    <organizer-form :event-organizer-id="publicEvent.organizer_id" :organizer="publicEvent.organizer" @onSave="onSave"/>
+                    <organizer-form
+                            :event-id="publicEvent.id"
+                            :organizer="publicEvent.organizer"
+                            @onSave="onSave"/>
                 </div>
             </modal>
         </transition>
@@ -71,6 +74,7 @@
 
 <script>
     import {mapActions} from "vuex";
+    import Helpers from '../../../../../scripts/helpers';
 
     import {
         NAMESPACE,
@@ -102,12 +106,14 @@
             onSave() {
                 this.closeModal();
                 this.reload({id: this.publicEvent.id});
+            },
+            formatPhone(phoneString) {
+                return Helpers.formatPhoneNumber(phoneString);
             }
         },
         computed: {
             typeName() {
                 let type = this.publicEventTypes.find(type => type.id === this.publicEvent.type_id);
-                console.log(type);
                 return type ? type.name : 'N/A';
             }
         }

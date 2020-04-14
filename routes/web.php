@@ -480,12 +480,14 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('public-events')->namespace('PublicEvent')->group(function () {
-        Route::get('isCodeUnique', 'PublicEventDetailController@isCodeUnique')->name('public-event.isCodeUnique');
+        Route::get('is-code-unique', 'PublicEventDetailController@isCodeUnique')->name('public-event.isCodeUnique');
         Route::post('save', 'PublicEventDetailController@save')->name('public-event.save');
         
         Route::prefix('{event_id}')->group(function () {
-            Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
+            Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
+            Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
+            Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
     });
     
