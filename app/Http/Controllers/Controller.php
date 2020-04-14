@@ -23,7 +23,8 @@ class Controller extends BaseController
     protected $loadCommunicationTypes = false;
     protected $loadMerchantStatuses = false;
     protected $loadMerchantCommissionTypes = false;
-    protected $loadPublicEventsTypes = false;
+    protected $loadPublicEventTypes = false;
+    protected $loadPublicEventMediaTypes = false;
 
     public function render($componentName, $props = [])
     {
@@ -38,7 +39,8 @@ class Controller extends BaseController
             ->loadCommunicationTypes($this->loadCommunicationTypes)
             ->loadMerchantStatuses($this->loadMerchantStatuses)
             ->loadMerchantCommissionTypes($this->loadMerchantCommissionTypes)
-            ->loadPublicEventsTypes($this->loadPublicEventsTypes)
+            ->loadPublicEventTypes($this->loadPublicEventTypes)
+            ->loadPublicEventMediaTypes($this->loadPublicEventMediaTypes)
             ->render();
     }
     

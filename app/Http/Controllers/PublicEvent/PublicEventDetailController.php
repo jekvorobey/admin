@@ -17,7 +17,8 @@ class PublicEventDetailController extends Controller
 {
     public function index($event_id, PublicEventService $publicEventService)
     {
-        $this->loadPublicEventsTypes = true;
+        $this->loadPublicEventTypes = true;
+        $this->loadPublicEventMediaTypes = true;
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {
             throw new NotFoundHttpException('public event not found');

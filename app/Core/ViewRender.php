@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
+use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventTypeDto;
 use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
@@ -42,6 +43,7 @@ class ViewRender
     private $merchantStatuses = [];
     private $merchantCommissionTypes = [];
     private $publicEventTypes = [];
+    private $publicEventMediaTypes = [];
     
     public function __construct($componentName, $props)
     {
@@ -192,7 +194,7 @@ class ViewRender
         return $this;
     }
     
-    public function loadPublicEventsTypes(bool $load = false): self
+    public function loadPublicEventTypes(bool $load = false): self
     {
         if ($load) {
             /** @var PublicEventTypeService $publicEventTypeService */
@@ -216,6 +218,16 @@ class ViewRender
                 })
                 ->all();
         }
+        return $this;
+    }
+    
+    public function loadPublicEventMediaTypes(bool $load = false): self
+    {
+        $this->publicEventMediaTypes = [
+            'catalog' => PublicEventDto::MEDIA_CATALOG,
+            'detail' => PublicEventDto::MEDIA_DETAIL,
+            'gallery' => PublicEventDto::MEDIA_GALLERY,
+        ];
         return $this;
     }
     
@@ -246,6 +258,7 @@ class ViewRender
                 'merchantStatuses' => $this->merchantStatuses,
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
                 'publicEventTypes' => $this->publicEventTypes,
+                'publicEventMediaTypes' => $this->publicEventMediaTypes,
             ],
             [
                 'title' => $this->title,
