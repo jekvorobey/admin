@@ -54,20 +54,20 @@
             <v-select v-model="promoCode.merchant_id" :options="merchants" class="col-3 mt-1" v-if="merchantBtn">Выберите мерчанта</v-select>
         </div>
 
-        <div class="row mt-3">
-            <div class="col-12">
-                <b>Ограничения на применение промокода</b>
-            </div>
-
+        <div class="row">
             <div class="col-12 mt-3">
                 <div class="custom-control custom-switch">
                     <input type="checkbox" class="custom-control-input" id="ownerBtn" key="ownerBtn" v-model="ownerBtn">
-                    <label class="custom-control-label" for="ownerBtn">Реферальный партнёр</label>
+                    <label class="custom-control-label" for="ownerBtn">Привязать промокод к РП</label>
                 </div>
             </div>
 
-            <div class="col-3 mt-1" v-if="ownerBtn">
-                <v-input v-model="promoCode.owner_id" min="1" name="owner_id" type="number" help="ID реферального партнёра"></v-input>
+            <v-input v-if="ownerBtn" v-model="promoCode.owner_id" min="1" name="owner_id" type="number" help="ID реферального партнёра" class="col-3 mt-1"></v-input>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <b>Ограничения на применение промокода</b>
             </div>
 
             <div class="col-12 mt-3">
@@ -335,25 +335,12 @@
                 this.updateMerchant();
             },
             ownerBtn(val) {
-                if (val) {
-                    this.customersBtn = false;
-                    this.roleBtn = false;
-                    this.segmentsBtn = false;
-                }
+                this.promoCode.owner_id = null;
             },
             limitedBtn(val) {
                 if (!val) {
                     this.promoCode.counter = null;
                 }
-            },
-            customersBtn(val) {
-                this.ownerBtn = val ? false : this.ownerBtn;
-            },
-            roleBtn(val) {
-                this.ownerBtn = val ? false : this.ownerBtn;
-            },
-            segmentsBtn(val) {
-                this.ownerBtn = val ? false : this.ownerBtn;
             },
             'customers': {
                 handler(val, oldVal) {
