@@ -505,12 +505,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "522d11203f0e55c69edf73ca8a0b1de7267a9e25"
+                "reference": "2a5a48ae1dfc62bcd0bc62e2dd46bad92d7be9f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=522d11203f0e55c69edf73ca8a0b1de7267a9e25",
-                "reference": "522d11203f0e55c69edf73ca8a0b1de7267a9e25",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=2a5a48ae1dfc62bcd0bc62e2dd46bad92d7be9f2",
+                "reference": "2a5a48ae1dfc62bcd0bc62e2dd46bad92d7be9f2",
                 "shasum": ""
             },
             "require": {
@@ -545,7 +545,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-04-09T19:50:06+00:00"
+            "time": "2020-04-13T21:56:04+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -698,12 +698,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "ce510e69994033f4d07c561d687ff88f406fbf5c"
+                "reference": "172e1c1911972055cc7945fac43b377503a23f4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=ce510e69994033f4d07c561d687ff88f406fbf5c",
-                "reference": "ce510e69994033f4d07c561d687ff88f406fbf5c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=172e1c1911972055cc7945fac43b377503a23f4c",
+                "reference": "172e1c1911972055cc7945fac43b377503a23f4c",
                 "shasum": ""
             },
             "require": {
@@ -738,7 +738,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-04-13T11:49:01+00:00"
+            "time": "2020-04-14T12:35:48+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -834,12 +834,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "10001862ecf82a3fab92cf7fce3b7e7e1a22a758"
+                "reference": "57f90ce77d0ea62a7616cf0dbcdc3188bb2f838b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=10001862ecf82a3fab92cf7fce3b7e7e1a22a758",
-                "reference": "10001862ecf82a3fab92cf7fce3b7e7e1a22a758",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=57f90ce77d0ea62a7616cf0dbcdc3188bb2f838b",
+                "reference": "57f90ce77d0ea62a7616cf0dbcdc3188bb2f838b",
                 "shasum": ""
             },
             "require": {
@@ -874,7 +874,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-04-10T13:06:20+00:00"
+            "time": "2020-04-14T09:08:31+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",

@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-04-13 14:50:57.
+    * Generated on 2020-04-14 15:39:20.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -90,7 +90,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -292,7 +294,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -494,7 +498,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -696,7 +702,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -898,7 +906,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -1100,7 +1110,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -1302,7 +1314,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
@@ -1504,7 +1518,9 @@ namespace PHPSTORM_META {
         'Pim\Services\OfferService\OfferService' => \Pim\Services\OfferService\RestOfferService::class,
         'Pim\Services\ProductService\ProductService' => \Pim\Services\ProductService\RestProductService::class,
         'Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService' => \Pim\Services\PropertyDirectoryValueService\RestPropertyDirectoryValueService::class,
+        'Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService' => \Pim\Services\PublicEventOrganizerService\RestPublicEventOrganizeService::class,
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
+        'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
         'auth.driver' => \Illuminate\Auth\SessionGuard::class,
