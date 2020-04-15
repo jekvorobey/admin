@@ -15,6 +15,7 @@
         </div>
         <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
         <main-tab v-if="nav.currentTab === 'main'" :public-event="publicEvent"/>
+        <content-tab v-if="nav.currentTab === 'content'" :public-event="publicEvent"/>
     </layout-main>
 </template>
 
@@ -24,6 +25,7 @@
     import VTabs from '../../../components/tabs/tabs.vue';
 
     import MainTab from './components/main-tab.vue';
+    import ContentTab from './components/content-tab.vue';
 
     import modalMixin from '../../../mixins/modal';
     import {
@@ -36,6 +38,7 @@
     components: {
         VTabs,
         MainTab,
+        ContentTab,
     },
     mixins: [modalMixin],
     props: {
@@ -49,6 +52,7 @@
                 currentTab: 'main',
                 tabs: [
                     {value: 'main', text: 'Основное'},
+                    {value: 'content', text: 'Контент'},
                 ]
             }
         };

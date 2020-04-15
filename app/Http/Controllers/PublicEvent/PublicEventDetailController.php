@@ -19,6 +19,8 @@ class PublicEventDetailController extends Controller
     {
         $this->loadPublicEventTypes = true;
         $this->loadPublicEventMediaTypes = true;
+        $this->loadPublicEventMediaCollections = true;
+        
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {
             throw new NotFoundHttpException('public event not found');
@@ -114,6 +116,7 @@ class PublicEventDetailController extends Controller
                 ->withActualSprint()
                 ->withSprintTicketsCount()
                 ->withPlace()
+                ->withMedia()
                 ->get()
                 ->first();
         } catch (\Exception $e) {

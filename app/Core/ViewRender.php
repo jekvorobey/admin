@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\PublicEvent\PublicEventDto;
+use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Dto\PublicEvent\PublicEventTypeDto;
 use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
@@ -44,6 +45,7 @@ class ViewRender
     private $merchantCommissionTypes = [];
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
+    private $publicEventMediaCollections = [];
     
     public function __construct($componentName, $props)
     {
@@ -223,11 +225,25 @@ class ViewRender
     
     public function loadPublicEventMediaTypes(bool $load = false): self
     {
-        $this->publicEventMediaTypes = [
-            'catalog' => PublicEventDto::MEDIA_CATALOG,
-            'detail' => PublicEventDto::MEDIA_DETAIL,
-            'gallery' => PublicEventDto::MEDIA_GALLERY,
-        ];
+        if ($load) {
+            $this->publicEventMediaTypes = [
+                'image' => PublicEventMediaDto::TYPE_IMAGE,
+                'video' => PublicEventMediaDto::TYPE_VIDEO,
+                'youtube' => PublicEventMediaDto::TYPE_YOUTUBE,
+            ];
+        }
+        return $this;
+    }
+    
+    public function loadPublicEventMediaCollections(bool $load = false): self
+    {
+        if ($load) {
+            $this->publicEventMediaCollections = [
+                'catalog' => PublicEventDto::MEDIA_CATALOG,
+                'detail' => PublicEventDto::MEDIA_DETAIL,
+                'gallery' => PublicEventDto::MEDIA_GALLERY,
+            ];
+        }
         return $this;
     }
     
@@ -259,6 +275,7 @@ class ViewRender
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
+                'publicEventMediaCollections' => $this->publicEventMediaCollections,
             ],
             [
                 'title' => $this->title,

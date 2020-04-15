@@ -137,7 +137,15 @@ Vue.mixin({
         /** @return {PublicEventType[]} */
         publicEventTypes() {
             return this.$store.state.layout.publicEventTypes;
-        }
+        },
+        /** @return {PublicEventMediaTypes} */
+        publicEventMediaTypes() {
+            return this.$store.state.layout.publicEventMediaTypes;
+        },
+        /** @return {PublicEventMediaCollections} */
+        publicEventMediaCollections() {
+            return this.$store.state.layout.publicEventMediaCollections;
+        },
     },
 });
 
@@ -292,4 +300,18 @@ Vue.mixin({
  @property {number} id
  @property {string} name
  @property {string} code
+ */
+/**
+ @typedef PublicEventMediaTypes
+ @type {Object}
+ @property {string} image
+ @property {string} video
+ @property {string} youtube
+ */
+/**
+ @typedef PublicEventMediaCollections
+ @type {Object}
+ @property {string} catalog
+ @property {string} detail
+ @property {string} gallery
  */

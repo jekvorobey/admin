@@ -129,7 +129,7 @@ export default {
             },
         ],
     },
-    //devtool: 'source-map',
+    devtool: 'source-map',
     plugins: [
         // new MiniCssExtractPlugin({
         //     /* При добавлении хэша перестанет работать Critical CSS. */
