@@ -409,10 +409,12 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('preference')->group(function () {
                         Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');
-                        Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
-                        Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
                         Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('customers.detail.preference.favorite.add');
                         Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('customers.detail.preference.favorite.delete');
+                        Route::prefix('{type}')->group(function () {
+                            Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
+                            Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
+                        });
                     });
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');

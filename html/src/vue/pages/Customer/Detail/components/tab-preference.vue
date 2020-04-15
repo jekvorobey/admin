@@ -1,7 +1,7 @@
 <template>
     <table class="table table-sm">
         <thead>
-        <tr>
+        <tr class="table-secondary">
             <th colspan="2">
                 Личные предпочтения
             </th>
@@ -11,26 +11,58 @@
         <tr>
             <th>
                 Бренды
-                <button class="btn btn-success btn-sm" v-b-modal.modal-brands><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editBrands(1)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
-                <div v-for="brand_id in customer.brands">{{ brands[brand_id].name }}</div>
-                <div v-if="!customer.brands.length">-</div>
+                <div v-for="brand_id in pref_personal.brands">{{ brands[brand_id].name }}</div>
+                <div v-if="!pref_personal.brands.length">-</div>
 
-                <modal-brands :model.sync="customer.brands" :brands="brands" :customer-id="id"/>
+                <modal-brands v-if="type===1" :model.sync="pref_personal.brands" :brands="brands" :customer-id="id" :type="type"/>
             </td>
         </tr>
         <tr>
             <th>
                 Категории
-                <button class="btn btn-success btn-sm" v-b-modal.modal-categories><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editCategories(1)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
-                <div v-for="category_id in customer.categories">{{ categoryName(category_id) }}</div>
-                <div v-if="!customer.categories.length">-</div>
+                <div v-for="category_id in pref_personal.categories">{{ categoryName(category_id) }}</div>
+                <div v-if="!pref_personal.categories.length">-</div>
 
-                <modal-categories :model.sync="customer.categories" :categories="categories" :customer-id="id"/>
+                <modal-categories v-if="type===1" :model.sync="pref_personal.categories" :categories="categories" :customer-id="id" :type="type"/>
             </td>
+        </tr>
+
+        <tr class="table-secondary">
+            <th colspan="2">Профессиональные предпочтения</th>
+        </tr>
+        <tr>
+            <th>
+                Бренды
+                <button class="btn btn-success btn-sm" @click="editBrands(2)"><fa-icon icon="pencil-alt"/></button>
+            </th>
+            <td>
+                <div v-for="brand_id in pref_referral.brands">{{ brands[brand_id].name }}</div>
+                <div v-if="!pref_referral.brands.length">-</div>
+
+                <modal-brands v-if="type===2" :model.sync="pref_referral.brands" :brands="brands" :customer-id="id" :type="type"/>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Категории
+                <button class="btn btn-success btn-sm" @click="editCategories(2)"><fa-icon icon="pencil-alt"/></button>
+            </th>
+            <td>
+                <div v-for="category_id in pref_referral.categories">{{ categoryName(category_id) }}</div>
+                <div v-if="!pref_referral.categories.length">-</div>
+
+                <modal-categories v-if="type===2" :model.sync="pref_referral.categories" :categories="categories" :customer-id="id" :type="type"/>
+            </td>
+        </tr>
+
+        <tr class="table-secondary">
+            <th colspan="2">Избранное пользователя</th>
         </tr>
         <tr>
             <th>
@@ -65,9 +97,14 @@ export default {
     props: ['id'],
     data() {
         return {
+            type: null,
             brands: [],
             categories: [],
-            customer: {
+            pref_personal: {
+                brands: [],
+                categories: [],
+            },
+            pref_referral: {
                 brands: [],
                 categories: [],
             },
@@ -75,6 +112,61 @@ export default {
         };
     },
     methods: {
+        updateBrands(type, brands) {
+            switch (type) {
+                case 1:
+                    this.$set(this.pref_personal.brands, 0, {
+                        id: 1,
+                        name: 'name'
+                    });
+                    break;
+                case 2:
+                    this.$set(this.pref_referral, this.pref_referral.length, {
+                        brands: brands
+                    });
+                    break;
+                default:
+                    return
+            }
+        },
+        editBrands: async function (type) {
+            switch (type) {
+                case 1:
+                    this.type = 1;
+                    //this.model_to_sync = 'pref_personal.brands';
+                    await this.$nextTick();
+                    this.$bvModal.show('modal-brands');
+                    break;
+                case 2:
+                    this.type = 2;
+                    //this.model_to_sync = 'pref_referral.brands';
+                    await this.$nextTick();
+                    this.$bvModal.show('modal-brands');
+                    break;
+                default:
+                    this.type = null;
+                    this.model_to_sync = null;
+            }
+        },
+        editCategories: async function (type) {
+            switch (type) {
+                case 1:
+                    this.type = 1;
+                    //this.model_to_sync = 'pref_personal.categories';
+                    await this.$nextTick();
+                    this.$bvModal.show('modal-categories');
+                    break;
+                case 2:
+                    this.type = 2;
+                    //this.model_to_sync = 'pref_referral.categories';
+                    await this.$nextTick();
+                    this.$bvModal.show('modal-categories');
+                    break;
+                default:
+                    this.type = null;
+                    this.model_to_sync = null;
+            }
+        },
         categoryName(category_id) {
             let name = [];
             let parent_id = category_id;
@@ -100,8 +192,10 @@ export default {
         Services.net().get(this.getRoute('customers.detail.preference', {id: this.id})).then(data => {
             this.brands = data.brands;
             this.categories = data.categories;
-            this.customer.brands = data.customer.brands;
-            this.customer.categories = data.customer.categories;
+            this.pref_personal.brands = data.pref_personal.brands;
+            this.pref_personal.categories = data.pref_personal.categories;
+            this.pref_referral.brands = data.pref_referral.brands;
+            this.pref_referral.categories = data.pref_referral.categories;
             this.favorites = data.favorites;
         }).finally(() => {
             Services.hideLoader();
