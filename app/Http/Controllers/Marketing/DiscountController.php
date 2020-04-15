@@ -10,6 +10,7 @@ use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Services\BrandService\BrandService;
@@ -164,6 +165,8 @@ class DiscountController extends Controller
     public function detail(int $id)
     {
         $data = DiscountHelper::detail($id);
+        $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
+
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Detail', $data);
     }
