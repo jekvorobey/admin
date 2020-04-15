@@ -112,59 +112,36 @@ export default {
         };
     },
     methods: {
-        updateBrands(type, brands) {
-            switch (type) {
-                case 1:
-                    this.$set(this.pref_personal.brands, 0, {
-                        id: 1,
-                        name: 'name'
-                    });
-                    break;
-                case 2:
-                    this.$set(this.pref_referral, this.pref_referral.length, {
-                        brands: brands
-                    });
-                    break;
-                default:
-                    return
-            }
-        },
         editBrands: async function (type) {
             switch (type) {
                 case 1:
                     this.type = 1;
-                    //this.model_to_sync = 'pref_personal.brands';
                     await this.$nextTick();
                     this.$bvModal.show('modal-brands');
                     break;
                 case 2:
                     this.type = 2;
-                    //this.model_to_sync = 'pref_referral.brands';
                     await this.$nextTick();
                     this.$bvModal.show('modal-brands');
                     break;
                 default:
                     this.type = null;
-                    this.model_to_sync = null;
             }
         },
         editCategories: async function (type) {
             switch (type) {
                 case 1:
                     this.type = 1;
-                    //this.model_to_sync = 'pref_personal.categories';
                     await this.$nextTick();
                     this.$bvModal.show('modal-categories');
                     break;
                 case 2:
                     this.type = 2;
-                    //this.model_to_sync = 'pref_referral.categories';
                     await this.$nextTick();
                     this.$bvModal.show('modal-categories');
                     break;
                 default:
                     this.type = null;
-                    this.model_to_sync = null;
             }
         },
         categoryName(category_id) {
