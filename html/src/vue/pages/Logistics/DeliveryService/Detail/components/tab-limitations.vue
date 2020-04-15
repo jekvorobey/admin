@@ -66,6 +66,11 @@
     },
     methods: {
         save() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+
             Services.showLoader();
             Services.net().put(this.getRoute('deliveryService.detail.limitations.save', {id: this.deliveryService.id}), {}, this.form).then(() => {
                 this.deliveryService.do_dangerous_products_delivery = this.form.do_dangerous_products_delivery;
