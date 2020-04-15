@@ -149,6 +149,10 @@ class Menu
                         'title' => 'Стоимость доставки по регионам',
                         'route' => route('deliveryPrice.index'),
                     ],
+                    [
+                        'title' => 'Планировщик времени статусов',
+                        'route' => route('deliveryKpi.index'),
+                    ],
                 ],
             ],
             [

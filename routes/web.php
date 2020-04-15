@@ -351,8 +351,27 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('delivery-prices')->group(function () {
-            Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
-            Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
+            Route::get('', 'DeliveryPriceController@index')->name('deliveryPrice.index');
+            Route::put('delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
+        });
+
+        Route::prefix('delivery-kpi')->group(function () {
+            Route::get('', 'DeliveryKpiController@index')->name('deliveryKpi.index');
+
+            Route::prefix('main')->group(function () {
+                Route::get('', 'DeliveryKpiController@getMain')->name('deliveryKpi.main.get');
+                Route::put('', 'DeliveryKpiController@setMain')->name('deliveryKpi.main.set');
+            });
+
+            Route::prefix('ct')->group(function () {
+                Route::get('', 'DeliveryKpiController@getCt')->name('deliveryKpi.ct.get');
+                Route::put('', 'DeliveryKpiController@setCt')->name('deliveryKpi.ct.set');
+            });
+
+            Route::prefix('ppt')->group(function () {
+                Route::get('', 'DeliveryKpiController@getPpt')->name('deliveryKpi.ppt.get');
+                Route::put('', 'DeliveryKpiController@setPpt')->name('deliveryKpi.ppt.set');
+            });
         });
     });
 

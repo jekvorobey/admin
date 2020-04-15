@@ -650,12 +650,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "0f2c6b057036cd44c174d55b9e5f8fcde39f6c35"
+                "reference": "7bd8839efd3f49a383672dc5876c2a17f58452a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=0f2c6b057036cd44c174d55b9e5f8fcde39f6c35",
-                "reference": "0f2c6b057036cd44c174d55b9e5f8fcde39f6c35",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=7bd8839efd3f49a383672dc5876c2a17f58452a3",
+                "reference": "7bd8839efd3f49a383672dc5876c2a17f58452a3",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +690,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-04-14T16:24:04+00:00"
+            "time": "2020-04-15T19:09:10+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -831,12 +831,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "7be96a6b2a3cda7b8f56aa3d7617411cd328a59a"
+                "reference": "45e711c29a5c50aa77d12bdee86c97b56bbb356e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=7be96a6b2a3cda7b8f56aa3d7617411cd328a59a",
-                "reference": "7be96a6b2a3cda7b8f56aa3d7617411cd328a59a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=45e711c29a5c50aa77d12bdee86c97b56bbb356e",
+                "reference": "45e711c29a5c50aa77d12bdee86c97b56bbb356e",
                 "shasum": ""
             },
             "require": {
@@ -871,7 +871,10 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-04-15T12:50:31+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
+            },
+            "time": "2020-04-15T16:44:42+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",

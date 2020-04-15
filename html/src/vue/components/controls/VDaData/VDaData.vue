@@ -1,6 +1,6 @@
 <template>
     <div class="form-group">
-        <label :for="inputId">
+        <label :for="inputId" v-if="this.$slots.default">
             <slot />
             <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
         </label>

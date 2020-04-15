@@ -167,6 +167,11 @@ export default {
     },
     methods: {
         save() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+
             Services.showLoader();
             Services.net().put(this.getRoute('deliveryService.detail.settings.save', {id: this.deliveryService.id}), {}, this.form).then(() => {
                 this.deliveryService.do_consolidation = this.form.do_consolidation;
