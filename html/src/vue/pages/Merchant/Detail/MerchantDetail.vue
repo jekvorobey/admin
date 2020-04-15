@@ -1,5 +1,5 @@
 <template>
-    <layout-main back>
+    <layout-main back :back-url="getRoute('merchant.registrationList')">
         <b-row class="mb-2">
             <b-col>
                 <b-card>
@@ -22,6 +22,7 @@
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="merchant"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
+                    <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -37,11 +38,13 @@ import Infopanel from './components/infopanel.vue';
 import TabMain from './components/tab-main.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
+import TabCommission from './components/tab-commission.vue';
 
 export default {
     mixins: [tabsMixin],
     props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
     components: {
+        TabCommission,
         TabMain,
         Infopanel,
         TabOperator,
@@ -59,7 +62,7 @@ export default {
             tabs.digest = {i: i++, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
             tabs.storage = {i: i++, title: 'Склады'};
-            tabs.comission = {i: i++, title: 'Комиссия'};
+            tabs.commission = {i: i++, title: 'Комиссия'};
             tabs.operator = {i: i++, title: 'Команда мерчанта'};
             tabs.product = {i: i++, title: 'Товары'};
             tabs.order = {i: i++, title: 'Заказы'};

@@ -29,10 +29,12 @@ export default {
         saveCommission(f) {
             Services.showLoader();
             Services.net().post(this.getRoute('merchant.commission.save'), {}, {
+                id: f.id,
                 type: f.type,
                 value: f.value,
                 rating_id: f.rating_id,
-            }).then(() => {
+            }).then((data) => {
+                this.form = data.form;
                 Services.msg('Данные сохранены');
             }).finally(() => {
                 Services.hideLoader();

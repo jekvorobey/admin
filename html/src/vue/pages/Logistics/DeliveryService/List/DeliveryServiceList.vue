@@ -61,7 +61,7 @@
 </template>
 
 <script>
-    import Service from '../../../../../scripts/services/services';
+    import Services from '../../../../../scripts/services/services';
     import withQuery from 'with-query';
     import qs from 'qs';
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
@@ -159,7 +159,8 @@ export default {
             }));
         },
         loadPage() {
-            Service.net().get(this.route('deliveryService.pagination'), {
+            Services.showLoader();
+            Services.net().get(this.route('deliveryService.pagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
                 sort: this.sort,
@@ -168,6 +169,8 @@ export default {
                 if (data.pager) {
                     this.pager = data.pager
                 }
+            }).finally(() => {
+                Services.hideLoader();
             });
         },
         applyFilter() {

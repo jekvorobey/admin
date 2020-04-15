@@ -21,11 +21,16 @@
                                     class="rounded-0"
                         />
                     </b-col>
-                    <b-col md="11">
+                    <b-col md="10">
                         <b-card-body :title="product.name">
                             <b-card-text>
                                 Артикул: {{ product.vendor_code }}
                             </b-card-text>
+                        </b-card-body>
+                    </b-col>
+                    <b-col md="1">
+                        <b-card-body>
+                            <b-button variant="danger" @click="() => {removeProduct(product.id)}"><fa-icon icon="trash-alt"/></b-button>
                         </b-card-body>
                     </b-col>
                 </b-row>
@@ -56,31 +61,34 @@
                 Services.net().get(this.getRoute('productGroup.getProducts'), {vendor_code: val})
                     .then((data) => {
                         if (data && data[0]) {
-                            this.selectedProductIds.push(data[0].id);
+                            let productId = data[0].id;
+                            this.$emit('add', productId);
+                            this.selectedProductIds.push(productId);
                             this.inputVendorCode = '';
                         }
                     });
             },
             removeProduct(id) {
-                const idx = this.selectedProductIds.indexOf(id);
+                this.selectedProductIds = this.selectedProductIds.filter((selectProductId) => {
+                    return selectProductId !== id
+                });
 
-                if (idx !== -1) {
-                    this.selectedProductIds.splice(idx, 1);
-                }
+                this.$emit('delete', id);
             },
             fetchProducts(ids) {
-                if (ids) {
+                if (ids && (ids.length > 0)) {
                     Services.net().get(this.getRoute('productGroup.getProducts'), {id: ids})
                         .then((data) => {
                             this.products = data;
                         });
+                } else {
+                    this.products = [];
                 }
             },
         },
         watch: {
             selectedProductIds(val) {
                 this.fetchProducts(val);
-                this.$emit('update', val);
             }
         },
         mounted: function () {

@@ -1,6 +1,6 @@
 <template>
     <layout-main back>
-        <form v-on:submit.prevent.stop="save" class="mt-3">
+        <form v-on:submit.prevent.stop="add" class="mt-3">
             <div class="row">
                 <v-select
                     v-model="$v.store.merchant_id.$model"
@@ -14,56 +14,63 @@
                 <v-input
                     v-model="$v.store.name.$model"
                     :error="error_name"
-                    class="col-lg-6 col-12">Название склада</v-input>
-            </div>
-            <div class="row">
+                    class="col-lg-4 col-8">Название склада</v-input>
                 <v-input
-                    v-model="store.xml_id"
-                    :error="error_zip"
-                    class="col-lg-2 col-4">
+                        v-model="store.xml_id"
+                        class="col-lg-2 col-4">
                     Внешний код
                 </v-input>
-                <v-input
-                    v-model="$v.store.zip.$model"
-                    :error="error_zip"
-                    class="col-lg-2 col-4">
-                    Индекс
-                </v-input>
-                <v-input
-                    v-model="$v.store.city.$model"
-                    :error="error_city"
-                    class="col-lg-2 col-4">Город</v-input>
+            </div>
+            <div class="row">
+                <v-dadata
+                        :value="$v.store.address.address_string.$model"
+                        :error="error_address"
+                        @onSelect="onStoreAddressAdd"
+                        class="col-lg-6 col-12">
+                    Адрес
+                </v-dadata>
             </div>
             <div class="row">
                 <v-input
-                    v-model="$v.store.street.$model"
-                    :error="error_street"
-                    class="col-lg-2 col-4">Улица</v-input>
+                        v-model="store.address.porch"
+                        class="col-lg-2 col-4">Подъезд</v-input>
                 <v-input
-                    v-model="store.house"
-                    class="col-lg-2 col-4">Дом</v-input>
+                        v-model="store.address.floor"
+                        class="col-lg-2 col-4">Этаж</v-input>
                 <v-input
-                    v-model="store.flat"
-                    class="col-lg-2 col-4">Квартира/Офис</v-input>
+                        v-model="store.address.intercom"
+                        class="col-lg-2 col-4">Домофон</v-input>
             </div>
-            <button @click="add" type="button" class="btn btn-success mb-3" :disabled="!$v.store.$anyDirty">Добавить</button>
+            <div class="row">
+                <v-input
+                        type="textarea"
+                        v-model="store.address.comment"
+                        class="col-lg-6 col-12">Комментарий к адресу</v-input>
+            </div>
+            <button
+                    @click="add"
+                    type="button"
+                    class="btn btn-success mb-3"
+                    :disabled="!$v.store.$anyDirty">Добавить</button>
         </form>
     </layout-main>
 </template>
 
 <script>
-    import Service from '../../../../../scripts/services/services';
+    import Services from '../../../../../scripts/services/services';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
 
     import {validationMixin} from 'vuelidate';
-    import {integer, required} from 'vuelidate/lib/validators';
+    import {integer, required, requiredIf} from 'vuelidate/lib/validators';
 
     export default {
     name: 'page-stores-detail',
     components: {
         VInput,
         VSelect,
+        VDadata,
     },
     mixins: [validationMixin],
     props: {
@@ -75,41 +82,95 @@
                 merchant_id: null,
                 name: null,
                 xml_id: null,
-                zip: null,
-                city: null,
-                street: null,
-                house: null,
-                flat: null,
+                address: {
+                    address_string: null,
+                    country_code: null,
+                    post_index: null,
+                    region: null,
+                    region_guid: null,
+                    area: null,
+                    area_guid: null,
+                    city: null,
+                    city_guid: null,
+                    street: null,
+                    house: null,
+                    block: null,
+                    flat: null,
+                    porch: null,
+                    floor: null,
+                    intercom: null,
+                    comment: null,
+                }
             },
         }
     },
-    validations: {
-        store: {
-            merchant_id: {integer, required},
-            name: {required},
-            zip: {required},
-            city: {required},
-            street: {required},
-        }
+    validations() {
+        let self = this;
+
+        return {
+            store: {
+                merchant_id: {integer, required},
+                name: {required},
+                address: {
+                    address_string: {required},
+                    country_code: {required},
+                    post_index: {required},
+                    region: {required},
+                    region_guid: {required},
+                    city: {required},
+                    city_guid: {required},
+                    house: {
+                        required: requiredIf(() => {
+                            return !self.store.address.block;
+                        })
+                    },
+                    block: {
+                        required: requiredIf(() => {
+                            return !self.store.address.house;
+                        })
+                    },
+                }
+            }
+        };
     },
     methods: {
+        onStoreAddressAdd(suggestion) {
+            let address = suggestion.data;
+
+            this.store.address.address_string = suggestion.unrestricted_value;
+            this.store.address.country_code = address.country_iso_code;
+            this.store.address.post_index = address.postal_code;
+            this.store.address.region = address.region_with_type;
+            this.store.address.region_guid = address.region_fias_id;
+            this.store.address.area = address.area_with_type;
+            this.store.address.area_guid = address.area_fias_id;
+            this.store.address.city = address.settlement_with_type ? address.settlement_with_type :
+                address.city_with_type;
+            this.store.address.city_guid = address.settlement_with_type ? address.settlement_fias_id :
+                address.city_fias_id;
+            this.store.address.street = address.street_with_type;
+            this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
+            this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
+            this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
+        },
         add() {
+            let self = this;
             this.$v.$touch();
             if (this.$v.$invalid) {
                 return;
             }
 
             Services.showLoader();
-            Service.net().post(
+            Services.net().post(
                 this.getRoute('merchantStore.create'),
                 null,
                 this.store
             ).then(data => {
-                if (data.status === 'ok') {
+                if (data.id) {
                     Services.msg("Изменения сохранены");
-                    window.location.href = this.route('merchantStore.list');
+                    window.location.href = self.getRoute('merchantStore.edit', {id: data.id});
                 }
-            }).finally(data => {
+            }).finally(() => {
                 Services.hideLoader();
             });
         },
@@ -136,24 +197,30 @@
                 }
             }
         },
-        error_zip() {
-            if (this.$v.store.zip.$dirty) {
-                if (!this.$v.store.zip.required) {
-                    return "Обязательное поле!";
+        error_address() {
+            if (this.$v.store.address.address_string.$dirty) {
+                if (!this.$v.store.address.address_string.required) {
+                    return "Введите адрес и выберите его из подсказки ниже";
                 }
             }
-        },
-        error_city() {
-            if (this.$v.store.city.$dirty) {
-                if (!this.$v.store.city.required) {
-                    return "Обязательное поле!";
+            if (this.$v.store.address.post_index.$dirty) {
+                if (!this.$v.store.address.post_index.required) {
+                    return "Введите почтовый индекс";
                 }
             }
-        },
-        error_street() {
-            if (this.$v.store.street.$dirty) {
-                if (!this.$v.store.street.required) {
-                    return "Обязательное поле!";
+            if (this.$v.store.address.region.$dirty) {
+                if (!this.$v.store.address.region.required) {
+                    return "Введите регион";
+                }
+            }
+            if (this.$v.store.address.city.$dirty) {
+                if (!this.$v.store.address.city.required) {
+                    return "Введите город/населенный пункт";
+                }
+            }
+            if (this.$v.store.address.house.$dirty || this.$v.store.address.block.$dirty) {
+                if (!this.$v.store.address.house.required || !this.$v.store.address.block.required) {
+                    return "Введите дом/строение/корпус";
                 }
             }
         },

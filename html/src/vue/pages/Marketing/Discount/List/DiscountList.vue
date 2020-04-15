@@ -92,7 +92,7 @@
                                     <label>Бессрочная</label>
                                     <input class="ml-3 mt-3"
                                            type="checkbox"
-                                           @change="e => indefinitelyCheck(e)"
+                                           v-model="filter.indefinitely"
                                            :checked="iFilter.indefinitely"
                                     >
                                 </div>
@@ -419,9 +419,6 @@
                     checkboxes[discountId] = newValue;
                 });
                 this.checkboxes = checkboxes;
-            },
-            indefinitelyCheck(e) {
-                this.filter.indefinitely = e.target.checked;
             },
         },
         computed: {

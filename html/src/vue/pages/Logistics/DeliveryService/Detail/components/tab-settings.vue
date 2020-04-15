@@ -136,17 +136,17 @@ export default {
                 end: '23:30'
             },
             form: {
-                do_consolidation: null,
-                do_deconsolidation: null,
-                do_zero_mile: null,
-                do_express_delivery: null,
-                do_return: null,
-                max_cargo_export_time: '',
-                add_partial_reject_service: null,
-                add_insurance_service: null,
-                add_fitting_service: null,
-                add_return_service: null,
-                add_open_service: null,
+                do_consolidation: this.model.do_consolidation,
+                do_deconsolidation: this.model.do_deconsolidation,
+                do_zero_mile: this.model.do_zero_mile,
+                do_express_delivery: this.model.do_express_delivery,
+                do_return: this.model.do_return,
+                max_cargo_export_time: this.model.max_cargo_export_time,
+                add_partial_reject_service: this.model.add_partial_reject_service,
+                add_insurance_service: this.model.add_insurance_service,
+                add_fitting_service: this.model.add_fitting_service,
+                add_return_service: this.model.add_return_service,
+                add_open_service: this.model.add_open_service,
             },
         }
     },
@@ -184,7 +184,7 @@ export default {
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
-            })
+            });
         },
         cancel() {
             this.form.do_consolidation = this.deliveryService.do_consolidation;
@@ -209,25 +209,5 @@ export default {
             return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
         },
     },
-    created() {
-        Services.showLoader();
-        Services.net().get(
-            this.getRoute('deliveryService.detail.settings', {id: this.model.id})
-        ).then(data => {
-            this.form.do_consolidation = data.deliveryService.do_consolidation;
-            this.form.do_deconsolidation = data.deliveryService.do_deconsolidation;
-            this.form.do_zero_mile = data.deliveryService.do_zero_mile;
-            this.form.do_express_delivery = data.deliveryService.do_express_delivery;
-            this.form.do_return = data.deliveryService.do_return;
-            this.form.max_cargo_export_time = data.deliveryService.max_cargo_export_time;
-            this.form.add_partial_reject_service = data.deliveryService.add_partial_reject_service;
-            this.form.add_insurance_service = data.deliveryService.add_insurance_service;
-            this.form.add_fitting_service = data.deliveryService.add_fitting_service;
-            this.form.add_return_service = data.deliveryService.add_return_service;
-            this.form.add_open_service = data.deliveryService.add_open_service;
-        }).finally(() => {
-            Services.hideLoader();
-        });
-    }
 };
 </script>

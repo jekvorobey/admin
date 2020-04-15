@@ -11,14 +11,14 @@ import 'lazysizes/plugins/respimg/ls.respimg';
 import store from './store/store';
 import Services from '../scripts/services/services';
 import BootstrapVue from 'bootstrap-vue';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import './fontawesome';
-import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
+import { capitalize, formatSize, integer, lowercase, truncate } from '../scripts/filters';
 import OrderStatus from './components/status/order-status.vue';
 import PaymentStatus from './components/status/payment-status.vue';
 import Media from '../scripts/media.js';
 import * as moment from 'moment';
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 
 Vue.use(BootstrapVue);
 
@@ -129,6 +129,22 @@ Vue.mixin({
         /** @return {MerchantStatuses} */
         merchantStatuses() {
             return this.$store.state.layout.merchantStatuses;
+        },
+        /** @return {MerchantCommissionTypes} */
+        merchantCommissionTypes() {
+            return this.$store.state.layout.merchantCommissionTypes;
+        },
+        /** @return {PublicEventType[]} */
+        publicEventTypes() {
+            return this.$store.state.layout.publicEventTypes;
+        },
+        /** @return {PublicEventMediaTypes} */
+        publicEventMediaTypes() {
+            return this.$store.state.layout.publicEventMediaTypes;
+        },
+        /** @return {PublicEventMediaCollections} */
+        publicEventMediaCollections() {
+            return this.$store.state.layout.publicEventMediaCollections;
         },
     },
 });
@@ -267,4 +283,35 @@ Vue.mixin({
  @property {string} work
  @property {string} stop
  @property {string} close
+ */
+/**
+ @typedef MerchantCommissionTypes
+ @type {Object}
+ @property {string} global
+ @property {string} rating
+ @property {string} merchant
+ @property {string} brand
+ @property {string} category
+ @property {string} sku
+ */
+/**
+ @typedef PublicEventType
+ @type {Object}
+ @property {number} id
+ @property {string} name
+ @property {string} code
+ */
+/**
+ @typedef PublicEventMediaTypes
+ @type {Object}
+ @property {string} image
+ @property {string} video
+ @property {string} youtube
+ */
+/**
+ @typedef PublicEventMediaCollections
+ @type {Object}
+ @property {string} catalog
+ @property {string} detail
+ @property {string} gallery
  */

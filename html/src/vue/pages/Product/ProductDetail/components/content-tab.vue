@@ -54,14 +54,18 @@
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-start align-items-start">
-                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DescriptionEdit')">
+                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                                 @onEdit="openModal('DescriptionEdit')"
+                                 @onDelete="deleteDescriptionText">
                         {{ product.description }}
                     </shadow-card>
                 </div>
             </div>
             <div class="col">
                 <div class="d-flex flex-row justify-content-start align-items-start">
-                    <shadow-card title="Видео" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DescriptionVideoEdit')">
+                    <shadow-card title="Видео" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                                 @onEdit="openModal('DescriptionVideoEdit')"
+                                 @onDelete="deleteDescriptionVideo">
                         <div v-if="product.description_video" class="embed-responsive embed-responsive-16by9 ">
                             <iframe
                                     width="424"
@@ -87,7 +91,8 @@
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-start align-items-md-stretch">
-                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('HowToEdit')">
+                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                                 @onEdit="openModal('HowToEdit')" @onDelete="deleteHowToText">
                         <div v-html="product.how_to"></div>
                     </shadow-card>
                     <shadow-card title="Инструкция">
@@ -101,7 +106,11 @@
             </div>
             <div class="col">
                 <div class="d-flex flex-row justify-content-start align-items-start">
-                    <shadow-card title="Видео" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('HowToVideoEdit')">
+                    <shadow-card
+                            title="Видео"
+                            :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                            @onEdit="openModal('HowToVideoEdit')"
+                            @onDelete="deleteHowToVideo">
                         <div v-if="product.how_to_video" class="embed-responsive embed-responsive-16by9 ">
                             <iframe
                                     width="424"
@@ -122,6 +131,26 @@
                 </div>
             </div>
         </div>
+        <hr>
+        <h3>Мастер-классы</h3>
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <th>
+                        Добавить
+                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
+                    </th>
+                    <td>
+                        <div v-for="(event, index) in product.publicEvents">
+                            {{ event.description }}
+                            <span>
+                                <fa-icon icon="times"/>
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         <file-upload-modal
                 @accept="onAcceptImage"
@@ -273,7 +302,35 @@ export default {
         onTipSaved() {
             this.closeModal('TipForm');
             this.$emit('onSave');
-        }
+        },
+        deleteHowToText() {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {how_to: null})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        deleteHowToVideo() {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {how_to_video: null})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        deleteDescriptionVideo() {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {description_video: null})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        deleteDescriptionText() {
+            let route = this.getRoute('products.saveProduct', {id: this.product.id});
+            Services.net().post(route, {}, {description: null})
+                .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
     },
     computed: {
         mainImage() {

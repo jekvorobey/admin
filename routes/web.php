@@ -39,6 +39,11 @@ Route::middleware('auth')->group(function () {
                     Route::post('document', 'TabMainController@createDocument')->name('merchant.detail.main.document.create');
                     Route::delete('document', 'TabMainController@deleteDocument')->name('merchant.detail.main.document.delete');
                 });
+                Route::prefix('commission')->group(function () {
+                    Route::get('', 'TabCommissionController@load')->name('merchant.detail.commission');
+                    Route::post('save', 'TabCommissionController@saveCommission')->name('merchant.detail.commission.save');
+                    Route::post('remove', 'TabCommissionController@removeCommission')->name('merchant.detail.commission.remove');
+                });
             });
         });
 
@@ -68,10 +73,12 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('promo-code')->group(function () {
-            Route::get('/', 'PromoCodeController@index')->name('promo-code.list');
-            Route::post('/', 'PromoCodeController@create')->name('promo-code.save');
-            Route::get('/create', 'PromoCodeController@createPage')->name('promo-code.create');
-            Route::get('/generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::get('', 'PromoCodeController@index')->name('promo-code.list');
+            Route::post('', 'PromoCodeController@create')->name('promo-code.save');
+            Route::get('create', 'PromoCodeController@createPage')->name('promo-code.create');
+            Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
+            Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });
     });
 
@@ -116,6 +123,11 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+        });
+
+        Route::prefix('organization-card')->group(function () {
+            Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
+            Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
         });
     });
 
@@ -321,6 +333,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('logistics')->namespace('Logistics')->group(function () {
         Route::prefix('delivery-services')->namespace('DeliveryService')->group(function () {
             Route::get('/', 'DeliveryServiceListController@index')->name('deliveryService.list');
+            Route::get('page', 'DeliveryServiceListController@page')->name('deliveryService.pagination');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'DeliveryServiceDetailController@index')->name('deliveryService.detail');
@@ -328,8 +341,10 @@ Route::middleware('auth')->group(function () {
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('settings')->group(function () {
-                        Route::get('', 'TabSettingsController@load')->name('deliveryService.detail.settings');
                         Route::put('', 'TabSettingsController@save')->name('deliveryService.detail.settings.save');
+                    });
+                    Route::prefix('limitations')->group(function () {
+                        Route::put('', 'TabLimitationsController@save')->name('deliveryService.detail.limitations.save');
                     });
                 });
             });
@@ -462,6 +477,22 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OptionsController@index')->name('referral.options');
             Route::put('', 'OptionsController@save')->name('referral.options.save');
         });
+    });
+
+    Route::prefix('public-events')->namespace('PublicEvent')->group(function () {
+        Route::get('is-code-unique', 'PublicEventDetailController@isCodeUnique')->name('public-event.isCodeUnique');
+        Route::post('save', 'PublicEventDetailController@save')->name('public-event.save');
+        
+        Route::prefix('{event_id}')->group(function () {
+            Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
+            Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
+            Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
+            Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
+        });
+    });
+    
+    Route::prefix('organizers')->namespace('PublicEvent')->group(function () {
+        Route::get('available', 'PublicEventDetailController@availableOrganizers')->name('public-event.availableOrganizers');
     });
 
 });

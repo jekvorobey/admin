@@ -40,8 +40,8 @@ class TabPreferenceController extends Controller
             'brands' => $brands->keyBy('id'),
             'categories' => $categories->keyBy('id'),
             'customer' => [
-                'brands' => $customer->brands,
-                'categories' => $customer->categories,
+                'brands' => $customer->own_brands,
+                'categories' => $customer->own_categories,
             ],
             'favorites' => $favoriteItems ? $this->loadFavoriteItems($query, $productService) : null,
         ]);
@@ -71,7 +71,7 @@ class TabPreferenceController extends Controller
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
+        $query->pageNumber($page, 12);
 
         $query->include(BrandDto::entity(), CategoryDto::entity());
         $query->addFields(BrandDto::entity(), 'id', 'name');
@@ -89,7 +89,8 @@ class TabPreferenceController extends Controller
             'brands.*' => 'numeric',
         ]);
 
-        $customerService->updateBrands($id, request('brands'));
+        //TODO: Не забыть переделать в #57176
+        $customerService->updateBrands($id, 1, request('brands'));
 
         return response('', 204);
     }
@@ -101,7 +102,8 @@ class TabPreferenceController extends Controller
             'categories.*' => 'numeric',
         ]);
 
-        $customerService->updateCategories($id, request('categories'));
+        //TODO: Не забыть переделать в #57176
+        $customerService->updateCategories($id, 1, request('categories'));
 
         return response('', 204);
     }
