@@ -55,94 +55,55 @@
 <script>
     import VInput from '../../../../components/controls/VInput/VInput.vue';
 
-    import Services from '../../../../../scripts/services/services.js';
     import Infopanel from './components/infopanel.vue';
     import TabSettings from './components/tab-settings.vue';
     import TabLimitations from './components/tab-limitations.vue';
+    import tabsMixin from "../../../../mixins/tabs";
 
     export default {
-    components: {
-        Infopanel,
-        VInput,
-        TabSettings,
-        TabLimitations,
-    },
-    props: [
-        'iDeliveryService',
-        'deliveryServiceStatuses',
-        'shipmentsInfo',
-    ],
-    data() {
-        return {
-            editStatus: false,
-            deliveryService: this.iDeliveryService,
-            tabIndex: 0,
-            showAllTabs: false,
-        };
-    },
-    watch: {
-        'tabIndex': 'pushRoute',
-        'showAllTabs': 'pushRoute',
-    },
-    computed: {
-        tabs() {
-            let tabs = {};
-            let i = 0;
-
-            tabs.main = {i: i++, title: 'Информация'};
-            tabs.settings = {i: i++, title: 'Настройки'};
-            tabs.limitations = {i: i++, title: 'Ограничения'};
-            tabs.shipments = {i: i++, title: 'Отправления'};
-            tabs.points = {i: i++, title: 'Пункты выдачи/приема заказов'};
-            if (this.showAllTabs) {
-                tabs.documents = {i: i++, title: 'Документы'};
-                tabs.managers = {i: i++, title: 'Менеджеры'};
-                tabs.cities = {i: i++, title: 'Населенные пункты доставки'};
-                tabs.cargos = {i: i++, title: 'Грузы'};
-                tabs.cargos = {i: i++, title: 'Задания на забор'};
-                tabs.cargos = {i: i++, title: 'Задания на доставку'};
-                tabs.cargos = {i: i++, title: 'Заявки на расконсолидацию'};
-                tabs.reports = {i: i++, title: 'Отчеты'};
-                tabs.orderStatuses = {i: i++, title: 'Модель статусов'};
-                tabs.pickupTimes = {i: i++, title: 'Графики приезда к мерчантам'};
-            }
-
-            return tabs;
+        mixins: [tabsMixin],
+        components: {
+            Infopanel,
+            VInput,
+            TabSettings,
+            TabLimitations,
         },
-        currentTabName() {
-            let tabName = 'main';
-            for (let key in this.tabs) {
-                if (!this.tabs.hasOwnProperty(key)) {
-                    continue;
-                }
-                if (this.tabs[key].i === this.tabIndex) {
-                    tabName = key;
-                }
-            }
-
-            return tabName;
-        }
-    },
-    methods: {
-        pushRoute() {
-            let route = {};
-            if (this.level_id) {
-                route.level_id = this.level_id;
-            }
-            Services.route().push({
-                tab: this.currentTabName,
-                allTab: this.showAllTabs ? 1 : 0,
-            }, this.getRoute('deliveryService.detail', {id: this.deliveryService.id}));
+        props: [
+            'iDeliveryService',
+            'deliveryServiceStatuses',
+            'shipmentsInfo',
+        ],
+        data() {
+            return {
+                editStatus: false,
+                deliveryService: this.iDeliveryService,
+            };
         },
-    },
-    created() {
-        Services.event().$on('showTab', (tab) => {
-            this.tabIndex = this.tabs[tab];
-        });
+        computed: {
+            tabs() {
+                let tabs = {};
+                let i = 0;
 
-        let currentTab = Services.route().get('tab', 'main');
-        this.showAllTabs = !!Number(Services.route().get('allTab', 0));
-        this.tabIndex = this.tabs[currentTab].i;
-    }
-};
+                tabs.main = {i: i++, title: 'Информация'};
+                tabs.settings = {i: i++, title: 'Настройки'};
+                tabs.limitations = {i: i++, title: 'Ограничения'};
+                tabs.shipments = {i: i++, title: 'Отправления'};
+                tabs.points = {i: i++, title: 'Пункты выдачи/приема заказов'};
+                if (this.showAllTabs) {
+                    tabs.documents = {i: i++, title: 'Документы'};
+                    tabs.managers = {i: i++, title: 'Менеджеры'};
+                    tabs.cities = {i: i++, title: 'Населенные пункты доставки'};
+                    tabs.cargos = {i: i++, title: 'Грузы'};
+                    tabs.cargos = {i: i++, title: 'Задания на забор'};
+                    tabs.cargos = {i: i++, title: 'Задания на доставку'};
+                    tabs.cargos = {i: i++, title: 'Заявки на расконсолидацию'};
+                    tabs.reports = {i: i++, title: 'Отчеты'};
+                    tabs.orderStatuses = {i: i++, title: 'Модель статусов'};
+                    tabs.pickupTimes = {i: i++, title: 'Графики приезда к мерчантам'};
+                }
+
+                return tabs;
+            },
+        },
+    };
 </script>

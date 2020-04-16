@@ -372,6 +372,11 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'DeliveryKpiController@getPpt')->name('deliveryKpi.ppt.get');
                 Route::put('', 'DeliveryKpiController@setPpt')->name('deliveryKpi.ppt.set');
             });
+
+            Route::prefix('pct')->group(function () {
+                Route::get('', 'DeliveryKpiController@getPct')->name('deliveryKpi.pct.get');
+                Route::put('', 'DeliveryKpiController@setPct')->name('deliveryKpi.pct.set');
+            });
         });
     });
 
