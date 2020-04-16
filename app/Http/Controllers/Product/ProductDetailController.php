@@ -211,26 +211,28 @@ class ProductDetailController extends Controller
         if (!$products->count()) {
             throw new NotFoundHttpException();
         }
-        
         $stockService = resolve(StockService::class);
-        $currentOffer = collect($products->first()->offers)
+        $priceService = resolve(PriceService::class);
+        $listOffers = collect($products->first()->offers)
+            ->map(function ($item) use ($priceService, $stockService) {
+                $item['offer_id'] = $item['id'];
+                unset($item['id']);
+                $item['qty'] = $stockService->qtyByOffer($item['offer_id']);
+                $priceIn = new PriceInDto($item['offer_id']);
+                $priceDto = $priceService->price($priceIn);
+                $item['price'] = $priceDto ? $priceDto->price : 0;
+                return $item;
+            });
+        $currentOffer = $listOffers
             ->whereIn('sale_status', [1, 2])
-            ->pluck('id')
-            ->map(function ($item) use ($stockService) {
-                return ['offer_id' => $item, 'qty' => $stockService->qtyByOffer($item)];
-            })
             ->sortByDesc('qty')
             ->first();
-        if ($currentOffer) {
-            $priceIn = new PriceInDto($currentOffer['offer_id']);
-            $priceService = resolve(PriceService::class);
-            $priceDto = $priceService->price($priceIn);
-            $currentOffer['price'] = $priceDto ? $priceDto->price : 0;
-        } else {
+        if (!$currentOffer) {
             $currentOffer['qty'] = 0;
             $currentOffer['price'] = 0;
         }
         $products->first()->showCount = $currentOffer;
+        $products->first()->offers = $listOffers;
         $products->first()->publicEvents = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
         //После реализации сервиса мастер классов - тут получение приаязанных
         /** @var ProductDto $product */
