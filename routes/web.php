@@ -44,6 +44,14 @@ Route::middleware('auth')->group(function () {
                     Route::post('save', 'TabCommissionController@saveCommission')->name('merchant.detail.commission.save');
                     Route::post('remove', 'TabCommissionController@removeCommission')->name('merchant.detail.commission.remove');
                 });
+                Route::prefix('marketing')->group(function () {
+                    Route::prefix('discounts')->group(function () {
+                        Route::get('', 'TabMarketingController@loadDiscounts')->name('merchant.detail.marketing.discounts');
+                        Route::get('page', 'TabMarketingController@page')->name('merchant.detail.marketing.discounts.pagination');
+                        Route::put('', 'TabMarketingController@status')->name('merchant.detail.marketing.discounts.status');
+                        Route::delete('', 'TabMarketingController@delete')->name('merchant.detail.marketing.discounts.delete');
+                    });
+                });
             });
         });
 
