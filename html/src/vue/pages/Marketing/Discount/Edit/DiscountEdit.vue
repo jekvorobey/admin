@@ -3,7 +3,7 @@
         <discount-form
             :i-discount="iDiscount"
             :discounts="discounts"
-            :discount-types="discountTypes"
+            :option-discount-types="optionDiscountTypes"
             :discount-statuses="discountStatuses"
             :iConditionTypes="iConditionTypes"
             :paymentMethods="paymentMethods"
@@ -34,7 +34,7 @@
     import Services from '../../../../../scripts/services/services';
     import DiscountForm from '../components/discount-form.vue';
     import modal from '../../../../components/controls/modal/modal.vue';
-    import modalMixin from "../../../../mixins/modal";
+    import modalMixin from '../../../../mixins/modal';
 
     export default {
         name: 'page-discount-edit',
@@ -46,7 +46,7 @@
         props: {
             iDiscount: Object,
             discounts: Array,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             iConditionTypes: Object,
             discountStatuses: Object,
             paymentMethods: Array,

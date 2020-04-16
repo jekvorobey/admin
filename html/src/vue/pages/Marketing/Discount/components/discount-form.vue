@@ -6,13 +6,13 @@
         >Название</v-input>
         <div class="row">
             <v-select v-model="discount.type"
-                      :options="discountTypes"
+                      :options="optionDiscountTypes"
                       class="col-3"
                       :error="discountErrors.type"
                       @change="onTypeChange()"
             >Скидка на</v-select>
 
-            <div v-if="discount.type === TYPE_OFFER" class="col-9">
+            <div v-if="discount.type === discountTypes.offer" class="col-9">
                 <v-input v-model="discount.offers"
                          :help="'ID офферов через запятую'"
                          :error="discountErrors.offers"
@@ -20,7 +20,7 @@
                 >Офферы</v-input>
             </div>
 
-            <div v-if="discount.type === TYPE_BUNDLE" class="col-9">
+            <div v-if="discount.type === discountTypes.bundle" class="col-9">
                 <v-input v-model="discount.bundles"
                          :help="'ID бандлов через запятую'"
                          :error="discountErrors.bundles"
@@ -28,7 +28,7 @@
                 >Бандлы</v-input>
             </div>
 
-            <template v-if="discount.type === TYPE_BRAND">
+            <template v-if="discount.type === discountTypes.brand">
                 <BrandsSearch
                         key="brands-search-main"
                         classes="col-9"
@@ -44,7 +44,7 @@
                 </div>
             </template>
 
-            <template v-if="discount.type === TYPE_CATEGORY">
+            <template v-if="discount.type === discountTypes.category">
                 <CategoriesSearch
                         classes="col-9"
                         title="Категории"
@@ -122,6 +122,7 @@
         </div>
 
         <Conditions
+                :discount="discount"
                 :discounts="discounts"
                 :conditions="discount.conditions"
                 :iConditionTypes="iConditionTypes"
@@ -132,6 +133,7 @@
                 :roles="roles"
                 :brands="brands"
                 :categories="categories"
+                :discountSizeTypes="discountSizeTypes"
         ></Conditions>
 
         <div class="row">
@@ -150,7 +152,7 @@
     import BrandsSearch from './brands-search.vue';
     import Conditions from './conditions.vue';
     import CategoriesSearch from './categories-search.vue';
-    import Services from "../../../../../scripts/services/services";
+    import Services from '../../../../../scripts/services/services';
 
     moment.locale('ru');
 
@@ -165,7 +167,7 @@
         props: {
             iDiscount: Object,
             discounts: Array,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             discountStatuses: Object,
             iConditionTypes: Object,
             paymentMethods: Array,
@@ -208,14 +210,6 @@
                     conditions: null,
                 },
 
-                // Тип скидки
-                TYPE_OFFER: 1,
-                TYPE_BUNDLE: 2,
-                TYPE_BRAND: 3,
-                TYPE_CATEGORY: 4,
-                TYPE_DELIVERY: 5,
-                TYPE_CART_TOTAL: 6,
-
                 // Тип условия скидки
                 CONDITION_TYPE_USER: 9,
             }
@@ -233,7 +227,7 @@
                         bool = false;
                     }
                     switch (this.discount.type) {
-                        case this.TYPE_OFFER:
+                        case this.discountTypes.offer:
                             if (!(this.discount.offers)) {
                                 this.discountErrors.offers = "Введите значения ID офферов!";
                                 bool = false;
@@ -242,7 +236,7 @@
                                 bool = false;
                             }
                             break;
-                        case this.TYPE_BUNDLE:
+                        case this.discountTypes.bundle:
                             if (!(this.discount.bundles)) {
                                 this.discountErrors.bundles = "Введите значения ID бандлов!";
                                 bool = false;
@@ -251,20 +245,20 @@
                                 bool = false;
                             }
                             break;
-                        case this.TYPE_BRAND:
+                        case this.discountTypes.brand:
                             if (!(this.discount.brands.length > 0)) {
                                 this.discountErrors.brands = "Выберите хотя бы один бренд!";
                                 bool = false;
                             }
                             break;
-                        case this.TYPE_CATEGORY:
+                        case this.discountTypes.category:
                             if (!(this.discount.categories.length > 0)) {
                                 this.discountErrors.categories = "Выберите хотя бы одну категорию!";
                                 bool = false;
                             }
                             break;
-                        case this.TYPE_DELIVERY:
-                        case this.TYPE_CART_TOTAL:
+                        case this.discountTypes.delivery:
+                        case this.discountTypes.cartTotal:
                             break;
                     }
                     if (!(this.discount.value_type)) {
@@ -351,6 +345,8 @@
                         segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],
                         sum: ('minPrice' in cond) ? cond.minPrice : "",
                         synergy: ('synergy' in cond) ? cond.synergy : [],
+                        maxValueType: ('maxValueType' in cond) ? cond.maxValueType : null,
+                        maxValue: ('maxValue' in cond) ? cond.maxValue : null,
                         type: item.type,
                         users: ('customerIds' in cond) ? cond.customerIds : [],
                         count: ('count' in cond) ? cond.count : '',

@@ -5,7 +5,7 @@
                 <b-card>
                     <infopanel
                         :model.sync="discount"
-                        :discount-types="discountTypes"
+                        :option-discount-types="optionDiscountTypes"
                         :discount-statuses="discountStatuses"
                         :merchants="merchants"
                         :author="author"
@@ -82,7 +82,7 @@
         props: {
             discounts: Array,
             iDiscount: Object,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             discountStatuses: Object,
             iConditionTypes: Object,
             merchants: Array,

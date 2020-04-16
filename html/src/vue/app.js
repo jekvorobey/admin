@@ -146,6 +146,10 @@ Vue.mixin({
         publicEventMediaCollections() {
             return this.$store.state.layout.publicEventMediaCollections;
         },
+        /** @return {DeliveryType} */
+        discountTypes() {
+            return this.$store.state.layout.discountTypes;
+        },
     },
 });
 
@@ -314,4 +318,14 @@ Vue.mixin({
  @property {string} catalog
  @property {string} detail
  @property {string} gallery
+ */
+/**
+ @typedef DeliveryType
+ @type {Object}
+ @property {integer} offer
+ @property {integer} bundle
+ @property {integer} brand
+ @property {integer} category
+ @property {integer} delivery
+ @property {integer} cartTotal
  */

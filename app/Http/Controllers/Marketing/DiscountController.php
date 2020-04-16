@@ -5,17 +5,17 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
-use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Pim\Core\PimException;
 
 /**
  * Class DiscountController
@@ -46,7 +46,7 @@ class DiscountController extends Controller
             'roles' => Helpers::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
-            'discountTypes' => DiscountTypeDto::allTypes(),
+            'optionDiscountTypes' => DiscountTypeDto::allTypes(),
             'merchantNames' => DiscountHelper::getMerchantNames(),
             'userNames' => DiscountHelper::getUserNames(),
             'authors' => $discountUserInfo['authors'],
@@ -86,10 +86,12 @@ class DiscountController extends Controller
     public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
         $this->title = 'Создание скидки';
+        $this->loadDiscountTypes = true;
+
         $data = DiscountHelper::loadData();
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
-            'discountTypes' => $data['discountTypes'],
+            'optionDiscountTypes' => $data['optionDiscountTypes'],
             'iConditionTypes' => $data['conditionTypes'],
             'deliveryMethods' => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
@@ -146,6 +148,7 @@ class DiscountController extends Controller
      */
     public function edit(int $id)
     {
+        $this->loadDiscountTypes = true;
         $data = DiscountHelper::detail($id);
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Edit', $data);

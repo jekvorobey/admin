@@ -26,6 +26,7 @@ class Controller extends BaseController
     protected $loadPublicEventTypes = false;
     protected $loadPublicEventMediaTypes = false;
     protected $loadPublicEventMediaCollections = false;
+    protected $loadDiscountTypes = false;
 
     public function render($componentName, $props = [])
     {
@@ -43,6 +44,7 @@ class Controller extends BaseController
             ->loadPublicEventTypes($this->loadPublicEventTypes)
             ->loadPublicEventMediaTypes($this->loadPublicEventMediaTypes)
             ->loadPublicEventMediaCollections($this->loadPublicEventMediaCollections)
+            ->loadDiscountTypes($this->loadDiscountTypes)
             ->render();
     }
     
