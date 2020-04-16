@@ -37,6 +37,7 @@ import {
     faTrashAlt,
     faTruck,
     faCopy,
+    faAngleUp,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -66,3 +67,4 @@ library.add(faFileArchive);
 library.add(faFileExcel);
 library.add(faPercent);
 library.add(faCopy);
+library.add(faAngleUp);

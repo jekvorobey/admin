@@ -31,10 +31,10 @@ class DiscountHelper
     /**
      * @param Request $request
      * @param array   $pager
-     *
+     * @param int     $merchantId
      * @return array
      */
-    public static function getParams(Request $request, array $pager = [])
+    public static function getParams(Request $request, array $pager = [], int $merchantId = null)
     {
         $discountInDto = new DiscountInDto();
 
@@ -61,8 +61,13 @@ class DiscountHelper
             : null;
         isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
-        return $discountInDto
-            ->status(DiscountStatusDto::STATUS_CREATED, true)
+        if ($merchantId) {
+            $query = $discountInDto->merchant($merchantId);
+        } else {
+            $query = $discountInDto->status(DiscountStatusDto::STATUS_CREATED, true);
+        }
+
+        return $query
             ->sortDirection('desc')
             ->toQuery();
     }
@@ -368,10 +373,11 @@ class DiscountHelper
      *
      * @return array
      */
-    public static function getDefaultPager(Request $request, int $perPage = 20)
+    public static function getDefaultPager(Request $request = null, int $perPage = 20)
     {
+        $page = $request ? (int)$request->get('page', 1) : 1;
         return [
-            'page'    => (int)$request->get('page', 1),
+            'page'    => $page,
             'perPage' => $perPage,
         ];
     }
@@ -459,5 +465,20 @@ class DiscountHelper
             'categories'       => $categoryService->categories($categoryService->newQuery()),
             'brands'           => $brandService->brands($brandService->newQuery()),
         ];
+    }
+
+    /**
+     * @param DiscountService $discountService
+     * @param int             $merchantId
+     *
+     * @return array
+     */
+    public static function getDiscountAuthors(DiscountService $discountService, int $merchantId)
+    {
+        $params = (new DiscountInDto())
+            ->merchant($merchantId)
+            ->toQuery();
+
+        return $discountService->authors($params);
     }
 }
