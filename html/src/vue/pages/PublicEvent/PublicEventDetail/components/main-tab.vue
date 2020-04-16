@@ -73,13 +73,7 @@
 </template>
 
 <script>
-    import {mapActions} from "vuex";
     import Helpers from '../../../../../scripts/helpers';
-
-    import {
-        NAMESPACE,
-        ACT_LOAD_PUBLIC_EVENT
-    } from '../../../../store/modules/public-events';
 
     import modalMixin from '../../../../mixins/modal.js';
     import ShadowCard from '../../../../components/shadow-card.vue';
@@ -100,12 +94,9 @@
             publicEvent: {}
         },
         methods: {
-            ...mapActions(NAMESPACE, {
-                reload: ACT_LOAD_PUBLIC_EVENT
-            }),
             onSave() {
                 this.closeModal();
-                this.reload({id: this.publicEvent.id});
+                this.$emit('onChange');
             },
             formatPhone(phoneString) {
                 return Helpers.formatPhoneNumber(phoneString);

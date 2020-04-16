@@ -372,6 +372,11 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'DeliveryKpiController@getPpt')->name('deliveryKpi.ppt.get');
                 Route::put('', 'DeliveryKpiController@setPpt')->name('deliveryKpi.ppt.set');
             });
+
+            Route::prefix('pct')->group(function () {
+                Route::get('', 'DeliveryKpiController@getPct')->name('deliveryKpi.pct.get');
+                Route::put('', 'DeliveryKpiController@setPct')->name('deliveryKpi.pct.set');
+            });
         });
     });
 
@@ -507,6 +512,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
+            Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
+            Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
+            
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
