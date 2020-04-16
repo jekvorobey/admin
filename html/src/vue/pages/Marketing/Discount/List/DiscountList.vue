@@ -261,7 +261,7 @@
         props: {
             iDiscounts: [Array, null],
             iCurrentPage: Number,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             discountStatuses: Object,
             iPager: Object,
             roles: Array,
@@ -405,7 +405,7 @@
                 this.applyFilter();
             },
             discountTypeName(type) {
-                return (type in this.discountTypes) ? this.discountTypes[type].name : 'N/A';
+                return (type in this.optionDiscountTypes) ? this.optionDiscountTypes[type].name : 'N/A';
             },
             forEachDiscount(callback) {
                 for (let i in this.discounts) {
@@ -443,7 +443,7 @@
                 }));
             },
             discountTypesOptions() {
-                return Object.values(this.discountTypes).map(type => ({value: type.id, text: type.name}));
+                return Object.values(this.optionDiscountTypes).map(type => ({value: type.id, text: type.name}));
             },
             discountStatusesOptions() {
                 return Object.values(this.discountStatuses).map(type => ({value: type.id, text: type.name}));

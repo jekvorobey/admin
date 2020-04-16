@@ -320,7 +320,11 @@ class DiscountHelper
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
                     if (!empty($condition['synergy'])) {
-                        $conditions[] = $model->setSynergy($condition['synergy']);
+                        $conditions[] = $model->setSynergy(
+                            $condition['synergy'],
+                            $condition['maxValueType'] ?? null,
+                            $condition['maxValue'] ?? null
+                        );
                     }
                     break;
             }
@@ -381,7 +385,7 @@ class DiscountHelper
         $merchantService = resolve(MerchantService::class);
 
         $data                     = [];
-        $data['discountTypes']    = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
+        $data['optionDiscountTypes']    = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
         $data['conditionTypes']   = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
         $data['deliveryMethods']  = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
         $data['paymentMethods']   = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
@@ -398,7 +402,11 @@ class DiscountHelper
         $data['discounts'] = $discountService->discounts($params)
             ->sortByDesc('created_at')
             ->map(function (DiscountDto $item) {
-                return ['value' => $item['id'], 'text' => "{$item['name']} ({$item->validityPeriod()})"];
+                return [
+                    'value' => $item['id'],
+                    'text' => "{$item['name']} ({$item->validityPeriod()})",
+                    'type' => $item->type,
+                ];
             })
             ->values();
 
@@ -439,7 +447,7 @@ class DiscountHelper
             'title'            => $title,
             'iDiscount'        => $discount,
             'discounts'        => $data['discounts'],
-            'discountTypes'    => $data['discountTypes'],
+            'optionDiscountTypes'    => $data['optionDiscountTypes'],
             'iConditionTypes'  => $data['conditionTypes'],
             'deliveryMethods'  => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
