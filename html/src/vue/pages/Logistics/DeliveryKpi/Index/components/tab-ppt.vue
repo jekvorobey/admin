@@ -5,20 +5,20 @@
             <th>
                 Мерчант
             </th>
-            <th>CT (мин) <fa-icon icon="question-circle" v-b-popover.hover="helpCt"></fa-icon></th>
+            <th>PPT (мин) <fa-icon icon="question-circle" v-b-popover.hover="helpPpt"></fa-icon></th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="deliveryKpiCt in deliveryKpiCts">
+        <tr v-for="deliveryKpiPpt in deliveryKpiPpts">
             <td>
-                {{deliveryKpiCt.merchant.legal_name}}
+                {{deliveryKpiPpt.merchant.legal_name}}
             </td>
             <td>
-                <v-input type="number" v-model.number="$v.form[deliveryKpiCt.merchant_id].ct.$model" :error="errorCt(deliveryKpiCt.merchant_id)"></v-input>
+                <v-input type="number" v-model.number="$v.form[deliveryKpiPpt.merchant_id].ppt.$model" :error="errorPpt(deliveryKpiPpt.merchant_id)"></v-input>
             </td>
             <td>
-                <button class="btn btn-success btn-sm" @click="save(deliveryKpiCt.merchant_id)" :disabled="!$v.form[deliveryKpiCt.merchant_id].$anyDirty" title="Сохранить">
+                <button class="btn btn-success btn-sm" @click="save(deliveryKpiPpt.merchant_id)" :disabled="!$v.form[deliveryKpiPpt.merchant_id].$anyDirty" title="Сохранить">
                     <fa-icon icon="save"/>
                 </button>
             </td>
@@ -28,7 +28,7 @@
                 <v-select v-model="$v.form['new'].merchant_id.$model" :options="merchantOptions" :error="errorMerchantId('new')"></v-select>
             </td>
             <td>
-                <v-input type="number" v-model.number="$v.form['new'].ct.$model" :error="errorCt('new')"></v-input>
+                <v-input type="number" v-model.number="$v.form['new'].ppt.$model" :error="errorPpt('new')"></v-input>
             </td>
             <td>
                 <button class="btn btn-success btn-sm" @click="save('new')" :disabled="!$v.form['new'].$anyDirty" title="Сохранить">
@@ -49,7 +49,7 @@
     import {validationMixin} from 'vuelidate';
 
     export default {
-        name: 'tab-ct',
+        name: 'tab-ppt',
         components: {
             VInput,
             VSelect,
@@ -59,20 +59,20 @@
         ],
         data() {
             return {
-                deliveryKpiCts: [],
+                deliveryKpiPpts: [],
                 merchants: [],
                 form: {
                     new: {
                         merchant_id: 0,
-                        ct: 0,
+                        ppt: 0,
                     }
                 },
             }
         },
         created() {
             Services.showLoader();
-            Services.net().get(this.getRoute('deliveryKpi.ct.get')).then(data => {
-                this.deliveryKpiCts = data.deliveryKpiCts;
+            Services.net().get(this.getRoute('deliveryKpi.ppt.get')).then(data => {
+                this.deliveryKpiPpts = data.deliveryKpiPpts;
                 this.merchants = data.merchants;
                 this.fillForm();
             }).finally(() => {
@@ -81,9 +81,9 @@
         },
         validations() {
             let form = {};
-            for (let [id, deliveryKpiCt] of Object.entries(this.deliveryKpiCts)) {
-                form[deliveryKpiCt.merchant_id] = {
-                    ct: {
+            for (let [id, deliveryKpiPpt] of Object.entries(this.deliveryKpiPpts)) {
+                form[deliveryKpiPpt.merchant_id] = {
+                    ppt: {
                         required,
                         integer,
                         minValue: minValue(0),
@@ -96,7 +96,7 @@
                     integer,
                     minValue: minValue(1),
                 },
-                ct: {
+                ppt: {
                     required,
                     integer,
                     minValue: minValue(0),
@@ -107,16 +107,16 @@
         },
         methods: {
             fillForm() {
-                for (let [id, deliveryKpiCt] of Object.entries(this.deliveryKpiCts)) {
-                    this.$set(this.form, deliveryKpiCt.merchant_id, {
-                        merchant_id: deliveryKpiCt.merchant_id,
-                        ct: deliveryKpiCt.ct,
+                for (let [id, deliveryKpiPpt] of Object.entries(this.deliveryKpiPpts)) {
+                    this.$set(this.form, deliveryKpiPpt.merchant_id, {
+                        merchant_id: deliveryKpiPpt.merchant_id,
+                        ppt: deliveryKpiPpt.ppt,
                     });
-                    this.$v.form[deliveryKpiCt.merchant_id].$reset();
+                    this.$v.form[deliveryKpiPpt.merchant_id].$reset();
                 }
                 this.$set(this.form, 'new', {
                     merchant_id: 0,
-                    ct: 0,
+                    ppt: 0,
                 });
                 this.$v.form['new'].$reset();
             },
@@ -127,8 +127,8 @@
                 }
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('deliveryKpi.ct.set'), {}, this.form[id]).then(data => {
-                    this.deliveryKpiCts = data.deliveryKpiCts;
+                Services.net().put(this.getRoute('deliveryKpi.ppt.set'), {}, this.form[id]).then(data => {
+                    this.deliveryKpiPpts = data.deliveryKpiPpts;
                     this.merchants = data.merchants;
                     this.fillForm();
 
@@ -144,12 +144,12 @@
                     }
                 }
             },
-            errorCt(id) {
-                if (this.$v.form.hasOwnProperty(id) && this.$v.form[id].ct.$dirty) {
-                    if (!this.$v.form[id].ct.required) {
+            errorPpt(id) {
+                if (this.$v.form.hasOwnProperty(id) && this.$v.form[id].ppt.$dirty) {
+                    if (!this.$v.form[id].ppt.required) {
                         return "Обязательное поле!";
                     }
-                    if (!this.$v.form[id].ct.integer || !this.$v.form[id].ct.minValue) {
+                    if (!this.$v.form[id].ppt.integer || !this.$v.form[id].ppt.minValue) {
                         return "Только целое число больше, либо равно 0";
                     }
                 }
@@ -159,8 +159,8 @@
             merchantOptions() {
                 return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
             },
-            helpCt() {
-                return 'Confirmation Time - время перехода Отправления из статуса “Ожидает подтверждения” в статус “На комплектации”';
+            helpPpt() {
+                return 'Planned Processing Time - плановое время для прохождения Отправлением статусов от “На комплектации” до “Готов к передаче ЛО”';
             },
         },
     };
