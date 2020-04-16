@@ -107,7 +107,7 @@ class TabDocumentController extends Controller
             $file = $files->get($document->file_id);
                 $writer->addRow(WriterEntityFactory::createRowFromArray([
                     $document->id,
-                    $document->typesNames()[$document->type],
+                    $document->typeName($document->type),
                     $document->period_since,
                     $document->period_to,
                     $document->updated_at,
@@ -158,7 +158,7 @@ class TabDocumentController extends Controller
             "d_period_to" => $document->period_to,
             "d_creation_date" => $document->updated_at,
             "d_amount_reward" => $document->amount_reward,
-            "d_type" => $document->typesNames()[$document->type],
+            "d_type" => $document->typeName($document->type),
             "d_status" => $document->statusName($document->status),
             "file_url" => $attachment,
         ];
