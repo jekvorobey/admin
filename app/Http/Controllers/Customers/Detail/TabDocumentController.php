@@ -48,6 +48,7 @@ class TabDocumentController extends Controller
                 }
                 return [
                     'id' => $document->id,
+                    'typeId' => $document->type,
                     'period_since' => $document->period_since,
                     'period_to' => $document->period_to,
                     'date' => $document->updated_at,
@@ -58,6 +59,7 @@ class TabDocumentController extends Controller
                 ];
             })->filter(),
             'statuses' => $documentDto->statusesNames(),
+            'types' => $documentDto->typesNames(),
         ]);
     }
 
@@ -82,9 +84,10 @@ class TabDocumentController extends Controller
         $format = request('format');
 
         $writer = WriterFactory::createFromType($format);
-        $writer->openToBrowser("Акты о реферальных зачислениях реферрера {$customerId}.{$format}");
+        $writer->openToBrowser("Документы реферального партнера {$customerId}.{$format}");
         $writer->addRow(WriterEntityFactory::createRowFromArray([
-            'Номер акта',
+            'Номер документа',
+            'Тип документа',
             'Начало периода',
             'Окончание периода',
             'Дата документа',
@@ -104,6 +107,7 @@ class TabDocumentController extends Controller
             $file = $files->get($document->file_id);
                 $writer->addRow(WriterEntityFactory::createRowFromArray([
                     $document->id,
+                    $document->typesNames()[$document->type],
                     $document->period_since,
                     $document->period_to,
                     $document->updated_at,
@@ -154,6 +158,7 @@ class TabDocumentController extends Controller
             "d_period_to" => $document->period_to,
             "d_creation_date" => $document->updated_at,
             "d_amount_reward" => $document->amount_reward,
+            "d_type" => $document->typesNames()[$document->type],
             "d_status" => $document->statusName($document->status),
             "file_url" => $attachment,
         ];
@@ -176,15 +181,17 @@ class TabDocumentController extends Controller
     public function createDocument(int $customerId, CustomerService $customerService)
     {
         $this->validate(request(), [
+            'type' => 'required|integer',
             'file' => 'required|max:4000',
-            'period_since' => 'required|date',
-            'period_to' => 'required|date',
-            'amount_reward' => 'required|numeric',
-            'status' => 'required|numeric',
+            'period_since' => 'nullable|date',
+            'period_to' => 'nullable|date',
+            'amount_reward' => 'nullable|numeric',
+            'status' => 'nullable|integer',
         ]);
 
         $documentFile = request('file');
         $documentDto = new CustomerDocumentDto();
+        $documentDto->type = request('type');
         $documentDto->file_id = $documentFile['id'];
         $documentDto->period_since = request('period_since');
         $documentDto->period_to = request('period_to');
@@ -192,16 +199,17 @@ class TabDocumentController extends Controller
         $documentDto->status = request('status');
 
         $createdDocumentId = $customerService->createDocument($customerId, $documentDto);
+        /** @var CustomerDocumentDto $createdDocument */
         $createdDocument = $customerService->documents($customerId)->where('id', $createdDocumentId)->first();
 
         return response()->json([
             'id' => $createdDocumentId,
+            'typeId' => $createdDocument->type,
             'period_since' => $createdDocument->period_since,
             'period_to' => $createdDocument->period_to,
             'date' => $createdDocument->updated_at,
             'amount_reward' => $createdDocument->amount_reward,
             'statusId' => $createdDocument->status,
-            'statusVerbal' => $documentDto->statusName($createdDocument->status),
         ]);
     }
 
