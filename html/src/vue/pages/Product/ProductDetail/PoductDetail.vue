@@ -43,6 +43,12 @@
                 :product="product"
                 @onSave="refresh"
             ></content-tab>
+        <categories-tab
+                v-if="nav.currentTab === 'categories'"
+                :product="product"
+                :propertyValues="this.properties"
+                :options="options"
+        ></categories-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
@@ -63,6 +69,7 @@
     import PropertyTab from './components/property-tab.vue';
     import DeliveryTab from './components/delivery-tab.vue';
     import ContentTab from './components/content-tab.vue';
+    import CategoriesTab from './components/categories-tab.vue';
     import HistoryTab from './components/history-tab.vue';
     import ProductRejectModal from './components/product-reject-modal.vue';
     import Services from '../../../../scripts/services/services';
@@ -75,6 +82,7 @@
         PropertyTab,
         DeliveryTab,
         ContentTab,
+        CategoriesTab,
         HistoryTab,
         ProductRejectModal,
     },
@@ -97,6 +105,7 @@
                     {value: 'props', text: 'Мастер-данные'},
                     {value: 'delivery', text: 'Хранение и доставка'},
                     {value: 'content', text: 'Контент'},
+                    {value: 'categories', text: 'Категории'},
                     {value: 'history', text: 'История'},
                 ]
             }
