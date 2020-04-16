@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-categories" title="Редактирование личных брендов" hide-footer ref="modal">
+    <b-modal id="modal-categories" :title="this.getTitle" hide-footer ref="modal">
         <template v-slot:default="{close}">
 
             <modal-categories-checkbox :categories="formCategories.children" :model.sync="form.categories"/>
@@ -20,7 +20,7 @@ import ModalCategoriesCheckbox from './modal-categories-checkbox.vue';
 export default {
     name: 'modal-categories',
     components: {ModalCategoriesCheckbox},
-    props: ['customerId', 'model', 'categories'],
+    props: ['customerId', 'model', 'categories', 'type'],
     data() {
         return {
             form: {
@@ -29,6 +29,16 @@ export default {
         }
     },
     computed: {
+        getTitle() {
+            switch (this.type) {
+                case 1:
+                    return 'Редактирование личных категорий';
+                case 2:
+                    return 'Редактирование профессиональных категорий';
+                default:
+                    return 'Редактирование предпочитаемых категорий'
+            }
+        },
         formCategories() {
             return NestedSets.process(Object.values(this.categories));
         },
@@ -36,7 +46,11 @@ export default {
     methods: {
         saveCategories() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.preference.category.save', {id: this.customerId}), null, {
+            Services.net().put(this.getRoute('customers.detail.preference.category.save',
+                {
+                    id: this.customerId,
+                    type: this.type,
+                }), null, {
                 categories: this.form.categories
             }).then(data => {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.form.categories)));

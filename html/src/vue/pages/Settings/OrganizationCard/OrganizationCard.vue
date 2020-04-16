@@ -1,169 +1,165 @@
 <template>
     <layout-main>
-        <div class="page-organization-card">
-            <form v-on:submit.prevent.stop="update">
-                <h3 class="mb-3">Сведения об организации</h3>
-                <div class="mb-3">
-                    <v-input v-model="$v.form.short_name.$model"
-                             :error="errorShortName"
-                             @change="() => {updateInput('short_name')}"
-                    >Краткое наименование организации</v-input>
-                </div>
-                <div class="mb-3">
-                    <v-input v-model="$v.form.full_name.$model"
-                             :error="errorFullName"
-                             @change="() => {updateInput('full_name')}"
-                    >Полное наименование организации</v-input>
-                </div>
+        <form v-on:submit.prevent.stop="update">
+            <h3 class="mb-3">Сведения об организации</h3>
+            <div class="mb-3">
+                <v-input v-model="$v.form.short_name.$model"
+                         :error="errorShortName"
+                         @change="() => {updateInput('short_name')}"
+                >Краткое наименование организации</v-input>
+            </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.full_name.$model"
+                         :error="errorFullName"
+                         @change="() => {updateInput('full_name')}"
+                >Полное наименование организации</v-input>
+            </div>
 
-                <hr/>
+            <hr/>
 
-                <div class="row">
-                    <v-input v-model="$v.form.inn.$model"
-                             :error="errorInn"
-                             class="col-md-6 col-12"
-                             @change="() => {updateInput('inn')}"
-                    >ИНН</v-input>
-                    <v-input v-model="$v.form.kpp.$model"
-                             :error="errorKpp"
-                             class="col-md-6 col-12"
-                             @change="() => {updateInput('kpp')}"
-                    >КПП</v-input>
-                </div>
-                <div class="row">
-                    <v-input v-model="$v.form.okpo.$model"
-                             :error="errorOkpo"
-                             class="col-md-6 col-12"
-                             @change="() => {updateInput('okpo')}"
-                    >ОКПО</v-input>
-                    <v-input v-model="$v.form.ogrn.$model"
-                             :error="errorOgrn"
-                             class="col-md-6 col-12"
-                             @change="() => {updateInput('ogrn')}"
-                    >ОГРН</v-input>
-                </div>
+            <div class="row">
+                <v-input v-model="$v.form.inn.$model"
+                         :error="errorInn"
+                         class="col-md-6 col-12"
+                         @change="() => {updateInput('inn')}"
+                >ИНН</v-input>
+                <v-input v-model="$v.form.kpp.$model"
+                         :error="errorKpp"
+                         class="col-md-6 col-12"
+                         @change="() => {updateInput('kpp')}"
+                >КПП</v-input>
+            </div>
+            <div class="row">
+                <v-input v-model="$v.form.okpo.$model"
+                         :error="errorOkpo"
+                         class="col-md-6 col-12"
+                         @change="() => {updateInput('okpo')}"
+                >ОКПО</v-input>
+                <v-input v-model="$v.form.ogrn.$model"
+                         :error="errorOgrn"
+                         class="col-md-6 col-12"
+                         @change="() => {updateInput('ogrn')}"
+                >ОГРН</v-input>
+            </div>
 
-                <hr/>
+            <hr/>
 
 
-                <div class="mb-3">
-                    <v-input v-model="$v.form.fact_address.$model"
-                             :error="errorFactAddress"
-                             @change="() => {updateInput('fact_address')}"
-                    >Фактический адрес</v-input>
-                </div>
-                <div class="mb-3">
-                    <v-input v-model="$v.form.legal_address.$model"
-                             :error="errorLegalAddress"
-                             @change="() => {updateInput('legal_address')}"
-                    >Юридический адрес</v-input>
-                </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.fact_address.$model"
+                         :error="errorFactAddress"
+                         @change="() => {updateInput('fact_address')}"
+                >Фактический адрес</v-input>
+            </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.legal_address.$model"
+                         :error="errorLegalAddress"
+                         @change="() => {updateInput('legal_address')}"
+                >Юридический адрес</v-input>
+            </div>
 
-                <hr/>
+            <hr/>
 
-                <div class="mb-3">
-                    <v-input v-model="$v.form.payment_account.$model"
-                             :error="errorPaymentAccount"
-                             @change="() => {updateInput('payment_account')}"
-                    >Номер банковского счета</v-input>
-                </div>
-                <div class="row">
-                    <v-input v-model="$v.form.bank_bik.$model"
-                             :error="errorBankBik"
-                             class="col-md-4 col-12"
-                             @change="() => {updateInput('bank_bik')}"
-                    >БИК банка</v-input>
-                    <v-input v-model="$v.form.bank_name.$model"
-                             :error="errorBankName"
-                             class="col-md-8 col-12"
-                             @change="() => {updateInput('bank_name')}"
-                    >Наименование банка</v-input>
-                </div>
-                <div class="mb-3">
-                    <v-input v-model="$v.form.correspondent_account.$model"
-                             :error="errorCorrespondentAccount"
-                             @change="() => {updateInput('correspondent_account')}"
-                    >Номер корреспондентского счета</v-input>
-                </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.payment_account.$model"
+                         :error="errorPaymentAccount"
+                         @change="() => {updateInput('payment_account')}"
+                >Номер банковского счета</v-input>
+            </div>
+            <div class="row">
+                <v-input v-model="$v.form.bank_bik.$model"
+                         :error="errorBankBik"
+                         class="col-md-3 col-12"
+                         @change="() => {updateInput('bank_bik')}"
+                >БИК банка</v-input>
+                <v-input v-model="$v.form.bank_name.$model"
+                         :error="errorBankName"
+                         class="col-md-9 col-12"
+                         @change="() => {updateInput('bank_name')}"
+                >Наименование банка</v-input>
+            </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.correspondent_account.$model"
+                         :error="errorCorrespondentAccount"
+                         @change="() => {updateInput('correspondent_account')}"
+                >Номер корреспондентского счета</v-input>
+            </div>
 
-                <hr/>
 
-                <h3 class="mb-3">Сведения о генеральном директоре</h3>
-                <div class="row">
-                    <v-input v-model="$v.form.ceo_last_name.$model"
-                             :error="errorCeoLastName"
-                             class="col-md-4 col-12"
-                             @change="() => {updateInput('ceo_last_name')}"
-                    >Фамилия</v-input>
-                    <v-input v-model="$v.form.ceo_first_name.$model"
-                             :error="errorCeoFirstName"
-                             class="col-md-4 col-12"
-                             @change="() => {updateInput('ceo_first_name')}"
-                    >Имя</v-input>
-                    <v-input v-model="$v.form.ceo_middle_name.$model"
-                             :error="errorCeoMiddleName"
-                             class="col-md-4 col-12"
-                             @change="() => {updateInput('ceo_middle_name')}"
-                    >Отчество</v-input>
-                </div>
-                <div class="mb-3">
-                    <v-input v-model="$v.form.ceo_document_number.$model"
-                             :error="errorCeoDocumentNumber"
-                             @change="() => {updateInput('ceo_document_number')}"
-                    >Номер документа, подтверждающий полномочия</v-input>
-                </div>
+            <h3 class="mb-3">Сведения о генеральном директоре</h3>
+            <div class="row">
+                <v-input v-model="$v.form.ceo_last_name.$model"
+                         :error="errorCeoLastName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('ceo_last_name')}"
+                >Фамилия</v-input>
+                <v-input v-model="$v.form.ceo_first_name.$model"
+                         :error="errorCeoFirstName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('ceo_first_name')}"
+                >Имя</v-input>
+                <v-input v-model="$v.form.ceo_middle_name.$model"
+                         :error="errorCeoMiddleName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('ceo_middle_name')}"
+                >Отчество</v-input>
+            </div>
+            <div class="mb-3">
+                <v-input v-model="$v.form.ceo_document_number.$model"
+                         :error="errorCeoDocumentNumber"
+                         @change="() => {updateInput('ceo_document_number')}"
+                >Номер документа, подтверждающий полномочия</v-input>
+            </div>
 
-                <hr/>
 
-                <h3 class="mb-3">Контактная информация</h3>
-                <div class="row">
-                    <v-input
-                            v-model="$v.form.contact_centre_phone.$model"
-                            :placeholder="telPlaceholder"
-                            :error="errorContactCentrePhone"
-                            v-mask="telMask"
-                            class="col-md-6 col-12"
-                            autocomplete="off"
-                            @change="() => {updateInput('contact_centre_phone')}"
-                    >Телефон конактного-центра</v-input>
-                    <v-input
-                            v-model="$v.form.social_phone.$model"
-                            :placeholder="telPlaceholder"
-                            :error="errorSocialPhone"
-                            v-mask="telMask"
-                            class="col-md-6 col-12"
-                            autocomplete="off"
-                            @change="() => {updateInput('social_phone')}"
-                    >Мобильный телефон для мессенджеров</v-input>
-                </div>
+            <h3 class="mb-3">Контактная информация</h3>
+            <div class="row">
                 <v-input
-                        v-model="$v.form.email_for_merchant.$model"
-                        :placeholder="emailPlaceholder"
-                        :error="errorEmailForMerchant"
+                        v-model="$v.form.contact_centre_phone.$model"
+                        :placeholder="telPlaceholder"
+                        :error="errorContactCentrePhone"
+                        v-mask="telMask"
+                        class="col-md-6 col-12"
                         autocomplete="off"
-                        @change="() => {updateInput('email_for_merchant')}"
-                >E-mail для мерчантов</v-input>
+                        @change="() => {updateInput('contact_centre_phone')}"
+                >Телефон конактного-центра</v-input>
                 <v-input
-                        v-model="$v.form.common_email.$model"
-                        :placeholder="emailPlaceholder"
-                        :error="errorCommonEmail"
+                        v-model="$v.form.social_phone.$model"
+                        :placeholder="telPlaceholder"
+                        :error="errorSocialPhone"
+                        v-mask="telMask"
+                        class="col-md-6 col-12"
                         autocomplete="off"
-                        @change="() => {updateInput('common_email')}"
-                >Общий e-mail</v-input>
-                <v-input
-                        v-model="$v.form.email_for_claim.$model"
-                        :placeholder="emailPlaceholder"
-                        :error="errorEmailForClaim"
-                        autocomplete="off"
-                        @change="() => {updateInput('email_for_claim')}"
-                >E-mail для заявок</v-input>
+                        @change="() => {updateInput('social_phone')}"
+                >Мобильный телефон для мессенджеров</v-input>
+            </div>
+            <v-input
+                    v-model="$v.form.email_for_merchant.$model"
+                    :placeholder="emailPlaceholder"
+                    :error="errorEmailForMerchant"
+                    autocomplete="off"
+                    @change="() => {updateInput('email_for_merchant')}"
+            >E-mail для мерчантов</v-input>
+            <v-input
+                    v-model="$v.form.common_email.$model"
+                    :placeholder="emailPlaceholder"
+                    :error="errorCommonEmail"
+                    autocomplete="off"
+                    @change="() => {updateInput('common_email')}"
+            >Общий e-mail</v-input>
+            <v-input
+                    v-model="$v.form.email_for_claim.$model"
+                    :placeholder="emailPlaceholder"
+                    :error="errorEmailForClaim"
+                    autocomplete="off"
+                    @change="() => {updateInput('email_for_claim')}"
+            >E-mail для заявок</v-input>
 
 
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
-                </div>
-            </form>
-        </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
     </layout-main>
 </template>
 
@@ -465,12 +461,3 @@ export default {
     }
 };
 </script>
-
-<style>
-    .page-organization-card {
-        width: 100%;
-        max-width: 720px;
-        padding: 15px;
-        margin: 50px auto 0 auto;
-    }
-</style>
