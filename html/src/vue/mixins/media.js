@@ -7,6 +7,9 @@ export default {
         },
         fileUrl(id) {
             return Media.file(id)
+        },
+        youtubeUrl(code) {
+            return Media.video(code);
         }
     }
 }
