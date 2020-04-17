@@ -40,10 +40,21 @@ class MerchantDetailController extends Controller
         $operatorMain = $operatorService->operators(
             (new RestQuery())->setFilter('merchant_id', $merchant->id)->setFilter('is_main', true)
         )->first();
-        /** @var UserDto $userMain */
-        $userMain = $userService
-            ->users((new RestQuery())->setFilter('id', $operatorMain->user_id))
-            ->first();
+        if (is_null($operatorMain)) {
+            /**
+             * Если не найден оператор с флагом is_main, то берем первого попавшегося оператора
+             */
+            $operatorMain = $operatorService->operators(
+                (new RestQuery())->setFilter('merchant_id', $merchant->id)
+            )->first();
+        }
+        $userMain = null;
+        if ($operatorMain) {
+            /** @var UserDto $userMain */
+            $userMain = $userService
+                ->users((new RestQuery())->setFilter('id', $operatorMain->user_id))
+                ->first();
+        }
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
 
@@ -78,11 +89,11 @@ class MerchantDetailController extends Controller
                 'contract_number' => $merchant->contract_number,
                 'contract_at' => $merchant->contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->contract_at)->format('Y-m-d') : null,
                 'main_operator' => [
-                    'first_name' => $userMain->first_name,
-                    'last_name' => $userMain->last_name,
-                    'middle_name' => $userMain->middle_name,
-                    'phone' => $userMain->phone,
-                    'email' => $userMain->email,
+                    'first_name' => $userMain ? $userMain->first_name : '',
+                    'last_name' => $userMain ? $userMain->last_name : 'N/A',
+                    'middle_name' => $userMain ? $userMain->middle_name : '',
+                    'phone' => $userMain ? $userMain->phone : 'N/A',
+                    'email' => $userMain ? $userMain->email : 'N/A',
                 ],
             ],
             'statuses' => MerchantStatus::statusesByMode($isRequest),
