@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Pim\Dto\PublicEvent\OrganizerDto;
 use Pim\Dto\PublicEvent\PublicEventDto;
+use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService;
 use Pim\Services\PublicEventService\PublicEventService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -103,6 +105,43 @@ class PublicEventDetailController extends Controller
         $organizerDto = new OrganizerDto($organizerData);
         $organizerDto->owner_id = $user->userId();
         $publicEventService->addOrganizerByValue($event_id, $organizerDto);
+        return response()->json();
+    }
+    
+    public function saveMedia(int $event_id, Request $request, PublicEventService $publicEventService)
+    {
+        $data = $this->validate($request, [
+            'type' => ['required', Rule::in([
+                PublicEventMediaDto::TYPE_IMAGE,
+                PublicEventMediaDto::TYPE_VIDEO,
+                PublicEventMediaDto::TYPE_YOUTUBE,
+            ])],
+            'collection' => ['required', Rule::in([
+                PublicEventDto::MEDIA_CATALOG,
+                PublicEventDto::MEDIA_DETAIL,
+                PublicEventDto::MEDIA_GALLERY,
+                PublicEventDto::MEDIA_DESCRIPTION,
+                PublicEventDto::MEDIA_HISTORY,
+            ])],
+            'value' => 'required',
+            'oldMedia' => 'nullable|integer'
+        ]);
+        
+        $oldMediaId = $data['oldMedia'] ?? null;
+        if ($oldMediaId) {
+            $publicEventService->delMedia($event_id, $oldMediaId);
+        }
+        $publicEventService->addMedia($event_id, $data['collection'], $data['type'], $data['value']);
+        
+        return response()->json();
+    }
+    
+    public function deleteMedia(int $event_id, Request $request, PublicEventService $publicEventService)
+    {
+        $data = $this->validate($request, [
+            'mediaId' => 'required'
+        ]);
+        $publicEventService->delMedia($event_id, $data['mediaId']);
         return response()->json();
     }
     

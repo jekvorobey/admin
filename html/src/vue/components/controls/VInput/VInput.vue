@@ -1,6 +1,6 @@
 <template>
     <div class="form-group">
-        <label :for="inputId">
+        <label :for="inputId" v-if="this.$slots.default">
             <slot />
         </label>
         <input
@@ -35,9 +35,9 @@
 </template>
 
 <script>
-import inputMixin from '../../../mixins/input-mixin';
+    import inputMixin from '../../../mixins/input-mixin';
 
-const validTags = ['input', 'textarea'];
+    const validTags = ['input', 'textarea'];
 
 export default {
     name: 'v-input',

@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-brands" title="Редактирование личных брендов" hide-footer ref="modal">
+    <b-modal id="modal-brands" :title="this.getTitle" hide-footer ref="modal">
         <template v-slot:default="{close}">
 
             <b-form-group>
@@ -26,7 +26,7 @@ import Services from '../../../../../scripts/services/services.js';
 
 export default {
     name: 'modal-brands',
-    props: ['customerId', 'model', 'brands'],
+    props: ['customerId', 'model', 'brands', 'type'],
     data() {
         return {
             form: {
@@ -35,6 +35,16 @@ export default {
         }
     },
     computed: {
+        getTitle() {
+            switch (this.type) {
+                case 1:
+                    return 'Редактирование личных брендов';
+                case 2:
+                    return 'Редактирование профессиональных брендов';
+                default:
+                    return 'Редактирование предпочитаемых брендов'
+            }
+        },
         sortBrands() {
             return Object.values(this.brands).sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         },
@@ -42,7 +52,11 @@ export default {
     methods: {
         saveBrands() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.preference.brand.save', {id: this.customerId}), null, {
+            Services.net().put(this.getRoute('customers.detail.preference.brand.save',
+                {
+                    id: this.customerId,
+                    type: this.type,
+                }), null, {
                 brands: this.form.brands
             }).then(data => {
                 this.$emit('update:model', JSON.parse(JSON.stringify(this.form.brands)));

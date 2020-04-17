@@ -9,6 +9,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
@@ -46,7 +47,9 @@ class ViewRender
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
     private $publicEventMediaCollections = [];
-    
+
+    private $discountTypes = [];
+
     public function __construct($componentName, $props)
     {
         $this->componentName = $componentName;
@@ -242,6 +245,23 @@ class ViewRender
                 'catalog' => PublicEventDto::MEDIA_CATALOG,
                 'detail' => PublicEventDto::MEDIA_DETAIL,
                 'gallery' => PublicEventDto::MEDIA_GALLERY,
+                'description' => PublicEventDto::MEDIA_DESCRIPTION,
+                'history' => PublicEventDto::MEDIA_HISTORY,
+            ];
+        }
+        return $this;
+    }
+
+    public function loadDiscountTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->discountTypes = [
+                'offer' => DiscountTypeDto::TYPE_OFFER,
+                'bundle' => DiscountTypeDto::TYPE_BUNDLE,
+                'brand' => DiscountTypeDto::TYPE_BRAND,
+                'category' => DiscountTypeDto::TYPE_CATEGORY,
+                'delivery' => DiscountTypeDto::TYPE_DELIVERY,
+                'cartTotal' => DiscountTypeDto::TYPE_CART_TOTAL,
             ];
         }
         return $this;
@@ -276,6 +296,8 @@ class ViewRender
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
                 'publicEventMediaCollections' => $this->publicEventMediaCollections,
+
+                'discountTypes' => $this->discountTypes,
             ],
             [
                 'title' => $this->title,

@@ -44,6 +44,14 @@ Route::middleware('auth')->group(function () {
                     Route::post('save', 'TabCommissionController@saveCommission')->name('merchant.detail.commission.save');
                     Route::post('remove', 'TabCommissionController@removeCommission')->name('merchant.detail.commission.remove');
                 });
+                Route::prefix('marketing')->group(function () {
+                    Route::prefix('discounts')->group(function () {
+                        Route::get('', 'TabMarketingController@loadDiscounts')->name('merchant.detail.marketing.discounts');
+                        Route::get('page', 'TabMarketingController@page')->name('merchant.detail.marketing.discounts.pagination');
+                        Route::put('', 'TabMarketingController@status')->name('merchant.detail.marketing.discounts.status');
+                        Route::delete('', 'TabMarketingController@delete')->name('merchant.detail.marketing.discounts.delete');
+                    });
+                });
             });
         });
 
@@ -351,8 +359,32 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('delivery-prices')->group(function () {
-            Route::get('/', 'DeliveryPriceController@index')->name('deliveryPrice.index');
-            Route::put('/delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
+            Route::get('', 'DeliveryPriceController@index')->name('deliveryPrice.index');
+            Route::put('delivery-price', 'DeliveryPriceController@save')->name('deliveryPrice.save');
+        });
+
+        Route::prefix('delivery-kpi')->group(function () {
+            Route::get('', 'DeliveryKpiController@index')->name('deliveryKpi.index');
+
+            Route::prefix('main')->group(function () {
+                Route::get('', 'DeliveryKpiController@getMain')->name('deliveryKpi.main.get');
+                Route::put('', 'DeliveryKpiController@setMain')->name('deliveryKpi.main.set');
+            });
+
+            Route::prefix('ct')->group(function () {
+                Route::get('', 'DeliveryKpiController@getCt')->name('deliveryKpi.ct.get');
+                Route::put('', 'DeliveryKpiController@setCt')->name('deliveryKpi.ct.set');
+            });
+
+            Route::prefix('ppt')->group(function () {
+                Route::get('', 'DeliveryKpiController@getPpt')->name('deliveryKpi.ppt.get');
+                Route::put('', 'DeliveryKpiController@setPpt')->name('deliveryKpi.ppt.set');
+            });
+
+            Route::prefix('pct')->group(function () {
+                Route::get('', 'DeliveryKpiController@getPct')->name('deliveryKpi.pct.get');
+                Route::put('', 'DeliveryKpiController@setPct')->name('deliveryKpi.pct.set');
+            });
         });
     });
 
@@ -409,10 +441,12 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::prefix('preference')->group(function () {
                         Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');
-                        Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
-                        Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
                         Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('customers.detail.preference.favorite.add');
                         Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('customers.detail.preference.favorite.delete');
+                        Route::prefix('{type}')->group(function () {
+                            Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
+                            Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
+                        });
                     });
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
@@ -486,6 +520,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
+            Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
+            Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
+            
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });

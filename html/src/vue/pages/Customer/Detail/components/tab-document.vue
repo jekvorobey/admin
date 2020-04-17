@@ -25,8 +25,9 @@
         </tr>
         <tr>
             <th>ID</th>
-            <th>Период</th>
+            <th>Тип документа</th>
             <th>Дата документа</th>
+            <th>Период</th>
             <th>Сумма вознаграждения</th>
             <th>Статус</th>
             <th>Файл</th>
@@ -36,9 +37,12 @@
         <tbody>
         <tr v-for="(document, i) in documents">
             <td>{{ document.id }}</td>
-            <td>{{ datePrint(document.period_since) }} — {{ datePrint(document.period_to) }}</td>
+            <td>{{ typeName(document.typeId) }}</td>
             <td>{{ datetimePrint(document.date) }}</td>
-            <td>{{ document.amount_reward }} руб.</td>
+            <td>
+                {{ document.period_since ? datePrint(document.period_since) : '' }} — {{ document.period_to ? datePrint(document.period_to) : '' }}
+            </td>
+            <td>{{ document.amount_reward ? document.amount_reward : '--' }} руб.</td>
             <td>
                 <span class="badge" :class="statusClass(document.statusId)">{{ statusName(document.statusId) || 'N/A'}}</span></td>
             <td>
@@ -59,6 +63,7 @@
     <document-create-modal
             @add="createDocument"
             modal-name="CreateDocumentModal"
+            :types="types"
             :statuses="statuses"/>
 
 </div>
@@ -82,7 +87,8 @@
         mixins: [modalMixin],
         props: [
             'model',
-            'statuses'
+            'types',
+            'statuses',
         ],
         data() {
             return {
@@ -109,6 +115,9 @@
             },
             statusName(statusId) {
                 return this.statuses[statusId]
+            },
+            typeName (typeId) {
+                return this.types[typeId]
             },
             deleteDocument(document_id, index) {
                 Services.showLoader();
@@ -140,12 +149,12 @@
                 }), newDocument).then(data => {
                     this.$set(this.documents, this.documents.length, {
                         id: data.id,
+                        typeId: data.typeId,
                         period_since: data.period_since,
                         period_to: data.period_to,
                         date: data.date,
                         amount_reward: data.amount_reward,
                         statusId: data.statusId,
-                        statusVerbal: data.statusVerbal,
                         name: newDocument.file.name,
                         url: newDocument.file.url,
                     });
@@ -160,7 +169,9 @@
             Services.showLoader();
             Services.net().get(this.getRoute('customers.detail.document', {id: this.model.id})).then(data => {
                 this.documents = data.documents;
+                this.types = data.types;
                 this.statuses = data.statuses;
+
             }).finally(() => {
                 Services.hideLoader();
             })

@@ -43,7 +43,7 @@
                 <th><label for="discount-type-select">Скидка на</label></th>
                 <td colspan="2">
                     <select class="form-control form-control-sm" id="discount-type-select" v-model="discount.type">
-                        <option v-for="type in discountTypes" :value="type.value">
+                        <option v-for="type in optionDiscountTypes" :value="type.value">
                             {{ type.text }}
                         </option>
                     </select>
@@ -109,7 +109,7 @@
         mixins: [],
         props: {
             model: Object,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             discountStatuses: Object,
             merchants: Array,
             author: Object,

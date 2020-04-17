@@ -1,6 +1,6 @@
 <template>
     <div class="form-group">
-        <label :for="inputId">
+        <label :for="inputId" v-if="this.$slots.default">
             <slot />
         </label>
         <b-form-select v-bind="$attrs"
@@ -20,6 +20,7 @@
 
 <script>
     import inputMixin from '../../../mixins/input-mixin';
+
     export default {
         name: "VSelect",
         mixins: [inputMixin],

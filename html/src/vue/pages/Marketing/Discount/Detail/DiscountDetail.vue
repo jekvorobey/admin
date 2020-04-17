@@ -5,7 +5,7 @@
                 <b-card>
                     <infopanel
                         :model.sync="discount"
-                        :discount-types="discountTypes"
+                        :option-discount-types="optionDiscountTypes"
                         :discount-statuses="discountStatuses"
                         :merchants="merchants"
                         :author="author"
@@ -22,20 +22,20 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <th>Сумма заказов с использованием скидки (в рублях)</th>
-                            <td>–</td>
+                            <th>Сумма заказов с использованием скидки</th>
+                            <td>{{ KPI.orders_sum_with_discount }} ₽</td>
                         </tr>
                         <tr>
-                            <th>Сумма, которое сэкономили покупатели (в рублях)</th>
-                            <td>–</td>
+                            <th>Сумма, которое сэкономили покупатели</th>
+                            <td>{{ KPI.saved_sum }} ₽</td>
                         </tr>
                         <tr>
-                            <th>Количество пользователей, которые воспользовались скидкой</th>
-                            <td>–</td>
+                            <th>Количество пользователей, <br/>которые воспользовались скидкой</th>
+                            <td>{{ KPI.customers_count }}</td>
                         </tr>
                         <tr>
                             <th>Количество заказов со скидкой</th>
-                            <td>–</td>
+                            <td>{{ KPI.orders_count }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -82,7 +82,7 @@
         props: {
             discounts: Array,
             iDiscount: Object,
-            discountTypes: Object,
+            optionDiscountTypes: Object,
             discountStatuses: Object,
             iConditionTypes: Object,
             merchants: Array,
@@ -93,6 +93,7 @@
             brands: Array,
             categories: Array,
             roles: Array,
+            KPI: Object,
         },
         data() {
             return {

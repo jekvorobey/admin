@@ -76,7 +76,7 @@
                 <div v-if="!certificates.length">-</div>
 
                 <div>
-                    <file-input v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                    <file-input v-if="!form.file" destination='certificate' @uploaded="(data) => form.file = data" class="mb-3"></file-input>
                     <div v-else class="alert alert-success py-1 px-3" role="alert">
                         Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
                         <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>

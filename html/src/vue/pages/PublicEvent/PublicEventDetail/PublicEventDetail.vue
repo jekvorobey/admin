@@ -14,13 +14,21 @@
             </div>
         </div>
         <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
-        <main-tab v-if="nav.currentTab === 'main'" :public-event="publicEvent"/>
-        <content-tab v-if="nav.currentTab === 'content'" :public-event="publicEvent"/>
+        <main-tab
+                v-if="nav.currentTab === 'main'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
+        <content-tab
+                v-if="nav.currentTab === 'content'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
     </layout-main>
 </template>
 
 <script>
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
 
     import VTabs from '../../../components/tabs/tabs.vue';
 
@@ -32,7 +40,8 @@
         NAMESPACE,
         SET_DETAIL,
         GET_DETAIL,
-    } from '../../../store/modules/public-events.js';
+        ACT_LOAD_PUBLIC_EVENT,
+    } from '../../../store/modules/public-events';
 
     export default {
     components: {
@@ -59,7 +68,12 @@
     },
 
     methods: {
-
+        ...mapActions(NAMESPACE, {
+            reload: ACT_LOAD_PUBLIC_EVENT
+        }),
+        onTabChange() {
+            this.reload({id: this.publicEvent.id});
+        }
     },
     computed: {
         ...mapGetters(NAMESPACE, {

@@ -93,6 +93,9 @@
                             <ul>
                                 <li v-for="id in condition.synergy">{{ discountName(id) }}</li>
                             </ul>
+                            <template v-if="condition.maxValueType">
+                                Максимальный размер (Значение в {{ isPercentType(condition.maxValueType) ? 'процентах' : 'рублях' }}): {{ condition.maxValue }}
+                            </template>
                         </template>
                     </td>
                     <td>
@@ -271,6 +274,23 @@
                       :error="valuesErrors.synergy"
                       @change="initSynergyError"
             >Суммируется с другими скидками</v-select>
+
+            <div v-if="canHasSynergyMax">
+                <p>Суммируется, но максимальный размер:</p>
+                <v-select v-model="values.maxValueType"
+                        :options="[{text: 'Без ограничения', value: null}, ...discountSizeTypes]"
+                        :error="valuesErrors.synergyMaxValueType"
+                        @change="initErrorSynergyMaxValueType"
+                >Тип значения</v-select>
+                <v-input v-model="values.maxValue"
+                        type="number"
+                        min="1"
+                        :error="valuesErrors.synergyMaxValue"
+                        @change="initErrorSynergyMaxValue"
+                >Значение в {{ isPercentType(values.value_type) ? 'процентах' : 'рублях' }}
+                </v-input>
+            </div>
+
         </div>
 
         <div class="col-12" id="conditions-scroll">&nbsp;</div>
@@ -282,7 +302,7 @@
     import CategoriesSearch from './categories-search.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
-    import Services from "../../../../../scripts/services/services";
+    import Services from '../../../../../scripts/services/services';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
     export default {
@@ -295,6 +315,7 @@
             Services,
         },
         props: {
+            discount: Object,
             discounts: Array,
             conditions: Array,
             iConditionTypes: Object,
@@ -305,6 +326,7 @@
             categories: Array,
             segments: Array,
             roles: Array,
+            discountSizeTypes: Array,
         },
         data() {
             return {
@@ -335,7 +357,9 @@
                     regions: null,
                     user: null,
                     sequenceNumber: null,
-                    synergy:null,
+                    synergy: null,
+                    synergyMaxValueType: null,
+                    synergyMaxValue: null,
                 },
             }
         },
@@ -379,6 +403,7 @@
                         break;
                     case this.CONDITION_TYPE_DISCOUNT_SYNERGY:
                         bool = this.checkValuesSynergy() && bool;
+                        bool = this.checkValuesSynergyMax() && bool;
                         break;
                 }
 
@@ -505,6 +530,40 @@
                     return false;
                 }
                 return true;
+            },
+            checkValuesSynergyMax() {
+                if (!this.canHasSynergyMax) {
+                    this.values.maxValue = null;
+                    this.values.maxValueType = null;
+                    return true;
+                }
+
+                if (!this.values.maxValue && !this.values.maxValueType) {
+                    return true;
+                } else if (this.values.maxValue && this.values.maxValueType) {
+                    switch (this.values.maxValueType) {
+                        case 1:
+                            if (!(this.values.maxValue > 0 && this.values.maxValue <= 100)) {
+                                this.valuesErrors.synergyMaxValue = 'Значение должно быть в диапазоне от 1 до 100!';
+                                return false;
+                            }
+                            break;
+                        case 2:
+                            if (!(this.values.maxValue > 0)) {
+                                this.valuesErrors.synergyMaxValue = 'Значение должно быть больше 0!';
+                                return false;
+                            }
+                            break;
+                    }
+                    return true;
+                } else if (this.values.maxValue) {
+                    this.valuesErrors.synergyMaxValueType = 'Выберите тип максимального значения';
+                    return false;
+                } else if (this.values.maxValueType) {
+                    this.valuesErrors.synergyMaxValue = 'Введите максимальное значение';
+                    return false;
+                }
+                return false;
             },
             editCondition(condType) {
                 let values = this.conditions.find(condition => {
@@ -635,11 +694,48 @@
             initSynergyError() {
                 this.valuesErrors.synergy = null;
             },
+            initErrorSynergyMaxValueType() {
+                this.valuesErrors.synergyMaxValueType = null;
+            },
+            initErrorSynergyMaxValue() {
+                this.valuesErrors.synergyMaxValue = null;
+            },
+            isPercentType(type) {
+                return type === 1;
+            },
         },
         computed: {
             valuesUserError() {
                 return (this.valuesErrors.user) ? ' ' : null;
             },
+            canHasSynergyMax() {
+                if ([
+                    this.discountTypes.brand,
+                    this.discountTypes.category,
+                    this.discountTypes.offer,
+                ].indexOf(this.discount.type) === -1) {
+                    return false;
+                }
+
+                let canHasSynergyMax = true;
+
+                if (this.values.synergy.length > 0) {
+                    this.values.synergy.forEach((discount_id) => {
+                        let discount = this.discounts.find(discount => discount.value === discount_id);
+                        if (discount) {
+                            if ([
+                                this.discountTypes.brand,
+                                this.discountTypes.category,
+                                this.discountTypes.offer,
+                            ].indexOf(discount.type) === -1) {
+                                canHasSynergyMax = false;
+                            }
+                        }
+                    });
+                }
+
+                return canHasSynergyMax;
+            }
         },
         watch: {
             conditionType() {

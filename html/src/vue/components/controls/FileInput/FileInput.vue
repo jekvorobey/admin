@@ -85,6 +85,7 @@
                     })
                         .then(
                             data => {
+                                // data = {id, name, url}
                                 this.$emit('uploaded', data);
                             },
                             error => {

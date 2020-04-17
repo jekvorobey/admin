@@ -8,8 +8,12 @@ use Carbon\Carbon;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -20,6 +24,16 @@ use Pim\Services\SearchService\SearchService;
 
 class TabPreferenceController extends Controller
 {
+    /**
+     * @param $id
+     * @param BrandService $brandService
+     * @param CategoryService $categoryService
+     * @param CustomerService $customerService
+     * @param ProductService $productService
+     * @param Request $request
+     * @return JsonResponse
+     * @throws PimException
+     */
     public function load(
         $id,
         BrandService $brandService,
@@ -39,9 +53,13 @@ class TabPreferenceController extends Controller
         return response()->json([
             'brands' => $brands->keyBy('id'),
             'categories' => $categories->keyBy('id'),
-            'customer' => [
+            'pref_personal' => [
                 'brands' => $customer->own_brands,
                 'categories' => $customer->own_categories,
+            ],
+            'pref_referral' => [
+                'brands' => $customer->ref_brands,
+                'categories' => $customer->ref_categories,
             ],
             'favorites' => $favoriteItems ? $this->loadFavoriteItems($query, $productService) : null,
         ]);
@@ -82,28 +100,38 @@ class TabPreferenceController extends Controller
         return $query;
     }
 
-    public function putBrands(int $id, CustomerService $customerService)
+    /**
+     * @param int $id
+     * @param int $prefType
+     * @param CustomerService $customerService
+     * @return ResponseFactory|Response
+     */
+    public function putBrands(int $id, int $prefType, CustomerService $customerService)
     {
-        $this->validate(request(), [
+        $data = $this->validate(request(), [
             'brands' => 'array',
-            'brands.*' => 'numeric',
+            'brands.*' => 'integer',
         ]);
 
-        //TODO: Не забыть переделать в #57176
-        $customerService->updateBrands($id, 1, request('brands'));
+        $customerService->updateBrands($id, $prefType, $data['brands']);
 
         return response('', 204);
     }
 
-    public function putCategories(int $id, CustomerService $customerService)
+    /**
+     * @param int $id
+     * @param int $prefType
+     * @param CustomerService $customerService
+     * @return ResponseFactory|Response
+     */
+    public function putCategories(int $id, int $prefType, CustomerService $customerService)
     {
-        $this->validate(request(), [
+        $data = $this->validate(request(), [
             'categories' => 'array',
-            'categories.*' => 'numeric',
+            'categories.*' => 'integer',
         ]);
 
-        //TODO: Не забыть переделать в #57176
-        $customerService->updateCategories($id, 1, request('categories'));
+        $customerService->updateCategories($id, $prefType, $data['categories']);
 
         return response('', 204);
     }
