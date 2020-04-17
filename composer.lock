@@ -505,12 +505,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "7b3a74e00b0859163b341b777d6edcca18bfe843"
+                "reference": "739c3eea5fd6be11c418ac401b093d66b86c3d5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=7b3a74e00b0859163b341b777d6edcca18bfe843",
-                "reference": "7b3a74e00b0859163b341b777d6edcca18bfe843",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=739c3eea5fd6be11c418ac401b093d66b86c3d5a",
+                "reference": "739c3eea5fd6be11c418ac401b093d66b86c3d5a",
                 "shasum": ""
             },
             "require": {
@@ -545,7 +545,10 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-04-16T22:59:44+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/14329212/issues"
+            },
+            "time": "2020-04-17T15:26:28+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -4476,16 +4479,6 @@
                 "certificate",
                 "ssl",
                 "tls"
-            ],
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-04-08T08:27:21+00:00"
         },

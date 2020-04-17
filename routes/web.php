@@ -88,6 +88,10 @@ Route::middleware('auth')->group(function () {
             Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });
+
+        Route::prefix('bonus')->group(function () {
+            Route::get('', 'BonusController@index')->name('bonus.list');
+        });
     });
 
     Route::prefix('claims')->namespace('Claim')->group(function () {
@@ -476,6 +480,10 @@ Route::middleware('auth')->group(function () {
                         });
 
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                    });
+                    Route::prefix('bonuses')->group(function () {
+                        Route::get('', 'TabBonusController@load')->name('customers.detail.bonuses');
+                        Route::post('', 'TabBonusController@add')->name('customers.detail.bonus.add');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

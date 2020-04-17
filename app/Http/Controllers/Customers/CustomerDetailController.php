@@ -21,6 +21,7 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Core\Helpers;
 
 class CustomerDetailController extends Controller
 {
@@ -119,6 +120,7 @@ class CustomerDetailController extends Controller
                 'referral_code' => $customer->referral_code,
                 'referral_bill' => $customer->referral_bill,
                 'promo_page_name' => $customer->promo_page_name,
+                'bonus' => Helpers::getPriceFormat($customer->bonus, 0),
                 'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
                 'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
@@ -145,7 +147,7 @@ class CustomerDetailController extends Controller
             ],
             'order' => [
                 'count' => $orders->count(),
-                'price' => number_format($orders->sum('price'), 2, '.', ' '),
+                'price' => Helpers::getPriceFormat($orders->sum('price')),
             ],
             'referralLevels' => $referralLevels,
         ]);
