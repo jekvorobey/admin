@@ -23,7 +23,7 @@
                     <tab-main v-if="key === 'main'" :model.sync="merchant"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
-                    <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id"/>
+                    <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id" :legal_name="merchant.legal_name"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-
 import Infopanel from './components/infopanel.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';

@@ -30,11 +30,12 @@ class DiscountHelper
 {
     /**
      * @param Request $request
+     * @param int     $userId
      * @param array   $pager
      * @param int     $merchantId
      * @return array
      */
-    public static function getParams(Request $request, array $pager = [], int $merchantId = null)
+    public static function getParams(Request $request, int $userId, array $pager = [], int $merchantId = null)
     {
         $discountInDto = new DiscountInDto();
 
@@ -61,13 +62,10 @@ class DiscountHelper
             : null;
         isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
-        if ($merchantId) {
-            $query = $discountInDto->merchant($merchantId);
-        } else {
-            $query = $discountInDto->status(DiscountStatusDto::STATUS_CREATED, true);
-        }
+        ($merchantId) ? $discountInDto->merchant($merchantId) : null;
 
-        return $query
+        return $discountInDto
+            ->status(DiscountStatusDto::STATUS_CREATED, true, $userId)
             ->sortDirection('desc')
             ->toQuery();
     }
@@ -92,13 +90,18 @@ class DiscountHelper
         return $discounts;
     }
 
-    public static function getDiscountUsersInfo(DiscountService $discountService)
+    public static function getDiscountUsersInfo(DiscountService $discountService, int $userId, $merchantId = null)
     {
-        return $discountService->usersInfo([
+        $filter = [
             'filter' => [
-                '!status' => DiscountStatusDto::STATUS_CREATED
+                '!status' => DiscountStatusDto::STATUS_CREATED,
+                '!status_user_id' => $userId,
             ]
-        ]);
+        ];
+        if ($merchantId) {
+            $filter['filter']['merchant_id'] = $merchantId;
+        }
+        return $discountService->usersInfo($filter);
     }
 
     /**
@@ -373,11 +376,10 @@ class DiscountHelper
      *
      * @return array
      */
-    public static function getDefaultPager(Request $request = null, int $perPage = 20)
+    public static function getDefaultPager(Request $request, int $perPage = 20)
     {
-        $page = $request ? (int)$request->get('page', 1) : 1;
         return [
-            'page'    => $page,
+            'page'    => (int)$request->get('page', 1),
             'perPage' => $perPage,
         ];
     }
@@ -465,20 +467,5 @@ class DiscountHelper
             'categories'       => $categoryService->categories($categoryService->newQuery()),
             'brands'           => $brandService->brands($brandService->newQuery()),
         ];
-    }
-
-    /**
-     * @param DiscountService $discountService
-     * @param int             $merchantId
-     *
-     * @return array
-     */
-    public static function getDiscountAuthors(DiscountService $discountService, int $merchantId)
-    {
-        $params = (new DiscountInDto())
-            ->merchant($merchantId)
-            ->toQuery();
-
-        return $discountService->authors($params);
     }
 }

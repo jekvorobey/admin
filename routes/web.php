@@ -46,10 +46,12 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('marketing')->group(function () {
                     Route::prefix('discounts')->group(function () {
-                        Route::get('', 'TabMarketingController@loadDiscounts')->name('merchant.detail.marketing.discounts');
-                        Route::get('page', 'TabMarketingController@page')->name('merchant.detail.marketing.discounts.pagination');
-                        Route::put('', 'TabMarketingController@status')->name('merchant.detail.marketing.discounts.status');
-                        Route::delete('', 'TabMarketingController@delete')->name('merchant.detail.marketing.discounts.delete');
+                        Route::get('data', 'TabMarketingController@loadDiscountsData')->name('merchant.detail.marketing.discounts.data');
+                        Route::get('page', 'TabMarketingController@pageDiscounts')->name('merchant.detail.marketing.discounts.pagination');
+                    });
+                    Route::prefix('promo-codes')->group(function () {
+                        Route::get('data', 'TabMarketingController@loadPromoCodesData')->name('merchant.detail.marketing.promo-codes.data');
+                        Route::get('', 'TabMarketingController@loadPromoCodes')->name('merchant.detail.marketing.promo-codes');
                     });
                 });
             });
