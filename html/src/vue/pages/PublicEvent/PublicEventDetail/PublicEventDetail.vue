@@ -24,6 +24,12 @@
                 :public-event="publicEvent"
                 @onChange="onTabChange"
         />
+        <sprints-tab
+                v-if="nav.currentTab === 'sprints'"
+                :public-event="publicEvent"
+                :sprint-statuses="sprintStatuses"
+                @onChange="onTabChange"
+        />
     </layout-main>
 </template>
 
@@ -34,24 +40,22 @@
 
     import MainTab from './components/main-tab.vue';
     import ContentTab from './components/content-tab.vue';
+    import SprintsTab from './components/sprints-tab.vue';
 
     import modalMixin from '../../../mixins/modal';
-    import {
-        NAMESPACE,
-        SET_DETAIL,
-        GET_DETAIL,
-        ACT_LOAD_PUBLIC_EVENT,
-    } from '../../../store/modules/public-events';
+    import {ACT_LOAD_PUBLIC_EVENT, GET_DETAIL, NAMESPACE, SET_DETAIL,} from '../../../store/modules/public-events';
 
     export default {
     components: {
         VTabs,
         MainTab,
         ContentTab,
+        SprintsTab,
     },
     mixins: [modalMixin],
     props: {
-        iPublicEvent:{}
+        iPublicEvent: {},
+        sprintStatuses: {}
     },
     data() {
         this.$store.commit(`${NAMESPACE}/${SET_DETAIL}`, {publicEvent: this.iPublicEvent});
@@ -62,6 +66,7 @@
                 tabs: [
                     {value: 'main', text: 'Основное'},
                     {value: 'content', text: 'Контент'},
+                    {value: 'sprints', text: 'Спринты'},
                 ]
             }
         };

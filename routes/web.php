@@ -522,7 +522,8 @@ Route::middleware('auth')->group(function () {
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
             Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
             Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
-            
+            Route::get('sprints', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });

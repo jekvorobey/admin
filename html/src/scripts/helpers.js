@@ -34,6 +34,10 @@ export default class Helpers {
         return `${day}.${month}.${year}`;
     }
 
+    static onlyDate(dateString) {
+        return Helpers.dateToString(new Date(dateString));
+    }
+
     /**
      * Проверка на touch device.
      *
