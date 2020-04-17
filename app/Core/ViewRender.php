@@ -245,6 +245,8 @@ class ViewRender
                 'catalog' => PublicEventDto::MEDIA_CATALOG,
                 'detail' => PublicEventDto::MEDIA_DETAIL,
                 'gallery' => PublicEventDto::MEDIA_GALLERY,
+                'description' => PublicEventDto::MEDIA_DESCRIPTION,
+                'history' => PublicEventDto::MEDIA_HISTORY,
             ];
         }
         return $this;

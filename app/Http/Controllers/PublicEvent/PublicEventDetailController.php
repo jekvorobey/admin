@@ -120,6 +120,8 @@ class PublicEventDetailController extends Controller
                 PublicEventDto::MEDIA_CATALOG,
                 PublicEventDto::MEDIA_DETAIL,
                 PublicEventDto::MEDIA_GALLERY,
+                PublicEventDto::MEDIA_DESCRIPTION,
+                PublicEventDto::MEDIA_HISTORY,
             ])],
             'value' => 'required',
             'oldMedia' => 'nullable|integer'
