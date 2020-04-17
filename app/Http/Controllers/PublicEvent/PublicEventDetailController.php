@@ -10,6 +10,8 @@ use Illuminate\Validation\Rule;
 use Pim\Dto\PublicEvent\OrganizerDto;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
+use Pim\Dto\PublicEvent\PublicEventSprintStatus;
+use Pim\Dto\PublicEvent\SprintDto;
 use Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService;
 use Pim\Services\PublicEventService\PublicEventService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -29,7 +31,8 @@ class PublicEventDetailController extends Controller
         }
         
         return $this->render('PublicEvent/PublicEventDetail', [
-            'iPublicEvent' => $publicEvent
+            'iPublicEvent' => $publicEvent,
+            'sprintStatuses' => PublicEventSprintStatus::all(),
         ]);
     }
     
@@ -143,6 +146,13 @@ class PublicEventDetailController extends Controller
         ]);
         $publicEventService->delMedia($event_id, $data['mediaId']);
         return response()->json();
+    }
+
+    public function getSprints(int $event_id, PublicEventService $publicEventService)
+    {
+        /** @var Collection|SprintDto[] $sprints */
+        $sprints = $publicEventService->getSprints($event_id);
+        return response()->json($sprints);
     }
     
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto
