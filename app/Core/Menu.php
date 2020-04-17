@@ -252,6 +252,10 @@ class Menu
                         'title' => 'Скидки',
                         'route' => route('discount.list'),
                     ],
+                    [
+                        'title' => 'Бонусы',
+                        'route' => route('bonus.list'),
+                    ],
 //                    [
 //                        'title' => 'Бандлы',
 //                        'route' => '#',
