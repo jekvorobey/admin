@@ -32,4 +32,17 @@ class Helpers
         $roles[] = ['value' => UserDto::SHOWCASE__REFERRAL_PARTNER, 'text' => 'Реферальный партнер'];
         return $roles;
     }
+
+    /**
+     * @param        $price
+     * @param int    $decimals
+     * @param string $decPoint
+     * @param string $thousandsSep
+     *
+     * @return string
+     */
+    public static function getPriceFormat($price, $decimals = 2, $decPoint = '.', $thousandsSep = ' ')
+    {
+        return number_format($price, $decimals, $decPoint, $thousandsSep);
+    }
 }

@@ -21,6 +21,7 @@ use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
+use Pim\Dto\PublicEvent\PublicEventSprintStatus;
 use Pim\Dto\PublicEvent\PublicEventTypeDto;
 use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
@@ -44,9 +45,11 @@ class ViewRender
 
     private $merchantStatuses = [];
     private $merchantCommissionTypes = [];
+
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
     private $publicEventMediaCollections = [];
+    private $loadPublicEventSprintStatus = [];
 
     private $discountTypes = [];
 
@@ -56,14 +59,14 @@ class ViewRender
         $this->props = $props;
     }
     
-    public function setTitle($title)
+    public function setTitle($title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function loadUserRoles($load = false)
+    public function loadUserRoles($load = false): self
     {
         if ($load) {
             $this->userRoles = [
@@ -90,7 +93,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCustomerStatus($load = false)
+    public function loadCustomerStatus($load = false): self
     {
         if ($load) {
             $this->customerStatus = [
@@ -111,7 +114,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCommunicationChannelTypes($load = false)
+    public function loadCommunicationChannelTypes($load = false): self
     {
         if ($load) {
             $this->communicationChannelTypes = [
@@ -129,7 +132,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCommunicationChannels($load = false)
+    public function loadCommunicationChannels($load = false): self
     {
         if ($load) {
             $this->communicationChannels = resolve(CommunicationService::class)->channels()->keyBy('id');
@@ -138,7 +141,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCommunicationThemes($load = false)
+    public function loadCommunicationThemes($load = false): self
     {
         if ($load) {
             $this->communicationThemes = resolve(CommunicationThemeService::class)->themes()->keyBy('id');
@@ -147,7 +150,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCommunicationStatuses($load = false)
+    public function loadCommunicationStatuses($load = false): self
     {
         if ($load) {
             $this->communicationStatuses = resolve(CommunicationStatusService::class)->statuses()->keyBy('id');
@@ -156,7 +159,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadCommunicationTypes($load = false)
+    public function loadCommunicationTypes($load = false): self
     {
         if ($load) {
             $this->communicationTypes = resolve(CommunicationTypeService::class)->types()->keyBy('id');
@@ -165,7 +168,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadMerchantStatuses($load = false)
+    public function loadMerchantStatuses($load = false): self
     {
         if ($load) {
             $this->merchantStatuses = [
@@ -183,7 +186,7 @@ class ViewRender
         return $this;
     }
 
-    public function loadMerchantCommissionTypes($load = false)
+    public function loadMerchantCommissionTypes($load = false): self
     {
         if ($load) {
             $this->merchantCommissionTypes = [
@@ -245,6 +248,22 @@ class ViewRender
                 'catalog' => PublicEventDto::MEDIA_CATALOG,
                 'detail' => PublicEventDto::MEDIA_DETAIL,
                 'gallery' => PublicEventDto::MEDIA_GALLERY,
+                'description' => PublicEventDto::MEDIA_DESCRIPTION,
+                'history' => PublicEventDto::MEDIA_HISTORY,
+            ];
+        }
+        return $this;
+    }
+
+    public function loadPublicEventSprintStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->loadPublicEventSprintStatus = [
+                'created' => PublicEventSprintStatus::CREATED,
+                'disabled' => PublicEventSprintStatus::DISABLED,
+                'ready' => PublicEventSprintStatus::READY,
+                'in_process' => PublicEventSprintStatus::IN_PROCESS,
+                'done' => PublicEventSprintStatus::DONE,
             ];
         }
         return $this;
@@ -291,9 +310,11 @@ class ViewRender
 
                 'merchantStatuses' => $this->merchantStatuses,
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
+
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
                 'publicEventMediaCollections' => $this->publicEventMediaCollections,
+                'loadPublicEventSprintStatus' => $this->loadPublicEventSprintStatus,
 
                 'discountTypes' => $this->discountTypes,
             ],

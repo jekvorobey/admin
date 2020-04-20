@@ -46,10 +46,12 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('marketing')->group(function () {
                     Route::prefix('discounts')->group(function () {
-                        Route::get('', 'TabMarketingController@loadDiscounts')->name('merchant.detail.marketing.discounts');
-                        Route::get('page', 'TabMarketingController@page')->name('merchant.detail.marketing.discounts.pagination');
-                        Route::put('', 'TabMarketingController@status')->name('merchant.detail.marketing.discounts.status');
-                        Route::delete('', 'TabMarketingController@delete')->name('merchant.detail.marketing.discounts.delete');
+                        Route::get('data', 'TabMarketingController@loadDiscountsData')->name('merchant.detail.marketing.discounts.data');
+                        Route::get('page', 'TabMarketingController@pageDiscounts')->name('merchant.detail.marketing.discounts.pagination');
+                    });
+                    Route::prefix('promo-codes')->group(function () {
+                        Route::get('data', 'TabMarketingController@loadPromoCodesData')->name('merchant.detail.marketing.promo-codes.data');
+                        Route::get('', 'TabMarketingController@loadPromoCodes')->name('merchant.detail.marketing.promo-codes');
                     });
                 });
             });
@@ -87,6 +89,10 @@ Route::middleware('auth')->group(function () {
             Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
             Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
+        });
+
+        Route::prefix('bonus')->group(function () {
+            Route::get('', 'BonusController@index')->name('bonus.list');
         });
     });
 
@@ -477,6 +483,10 @@ Route::middleware('auth')->group(function () {
 
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
                     });
+                    Route::prefix('bonuses')->group(function () {
+                        Route::get('', 'TabBonusController@load')->name('customers.detail.bonuses');
+                        Route::post('', 'TabBonusController@add')->name('customers.detail.bonus.add');
+                    });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });
 
@@ -522,7 +532,8 @@ Route::middleware('auth')->group(function () {
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
             Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
             Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
-            
+            Route::get('sprints', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });

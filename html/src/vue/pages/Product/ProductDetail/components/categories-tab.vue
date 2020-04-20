@@ -12,12 +12,8 @@
                 tree: []
             };
         },
-        component:{
-        },
         props: {
             product: Object,
-            brand: Object,
-            category: Object,
             propertyValues: {},
             options: Object
         },
