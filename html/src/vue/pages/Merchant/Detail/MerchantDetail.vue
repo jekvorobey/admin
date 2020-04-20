@@ -23,6 +23,7 @@
                     <tab-main v-if="key === 'main'" :model.sync="merchant"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
+                    <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
                     <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id" :legal_name="merchant.legal_name"/>
                     <template v-else>
                         Заглушка
@@ -40,6 +41,7 @@ import tabsMixin from '../../../mixins/tabs.js';
 import TabMain from './components/tab-main.vue';
 import TabCommission from './components/tab-commission.vue';
 import TabOperator from './components/tab-operator.vue';
+import TabOrder from './components/tab-order.vue';
 import TabMarketing from './components/tab-marketing.vue';
 
 export default {
@@ -50,6 +52,7 @@ export default {
         TabMain,
         TabCommission,
         TabOperator,
+        TabOrder,
         TabMarketing,
     },
     data() {

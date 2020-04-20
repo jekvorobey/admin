@@ -54,6 +54,10 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabMarketingController@loadPromoCodes')->name('merchant.detail.marketing.promo-codes');
                     });
                 });
+                Route::prefix('order')->group(function () {
+                    Route::get('data', 'TabOrderController@loadOrdersData')->name('merchant.detail.order.data');
+                    Route::get('page', 'TabOrderController@page')->name('merchant.detail.order.pagination');
+                });
             });
         });
 
