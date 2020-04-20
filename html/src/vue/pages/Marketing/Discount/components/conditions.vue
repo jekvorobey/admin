@@ -85,7 +85,7 @@
                         </template>
 
                         <template v-if="condition.type === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
-                            Каждый {{ condition.sequenceNumber }}-й заказ
+                            {{ condition.sequenceNumber }}-й заказ Клиента
                         </template>
 
                         <template v-if="condition.type === CONDITION_TYPE_DISCOUNT_SYNERGY">
