@@ -171,7 +171,7 @@ class FlowListController extends Controller
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
 
-        $restQuery = $orderService->newQuery()->addSort('created_at', 'desc');;
+        $restQuery = $orderService->newQuery()->addSort('created_at', 'desc');
 
         $page = $request->get('page', 1);
         $restQuery->pageNumber($page, 20);

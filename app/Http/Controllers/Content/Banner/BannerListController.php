@@ -115,7 +115,7 @@ class BannerListController extends Controller
             $query->setFilter('type_id', $filter['type']);
         }
 
-        return $query;
+        return $query->addSort('id', 'desc');
     }
 
     /**
