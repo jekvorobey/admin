@@ -154,7 +154,7 @@ class CargoListController extends Controller
     protected function makeRestQuery(CargoService $cargoService, Request $request, bool $withDefaultFilter = false): DataQuery
     {
         /** @var RestQuery $restQuery */
-        $restQuery = $cargoService->newQuery();
+        $restQuery = $cargoService->newQuery()->addSort('created_at', 'desc');
         
         $page = $request->get('page', 1);
         $restQuery->pageNumber($page, 20);
