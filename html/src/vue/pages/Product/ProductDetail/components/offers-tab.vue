@@ -69,7 +69,7 @@
                 qtyFrom: '',
                 qtyTo: '',
                 status: '',
-            };
+            }
         },
         props: {
             offers: Array,

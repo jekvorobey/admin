@@ -162,7 +162,7 @@ class ContentClaimController extends Controller
         $page = $request->get('page', 1);
         $filters = array_filter($request->get('filter', []));
 
-        $restQuery = $claimService->newQuery();
+        $restQuery = $claimService->newQuery()->addSort('created_at', 'desc');
         $restQuery->setFilter('type', $this->contentTypes);
 
         foreach ($filters as $key => $value) {
