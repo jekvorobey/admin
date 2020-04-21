@@ -88,7 +88,6 @@
             brand: Object,
             category: Object,
             propertyValues: {},
-
             options: Object
         },
         methods: {
@@ -103,11 +102,12 @@
         },
         computed: {
             brandName() {
-                let brand = this.options.brands.find(brand => brand.id === this.product.brand_id);
+                let brand = Object.values(this.options.brands).find(brand => brand.id === this.product.brand_id);
                 return brand ? brand.name : 'N/A';
             },
             categoryName() {
-                let category = this.options.categories.find(category => category.id === this.product.category_id);
+                let category = Object.values(this.options.categories).find(category => category.id ===
+                    this.product.category_id);
                 return category ? category.name : 'N/A';
             }
         }

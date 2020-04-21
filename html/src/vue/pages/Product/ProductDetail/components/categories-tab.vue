@@ -22,7 +22,7 @@
                 return this.propertyValues[id] || [];
             },
             categoryGet(catId) {
-                let category = this.options.categories.find(category => category.id === catId);
+                let category = Object.values(this.options.categories).find(category => category.id === catId);
                 return category ? category : false;
             },
             categoryTree(catId) {
