@@ -179,21 +179,20 @@ class PriceChangeClaimController extends Controller
 
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService, true)->first();
+            $claim = $this->loadClaims($query, $userService)->first();
         } catch (\Exception $e) {
             $result = 'fail';
             if ($request->get('status') == PriceChangeClaimDto::STATUS_DONE) {
-                //todo
                 $error = 'Не все запросы на изменение цены в заявке обработаны';
             }
             $systemError = $e->getMessage();
         }
 
-        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error,'systemErrors' => $systemError]);
+        return response()->json(['result' => $result, 'claimStatus' => $claim->status, 'error' => $error,'systemErrors' => $systemError]);
     }
 
     /**
-     * Изменить статус заявки
+     * Изменить ценц
      * @param  int  $id
      * @param  Request  $request
      * @param  ClaimService  $claimService
@@ -220,7 +219,7 @@ class PriceChangeClaimController extends Controller
 
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService, true)->first();
+            $claim = $this->loadClaims($query, $userService)->first();
             $offers = $claim->getOffers();
             //Формируем массив с измененными ценами
             $newPrices = collect();
@@ -255,13 +254,13 @@ class PriceChangeClaimController extends Controller
             //Получаем всю информацию по заявке
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService, true)->first();
+            $claim = $this->loadClaims($query, $userService)->first();
         } catch (\Exception $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
         }
 
-        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error,'systemErrors' => $systemError]);
+        return response()->json(['result' => $result, 'claimPayload' => $claim->payload, 'error' => $error,'systemErrors' => $systemError]);
     }
 
     /**

@@ -1,74 +1,164 @@
 <template>
     <div class="container-fluid">
-        <draggable v-model="selectedMenuItems"
-                   v-bind="dragOptions"
-        >
-            <!-- Первый уровень -->
-            <div v-for="(item, itemIndex) in selectedMenuItems"
-                 class="row my-2 bg-light border border-dark rounded"
-            >
-                <div class="col p-2">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col align-self-center">
-                                <b>{{item.name}}</b> ({{item.url}})<br>
-                            </div>
-                            <div class="col-auto">
-                                <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
-                                    <fa-icon icon="edit"/>
-                                </b-button>
-                                <b-button class="btn btn-danger btn-sm">
-                                    <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
-                                </b-button>
+        <div>
+            <div class="row">
+                <h4 class="col-sm"><em>Скрытые пункты меню</em></h4>
+
+                <b-button class="btn btn-warning" @click="toggleVisibility()">
+                    Активировать выбранные <fa-icon icon="eye"/>
+                </b-button>
+            </div>
+            <div v-model="selectedMenuItems">
+                <!-- Первый уровень -->
+                <div v-for="(item, itemIndex) in selectedMenuItems"
+                     v-if="item.active === 0"
+                     class="row my-2 bg-light border border-dark rounded"
+                >
+                    <div class="col p-2">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col align-self-center">
+                                    <input type="checkbox" style="width: 20px; height: 20px" v-model="checkboxes[itemIndex]">
+                                    <b>{{item.name}}</b> ({{item.url}})<br>
+                                </div>
+                                <div class="col-auto">
+                                    <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
+                                        <fa-icon icon="edit"/>
+                                    </b-button>
+                                    <b-button class="btn btn-danger btn-sm">
+                                        <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
+                                    </b-button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="container-fluid">
-                        <draggable v-model="item.children"
-                                   v-bind="dragOptions"
-                        >
-                            <!-- Второй уровень -->
-                            <div v-for="(child, childIndex) in item.children"
-                                 class="row my-2 bg-light border border-dark rounded"
+                        <div class="container-fluid">
+                            <draggable v-model="item.children"
+                                       v-bind="dragOptions"
                             >
-                                <div class="col p-2">
-                                    <div class="container-fluid">
-                                        <div class="row">
-                                            <div class="col align-self-center">
-                                                {{child.name}} ({{child.url}})
-                                            </div>
-                                            <div class="col-auto">
-                                                <b-button class="btn btn-success btn-sm"
-                                                          @click="editItem(childIndex, itemIndex)">
-                                                    <fa-icon icon="edit"/>
-                                                </b-button>
-                                                <b-button class="btn btn-danger btn-sm">
-                                                    <fa-icon icon="trash-alt"
-                                                             @click="removeItem(childIndex, itemIndex)"/>
-                                                </b-button>
+                                <!-- Второй уровень -->
+                                <div v-for="(child, childIndex) in item.children"
+                                     class="row my-2 bg-light border border-dark rounded"
+                                >
+                                    <div class="col p-2">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col align-self-center">
+                                                    {{child.name}} ({{child.url}})
+                                                </div>
+                                                <div class="col-auto">
+                                                    <b-button class="btn btn-success btn-sm"
+                                                              @click="editItem(childIndex, itemIndex)">
+                                                        <fa-icon icon="edit"/>
+                                                    </b-button>
+                                                    <b-button class="btn btn-danger btn-sm">
+                                                        <fa-icon icon="trash-alt"
+                                                                 @click="removeItem(childIndex, itemIndex)"/>
+                                                    </b-button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row my-2">
-                                <b-button class="btn btn-success btn-sm" @click="createItem(itemIndex)">
-                                    <fa-icon icon="plus"/>
-                                    Добавить подпункт
-                                </b-button>
-                            </div>
-                        </draggable>
+                                <div class="row my-2">
+                                    <b-button class="btn btn-success btn-sm" @click="createItem(itemIndex)">
+                                        <fa-icon icon="plus"/>
+                                        Добавить подпункт
+                                    </b-button>
+                                </div>
+                            </draggable>
+                        </div>
                     </div>
                 </div>
+                <hr>
             </div>
-            <div class="row my-2">
-                <b-button class="btn btn-success btn-sm" @click="createItem()">
-                    <fa-icon icon="plus"/>
-                    Добавить пункт
+        </div>
+
+        <div>
+            <div class="row">
+            <h4 class="col-sm"><em>Активные пункты меню</em></h4>
+
+                <b-button class="btn btn-warning" @click="toggleVisibility()">
+                    Скрыть выбранные <fa-icon icon="eye"/>
                 </b-button>
             </div>
-        </draggable>
+
+            <draggable v-model="selectedMenuItems"
+                       v-bind="dragOptions"
+                       ondragend=""
+            >
+                <!-- Первый уровень -->
+                <div v-for="(item, itemIndex) in selectedMenuItems"
+                     v-if="item.active !== 0"
+                     class="row my-2 bg-light border border-dark rounded"
+                >
+                    <div class="col p-2">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col align-self-center">
+                                    <input type="checkbox" style="width: 20px; height: 20px" v-model="checkboxes[itemIndex]">
+                                    <b>{{item.name}}</b> ({{item.url}})<br>
+                                </div>
+                                <div class="col-auto">
+                                    <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
+                                        <fa-icon icon="edit"/>
+                                    </b-button>
+                                    <b-button class="btn btn-danger btn-sm">
+                                        <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
+                                    </b-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-fluid">
+                            <draggable v-model="item.children"
+                                       v-bind="dragOptions"
+                            >
+                                <!-- Второй уровень -->
+                                <div v-for="(child, childIndex) in item.children"
+                                     class="row my-2 bg-light border border-dark rounded"
+                                >
+                                    <div class="col p-2">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col align-self-center">
+                                                    {{child.name}} ({{child.url}})
+                                                </div>
+                                                <div class="col-auto">
+                                                    <b-button class="btn btn-success btn-sm"
+                                                              @click="editItem(childIndex, itemIndex)">
+                                                        <fa-icon icon="edit"/>
+                                                    </b-button>
+                                                    <b-button class="btn btn-danger btn-sm">
+                                                        <fa-icon icon="trash-alt"
+                                                                 @click="removeItem(childIndex, itemIndex)"/>
+                                                    </b-button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row my-2">
+                                    <b-button class="btn btn-success btn-sm" @click="createItem(itemIndex)">
+                                        <fa-icon icon="plus"/>
+                                        Добавить подпункт
+                                    </b-button>
+                                </div>
+                            </draggable>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <b-button class="btn btn-success btn-sm" @click="createItem()">
+                        <fa-icon icon="plus"/>
+                        Добавить пункт
+                    </b-button>
+                </div>
+            </draggable>
+        </div>
+
+
+
 
         <form-modal modal-name="FormTheme" @accept="onModalAccept" :model.sync="activeItem"/>
     </div>
@@ -96,6 +186,7 @@
         },
         data() {
             return {
+                checkboxes: {},
                 selectedMenuItems: this.iMenuItems,
                 activeItem: null,
             };
@@ -113,6 +204,7 @@
                     name: item ? item.name : '',
                     url: item ? item.url : '',
                     options: item ? item.options : {},
+                    active: item ? item.active : 1,
                     parent_id: item ? item.parent_id : null,
                     children: item ? item.children : [],
                     _new: !item,
@@ -153,6 +245,19 @@
                 } else {
                     this.selectedMenuItems.splice(itemIndex, 1);
                 }
+            },
+            toggleVisibility() {
+                Object.entries(this.checkboxes).forEach(item => {
+                    let index = item[0];
+                    let value = item.slice(1,2)
+                    if (value == 'true') {
+                        if (this.selectedMenuItems[index].active === 0) {
+                            this.selectedMenuItems[index].active = 1
+                        } else {
+                            this.selectedMenuItems[index].active = 0
+                        }
+                    }
+                })
             },
             /**
              * Получить пункт меню

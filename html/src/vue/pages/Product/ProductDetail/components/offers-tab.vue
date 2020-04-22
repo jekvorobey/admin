@@ -40,7 +40,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="offer in filteredOffers">
+                <tr v-for="(offer, index) in filteredOffers" v-on:click="editeOffer(index)">
                     <td>{{ offer.offer_id }}</td>
                     <td>{{ offer.created_at }}</td>
                     <td>{{ offer.merchant_id }}</td>
@@ -51,16 +51,26 @@
                 </tr>
             </tbody>
         </table>
+        <offer-edit-modal
+                title="Редактировать предложение"
+                :offer = "this.offerModal"
+                modal-name="offerEdit"/>
     </div>
 </template>
 
 <script>
     import FInput from "../../../../components/filter/f-input.vue";
+    import Modal from '../../../../components/controls/modal/modal.vue';
+    import modalMixin from '../../../../mixins/modal';
+    import offerEditModal from './offer-edit-modal.vue';
 
     export default {
         components:{
             FInput,
+            offerEditModal,
+            Modal,
         },
+        mixins: [modalMixin],
         data: function() {
             return {
                 merchantId: '',
@@ -69,6 +79,7 @@
                 qtyFrom: '',
                 qtyTo: '',
                 status: '',
+                offerModal: null,
             }
         },
         props: {
@@ -87,6 +98,10 @@
                 items.unshift(this.headOffer());
                 return items;
             },
+            editeOffer: function (id) {
+                this.offerModal = this.offers[id];
+                this.openModal('offerEdit');
+            }
         },
         mounted() {
         },
