@@ -35,8 +35,7 @@
         <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
         <offers-tab
                 v-if="nav.currentTab === 'offers'"
-                :claim="claim"
-                @onSave="onChange"
+                :model.sync="claim"
         ></offers-tab>
     </layout-main>
 </template>
@@ -91,19 +90,20 @@
         changeClaimStatus(statusId) {
             let errorMessage = 'Ошибка при изменении статуса заявки.';
 
+            Services.showLoader();
             Services.net().put(this.getRoute('priceChangeClaims.changeStatus', {id: this.claim.id}), null,
                 {'status': statusId}).then(data => {
                 if (data.result === 'ok') {
-                    this.onChange(data);
+                    this.claim.status = data.claimStatus;
+                    Services.msg("Изменения сохранены");
                 } else {
-                    this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + data.error});
+                    Services.msg(errorMessage + ' ' + data.error, 'danger');
                 }
             }, () => {
-                this.showMessageBox({title: 'Ошибка', text: errorMessage});
+                Services.msg(errorMessage, 'danger');
+            }).finally(() => {
+                Services.hideLoader();
             });
-        },
-        onChange(data) {
-            this.claim = data.claim;
         },
     },
     computed: {

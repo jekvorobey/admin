@@ -210,6 +210,7 @@ export default {
             }));
         },
         loadPage() {
+            Services.showLoader();
             Services.net().get(this.route(this.routePrefix + '.pagination'), {
                 page: this.currentPage,
                 filter: this.appliedFilter,
@@ -219,6 +220,8 @@ export default {
                 if (data.pager) {
                     this.pager = data.pager
                 }
+            }).finally(() => {
+                Services.hideLoader();
             });
         },
         applyFilter() {

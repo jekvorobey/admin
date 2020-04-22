@@ -27,7 +27,7 @@ class TabSettingsController extends Controller
             'do_zero_mile' => ['required', 'boolean'],
             'do_express_delivery' => ['required', 'boolean'],
             'do_return' => ['required', 'boolean'],
-            'max_cargo_export_time' => ['date_format:H:i'],
+            'max_cargo_export_time' => ['nullable', 'date_format:H:i'],
             'add_partial_reject_service' => ['required', 'boolean'],
             'add_insurance_service' => ['required', 'boolean'],
             'add_fitting_service' => ['required', 'boolean'],
@@ -41,9 +41,7 @@ class TabSettingsController extends Controller
         $deliveryService->do_zero_mile = $data['do_zero_mile'];
         $deliveryService->do_express_delivery = $data['do_express_delivery'];
         $deliveryService->do_return = $data['do_return'];
-        if ($data['max_cargo_export_time']) {
-            $deliveryService->max_cargo_export_time = $data['max_cargo_export_time'];
-        }
+        $deliveryService->max_cargo_export_time = $data['max_cargo_export_time'];
         $deliveryService->add_partial_reject_service = $data['add_partial_reject_service'];
         $deliveryService->add_insurance_service = $data['add_insurance_service'];
         $deliveryService->add_fitting_service = $data['add_fitting_service'];

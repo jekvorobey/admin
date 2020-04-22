@@ -74,7 +74,7 @@
     export default {
         components: {OfferPriceRejectModal},
         props: [
-            'claim',
+            'model',
         ],
         data() {
             return {
@@ -120,18 +120,26 @@
                     data['comment'] = comment;
                 }
 
+                Services.showLoader();
                 Services.net().put(this.getRoute('priceChangeClaims.changePrice', {id: this.claim.id}), null, data).then(response => {
                     if (response.result === 'ok') {
-                        this.$emit('onSave', response);
+                        this.claim.payload = response.claimPayload;
+                        Services.msg("Изменения сохранены");
                     } else {
-                        this.showMessageBox({title: 'Ошибка', text: errorMessage + ' ' + response.error});
+                        Services.msg(errorMessage + ' ' + response.error, 'danger');
                     }
                 }, () => {
-                    this.showMessageBox({title: 'Ошибка', text: errorMessage});
+                    Services.msg(errorMessage, 'danger');
+                }).finally(() => {
+                    Services.hideLoader();
                 });
             },
         },
         computed: {
+            claim: {
+                get() {return this.model},
+                set(value) {this.$emit('update:model', value)},
+            },
             isWorkStatus() {
                 return this.isStatus(2);
             },
