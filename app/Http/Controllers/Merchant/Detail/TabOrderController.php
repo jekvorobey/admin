@@ -2,42 +2,81 @@
 
 namespace App\Http\Controllers\Merchant\Detail;
 
-use App\Core\DiscountHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Dto\DataQuery;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
+use Greensight\Oms\Dto\DeliveryType;
+use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
-use Illuminate\Http\Request;
-use Greensight\CommonMsa\Dto\AbstractDto;
-use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
-use Greensight\Logistics\Services\ListsService\ListsService;
-use Greensight\Oms\Dto\OrderDto;
-use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\PaymentMethod;
-use Greensight\Oms\Services\DeliveryService\DeliveryService;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use MerchantManagement\Services\MerchantService\MerchantService;
-use Pim\Services\BrandService\BrandService;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\Oms\Dto\DeliveryType;
-use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 
 
 class TabOrderController extends Controller
 {
+    /**
+     * @return array
+     */
+    protected function getCustomersNames(DataQuery $restQuery): array
+    {
+        /** @var ShipmentService $shipmentService */
+        $shipmentService = resolve(ShipmentService::class);
+
+        /** @var OrderService $orderService */
+        $orderService = resolve(OrderService::class);
+
+        /** @var CustomerService $customerService */
+        $customerService = resolve(CustomerService::class);
+
+        /** @var UserService $userService */
+        $userService = resolve(UserService::class);
+
+        $restQuery->addFields(ShipmentDto::entity(), 'id')
+            ->include('delivery');
+
+        $shipments = $shipmentService->shipments($restQuery);
+
+        $orderIds = $shipments->pluck('delivery.order_id')->all();
+        $orders = $orderService->orders(
+            (new RestQuery())
+                ->addFields(OrderDto::class, 'id', 'customer_id')
+                ->setFilter('id', $orderIds)
+        )->keyBy('id');
+
+        $customerIds = $orders->pluck('customer_id')->all();
+        $customers = $customerService->customers(
+            (new RestQuery())
+                ->addFields(CustomerDto::class, 'id', 'user_id')
+                ->setFilter('id', $customerIds)
+        )->keyBy('id');
+
+        $userIds = $customers->pluck('user_id')->all();
+        $users = $userService->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id', 'full_name')
+                ->setFilter('id', $userIds)
+        )->keyBy('id');
+
+        return array_filter($users->map(function (UserDto $user) {
+            return $user->full_name;
+        })->all());
+    }
+
     /**
      * AJAX подгрузка информации для фильтрации скидок
      *
@@ -46,9 +85,17 @@ class TabOrderController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function loadShipmentData(int $merchantId, Request $request)
+    public function loadOrdersData(int $merchantId, Request $request)
     {
         $restQuery = $this->makeRestQuery($request, $merchantId);
+
+        return response()->json([
+            'shipmentStatuses' => ShipmentStatus::allStatuses(),
+            'customerFullNames' => $this->getCustomersNames($restQuery),
+            'deliveryTypes' => DeliveryType::allTypes(),
+            'deliveryMethods' => DeliveryMethod::allMethods(),
+            'deliveryServices' => DeliveryService::allServices(),
+        ]);
     }
 
     /**
@@ -56,20 +103,44 @@ class TabOrderController extends Controller
      */
     protected function getFilter(): array
     {
+        $allDeliveryServices = DeliveryService::allServices();
         $filter = Validator::make(request('filter') ?? [],
             [
                 'order_number' => 'string|someone',
-                'shipment_number' => 'string|someone',
-//                'required_shipping_at' => 'array|someone',
-//                'store_id' => 'array|someone',
-//                'status' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
-//                'cost' => 'array|someone',
-//                'offer_xml_id' => 'string|someone',
-//                'product_vendor_code' => 'string|someone',
-//                'brands' => 'array|someone',
+                'number' => 'string|someone',
+                'status' => 'array|someone',
+                'status.' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
+                'is_problem' => 'boolean|someone',
+                'customer_id' => 'numeric|someone',
+                'customer_full_name' => 'string|someone',
+                'package_qty_from' => 'numeric|someone',
+                'package_qty_to' => 'numeric|someone',
+                'weight_from' => 'numeric|someone',
+                'weight_to' => 'numeric|someone',
+                'cost_from' => 'numeric|someone',
+                'cost_to' => 'numeric|someone',
+                'delivery_type' => 'array|someone',
+                'delivery_type.' => Rule::in(array_keys(DeliveryType::allTypes())),
+                'delivery_method' => 'array|someone',
+                'delivery_method.' => Rule::in(array_keys(DeliveryMethod::allMethods())),
+                'delivery_service' => 'array|someone',
+                'delivery_service.' => Rule::in(array_keys($allDeliveryServices)),
+                'delivery_service_zero_mile' => 'array|someone',
+                'delivery_service_zero_mile.' => Rule::in(array_keys($allDeliveryServices)),
+                'delivery_address_post_index' => 'string|someone',
+                'delivery_address_region' => 'string|someone',
+                'delivery_address_city' => 'string|someone',
+                'delivery_address_street' => 'string|someone',
+                'delivery_address_porch' => 'string|someone',
+                'delivery_address_house' => 'string|someone',
+                'delivery_address_floor' => 'string|someone',
+                'delivery_address_flat' => 'string|someone',
+                'required_shipping_at' => 'array|someone',
+                'required_shipping_at.'  => 'date',
+                'delivery_at' => 'array|someone',
+                'delivery_at.'  => 'date',
             ]
         )->attributes();
-        $filter['is_problem'] = false;
 
         return $filter;
     }
@@ -90,7 +161,7 @@ class TabOrderController extends Controller
         $restQuery = $shipmentService->newQuery();
         $restQuery->setFilter('merchant_id', $merchantId)
             ->setFilter('is_canceled', false)
-            ->setFilter('status', '>=', ShipmentStatus::AWAITING_CONFIRMATION);
+            ->setFilter('user_exist', intval(true));
 
         $page = $request->get('page', 1);
         $restQuery->pageNumber($page, 20);
@@ -99,39 +170,32 @@ class TabOrderController extends Controller
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
-//                    case 'created_at':
-//                        $value = array_filter($value);
-//                        if ($value) {
-//                            $restQuery->setFilter($key, '>=', $value[0]);
-//                            $restQuery->setFilter($key, '<=', $value[1]);
-//                        }
-//                        break;
-//                    case 'created_at':
-//                        $value = array_filter($value);
-//                        if ($value) {
-//                            $restQuery->setFilter($key, '>=', $value[0]);
-//                            $restQuery->setFilter($key, '<=', $value[1]);
-//                        }
-//                        break;
-//                    case 'required_shipping_at':
-//                        $restQuery->setFilter($key, '>=', $value);
-//                        $restQuery->setFilter(
-//                            $key,
-//                            '<=',
-//                            (new Carbon($value))
-//                                ->modify('+1 day')
-//                                ->format('Y-m-d')
-//                        );
-//                        break;
-//                    case 'cost':
-//                        if (isset($value[0]) && $value[0]) {
-//                            $restQuery->setFilter($key, '>=', $value[0]);
-//                        }
-//                        if (isset($value[1]) && $value[1]) {
-//                            $restQuery->setFilter($key, '<=', $value[1]);
-//                        }
-//                        break;
-
+                    case 'package_qty_from':
+                        $restQuery->setFilter('package_qty', '>=', $value);
+                        break;
+                    case 'package_qty_to':
+                        $restQuery->setFilter('package_qty', '<=', $value);
+                        break;
+                    case 'weight_from':
+                        $restQuery->setFilter('weight', '>=', $value);
+                        break;
+                    case 'weight_to':
+                        $restQuery->setFilter('weight', '<=', $value);
+                        break;
+                    case 'cost_from':
+                        $restQuery->setFilter('cost', '>=', $value);
+                        break;
+                    case 'cost_to':
+                        $restQuery->setFilter('cost', '<=', $value);
+                        break;
+                    case 'required_shipping_at':
+                    case 'delivery_at':
+                        $value = array_filter($value);
+                        if ($value) {
+                            $restQuery->setFilter($key, '>=', $value[0]);
+                            $restQuery->setFilter($key, '<=', (new Carbon($value[1]))->modify('+1 day')->format('Y-m-d'));
+                        }
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -228,7 +292,7 @@ class TabOrderController extends Controller
                 ->setFilter('id', $storesIds)
         )->keyBy('id');
 
-        $shipments = $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores, $userIds) {
+        $shipments = $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores) {
             $delivery = $shipment->delivery();
 
             $data['order'] = [
@@ -241,10 +305,11 @@ class TabOrderController extends Controller
                 'number' => $shipment->number,
             ];
 
-            $user = $users[$customers[$orders[$delivery->order_id]->customer_id]->user_id];
-            $data['client'] = [
-                'id' => $user->id,
-                'full_name' => $user->getTitle(),
+            $customerId = $orders[$delivery->order_id]->customer_id;
+            $user = $users[$customers[$customerId]->user_id];
+            $data['customer'] = [
+                'id' => $customerId,
+                'full_name' => $user->full_name,
             ];
 
             $data['status'] = ShipmentStatus::statusById($shipment->status);
@@ -265,14 +330,14 @@ class TabOrderController extends Controller
                 'name' => $deliveryMethod->name,
             ];
 
-            $deliveryServiceLastMile = DeliveryServiceDto::serviceById($delivery->delivery_service);
+            $deliveryServiceLastMile = DeliveryService::serviceById($delivery->delivery_service);
             $data['delivery_service_last_mile'] = [
                 'id' => $deliveryServiceLastMile->id,
                 'name' => $deliveryServiceLastMile->name,
             ];
 
             if ($shipment->delivery_service_zero_mile) {
-                $deliveryServiceZeroMile = DeliveryServiceDto::serviceById(
+                $deliveryServiceZeroMile = DeliveryService::serviceById(
                     $shipment->delivery_service_zero_mile
                 );
                 $data['delivery_service_zero_mile'] = [

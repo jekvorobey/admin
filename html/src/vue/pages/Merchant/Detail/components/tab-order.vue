@@ -10,17 +10,119 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <f-input v-model="filter.order_number" class="col-2">
+                    <f-input v-model="filter.order_number"  class="col-3">
                         № заказа
                     </f-input>
-                    <f-input v-model="filter.number" class="col-2">
+                    <f-input v-model="filter.number" class="col-3">
                         № отправления
                     </f-input>
-                    status
-<!--                    <f-multi-select v-model="filter.status" :options="statusOptions" class="col">-->
-<!--                        Статус заказа-->
-<!--                    </f-multi-select>-->
+                    <f-multi-select v-model="filter.status" :options="statusOptions" class="col-3">
+                        Статус отправления текущий
+                    </f-multi-select>
+                    <f-select v-model="filter.is_problem" :options="problemOptions" class="col-3">
+                        Проблемное/нет проблем
+                    </f-select>
                 </div>
+                <transition name="slide">
+                    <div v-if="opened" class="additional-filter pt-3 mt-3">
+                        <div class="row">
+                            <f-input v-model="filter.customer_id" type="number" class="col-3">
+                                ID клиента
+                            </f-input>
+                            <f-input v-model="filter.customer_full_name" id="color" list="customersList" class="col-5">
+                                ФИО клиента
+                            </f-input>
+                            <datalist id="customersList">
+                                <option v-for="customerFullName in customerFullNames" :value="customerFullName"/>
+                            </datalist>
+                            <f-input v-model="filter.package_qty_from" type="number" class="col-2">
+                                Кол-во коробок
+                                <template #prepend><span class="input-group-text">от</span></template>
+                                <template #append><span class="input-group-text">шт.</span></template>
+                            </f-input>
+                            <f-input v-model="filter.package_qty_to" type="number" class="col-2">
+                                &nbsp;
+                                <template #prepend><span class="input-group-text">до</span></template>
+                                <template #append><span class="input-group-text">шт.</span></template>
+                            </f-input>
+                        </div>
+                        <div class="row">
+                            <f-input v-model="filter.weight_from" type="number" class="col-2">
+                                Вес отправления
+                                <template #prepend><span class="input-group-text">от</span></template>
+                                <template #append><span class="input-group-text">кг</span></template>
+                            </f-input>
+                            <f-input v-model="filter.weight_to" type="number" class="col-2">
+                                &nbsp;
+                                <template #prepend><span class="input-group-text">до</span></template>
+                                <template #append><span class="input-group-text">кг</span></template>
+                            </f-input>
+                            <f-input v-model="filter.cost_from" type="number" class="col-2">
+                                Сумма товаров
+                                <template #prepend><span class="input-group-text">от</span></template>
+                                <template #append><span class="input-group-text">руб.</span></template>
+                            </f-input>
+                            <f-input v-model="filter.cost_to" type="number" class="col-2">
+                                &nbsp;
+                                <template #prepend><span class="input-group-text">до</span></template>
+                                <template #append><span class="input-group-text">руб.</span></template>
+                            </f-input>
+                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-4">
+                                Тип доставки
+                            </f-multi-select>
+                        </div>
+                        <div class="row">
+                            <f-multi-select v-model="filter.delivery_method" :options="deliveryMethodOptions" class="col-4">
+                                Способ доставки
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-4">
+                                ЛО - последняя миля
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_service_zero_mile" :options="deliveryServiceOptions" class="col-4">
+                                ЛО - нулевая миля
+                            </f-multi-select>
+                        </div>
+                        <div class="row">
+                            <div class="col">Адрес доставки:</div>
+                        </div>
+                        <div class="row">
+                            <f-input v-model="filter.delivery_address_post_index" class="col-3">
+                                Индекс
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_region" class="col-5">
+                                Регион
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_city" class="col-4">
+                                Город
+                            </f-input>
+                        </div>
+                        <div class="row">
+                            <f-input v-model="filter.delivery_address_street" class="col-8">
+                                Улица
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_porch" class="col-1">
+                                Под.
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_house" class="col-1">
+                                Дом
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_floor" class="col-1">
+                                Этаж
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_flat" class="col-1">
+                                Кв.
+                            </f-input>
+                        </div>
+                        <div class="row">
+                            <f-date v-model="filter.required_shipping_at" class="col-6" range confirm>
+                                PSD - Дата отгрузки отправления
+                            </f-date>
+                            <f-date v-model="filter.delivery_at" class="col-6" range confirm>
+                                PDD - Дата доставки отправления плановая
+                            </f-date>
+                        </div>
+                    </div>
+                </transition>
             </div>
             <div class="card-footer">
                 <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
@@ -72,6 +174,8 @@
 <script>
     import FInput from '../../../../components/filter/f-input.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import FSelect from '../../../../components/filter/f-select.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
 
     import Services from "../../../../../scripts/services/services";
 
@@ -79,23 +183,34 @@
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
     const cleanHiddenFilter = {
-        client: null,
-        package_qty: null,
-        weight: null,
-        cost: null,
-        delivery_type: null,
-        delivery_method: null,
-        delivery_service_last_mile: null,
-        delivery_service_zero_mile: null,
-        delivery_address: '',
-        required_shipping_at: '',
-        delivery_at: '',
+        customer_id: null,
+        customer_full_name: '',
+        package_qty_from: null,
+        package_qty_to: null,
+        weight_from: null,
+        weight_to: null,
+        cost_from: null,
+        cost_to: null,
+        delivery_type: [],
+        delivery_method: [],
+        delivery_service: [],
+        delivery_service_zero_mile: [],
+        delivery_address_post_index: '',
+        delivery_address_region: '',
+        delivery_address_city: '',
+        delivery_address_street: '',
+        delivery_address_porch: '',
+        delivery_address_house: '',
+        delivery_address_floor: '',
+        delivery_address_flat: '',
+        required_shipping_at: [],
+        delivery_at: [],
     };
 
     const cleanFilter = Object.assign({
         order_number: '',
         number: '',
-        status: null,
+        status: [],
         is_problem: null,
     }, cleanHiddenFilter);
 
@@ -104,15 +219,26 @@
         'number',
         'status',
         'is_problem',
-        'client',
-        'package_qty',
-        'weight',
-        'cost',
+        'customer_id',
+        'customer_full_name',
+        'package_qty_from',
+        'package_qty_to',
+        'weight_from',
+        'weight_to',
+        'cost_from',
+        'cost_to',
         'delivery_type',
         'delivery_method',
-        'delivery_service_last_mile',
+        'delivery_service',
         'delivery_service_zero_mile',
-        'delivery_address',
+        'delivery_address_post_index',
+        'delivery_address_region',
+        'delivery_address_city',
+        'delivery_address_street',
+        'delivery_address_porch',
+        'delivery_address_house',
+        'delivery_address_floor',
+        'delivery_address_flat',
         'required_shipping_at',
         'delivery_at',
     ];
@@ -123,17 +249,22 @@
         components: {
             FInput,
             FMultiSelect,
+            FSelect,
+            FDate,
             ModalColumns
         },
         mixins: [modalMixin],
         data() {
             let self = this;
             let filter = Object.assign({}, cleanFilter);
+            filter.status = filter.status.map(value => parseInt(value));
 
             return {
                 opened: false,
                 filter,
+                appliedFilter: {},
                 shipmentStatuses: {},
+                customerFullNames: [],
                 isSelectAllPageShipments: false,
                 currentPage: 1,
                 pager: {},
@@ -159,16 +290,16 @@
                     },
                     {
                         name: 'ФИО + ID клиента',
-                        code: 'client',
+                        code: 'customer',
                         value: function(shipment) {
-                            return '<a href="' + self.getRoute('customers.detail', {id: shipment.client.id}) + '">' +
-                                shipment.client.id + ': ' + shipment.client.full_name + '</a>';
+                            return '<a href="' + self.getRoute('customers.detail', {id: shipment.customer.id}) + '">' +
+                                shipment.customer.id + ': ' + shipment.customer.full_name + '</a>';
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Статус',
+                        name: 'Статус отправления текущий',
                         code: 'status',
                         value: function(shipment) {
                             let status = '<span class="badge ' + self.statusClass(shipment.status.id) + '">' + shipment.status.name + '</span>';
@@ -287,15 +418,18 @@
         created() {
             Services.showLoader();
             Promise.all([
-                // Services.net().get(
-                //     this.getRoute('merchant.detail.order.data', {id: this.id})
-                // ),
+                Services.net().get(
+                    this.getRoute('merchant.detail.order.data', {id: this.id})
+                ),
                 this.paginationPromise(),
-                // this.paginationPromise()
             ]).then(data => {
-                // this.orders = data[0].orders;
-                this.shipments = data[0].shipments;
-                this.pager = data[0].pager;
+                this.shipmentStatuses = data[0].shipmentStatuses;
+                this.customerFullNames = data[0].customerFullNames;
+                this.deliveryTypes = data[0].deliveryTypes;
+                this.deliveryMethods = data[0].deliveryMethods;
+                this.deliveryServices = data[0].deliveryServices;
+                this.shipments = data[1].shipments;
+                this.pager = data[1].pager;
             }).finally(() => {
                 Services.hideLoader();
             });
@@ -303,12 +437,12 @@
         methods: {
             toggleHiddenFilter() {
                 this.opened = !this.opened;
-                // if (this.opened === false) {
-                //     for (let entry of Object.entries(cleanHiddenFilter)) {
-                //         this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
-                //     }
-                //     this.applyFilter();
-                // }
+                if (this.opened === false) {
+                    for (let entry of Object.entries(cleanHiddenFilter)) {
+                        this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+                    }
+                    this.applyFilter();
+                }
             },
             selectAllPageShipments() {
                 let checkboxes = document.getElementsByClassName('shipment-select');
@@ -340,7 +474,9 @@
                 Services.showLoader();
                 this.paginationPromise().then(data => {
                     this.shipments = data.shipments;
-                    this.pager = data.pager;
+                    if (data.pager) {
+                        this.pager = data.pager
+                    }
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -365,10 +501,40 @@
         },
         computed: {
             statusOptions() {
-                // return Object.values(this.shipmentStatuses).map(status => ({
-                //     value: status.id,
-                //     text: status.name
-                // }));
+                return Object.values(this.shipmentStatuses).map(status => ({
+                    value: status.id,
+                    text: status.name
+                }));
+            },
+            problemOptions() {
+                return [
+                    {
+                        value: 0,
+                        text: 'Нет проблем'
+                    },
+                    {
+                        value: 1,
+                        text: 'Проблемный'
+                    }
+                ];
+            },
+            deliveryTypeOptions() {
+                return Object.values(this.deliveryTypes).map(type => ({
+                    value: type.id,
+                    text: type.name
+                }));
+            },
+            deliveryMethodOptions() {
+                return Object.values(this.deliveryMethods).map(method => ({
+                    value: method.id,
+                    text: method.name
+                }));
+            },
+            deliveryServiceOptions() {
+                return Object.values(this.deliveryServices).map(service => ({
+                    value: service.id,
+                    text: service.name
+                }));
             },
             editedShowColumns() {
                 return this.columns.filter(function(column) {
@@ -383,3 +549,8 @@
         }
     };
 </script>
+<style scoped>
+    .additional-filter {
+        border-top: 1px solid #DFDFDF;
+    }
+</style>
