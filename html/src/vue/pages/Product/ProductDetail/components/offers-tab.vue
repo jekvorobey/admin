@@ -54,7 +54,8 @@
         <offer-edit-modal
                 title="Редактировать предложение"
                 :offer = "this.offerModal"
-                modal-name="offerEdit"/>
+                modal-name="offerEdit"
+                @onSave="$emit('onSave')"/>
     </div>
 </template>
 

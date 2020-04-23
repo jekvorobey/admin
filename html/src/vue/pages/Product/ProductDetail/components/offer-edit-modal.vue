@@ -13,6 +13,7 @@
                         Сортировка
                     </v-input>
                 </div>
+                <button @click="save" class="btn btn-dark mt-3">Сохранить</button>
             </div>
         </modal>
     </transition>
@@ -22,6 +23,7 @@
     import modal from '../../../../components/controls/modal/modal.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import modalMixin from '../../../../mixins/modal.js';
+    import Services from "../../../../../scripts/services/services";
 
     export default {
         components: {
@@ -35,6 +37,16 @@
             offer: Object,
         },
         methods: {
+            save() {
+                Services.showLoader();
+                let data = {"props": {"status": this.offer.sale_status, "manual_sort" : this.offer.manual_sort}};
+                Services.net().post(this.getRoute('offers.saveOfferProps', {id: this.offer.offer_id}), {}, data).catch(() => {
+                }).then((response)=> {
+                    Services.hideLoader();
+                    this.$emit('onSave');
+                    this.closeModal();
+                });
+            },
         },
     }
 </script>
