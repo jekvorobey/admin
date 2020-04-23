@@ -18,6 +18,7 @@ use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -105,6 +106,19 @@ class ProductDetailController extends Controller
            'props' => 'required|array'
         ]);
         $productService->saveProperties($id, $data['props']);
+        return response()->json();
+    }
+
+    public function saveOfferProps(
+        int $id,
+        Request $request,
+        OfferService $offerService
+    )
+    {
+        $data = $this->validate($request, [
+            'props' => 'required'
+        ]);
+        $offerService->saveProperties($id, $data['props']);
         return response()->json();
     }
     

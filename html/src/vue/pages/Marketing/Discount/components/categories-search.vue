@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'category-collapse-' + _uid">Выбрать категорию</button>
+                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'category-collapse-' + _uid" @click="reverseButtonName">{{ buttonName }}</button>
             </div>
         </div>
         <div class="mb-2 error">
@@ -51,10 +51,17 @@
         },
         data() {
             return {
+                buttonName: 'Выбрать категорию',
                 category: [],
             }
         },
         methods: {
+            reverseButtonName() {
+                if (this.buttonName === 'Выбрать категорию')
+                    this.buttonName = 'Закрыть список';
+                else
+                    this.buttonName = 'Выбрать категорию';
+            },
             toggleCategory(categoryId) {
                 let categories = new Set(this.category);
                 if (categories.has(categoryId)) {

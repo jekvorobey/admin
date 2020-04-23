@@ -11,7 +11,7 @@
             :brands="brands"
             :roles="roles"
             :iDistricts="iDistricts"
-            :submit-text="'Создать скидку'"
+            :submit-text="'Сохранить'"
             :processing="processing"
             :action="add"
         ></discount-form>
@@ -104,6 +104,7 @@
                 this.processing = true;
                 let err = 'Произошла ошибка при добавлении скидки.';
                 let success = 'Скидка успешно добавлена.';
+                Services.showLoader();
                 Services.net().post(
                     this.route('discount.save'),
                     {},
@@ -112,10 +113,13 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('AddDiscount');
                     this.processing = false;
+                    this.setTimeout(location=this.route('discount.list'), 4000);
                 }, () => {
                     this.result = err;
                     this.openModal('AddDiscount');
                     this.processing = false;
+                }).finally(() => {
+                    Services.hideLoader();
                 });
             },
             formatIds(ids) {

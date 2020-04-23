@@ -11,7 +11,7 @@
             :i-promo-codes="iPromoCodes"
             :i-types="iTypes"
             :i-statuses="iStatuses"
-            :submit-text="'Создать промокод'"
+            :submit-text="'Сохранить'"
             :action="action"
             :processing="processing"
         ></promo-code-form>
@@ -57,6 +57,7 @@
 
                 Services.net().post(this.route('promo-code.save'), {}, promoCode).then(data => {
                     Services.msg("Промокод добавлен");
+                    this.setTimeout(location=this.route('promo-code.list'), 4000);
                 }, () => {
                     Services.msg("Ошибка при добавлении промокода");
                 }).finally(data => {

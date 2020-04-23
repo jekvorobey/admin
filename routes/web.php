@@ -221,6 +221,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::prefix('{id}')->group(function () {
+            Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
+        });
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {

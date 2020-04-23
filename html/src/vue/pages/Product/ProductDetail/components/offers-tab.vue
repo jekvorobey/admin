@@ -6,7 +6,11 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <f-input v-model="merchantId" class="col-md-1 col-sm-12">Мерчант</f-input>
+                    <f-input v-model="offerId" class="col-md-2 col-sm-12">ID предложения</f-input>
+                    <f-input v-model="merchantId" class="col-md-2 col-sm-12">Мерчант</f-input>
+                    <f-input v-model="status" class="col-md-2 col-sm-12">Статус</f-input>
+                </div>
+                <div class="row">
                     <f-input v-model="priceFrom" class="col-md-2 col-sm-12">
                         Цена от
                         <template #append><span class="input-group-text">руб.</span></template>
@@ -15,15 +19,14 @@
                         Цена до
                         <template #append><span class="input-group-text">руб.</span></template>
                     </f-input>
-                    <f-input v-model="qtyFrom" class="col-md-2 col-sm-12">
+                        <f-input v-model="qtyFrom" class="col-md-2 col-sm-12">
                         Остаток от
                         <template #append><span class="input-group-text">руб.</span></template>
                     </f-input>
-                    <f-input v-model="qtyTo" class="col-md-2 col-sm-12">
+                        <f-input v-model="qtyTo" class="col-md-2 col-sm-12">
                         Остаток до
                         <template #append><span class="input-group-text">руб.</span></template>
                     </f-input>
-                    <f-input v-model="status" class="col-md-1 col-sm-12">Статус</f-input>
                 </div>
             </div>
         </div>
@@ -54,7 +57,8 @@
         <offer-edit-modal
                 title="Редактировать предложение"
                 :offer = "this.offerModal"
-                modal-name="offerEdit"/>
+                modal-name="offerEdit"
+                @onSave="$emit('onSave')"/>
     </div>
 </template>
 
@@ -73,6 +77,7 @@
         mixins: [modalMixin],
         data: function() {
             return {
+                offerId: '',
                 merchantId: '',
                 priceFrom: '',
                 priceTo: '',
@@ -108,6 +113,7 @@
         computed: {
             filteredOffers() {
                 return this.sortedOffers()
+                    .filter(offer => offer.offer_id.toString().includes(this.offerId))
                     .filter(offer => offer.merchant_id.toString().includes(this.merchantId))
                     .filter(offer => offer.sale_status.toString().includes(this.status))
                     .filter(offer => offer.price >= this.priceFrom)

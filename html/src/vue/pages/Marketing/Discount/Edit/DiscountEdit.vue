@@ -118,6 +118,7 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('UpdateDiscount');
                     this.processing = false;
+                    this.setTimeout(location=this.route('discount.list'), 4000);
                 }, () => {
                     this.result = err;
                     this.openModal('UpdateDiscount');
