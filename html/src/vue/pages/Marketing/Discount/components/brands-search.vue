@@ -10,7 +10,7 @@
                 >{{ brand.name }} <fa-icon icon="trash-alt"></fa-icon></div>
             </div>
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'brand-collapse-' + _uid">Выбрать бренд</button>
+                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'brand-collapse-' + _uid" @click="reverseButtonName()">{{ buttonName }}</button>
             </div>
         </div>
         <div class="mb-2 error">
@@ -38,10 +38,17 @@
         },
         data() {
             return {
+                buttonName: 'Выбрать бренд',
                 brand: [],
             }
         },
         methods: {
+            reverseButtonName() {
+                if (this.buttonName === 'Выбрать бренд')
+                    this.buttonName = 'Закрыть список';
+                else
+                    this.buttonName = 'Выбрать бренд';
+            },
             toggleBrand(brandId) {
                 let brands = new Set(this.brand);
                 if (brands.has(brandId)) {
