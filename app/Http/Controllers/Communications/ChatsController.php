@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -26,7 +27,12 @@ class ChatsController extends Controller
         $this->loadCommunicationTypes = true;
 
         $this->title = 'Непрочитанные сообщения';
-        return $this->render('Communication/ChatsUnread');
+        return $this->render('Communication/ChatsUnread', [
+            'roles' => UserDto::rolesByFrontIds([
+                Front::FRONT_MAS,
+                Front::FRONT_SHOWCASE,
+            ])
+        ]);
     }
 
     public function broadcast()
@@ -50,20 +56,20 @@ class ChatsController extends Controller
     public function filter(CommunicationService $communicationService)
     {
         $listConstructor = $communicationService->chats();
-        if (request('user_id')) {
-            $listConstructor->setUserIds([request('user_id')]);
+        if (request('user_ids')) {
+            $listConstructor->setUserIds(request('user_ids'));
         }
         if (request('theme')) {
             $listConstructor->setTheme(request('theme'));
         }
-        if (request('channel_id')) {
-            $listConstructor->setChannelIds([request('channel_id')]);
+        if (request('channel_ids')) {
+            $listConstructor->setChannelIds(request('channel_ids'));
         }
-        if (request('status_id')) {
-            $listConstructor->setStatusIds([request('status_id')]);
+        if (request('status_ids')) {
+            $listConstructor->setStatusIds(request('status_ids'));
         }
-        if (request('type_id')) {
-            $listConstructor->setTypeIds([request('type_id')]);
+        if (request('type_ids')) {
+            $listConstructor->setTypeIds(request('type_ids'));
         }
         if (!is_null(request('unread_admin'))) {
             $listConstructor->setUnreadAdmin((bool)request('unread_admin'));
@@ -198,4 +204,35 @@ class ChatsController extends Controller
 
         return [$chats, $users, $files];
     }
+
+    /**
+     * Получение пользователей по массиву ролей
+     *
+     * @param UserService $userService
+     * @param RequestInitiator $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function userListForBroadcast(UserService $userService, RequestInitiator $user)
+    {
+        $roleIds = request('role_ids');
+
+        $users = $userService->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id', 'full_name', 'phone', 'email')
+                ->setFilter('id', '!=', $user->userId())
+                ->setFilter('role', $roleIds)
+        )->map(function (UserDto $user) {
+                return [
+                    'id' => $user->id,
+                    'title' => $user->getTitle(),
+                    'email' => $user->email,
+                ];
+            })->keyBy('id')
+            ->all();
+
+        return response()->json([
+            'users' => $users,
+        ]);
+    }
+
 }

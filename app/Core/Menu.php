@@ -300,6 +300,14 @@ class Menu
                 'title' => 'Коммуникации',
                 'items' => [
                     [
+                        'title' => 'Непрочитанные сообщения',
+                        'route' => route('communications.chats.unread'),
+                    ],
+                    [
+                        'title' => 'Массовая рассылка',
+                        'route' => route('communications.chats.broadcast'),
+                    ],
+                    [
                         'title' => 'Статусы',
                         'route' => route('communications.statuses.list'),
                     ],
@@ -310,10 +318,6 @@ class Menu
                     [
                         'title' => 'Типы',
                         'route' => route('communications.types.list'),
-                    ],
-                    [
-                        'title' => 'Массовая рассылка',
-                        'route' => route('communications.chats.broadcast'),
                     ],
                 ],
             ],

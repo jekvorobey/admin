@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import FileInput from '../controls/FileInput/FileInput.vue';
-import VDeleteButton from '../controls/VDeleteButton/VDeleteButton.vue';
+import FileInput from '../../controls/FileInput/FileInput.vue';
+import VDeleteButton from '../../controls/VDeleteButton/VDeleteButton.vue';
 
 export default {
     name: 'communication-chat-message',

@@ -1,22 +1,16 @@
 <template>
     <div>
-        <communication-chat-creator kind='selectedUser'
-                                    :customer="customer"/>
-        <communication-chat-list :filter="{user_id: customer.user_id}"
-                                 :customer="customer"/>
+        <communication-chat-list :filter="{user_ids: [customer.user_id]}"
+                                 :chatUsers="[{user_id: customer.user_id, email: customer.email}]"/>
     </div>
 </template>
 
 <script>
-import ModalBrands from './modal-brands.vue';
-import ModalCategories from './modal-categories.vue';
-import CommunicationChatCreator from '../../../../components/communication-chat-creator/communication-chat-creator.vue';
-import CommunicationChatList from '../../../../components/communication-chat-list/communication-chat-list.vue';
-import Services from "../../../../../scripts/services/services";
+import CommunicationChatList from '../../../../components/communication/communication-chat-list/communication-chat-list.vue';
 
 export default {
     name: 'tab-communication',
-    components: {CommunicationChatList, CommunicationChatCreator, ModalCategories, ModalBrands},
+    components: {CommunicationChatList},
     props: ['customer'],
 };
 </script>
