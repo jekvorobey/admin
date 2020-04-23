@@ -30,6 +30,51 @@ use Illuminate\Validation\Rule;
 class TabOrderController extends Controller
 {
     /**
+     * AJAX подгрузка информации для фильтрации скидок
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function loadOrdersData(int $merchantId, Request $request)
+    {
+        $restQuery = $this->makeRestQuery($request, $merchantId);
+
+        return response()->json([
+            'shipmentStatuses' => ShipmentStatus::allStatuses(),
+            'customerFullNames' => $this->getCustomersNames($restQuery),
+            'deliveryTypes' => DeliveryType::allTypes(),
+            'deliveryMethods' => DeliveryMethod::allMethods(),
+            'deliveryServices' => DeliveryService::allServices(),
+            'stores' => $this->loadStores($merchantId),
+        ]);
+    }
+
+    /**
+     * AJAX пагинация списка заказов
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @param  ShipmentService $shipmentService
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function page(int $merchantId, Request $request, ShipmentService $shipmentService): JsonResponse
+    {
+        $restQuery = $this->makeRestQuery($request, $merchantId);
+        $shipments = $this->loadShipments($restQuery);
+        $result = [
+            'shipments' => $shipments,
+        ];
+        if ($request->get('page') == 1) {
+            $result['pager'] = $shipmentService->shipmentsCount($restQuery);
+        }
+
+        return response()->json($result);
+    }
+
+    /**
      * @return array
      */
     protected function getCustomersNames(DataQuery $restQuery): array
@@ -78,71 +123,24 @@ class TabOrderController extends Controller
     }
 
     /**
-     * AJAX подгрузка информации для фильтрации скидок
-     *
      * @param int $merchantId
-     * @param Request $request
-     * @return JsonResponse
-     * @throws \Exception
+     * @return Collection|StoreDto[]
      */
-    public function loadOrdersData(int $merchantId, Request $request)
+    public function loadStores(int $merchantId): Collection
     {
-        $restQuery = $this->makeRestQuery($request, $merchantId);
+        /** @var Collection|StoreDto[] $stores */
+        static $stores = null;
 
-        return response()->json([
-            'shipmentStatuses' => ShipmentStatus::allStatuses(),
-            'customerFullNames' => $this->getCustomersNames($restQuery),
-            'deliveryTypes' => DeliveryType::allTypes(),
-            'deliveryMethods' => DeliveryMethod::allMethods(),
-            'deliveryServices' => DeliveryService::allServices(),
-        ]);
-    }
+        if (is_null($stores)) {
+            /** @var StoreService $storeService */
+            $storeService = resolve(StoreService::class);
 
-    /**
-     * @return array
-     */
-    protected function getFilter(): array
-    {
-        $allDeliveryServices = DeliveryService::allServices();
-        $filter = Validator::make(request('filter') ?? [],
-            [
-                'order_number' => 'string|someone',
-                'number' => 'string|someone',
-                'status' => 'array|someone',
-                'status.' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
-                'is_problem' => 'boolean|someone',
-                'customer_id' => 'numeric|someone',
-                'customer_full_name' => 'string|someone',
-                'package_qty_from' => 'numeric|someone',
-                'package_qty_to' => 'numeric|someone',
-                'weight_from' => 'numeric|someone',
-                'weight_to' => 'numeric|someone',
-                'cost_from' => 'numeric|someone',
-                'cost_to' => 'numeric|someone',
-                'delivery_type' => 'array|someone',
-                'delivery_type.' => Rule::in(array_keys(DeliveryType::allTypes())),
-                'delivery_method' => 'array|someone',
-                'delivery_method.' => Rule::in(array_keys(DeliveryMethod::allMethods())),
-                'delivery_service' => 'array|someone',
-                'delivery_service.' => Rule::in(array_keys($allDeliveryServices)),
-                'delivery_service_zero_mile' => 'array|someone',
-                'delivery_service_zero_mile.' => Rule::in(array_keys($allDeliveryServices)),
-                'delivery_address_post_index' => 'string|someone',
-                'delivery_address_region' => 'string|someone',
-                'delivery_address_city' => 'string|someone',
-                'delivery_address_street' => 'string|someone',
-                'delivery_address_porch' => 'string|someone',
-                'delivery_address_house' => 'string|someone',
-                'delivery_address_floor' => 'string|someone',
-                'delivery_address_flat' => 'string|someone',
-                'required_shipping_at' => 'array|someone',
-                'required_shipping_at.'  => 'date',
-                'delivery_at' => 'array|someone',
-                'delivery_at.'  => 'date',
-            ]
-        )->attributes();
+            $restQuery = $storeService->newQuery();
+            $restQuery->addFields(StoreDto::entity(), 'id', 'name');
+            $stores = $storeService->stores($restQuery, $merchantId)->keyBy('id');
+        }
 
-        return $filter;
+        return $stores;
     }
 
     /**
@@ -207,24 +205,50 @@ class TabOrderController extends Controller
     }
 
     /**
-     * @param int $merchantId
-     * @return Collection|StoreDto[]
+     * @return array
      */
-    public function loadStores(int $merchantId): Collection
+    protected function getFilter(): array
     {
-        /** @var Collection|StoreDto[] $stores */
-        static $stores = null;
+        $allDeliveryServices = DeliveryService::allServices();
+        $filter = Validator::make(request('filter') ?? [],
+            [
+                'order_number' => 'string|someone',
+                'number' => 'string|someone',
+                'status' => 'array|someone',
+                'status.' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
+                'is_problem' => 'boolean|someone',
+                'customer_id' => 'numeric|someone',
+                'customer_full_name' => 'string|someone',
+                'package_qty_from' => 'numeric|someone',
+                'package_qty_to' => 'numeric|someone',
+                'weight_from' => 'numeric|someone',
+                'weight_to' => 'numeric|someone',
+                'cost_from' => 'numeric|someone',
+                'cost_to' => 'numeric|someone',
+                'delivery_type' => 'array|someone',
+                'delivery_type.' => Rule::in(array_keys(DeliveryType::allTypes())),
+                'delivery_method' => 'array|someone',
+                'delivery_method.' => Rule::in(array_keys(DeliveryMethod::allMethods())),
+                'delivery_service' => 'array|someone',
+                'delivery_service.' => Rule::in(array_keys($allDeliveryServices)),
+                'delivery_service_zero_mile' => 'array|someone',
+                'delivery_service_zero_mile.' => Rule::in(array_keys($allDeliveryServices)),
+                'delivery_address_post_index' => 'string|someone',
+                'delivery_address_region' => 'string|someone',
+                'delivery_address_city' => 'string|someone',
+                'delivery_address_street' => 'string|someone',
+                'delivery_address_porch' => 'string|someone',
+                'delivery_address_house' => 'string|someone',
+                'delivery_address_floor' => 'string|someone',
+                'delivery_address_flat' => 'string|someone',
+                'required_shipping_at' => 'array|someone',
+                'required_shipping_at.'  => 'date',
+                'delivery_at' => 'array|someone',
+                'delivery_at.'  => 'date',
+            ]
+        )->attributes();
 
-        if (is_null($stores)) {
-            /** @var StoreService $storeService */
-            $storeService = resolve(StoreService::class);
-
-            $restQuery = $storeService->newQuery();
-            $restQuery->addFields(StoreDto::entity(), 'id', 'name');
-            $stores = $storeService->stores($restQuery, $merchantId)->keyBy('id');
-        }
-
-        return $stores;
+        return $filter;
     }
 
     /**
@@ -362,28 +386,5 @@ class TabOrderController extends Controller
         });
 
         return $shipments;
-    }
-
-    /**
-     * AJAX пагинация списка заказов
-     *
-     * @param int $merchantId
-     * @param Request $request
-     * @param  ShipmentService $shipmentService
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
-     */
-    public function page(int $merchantId, Request $request, ShipmentService $shipmentService): JsonResponse
-    {
-        $restQuery = $this->makeRestQuery($request, $merchantId);
-        $shipments = $this->loadShipments($restQuery);
-        $result = [
-            'shipments' => $shipments,
-        ];
-        if ($request->get('page') == 1) {
-            $result['pager'] = $shipmentService->shipmentsCount($restQuery);
-        }
-
-        return response()->json($result);
     }
 }

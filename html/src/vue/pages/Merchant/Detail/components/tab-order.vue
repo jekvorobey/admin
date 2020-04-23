@@ -72,14 +72,17 @@
                             </f-multi-select>
                         </div>
                         <div class="row">
-                            <f-multi-select v-model="filter.delivery_method" :options="deliveryMethodOptions" class="col-4">
+                            <f-multi-select v-model="filter.delivery_method" :options="deliveryMethodOptions" class="col-3">
                                 Способ доставки
                             </f-multi-select>
-                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-4">
+                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-3">
                                 ЛО - последняя миля
                             </f-multi-select>
-                            <f-multi-select v-model="filter.delivery_service_zero_mile" :options="deliveryServiceOptions" class="col-4">
+                            <f-multi-select v-model="filter.delivery_service_zero_mile" :options="deliveryServiceOptions" class="col-3">
                                 ЛО - нулевая миля
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.store_id" :options="storeOptions" class="col-3">
+                                Склад отгрузки
                             </f-multi-select>
                         </div>
                         <div class="row">
@@ -100,11 +103,11 @@
                             <f-input v-model="filter.delivery_address_street" class="col-8">
                                 Улица
                             </f-input>
-                            <f-input v-model="filter.delivery_address_porch" class="col-1">
-                                Под.
-                            </f-input>
                             <f-input v-model="filter.delivery_address_house" class="col-1">
                                 Дом
+                            </f-input>
+                            <f-input v-model="filter.delivery_address_porch" class="col-1">
+                                Под.
                             </f-input>
                             <f-input v-model="filter.delivery_address_floor" class="col-1">
                                 Этаж
@@ -195,6 +198,7 @@
         delivery_method: [],
         delivery_service: [],
         delivery_service_zero_mile: [],
+        store_id: [],
         delivery_address_post_index: '',
         delivery_address_region: '',
         delivery_address_city: '',
@@ -231,6 +235,7 @@
         'delivery_method',
         'delivery_service',
         'delivery_service_zero_mile',
+        'store_id',
         'delivery_address_post_index',
         'delivery_address_region',
         'delivery_address_city',
@@ -265,6 +270,10 @@
                 appliedFilter: {},
                 shipmentStatuses: {},
                 customerFullNames: [],
+                deliveryTypes: [],
+                deliveryMethods: [],
+                deliveryServices: [],
+                stores: [],
                 isSelectAllPageShipments: false,
                 currentPage: 1,
                 pager: {},
@@ -428,6 +437,7 @@
                 this.deliveryTypes = data[0].deliveryTypes;
                 this.deliveryMethods = data[0].deliveryMethods;
                 this.deliveryServices = data[0].deliveryServices;
+                this.stores = data[0].stores;
                 this.shipments = data[1].shipments;
                 this.pager = data[1].pager;
             }).finally(() => {
@@ -534,6 +544,12 @@
                 return Object.values(this.deliveryServices).map(service => ({
                     value: service.id,
                     text: service.name
+                }));
+            },
+            storeOptions() {
+                return Object.values(this.stores).map(store => ({
+                    value: store.id,
+                    text: store.name
                 }));
             },
             editedShowColumns() {
