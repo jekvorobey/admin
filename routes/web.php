@@ -46,11 +46,17 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('marketing')->group(function () {
                     Route::prefix('discounts')->group(function () {
-                        Route::get('', 'TabMarketingController@loadDiscounts')->name('merchant.detail.marketing.discounts');
-                        Route::get('page', 'TabMarketingController@page')->name('merchant.detail.marketing.discounts.pagination');
-                        Route::put('', 'TabMarketingController@status')->name('merchant.detail.marketing.discounts.status');
-                        Route::delete('', 'TabMarketingController@delete')->name('merchant.detail.marketing.discounts.delete');
+                        Route::get('data', 'TabMarketingController@loadDiscountsData')->name('merchant.detail.marketing.discounts.data');
+                        Route::get('page', 'TabMarketingController@pageDiscounts')->name('merchant.detail.marketing.discounts.pagination');
                     });
+                    Route::prefix('promo-codes')->group(function () {
+                        Route::get('data', 'TabMarketingController@loadPromoCodesData')->name('merchant.detail.marketing.promo-codes.data');
+                        Route::get('', 'TabMarketingController@loadPromoCodes')->name('merchant.detail.marketing.promo-codes');
+                    });
+                });
+                Route::prefix('order')->group(function () {
+                    Route::get('data', 'TabOrderController@loadOrdersData')->name('merchant.detail.order.data');
+                    Route::get('page', 'TabOrderController@page')->name('merchant.detail.order.pagination');
                 });
             });
         });
@@ -87,6 +93,10 @@ Route::middleware('auth')->group(function () {
             Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
             Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
+        });
+
+        Route::prefix('bonus')->group(function () {
+            Route::get('', 'BonusController@index')->name('bonus.list');
         });
     });
 
@@ -476,6 +486,10 @@ Route::middleware('auth')->group(function () {
                         });
 
                         Route::post('', 'TabDocumentController@createDocument')->name('customers.detail.document.create');
+                    });
+                    Route::prefix('bonuses')->group(function () {
+                        Route::get('', 'TabBonusController@load')->name('customers.detail.bonuses');
+                        Route::post('', 'TabBonusController@add')->name('customers.detail.bonus.add');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                 });

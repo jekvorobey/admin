@@ -75,7 +75,7 @@
                 <td colspan="2">&nbsp;</td>
             </template>
             <template v-else-if="condition.type === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
-                <td>Каждый {{ condition.sequenceNumber }}-й заказ</td>
+                <td>{{ condition.sequenceNumber }}-й заказ Клиента</td>
                 <td colspan="2">&nbsp;</td>
             </template>
             <template v-else-if="condition.type === CONDITION_TYPE_DISCOUNT_SYNERGY">

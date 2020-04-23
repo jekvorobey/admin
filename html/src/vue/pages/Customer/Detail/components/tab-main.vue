@@ -50,6 +50,10 @@
             <td><a tabindex @click="openOrder">{{ order.price }}</a></td>
         </tr>
         <tr>
+            <th>Доступных бонусов</th>
+            <td>{{ customer.bonus }}</td>
+        </tr>
+        <tr>
             <th>Подписка на рассылку</th>
             <td></td>
         </tr>

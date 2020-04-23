@@ -41,6 +41,7 @@
                     <tab-promo-page v-else-if="key === 'promoPage'" :model.sync="customer"/>
                     <tab-order-referrer v-else-if="key === 'orderReferrer'" :id="customer.id"/>
                     <tab-billing v-else-if="key === 'billing'" :model.sync="customer"/>
+                    <tab-bonus v-else-if="key === 'bonuses'" :model.sync="customer"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -76,6 +77,7 @@ import TabPromoProduct from './components/tab-promo-product.vue';
 import TabPromoPage from './components/tab-promo-page.vue';
 import TabOrderReferrer from './components/tab-order-referrer.vue';
 import TabBilling from './components/tab-billing.vue';
+import TabBonus from './components/tab-bonus.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
 
@@ -91,6 +93,7 @@ export default {
         TabPreference,
         TabPromoPage,
         TabPromoProduct,
+        TabBonus,
         ModalMarkStatus,
         ModalPortfolios,
         Infopanel,
@@ -140,6 +143,7 @@ export default {
                 tabs.referralPromocodes = {i: i++, title: 'Промокоды Реферального Партнера'};
             }
             if (this.showAllTabs) {
+                tabs.bonuses = {i: i++, title: 'Бонусы'};
                 tabs.gifts = {i: i++, title: 'Подарки'};
                 tabs.sertificates = {i: i++, title: 'Сертификаты'};
                 tabs.logSegment = {i: i++, title: 'Сегмент'};

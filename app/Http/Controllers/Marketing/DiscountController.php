@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
@@ -28,16 +29,18 @@ class DiscountController extends Controller
      *
      * @param Request $request
      * @param DiscountService $discountService
+     * @param RequestInitiator $user
      * @return mixed
      */
-    public function index(Request $request, DiscountService $discountService)
+    public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
     {
         $this->title = 'Скидки';
+        $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
-        $params = DiscountHelper::getParams($request, $pager);
-        $countParams = DiscountHelper::getParams($request);
+        $params = DiscountHelper::getParams($request, $userId, $pager);
+        $countParams = DiscountHelper::getParams($request, $userId);
         $discounts = DiscountHelper::load($params, $discountService);
-        $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService);
+        $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService, $userId);
         $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
         return $this->render('Marketing/Discount/List', [
@@ -60,13 +63,15 @@ class DiscountController extends Controller
      *
      * @param Request $request
      * @param DiscountService $discountService
+     * @param RequestInitiator $user
      * @return JsonResponse
      */
-    public function page(Request $request, DiscountService $discountService)
+    public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
     {
+        $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
-        $params = DiscountHelper::getParams($request, $pager);
-        $countParams = DiscountHelper::getParams($request);
+        $params = DiscountHelper::getParams($request, $userId, $pager);
+        $countParams = DiscountHelper::getParams($request, $userId);
         $discounts = DiscountHelper::load($params, $discountService);
         return response()->json([
             'iDiscounts' => $discounts,

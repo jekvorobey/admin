@@ -39,6 +39,16 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-6">
+                                <label>Инициатор</label>
+                                <v-select2 v-model="filter.merchant_id"
+                                           class="form-control"
+                                           :multiple="true"
+                                           :selectOnClose="true"
+                                           width="100%">
+                                    <option v-for="initiator in initiatorsOptions" :value="initiator.value">{{ initiator.text }}</option>
+                                </v-select2>
+                            </div>
+                            <div class="col-6">
                                 <label>Автор</label>
                                 <v-select2 v-model="filter.user_id"
                                            class="form-control"
@@ -124,6 +134,7 @@
                 <th>Название</th>
                 <th>Скидка</th>
                 <th>Период действия</th>
+                <th>Инициатор</th>
                 <th>Автор</th>
                 <th>Статус</th>
             </tr>
@@ -141,6 +152,7 @@
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
                 <td>{{ discount.validityPeriod }}</td>
+                <td>{{ initiatorName(discount.merchant_id) }}</td>
                 <td>{{ userName(discount.user_id) }}</td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
@@ -194,6 +206,7 @@
 
     import modal from '../../../../../components/controls/modal/modal.vue';
     import modalMixin from '../../../../../mixins/modal';
+    import Service from "../../../../../../scripts/services/services";
 
     const cleanHiddenFilter = {
         user_id: [],
@@ -243,7 +256,7 @@
             DiscountList,
         },
         mixins: [modalMixin],
-        props: ['id'],
+        props: ['id', 'legal_name'],
         data() {
             let filter = Object.assign({}, cleanFilter);
             filter.status = filter.status.map(value => parseInt(value));
@@ -255,6 +268,7 @@
                     discountStatuses: {},
                     discountTypes: {},
                     roles: [],
+                    initiators: [],
                     authors: [],
                     userNames: {},
                 },
@@ -285,28 +299,22 @@
         created() {
             Services.showLoader();
             Promise.all([
-                Services.net().get(this.getRoute('merchant.detail.marketing.discounts', {id: this.id})),
-                Services.net().get(
-                    this.getRoute(
-                        'merchant.detail.marketing.discounts.pagination',
-                        {id: this.id}
-                    ),
-                    {
-                        page: this.currentPage,
-                        filter: {},
-                })
+                Services.net().get(this.getRoute('merchant.detail.marketing.discounts.data', {id: this.id})),
+                this.paginationPromise()
             ]).then(data => {
                 this.filterData.discountStatuses = data[0].discountStatuses;
                 this.filterData.discountTypes = data[0].discountTypes;
                 this.filterData.roles = data[0].roles;
+                this.filterData.initiators = data[0].initiators;
                 this.filterData.authors = data[0].authors;
                 this.filterData.userNames = data[0].userNames;
                 this.pager = data[0].pager;
+
                 this.discounts = data[1].discounts;
                 this.total = data[1].total;
             }).finally(() => {
                 Services.hideLoader();
-            })
+            });
         },
         methods: {
             toggleHiddenFilter() {
@@ -316,10 +324,8 @@
                 let user = this.filterData.userNames[id];
                 return user ? user : 'N/A';
             },
-            loadPage() {
-                this.processing = true;
-                Services.showLoader();
-                Services.net().get(
+            paginationPromise() {
+                return Services.net().get(
                     this.getRoute(
                         'merchant.detail.marketing.discounts.pagination',
                         {id: this.id}
@@ -327,7 +333,12 @@
                     {
                         page: this.currentPage,
                         filter: this.appliedFilter,
-                }).then(data => {
+                    });
+            },
+            loadPage() {
+                this.processing = true;
+                Services.showLoader();
+                this.paginationPromise().then(data => {
                     this.discounts = data.discounts;
                     this.total = data.total;
                     this.processing = false;
@@ -377,15 +388,19 @@
                 this.openModal('UpdateStatusDiscount');
             },
             approveChangeStatus() {
+                if (!this.newStatus) {
+                    return;
+                }
+
                 this.processing = true;
                 Services.showLoader();
-                Services.net().put(this.route('discount.status'), {
+                Service.net().put(this.route('discount.status'), {
                     ids: this.selectedIds,
-                    status: this.STATUS_SENT,
+                    status: this.newStatus,
                 }).then(data => {
                     this.processing = false;
                     this.closeModal('UpdateStatusDiscount');
-                    window.location.reload();
+                    this.loadPage();
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -398,7 +413,7 @@
                 }).then(data => {
                     this.processing = false;
                     this.closeModal('DeleteDiscount');
-                    window.location.reload();
+                    this.loadPage();
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -416,6 +431,13 @@
                 });
                 this.checkboxes = checkboxes;
             },
+            initiatorName(id) {
+                if (!id) {
+                    return 'Маркетплейс';
+                } else {
+                    return this.legal_name;
+                }
+            },
         },
         computed: {
             discountStatusesOptions() {
@@ -423,6 +445,11 @@
             },
             discountTypesOptions() {
                 return Object.values(this.filterData.discountTypes).map(type => ({value: type.id, text: type.name}));
+            },
+            initiatorsOptions() {
+                return this.filterData.initiators.map(initiatorId => ({
+                    value: initiatorId ? initiatorId : -1, text: this.initiatorName(initiatorId)
+                }));
             },
             authorsOptions() {
                 return this.filterData.authors.map(authorId => ({
@@ -453,7 +480,12 @@
                     }
                 });
                 return discountId;
-            }
+            },
+            selectedIds() {
+                return this.discounts.filter(discount => {
+                    return (discount.id in this.checkboxes) && this.checkboxes[discount.id];
+                }).map(discount => discount.id);
+            },
         },
         watch: {
             currentPage() {
