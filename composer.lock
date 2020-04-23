@@ -545,6 +545,9 @@
                 }
             ],
             "description": "iBT Customer management client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/14329212/issues"
+            },
             "time": "2020-04-17T15:26:28+00:00"
         },
         {
