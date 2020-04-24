@@ -332,6 +332,10 @@ class Menu
                         'title' => 'Карточка организации',
                         'route' => route('settings.organizationCard'),
                     ],
+                    [
+                        'title' => 'Маркетинговые инструменты',
+                        'route' => route('settings.marketing'),
+                    ],
                 ],
             ],
         ];

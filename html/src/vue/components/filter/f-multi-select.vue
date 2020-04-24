@@ -93,6 +93,7 @@
             remove(value) {
                 this.value.splice(this.value.indexOf(value), 1);
                 this.$emit('input', this.value);
+                this.$emit('change');
             },
             toggleOption(value) {
                 if (this.valueSelected(value)) {
@@ -100,6 +101,7 @@
                 } else {
                     this.value.push(value);
                     this.$emit('input', this.value);
+                    this.$emit('change');
                 }
             },
             valueSelected(value) {

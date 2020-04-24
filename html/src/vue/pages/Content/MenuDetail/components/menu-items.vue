@@ -16,7 +16,7 @@
                 >
                     <div class="col p-2">
                         <div class="container-fluid">
-                            <div class="row">
+                            <div class="row mt-2 mb-2">
                                 <div class="col align-self-center">
                                     <input type="checkbox" style="width: 20px; height: 20px" v-model="checkboxes[itemIndex]">
                                     <b>{{item.name}}</b> ({{item.url}})<br>
@@ -25,8 +25,8 @@
                                     <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
                                         <fa-icon icon="edit"/>
                                     </b-button>
-                                    <b-button class="btn btn-danger btn-sm">
-                                        <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
+                                    <b-button class="btn btn-danger btn-sm" @click="removeItem(itemIndex)">
+                                        <fa-icon icon="trash-alt"/>
                                     </b-button>
                                 </div>
                             </div>
@@ -35,6 +35,7 @@
                         <div class="container-fluid">
                             <draggable v-model="item.children"
                                        v-bind="dragOptions"
+                                       style="cursor: move"
                             >
                                 <!-- Второй уровень -->
                                 <div v-for="(child, childIndex) in item.children"
@@ -44,16 +45,16 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="col align-self-center">
-                                                    {{child.name}} ({{child.url}})
+                                                    {{childIndex + 1}}. {{child.name}} ({{child.url}})
                                                 </div>
                                                 <div class="col-auto">
                                                     <b-button class="btn btn-success btn-sm"
                                                               @click="editItem(childIndex, itemIndex)">
                                                         <fa-icon icon="edit"/>
                                                     </b-button>
-                                                    <b-button class="btn btn-danger btn-sm">
-                                                        <fa-icon icon="trash-alt"
-                                                                 @click="removeItem(childIndex, itemIndex)"/>
+                                                    <b-button class="btn btn-danger btn-sm"
+                                                              @click="removeItem(childIndex, itemIndex)">
+                                                        <fa-icon icon="trash-alt"/>
                                                     </b-button>
                                                 </div>
                                             </div>
@@ -85,26 +86,27 @@
 
             <draggable v-model="selectedMenuItems"
                        v-bind="dragOptions"
-                       ondragend=""
+                       style="cursor: move"
             >
                 <!-- Первый уровень -->
                 <div v-for="(item, itemIndex) in selectedMenuItems"
                      v-if="item.active !== 0"
                      class="row my-2 bg-light border border-dark rounded"
+                     @dragend="updateOrder()"
                 >
                     <div class="col p-2">
                         <div class="container-fluid">
-                            <div class="row">
+                            <div class="row mt-2 mb-2">
                                 <div class="col align-self-center">
                                     <input type="checkbox" style="width: 20px; height: 20px" v-model="checkboxes[itemIndex]">
-                                    <b>{{item.name}}</b> ({{item.url}})<br>
+                                    <b>{{itemIndex + 1}}. {{item.name}}</b> ({{item.url}})<br>
                                 </div>
                                 <div class="col-auto">
                                     <b-button class="btn btn-success btn-sm" @click="editItem(itemIndex)">
                                         <fa-icon icon="edit"/>
                                     </b-button>
-                                    <b-button class="btn btn-danger btn-sm">
-                                        <fa-icon icon="trash-alt" @click="removeItem(itemIndex)"/>
+                                    <b-button class="btn btn-danger btn-sm" @click="removeItem(itemIndex)">
+                                        <fa-icon icon="trash-alt"/>
                                     </b-button>
                                 </div>
                             </div>
@@ -113,6 +115,7 @@
                         <div class="container-fluid">
                             <draggable v-model="item.children"
                                        v-bind="dragOptions"
+                                       style="cursor: move"
                             >
                                 <!-- Второй уровень -->
                                 <div v-for="(child, childIndex) in item.children"
@@ -122,43 +125,39 @@
                                         <div class="container-fluid">
                                             <div class="row">
                                                 <div class="col align-self-center">
-                                                    {{child.name}} ({{child.url}})
+                                                    {{childIndex + 1}}. {{child.name}} ({{child.url}})
                                                 </div>
                                                 <div class="col-auto">
                                                     <b-button class="btn btn-success btn-sm"
                                                               @click="editItem(childIndex, itemIndex)">
                                                         <fa-icon icon="edit"/>
                                                     </b-button>
-                                                    <b-button class="btn btn-danger btn-sm">
-                                                        <fa-icon icon="trash-alt"
-                                                                 @click="removeItem(childIndex, itemIndex)"/>
+                                                    <b-button class="btn btn-danger btn-sm"
+                                                              @click="removeItem(childIndex, itemIndex)">
+                                                        <fa-icon icon="trash-alt"/>
                                                     </b-button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row my-2">
-                                    <b-button class="btn btn-success btn-sm" @click="createItem(itemIndex)">
+                                    <b-button class="btn btn-success btn-sm"
+                                              @click="createItem(itemIndex)">
                                         <fa-icon icon="plus"/>
                                         Добавить подпункт
                                     </b-button>
-                                </div>
                             </draggable>
                         </div>
                     </div>
                 </div>
-                <div class="row my-2">
-                    <b-button class="btn btn-success btn-sm" @click="createItem()">
-                        <fa-icon icon="plus"/>
-                        Добавить пункт
-                    </b-button>
-                </div>
             </draggable>
+            <div class="row my-2">
+                <b-button class="btn btn-success btn-sm" @click="createItem()">
+                    <fa-icon icon="plus"/>
+                    Добавить пункт
+                </b-button>
+            </div>
         </div>
-
-
-
 
         <form-modal modal-name="FormTheme" @accept="onModalAccept" :model.sync="activeItem"/>
     </div>
@@ -192,6 +191,16 @@
             };
         },
         methods: {
+            /**
+             * При перетаскивании элемента проводится синхронизация всех
+             * связанных массивов между компонентами
+             */
+            updateOrder: async function() {
+                await this.$nextTick();
+                this.iMenuItems = this.selectedMenuItems;
+                await this.$nextTick();
+                this.$emit('update:iMenuItems', this.iMenuItems);
+            },
             /**
              * Подготовить активный (тот что редактируется или создаётся) пункт меню, чтобы его передать в попап
              * @param {Object} item - существующий пункт меню, если есть
@@ -246,6 +255,9 @@
                     this.selectedMenuItems.splice(itemIndex, 1);
                 }
             },
+            /**
+             * Переключить видимость выделенных элементов - скрыть/отобразить
+             */
             toggleVisibility() {
                 Object.entries(this.checkboxes).forEach(item => {
                     let index = item[0];

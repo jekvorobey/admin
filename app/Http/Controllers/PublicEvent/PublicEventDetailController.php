@@ -154,6 +154,19 @@ class PublicEventDetailController extends Controller
         $sprints = $publicEventService->getSprints($event_id);
         return response()->json($sprints);
     }
+
+    public function createSprint(int $event_id, PublicEventService $publicEventService)
+    {
+        $publicEventService->createSprint($event_id);
+        return response()->json();
+    }
+
+    public function deleteSprint(int $event_id, Request $request, PublicEventService $publicEventService)
+    {
+        $sprintId = $request->get('sprintId');
+        $publicEventService->deleteSprint($event_id, $sprintId);
+        return response()->json();
+    }
     
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto
     {
