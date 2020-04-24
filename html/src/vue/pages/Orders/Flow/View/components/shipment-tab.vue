@@ -80,9 +80,9 @@
                             <small>{{ item.product.brand.name }}</small>
                         </td>
                         <td>{{ item.qty | integer }}</td>
-                        <td>{{ item.cost }}</td>
-                        <td>{{ (item.cost - item.price) }}</td>
-                        <td>{{ item.price }}</td>
+                        <td>{{ roundFloat(item.cost) }} руб.</td>
+                        <td>{{ roundFloat((item.cost - item.price)) }} руб.</td>
+                        <td>{{ roundFloat(item.price) }} руб.</td>
                         <td>
                         </td>
                     </tr>
@@ -102,6 +102,7 @@
     },
     props: {
         shipments: {},
+        roundFloat: Function,
     },
     methods: {
         editShipment(id) {
