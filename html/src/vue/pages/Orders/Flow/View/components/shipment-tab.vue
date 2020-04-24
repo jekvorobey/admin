@@ -80,9 +80,9 @@
                             <small>{{ item.product.brand.name }}</small>
                         </td>
                         <td>{{ item.qty | integer }}</td>
-                        <td>{{ item.cost }}</td>
-                        <td>{{ (item.cost - item.price) }}</td>
-                        <td>{{ item.price }}</td>
+                        <td>{{ Math.round(item.cost) }} руб.</td>
+                        <td>{{ Math.round((item.cost - item.price)) }} руб.</td>
+                        <td>{{ Math.round(item.price) }} руб.</td>
                         <td>
                         </td>
                     </tr>
