@@ -123,8 +123,8 @@
         props: ['chatUsers', 'roles'],
         data() {
             let user_ids;
-            if (this.chatUsers && this.chatUsers.length === 1) {
-                user_ids = [this.chatUsers[0].user_id];
+            if (this.chatUsers) {
+                user_ids = [this.chatUsers[0].id];
             } else {
                 user_ids = [];
             }
@@ -144,7 +144,7 @@
         methods: {
             initUsers() {
                 if (this.chatUsers && this.chatUsers.length === 1) {
-                    this.form.user_ids = [this.chatUsers[0].user_id];
+                    this.form.user_ids = [this.chatUsers[0].id];
                 } else {
                     if (this.chatUsers) {
                         this.form.user_ids = [];
