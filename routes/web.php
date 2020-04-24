@@ -530,9 +530,15 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
+
             Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
             Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
-            Route::get('sprints', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+
+            Route::prefix('sprints')->group(function () {
+                Route::get('', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+                Route::post('', 'PublicEventDetailController@createSprint')->name('public-event.createSprint');
+                Route::post('delete', 'PublicEventDetailController@deleteSprint')->name('public-event.deleteSprint');
+            });
 
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
