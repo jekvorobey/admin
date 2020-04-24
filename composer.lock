@@ -698,12 +698,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "d1a81f9cbef442621327b52585e85db9609e5488"
+                "reference": "95723c2f57a91d08ef22f8ee64d120e194ede709"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=d1a81f9cbef442621327b52585e85db9609e5488",
-                "reference": "d1a81f9cbef442621327b52585e85db9609e5488",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=95723c2f57a91d08ef22f8ee64d120e194ede709",
+                "reference": "95723c2f57a91d08ef22f8ee64d120e194ede709",
                 "shasum": ""
             },
             "require": {
@@ -738,10 +738,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
-            },
-            "time": "2020-04-24T14:05:16+00:00"
+            "time": "2020-04-24T15:36:49+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -919,12 +916,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "13c76963393c8ac81e9b8c7808f1b3060b9949f6"
+                "reference": "822908b5e40755cc36d5403df69f8c14ecc5eb62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=13c76963393c8ac81e9b8c7808f1b3060b9949f6",
-                "reference": "13c76963393c8ac81e9b8c7808f1b3060b9949f6",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=822908b5e40755cc36d5403df69f8c14ecc5eb62",
+                "reference": "822908b5e40755cc36d5403df69f8c14ecc5eb62",
                 "shasum": ""
             },
             "require": {
@@ -959,7 +956,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2020-04-17T15:15:08+00:00"
+            "time": "2020-04-24T17:45:23+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
