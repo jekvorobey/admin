@@ -146,6 +146,11 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
             Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
         });
+
+        Route::prefix('marketing')->group(function () {
+            Route::get('', 'MarketingController@index')->name('settings.marketing');
+            Route::put('', 'MarketingController@update')->name('settings.marketing.update');
+        });
     });
 
     Route::prefix('notifications')->group(function () {
