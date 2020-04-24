@@ -8,7 +8,7 @@
         </div>
         <div class="row">
             <transition name="slide">
-                <slide-discounts v-if="openedDiscounts" :id="id" :legal_name="legal_name"></slide-discounts>
+                <slide-discounts v-if="openedDiscounts" :id="id" :legalName="legalName"></slide-discounts>
             </transition>
         </div>
 
@@ -32,7 +32,7 @@
 
     export default {
         name: 'tab-marketing',
-        props: ['id', 'legal_name'],
+        props: ['id', 'legalName'],
         components: {
             SlideDiscounts,
             SlidePromocodes,
