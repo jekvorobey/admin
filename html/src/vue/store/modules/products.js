@@ -48,6 +48,8 @@ export default {
                         total: data.total,
                         page
                     })
+                }).finally(() => {
+                    Services.hideLoader();
                 });
         },
         [ACT_UPDATE_APPROVAL]({rootGetters}, {ids, status, comment}) {

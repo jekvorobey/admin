@@ -196,6 +196,7 @@
 <script>
     import withQuery from 'with-query';
 
+    import Services from "../../../../scripts/services/services.js";
     import FSelect from '../../../components/filter/f-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
@@ -324,6 +325,7 @@
                 ACT_UPDATE_APPROVAL
             ]),
             loadPage(page) {
+                Services.showLoader();
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
                     if (value !== undefined && value !== null && value !== '') {
