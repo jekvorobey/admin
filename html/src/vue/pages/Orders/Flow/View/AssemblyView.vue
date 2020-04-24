@@ -79,7 +79,6 @@
         <customer-history-tab
                 v-if="nav.currentTab === 'customer_history'"
                 :history="order.customer_history"
-                :roundFloat="roundFloat"
         ></customer-history-tab>
         <main-tab
                 v-if="nav.currentTab === 'main'"
@@ -94,7 +93,6 @@
         <shipment-tab
                 v-if="nav.currentTab === 'shipment'"
                 :shipments="order.shipments"
-                :roundFloat="roundFloat"
         ></shipment-tab>
     </layout-main>
 </template>
@@ -207,14 +205,6 @@
         },
         isStatus(statusId) {
             return this.order.status.id === statusId;
-        },
-        /**
-         * Округляет дробные числа до 2 знака после запятой
-         * @param value
-         * @returns {number}
-         */
-        roundFloat(value) {
-            return Math.floor(value * 100) / 100;
         },
     },
     computed: {
