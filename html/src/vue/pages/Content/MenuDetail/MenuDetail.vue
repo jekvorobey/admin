@@ -4,7 +4,7 @@
             <h2>{{menu.name}}</h2>
 
             <menu-items
-                    :i-menu-items="selectedMenuItems"
+                    :i-menu-items.sync="selectedMenuItems"
                     @update="onUpdateMenuItems"
             >
             </menu-items>
