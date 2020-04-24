@@ -26,6 +26,14 @@ class MerchantDetailController extends Controller
     ) {
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
+        $this->loadUserRoles = true;
+        $this->loadCustomerStatus = true;
+        $this->loadCommunicationChannelTypes = true;
+        $this->loadCommunicationChannels = true;
+        $this->loadCommunicationThemes = true;
+        $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
+
         /** @var MerchantDto $merchant */
         $merchant = $merchantService->merchants((new RestQuery())->setFilter('id', $id))->first();
         if (!$merchant) {
@@ -55,6 +63,23 @@ class MerchantDetailController extends Controller
                 ->users((new RestQuery())->setFilter('id', $operatorMain->user_id))
                 ->first();
         }
+
+        $useroperatorIds = $operatorService->operators(
+            (new RestQuery())->addFields(OperatorDto::class, 'user_id')
+                ->setFilter('merchant_id', $merchant->id)
+        )->pluck('user_id')->all();
+
+        $operatorUsers = $userService->users(
+            (new RestQuery())->addFields(
+                UserDto::class,
+                'id',
+                'first_name',
+                'last_name',
+                'middle_name',
+                'phone',
+                'email'
+            )->setFilter('id', $useroperatorIds)
+        )->keyBy('id');
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
 
@@ -95,6 +120,15 @@ class MerchantDetailController extends Controller
                     'phone' => $userMain ? $userMain->phone : 'N/A',
                     'email' => $userMain ? $userMain->email : 'N/A',
                 ],
+                'operators' => collect([$userMain->id => $userMain])
+                    ->union($operatorUsers)
+                    ->map(function (UserDto $operatorUser) use ($userMain) {
+                        return [
+                            'id' => $operatorUser->id,
+                            'title' => $operatorUser->getTitle() . ($operatorUser->id === $userMain->id ? ' (Администратор)' : ''),
+                            'email' => $operatorUser->email,
+                        ];
+                    })->all(),
             ],
             'statuses' => MerchantStatus::statusesByMode($isRequest),
             'ratings' => $ratings->map(function (RatingDto $ratingDto) {

@@ -54,6 +54,10 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabMarketingController@loadPromoCodes')->name('merchant.detail.marketing.promo-codes');
                     });
                 });
+                Route::prefix('order')->group(function () {
+                    Route::get('data', 'TabOrderController@loadOrdersData')->name('merchant.detail.order.data');
+                    Route::get('page', 'TabOrderController@page')->name('merchant.detail.order.pagination');
+                });
             });
         });
 
@@ -135,13 +139,17 @@ Route::middleware('auth')->group(function () {
                 Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
-            Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
 
         Route::prefix('organization-card')->group(function () {
             Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
             Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
+        });
+
+        Route::prefix('marketing')->group(function () {
+            Route::get('', 'MarketingController@index')->name('settings.marketing');
+            Route::put('', 'MarketingController@update')->name('settings.marketing.update');
         });
     });
 
@@ -218,6 +226,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::prefix('{id}')->group(function () {
+            Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
+        });
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {
@@ -420,6 +431,7 @@ Route::middleware('auth')->group(function () {
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
+            Route::get('user-list', 'ChatsController@userListForBroadcast')->name('communications.chats.user.list');
         });
     });
 

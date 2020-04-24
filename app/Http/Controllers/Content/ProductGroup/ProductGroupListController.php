@@ -76,7 +76,7 @@ class ProductGroupListController extends Controller
             $query->setFilter('type_id', $filter['type']);
         }
 
-        return $query;
+        return $query->addSort('id', 'desc');
     }
 
     /**

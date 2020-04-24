@@ -216,7 +216,7 @@ class ProductCheckClaimController extends Controller
         $page = $request->get('page', 1);
         $filters = $this->getFilter();
 
-        $restQuery = $claimService->newQuery();
+        $restQuery = $claimService->newQuery()->addSort('created_at', 'desc');
         $restQuery->setFilter('type', ClaimTypeDto::TYPE_PRODUCT_CHECK);
 
         foreach ($filters as $key => $value) {
