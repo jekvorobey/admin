@@ -5,29 +5,34 @@ namespace App\Http\Controllers\Settings;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\Marketing\Dto\Option\OptionDto;
-use Greensight\Marketing\Services\OptionService\OptionService;
+use Greensight\Customer\Dto\OptionDto as CustomerOptionDto;
+use Greensight\Marketing\Dto\Option\OptionDto as MarketingOptionDto;
+use Greensight\Marketing\Services\OptionService\OptionService as MarketingOptionService;
+use Greensight\Customer\Services\OptionService\OptionService as CustomerOptionService;
 use Illuminate\Validation\Rule;
 
 
 class MarketingController extends Controller
 {
-    public function index(OptionService $optionService)
+    public function index()
     {
         $this->title = 'Маректинговые инструменты iBT.Studio';
-
+        $marketingOptionService = resolve(MarketingOptionService::class);
+        $customerOptionService = resolve(CustomerOptionService::class);
+        $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);
         return $this->render('Settings/Marketing', [
-            'bonus_per_rubles' => $optionService->get(OptionDto::KEY_BONUS_PER_RUBLES),
-            'roles_available_for_bonuses' => $optionService->get(OptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES),
-            'activation_bonus_name' => $optionService->get(OptionDto::KEY_ACTIVATION_BONUS_NAME),
-            'activation_bonus_value' => $optionService->get(OptionDto::KEY_ACTIVATION_BONUS_VALUE),
-            'activation_bonus_valid_period' => $optionService->get(OptionDto::KEY_ACTIVATION_BONUS_VALID_PERIOD),
+            'bonus_per_rubles' => $marketingOptionService->get(MarketingOptionDto::KEY_BONUS_PER_RUBLES),
+            'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES),
+            'activation_bonus_name' => $activationBonus['name'] ?? null,
+            'activation_bonus_value' => $activationBonus['value'] ?? null,
+            'activation_bonus_valid_period' => $activationBonus['valid_period'] ?? null,
+            'activation_bonus' => $activationBonus ?? null,
 
             'roles' => Helpers::getOptionRoles(false),
         ]);
     }
 
-    public function update(OptionService $optionService)
+    public function update()
     {
         $data = $this->validate(request(), [
             'bonus_per_rubles' => 'numeric|gte:0',
@@ -37,27 +42,24 @@ class MarketingController extends Controller
                     UserDto::SHOWCASE__PROFESSIONAL,
                     UserDto::SHOWCASE__REFERRAL_PARTNER
                 ])],
-            'activation_bonus_name'  => 'string|nullable',
-            'activation_bonus_value'  => 'integer|gt:0|nullable',
-            'activation_bonus_valid_period'  => 'integer|gte:0|nullable',
+            'activation_bonus' => 'array|nullable',
+            'activation_bonus.name'  => 'string|nullable',
+            'activation_bonus.value'  => 'integer|gt:0|nullable',
+            'activation_bonus.valid_period'  => 'integer|gte:0|nullable',
         ]);
 
+        $marketingOptionService = resolve(MarketingOptionService::class);
+        $customerOptionService = resolve(CustomerOptionService::class);
         foreach ($data as $key => $v) {
             switch ($key) {
                 case 'bonus_per_rubles':
-                    $optionService->put(OptionDto::KEY_BONUS_PER_RUBLES, (float) $v);
+                    $marketingOptionService->put(MarketingOptionDto::KEY_BONUS_PER_RUBLES, (float) $v);
                     break;
                 case 'roles_available_for_bonuses':
-                    $optionService->put(OptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, $v);
+                    $marketingOptionService->put(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, $v);
                     break;
-                case 'activation_bonus_name':
-                    $optionService->put(OptionDto::KEY_ACTIVATION_BONUS_NAME, $v);
-                    break;
-                case 'activation_bonus_value':
-                    $optionService->put(OptionDto::KEY_ACTIVATION_BONUS_VALUE, $v ? (int) $v : null);
-                    break;
-                case 'activation_bonus_valid_period':
-                    $optionService->put(OptionDto::KEY_ACTIVATION_BONUS_VALID_PERIOD, $v ? (int) $v : null);
+                case 'activation_bonus':
+                    $customerOptionService->put(CustomerOptionDto::KEY_ACTIVATION_BONUS, $v);
                     break;
             }
         }

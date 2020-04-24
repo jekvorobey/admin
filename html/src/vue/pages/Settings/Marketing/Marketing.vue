@@ -34,14 +34,14 @@
                     :error="errorActivationBonusName"
                     class="col-6"
                     placeholder="Бонус за активацию"
-                    @change="() => {updateInput('activation_bonus_name')}"
+                    @change="() => {updateInput('activation_bonus')}"
                 >Название события</v-input>
                 <v-input v-model="$v.form.activation_bonus_value.$model"
                      :error="errorActivationBonusValue"
                      class="col-6"
                      type="number"
                      min="1"
-                     @change="() => {updateInput('activation_bonus_value')}"
+                     @change="() => {updateInput('activation_bonus')}"
                 >Сумма</v-input>
                 <div class="col-12">
                     <span class="custom-control custom-switch">
@@ -61,7 +61,7 @@
                          class="col-3"
                          type="number"
                          min="1"
-                         @change="() => {updateInput('activation_bonus_valid_period')}"
+                         @change="() => {updateInput('activation_bonus')}"
                 >Срок действия (дней)</v-input>
 
             </div>
@@ -87,9 +87,7 @@
         props: {
             bonus_per_rubles: Number,
             roles_available_for_bonuses: Array,
-            activation_bonus_name: [String, null],
-            activation_bonus_value: [Number, null],
-            activation_bonus_valid_period: [Number, null],
+            activation_bonus: [Object, null],
             roles: Array,
         },
         mixins: [validationMixin],
@@ -98,13 +96,14 @@
                 form: {
                     bonus_per_rubles: this.bonus_per_rubles,
                     roles_available_for_bonuses: this.roles_available_for_bonuses,
-                    activation_bonus_name: this.activation_bonus_name,
-                    activation_bonus_value: this.activation_bonus_value,
-                    activation_bonus_valid_period: this.activation_bonus_valid_period,
+
+                    activation_bonus_name: this.activation_bonus ? this.activation_bonus.name : null,
+                    activation_bonus_value: this.activation_bonus ? this.activation_bonus.value : null,
+                    activation_bonus_valid_period: this.activation_bonus ? this.activation_bonus.valid_period : null,
                 },
                 requestData: {},
-                bonusActivationBtn: this.activation_bonus_value > 0,
-                bonusUnlimitedPeriodBtn: this.activation_bonus_valid_period <= 0,
+                bonusActivationBtn: this.activation_bonus && this.activation_bonus.value > 0,
+                bonusUnlimitedPeriodBtn: !this.activation_bonus || this.activation_bonus.valid_period <= 0,
             }
         },
         validations: {
@@ -128,6 +127,9 @@
         methods: {
             updateInput(type) {
                 this.requestData[type] = this.form[type];
+                if (type === 'activation_bonus') {
+                    this.requestData['activation_bonus'] = this.formatActivationBonus;
+                }
             },
             update() {
                 this.$v.$touch();
@@ -148,6 +150,18 @@
             },
         },
         computed: {
+            formatActivationBonus() {
+                if (!this.bonusActivationBtn) {
+                    return null;
+                }
+
+                let name = this.form.activation_bonus_name;
+                let value = parseInt(this.form.activation_bonus_value);
+                let valid_period = !this.bonusUnlimitedPeriodBtn ? parseInt(this.form.activation_bonus_valid_period) : null;
+                return (name && value > 0 && (valid_period > 0 || this.bonusUnlimitedPeriodBtn))
+                    ? {name, value,valid_period}
+                    : null;
+            },
             // ===============================
             errorBonusPerRubles() {
                 if (this.$v.form.bonus_per_rubles.$dirty) {
@@ -171,28 +185,16 @@
                 if (this.$v.form.activation_bonus_value.$dirty) {
                     if (!this.$v.form.activation_bonus_value.required) return "Обязательное поле!";
                     if (!this.$v.form.activation_bonus_value.integer) return "Введите целое число!";
-                   if (!this.$v.form.activation_bonus_value.minValue) return "Значение должно быть > 0";
+                    if (!this.$v.form.activation_bonus_value.minValue) return "Значение должно быть > 0";
                 }
             },
         },
         watch: {
             bonusActivationBtn() {
-                if (this.bonusActivationBtn) {
-                    this.updateInput('activation_bonus_name');
-                    this.updateInput('activation_bonus_valid_period');
-                    this.updateInput('activation_bonus_value');
-                } else {
-                    this.requestData.activation_bonus_name = null;
-                    this.requestData.activation_bonus_valid_period = null;
-                    this.requestData.activation_bonus_value = null;
-                }
+                this.updateInput('activation_bonus');
             },
             bonusUnlimitedPeriodBtn() {
-                if (this.bonusUnlimitedPeriodBtn) {
-                    this.requestData.activation_bonus_valid_period = null;
-                } else {
-                    this.updateInput('activation_bonus_valid_period');
-                }
+                this.updateInput('activation_bonus');
             }
         },
     }
