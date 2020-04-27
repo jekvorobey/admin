@@ -48,7 +48,7 @@ class DeliveryServiceDetailController extends Controller
                 //Инфопанель
                 'id' => $deliveryService->id,
                 'name' => $deliveryService->name,
-                'registered_at' => $deliveryService->registered_at->format(AbstractDto::DATE_FORMAT),
+                'registered_at' => $deliveryService->registered_at ? $deliveryService->registered_at->format(AbstractDto::DATE_FORMAT) : '',
                 'status' => $deliveryService->status,
                 'priority' => $deliveryService->priority,
                 //Вкладка "Настройки"
