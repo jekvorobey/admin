@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
                     Route::get('page', 'TabOrderController@page')->name('merchant.detail.order.pagination');
                 });
                 Route::prefix('product')->group(function () {
-//                    Route::get('data', 'TabProductController@loadOrdersData')->name('merchant.detail.order.data');
+                    Route::get('data', 'TabProductController@loadProductsData')->name('merchant.detail.product.data');
                     Route::get('page', 'TabProductController@page')->name('merchant.detail.product.pagination');
                 });
             });

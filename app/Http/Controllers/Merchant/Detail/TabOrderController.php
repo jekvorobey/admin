@@ -30,7 +30,7 @@ use Illuminate\Validation\Rule;
 class TabOrderController extends Controller
 {
     /**
-     * AJAX подгрузка информации для фильтрации скидок
+     * AJAX подгрузка информации для фильтрации отправлений
      *
      * @param int $merchantId
      * @param Request $request

@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Services\OfferService\OfferService;
+use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\ProductService\ProductService;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
@@ -37,6 +38,21 @@ use Greensight\Store\Dto\StockDto;
 class TabProductController extends Controller
 {
     /**
+     * AJAX подгрузка информации для фильтрации оферов
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function loadProductsData(int $merchantId, Request $request)
+    {
+        return response()->json([
+            'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
+        ]);
+    }
+
+    /**
      * AJAX пагинация списка офферов
      *
      * @param int $merchantId
@@ -45,12 +61,19 @@ class TabProductController extends Controller
      */
     public function page(int $merchantId): JsonResponse
     {
-        $query = $this->makeQuery($merchantId);
-        $offers = $this->loadItems($query);
+        /** @var OfferService $offerService */
+        $offerService = resolve(OfferService::class);
 
-        return response()->json([
-            'offers' => $offers
-        ]);
+        $restQuery = $this->makeQuery($merchantId);
+        $offers = $this->loadItems($restQuery);
+        $result = [
+            'offers' => $offers,
+        ];
+        if (request('page') == 1) {
+            $result['pager'] = $offerService->offersCount($restQuery);
+        }
+
+        return response()->json($result);
     }
 
     /**
@@ -61,18 +84,58 @@ class TabProductController extends Controller
      */
     protected function makeQuery(int $merchantId)
     {
-        $query = (new RestQuery())
+        $page = request('page', 1);
+
+        $restQuery = (new RestQuery())
             ->include('product')
-            ->setFilter('merchant_id', $merchantId);
-//        $page = request('page', 1);
-//        $query->pageNumber($page, 10);
-//        $filter = request('filter', []);
+            ->setFilter('merchant_id', $merchantId)
+            ->pageNumber($page, 10);
 
-//        if (isset($filter['saleStatus'])) {
-//            $query->setFilter('sale_status', $filter['saleStatus']);
-//        }
+        $filter = $this->getFilter();
 
-        return $query;
+        if ($filter) {
+            foreach ($filter as $key => $value) {
+                switch ($key) {
+                    case 'price_from':
+                        $restQuery->setFilter('price', '>=', $value);
+                        break;
+                    case 'price_to':
+                        $restQuery->setFilter('price', '<=', $value);
+                        break;
+//                    case 'qty_from':
+//                        $restQuery->setFilter('qty', '>=', $value);
+//                        break;
+//                    case 'qty_to':
+//                        $restQuery->setFilter('qty', '<=', $value);
+//                        break;
+                    default:
+                        $restQuery->setFilter($key, $value);
+                }
+            }
+        }
+
+        return $restQuery;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFilter(): array
+    {
+        $filter = Validator::make(request('filter') ?? [],
+            [
+                'id' => 'string|someone',
+                'product_name' => 'string|someone',
+                'sale_status' => 'array|someone',
+                'sale_status.' => Rule::in(array_keys(OfferSaleStatus::allStatuses())),
+                'price_from' => 'numeric|someone',
+                'price_to' => 'numeric|someone',
+                'qty_from' => 'numeric|someone',
+                'qty_to' => 'numeric|someone',
+            ]
+        )->attributes();
+
+        return $filter;
     }
 
     protected function loadItems(RestQuery $query)
@@ -90,45 +153,32 @@ class TabProductController extends Controller
 
         $offerIds = $offers->pluck('id')
             ->all();
+
         $prices = $priceService->prices(
             (new PricesInDto())->setOffers($offerIds)
-        );
-
-        $offerIdsFromPrices = $prices->pluck('offer_id')
-            ->all();
-
-        $prices = $prices->keyBy('offer_id')
-            ->all();
+        )->keyBy('offer_id')
+        ->all();
 
         $qtys = $stockService->stocks(
             (new RestQuery())->addFields(StockDto::class, 'offer_id', 'qty')
-                ->setFilter('offer_id', $offerIdsFromPrices)
-        );
-
-        $offerIdsFromQtys = $qtys->pluck('offer_id')
+                ->setFilter('offer_id', $offerIds)
+        )->keyBy('offer_id')
             ->all();
 
-        $qtys = $qtys->keyBy('offer_id')
-            ->all();
-
-        $offers = $offers->filter(function (OfferDto $offer) use ($offerIdsFromQtys) {
-            return in_array($offer->id, $offerIdsFromQtys);
-        })->map(function (OfferDto $offer) use ($prices, $qtys) {
+        $offers = $offers->map(function (OfferDto $offer) use ($prices, $qtys) {
             return [
                 'id' => $offer->id,
-                'name' => $offer->product->name,
-                'sale_status' => $offer->sale_status,
-                'price' => $prices[$offer->id]->price,
-                'qty' => $qtys[$offer->id]->qty,
+                'product' => [
+                    'id' => $offer->product->id,
+                    'name' => $offer->product->name,
+                ],
+                'sale_status' => OfferSaleStatus::statusById($offer->sale_status),
+                'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : "Нет данных",
+                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id]->qty : "Нет данных",
                 'created_at' => $offer->created_at,
             ];
         })->all();
 
         return $offers;
-//        return $prices;
-//        return [
-//            'prices' => $prices,
-//            'offers' => $offers,
-//        ];
     }
 }
