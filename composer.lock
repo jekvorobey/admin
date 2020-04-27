@@ -650,12 +650,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "ab9192359d66688c2545efbb44826cc5813078a3"
+                "reference": "967bc3135a62e6409190e14fead7e581d982ee58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=ab9192359d66688c2545efbb44826cc5813078a3",
-                "reference": "ab9192359d66688c2545efbb44826cc5813078a3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=967bc3135a62e6409190e14fead7e581d982ee58",
+                "reference": "967bc3135a62e6409190e14fead7e581d982ee58",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +690,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-04-22T16:02:14+00:00"
+            "time": "2020-04-27T09:51:18+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -698,12 +698,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "95723c2f57a91d08ef22f8ee64d120e194ede709"
+                "reference": "af1223901dce45f688734c991496bd08fea4b354"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=95723c2f57a91d08ef22f8ee64d120e194ede709",
-                "reference": "95723c2f57a91d08ef22f8ee64d120e194ede709",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=af1223901dce45f688734c991496bd08fea4b354",
+                "reference": "af1223901dce45f688734c991496bd08fea4b354",
                 "shasum": ""
             },
             "require": {
@@ -738,7 +738,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-04-24T15:36:49+00:00"
+            "time": "2020-04-27T15:19:05+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -5256,23 +5256,20 @@
         },
         {
             "name": "phpdocumentor/reflection-common",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
-                "reference": "63a995caa1ca9e5590304cd845c15ad6d482a62a"
+                "reference": "6568f4687e5b41b054365f9ae03fcb1ed5f2069b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/63a995caa1ca9e5590304cd845c15ad6d482a62a",
-                "reference": "63a995caa1ca9e5590304cd845c15ad6d482a62a",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/6568f4687e5b41b054365f9ae03fcb1ed5f2069b",
+                "reference": "6568f4687e5b41b054365f9ae03fcb1ed5f2069b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~6"
             },
             "type": "library",
             "extra": {
@@ -5304,7 +5301,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2018-08-07T13:53:10+00:00"
+            "time": "2020-04-27T09:25:28+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
