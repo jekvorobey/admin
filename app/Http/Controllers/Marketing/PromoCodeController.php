@@ -47,9 +47,8 @@ class PromoCodeController extends Controller
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
 
-        $merchants = $merchantService->merchants()->map(function (MerchantDto $merchant) {
-            return ['id' => $merchant->id, 'name' => $merchant->legal_name];
-        });
+        $merchantsIds = $promoCodes->pluck('merchant_id')->unique()->all();
+        $merchants = $this->getMerchants($merchantsIds)->values();
 
         $users = collect();
         $referrals = collect();
