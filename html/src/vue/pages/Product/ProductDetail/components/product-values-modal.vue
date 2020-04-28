@@ -123,7 +123,9 @@
         },
         computed: {
             brandOptions() {
-                return this.options.brands.map(brand => ({value: brand.id, text: brand.name}));
+                return this.options.brands
+                    ? this.options.brands.map(brand => ({value: brand.id, text: brand.name}))
+                    : [];
             },
             categoryOptions() {
                 return this.options.categories.map(category => ({value: category.id, text: category.name}));
