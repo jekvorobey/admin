@@ -206,7 +206,6 @@
 
     import modal from '../../../../../components/controls/modal/modal.vue';
     import modalMixin from '../../../../../mixins/modal';
-    import Service from "../../../../../../scripts/services/services";
 
     const cleanHiddenFilter = {
         user_id: [],

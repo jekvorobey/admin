@@ -45,6 +45,9 @@
                                 <template #prepend><span class="input-group-text">до</span></template>
                                 <template #append><span class="input-group-text">шт.</span></template>
                             </f-input>
+                            <f-date v-model="filter.created_at" class="col-6" range confirm>
+                                Дата создания оффера
+                            </f-date>
                         </div>
                     </div>
                 </transition>
@@ -55,16 +58,34 @@
             </div>
         </div>
 
+        <div class="row mb-3">
+            <div class="col-12 mt-3">
+                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">Сменить статус
+                    <template v-if="countSelected <= 1">оффера</template>
+                    <template v-else>офферов</template>
+                </button>
+
+                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать оффер</button>
+                <a class="btn btn-warning" v-else>Редактировать оффер</a>
+<!--                <a :href="getRoute('offer.edit', {id: selectedOffers[0].id})" class="btn btn-warning" v-else>Редактировать оффер</a>-->
+
+                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteDiscount()">Удалить
+                    <template v-if="countSelected <= 1">оффер</template>
+                    <template v-else>офферы</template>
+                </button>
+            </div>
+        </div>
+
         <table class="table table-condensed">
             <thead>
             <tr>
                 <th>
-<!--                    <input type="checkbox"-->
-<!--                           id="select-all-page-shipments"-->
-<!--                           v-model="isSelectAllPageShipments"-->
-<!--                           @click="selectAllPageShipments()"-->
-<!--                    >-->
-<!--                    <label for="select-all-page-shipments" class="mb-0">Все</label>-->
+                    <input type="checkbox"
+                           id="select-all-page-shipments"
+                           v-model="selectAll"
+                           @click="changeSelectAll()"
+                    >
+                    <label for="select-all-page-shipments" class="mb-0">Все</label>
                 </th>
                 <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
                 <th>
@@ -77,7 +98,12 @@
             </thead>
             <tbody>
             <tr v-for="offer in offers">
-                <td><input type="checkbox" value="true" class="shipment-select" :value="offer.id"></td>
+                <td><input type="checkbox"
+                           value="true"
+                           class="offer-select"
+                           v-model="checkboxes[offer.id]"
+                           :value="offer.id"
+                ></td>
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(offer)"></td>
             </tr>
             <tr v-if="!offers.length">
@@ -93,18 +119,44 @@
                 :hide-goto-end-buttons="pager.pages < 10"
                 class="float-right"
         ></b-pagination>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('UpdateStatusOffer')">
+                <div slot="header">
+                    <b>Обновление статуса</b>
+                </div>
+                <div slot="body">
+                    <div v-for="offer in selectedOffers">#{{ offer.id }} {{ offer.product.name }}</div>
+                    <v-select v-model="newStatus" :options="saleStatusOptions" class="mt-3">Новый статус</v-select>
+                    <button class="btn btn-success mt-3" type="button" @click="approveChangeStatus()">Изменить статус</button>
+                </div>
+            </modal>
+        </transition>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('DeleteOffer')">
+                <div slot="header">
+                    <b>Вы уверены, что хотите удалить следующие предложения?</b>
+                </div>
+                <div slot="body">
+                    <div v-for="offer in selectedOffers">#{{ offer.id }} {{ offer.product.name }}</div>
+                    <button class="btn btn-danger mt-3" type="button" @click="approveDelete()">Удалить</button>
+                </div>
+            </modal>
+        </transition>
     </div>
 </template>
 
 <script>
     import FInput from '../../../../components/filter/f-input.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
-    // import FSelect from '../../../../components/filter/f-select.vue';
-    // import FDate from '../../../../components/filter/f-date.vue';
+    import FDate from '../../../../components/filter/f-date.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import Services from "../../../../../scripts/services/services";
 
     import modalMixin from '../../../../mixins/modal';
+    import modal from '../../../../components/controls/modal/modal.vue';
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
     const cleanHiddenFilter = {
@@ -138,24 +190,26 @@
         components: {
             FInput,
             FMultiSelect,
-            // FSelect,
-            // FDate,
-            ModalColumns
+            FDate,
+            ModalColumns,
+            modal,
+            VSelect,
         },
         mixins: [modalMixin],
         data() {
             let self = this;
             let filter = Object.assign({}, cleanFilter);
-            // filter.status = filter.status.map(value => parseInt(value));
 
             return {
                 opened: false,
                 filter,
                 appliedFilter: {},
                 offerSaleStatuses: {},
-                // isSelectAllPageShipments: false,
+                selectAll: false,
                 currentPage: 1,
                 pager: {},
+                checkboxes: {},
+                newStatus: 0,
                 columns: [
                     {
                         name: 'ID оффера',
@@ -241,12 +295,19 @@
                     this.applyFilter();
                 }
             },
-            // selectAllPageShipments() {
-            //     let checkboxes = document.getElementsByClassName('shipment-select');
-            //     for (let i = 0; i < checkboxes.length; i++) {
-            //         checkboxes[i].checked = this.isSelectAllPageShipments ? '' : 'checked';
-            //     }
-            // },
+            forEachOffer(callback) {
+                for (let i in this.offers) {
+                    callback(this.offers[i]['id']);
+                }
+            },
+            changeSelectAll() {
+                let newValue = !this.selectAll;
+                let checkboxes = {};
+                this.forEachOffer((offerId) => {
+                    checkboxes[offerId] = newValue;
+                });
+                this.checkboxes = checkboxes;
+            },
             showChangeColumns() {
                 this.openModal('list_columns');
             },
@@ -295,6 +356,39 @@
                 }
                 this.applyFilter();
             },
+            changeStatus() {
+                this.openModal('UpdateStatusOffer');
+            },
+            deleteDiscount() {
+                this.openModal('DeleteOffer');
+            },
+            approveChangeStatus() {
+                if (!this.newStatus) {
+                    return;
+                }
+
+                Services.showLoader();
+                Services.net().put(this.route('offers.change.saleStatus'), {
+                    offer_ids: this.selectedIds,
+                    sale_status: this.newStatus,
+                }).then(() => {
+                    this.closeModal('UpdateStatusOffer');
+                    this.loadPage();
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+            approveDelete() {
+                Services.showLoader();
+                Services.net().delete(this.route('offers.delete'), {
+                    offer_ids: this.selectedIds,
+                }).then(data => {
+                    this.closeModal('DeleteOffer');
+                    this.loadPage();
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
         },
         computed: {
             saleStatusOptions() {
@@ -303,42 +397,19 @@
                     text: status.name
                 }));
             },
-            // problemOptions() {
-            //     return [
-            //         {
-            //             value: 0,
-            //             text: 'Нет проблем'
-            //         },
-            //         {
-            //             value: 1,
-            //             text: 'Проблемный'
-            //         }
-            //     ];
-            // },
-            // deliveryTypeOptions() {
-            //     return Object.values(this.deliveryTypes).map(type => ({
-            //         value: type.id,
-            //         text: type.name
-            //     }));
-            // },
-            // deliveryMethodOptions() {
-            //     return Object.values(this.deliveryMethods).map(method => ({
-            //         value: method.id,
-            //         text: method.name
-            //     }));
-            // },
-            // deliveryServiceOptions() {
-            //     return Object.values(this.deliveryServices).map(service => ({
-            //         value: service.id,
-            //         text: service.name
-            //     }));
-            // },
-            // storeOptions() {
-            //     return Object.values(this.stores).map(store => ({
-            //         value: store.id,
-            //         text: store.name
-            //     }));
-            // },
+            countSelected() {
+                return Object.values(this.checkboxes).reduce((acc, val) => { return acc + val; }, 0);
+            },
+            selectedOffers() {
+                return this.offers.filter((offer) => {
+                    return (offer.id in this.checkboxes) && this.checkboxes[offer.id];
+                });
+            },
+            selectedIds() {
+                return this.offers.filter(offer => {
+                    return (offer.id in this.checkboxes) && this.checkboxes[offer.id];
+                }).map(offer => offer.id);
+            },
             editedShowColumns() {
                 return this.columns.filter(function(column) {
                     return !column.isAlwaysShown;
