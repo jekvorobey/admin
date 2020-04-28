@@ -154,6 +154,14 @@ Vue.mixin({
         discountTypes() {
             return this.$store.state.layout.discountTypes;
         },
+        /** @return {PromoCodeType} */
+        promoCodeTypes() {
+            return this.$store.state.layout.promoCodeTypes;
+        },
+        /** @return {PromoCodeStatus} */
+        promoCodeStatus() {
+            return this.$store.state.layout.promoCodeStatus;
+        }
     },
 });
 
@@ -343,4 +351,24 @@ Vue.mixin({
  @property {integer} ready
  @property {integer} in_process
  @property {integer} done
+ */
+/**
+ @typedef PromoCodeStatus
+ @type {Object}
+ @property {integer} created
+ @property {integer} sent
+ @property {integer} checking
+ @property {integer} active
+ @property {integer} rejected
+ @property {integer} paused
+ @property {integer} expired
+ @property {integer} test
+ */
+/**
+ @typedef PromoCodeType
+ @type {Object}
+ @property {integer} discount
+ @property {integer} delivery
+ @property {integer} gift
+ @property {integer} bonus
  */

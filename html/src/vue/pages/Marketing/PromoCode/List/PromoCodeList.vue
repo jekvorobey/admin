@@ -126,8 +126,10 @@
                     </td>
                     <td>{{ promoCode.validityPeriod }}</td>
                     <td>
-                        <a v-if="promoCode.merchant_id" :href="getRoute('merchant.detail', {id: promoCode.merchant_id})">
-                            Мерчант {{promoCode.merchant_id}}
+                        <a v-if="promoCode.merchant_id"
+                           title="Мерчант"
+                           :href="getRoute('merchant.detail', {id: promoCode.merchant_id})">
+                            {{ getMerchantName(promoCode.merchant_id) }}
                         </a>
                         <template v-else>Маркетплейс</template>
                     </td>
@@ -162,7 +164,7 @@ import Services from '../../../../../scripts/services/services.js';
 export default {
     name: 'page-promo-code-list',
     components: {VDeleteButton, FCheckbox, FInput, FDate,},
-    props: ['iPromoCodes', 'types', 'statuses', 'creators', 'owners',],
+    props: ['iPromoCodes', 'Merchants', 'types', 'statuses', 'creators', 'owners',],
     data() {
         return {
             filter: {
@@ -181,11 +183,19 @@ export default {
             total: 0,
             currentPage: this.iCurrentPage,
             promoCodes: [...this.iPromoCodes],
+            merchants: this.Merchants,
             selectPromoCodes: [],
             newStatus: null,
         }
     },
     methods: {
+        getMerchantName(id) {
+            let merchant_name;
+            Object.values(this.merchants).map(merchant => (
+                merchant.id === id ? merchant_name = merchant.name : null
+            ));
+            return merchant_name;
+        },
         deletePromoCodes() {
             Services.showLoader();
             Services.net().delete(this.getRoute('promo-code.delete'), {

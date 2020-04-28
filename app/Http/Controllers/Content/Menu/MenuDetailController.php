@@ -54,7 +54,7 @@ class MenuDetailController extends Controller
     ) {
         $query = $menuService->newQuery();
         $query->setFilter('id', $id);
-        $query->include('items');
+        $query->include('all_items');
 
         return $menuService->menus($query)->first();
     }

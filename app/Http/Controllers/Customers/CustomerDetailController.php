@@ -16,6 +16,9 @@ use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
+use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
+use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
+use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
@@ -40,6 +43,8 @@ class CustomerDetailController extends Controller
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
         $this->loadCommunicationTypes = true;
+        $this->loadPromoCodeTypes = true;
+        $this->loadPromoCodeStatus = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
@@ -150,6 +155,10 @@ class CustomerDetailController extends Controller
                 'price' => Helpers::getPriceFormat($orders->sum('price')),
             ],
             'referralLevels' => $referralLevels,
+            'options' => [
+                'promoCodeTypes' => PromoCodeOutDto::allTypes(),
+                'promoCodeStatuses' => PromoCodeOutDto::allStatuses(),
+            ],
         ]);
     }
 

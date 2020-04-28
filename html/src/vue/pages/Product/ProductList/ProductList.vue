@@ -126,12 +126,15 @@
             </thead>
             <tbody>
                 <tr v-for="product in products">
-                    <td>
-                        <input v-if="product.ready"
-                                type="checkbox"
+                    <td class="d-flex flex-column align-items-center">
+                        <input type="checkbox"
                                 :checked="massHas({type:massProductsType, id:product.id})"
-                                @change="e => massCheckbox(e, massProductsType, product.id)">
-                        <fa-icon v-else icon="exclamation-triangle" class="text-warning" title="Товар помечен для обновления"></fa-icon>
+                                @change="e => massCheckbox(e, massProductsType, product.id)"/>
+                        <fa-icon
+                                v-if="!product.ready"
+                                icon="exclamation-triangle"
+                                class="text-warning mt-2"
+                                title="Товар помечен для индексирования"/>
                     </td>
                     <td>{{product.id}}</td>
                     <td><img :src="imageUrl(product.catalogImageId, 100, 100)" class="preview"></td>

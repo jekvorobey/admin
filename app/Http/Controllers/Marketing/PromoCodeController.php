@@ -34,16 +34,22 @@ class PromoCodeController extends Controller
      * @param PromoCodeService $promoCodeService
      * @param UserService $userService
      * @param CustomerService $customerService
+     * @param MerchantService $merchantService
      * @return mixed
      */
     public function index(
         PromoCodeService $promoCodeService,
         UserService $userService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        MerchantService $merchantService
     ) {
         $this->title = 'Промокоды';
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
+
+        $merchants = $merchantService->merchants()->map(function (MerchantDto $merchant) {
+            return ['id' => $merchant->id, 'name' => $merchant->legal_name];
+        });
 
         $users = collect();
         $referrals = collect();
@@ -91,6 +97,7 @@ class PromoCodeController extends Controller
 
         return $this->render('Marketing/PromoCode/List', [
             'iPromoCodes' => $promoCodes,
+            'Merchants' => $merchants,
             'statuses' => PromoCodeOutDto::allStatuses(),
             'types' => PromoCodeOutDto::allTypes(),
             'creators' => $creatorIds->map(function ($creatorId) use ($users) {

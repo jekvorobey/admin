@@ -123,10 +123,12 @@
         },
         computed: {
             brandOptions() {
-                return this.options.brands.map(brand => ({value: brand.id, text: brand.name}));
+                let brandList = Object.values(this.options.brands);
+                return brandList.map(brand => ({value: brand.id, text: brand.name}));
             },
             categoryOptions() {
-                return this.options.categories.map(category => ({value: category.id, text: category.name}));
+                let categoryList = Object.values(this.options.categories);
+                return categoryList.map(category => ({value: category.id, text: category.name}));
             },
             approvalStatusOptions() {
                 return Object.entries(this.options.approval).map(status => ({value: status[0], text: status[1]}));
