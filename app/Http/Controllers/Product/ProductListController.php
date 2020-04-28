@@ -32,8 +32,8 @@ class ProductListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'brands' => $brandService->brands($brandService->newQuery()),
-                'categories' => $categoryService->categories($categoryService->newQuery()),
+                'brands' => $brandService->brands($brandService->newQuery())->values()->toArray(),
+                'categories' => $categoryService->categories($categoryService->newQuery())->values()->toArray(),
                 'productionStatuses' => ProductProductionStatus::allStatuses(),
                 'productionDone' => ProductProductionStatus::DONE,
                 'productionCancel' => ProductProductionStatus::REJECTED,
