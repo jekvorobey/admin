@@ -192,7 +192,7 @@ export default {
         getMerchantName(id) {
             let merchant_name;
             Object.values(this.merchants).map(merchant => (
-                merchant.id === id ? merchant_name = merchant.name : null
+                merchant.id === id ? merchant_name = merchant.legal_name : null
             ));
             return merchant_name;
         },
