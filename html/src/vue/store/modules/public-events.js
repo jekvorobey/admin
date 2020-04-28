@@ -10,12 +10,17 @@ export const GET_DETAIL = 'get_detail';
 export const ACT_IS_UNIQUE = 'act_is_unique';
 export const ACT_SAVE_PUBLIC_EVENT = 'act_save_public_event';
 export const ACT_LOAD_PUBLIC_EVENT = 'act_load_public_event';
+
 export const ACT_LOAD_AVAILABLE_ORGANIZERS = 'act_load_available_organizers';
 export const ACT_SAVE_EVENT_ORGANIZER_ID = 'act_save_event_organizer_id';
 export const ACT_SAVE_EVENT_ORGANIZER_VALUE = 'act_save_event_organizer_value';
+
 export const ACT_SAVE_EVENT_MEDIA = 'act_save_event_media';
 export const ACT_DELETE_EVENT_MEDIA = 'act_delete_event_media';
+
 export const ACT_LOAD_SPRINTS = 'act_load_sprints';
+export const ACT_CREATE_SPRINT = 'act_create_sprint';
+export const ACT_DELETE_SPRINT = 'act_delete_sprint';
 
 export default {
     name: NAMESPACE,
@@ -84,6 +89,16 @@ export default {
             commit('loaderShow', true, {root:true});
             return Services.net().get(rootGetters.getRoute('public-event.getSprints', {event_id: publicEventId}))
                 .finally(() => commit('loaderShow', false, {root:true}));
-        }
+        },
+        [ACT_CREATE_SPRINT]({rootGetters, commit}, {publicEventId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.createSprint', {event_id: publicEventId}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_SPRINT]({rootGetters, commit}, {publicEventId, sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.deleteSprint', {event_id: publicEventId}), {}, {sprintId})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
     }
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import CommunicationChatCreator from '../../../components/communication-chat-creator/communication-chat-creator.vue';
+import CommunicationChatCreator from '../../../components/communication/communication-chat-creator/communication-chat-creator.vue';
 
 export default {
     components: {CommunicationChatCreator},

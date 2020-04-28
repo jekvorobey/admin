@@ -58,6 +58,13 @@
             <td></td>
         </tr>
         <tr>
+            <th>Регистрация по ссылке</th>
+            <td>
+                <a v-if="customer.referrer" :href="getRoute('customers.detail', {id: customer.referrer.id})">Ссылка с ID {{ customer.referrer.id }}</a>
+                <template v-else >нет</template>
+            </td>
+        </tr>
+        <tr>
             <th>Дата регистрации</th>
             <td>{{ datetimePrint(customer.created_at) }}</td>
         </tr>

@@ -3,43 +3,60 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use Cms\Core\CmsException;
 use Cms\Dto\OptionDto;
 use Cms\Services\OptionService\OptionService;
 
 class OrganizationCardController extends Controller
 {
+    const MAPPING_KEYS = [
+        'short_name' => OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME,
+        'full_name' => OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME,
+
+        'inn' => OptionDto::KEY_ORGANIZATION_CARD_INN,
+        'kpp' => OptionDto::KEY_ORGANIZATION_CARD_KPP,
+        'okpo' => OptionDto::KEY_ORGANIZATION_CARD_OKPO,
+        'ogrn' => OptionDto::KEY_ORGANIZATION_CARD_OGRN,
+
+        'fact_address' => OptionDto::KEY_ORGANIZATION_CARD_FACT_ADDRESS,
+        'legal_address' => OptionDto::KEY_ORGANIZATION_CARD_LEGAL_ADDRESS,
+
+        'payment_account' => OptionDto::KEY_ORGANIZATION_CARD_PAYMENT_ACCOUNT,
+        'bank_bik' => OptionDto::KEY_ORGANIZATION_CARD_BANK_BIK,
+        'bank_name' => OptionDto::KEY_ORGANIZATION_CARD_BANK_NAME,
+        'correspondent_account' => OptionDto::KEY_ORGANIZATION_CARD_CORRESPONDENT_ACCOUNT,
+
+        'ceo_last_name' => OptionDto::KEY_ORGANIZATION_CARD_CEO_LAST_NAME,
+        'ceo_first_name' => OptionDto::KEY_ORGANIZATION_CARD_CEO_FIRST_NAME,
+        'ceo_middle_name' => OptionDto::KEY_ORGANIZATION_CARD_CEO_MIDDLE_NAME,
+        'ceo_document_number' => OptionDto::KEY_ORGANIZATION_CARD_CEO_DOCUMENT_NUMBER,
+
+        'contact_centre_phone' => OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE,
+        'social_phone' => OptionDto::KEY_ORGANIZATION_CARD_SOCIAL_PHONE,
+        'email_for_merchant' => OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_MERCHANT,
+        'common_email' => OptionDto::KEY_ORGANIZATION_CARD_COMMON_EMAIL,
+        'email_for_claim' => OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_CLAIM,
+    ];
+
+    /**
+     * Страница Карточка организации
+     * @param OptionService $optionService
+     * @return mixed
+     * @throws CmsException
+     */
     public function index(OptionService $optionService)
     {
         $this->title = 'Карточка организации iBT.Studio';
 
-        return $this->render('Settings/OrganizationCard', [
-            'short_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME),
-            'full_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME),
+        $organizationCardKeys = array_values(static::MAPPING_KEYS);
+        $options = $optionService->get($organizationCardKeys);
+        $data = collect(static::MAPPING_KEYS)
+            ->map(function ($item, $key) use ($options) {
+                return $options[$item];
+            })
+            ->all();
 
-            'inn' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_INN),
-            'kpp' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_KPP),
-            'okpo' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_OKPO),
-            'ogrn' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_OGRN),
-
-            'fact_address' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_FACT_ADDRESS),
-            'legal_address' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_LEGAL_ADDRESS),
-
-            'payment_account' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_PAYMENT_ACCOUNT),
-            'bank_bik' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_BANK_BIK),
-            'bank_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_BANK_NAME),
-            'correspondent_account' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CORRESPONDENT_ACCOUNT),
-
-            'ceo_last_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CEO_LAST_NAME),
-            'ceo_first_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CEO_FIRST_NAME),
-            'ceo_middle_name' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CEO_MIDDLE_NAME),
-            'ceo_document_number' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CEO_DOCUMENT_NUMBER),
-
-            'contact_centre_phone' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE),
-            'social_phone' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_SOCIAL_PHONE),
-            'email_for_merchant' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_MERCHANT),
-            'common_email' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_COMMON_EMAIL),
-            'email_for_claim' => $optionService->get(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_CLAIM),
-        ]);
+        return $this->render('Settings/OrganizationCard', $data);
     }
 
     public function update(OptionService $optionService)
@@ -73,74 +90,20 @@ class OrganizationCardController extends Controller
             'email_for_claim' => 'email',
         ]);
 
-        if (array_key_exists('short_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME, $data['short_name']);
-        }
-        if (array_key_exists('full_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME, $data['full_name']);
-        }
+        $data = collect($data)
+            ->map(function ($item, $key) {
+                return [
+                    'newKey' => static::MAPPING_KEYS[$key],
+                    'value' => $item,
+                ];
+            })
+            ->keyBy('newKey')
+            ->map(function ($item, $key) {
+                return $item['value'];
+            })
+            ->all();
 
-        if (array_key_exists('inn', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_INN, $data['inn']);
-        }
-        if (array_key_exists('kpp', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_KPP, $data['kpp']);
-        }
-        if (array_key_exists('okpo', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_OKPO, $data['okpo']);
-        }
-        if (array_key_exists('ogrn', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_OGRN, $data['ogrn']);
-        }
-
-        if (array_key_exists('fact_address', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_FACT_ADDRESS, $data['fact_address']);
-        }
-        if (array_key_exists('legal_address', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_LEGAL_ADDRESS, $data['legal_address']);
-        }
-
-        if (array_key_exists('payment_account', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_PAYMENT_ACCOUNT, $data['payment_account']);
-        }
-        if (array_key_exists('bank_bik', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_BANK_BIK, $data['bank_bik']);
-        }
-        if (array_key_exists('bank_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_BANK_NAME, $data['bank_name']);
-        }
-        if (array_key_exists('correspondent_account', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CORRESPONDENT_ACCOUNT, $data['correspondent_account']);
-        }
-
-        if (array_key_exists('ceo_last_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_LAST_NAME, $data['ceo_last_name']);
-        }
-        if (array_key_exists('ceo_first_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_FIRST_NAME, $data['ceo_first_name']);
-        }
-        if (array_key_exists('ceo_middle_name', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_MIDDLE_NAME, $data['ceo_middle_name']);
-        }
-        if (array_key_exists('ceo_document_number', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CEO_DOCUMENT_NUMBER, $data['ceo_document_number']);
-        }
-
-        if (array_key_exists('contact_centre_phone', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE, $data['contact_centre_phone']);
-        }
-        if (array_key_exists('social_phone', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_SOCIAL_PHONE, $data['social_phone']);
-        }
-        if (array_key_exists('email_for_merchant', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_MERCHANT, $data['email_for_merchant']);
-        }
-        if (array_key_exists('common_email', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_COMMON_EMAIL, $data['common_email']);
-        }
-        if (array_key_exists('email_for_claim', $data)) {
-            $optionService->put(OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_CLAIM, $data['email_for_claim']);
-        }
+        $optionService->put($data);
 
         return response()->json();
     }

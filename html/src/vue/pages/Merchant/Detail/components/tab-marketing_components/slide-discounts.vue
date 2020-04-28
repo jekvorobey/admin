@@ -256,7 +256,7 @@
             DiscountList,
         },
         mixins: [modalMixin],
-        props: ['id', 'legal_name'],
+        props: ['id', 'legalName'],
         data() {
             let filter = Object.assign({}, cleanFilter);
             filter.status = filter.status.map(value => parseInt(value));
@@ -435,7 +435,7 @@
                 if (!id) {
                     return 'Маркетплейс';
                 } else {
-                    return this.legal_name;
+                    return this.legalName;
                 }
             },
         },

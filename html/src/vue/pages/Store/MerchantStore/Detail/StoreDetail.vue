@@ -62,7 +62,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(day, index) in store.days" :class="!day.active ? 'inactive' : ''">
+            <tr v-for="(day, index) in store.storeWorking" :class="!day.active ? 'inactive' : ''">
                 <td>
                     <input type="checkbox" v-model="day.active" @change="updateWorking(index)"/>
                 </td>
@@ -371,7 +371,7 @@
             this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
         },
         updateWorking(index) {
-            this.changeStore.days[index] = this.store.days[index];
+            this.changeStore.days[index] = this.store.storeWorking[index];
         },
         savePickupTime(pickupTime) {
             let day = pickupTime.day;

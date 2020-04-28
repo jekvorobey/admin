@@ -385,32 +385,24 @@ class MerchantStoreController extends Controller
             $data = $store->toArray();
             
             $data['merchant'] = $merchants->has($store->merchant_id) ? $merchants[$store->merchant_id] : [];
-    
-            if (!is_null($store->storeWorking()) || !is_null($store->storePickupTime())) {
+            $data['storeWorking'] = $store->storeWorking ? $store->storeWorking->keyBy('day') : [];
+
+            if ($store->storePickupTime) {
                 foreach ([1, 2, 3, 4, 5, 6, 7] as $day) {
-                    $data['days'][$day] = [];
-            
-                    if (!is_null($store->storeWorking())) {
-                        $workingDay = $store->storeWorking()->pluck('day')->search($day);
-                        if ($workingDay !== false) {
-                            $data['days'][$day] = $store['storeWorking'][$workingDay];
-                        }
-                    }
-                    
                     $dayHasPickupTime = false;
                     foreach (DeliveryService::allServices() as $deliveryService) {
                         $pickupTimeDto = null;
                         $allDeliveryServicePickupTimeDto = null;
-                        if (!is_null($store->storePickupTime())) {
+                        if ($store->storePickupTime->isNotEmpty()) {
                             /** @var StorePickupTimeDto $pickupTimeDto */
-                            $pickupTimeDto = $store->storePickupTime()->filter(function (StorePickupTimeDto $item) use (
+                            $pickupTimeDto = $store->storePickupTime->filter(function (StorePickupTimeDto $item) use (
                                 $day,
                                 $deliveryService
                             ) {
                                 return $item->day == $day && $item->delivery_service == $deliveryService->id;
                             })->first();
-    
-                            $allDeliveryServicePickupTimeDto = $store->storePickupTime()->filter(function (
+
+                            $allDeliveryServicePickupTimeDto = $store->storePickupTime->filter(function (
                                 StorePickupTimeDto $item
                             ) use (
                                 $day
@@ -418,16 +410,17 @@ class MerchantStoreController extends Controller
                                 return $item->day == $day && !$item->delivery_service;
                             })->first();
                         }
-                
+
                         $emptyPickupTimeDto = new StorePickupTimeDto([
                             'day' => $day,
                             'store_id' => $store->id,
                         ]);
                         $data['pickupTimes'][$day][$deliveryService->id] = array_filter(is_null($pickupTimeDto) ?
-                            array_merge($emptyPickupTimeDto->toArray(), ['delivery_service' => $deliveryService->id]) : $pickupTimeDto->toArray());
+                            array_merge($emptyPickupTimeDto->toArray(), ['delivery_service' => $deliveryService->id])
+                            : $pickupTimeDto->toArray());
                         $data['pickupTimes'][$day]['all'] = array_filter(is_null($allDeliveryServicePickupTimeDto) ?
                             $emptyPickupTimeDto->toArray() : $allDeliveryServicePickupTimeDto->toArray());
-                        
+
                         if (!is_null($pickupTimeDto) || !is_null($allDeliveryServicePickupTimeDto)) {
                             $dayHasPickupTime = true;
                         }

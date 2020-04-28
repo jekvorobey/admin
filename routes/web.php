@@ -58,6 +58,10 @@ Route::middleware('auth')->group(function () {
                     Route::get('data', 'TabOrderController@loadOrdersData')->name('merchant.detail.order.data');
                     Route::get('page', 'TabOrderController@page')->name('merchant.detail.order.pagination');
                 });
+                Route::prefix('product')->group(function () {
+                    Route::get('data', 'TabProductController@loadProductsData')->name('merchant.detail.product.data');
+                    Route::get('page', 'TabProductController@page')->name('merchant.detail.product.pagination');
+                });
             });
         });
 
@@ -139,13 +143,17 @@ Route::middleware('auth')->group(function () {
                 Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
-            Route::get('userListTitle', 'UsersController@userListTitle')->name('settings.userListTitle');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
         });
 
         Route::prefix('organization-card')->group(function () {
             Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
             Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
+        });
+
+        Route::prefix('marketing')->group(function () {
+            Route::get('', 'MarketingController@index')->name('settings.marketing');
+            Route::put('', 'MarketingController@update')->name('settings.marketing.update');
         });
     });
 
@@ -222,6 +230,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::prefix('{id}')->group(function () {
+            Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
+        });
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {
@@ -424,6 +435,7 @@ Route::middleware('auth')->group(function () {
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
+            Route::get('user-list', 'ChatsController@userListForBroadcast')->name('communications.chats.user.list');
         });
     });
 
@@ -534,9 +546,15 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
+
             Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
             Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
-            Route::get('sprints', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+
+            Route::prefix('sprints')->group(function () {
+                Route::get('', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
+                Route::post('', 'PublicEventDetailController@createSprint')->name('public-event.createSprint');
+                Route::post('delete', 'PublicEventDetailController@deleteSprint')->name('public-event.deleteSprint');
+            });
 
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
