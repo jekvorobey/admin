@@ -504,6 +504,7 @@ Route::middleware('auth')->group(function () {
                         Route::post('', 'TabBonusController@add')->name('customers.detail.bonus.add');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
+                    Route::get('promocodes', 'TabPromocodesController@load')->name('customers.detail.promocodes');
                 });
 
             });

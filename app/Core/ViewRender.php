@@ -10,6 +10,7 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
+use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
@@ -52,6 +53,9 @@ class ViewRender
     private $loadPublicEventSprintStatus = [];
 
     private $discountTypes = [];
+
+    private $promoCodeTypes = [];
+    private $promoCodeStatus = [];
 
     public function __construct($componentName, $props)
     {
@@ -283,7 +287,37 @@ class ViewRender
         }
         return $this;
     }
-    
+
+    public function loadPromoCodeTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->promoCodeTypes = [
+                'discount' => PromoCodeOutDto::TYPE_DISCOUNT,
+                'delivery' => PromoCodeOutDto::TYPE_DELIVERY,
+                'gift' => PromoCodeOutDto::TYPE_GIFT,
+                'bonus' => PromoCodeOutDto::TYPE_BONUS,
+            ];
+        }
+        return $this;
+    }
+
+    public function loadPromoCodeStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->promoCodeStatus = [
+                'created' => PromoCodeOutDto::STATUS_CREATED,
+                'sent' => PromoCodeOutDto::STATUS_SENT,
+                'checking' => PromoCodeOutDto::STATUS_ON_CHECKING,
+                'active' => PromoCodeOutDto::STATUS_ACTIVE,
+                'rejected' => PromoCodeOutDto::STATUS_REJECTED,
+                'paused' => PromoCodeOutDto::STATUS_PAUSED,
+                'expired' => PromoCodeOutDto::STATUS_EXPIRED,
+                'test' => PromoCodeOutDto::STATUS_TEST,
+            ];
+        }
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -317,6 +351,9 @@ class ViewRender
                 'loadPublicEventSprintStatus' => $this->loadPublicEventSprintStatus,
 
                 'discountTypes' => $this->discountTypes,
+
+                'promoCodeTypes' => $this->promoCodeTypes,
+                'promoCodeStatus' => $this->promoCodeStatus,
             ],
             [
                 'title' => $this->title,
@@ -324,7 +361,7 @@ class ViewRender
             ]
         );
     }
-    
+
     private function getAssets()
     {
         if (frontend()->isInDevMode()) {
