@@ -69,7 +69,7 @@
                 <a class="btn btn-warning" v-else>Редактировать оффер</a>
 <!--                <a :href="getRoute('offer.edit', {id: selectedOffers[0].id})" class="btn btn-warning" v-else>Редактировать оффер</a>-->
 
-                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteDiscount()">Удалить
+                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOffer()">Удалить
                     <template v-if="countSelected <= 1">оффер</template>
                     <template v-else>офферы</template>
                 </button>
@@ -107,7 +107,7 @@
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(offer)"></td>
             </tr>
             <tr v-if="!offers.length">
-                <td :colspan="columns.length + 1">Заказов нет</td>
+                <td :colspan="columns.length + 1">Заказы отсутствуют</td>
             </tr>
             </tbody>
         </table>
@@ -359,7 +359,7 @@
             changeStatus() {
                 this.openModal('UpdateStatusOffer');
             },
-            deleteDiscount() {
+            deleteOffer() {
                 this.openModal('DeleteOffer');
             },
             approveChangeStatus() {
