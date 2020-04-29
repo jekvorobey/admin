@@ -24,13 +24,13 @@ Route::middleware('auth')->group(function () {
             Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
         });
 
-
         Route::prefix('detail/{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('operators')->group(function () {
+                    Route::get('data', 'TabOperatorController@loadData')->name('merchant.detail.operator.data');
                     Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
                 });
                 Route::prefix('main')->group(function () {
@@ -68,6 +68,17 @@ Route::middleware('auth')->group(function () {
         Route::prefix('commission')->group(function () {
             Route::get('', 'MerchantCommissionController@index')->name('merchant.commission');
             Route::post('', 'MerchantCommissionController@save')->name('merchant.commission.save');
+        });
+
+        Route::prefix('operator')->group(function () {
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'MerchantOperatorController@indexEdit')->name('merchant.operator.indexEdit');
+                Route::put('update', 'MerchantOperatorController@update')->name('merchant.operator.update');
+            });
+            Route::get('', 'MerchantOperatorController@indexCreate')->name('merchant.operator.indexCreate');
+            Route::post('save', 'MerchantOperatorController@save')->name('merchant.operator.save');
+            Route::put('change-role', 'MerchantOperatorController@changeRole')->name('merchant.operator.changeRole');
+            Route::delete('', 'MerchantOperatorController@delete')->name('merchant.operator.delete');
         });
     });
 

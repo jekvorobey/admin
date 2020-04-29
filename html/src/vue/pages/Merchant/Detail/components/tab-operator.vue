@@ -3,32 +3,72 @@
         <div class="card">
             <div class="card-header">
                 Фильтр
+                <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
+                    <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
+                </button>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <f-input v-model="filter.user_id"  class="col-2">
+                        ID пользователя
+                    </f-input>
+                    <f-input v-model="filter.full_name" class="col-5">
+                        ФИО
+                    </f-input>
+                    <f-input v-model="filter.email" class="col-5">
+                        Email
+                    </f-input>
+                </div>
+                <div class="row">
+                    <f-input v-model="filter.phone"  class="col-6">
+                        Телефон
+                    </f-input>
+                    <f-input v-model="filter.login" class="col-6">
+                        Логин
+                    </f-input>
+                </div>
+                <transition name="slide">
+                    <div v-if="opened" class="additional-filter pt-3 mt-3">
+                        <div class="row">
+                            <f-multi-select v-model="filter.communication_method" :options="communicationMethodOptions" class="col-4">
+                                Способ связи
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.role" :options="roleOptions" class="col-4">
+                                Роли
+                            </f-multi-select>
+                            <v-select v-model="filter.active" :options="activeOptions" class="col-4">
+                                Статус
+                            </v-select>
+                        </div>
+                    </div>
+                </transition>
             </div>
             <div class="card-footer">
-<!--                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>-->
-<!--                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>-->
+                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
+                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-12 mt-3">
-<!--                <a :href="getRoute('operator.create')" class="btn btn-success">Создать оператора</a>-->
+                <a :href="getRoute('merchant.operator.indexCreate') + '?merchant_id=' + id"
+                   class="btn btn-success"
+                >Создать менеджера</a>
 
-<!--                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать оператора</button>-->
-<!--                <a :href="getRoute('operator.edit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать оператора</a>-->
+<!--                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать менеджера</button>-->
+<!--                <a :href="getRoute('operator.edit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать менеджера</a>-->
 
-<!--                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOperator()">Удалить-->
-<!--                    <template v-if="countSelected <= 1">оператора</template>-->
-<!--                    <template v-else>операторов</template>-->
+<!--                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOperator()">-->
+<!--                    Удалить {{ pluralForm(countSelected, formsGenitive) }}-->
 <!--                </button>-->
 
-<!--                <button class="btn btn-secondary" @click="createChat()">Написать</button>-->
+<!--                <button class="btn btn-secondary" @click="createChat()">-->
+<!--                    Написать {{ pluralForm(countSelected, formsDative) }}-->
+<!--                </button>-->
 
-<!--                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">Сменить роль-->
-<!--                    <template v-if="countSelected <= 1">оператора</template>-->
-<!--                    <template v-else>операторов</template>-->
+<!--                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">-->
+<!--                    Сменить роль {{ pluralForm(countSelected, formsGenitive) }}-->
 <!--                </button>-->
             </div>
         </div>
@@ -46,10 +86,10 @@
                 </th>
                 <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
                 <th>
-<!--                    <button class="btn btn-light float-right" @click="showChangeColumns">-->
-<!--                        <fa-icon icon="cog"></fa-icon>-->
-<!--                    </button>-->
-<!--                    <modal-columns :i-columns="editedShowColumns"></modal-columns>-->
+                    <button class="btn btn-light float-right" @click="showChangeColumns">
+                        <fa-icon icon="cog"></fa-icon>
+                    </button>
+                    <modal-columns :i-columns="editedShowColumns"></modal-columns>
                 </th>
             </tr>
             </thead>
@@ -73,12 +113,19 @@
 </template>
 
 <script>
+    import FInput from '../../../../components/filter/f-input.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+
+    import ModalColumns from "../../../../components/modal-columns/modal-columns.vue";
+    import modalMixin from "../../../../mixins/modal.js";
+
     import Services from '../../../../../scripts/services/services.js';
 
     const cleanHiddenFilter = {
-        is_receive_sms: null,
-        roles: [],
-        is_main: null,
+        communication_method: [],
+        role: [],
+        active: null,
     };
 
     const cleanFilter = Object.assign({
@@ -95,20 +142,48 @@
         'email',
         'phone',
         'login',
-        'is_receive_sms',
-        'roles',
-        'is_main',
+        'communication_method',
+        'role',
+        'active',
+    ];
+
+    const formsGenitive  = [
+        "менеджера",
+        "менеджеров",
+        "менеджеров"
+    ];
+
+    const formsDative  = [
+        "менеджеру",
+        "менеджерам",
+        "менеджерам"
     ];
 
     export default {
         name: 'tab-operator',
         props: ['id'],
+        components: {
+            FInput,
+            FMultiSelect,
+            VSelect,
+            ModalColumns
+        },
+        mixins: [modalMixin],
         data() {
+            let self = this;
+            let filter = Object.assign({}, cleanFilter);
+            filter.role = filter.role.map(value => parseInt(value));
+
             return {
                 operators: [],
+                opened: false,
+                filter,
+                appliedFilter: {},
+                communicationMethods: [],
+                roles: [],
                 columns: [
                     {
-                        name: 'ID пользователя',
+                        name: 'ID',
                         code: 'user_id',
                         value: function(operator) {
                             return operator.user_id;
@@ -117,13 +192,22 @@
                         isAlwaysShown: true,
                     },
                     {
-                        name: 'ФИО оператора',
+                        name: 'ФИО',
                         code: 'full_name',
                         value: function(operator) {
                             return operator.full_name;
                         },
                         isShown: true,
                         isAlwaysShown: true,
+                    },
+                    {
+                        name: 'Должность',
+                        code: 'position',
+                        value: function(operator) {
+                            return operator.position;
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
                     },
                     {
                         name: 'Email',
@@ -144,36 +228,38 @@
                         isAlwaysShown: true,
                     },
                     {
-                        name: 'Предпочтительный способ связи (Получает СМС)',
-                        code: 'is_receive_sms',
+                        name: 'Способ связи',
+                        code: 'communication_method',
                         value: function(operator) {
-                            return operator.is_receive_sms ? 'Да' : 'Нет';
+                            return operator.communication_method;
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Роли оператора',
+                        name: 'Роли',
                         code: 'roles',
                         value: function(operator) {
                             let text = '';
-                            // operator.roles.forEach((role) => text += role);
-                            return text;
+                            Object.values(operator.roles).forEach((role) => text = text + role + '<br>');
+                            return text.slice(0, -4);
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Статус оператора',
-                        code: 'is_main',
+                        name: 'Статус',
+                        code: 'active',
                         value: function(operator) {
-                            return operator.is_main ? 'Администратор' : 'Оператор';
+                            return '<span class="badge ' + self.activeStatusClass(operator.active) + '">' +
+                                ((operator.active) ? 'Активен' : 'Не активен') +
+                                '</span>';
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Логин в MAS',
+                        name: 'Логин',
                         code: 'login',
                         value: function(operator) {
                             return operator.login;
@@ -181,17 +267,114 @@
                         isShown: true,
                         isAlwaysShown: true,
                     },
-                ]
+                ],
             }
         },
         created() {
             Services.showLoader();
-            Services.net().get(this.getRoute('merchant.detail.operator', {id: this.id})).then(data => {
-                this.operators = data.operators;
+            Promise.all([
+                Services.net().get(
+                    this.getRoute('merchant.detail.operator.data', {id: this.id})
+                ),
+                this.itemsPromise(),
+            ]).then(data => {
+                this.communicationMethods = data[0].communication_methods;
+                this.roles = data[0].roles;
+                this.operators = data[1].operators;
             }).finally(() => {
                 Services.hideLoader();
-            })
-        }
+            });
+        },
+        methods: {
+            itemsPromise() {
+                return Services.net().get(
+                    this.getRoute('merchant.detail.operator', {id: this.id}),
+                    {filter: this.appliedFilter}
+                );
+            },
+            activeStatusClass(activeStatusId) {
+                switch (activeStatusId) {
+                    case 0: return 'badge-danger';
+                    case 1: return 'badge-success';
+                    default: return 'badge-danger';
+                }
+            },
+            showChangeColumns() {
+                this.openModal('list_columns');
+            },
+            toggleHiddenFilter() {
+                this.opened = !this.opened;
+                if (this.opened === false) {
+                    for (let entry of Object.entries(cleanHiddenFilter)) {
+                        this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+                    }
+                    this.applyFilter();
+                }
+            },
+            applyFilter() {
+                let tmpFilter = {};
+                for (let [key, value] of Object.entries(this.filter)) {
+                    if (value && serverKeys.indexOf(key) !== -1) {
+                        tmpFilter[key] = value;
+                    }
+                }
+                this.appliedFilter = tmpFilter;
+                this.load();
+            },
+            clearFilter() {
+                for (let entry of Object.entries(cleanFilter)) {
+                    this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+                }
+                this.applyFilter();
+            },
+            load() {
+                Services.showLoader();
+                this.itemsPromise().then(data => {
+                    this.operators = data.operators;
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+        },
+        computed: {
+            editedShowColumns() {
+                return this.columns.filter(function(column) {
+                    return !column.isAlwaysShown;
+                })
+            },
+            communicationMethodOptions() {
+                return Object.values(this.communicationMethods).map(method => ({
+                    value: method.id,
+                    text: method.name,
+                }));
+            },
+            roleOptions() {
+                let arr = [];
+                for (let [roleId, roleName] of Object.entries(this.roles)) {
+                    arr.push({
+                        value: roleId,
+                        text: roleName,
+                    });
+                }
+                return arr;
+            },
+            activeOptions() {
+                return [
+                    {
+                        value: null,
+                        text: 'Не выбран',
+                    },
+                    {
+                        value: '0',
+                        text: 'Не активен',
+                    },
+                    {
+                        value: '1',
+                        text: 'Активен',
+                    },
+                ];
+            },
+        },
     };
 </script>
 

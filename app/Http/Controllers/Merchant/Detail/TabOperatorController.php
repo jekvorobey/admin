@@ -5,39 +5,134 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Dto\Front;
 use Illuminate\Support\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Services\OperatorService\OperatorService;
 
 class TabOperatorController extends Controller
 {
+    /**
+     * AJAX подгрузка информации для фильтрации отправлений
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function loadData(int $merchantId, Request $request)
+    {
+        return response()->json([
+            'communication_methods' => OperatorCommunicationMethod::allMethods(),
+            'roles' => UserDto::rolesByFrontIds([Front::FRONT_MAS]),
+        ]);
+    }
+
     public function load($id, OperatorService $operatorService, UserService $userService)
     {
-        /** @var Collection|OperatorDto $operators */
-        $operators = $operatorService->operators(
-            (new RestQuery())->addFields(OperatorDto::class, 'user_id')
-                ->setFilter('merchant_id', $id)
-        );
+        $restQuery = (new RestQuery())->setFilter('merchant_id', $id);
 
-        $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
-            ->keyBy('id');
+        $selectKey = $this->getFilter($restQuery);
 
-        return response()->json([
-            'operators' => $operators->map(function ($operator, $key) use ($users) {
+        if ($selectKey) {
+            $operators = $operatorService->operators($restQuery);
+
+            $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
+                ->keyBy('id');
+
+            $operators = $operators->map(function ($operator, $key) use ($users) {
                 return [
                     'user_id' => $operator->user_id,
                     'full_name' => $users[$operator->user_id]->full_name,
+                    'position' => $operator->position,
                     'email' => $users[$operator->user_id]->email,
                     'phone' => $users[$operator->user_id]->phone,
-                    'is_receive_sms' => $operator->is_receive_sms,
-                    'roles' => $users[$operator->user_id]->roles,
-                    'is_main' => $operator->is_main,
+                    'communication_method' => OperatorCommunicationMethod::methodById($operator->communication_method)['name'],
+                    'roles' => collect($users[$operator->user_id]->roles)->map(function ($item, $roleId) {
+                        return UserDto::roles()[$roleId];
+                    })->all(),
+                    'active' => $users[$operator->user_id]->active,
                     'login' => $users[$operator->user_id]->login,
                 ];
-            }),
-//            'users' => $users,
+            });
+        } else {
+            $operators = collect([]);
+        }
+
+        return response()->json([
+            'operators' => $operators,
         ]);
+    }
+
+    /**
+     * Возвращает
+     * true если нужно сделать выборку
+     * false если выборку делать не нужно (например если какой-то фильтр не дал результата)
+     *
+     * @return bool
+     */
+    protected function getFilter(RestQuery $restQuery): bool
+    {
+        /** UserService $userService */
+        $userService = resolve(UserService::class);
+
+        $filter = Validator::make(request('filter') ?? [],
+            [
+                'user_id' => 'integer|someone',
+                'full_name' => 'string|someone',
+                'email' => 'email|someone',
+                'phone' => 'string|someone',
+                'login' => 'string|someone',
+                'communication_method' => [
+                    'someone',
+                    Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
+                ],
+                'roles' => 'array|someone',
+                'active' => 'integer|someone',
+            ]
+        )->attributes();
+
+        $queryUserKey = true;
+        if ($filter) {
+            $filterUserIds = collect([]);
+            foreach ($filter as $key => $value) {
+                switch ($key) {
+                    case 'full_name':
+                    case 'email':
+                    case 'phone':
+                    case 'login':
+                    case 'role':
+                    case 'active':
+                        if ($key === 'phone') {
+                            $value = phone_format($value);
+                        }
+                        $userIds = $userService->users((new RestQuery)->setFilter($key, $value))
+                            ->pluck('id');
+                        if ($filterUserIds->isEmpty()) {
+                            $filterUserIds = $userIds;
+                        } else {
+                            $filterUserIds = $filterUserIds->intersect($userIds);
+                        }
+                        break;
+                    default:
+                        $restQuery->setFilter($key, $value);
+                }
+            }
+            $filterUserIds = $filterUserIds->all();
+            if ($filterUserIds) {
+                $restQuery->setFilter('user_id', $filterUserIds);
+            } else {
+                $queryUserKey = false;
+            }
+        }
+
+        return $queryUserKey;
     }
 }
