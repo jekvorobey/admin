@@ -12,7 +12,7 @@
                 <tr v-for="(item, index) in history">
                     <td>{{ item.created_at }}</td>
                     <td><a :href="getRoute('orders.flowDetail', {id: item.id})">{{ item.number }}</a></td>
-                    <td>{{ Math.round(item.price) }} руб.</td>
+                    <td>{{ roundValue(item.price) }} руб.</td>
                 </tr>
             </tbody>
         </table>
@@ -24,10 +24,17 @@
 
 <script>
 
+import Helpers from "../../../../../../scripts/helpers";
+
 export default {
     props: {
         history: Array,
         pager: Object
+    },
+    methods: {
+        roundValue(value) {
+            return Helpers.roundValue(value)
+        }
     },
     mounted() {
     }

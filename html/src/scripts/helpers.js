@@ -363,5 +363,15 @@ export default class Helpers {
             obj[pair[0]] = pair[1];
             return obj;
         }, {});
+    };
+
+    /**
+     * Математическое округление до целого
+     * @example 1,5 = 2
+     * @param value
+     * @returns {number}
+     */
+    static roundValue(value) {
+        return Math.round(value);
     }
 }
