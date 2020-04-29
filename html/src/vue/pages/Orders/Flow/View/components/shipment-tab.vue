@@ -80,9 +80,9 @@
                             <small>{{ item.product.brand.name }}</small>
                         </td>
                         <td>{{ item.qty | integer }}</td>
-                        <td>{{ Math.round(item.cost) }} руб.</td>
-                        <td>{{ Math.round((item.cost - item.price)) }} руб.</td>
-                        <td>{{ Math.round(item.price) }} руб.</td>
+                        <td>{{ roundValue(item.cost) }} руб.</td>
+                        <td>{{ roundValue((item.cost - item.price)) }} руб.</td>
+                        <td>{{ roundValue(item.price) }} руб.</td>
                         <td>
                         </td>
                     </tr>
@@ -94,6 +94,8 @@
 </template>
 <script>
 
+    import Helpers from "../../../../../../scripts/helpers";
+
     export default {
     data() {
         return {
@@ -104,6 +106,9 @@
         shipments: {},
     },
     methods: {
+        roundValue(value) {
+            return Helpers.roundValue(value)
+        },
         editShipment(id) {
 
         },

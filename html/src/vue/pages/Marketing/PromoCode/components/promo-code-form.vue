@@ -166,13 +166,14 @@
             processing: Boolean,
             submitText: String,
             action: Function,
+            referral: {},
         },
         data() {
             return {
                 types: [],
                 discounts: [],
                 promoCode: {
-                    owner_id: null,
+                    owner_id: this.referral,
                     merchant_id: null,
                     name: null,
                     code: null,
@@ -188,7 +189,7 @@
                 },
                 merchantBtn: false,
                 limitedBtn: false,
-                ownerBtn: false,
+                ownerBtn: !!this.referral,
                 customersBtn: false,
                 roleBtn: false,
                 segmentsBtn: false,

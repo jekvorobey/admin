@@ -116,7 +116,6 @@ export default {
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
-                tabs.referralActive = {i: i++, title: 'Реферальная активность'};
                 tabs.promoPage = {i: i++, title: 'Промостраница'};
                 tabs.promoProduct = {i: i++, title: 'Товары  для продвижения'};
                 tabs.orderReferrer = {i: i++, title: 'Реферальные заказы'};

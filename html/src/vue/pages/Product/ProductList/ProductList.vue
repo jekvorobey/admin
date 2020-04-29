@@ -146,7 +146,7 @@
                     <td>{{product.categoryName}}</td>
                     <td>{{formatDate(product.dateAdd)}}</td>
                     <td>{{product.price ? product.price : '--'}}</td>
-                    <td>{{product.qty ? Math.round(product.qty) : '--'}}</td>
+                    <td>{{product.qty ? roundValue(product.qty) : '--'}}</td>
                     <td>
                         <span class="badge" :class="{'badge-success':product.active,'badge-danger':!product.active}">
                             {{product.active ? 'Да' : 'Нет'}}
@@ -321,6 +321,9 @@
             statusComment: {required},
         },
         methods: {
+            roundValue(value) {
+                return Helpers.roundValue(value)
+            },
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
                 ACT_UPDATE_PRODUCTION,
