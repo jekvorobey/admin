@@ -207,6 +207,8 @@ class PromoCodeController extends Controller
             'merchants' => Helpers::getSelectOptions($merchants),
             'iRoles' => Helpers::getOptionRoles(false),
             'iSegments' => [['text' => 'A', 'value' => 1], ['text' => 'B', 'value' => 2]], // todo
+            'returnUrl' => $request->get('returnUrl', route('promo-code.list')),
+            'referral' => $request->get('referral'),
         ]);
     }
 

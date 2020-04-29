@@ -14,6 +14,7 @@
             :submit-text="'Сохранить'"
             :action="action"
             :processing="processing"
+            :referral="referral"
         ></promo-code-form>
     </layout-main>
 </template>
@@ -39,6 +40,8 @@
             iPromoCodes: Array,
             merchants: Array,
             iTypesForMerchant: Array,
+            returnUrl: {},
+            referral: {}
         },
         data() {
             return {
@@ -57,7 +60,7 @@
 
                 Services.net().post(this.route('promo-code.save'), {}, promoCode).then(data => {
                     Services.msg("Промокод добавлен");
-                    this.setTimeout(location=this.route('promo-code.list'), 4000);
+                    window.location.href = this.returnUrl;
                 }, () => {
                     Services.msg("Ошибка при добавлении промокода");
                 }).finally(data => {
