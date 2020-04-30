@@ -568,6 +568,7 @@ Route::middleware('auth')->group(function () {
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
+        Route::get('', 'PublicEventListController@page')->name('public-event.list');
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

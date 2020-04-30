@@ -95,12 +95,14 @@ class TabOperatorController extends Controller
                     Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
                 ],
                 'roles' => 'array|someone',
+                'roles.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
                 'active' => 'integer|someone',
             ]
         )->attributes();
 
         $queryUserKey = true;
         if ($filter) {
+            $filterUserKey = true;
             $filterUserIds = collect([]);
             foreach ($filter as $key => $value) {
                 switch ($key) {
@@ -115,8 +117,9 @@ class TabOperatorController extends Controller
                         }
                         $userIds = $userService->users((new RestQuery)->setFilter($key, $value))
                             ->pluck('id');
-                        if ($filterUserIds->isEmpty()) {
+                        if ($filterUserKey) {
                             $filterUserIds = $userIds;
+                            $filterUserKey = false;
                         } else {
                             $filterUserIds = $filterUserIds->intersect($userIds);
                         }

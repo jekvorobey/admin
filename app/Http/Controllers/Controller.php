@@ -26,6 +26,7 @@ class Controller extends BaseController
     protected $loadPublicEventTypes = false;
     protected $loadPublicEventMediaTypes = false;
     protected $loadPublicEventMediaCollections = false;
+    protected $loadPublicEventStatus = false;
     protected $loadPublicEventSprintStatus = false;
     protected $loadDiscountTypes = false;
     protected $loadPromoCodeTypes = false;
@@ -48,6 +49,7 @@ class Controller extends BaseController
             ->loadPublicEventMediaTypes($this->loadPublicEventMediaTypes)
             ->loadPublicEventMediaCollections($this->loadPublicEventMediaCollections)
             ->loadPublicEventSprintStatus($this->loadPublicEventSprintStatus)
+            ->loadPublicEventStatus($this->loadPublicEventStatus)
             ->loadDiscountTypes($this->loadDiscountTypes)
             ->loadPromoCodeTypes($this->loadPromoCodeTypes)
             ->loadPromoCodeStatus($this->loadPromoCodeStatus)
