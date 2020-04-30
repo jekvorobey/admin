@@ -4,8 +4,15 @@ import Helpers from '../../../scripts/helpers'
 export const NAMESPACE = 'publicEvents';
 
 export const SET_DETAIL = 'set_detail';
+export const SET_PAGE = 'set_page';
 
 export const GET_DETAIL = 'get_detail';
+export const GET_LIST = 'get_list';
+export const GET_PAGE_NUMBER = 'get_page_number';
+export const GET_TOTAL = 'get_total';
+export const GET_PAGE_SIZE = 'get_page_size';
+export const GET_NUM_PAGES = 'get_num_pages';
+
 
 export const ACT_IS_UNIQUE = 'act_is_unique';
 export const ACT_SAVE_PUBLIC_EVENT = 'act_save_public_event';
@@ -22,19 +29,34 @@ export const ACT_LOAD_SPRINTS = 'act_load_sprints';
 export const ACT_CREATE_SPRINT = 'act_create_sprint';
 export const ACT_DELETE_SPRINT = 'act_delete_sprint';
 
+const PAGE_SIZE = 10;
+
 export default {
     name: NAMESPACE,
     namespaced: true,
     state: {
-        detail: {}
+        detail: {},
+        list: [],
+        page: 1,
+        total: 0
     },
     mutations: {
         [SET_DETAIL](state, {publicEvent}) {
             state.detail = publicEvent;
+        },
+        [SET_PAGE](state, {list, page, total}) {
+            state.list = list;
+            state.page = page;
+            state.total = total;
         }
     },
     getters: {
         [GET_DETAIL]: state => state.detail,
+        [GET_LIST]: state => state.list,
+        [GET_PAGE_NUMBER]: state => state.page,
+        [GET_TOTAL]: state => state.total,
+        [GET_PAGE_SIZE]: () => PAGE_SIZE,
+        [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE)
     },
     actions: {
         [ACT_IS_UNIQUE]({rootGetters, commit}, {id, code}) {

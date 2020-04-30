@@ -150,6 +150,10 @@ Vue.mixin({
         publicEventSprintStatus() {
             return this.$store.state.layout.publicEventSprintStatus;
         },
+        /** @return {PublicEventStatus} */
+        publicEventStatus() {
+            return this.$store.state.layout.publicEventStatus;
+        },
         /** @return {DeliveryType} */
         discountTypes() {
             return this.$store.state.layout.discountTypes;
@@ -342,6 +346,13 @@ Vue.mixin({
  @property {integer} category
  @property {integer} delivery
  @property {integer} cartTotal
+ */
+/**
+ @typedef PublicEventStatus
+ @type {Object}
+ @property {integer} created
+ @property {integer} disabled
+ @property {integer} active
  */
 /**
  @typedef PublicEventSprintStatus
