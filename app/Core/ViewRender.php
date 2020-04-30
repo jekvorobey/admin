@@ -23,6 +23,7 @@ use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
+use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Dto\PublicEvent\PublicEventTypeDto;
 use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
@@ -50,10 +51,10 @@ class ViewRender
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
     private $publicEventMediaCollections = [];
-    private $loadPublicEventSprintStatus = [];
+    private $publicEventStatus = [];
+    private $publicEventSprintStatus = [];
 
     private $discountTypes = [];
-
     private $promoCodeTypes = [];
     private $promoCodeStatus = [];
 
@@ -259,10 +260,22 @@ class ViewRender
         return $this;
     }
 
+    public function loadPublicEventStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->publicEventStatus = [
+                'created' => PublicEventStatus::CREATED,
+                'disabled' => PublicEventStatus::DISABLED,
+                'active' => PublicEventStatus::ACTIVE,
+            ];
+        }
+        return $this;
+    }
+
     public function loadPublicEventSprintStatus(bool $load = false): self
     {
         if ($load) {
-            $this->loadPublicEventSprintStatus = [
+            $this->publicEventSprintStatus = [
                 'created' => PublicEventSprintStatus::CREATED,
                 'disabled' => PublicEventSprintStatus::DISABLED,
                 'ready' => PublicEventSprintStatus::READY,
@@ -348,7 +361,8 @@ class ViewRender
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
                 'publicEventMediaCollections' => $this->publicEventMediaCollections,
-                'loadPublicEventSprintStatus' => $this->loadPublicEventSprintStatus,
+                'publicEventSprintStatus' => $this->publicEventSprintStatus,
+                'publicEventStatus' => $this->publicEventStatus,
 
                 'discountTypes' => $this->discountTypes,
 

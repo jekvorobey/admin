@@ -174,28 +174,21 @@ Route::middleware('auth')->group(function () {
         Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
     });
 
-    Route::prefix('orders')->namespace('Orders')->group(function () {
+    Route::prefix('orders')->namespace('Order')->group(function () {
+        Route::get('', 'OrderListController@index')->name('orders.list');
+        Route::get('page', 'OrderListController@page')->name('orders.pagination');
+
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-            Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
-        });
+            Route::get('', 'OrderDetailController@detail')->name('orders.detail');
+            Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
+            Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
+            Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
 
-        Route::prefix('flow')->namespace('Flow')->group(function () {
-            Route::get('', 'FlowListController@index')->name('orders.flowList');
-            Route::get('page', 'FlowListController@page')->name('orders.FlowPagination');
-
-            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
-                Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
-                Route::put('pay', 'FlowDetailController@pay')->name('orders.pay');
-                Route::put('cancel', 'FlowDetailController@cancel')->name('orders.cancel');
-
-                Route::prefix('delivery')->group(function () {
-                    Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
-                    Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');
-                    Route::put('editShipment', 'FlowDeliveryController@editShipment')->name('orders.delivery.editShipment');
-                });
+            Route::prefix('delivery')->group(function () {
+                Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
+                Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');
+                Route::put('editShipment', 'FlowDeliveryController@editShipment')->name('orders.delivery.editShipment');
             });
-
         });
 
         Route::prefix('create')->namespace('Create')->group(function () {
@@ -206,7 +199,7 @@ Route::middleware('auth')->group(function () {
             Route::post('order', 'OrderCreateController@createOrder')->name('orders.createOrder');
         });
 
-        Route::prefix('cargo')->namespace('Cargo')->group(function () {
+        Route::prefix('cargos')->namespace('Cargo')->group(function () {
             Route::get('/', 'CargoListController@index')->name('cargo.list');
             Route::get('/page', 'CargoListController@page')->name('cargo.pagination');
 
@@ -233,9 +226,11 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        Route::prefix('order-statuses')->namespace('Directory')->group(function () {
-            Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
-            Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
+        Route::prefix('directories')->namespace('Directory')->group(function () {
+            Route::prefix('order-statuses')->group(function () {
+                Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
+                Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
+            });
         });
     });
 
@@ -574,6 +569,7 @@ Route::middleware('auth')->group(function () {
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
+        Route::get('', 'PublicEventListController@page')->name('public-event.list');
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

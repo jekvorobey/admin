@@ -60,7 +60,7 @@ class Menu
                 'items' => [
                     [
                         'title' => 'Список заказов',
-                        'route' => route('orders.flowList'),
+                        'route' => route('orders.list'),
                     ],
 //                    [
 //                        'title' => 'Проблемные заказы',
