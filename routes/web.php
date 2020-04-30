@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'PromoCodeController@create')->name('promo-code.save');
             Route::get('create', 'PromoCodeController@createPage')->name('promo-code.create');
             Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::get('check', 'PromoCodeController@checkUnique')->name('promo-code.check');
             Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });

@@ -273,4 +273,22 @@ class PromoCodeController extends Controller
         $r = $promoCodeService->generate();
         return response()->json($r);
     }
+
+    /**
+     * Проверка промокода на уникальность
+     * @param PromoCodeService $promoCodeService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkUnique(PromoCodeService $promoCodeService)
+    {
+        $data = $this->validate(request(),[
+            'code' => 'required|string|max:32'
+        ]);
+
+        $status = $promoCodeService->checkUnique($data['code']);
+
+        return response()->json([
+            'status' => $status,
+        ], 200);
+    }
 }

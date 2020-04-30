@@ -4,7 +4,16 @@
             <v-input v-model="promoCode.name" class="col-12">Название</v-input>
         </div>
         <div class="form-row">
-            <v-input v-model="promoCode.code" class="col-3" maxlength="32" autocomplete="off">Код</v-input>
+            <v-input v-model="promoCode.code"
+                     class="col-3"
+                     maxlength="32"
+                     @change="existCheck(promoCode.code)"
+                     autocomplete="off"
+                     :error="uniqueError"
+                     :help="promoCodeCheckProgress"
+                     aria-required="true">
+                Код
+            </v-input>
             <div class="col-auto">
                 <label>Сгенерировать случайный промокод</label>
                 <button type="button" class="btn btn-info btn-block" @click="generate()">Сгенерировать</button>
@@ -187,6 +196,8 @@
                     bonus_id: null,
                     conditions: null,
                 },
+                promoCodeExistStatus: '',
+                promoCodeCheckProgress: 'Промокод должен быть уникальным',
                 merchantBtn: false,
                 limitedBtn: false,
                 ownerBtn: !!this.referral,
@@ -232,6 +243,7 @@
                     portfolios: this.portfolios
                 }).then(code => {
                     this.promoCode.code = code;
+                    this.existCheck(code);
                 }).finally(data => {
                     Services.hideLoader();
                 });
@@ -273,9 +285,33 @@
                         this.promoCode.discount_id = null;
                     }
                 }
-            }
+            },
+            /**
+             * Проверка промокода на уникальность по коду
+             * @param code
+             */
+            existCheck(code) {
+                if (code.length === 0) return
+
+                this.promoCodeCheckProgress = 'Проверка...'
+                Services.net().get(this.getRoute('promo-code.check') +
+                    `?code=${code}`
+                ).then(data => {
+                    this.promoCodeExistStatus = data.status;
+                }).finally(() => {
+                    if (this.promoCodeExistStatus === 'ok')
+                        this.promoCodeCheckProgress = 'Промокод уникален'
+                    else this.promoCodeCheckProgress = ''
+                });
+            },
         },
         computed: {
+            uniqueError() {
+                if (this.promoCodeExistStatus === 'error') {
+                    this.promoCodeCheckProgress = '';
+                    return 'Промокод уже существует!'
+                }
+            },
             checkType() {
                 switch (this.promoCode.type) {
                     case this.PROMO_CODE_TYPE_DISCOUNT:
@@ -321,6 +357,7 @@
                 let required = this.promoCode.name
                     && this.promoCode.type
                     && this.promoCode.code
+                    && this.promoCodeExistStatus === 'ok'
                     && this.promoCode.status
                     && !this.processing;
 
