@@ -282,7 +282,7 @@
                         name: '№ заказа',
                         code: 'order',
                         value: function(shipment) {
-                            return '<a href="' + self.getRoute('orders.flowDetail', {id: shipment.order.id}) + '">' +
+                            return '<a href="' + self.getRoute('orders.detail', {id: shipment.order.id}) + '">' +
                                 shipment.order.number + '</a>';
                         },
                         isShown: true,
