@@ -35,9 +35,9 @@
                         </td>
                     </tr>
                     <tr v-if="newDocument.type !== '1'">
-                        <th>Сумма вознаграждения</th>
+                        <th>Сумма вознаграждения, руб.</th>
                         <td>
-                            <v-input v-model="newDocument.amount_reward" :error="errAmountReward" aria-required="true"/>
+                            <v-input v-model="newDocument.amount_reward" :error="errAmountReward" aria-required="true" aria-valuemin="0"/>
                         </td>
                     </tr>
                     <tr v-if="newDocument.type !== '1'">
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+    import moment from 'moment';
     import modal from '../../../../components/controls/modal/modal.vue';
     import modalMixin from '../../../../mixins/modal.js';
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
@@ -77,7 +78,7 @@
     import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
 
     import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import {required, integer, decimal, minValue} from 'vuelidate/lib/validators';
 
     export default {
         components: {
@@ -111,23 +112,32 @@
         },
         validations: {
             newDocument: {
-                type: {required},
+                type: {required, integer},
                 file: {required},
-                period_since: {required},
                 period_to: {required},
-                amount_reward: {required},
-                status: {required},
+                period_since: {required},
+                amount_reward: {required, decimal, minValue: minValue(0)},
+                status: {required, integer},
             },
         },
         methods: {
-            addDocument() {
+            addDocument: async function() {
                 this.$v.$touch();
                 if (this.newDocument.type !== '1') {
                     if (this.$v.$invalid) {
                         return;
                     }
+                } else {
+                    if (this.$v.newDocument.file.$invalid) {
+                        return;
+                    }
+                    this.clearFields();
+                    await this.$nextTick();
+                    this.newDocument.type = 1;
                 }
                 this.$emit('add', this.newDocument);
+                await this.$nextTick();
+                this.cancel();
             },
             clearFields() {
                 this.newDocument.type = '';
@@ -166,6 +176,11 @@
                 }
             },
             errPeriodSince() {
+                let start = this.newDocument.period_since;
+                let end = this.newDocument.period_to;
+                if ((start && end) && !(moment(start).unix() <= moment(end).unix())) {
+                    return "Дата начала не может быть позже даты окончания";
+                }
                 if (this.$v.newDocument.period_since.$dirty) {
                     if (!this.$v.newDocument.period_since.required) {
                         return "Обязательное поле!";
@@ -181,9 +196,7 @@
             },
             errAmountReward() {
                 if (this.$v.newDocument.amount_reward.$dirty) {
-                    if (!this.$v.newDocument.amount_reward.required) {
-                        return "Обязательное поле!";
-                    }
+                    return 'Сумма должна быть числом, не меньше 0';
                 }
             },
             errStatus() {

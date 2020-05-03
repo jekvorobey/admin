@@ -42,7 +42,7 @@
             <td>
                 {{ document.period_since ? datePrint(document.period_since) : '' }} — {{ document.period_to ? datePrint(document.period_to) : '' }}
             </td>
-            <td>{{ document.amount_reward ? document.amount_reward : '--' }} руб.</td>
+            <td>{{ document.amount_reward ? document.amount_reward + ' руб.' : '—' }}</td>
             <td>
                 <span class="badge" :class="statusClass(document.statusId)">{{ statusName(document.statusId) || 'N/A'}}</span></td>
             <td>
@@ -102,6 +102,14 @@
             },
         },
         methods: {
+            refresh() {
+                Services.showLoader();
+                Services.net().get(this.getRoute('customers.detail.document', {id: this.model.id})).then(data => {
+                    this.documents = data.documents;
+                }).finally(() => {
+                    Services.hideLoader();
+                })
+            },
             createNewDocument(){
                 this.openModal('CreateDocumentModal');
             },
@@ -143,25 +151,11 @@
                 })
             },
             createDocument(newDocument) {
-                Services.showLoader();
                 Services.net().post(this.getRoute('customers.detail.document.create', {
                     id: this.customer.id,
                 }), newDocument).then(data => {
-                    this.$set(this.documents, this.documents.length, {
-                        id: data.id,
-                        typeId: data.typeId,
-                        period_since: data.period_since,
-                        period_to: data.period_to,
-                        date: data.date,
-                        amount_reward: data.amount_reward,
-                        statusId: data.statusId,
-                        name: newDocument.file.name,
-                        url: newDocument.file.url,
-                    });
-                    this.closeModal();
+                    this.refresh();
                     Services.msg("Изменения сохранены");
-                }).finally(() => {
-                    Services.hideLoader();
                 })
             },
         },

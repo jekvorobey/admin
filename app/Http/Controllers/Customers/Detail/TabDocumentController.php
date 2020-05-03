@@ -17,6 +17,7 @@ use Greensight\Message\Services\MailService;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class TabDocumentController
@@ -143,6 +144,10 @@ class TabDocumentController extends Controller
         $userId = $customer->user_id;
         /** @var UserDto $user */
         $user = $userService->users((new RestQuery())->setFilter('id', $userId))->first();
+        if (!$user->email)
+        {
+            throw new BadRequestHttpException('Ошибка: Не указан Email пользователя');
+        }
         /** @var CustomerDocumentDto $document */
         $document = $customerService->documents($customerId)->where('id', $documentId)->first();
         /** @var FileDto $file */
@@ -170,7 +175,7 @@ class TabDocumentController extends Controller
 
         return response()->json([
             'email' => $user->email,
-        ]);
+        ], 200);
     }
 
     /**
