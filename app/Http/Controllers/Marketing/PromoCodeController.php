@@ -12,12 +12,14 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Marketing\Builder\PromoCode\PromoCodeBuilder;
+use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
+use Greensight\Marketing\Services\BonusService\BonusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
@@ -164,14 +166,15 @@ class PromoCodeController extends Controller
      *
      * @return mixed
      */
-    public function createPage(Request $request,
-        DiscountService $discountService,
-        PromoCodeService $promoCodeService,
-        MerchantService $merchantService
-    ) {
+    public function createPage(Request $request) {
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
+
+        $discountService = resolve(DiscountService::class);
+        $merchantService = resolve(MerchantService::class);
+        $bonusesService = resolve(BonusService::class);
+        $bonuses = $bonusesService->bonuses(new BonusInDto());
 
         $params = (new DiscountInDto())->toQuery();
         $discounts = $discountService->discounts($params)
@@ -195,7 +198,7 @@ class PromoCodeController extends Controller
             'iStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
             'iDiscounts' => $discounts,
             'gifts' => [],
-            'bonuses' => [],
+            'bonuses' => Helpers::getSelectOptions($bonuses),
             'merchants' => Helpers::getSelectOptions($merchants),
             'iRoles' => Helpers::getOptionRoles(false),
             'iSegments' => [['text' => 'A', 'value' => 1], ['text' => 'B', 'value' => 2]], // todo
