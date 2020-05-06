@@ -73,7 +73,7 @@ Vue.mixin({
             return '/' + this.$store.state.routes[name].replace(/^\//, '');
         },
         datePrint(date) {
-            return moment(date, "YYYY-MM-DD").format('LL');
+            return moment(date, "YYYY-MM-DD").format('L');
         },
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
