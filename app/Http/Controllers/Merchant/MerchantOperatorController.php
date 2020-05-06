@@ -34,21 +34,58 @@ class MerchantOperatorController extends Controller
         if (array_key_exists('merchant_id', $data)) {
             $props['merchantId'] = intval($data['merchant_id']);
         } else {
-            $merchants = $merchantService->merchants((new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name'))
-                ->all();
+            $merchants = $merchantService->merchants(
+                (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            )->all();
             $props['merchants'] = $merchants;
         }
         $props['communicationMethods'] = OperatorCommunicationMethod::allMethods();
         $props['roles'] = UserDto::rolesByFrontIds([Front::FRONT_MAS]);
-        return $this->render('Merchant/Operator/Create', $props);
+        return $this->render('Merchant/Operator/CreateEdit', $props);
     }
 
-    public function indexEdit(int $operatorId)
-    {
-        $this->title = 'Оператор: ';
+    public function indexEdit(
+        int $operatorId,
+        OperatorService $operatorService,
+        UserService $userService,
+        MerchantService $merchantService
+    ) {
+        /** @var OperatorDto $operator */
+        $operator = $operatorService->operators((new RestQuery())->setFilter('id', $operatorId))
+            ->first();
 
-        return $this->render('Merchant/Commission', [
+        /** @var UserDto $user */
+        $user = $userService->users((new RestQuery())->setFilter('id', $operator->user_id))
+            ->first();
 
+        $operator = [
+            'id' => $operator->id,
+            'merchant_id' => $operator->merchant_id,
+            'last_name' => $user->last_name,
+            'first_name' => $user->first_name,
+            'middle_name' => $user->middle_name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'login' => $user->login,
+            'position' => $operator->position,
+            'communication_method' => $operator->communication_method,
+            'roles' => collect($user->roles)->map(function ($item, $roleId) {
+                return $roleId;
+            })->values()
+                ->all(),
+            'active' => $user->active,
+        ];
+
+        $merchants = $merchantService->merchants(
+            (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name')
+        )->all();
+
+        $this->title = 'Редактирование менеджера';
+        return $this->render('Merchant/Operator/CreateEdit', [
+            'operatorProp' => $operator,
+            'merchants' => $merchants,
+            'communicationMethods' => OperatorCommunicationMethod::allMethods(),
+            'roles' => UserDto::rolesByFrontIds([Front::FRONT_MAS]),
         ]);
     }
 
@@ -87,27 +124,82 @@ class MerchantOperatorController extends Controller
         return response('', 201);
     }
 
-    public function update(MerchantService $merchantService)
-    {
-
-
-        return response()->json([
+    public function update(
+        int $operatorId,
+        Request $request,
+        OperatorService $operatorService,
+        UserService $userService,
+        MerchantService $merchantService
+    ) {
+        $userData = $request->validate([
+            'last_name' => 'string',
+            'first_name' => 'string',
+            'middle_name' => 'string',
+            'email' => 'email',
+            'phone' => 'string',
+            'login' => 'string',
+            'password' => 'string',
+            'active' => 'bool',
         ]);
+
+        $userRolesData = $request->validate([
+            'roles' => 'array',
+            'roles.add' => 'array',
+            'roles.delete' => 'array',
+            'roles.add.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
+            'roles.delete.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
+        ]);
+
+        $operatorData = $request->validate([
+            'merchant_id' => 'integer',
+            'position' => 'string',
+            'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
+        ]);
+
+        if ($userData || $userRolesData) {
+            /** @var OperatorDto $operator */
+            $operator = $operatorService->operators(
+                (new RestQuery())->setFilter('id', $operatorId)
+            )->first();
+
+            if ($userData) {
+                $userData['id'] = $operator->user_id;
+                $userService->update(new UserDto($userData));
+            }
+            if ($userRolesData && $userRolesData['roles']['add']) {
+                $userService->addRoles($operator->user_id, $userRolesData['roles']['add']);
+            }
+            if ($userRolesData && $userRolesData['roles']['delete']) {
+                $userService->deleteRoles($operator->user_id, $userRolesData['roles']['delete']);
+            }
+        }
+
+        $operatorData['id'] = $operatorId;
+        $operatorService->update($operatorData['id'], new OperatorDto($operatorData));
+
+        return response('', 204);
+    }
+
+    public function delete(Request $request, OperatorService $operatorService, UserService $userService)
+    {
+        $data = $request->validate([
+            'operator_ids' => 'required|array',
+        ]);
+
+        $userIds = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']))
+            ->pluck('user_id')
+            ->all();
+
+        $userService->deleteArray($userIds);
+        $operatorService->deleteArray($data['operator_ids']);
+
+        return response('', 204);
     }
 
     public function changeRole(MerchantService $merchantService)
     {
 
 
-        return response()->json([
-        ]);
-    }
-
-    public function delete(MerchantService $merchantService)
-    {
-
-
-        return response()->json([
-        ]);
+        return response('', 204);
     }
 }

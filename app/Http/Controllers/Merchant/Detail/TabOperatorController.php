@@ -49,6 +49,7 @@ class TabOperatorController extends Controller
 
             $operators = $operators->map(function ($operator, $key) use ($users) {
                 return [
+                    'id' => $operator->id,
                     'user_id' => $operator->user_id,
                     'full_name' => $users[$operator->user_id]->full_name,
                     'position' => $operator->position,

@@ -56,12 +56,12 @@
                    class="btn btn-success"
                 >Создать менеджера</a>
 
-<!--                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать менеджера</button>-->
-<!--                <a :href="getRoute('operator.edit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать менеджера</a>-->
+                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать менеджера</button>
+                <a :href="getRoute('merchant.operator.indexEdit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать менеджера</a>
 
-<!--                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOperator()">-->
-<!--                    Удалить {{ pluralForm(countSelected, formsGenitive) }}-->
-<!--                </button>-->
+                <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOperator()">
+                    Удалить {{ pluralForm(countSelected, formsGenitive) }}
+                </button>
 
 <!--                <button class="btn btn-secondary" @click="createChat()">-->
 <!--                    Написать {{ pluralForm(countSelected, formsDative) }}-->
@@ -77,12 +77,12 @@
             <thead>
             <tr>
                 <th>
-<!--                    <input type="checkbox"-->
-<!--                           id="select-all-page-shipments"-->
-<!--                           v-model="selectAll"-->
-<!--                           @click="changeSelectAll()"-->
-<!--                    >-->
-<!--                    <label for="select-all-page-shipments" class="mb-0">Все</label>-->
+                    <input type="checkbox"
+                           id="select-all-page-shipments"
+                           v-model="selectAll"
+                           @click="changeSelectAll()"
+                    >
+                    <label for="select-all-page-shipments" class="mb-0">Все</label>
                 </th>
                 <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
                 <th>
@@ -96,11 +96,11 @@
             <tbody>
             <tr v-for="operator in operators">
                 <td>
-<!--                    <input type="checkbox"-->
-<!--                           value="true"-->
-<!--                           class="offer-select"-->
-<!--                           v-model="checkboxes[offer.id]"-->
-<!--                           :value="offer.id">-->
+                    <input type="checkbox"
+                           value="true"
+                           class="operator-select"
+                           v-model="checkboxes[operator.id]"
+                           :value="operator.id">
                 </td>
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(operator)"></td>
             </tr>
@@ -109,6 +109,19 @@
             </tr>
             </tbody>
         </table>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('DeleteOperator')">
+                <div slot="header">
+                    <b>Вы уверены, что хотите удалить {{pluralForm(selectedOperators.length, formsNextGenitive)}}
+                        {{pluralForm(selectedOperators.length, formsGenitive)}}?</b>
+                </div>
+                <div slot="body">
+                    <div v-for="operator in selectedOperators">#{{ operator.id }} {{ operator.full_name }}</div>
+                    <button class="btn btn-danger mt-3" type="button" @click="approveDelete()">Удалить</button>
+                </div>
+            </modal>
+        </transition>
     </div>
 </template>
 
@@ -118,6 +131,7 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import ModalColumns from "../../../../components/modal-columns/modal-columns.vue";
+    import modal from '../../../../components/controls/modal/modal.vue';
     import modalMixin from "../../../../mixins/modal.js";
 
     import Services from '../../../../../scripts/services/services.js';
@@ -147,16 +161,22 @@
         'active',
     ];
 
-    const formsGenitive  = [
+    const formsGenitiveConst  = [
         "менеджера",
         "менеджеров",
         "менеджеров"
     ];
 
-    const formsDative  = [
+    const formsDativeConst  = [
         "менеджеру",
         "менеджерам",
         "менеджерам"
+    ];
+
+    const formsNextGenitiveConst  = [
+        "следующего",
+        "следующих",
+        "следующих"
     ];
 
     export default {
@@ -166,6 +186,7 @@
             FInput,
             FMultiSelect,
             VSelect,
+            modal,
             ModalColumns
         },
         mixins: [modalMixin],
@@ -181,7 +202,21 @@
                 appliedFilter: {},
                 communicationMethods: [],
                 roles: [],
+                selectAll: false,
+                checkboxes: {},
+                formsGenitive: formsGenitiveConst,
+                formsDative: formsDativeConst,
+                formsNextGenitive: formsNextGenitiveConst,
                 columns: [
+                    {
+                        name: '#',
+                        code: 'id',
+                        value: function(operator) {
+                            return operator.id;
+                        },
+                        isShown: true,
+                        isAlwaysShown: true,
+                    },
                     {
                         name: 'ID',
                         code: 'user_id',
@@ -335,6 +370,33 @@
                     Services.hideLoader();
                 });
             },
+            forEachOperator(callback) {
+                for (let i in this.operators) {
+                    callback(this.operators[i]['id']);
+                }
+            },
+            changeSelectAll() {
+                let newValue = !this.selectAll;
+                let checkboxes = {};
+                this.forEachOperator((operatorId) => {
+                    checkboxes[operatorId] = newValue;
+                });
+                this.checkboxes = checkboxes;
+            },
+            deleteOperator() {
+                this.openModal('DeleteOperator');
+            },
+            approveDelete() {
+                Services.showLoader();
+                Services.net().delete(this.route('merchant.operator.delete'), {
+                    operator_ids: this.selectedIds,
+                }).then(data => {
+                    this.closeModal('DeleteOperator');
+                    this.load();
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
         },
         computed: {
             editedShowColumns() {
@@ -373,6 +435,19 @@
                         text: 'Активен',
                     },
                 ];
+            },
+            countSelected() {
+                return Object.values(this.checkboxes).reduce((acc, val) => { return acc + val; }, 0);
+            },
+            selectedOperators() {
+                return this.operators.filter((operator) => {
+                    return (operator.id in this.checkboxes) && this.checkboxes[operator.id];
+                });
+            },
+            selectedIds() {
+                return this.operators.filter(operator => {
+                    return (operator.id in this.checkboxes) && this.checkboxes[operator.id];
+                }).map(operator => operator.id);
             },
         },
     };

@@ -12,19 +12,38 @@
         </template>
 
         <div class="row">
-            <v-input v-model="operator.last_name" :error="errorLastName" class="col-md-4 col-12">Фамилия*</v-input>
-            <v-input v-model="operator.first_name" :error="errorFirstName" class="col-md-4 col-12">Имя*</v-input>
-            <v-input v-model="operator.middle_name" :error="errorMiddleName" class="col-md-4 col-12">Отчество*</v-input>
+            <v-input v-model="operator.last_name" :error="errorLastName" class="col-md-4 col-12">Фамилия</v-input>
+            <v-input v-model="operator.first_name" :error="errorFirstName" class="col-md-4 col-12">Имя</v-input>
+            <v-input v-model="operator.middle_name" :error="errorMiddleName" class="col-md-4 col-12">Отчество</v-input>
         </div>
 
         <div class="row">
-            <v-input v-model="operator.email" :error="errorEmail" class="col-md-6 col-12">E-mail*</v-input>
-            <v-input v-model="operator.phone" :error="errorPhone" v-mask="telMask" class="col-md-6 col-12">Телефон*</v-input>
+            <v-input v-model="operator.email" :error="errorEmail" class="col-md-6 col-12">E-mail</v-input>
+            <v-input v-model="operator.phone" :error="errorPhone" v-mask="telMask" class="col-md-6 col-12">Телефон</v-input>
         </div>
 
         <div class="row">
-            <v-input v-model="operator.login" :error="errorLogin" class="col-md-6 col-12">Логин*</v-input>
-            <v-input v-model="operator.password" :error="errorPassword" type="password" class="col-md-6 col-12">Пароль*</v-input>
+            <v-input v-model="operator.login" :error="errorLogin" class="col-md-6 col-12">Логин</v-input>
+            <v-input v-if="!showPass"
+                     class="col-md-6 col-12"
+                     disabled
+            >
+                Пароль
+                <button class="btn btn-outline-info"
+                        @click="showHidePass"
+                >
+                    Изменить
+                </button>
+            </v-input>
+            <v-input v-else
+                     v-model="operator.password"
+                     :error="errorPassword"
+                     type="password"
+                     class="col-md-6 col-12"
+            >
+                <button v-if="operatorProp" class="btn btn-outline-secondary" @click="showHidePass">Отменить</button>
+                <template v-else>Пароль</template>
+            </v-input>
         </div>
 
         <v-input v-model="operator.position">Должность</v-input>
@@ -56,6 +75,7 @@
                        :id="`role-${roleId}`"
                        @change="e => rolesCheckbox(e, roleId)"
                        :value="roleId"
+                       :checked="operator.roles.includes(parseInt(roleId))"
                 >
                 <label class="form-check-label" :for="`role-${roleId}`">
                     {{ roleName }}
@@ -78,7 +98,7 @@
         </div>
 
         <button v-if="!operatorProp" class="btn btn-success" @click="create">Создать</button>
-        <button v-else class="btn btn-success" @click="edit">Сохранить изменения</button>
+        <button v-else class="btn btn-warning" @click="edit">Сохранить изменения</button>
     </layout-main>
 </template>
 
@@ -87,14 +107,18 @@
     import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
     import {validationMixin} from 'vuelidate';
-    import {email, required} from 'vuelidate/lib/validators';
+    import {email, required, requiredIf, minLength} from 'vuelidate/lib/validators';
     import {telMask} from '../../../../../scripts/mask';
 
     import Services from "../../../../../scripts/services/services.js";
     import {mapActions} from 'vuex';
 
+    function myCustomValidator () {
+        return value === 'isOk' // should return Boolean
+    }
+
     export default {
-        name: 'operator-create',
+        name: 'operator-create-edit',
         props: [
             'operatorProp',
             'merchantId',
@@ -110,6 +134,7 @@
         data() {
             let title = '';
             let operator = {};
+            let showPass = Boolean();
             if (!this.operatorProp) {
                 title = 'Создание менеджера';
                 operator = {
@@ -117,27 +142,31 @@
                     roles: [],
                     active: false,
                 };
+                showPass = true;
             } else {
-                title = 'Редактирование менеджера: ' + this.operatorProp.full_name;
+                title = 'Редактирование менеджера: ' +
+                    this.operatorProp.last_name + ' ' + this.operatorProp.first_name + ' ' + this.operatorProp.middle_name;
                 operator = {
                     merchant_id: this.operatorProp.merchant_id,
-                    last_name: this.operatorProp.merchant_id,
-                    first_name: this.operatorProp.merchant_id,
-                    middle_name: this.operatorProp.merchant_id,
-                    email: this.operatorProp.merchant_id,
-                    phone: this.operatorProp.merchant_id,
-                    login: this.operatorProp.merchant_id,
-                    password: this.operatorProp.merchant_id,
+                    last_name: this.operatorProp.last_name,
+                    first_name: this.operatorProp.first_name,
+                    middle_name: this.operatorProp.middle_name,
+                    email: this.operatorProp.email,
+                    phone: this.operatorProp.phone,
+                    login: this.operatorProp.login,
+                    password: null,
                     position: this.operatorProp.position,
-                    communication_method: this.operatorProp.merchant_id,
-                    roles: this.operatorProp.merchant_id,
+                    communication_method: this.operatorProp.communication_method,
+                    roles: [...this.operatorProp.roles],
                     active: this.operatorProp.active,
                 };
+                showPass = false;
             }
 
             return {
                 title: title,
                 operator: operator,
+                showPass: showPass,
             };
         },
         validations: {
@@ -149,7 +178,12 @@
                 email: {email, required},
                 phone: {required},
                 login: {required},
-                password: {required},
+                password: {
+                    required: requiredIf(function() {
+                        return this.showPass;
+                    }),
+                    minLength: minLength(8),
+                },
                 communication_method: {required},
                 roles: {required},
             }
@@ -177,6 +211,53 @@
                     });
                 }
             },
+            edit() {
+                this.$v.$touch();
+                if (!this.$v.$invalid) {
+                    let operatorEdit = {};
+                    for (let [key, value] of Object.entries(this.operator)) {
+                        if (key === 'phone') {
+                            value = value.replace(/[()]|\s|-/g, '');
+                        }
+                        if (
+                            (value !== this.operatorProp[key]) &&
+                            ((key !== 'merchant_id') || (parseInt(value) !== this.operatorProp[key])) &&
+                            ((key !== 'password') || value) &&
+                            ((key !== 'roles') || (JSON.stringify(value) !== JSON.stringify(this.operatorProp[key]))) &&
+                            ((key !== 'active') || (+value !== this.operatorProp[key]))
+                        ) {
+                            if (key === 'roles') {
+                                let cross = this.operatorProp['roles'].filter(role => value.includes(role));
+                                operatorEdit[key] = {};
+                                operatorEdit[key]['add'] = value.filter(role => !cross.includes(role));
+                                operatorEdit[key]['delete'] = this.operatorProp['roles'].filter(role => !cross.includes(role));
+                            } else {
+                                if (value !== '') {
+                                    operatorEdit[key] = value;
+                                }
+                            }
+                        }
+                    }
+                    console.log(operatorEdit);
+
+                    if (Object.keys(operatorEdit).length !== 0 || operatorEdit.constructor !== Object) {
+                        Services.showLoader();
+                        Services.net().put(
+                            this.route('merchant.operator.update'),
+                            {id: this.operatorProp.id},
+                            operatorEdit
+                        ).then(() => {
+                            Services.msg('Данные о менеджере успешно обновлены.');
+                        }, () => {
+                            Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
+                        }).finally(() => {
+                            Services.hideLoader();
+                        });
+                    } else {
+                        Services.msg('Данные о менеджере успешно обновлены.');
+                    }
+                }
+            },
             rolesCheckbox(e, id) {
                 id = parseInt(id);
                 if (e.target.checked) {
@@ -186,6 +267,10 @@
                         return roleId !== id;
                     });
                 }
+            },
+            showHidePass() {
+                this.showPass = !this.showPass;
+                this.operator.password = null;
             },
         },
         computed: {
@@ -231,6 +316,7 @@
             errorPassword() {
                 if (this.$v.operator.password.$dirty) {
                     if (!this.$v.operator.password.required) return "Обязательное поле!";
+                    if (!this.$v.operator.password.minLength) return "Не меньше 8 символов!";
                 }
             },
             errorCommunicationMethod() {
