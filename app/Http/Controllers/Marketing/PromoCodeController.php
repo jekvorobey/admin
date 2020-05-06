@@ -172,13 +172,6 @@ class PromoCodeController extends Controller
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
-        $promoCodeInDto = new PromoCodeInDto();
-        $promoCodes = $promoCodeService->promoCodes($promoCodeInDto)
-            ->sortByDesc('created_at')
-            ->map(function (PromoCodeOutDto $item) {
-                return ['value' => $item['id'], 'text' => "#{$item['id']} – {$item['name']}"];
-            })
-            ->values();
 
         $params = (new DiscountInDto())->toQuery();
         $discounts = $discountService->discounts($params)
@@ -197,7 +190,6 @@ class PromoCodeController extends Controller
         });
 
         return $this->render('Marketing/PromoCode/Create', [
-            'iPromoCodes' => $promoCodes,
             'iTypesForMerchant' => PromoCodeOutDto::availableTypesForMerchant(),
             'iTypes' => Helpers::getSelectOptions($promoCodeTypes),
             'iStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
@@ -240,8 +232,6 @@ class PromoCodeController extends Controller
             'conditions.roles.*' => 'numeric|nullable',
             'conditions.customers' => 'array|nullable',
             'conditions.customers.*' => 'numeric|nullable',
-            'conditions.synergy' => 'array|nullable',
-            'conditions.synergy.*' => 'numeric|nullable'
         ]);
 
         $data['creator_id'] = $requestInitiator->userId();
