@@ -22,7 +22,8 @@ class MarketingController extends Controller
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);
         return $this->render('Settings/Marketing', [
             'bonus_per_rubles' => $marketingOptionService->get(MarketingOptionDto::KEY_BONUS_PER_RUBLES),
-            'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES),
+            'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, []),
+            'order_activation_bonus_delay' => $marketingOptionService->get(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, 0),
             'activation_bonus_name' => $activationBonus['name'] ?? null,
             'activation_bonus_value' => $activationBonus['value'] ?? null,
             'activation_bonus_valid_period' => $activationBonus['valid_period'] ?? null,
@@ -36,6 +37,7 @@ class MarketingController extends Controller
     {
         $data = $this->validate(request(), [
             'bonus_per_rubles' => 'numeric|gte:0',
+            'order_activation_bonus_delay' => 'integer|gte:0',
             'roles_available_for_bonuses'  => 'array',
             'roles_available_for_bonuses.*'  => [
                 Rule::in([
@@ -57,6 +59,9 @@ class MarketingController extends Controller
                     break;
                 case 'roles_available_for_bonuses':
                     $marketingOptionService->put(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, $v);
+                    break;
+                case 'order_activation_bonus_delay':
+                    $marketingOptionService->put(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, (int) $v);
                     break;
                 case 'activation_bonus':
                     $customerOptionService->put(CustomerOptionDto::KEY_ACTIVATION_BONUS, $v);

@@ -19,6 +19,15 @@
                     Каким ролям можно начислять бонусы
                 </f-multi-select>
             </div>
+            <div class="mb-3 row">
+                <v-input v-model="$v.form.order_activation_bonus_delay.$model" class="col-6"
+                         :error="errorOrderActivationBonusDelay"
+                         help="Количество дней"
+                         type="number"
+                         min="0"
+                         @change="() => {updateInput('order_activation_bonus_delay')}"
+                >Начисление бонуса производится по факту статуса заказа ДОСТАВЛЕН и ОПЛАЧЕН + N дней</v-input>
+            </div>
 
             <h4 class="mb-3 mt-3">Бонусы за активацию клиента</h4>
             <div class="">
@@ -86,6 +95,7 @@
         components: {VInput, FMultiSelect},
         props: {
             bonus_per_rubles: Number,
+            order_activation_bonus_delay: Number,
             roles_available_for_bonuses: Array,
             activation_bonus: [Object, null],
             roles: Array,
@@ -96,6 +106,7 @@
                 form: {
                     bonus_per_rubles: this.bonus_per_rubles,
                     roles_available_for_bonuses: this.roles_available_for_bonuses,
+                    order_activation_bonus_delay: this.order_activation_bonus_delay,
 
                     activation_bonus_name: this.activation_bonus ? this.activation_bonus.name : null,
                     activation_bonus_value: this.activation_bonus ? this.activation_bonus.value : null,
@@ -109,6 +120,7 @@
         validations: {
             form: {
                 bonus_per_rubles: {required, minValue: minValue(0)},
+                order_activation_bonus_delay: {required, integer, minValue: minValue(0)},
                 activation_bonus_name: {
                     required: requiredIf(function () { return this.bonusActivationBtn }),
                 },
@@ -172,6 +184,13 @@
             errorActivationBonusName() {
                 if (this.$v.form.activation_bonus_name.$dirty) {
                     if (!this.$v.form.activation_bonus_name.required) return "Обязательное поле!";
+                }
+            },
+            errorOrderActivationBonusDelay() {
+                if (this.$v.form.bonus_per_rubles.$dirty) {
+                    if (!this.$v.form.order_activation_bonus_delay.required) return "Обязательное поле!";
+                    if (!this.$v.form.order_activation_bonus_delay.integer) return "Введите целое число!";
+                    if (!this.$v.form.order_activation_bonus_delay.minValue) return "Значение должно быть ≥ 0";
                 }
             },
             errorActivationBonusValidPeriod() {
