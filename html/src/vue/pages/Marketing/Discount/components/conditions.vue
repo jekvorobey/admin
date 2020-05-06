@@ -632,7 +632,7 @@
                 return brand ? brand.name : 'N/A';
             },
             categoryName(id) {
-                let category = this.categories.filter(category => category.id === id);
+                let category = this.categories.filter(category => category.id === parseInt(id));
                 return category.length > 0 ? category[0].name : 'N/A';
             },
             updateBrandList(brands) {
