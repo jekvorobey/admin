@@ -121,20 +121,6 @@
                 class="col-4"
                 :options="iSegments"
                 :multiple="true"></v-select>
-
-            <div class="col-12 mt-3">
-                <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="synergyBtn" key="synergyBtn" v-model="synergyBtn">
-                    <label class="custom-control-label" for="synergyBtn">Суммируется с промокодами</label>
-                </div>
-            </div>
-
-            <div class="col-12 mt-3" v-if="synergyBtn">
-                <label>Выберите промокоды</label>
-                <v-select2 v-model="promoCodes" class="form-control" width="100%" multiple>
-                    <option v-for="promoCode in iPromoCodes" :value="promoCode.value">{{ promoCode.text }}</option>
-                </v-select2>
-            </div>
         </div>
 
         <div class="row">
@@ -171,7 +157,6 @@
             bonuses: Object|Array,
             iSegments: Array,
             iRoles: Array,
-            iPromoCodes: Array,
             processing: Boolean,
             submitText: String,
             action: Function,
@@ -204,9 +189,7 @@
                 customersBtn: false,
                 roleBtn: false,
                 segmentsBtn: false,
-                synergyBtn: false,
 
-                promoCodes: [],
                 customers: [],
                 segments: [],
                 roleId: null,
@@ -228,9 +211,6 @@
                 }
                 if (this.segmentsBtn) {
                     this.promoCode.conditions.segments = this.segments;
-                }
-                if (this.synergyBtn) {
-                    this.promoCode.conditions.synergy = this.promoCodes;
                 }
                 this.promoCode.owner_id = this.ownerBtn ? this.promoCode.owner_id : null;
                 this.promoCode.counter = this.limitedBtn ? this.promoCode.counter : null;

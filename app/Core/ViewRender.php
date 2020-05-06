@@ -296,6 +296,10 @@ class ViewRender
                 'category' => DiscountTypeDto::TYPE_CATEGORY,
                 'delivery' => DiscountTypeDto::TYPE_DELIVERY,
                 'cartTotal' => DiscountTypeDto::TYPE_CART_TOTAL,
+                'anyOffer' => DiscountTypeDto::TYPE_ANY_OFFER,
+                'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
+                'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
+                'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
             ];
         }
         return $this;

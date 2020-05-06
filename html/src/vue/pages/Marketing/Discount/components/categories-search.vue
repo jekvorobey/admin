@@ -1,45 +1,27 @@
 <template>
     <div :class="classes">
-        <label for="category-select">{{ title }}</label>
-        <div class="input-group mb-1" :class="{ 'input-error': error }">
-            <div class="d-flex flex-row form-control">
-                <div v-for="category in selectedCategories"
-                     @click="toggleCategory(category.id)"
-                     class="badge badge-secondary cursor-pointer mr-2"
-                     id="category-select"
-                >{{ category.name }}
-                    <fa-icon icon="trash-alt"></fa-icon>
-                </div>
-            </div>
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'category-collapse-' + _uid" @click="reverseButtonName">{{ buttonName }}</button>
-            </div>
-        </div>
+        <label>{{ title }}</label>
+        <v-select2 v-model="form.categories"
+                   class="form-control"
+                   :multiple="true"
+                   :selectOnClose="true"
+                   @change="selectCategories"
+                   width="100%">
+            <option v-for="category in categoryOptions" :value="category.value">{{ category.text }}</option>
+        </v-select2>
+
         <div class="mb-2 error">
             {{ error }}
         </div>
-        <b-collapse :id="'category-collapse-' + _uid" class="mt-2">
-            <b-card>
-                <category-tree
-                        v-for="category in categories"
-                        :key="category.id"
-                        :category="category"
-                        :collection="categories"
-                        :depth="0"
-                >
-                </category-tree>
-            </b-card>
-        </b-collapse>
     </div>
 </template>
 
 <script>
-    import CategoryTree from '../../../../components/category-tree/category-tree.vue';
-    import Services from "../../../../../scripts/services/services";
+    import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
     export default {
         components: {
-            CategoryTree
+            VSelect2
         },
         props: {
             title: String,
@@ -52,44 +34,60 @@
         data() {
             return {
                 buttonName: 'Выбрать категорию',
-                category: [],
+                form: {
+                    categories: []
+                },
             }
         },
         methods: {
-            reverseButtonName() {
-                if (this.buttonName === 'Выбрать категорию')
-                    this.buttonName = 'Закрыть список';
-                else
-                    this.buttonName = 'Выбрать категорию';
+            selectCategories() {
+                this.$emit('update', this.form.categories);
             },
-            toggleCategory(categoryId) {
-                let categories = new Set(this.category);
-                if (categories.has(categoryId)) {
-                    categories.delete(categoryId);
-                } else {
-                    categories.add(categoryId);
+            categoryFullName(id) {
+                if (!(id in this.categoriesObject)) {
+                    return null;
                 }
-                this.category = [...categories];
-                this.$emit('update', this.category);
+
+                let names = [];
+                let currentCategory = this.categoriesObject[id];
+                names.push(currentCategory.name);
+
+                while (true) {
+                    let category = this.categoriesObject[currentCategory.id];
+                    if (category.parent_id && category.parent_id in this.categoriesObject) {
+                        let parentCategory = this.categoriesObject[category.parent_id];
+                        if (parentCategory.depth >= currentCategory.depth) {
+                            break;
+                        }
+
+                        names.push(parentCategory.name);
+                        currentCategory = parentCategory;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                return names.reverse().join(' » ');
             },
         },
         computed: {
-            selectedCategories() {
-                let selected = new Set(this.category);
-                return this.categories.filter(category => selected.has(category.id));
+            categoriesObject() {
+                return Object.fromEntries(Object.values(this.categories).map(category => [category.id, category]))
+            },
+            categoryOptions() {
+                return Object.values(this.categories).map(category => ({
+                    value: category.id,
+                    text: this.categoryFullName(category.id)
+                }));
             },
         },
         mounted() {
-            this.category = this.iCategories ? [...this.iCategories] : [];
-        },
-        created() {
-            Services.event().$on('select-category', categoryId => {
-                this.toggleCategory(categoryId);
-            });
+            this.form.categories = this.iCategories ? [...this.iCategories] : [];
         },
         watch: {
             iCategories(val) {
-                this.category = this.iCategories ? [...this.iCategories] : [];
+                this.form.categories = this.iCategories ? [...this.iCategories] : [];
             }
         },
     }
