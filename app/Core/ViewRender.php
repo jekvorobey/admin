@@ -9,6 +9,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Message\Dto\Communication\CommunicationChannelDto;
@@ -57,6 +58,7 @@ class ViewRender
     private $discountTypes = [];
     private $promoCodeTypes = [];
     private $promoCodeStatus = [];
+    private $bonusValueTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -335,6 +337,18 @@ class ViewRender
         return $this;
     }
 
+    public function loadBonusValueTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->bonusValueTypes = [
+                'percent' => BonusDto::VALUE_TYPE_PERCENT,
+                'rub' => BonusDto::VALUE_TYPE_RUB
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -372,6 +386,7 @@ class ViewRender
 
                 'promoCodeTypes' => $this->promoCodeTypes,
                 'promoCodeStatus' => $this->promoCodeStatus,
+                'bonusValueTypes' => $this->bonusValueTypes,
             ],
             [
                 'title' => $this->title,
