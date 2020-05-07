@@ -5,16 +5,14 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Dto\Front;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
-use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Services\OperatorService\OperatorService;
 
@@ -27,7 +25,7 @@ class TabOperatorController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function loadData(int $merchantId, Request $request)
+    public function loadData()
     {
         return response()->json([
             'communication_methods' => OperatorCommunicationMethod::allMethods(),

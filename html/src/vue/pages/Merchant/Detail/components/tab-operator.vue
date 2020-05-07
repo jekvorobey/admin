@@ -54,22 +54,22 @@
             <div class="col-12 mt-3">
                 <a :href="getRoute('merchant.operator.indexCreate') + '?merchant_id=' + id"
                    class="btn btn-success"
-                >Создать менеджера</a>
+                >Создать оператора</a>
 
-                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать менеджера</button>
-                <a :href="getRoute('merchant.operator.indexEdit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать менеджера</a>
+                <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать оператора</button>
+                <a :href="getRoute('merchant.operator.indexEdit', {id: selectedOperators[0].id})" class="btn btn-warning" v-else>Редактировать оператора</a>
 
                 <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOperator()">
                     Удалить {{ pluralForm(countSelected, formsGenitive) }}
                 </button>
 
-<!--                <button class="btn btn-secondary" @click="createChat()">-->
-<!--                    Написать {{ pluralForm(countSelected, formsDative) }}-->
-<!--                </button>-->
+                <button class="btn btn-primary" @click="onShowModalCreate()">
+                    Написать {{ pluralForm(countSelected, formsDative) }}
+                </button>
 
-<!--                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">-->
-<!--                    Сменить роль {{ pluralForm(countSelected, formsGenitive) }}-->
-<!--                </button>-->
+                <button class="btn btn-info" :disabled="countSelected !== 1" @click="changeRolesOperator()">
+                    Сменить роль {{ pluralForm(countSelected, formsGenitive) }}
+                </button>
             </div>
         </div>
 
@@ -113,12 +113,43 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('DeleteOperator')">
                 <div slot="header">
-                    <b>Вы уверены, что хотите удалить {{pluralForm(selectedOperators.length, formsNextGenitive)}}
-                        {{pluralForm(selectedOperators.length, formsGenitive)}}?</b>
+                    <b>Вы уверены, что хотите удалить {{pluralForm(countSelected, formsNextGenitive)}}
+                        {{pluralForm(countSelected, formsGenitive)}}?</b>
                 </div>
                 <div slot="body">
                     <div v-for="operator in selectedOperators">#{{ operator.id }} {{ operator.full_name }}</div>
                     <button class="btn btn-danger mt-3" type="button" @click="approveDelete()">Удалить</button>
+                </div>
+            </modal>
+        </transition>
+
+        <b-modal id="modal-create" title="Создание чата" hide-footer>
+            <communication-chat-creator :usersProp="selectedOperators.map(operator => {return {'id': operator.user_id, 'email': operator.email}})"
+                                        :userSendIds="selectedOperators.map(operator => operator.user_id)"
+            />
+        </b-modal>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('ChangeRolesOperator')">
+                <div slot="header">
+                    <b>Изменить роли оператора {{ selectedOperators[0].full_name }}</b>
+                </div>
+                <div slot="body">
+                    <template v-for="[roleId, roleName] in Object.entries(roles)">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   :id="`role-${roleId}`"
+                                   @change="e => rolesCheckbox(e, roleId)"
+                                   :value="roleId"
+                                   :checked="Object.keys(selectedOperators[0].roles).includes(roleId)"
+                            >
+                            <label class="form-check-label" :for="`role-${roleId}`">
+                                {{ roleName }}
+                            </label>
+                        </div>
+                    </template>
+                    <button class="btn btn-info mt-3" type="button" @click="approveChangeRoles()">Сохранить изменения</button>
                 </div>
             </modal>
         </transition>
@@ -135,6 +166,8 @@
     import modalMixin from "../../../../mixins/modal.js";
 
     import Services from '../../../../../scripts/services/services.js';
+    import CommunicationChatCreator
+        from "../../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
 
     const cleanHiddenFilter = {
         communication_method: [],
@@ -162,15 +195,15 @@
     ];
 
     const formsGenitiveConst  = [
-        "менеджера",
-        "менеджеров",
-        "менеджеров"
+        "оператора",
+        "операторов",
+        "операторов"
     ];
 
     const formsDativeConst  = [
-        "менеджеру",
-        "менеджерам",
-        "менеджерам"
+        "оператору",
+        "операторам",
+        "операторам"
     ];
 
     const formsNextGenitiveConst  = [
@@ -187,7 +220,8 @@
             FMultiSelect,
             VSelect,
             modal,
-            ModalColumns
+            ModalColumns,
+            CommunicationChatCreator
         },
         mixins: [modalMixin],
         data() {
@@ -207,6 +241,7 @@
                 formsGenitive: formsGenitiveConst,
                 formsDative: formsDativeConst,
                 formsNextGenitive: formsNextGenitiveConst,
+                rolesSelect: [],
                 columns: [
                     {
                         name: '#',
@@ -319,6 +354,7 @@
             }).finally(() => {
                 Services.hideLoader();
             });
+            Services.event().$on('closeModalCreate', this.onCloseModalCreate);
         },
         methods: {
             itemsPromise() {
@@ -390,9 +426,61 @@
                 Services.showLoader();
                 Services.net().delete(this.route('merchant.operator.delete'), {
                     operator_ids: this.selectedIds,
-                }).then(data => {
+                }).then(() => {
                     this.closeModal('DeleteOperator');
                     this.load();
+                    this.checkboxes = {};
+                    Services.msg('Данные об ' + pluralForm(this.countSelected, this.formsGenitive) +
+                        ' успешно удалены.');
+                }, () => {
+                    Services.msg('Произошла ошибка при удалении данных об ' +
+                        pluralForm(this.countSelected, this.formsGenitive) + '.', 'danger');
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+            onShowModalCreate() {
+                this.$bvModal.show('modal-create');
+            },
+            onCloseModalCreate() {
+                this.$bvModal.hide('modal-create');
+            },
+            changeRolesOperator() {
+                this.openModal('ChangeRolesOperator');
+                this.rolesSelect = Object.keys(this.selectedOperators[0].roles).map(roleId => parseInt(roleId));
+            },
+            rolesCheckbox(e, id) {
+                id = parseInt(id);
+                if (e.target.checked) {
+                    this.rolesSelect.push(id);
+                } else {
+                    this.rolesSelect = this.rolesSelect.filter((roleId) => {
+                        return roleId !== id;
+                    });
+                }
+            },
+            approveChangeRoles() {
+                let cross = this.rolesSelect.filter(
+                    role => Object.keys(this.selectedOperators[0].roles)
+                        .map(roleId => parseInt(roleId))
+                        .includes(role)
+                );
+                let rolesChange = {};
+                rolesChange['add'] = this.rolesSelect.filter(role => !cross.includes(role));
+                rolesChange['delete'] = Object.keys(this.selectedOperators[0].roles)
+                    .map(roleId => parseInt(roleId))
+                    .filter(role => !cross.includes(role));
+
+                Services.showLoader();
+                Services.net().put(this.route('merchant.operator.changeRoles'), {}, {
+                    user_id: this.selectedOperators[0].user_id,
+                    roles: rolesChange,
+                }).then(() => {
+                    this.closeModal('ChangeRolesOperator');
+                    this.load();
+                    Services.msg('Роли оператора успешно изменены.');
+                }, () => {
+                    Services.msg('Произошла ошибка при ролей оператора.', 'danger');
                 }).finally(() => {
                     Services.hideLoader();
                 });

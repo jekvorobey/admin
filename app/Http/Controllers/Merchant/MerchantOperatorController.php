@@ -5,18 +5,15 @@ namespace App\Http\Controllers\Merchant;
 
 
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Services\AuthService\UserService;
-use Illuminate\Validation\Rule;
-use Illuminate\Http\Request;
-use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
-use MerchantManagement\Services\MerchantService\Dto\GetCommissionDto;
-use MerchantManagement\Services\MerchantService\Dto\SaveCommissionDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
 
@@ -196,9 +193,23 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
-    public function changeRole(MerchantService $merchantService)
+    public function changeRoles(Request $request, UserService $userService)
     {
+        $userRolesData = $request->validate([
+            'user_id' => 'integer',
+            'roles' => 'array',
+            'roles.add' => 'array',
+            'roles.delete' => 'array',
+            'roles.add.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
+            'roles.delete.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
+        ]);
 
+        if ($userRolesData['roles'] && $userRolesData['roles']['add']) {
+            $userService->addRoles($userRolesData['user_id'], $userRolesData['roles']['add']);
+        }
+        if ($userRolesData['roles'] && $userRolesData['roles']['delete']) {
+            $userService->deleteRoles($userRolesData['user_id'], $userRolesData['roles']['delete']);
+        }
 
         return response('', 204);
     }

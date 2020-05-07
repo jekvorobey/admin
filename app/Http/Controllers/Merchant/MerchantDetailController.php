@@ -64,7 +64,7 @@ class MerchantDetailController extends Controller
                 ->first();
         }
 
-        $useroperatorIds = $operatorService->operators(
+        $userOperatorIds = $operatorService->operators(
             (new RestQuery())->addFields(OperatorDto::class, 'user_id')
                 ->setFilter('merchant_id', $merchant->id)
         )->pluck('user_id')->all();
@@ -78,7 +78,8 @@ class MerchantDetailController extends Controller
                 'middle_name',
                 'phone',
                 'email'
-            )->setFilter('id', $useroperatorIds)
+            )->include('roleLinks')
+                ->setFilter('id', $userOperatorIds)
         )->keyBy('id');
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
@@ -120,15 +121,14 @@ class MerchantDetailController extends Controller
                     'phone' => $userMain ? $userMain->phone : 'N/A',
                     'email' => $userMain ? $userMain->email : 'N/A',
                 ],
-                'operators' => collect([$userMain->id => $userMain])
-                    ->union($operatorUsers)
-                    ->map(function (UserDto $operatorUser) use ($userMain) {
+                'operators' => $operatorUsers->map(function (UserDto $operatorUser) {
                         return [
                             'id' => $operatorUser->id,
-                            'title' => $operatorUser->getTitle() . ($operatorUser->id === $userMain->id ? ' (Администратор)' : ''),
+                            'title' => $operatorUser->getTitle() . (in_array(UserDto::MAS__MERCHANT_ADMIN, array_keys ($operatorUser->roles)) ? ' (Администратор)' : ''),
                             'email' => $operatorUser->email,
                         ];
-                    })->all(),
+                    })->values()
+                        ->all(),
             ],
             'statuses' => MerchantStatus::statusesByMode($isRequest),
             'ratings' => $ratings->map(function (RatingDto $ratingDto) {

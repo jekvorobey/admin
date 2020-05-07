@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
             });
             Route::get('', 'MerchantOperatorController@indexCreate')->name('merchant.operator.indexCreate');
             Route::post('save', 'MerchantOperatorController@save')->name('merchant.operator.save');
-            Route::put('change-role', 'MerchantOperatorController@changeRole')->name('merchant.operator.changeRole');
+            Route::put('change-roles', 'MerchantOperatorController@changeRoles')->name('merchant.operator.changeRoles');
             Route::delete('', 'MerchantOperatorController@delete')->name('merchant.operator.delete');
         });
     });
@@ -159,6 +159,7 @@ Route::middleware('auth')->group(function () {
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+            Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
         });
 
         Route::prefix('organization-card')->group(function () {
@@ -447,7 +448,6 @@ Route::middleware('auth')->group(function () {
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
-            Route::get('user-list', 'ChatsController@userListForBroadcast')->name('communications.chats.user.list');
         });
     });
 

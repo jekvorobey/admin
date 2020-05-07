@@ -238,7 +238,6 @@
                             }
                         }
                     }
-                    console.log(operatorEdit);
 
                     if (Object.keys(operatorEdit).length !== 0 || operatorEdit.constructor !== Object) {
                         Services.showLoader();

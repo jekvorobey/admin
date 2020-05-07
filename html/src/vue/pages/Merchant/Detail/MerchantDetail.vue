@@ -25,7 +25,7 @@
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
                     <tab-product v-else-if="key === 'product'" :id="merchant.id"/>
-                    <tab-communication v-else-if="key === 'communication'" :merchant="merchant"/>
+                    <tab-communication v-else-if="key === 'communication'" :operators="merchant.operators"/>
                     <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id" :legal_name="merchant.legal_name"/>
                     <template v-else>
                         Заглушка

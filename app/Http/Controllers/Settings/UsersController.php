@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -120,6 +121,39 @@ class UsersController extends Controller
         $userService->deleteRole($id, $data['role']);
         return response()->json([
             'roles' => $userService->userRoles($id)
+        ]);
+    }
+
+    /**
+     * Получение пользователей по массиву ролей
+     *
+     * @param UserService $userService
+     * @param RequestInitiator $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function usersByRoles(UserService $userService, RequestInitiator $user)
+    {
+        $data = $this->validate(request(), [
+            'role_ids' => 'required|array',
+            'role_ids.' => 'integer',
+        ]);
+
+        $users = $userService->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id', 'full_name', 'phone', 'email')
+                ->setFilter('id', '!=', $user->userId())
+                ->setFilter('role', $data['role_ids'])
+        )->map(function (UserDto $user) {
+            return [
+                'id' => $user->id,
+                'title' => $user->getTitle(),
+                'email' => $user->email,
+            ];
+        })->keyBy('id')
+            ->all();
+
+        return response()->json([
+            'users' => $users,
         ]);
     }
 
