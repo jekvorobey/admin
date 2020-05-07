@@ -168,6 +168,7 @@
                     });
                     this.initComponent();
                     Services.event().$emit('closeModalCreate');
+                }).finally(() => {
                     Services.hideLoader();
                 });
             },

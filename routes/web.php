@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('bonus')->group(function () {
             Route::get('', 'BonusController@index')->name('bonus.list');
+            Route::post('', 'BonusController@create')->name('bonus.save');
             Route::get('create', 'BonusController@createPage')->name('bonus.create');
             Route::post('status', 'BonusController@status')->name('bonus.status');
             Route::delete('delete', 'BonusController@delete')->name('bonus.delete');

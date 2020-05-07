@@ -34,7 +34,7 @@
 
         <div class="row mb-3">
             <div class="col-12 mt-3">
-                <a :href="getRoute('bonus.create')" class="btn btn-success">Создать правило для начисления бонуса</a>
+                <a :href="getRoute('bonus.create')" class="btn btn-success">Создать новое правило</a>
             </div>
         </div>
 
@@ -99,6 +99,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import FDate from '../../../../components/filter/f-date.vue';
     import FInput from '../../../../components/filter/f-input.vue';
     import FCheckbox from '../../../../components/filter/f-checkbox.vue';
@@ -113,7 +114,6 @@
             iBonuses: Array,
             types: Object,
             statuses: Object,
-            creators: Array,
         },
         data() {
             return {
@@ -134,13 +134,33 @@
         methods: {
             deleteBonuses() {
                 Services.showLoader();
-                Services.net().delete(this.getRoute('bonus.delete'), {
-                    ids: this.selectBonuses,
-                }).then(() => {
-                   location.reload();
+                let uri = this.getRoute('bonus.delete');
+                let params = Services.net().params('delete', uri, {ids: this.selectBonuses});
+                axios.request(params).then(() => {
+                    location.reload();
+                }).catch((err) => {
+                    let response = err.response.data;
+                    let error = response.error;
+                    if (!error) {
+                        return Services.msg('Ошибка при выполнении операции', 'danger');
+                    }
+
+                    let items = error.items;
+                    if (!items) {
+                        return Services.msg(error.message, 'danger');
+                    }
+
+                    let msg = 'Невозможно удалить следующие бонусы, так как они привязаны к промокоду: ';
+                    let names = [];
+                    for (let i in items) {
+                        names.push('«' + this.bonusNames[items[i]] + '»');
+                    }
+                    msg += names.join(', ');
+
+                    return Services.msg(msg, 'danger');
                 }).finally(() => {
                     Services.hideLoader();
-                })
+                });
             },
             statusBonuses() {
                 Services.showLoader();
@@ -164,6 +184,9 @@
             }
         },
         computed: {
+            bonusNames() {
+                return Object.fromEntries(this.iBonuses.map(bonus => [bonus.id, bonus.name]));
+            },
             filtrateBonuses() {
                 let bonuses = [];
 

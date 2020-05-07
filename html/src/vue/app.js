@@ -165,6 +165,10 @@ Vue.mixin({
         /** @return {PromoCodeStatus} */
         promoCodeStatus() {
             return this.$store.state.layout.promoCodeStatus;
+        },
+        /** @return {BonusValueTypes} */
+        bonusValueTypes() {
+            return this.$store.state.layout.bonusValueTypes;
         }
     },
 });
@@ -386,4 +390,10 @@ Vue.mixin({
  @property {integer} delivery
  @property {integer} gift
  @property {integer} bonus
+ */
+ /**
+ @typedef BonusValueTypes
+ @type {Object}
+ @property {integer} percent
+ @property {integer} rub
  */
