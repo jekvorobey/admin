@@ -124,7 +124,7 @@
         data() {
             let user_ids;
             if (this.chatUsers) {
-                user_ids = [this.chatUsers[0].id];
+                user_ids = [this.chatUsers[0].user_id];
             } else {
                 user_ids = [];
             }
@@ -178,8 +178,9 @@
                     });
                     this.initComponent();
                     Services.event().$emit('closeModalCreate');
+                }).finally(() => {
                     Services.hideLoader();
-                });
+                })
             },
         },
         computed: {
