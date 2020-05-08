@@ -2,21 +2,27 @@
     <layout-main>
         <form id="form" novalidate v-on:submit.prevent.stop="send">
             <div class="row">
-                <v-input v-model="bonus.name" class="col-12">Название</v-input>
+                <v-input v-model="$v.bonus.name.$model" class="col-12" :error="errorName">Название</v-input>
             </div>
 
             <div class="row">
                 <div class="col-3">
                     <label>Бонус на</label>
-                    <select class="custom-select" v-model="bonus.type" @change="onTypeChange()">
+                    <select class="custom-select"
+                            :class="{ 'is-invalid': errorType }"
+                            v-model="$v.bonus.type.$model"
+                            @change="onTypeChange()"
+                    >
                         <option :value="null">–</option>
                         <option v-for="type in types" :value="type.id">{{ type.name }}</option>
                     </select>
+                    <small class="invalid-feedback" v-if="errorType">{{ errorType }}</small>
                 </div>
 
                 <div v-if="bonus.type === bonusTypes.offer" class="col-9">
-                    <v-input v-model="offerIds"
+                    <v-input v-model="$v.offerIds.$model"
                              :help="'ID офферов через запятую'"
+                             :error="errorOffers"
                     >Офферы</v-input>
                 </div>
 
@@ -27,6 +33,7 @@
                             title="Бренды"
                             :brands="brands"
                             :i-brands="bonus.brands"
+                            :error="errorBrands"
                             @update="updateBrands"
                     ></BrandsSearch>
 
@@ -41,6 +48,7 @@
                             title="Категории"
                             :categories="categories"
                             :i-categories="bonus.categories"
+                            :error="errorCategories"
                             @update="updateCategories"
                     ></CategoriesSearch>
 
@@ -66,7 +74,12 @@
                     </select>
                 </div>
 
-                <v-input v-model="bonus.value" class="col-3" type="number" min="0">Значение в {{ valueTypeName }}</v-input>
+                <v-input v-model="$v.bonus.value.$model"
+                         class="col-3"
+                         type="number"
+                         min="0"
+                         :error="errorValue"
+                >Значение в {{ valueTypeName }}</v-input>
             </div>
 
             <div class="row mt-3">
@@ -84,11 +97,12 @@
                     </div>
                 </div>
 
-                <v-input v-model="bonus.valid_period"
+                <v-input v-model="$v.bonus.value_period.$model"
                          v-if="!validPeriodBtn"
                          class="col-3 mt-3"
                          type="number"
                          min="0"
+                         :error="errorValuePeriod"
                 >Срок действия бонусов (в днях)</v-input>
             </div>
 
@@ -106,10 +120,14 @@
             <div class="row">
                 <div class="col-3">
                     <label>Статус</label>
-                    <select class="custom-select" v-model="bonus.status">
+                    <select class="custom-select"
+                            :class="{ 'is-invalid': errorStatus }"
+                            v-model="$v.bonus.status.$model"
+                    >
                         <option :value="null">–</option>
                         <option v-for="status in statuses" :value="status.id">{{ status.name }}</option>
                     </select>
+                    <small class="invalid-feedback" v-if="errorType">{{ errorStatus }}</small>
                 </div>
             </div>
 
@@ -125,8 +143,10 @@
 <script>
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import Services from "../../../../../scripts/services/services";
-    import BrandsSearch from '../../Discount/components/brands-search.vue';
-    import CategoriesSearch from '../../Discount/components/categories-search.vue';
+    import {validationMixin} from 'vuelidate';
+    import BrandsSearch from '../../components/brands-search.vue';
+    import CategoriesSearch from '../../components/categories-search.vue';
+    import {required, requiredIf, minValue, integer} from 'vuelidate/lib/validators';
 
     export default {
         components: {
@@ -141,6 +161,7 @@
             brands: Array,
             categories: Array,
         },
+        mixins: [validationMixin],
         data() {
             return {
                 bonus: {
@@ -159,11 +180,38 @@
                     categories: [],
                 },
                 offerIds: '',
-                validPeriodBtn: true
+                validPeriodBtn: true,
             }
+        },
+        validations: {
+            bonus: {
+                name: {required},
+                type: {required},
+                value: {required, integer, minValue: minValue(1)},
+                value_period: {
+                    required: requiredIf(function () { return !this.validPeriodBtn }),
+                    integer,
+                    minValue: minValue(1)
+                },
+                status: {required},
+                brands: {
+                    required: requiredIf(function () { return this.bonus.type === this.bonusTypes.brand }),
+                },
+                categories: {
+                    required: requiredIf(function () { return this.bonus.type === this.bonusTypes.category }),
+                },
+            },
+            offerIds: {
+                required: requiredIf(function () { return this.bonus.type === this.bonusTypes.offer }),
+            },
         },
         methods: {
             send() {
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
+
                 Services.showLoader();
                 Services.net().post(this.getRoute('bonus.save'), {}, this.bonus).then(() => {
                    // location.reload();
@@ -203,7 +251,52 @@
             },
             valueTypeName() {
                 return this.bonus.value_type === this.bonusValueTypes.percent ? 'процентах' : 'бонусах';
-            }
+            },
+            // ===============================
+            errorName() {
+                if (this.$v.bonus.name.$dirty) {
+                    if (!this.$v.bonus.name.required) return "Обязательное поле!";
+                }
+            },
+            errorType() {
+                if (this.$v.bonus.type.$dirty) {
+                    if (!this.$v.bonus.type.required) return "Обязательное поле!";
+                }
+            },
+            errorValue() {
+                if (this.$v.bonus.value.$dirty) {
+                    if (!this.$v.bonus.value.required) return "Обязательное поле!";
+                    if (!this.$v.bonus.value.integer) return "Введите целое число!";
+                    if (!this.$v.bonus.value.minValue) return "Значение должно быть > 0";
+                }
+            },
+            errorValuePeriod() {
+                if (this.$v.bonus.value_period.$dirty) {
+                    if (!this.$v.bonus.value_period.required) return "Обязательное поле!";
+                    if (!this.$v.bonus.value_period.integer) return "Введите целое число!";
+                    if (!this.$v.bonus.value_period.minValue) return "Значение должно быть > 0";
+                }
+            },
+            errorStatus() {
+                if (this.$v.bonus.status.$dirty) {
+                    if (!this.$v.bonus.status.required) return "Обязательное поле!";
+                }
+            },
+            errorOffers() {
+                if (this.$v.offerIds.$dirty) {
+                    if (!this.$v.offerIds.required) return "Обязательное поле!";
+                }
+            },
+            errorBrands() {
+                if (this.$v.bonus.brands.$dirty) {
+                    if (!this.$v.bonus.brands.required) return "Обязательное поле!";
+                }
+            },
+            errorCategories() {
+                if (this.$v.bonus.categories.$dirty) {
+                    if (!this.$v.bonus.categories.required) return "Обязательное поле!";
+                }
+            },
         },
         watch: {
             validPeriodBtn() {

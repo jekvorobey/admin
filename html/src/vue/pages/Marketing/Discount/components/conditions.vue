@@ -298,8 +298,8 @@
 </template>
 
 <script>
-    import BrandsSearch from './brands-search.vue';
-    import CategoriesSearch from './categories-search.vue';
+    import BrandsSearch from '../../components/brands-search.vue';
+    import CategoriesSearch from '../../components/categories-search.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import Services from '../../../../../scripts/services/services';

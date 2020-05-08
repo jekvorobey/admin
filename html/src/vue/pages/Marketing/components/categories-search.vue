@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
+    import VSelect2 from '../../../components/controls/VSelect2/v-select2.vue';
 
     export default {
         components: {

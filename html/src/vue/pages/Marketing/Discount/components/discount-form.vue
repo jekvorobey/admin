@@ -149,9 +149,9 @@
     import moment from 'moment';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
-    import BrandsSearch from './brands-search.vue';
+    import BrandsSearch from '../../components/brands-search.vue';
     import Conditions from './conditions.vue';
-    import CategoriesSearch from './categories-search.vue';
+    import CategoriesSearch from '../../components/categories-search.vue';
     import Services from '../../../../../scripts/services/services';
 
     moment.locale('ru');

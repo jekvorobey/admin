@@ -89,9 +89,13 @@ class BonusController extends Controller
         $brandService = resolve(BrandService::class);
         $categoryService = resolve(CategoryService::class);
 
+        $types = BonusDto::allTypes();
+        unset($types[BonusDto::TYPE_SERVICE]);
+        unset($types[BonusDto::TYPE_ANY_SERVICE]);
+
         return $this->render('Marketing/Bonus/Create', [
             'statuses' => BonusDto::allStatuses(),
-            'types' => BonusDto::allTypes(),
+            'types' => $types,
             'brands' => $brandService->brands($brandService->newQuery()),
             'categories' => $categoryService->categories($categoryService->newQuery()),
         ]);
