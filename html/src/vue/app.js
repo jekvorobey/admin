@@ -169,6 +169,10 @@ Vue.mixin({
         /** @return {BonusValueTypes} */
         bonusValueTypes() {
             return this.$store.state.layout.bonusValueTypes;
+        },
+        /** @return {BonusTypes} */
+        bonusTypes() {
+            return this.$store.state.layout.bonusTypes;
         }
     },
 });
@@ -395,5 +399,18 @@ Vue.mixin({
  @typedef BonusValueTypes
  @type {Object}
  @property {integer} percent
- @property {integer} rub
+ @property {integer} absolute
+ */
+/**
+ @typedef BonusTypes
+ @type {Object}
+ @property {integer} offer
+ @property {integer} brand
+ @property {integer} category
+ @property {integer} service
+ @property {integer} cartTotal
+ @property {integer} anyOffer
+ @property {integer} anyBrand
+ @property {integer} anyCategory
+ @property {integer} anyService
  */

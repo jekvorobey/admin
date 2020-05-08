@@ -59,6 +59,7 @@ class ViewRender
     private $promoCodeTypes = [];
     private $promoCodeStatus = [];
     private $bonusValueTypes = [];
+    private $bonusTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -337,12 +338,36 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadBonusTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->bonusTypes = [
+                'offer' => BonusDto::TYPE_OFFER,
+                'brand' => BonusDto::TYPE_BRAND,
+                'category' => BonusDto::TYPE_CATEGORY,
+                'service' => BonusDto::TYPE_SERVICE,
+                'cartTotal' => BonusDto::TYPE_CART_TOTAL,
+                'anyOffer' => BonusDto::TYPE_ANY_OFFER,
+                'anyBrand' => BonusDto::TYPE_ANY_BRAND,
+                'anyCategory' => BonusDto::TYPE_ANY_CATEGORY,
+                'anyService' => BonusDto::TYPE_ANY_SERVICE,
+            ];
+        }
+
+        return $this;
+    }
+
     public function loadBonusValueTypes(bool $load = false): self
     {
         if ($load) {
             $this->bonusValueTypes = [
                 'percent' => BonusDto::VALUE_TYPE_PERCENT,
-                'rub' => BonusDto::VALUE_TYPE_RUB
+                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE
             ];
         }
 
@@ -387,6 +412,7 @@ class ViewRender
                 'promoCodeTypes' => $this->promoCodeTypes,
                 'promoCodeStatus' => $this->promoCodeStatus,
                 'bonusValueTypes' => $this->bonusValueTypes,
+                'bonusTypes' => $this->bonusTypes,
             ],
             [
                 'title' => $this->title,

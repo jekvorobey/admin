@@ -9,7 +9,10 @@ use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Services\BonusService\BonusService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
+use Pim\Services\BrandService\BrandService;
+use Pim\Services\CategoryService\CategoryService;
 
 /**
  * Class BonusController
@@ -48,10 +51,24 @@ class BonusController extends Controller
             'status' => Rule::in(BonusDto::availableStatuses()),
             'type' => Rule::in(BonusDto::availableTypes()),
             'value' => 'numeric|gte:0|required',
-            'value_type' => Rule::in([BonusDto::VALUE_TYPE_PERCENT, BonusDto::VALUE_TYPE_RUB]),
+            'value_type' => Rule::in([BonusDto::VALUE_TYPE_PERCENT, BonusDto::VALUE_TYPE_ABSOLUTE]),
             'valid_period' => 'numeric|gt:0|nullable',
             'promo_code_only' => 'boolean|nullable',
+            'offers' => 'array',
+            'offers.*' => 'integer',
+            'brands' => 'array',
+            'brands.*' => 'integer',
+            'categories' => 'array',
+            'categories.*' => 'integer',
         ]);
+
+        $data['start_date'] = $data['start_date']
+            ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
+            : null;
+
+        $data['end_date'] = $data['end_date']
+            ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
+            : null;
 
         $builder = new BonusBuilder($data);
         /** @var BonusService $bonusService */
@@ -67,10 +84,16 @@ class BonusController extends Controller
     {
         $this->title = 'Создание правила начисления бонуса';
         $this->loadBonusValueTypes = true;
+        $this->loadBonusTypes = true;
+
+        $brandService = resolve(BrandService::class);
+        $categoryService = resolve(CategoryService::class);
 
         return $this->render('Marketing/Bonus/Create', [
             'statuses' => BonusDto::allStatuses(),
             'types' => BonusDto::allTypes(),
+            'brands' => $brandService->brands($brandService->newQuery()),
+            'categories' => $categoryService->categories($categoryService->newQuery()),
         ]);
     }
 

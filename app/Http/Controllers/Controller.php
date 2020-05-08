@@ -32,6 +32,7 @@ class Controller extends BaseController
     protected $loadPromoCodeTypes = false;
     protected $loadPromoCodeStatus = false;
     protected $loadBonusValueTypes = false;
+    protected $loadBonusTypes = false;
 
     public function render($componentName, $props = [])
     {
@@ -55,6 +56,7 @@ class Controller extends BaseController
             ->loadPromoCodeTypes($this->loadPromoCodeTypes)
             ->loadPromoCodeStatus($this->loadPromoCodeStatus)
             ->loadBonusValueTypes($this->loadBonusValueTypes)
+            ->loadBonusTypes($this->loadBonusTypes)
             ->render();
     }
     

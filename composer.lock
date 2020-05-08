@@ -585,9 +585,6 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/16499696/issues"
-            },
             "time": "2020-04-24T14:42:39+00:00"
         },
         {
@@ -645,9 +642,6 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
-            },
             "time": "2020-05-06T19:18:09+00:00"
         },
         {
@@ -707,12 +701,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "7802f850ccf8ea01ebb1dfd13bf43221d00bdb84"
+                "reference": "d84e05656182f6910fc160e886c4fae9f46be81f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=7802f850ccf8ea01ebb1dfd13bf43221d00bdb84",
-                "reference": "7802f850ccf8ea01ebb1dfd13bf43221d00bdb84",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=d84e05656182f6910fc160e886c4fae9f46be81f",
+                "reference": "d84e05656182f6910fc160e886c4fae9f46be81f",
                 "shasum": ""
             },
             "require": {
@@ -750,7 +744,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
             },
-            "time": "2020-05-07T10:20:09+00:00"
+            "time": "2020-05-08T14:59:32+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -787,9 +781,6 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/12949457/issues"
-            },
             "time": "2020-05-06T19:08:48+00:00"
         },
         {
@@ -838,9 +829,6 @@
                 }
             ],
             "description": "iBT message client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13390453/issues"
-            },
             "time": "2020-04-03T16:40:09+00:00"
         },
         {
@@ -890,9 +878,6 @@
                 }
             ],
             "description": "iBT oms client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
-            },
             "time": "2020-05-06T09:18:08+00:00"
         },
         {
@@ -981,9 +966,6 @@
                 }
             ],
             "description": "iBT store client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
-            },
             "time": "2020-04-28T19:03:38+00:00"
         },
         {
@@ -4344,6 +4326,12 @@
                 "phpstorm",
                 "sublime"
             ],
+            "funding": [
+                {
+                    "url": "https://github.com/barryvdh",
+                    "type": "github"
+                }
+            ],
             "time": "2020-04-22T09:57:26+00:00"
         },
         {
@@ -4509,16 +4497,6 @@
                 "certificate",
                 "ssl",
                 "tls"
-            ],
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-04-08T08:27:21+00:00"
         },
@@ -4776,12 +4754,6 @@
                 "Xdebug",
                 "performance"
             ],
-            "funding": [
-                {
-                    "url": "https://packagist.com",
-                    "type": "custom"
-                }
-            ],
             "time": "2020-03-01T12:26:26+00:00"
         },
         {
@@ -4957,6 +4929,20 @@
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
+            ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
+                    "type": "tidelift"
+                }
             ],
             "time": "2020-04-20T17:19:26+00:00"
         },
