@@ -7,7 +7,7 @@
             <v-input v-model="promoCode.code"
                      class="col-3"
                      maxlength="32"
-                     @change="existCheck(promoCode.code)"
+                     @input="existCheck(promoCode.code)"
                      autocomplete="off"
                      :error="uniqueError"
                      :help="promoCodeCheckProgress"
@@ -271,25 +271,37 @@
              * @param code
              */
             existCheck(code) {
-                if (code.length === 0) return
-
-                this.promoCodeCheckProgress = 'Проверка...'
-                Services.net().get(this.getRoute('promo-code.check') +
-                    `?code=${code}`
-                ).then(data => {
-                    this.promoCodeExistStatus = data.status;
-                }).finally(() => {
-                    if (this.promoCodeExistStatus === 'ok')
-                        this.promoCodeCheckProgress = 'Промокод уникален'
-                    else this.promoCodeCheckProgress = ''
-                });
+                if (code.length === 0) {
+                    this.promoCodeExistStatus = null;
+                    return;
+                }
+                this.promoCodeExistStatus='';
+                this.promoCodeCheckProgress = 'Проверка...';
+                
+                setTimeout(() =>
+                        Services.net().get(this.getRoute('promo-code.check') +
+                            `?code=${code}`
+                        ).then(data => {
+                            this.promoCodeExistStatus = data.status;
+                        }).finally(() => {
+                            if (this.promoCodeExistStatus === 'ok')
+                                this.promoCodeCheckProgress = 'Промокод уникален'
+                            else this.promoCodeCheckProgress = ''
+                        }),
+                    2000);
             },
         },
         computed: {
             uniqueError() {
-                if (this.promoCodeExistStatus === 'error') {
+                switch (this.promoCodeExistStatus) {
+                case 'error':
                     this.promoCodeCheckProgress = '';
-                    return 'Промокод уже существует!'
+                    return 'Промокод уже существует!';
+                case null:
+                    this.promoCodeCheckProgress = '';
+                    return 'Введите уникальный промокод';
+                default:
+                    return;
                 }
             },
             checkType() {
