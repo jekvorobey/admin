@@ -1,6 +1,6 @@
 <template>
     <transition name="modal">
-        <modal :close="closeModal" v-if="isModalOpen(modalName)">
+        <modal :close="cancel" v-if="isModalOpen(modalName)">
             <div slot="header">
                 Добавление документа пользователю
             </div>
@@ -137,6 +137,7 @@
                 }
                 this.$emit('add', this.newDocument);
                 await this.$nextTick();
+                this.$v.$reset();
                 this.cancel();
             },
             clearFields() {
@@ -152,6 +153,7 @@
             cancel() {
                 this.clearFields();
                 this.nullifyUploaded();
+                this.$v.$reset();
                 this.closeModal();
             },
         },
