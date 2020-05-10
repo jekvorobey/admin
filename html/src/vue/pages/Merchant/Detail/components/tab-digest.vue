@@ -2,119 +2,46 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="2">
-                Я им моя компания. Я и мой сын
-                <button @click="saveMerchant" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
-                <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+            <th colspan="1">
+                <h3>Текущий отчетный период</h3>
+            </th>
+            <th colspan="1" style="text-align: right">
+                <a href="#" class="btn btn-warning btn-md">
+                    Войти под мерчантом <fa-icon icon="eye"/>
+                </a>
+                <a href="#" class="btn btn-info btn-md">
+                    Поиск информации <fa-icon icon="question-circle"/>
+                </a>
+                <a href="#" class="btn btn-success btn-md">
+                    Сохранить изменения <fa-icon icon="check"/>
+                </a>
             </th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <th width="400px">ID</th>
-            <td>{{ merchant.id }}</td>
+            <th width="400px">Товаров на витрине</th>
+            <td>###</td>
         </tr>
         <tr>
-            <th>Дата регистрации</th>
-            <td>{{ datetimePrint(merchant.created_at) }}</td>
+            <th>Принято заказов</th>
+            <td>###</td>
         </tr>
         <tr>
-            <th>Адреса складов отгрузки</th>
-            <td><textarea v-model="form.storage_address" class="form-control"/></td>
+            <th>Доставлено заказов</th>
+            <td>###</td>
         </tr>
         <tr>
-            <th>Бренды и товарные категории</th>
-            <td><textarea v-model="form.sale_info" class="form-control"/></td>
+            <th>Продано товаров</th>
+            <td>Продано <b>###</b> товаров на сумму <b>### руб.</b></td>
         </tr>
         <tr>
-            <th>Ставка НДС, тип налогообложения</th>
-            <td><textarea v-model="form.vat_info" class="form-control"/></td>
+            <th>Начислено комиссии</th>
+            <td>### руб.</td>
         </tr>
         <tr>
-            <th>Коммерческие условия</th>
-            <td><textarea v-model="form.commercial_info" class="form-control"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
-        <tr>
-            <th>Юридический адрес</th>
-            <td><input v-model="form.legal_address" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Фактический адрес</th>
-            <td><input v-model="form.fact_address" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>ИНН</th>
-            <td><input v-model="form.inn" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>КПП</th>
-            <td><input v-model="form.kpp" class="form-control form-control-sm"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">ФИО генерального</th></tr>
-        <tr>
-            <th>Фамилия</th>
-            <td><input v-model="form.ceo_last_name" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Имя</th>
-            <td><input v-model="form.ceo_first_name" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Отчество</th>
-            <td><input v-model="form.ceo_middle_name" class="form-control form-control-sm"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">Банковские реквизиты</th></tr>
-        <tr>
-            <th>Номер банковского счета</th>
-            <td><input v-model="form.payment_account" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Банк</th>
-            <td><input v-model="form.bank" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Номер корреспондентского счета банка</th>
-            <td><input v-model="form.correspondent_account" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Юридический адрес банка</th>
-            <td><input v-model="form.bank_address" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Бик банка</th>
-            <td><input v-model="form.bank_bik" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr class="table-secondary"><th colspan="2">Документы</th></tr>
-        <tr>
-            <th>Номер Договора</th>
-            <td><input v-model="form.contract_number" class="form-control form-control-sm"/></td>
-        </tr>
-        <tr>
-            <th>Дата договора</th>
-            <td><date-picker v-model="form.contract_at" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
-        </tr>
-        <tr>
-            <th>Документы</th>
-            <td>
-                <div v-for="(document, i) in documents" class="mb-1">
-                    <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
-                    <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
-                </div>
-                <div v-if="!documents.length">-</div>
-
-                <div>
-                    <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
-                    <div v-else class="alert alert-success py-1 px-3" role="alert">
-                        Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-                        <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-                        <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
-                    </div>
-                </div>
-            </td>
+            <th>Примечание к мерчанту</th>
+            <td><textarea class="form-control" placeholder="Примечание к мерчанту"/></td>
         </tr>
         </tbody>
     </table>

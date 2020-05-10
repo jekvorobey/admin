@@ -20,7 +20,8 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-main v-if="key === 'main'" :model.sync="merchant"/>
+                    <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
+                    <tab-main v-else-if="key === 'main'" :model.sync="merchant"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
@@ -40,6 +41,7 @@
 import Infopanel from './components/infopanel.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
+import TabDigest from './components/tab-digest.vue';
 import TabMain from './components/tab-main.vue';
 import TabCommission from './components/tab-commission.vue';
 import TabOperator from './components/tab-operator.vue';
@@ -53,6 +55,7 @@ export default {
     props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
     components: {
         Infopanel,
+        TabDigest,
         TabMain,
         TabCommission,
         TabOperator,
@@ -71,7 +74,7 @@ export default {
             let tabs = {};
             let i = 0;
 
-            tabs.digest = {i: i++, title: 'Дайджест'};
+            tabs.digest = {i: i, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
             tabs.storage = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
