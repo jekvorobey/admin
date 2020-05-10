@@ -6,7 +6,7 @@
             </div>
             <div slot="body">
                 <textarea v-model="$v.form[text_field].$model" class="form-control" rows="20"></textarea>
-                <button @click="save" class="btn btn-dark mt-3" :disabled="!$v.form.$anyDirty">Сохранить</button>
+                <button @click="save" class="btn btn-dark mt-3" :disabled="!$v.form.$anyDirty || this.form.description === ''">Сохранить</button>
             </div>
         </modal>
     </transition>
@@ -37,10 +37,10 @@ export default {
         title: String,
         source: Object,
     },
-    data () {
-        return {
-            form: Object.assign({}, this.source),
-        };
+    computed: {
+        form: {
+            get() {return this.source}
+        }
     },
     validations() {
         return {

@@ -159,7 +159,7 @@
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
         <description-edit-modal
-                :source="product"
+                :source="currentProduct"
                 text_field="description"
                 title="Редактирование описания товара"
                 @onSave="$emit('onSave')"
@@ -228,7 +228,8 @@ export default {
         return {
             currentType: 0,
             replaceFileId: undefined,
-            currentTip: {}
+            currentTip: {},
+            currentProduct: Object.assign({}, this.product),
         };
     },
     methods: {
@@ -328,6 +329,7 @@ export default {
             let route = this.getRoute('products.saveProduct', {id: this.product.id});
             Services.net().post(route, {}, {description: null})
                 .then(()=> {
+                    this.currentProduct.description = null;
                     this.$emit('onSave');
                 });
         },
