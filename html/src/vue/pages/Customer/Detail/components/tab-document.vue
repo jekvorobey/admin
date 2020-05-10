@@ -165,7 +165,6 @@
                 this.documents = data.documents;
                 this.types = data.types;
                 this.statuses = data.statuses;
-
             }).finally(() => {
                 Services.hideLoader();
             })

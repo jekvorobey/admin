@@ -15,6 +15,7 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductImageType;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoPageController extends Controller
 {
@@ -25,11 +26,20 @@ class TabPromoPageController extends Controller
         ]));
     }
 
-    public function add($id, ReferralService $referralService)
+    public function add($id, ProductService $productService, ReferralService $referralService)
     {
         $data = $this->validate(request(), [
-            'product_id' => 'numeric'
+            'product_id' => 'integer'
         ]);
+
+        $product = $productService->newQuery()
+            ->setFilter('id', $data['product_id'])
+            ->products();
+        if ($product->isEmpty())
+        {
+            throw new BadRequestHttpException('Ошибка: товар не найден');
+        }
+
         $referralService->addPromoPageProduct($id, $data['product_id']);
 
         return response()->json($this->loadPromPageProducts($id));

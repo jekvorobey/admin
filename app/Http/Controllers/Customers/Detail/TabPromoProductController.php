@@ -19,6 +19,7 @@ use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoProductController extends Controller
 {
@@ -29,14 +30,35 @@ class TabPromoProductController extends Controller
         ]);
     }
 
-    public function save($id, ReferralService $referralService)
+    /**
+     * @param $id
+     * @param ProductService $productService
+     * @param ReferralService $referralService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function save($id, ProductService $productService, ReferralService $referralService)
     {
+        $data = $this->validate(request(), [
+            'product_id' => 'required|integer',
+            'active' => 'integer',
+            'files' => 'nullable',
+            'description' => 'required'
+        ]);
+
+        $product = $productService->newQuery()
+        ->setFilter('id', $data['product_id'])
+        ->products();
+        if ($product->isEmpty())
+        {
+            throw new BadRequestHttpException('Ошибка: товар не найден');
+        }
+
         $referralService->putPromotions((new PutPromotionDto())
             ->setCustomerId($id)
-            ->setProductId(request('product_id'))
-            ->setActive((bool)request('active'))
+            ->setProductId($data['product_id'])
+            ->setActive((bool)$data['active'])
             ->setFiles(request('files', []))
-            ->setDescription(request('description'))
+            ->setDescription($data['description'])
         );
 
         return response()->json([

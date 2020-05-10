@@ -1,14 +1,17 @@
 <template>
     <div>
-        <div class="form-inline mb-2">
-            <label class="mr-2" for="promo_page_name">Заголовок страницы</label>
-            <input class="form-control" id="promo_page_name" v-model="form.promo_page_name">
-            <button class="btn btn-outline-success ml-2" @click="saveCustomer">Сохранить</button>
-
-            <label class="mx-2" for="product_id">Добавить товар</label>
-            <input class="form-control" id="product_id" v-model="form.product_id">
-            <button class="btn btn-outline-success ml-2" @click="savePromoProduct">Добавить</button>
-        </div>
+            <div class="form-inline mb-2">
+                    <label class="mr-2" for="promo_page_name">Заголовок страницы</label>
+                    <input class="form-control" id="promo_page_name" v-model="form.promo_page_name">
+                    <button class="btn btn-outline-success ml-2" @click="saveCustomer">Сохранить</button>
+                    <label class="mx-2" for="product_id">Добавить товар по ID</label>
+                    <v-input id="product_id"
+                             v-model="form.product_id"
+                             :error="productIdError"
+                             placeholder="ID товара"
+                             aria-required="true"/>
+                    <button class="btn btn-outline-success ml-2" @click="savePromoProduct">Добавить</button>
+            </div>
 
         <div class="mb-2">
             Ссылка на промостраницу: <a :href="url">{{ url }}</a>
@@ -81,13 +84,18 @@ import Services from '../../../../../scripts/services/services.js';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import NetService from '../../../../../scripts/services/net.js';
 import DatePicker from 'vue2-datepicker';
+import VInput from "../../../../components/controls/VInput/VInput.vue";
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import moment from 'moment';
 
+import {validationMixin} from 'vuelidate';
+import {required, integer} from 'vuelidate/lib/validators';
+
 export default {
     name: 'tab-promo-page',
-    components: {VDeleteButton, DatePicker},
+    components: {VInput, VDeleteButton, DatePicker},
+    mixins: [validationMixin],
     props: ['model'],
     data() {
         return {
@@ -110,8 +118,17 @@ export default {
             }
         }
     },
+    validations: {
+        form: {
+            product_id: {required, integer},
+        },
+    },
     methods: {
         savePromoProduct() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
             Services.showLoader();
             Services.net().post(this.getRoute('customers.detail.promoPage.add', {id: this.model.id}), {
                 product_id: this.form.product_id
@@ -155,6 +172,16 @@ export default {
         customer: {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
+        },
+        productIdError() {
+            if (this.$v.form.product_id.$dirty) {
+                if (!this.$v.form.product_id.required) {
+                    return 'Введите ID товара!'
+                }
+                if (!this.$v.form.product_id.integer) {
+                    return "Введите целое число!";
+                }
+            }
         },
         filterProducts() {
             return this.products.filter(product => {
