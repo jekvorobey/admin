@@ -84,7 +84,7 @@
                     >
                     <label for="select-all-page-shipments" class="mb-0">Все</label>
                 </th>
-                <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
+                <th v-for="column in columns" v-if="column.isShown">{{ column.name }}</th>
                 <th>
                     <button class="btn btn-light float-right" @click="showChangeColumns">
                         <fa-icon icon="cog"></fa-icon>
@@ -113,8 +113,8 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('DeleteOperator')">
                 <div slot="header">
-                    <b>Вы уверены, что хотите удалить {{pluralForm(countSelected, formsNextGenitive)}}
-                        {{pluralForm(countSelected, formsGenitive)}}?</b>
+                    <b>Вы уверены, что хотите удалить {{ pluralForm(countSelected, formsNextGenitive) }}
+                        {{ pluralForm(countSelected, formsGenitive) }}?</b>
                 </div>
                 <div slot="body">
                     <div v-for="operator in selectedOperators">#{{ operator.id }} {{ operator.full_name }}</div>

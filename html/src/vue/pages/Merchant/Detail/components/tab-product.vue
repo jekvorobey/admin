@@ -61,8 +61,7 @@
         <div class="row mb-3">
             <div class="col-12 mt-3">
                 <button class="btn btn-secondary" :disabled="countSelected < 1" @click="changeStatus()">Сменить статус
-                    <template v-if="countSelected <= 1">оффера</template>
-                    <template v-else>офферов</template>
+                    {{ pluralForm(countSelected, formsGenitive) }}
                 </button>
 
                 <button class="btn btn-secondary" disabled v-if="countSelected !== 1">Редактировать оффер</button>
@@ -70,8 +69,7 @@
 <!--                <a :href="getRoute('offer.edit', {id: selectedOffers[0].id})" class="btn btn-warning" v-else>Редактировать оффер</a>-->
 
                 <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteOffer()">Удалить
-                    <template v-if="countSelected <= 1">оффер</template>
-                    <template v-else>офферы</template>
+                    {{ pluralForm(countSelected, formsDelete) }}
                 </button>
             </div>
         </div>
@@ -184,6 +182,18 @@
         'created_at',
     ];
 
+    const formsGenitiveConst  = [
+        "оффера",
+        "офферов",
+        "офферов"
+    ];
+
+    const formsDeleteConst  = [
+        "оффер",
+        "офферы",
+        "офферы"
+    ];
+
     export default {
         name: 'tab-product',
         props: ['id'],
@@ -210,6 +220,8 @@
                 pager: {},
                 checkboxes: {},
                 newStatus: 0,
+                formsGenitive: formsGenitiveConst,
+                formsDelete: formsDeleteConst,
                 columns: [
                     {
                         name: 'ID оффера',
@@ -382,7 +394,7 @@
                 Services.showLoader();
                 Services.net().delete(this.route('offers.delete'), {
                     offer_ids: this.selectedIds,
-                }).then(data => {
+                }).then(() => {
                     this.closeModal('DeleteOffer');
                     this.loadPage();
                 }).finally(() => {
