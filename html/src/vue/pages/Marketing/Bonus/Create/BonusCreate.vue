@@ -214,7 +214,12 @@
 
                 Services.showLoader();
                 Services.net().post(this.getRoute('bonus.save'), {}, this.bonus).then(() => {
-                   // location.reload();
+                    Services.msg("Правило успешно добавлено!");
+                    setTimeout(() => {
+                        location = this.route('bonus.list');
+                    }, 1000);
+                }).catch(() => {
+                    Services.msg("Ошибка при добавлении правила", "danger");
                 }).finally(() => {
                     Services.hideLoader();
                 })

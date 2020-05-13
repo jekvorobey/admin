@@ -33,9 +33,21 @@ class TabOperatorController extends Controller
         ]);
     }
 
-    public function load($id, OperatorService $operatorService, UserService $userService)
+    /**
+     * AJAX пагинация списка операторов
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @param  OperatorService $operatorService
+     * @param  UserService $userService
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function loadOperators(int $merchantId, Request $request, OperatorService $operatorService, UserService $userService)
     {
-        $restQuery = (new RestQuery())->setFilter('merchant_id', $id);
+        $page = $request->get('page', 1);
+        $restQuery = (new RestQuery())->pageNumber($page, 10)
+            ->setFilter('merchant_id', $merchantId);
 
         $selectKey = $this->getFilter($restQuery);
 
@@ -65,9 +77,14 @@ class TabOperatorController extends Controller
             $operators = collect([]);
         }
 
-        return response()->json([
+        $result = [
             'operators' => $operators,
-        ]);
+        ];
+        if ($request->get('page') == 1) {
+            $result['pager'] = $operatorService->operatorsCount($restQuery);
+        }
+
+        return response()->json($result);
     }
 
     /**

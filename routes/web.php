@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
             Route::namespace('Detail')->group(function () {
                 Route::prefix('operators')->group(function () {
                     Route::get('data', 'TabOperatorController@loadData')->name('merchant.detail.operator.data');
-                    Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
+                    Route::get('page', 'TabOperatorController@loadOperators')->name('merchant.detail.operator.pagination');
                 });
                 Route::prefix('main')->group(function () {
                     Route::get('', 'TabMainController@load')->name('merchant.detail.main');
@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('product')->group(function () {
                     Route::get('data', 'TabProductController@loadProductsData')->name('merchant.detail.product.data');
                     Route::get('page', 'TabProductController@page')->name('merchant.detail.product.pagination');
+                });
+                Route::prefix('store')->group(function () {
+                    Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
                 });
             });
         });
@@ -348,6 +351,9 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'MerchantStoreController@delete')
                 ->where(['id' => '[0-9]+'])
                 ->name('merchantStore.delete');
+            Route::delete('', 'MerchantStoreController@deleteArray')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.deleteArray');
 
             Route::prefix('working')->group(function () {
                 Route::put('/{id}', 'MerchantStoreController@updateWorking')

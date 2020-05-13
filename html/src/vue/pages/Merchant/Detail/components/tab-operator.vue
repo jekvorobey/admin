@@ -78,11 +78,11 @@
             <tr>
                 <th>
                     <input type="checkbox"
-                           id="select-all-page-shipments"
+                           id="select-all-page-operators"
                            v-model="selectAll"
                            @click="changeSelectAll()"
                     >
-                    <label for="select-all-page-shipments" class="mb-0">Все</label>
+                    <label for="select-all-page-operators" class="mb-0">Все</label>
                 </th>
                 <th v-for="column in columns" v-if="column.isShown">{{ column.name }}</th>
                 <th>
@@ -109,6 +109,14 @@
             </tr>
             </tbody>
         </table>
+        <b-pagination
+                v-if="pager.pages > 1"
+                v-model="currentPage"
+                :total-rows="pager.total"
+                :per-page="pager.pageSize"
+                :hide-goto-end-buttons="pager.pages < 10"
+                class="float-right"
+        ></b-pagination>
 
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('DeleteOperator')">
@@ -160,14 +168,15 @@
     import FInput from '../../../../components/filter/f-input.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import CommunicationChatCreator
+        from "../../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
 
     import ModalColumns from "../../../../components/modal-columns/modal-columns.vue";
     import modal from '../../../../components/controls/modal/modal.vue';
     import modalMixin from "../../../../mixins/modal.js";
 
     import Services from '../../../../../scripts/services/services.js';
-    import CommunicationChatCreator
-        from "../../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
+    import Helpers from "../../../../../scripts/helpers.js";
 
     const cleanHiddenFilter = {
         communication_method: [],
@@ -212,6 +221,12 @@
         "следующих"
     ];
 
+    const formsPrepositionalConst  = [
+        "операторе",
+        "операторах",
+        "операторах"
+    ];
+
     export default {
         name: 'tab-operator',
         props: ['id'],
@@ -241,7 +256,10 @@
                 formsGenitive: formsGenitiveConst,
                 formsDative: formsDativeConst,
                 formsNextGenitive: formsNextGenitiveConst,
+                formsPrepositional: formsPrepositionalConst,
                 rolesSelect: [],
+                currentPage: 1,
+                pager: {},
                 columns: [
                     {
                         name: '#',
@@ -346,21 +364,25 @@
                 Services.net().get(
                     this.getRoute('merchant.detail.operator.data', {id: this.id})
                 ),
-                this.itemsPromise(),
+                this.paginationPromise(),
             ]).then(data => {
                 this.communicationMethods = data[0].communication_methods;
                 this.roles = data[0].roles;
                 this.operators = data[1].operators;
+                this.pager = data[1].pager
             }).finally(() => {
                 Services.hideLoader();
             });
             Services.event().$on('closeModalCreate', this.onCloseModalCreate);
         },
         methods: {
-            itemsPromise() {
+            paginationPromise() {
                 return Services.net().get(
-                    this.getRoute('merchant.detail.operator', {id: this.id}),
-                    {filter: this.appliedFilter}
+                    this.getRoute('merchant.detail.operator.pagination', {id: this.id}),
+                    {
+                        page: this.currentPage,
+                        filter: this.appliedFilter,
+                    }
                 );
             },
             activeStatusClass(activeStatusId) {
@@ -390,7 +412,7 @@
                     }
                 }
                 this.appliedFilter = tmpFilter;
-                this.load();
+                this.loadPage();
             },
             clearFilter() {
                 for (let entry of Object.entries(cleanFilter)) {
@@ -398,10 +420,13 @@
                 }
                 this.applyFilter();
             },
-            load() {
+            loadPage() {
                 Services.showLoader();
-                this.itemsPromise().then(data => {
+                this.paginationPromise().then(data => {
                     this.operators = data.operators;
+                    if (data.pager) {
+                        this.pager = data.pager
+                    }
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -428,13 +453,13 @@
                     operator_ids: this.selectedIds,
                 }).then(() => {
                     this.closeModal('DeleteOperator');
-                    this.load();
+                    this.loadPage();
                     this.checkboxes = {};
-                    Services.msg('Данные об ' + pluralForm(this.countSelected, this.formsGenitive) +
+                    Services.msg('Данные об ' + Helpers.plural_form(this.countSelected, this.formsPrepositional) +
                         ' успешно удалены.');
                 }, () => {
                     Services.msg('Произошла ошибка при удалении данных об ' +
-                        pluralForm(this.countSelected, this.formsGenitive) + '.', 'danger');
+                        Helpers.plural_form(this.countSelected, this.formsPrepositional) + '.', 'danger');
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -477,7 +502,7 @@
                     roles: rolesChange,
                 }).then(() => {
                     this.closeModal('ChangeRolesOperator');
-                    this.load();
+                    this.loadPage();
                     Services.msg('Роли оператора успешно изменены.');
                 }, () => {
                     Services.msg('Произошла ошибка при ролей оператора.', 'danger');
@@ -528,7 +553,7 @@
                 return Object.values(this.checkboxes).reduce((acc, val) => { return acc + val; }, 0);
             },
             selectedOperators() {
-                return this.operators.filter((operator) => {
+                return this.operators.filter(operator => {
                     return (operator.id in this.checkboxes) && this.checkboxes[operator.id];
                 });
             },
@@ -538,6 +563,11 @@
                 }).map(operator => operator.id);
             },
         },
+        watch: {
+            currentPage() {
+                this.loadPage();
+            }
+        }
     };
 </script>
 

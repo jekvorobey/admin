@@ -17,7 +17,11 @@
                 <p class="text-secondary">Текущий остаток товара на витрине: <span class="float-right">{{ product.showCount.qty }} шт.</span></p>
                 <p class="text-secondary">Дата создания товара: <span class="float-right">{{ product.created_at }}</span></p>
                 <p class="text-secondary">Дата последнего обновления товара: <span class="float-right">{{ product.updated_at }}</span></p>
-
+                <div style="margin-top: 10px">
+                    <button @click="openModal('productStatusEdit')" class="btn btn-outline-dark md-3">
+                        Изменить статус
+                    </button>
+                </div>
             </div>
             <div class="shadow flex-grow-2 mr-3 mt-3">
                 <img :src="mainImage.url" :alt="product.name">
@@ -53,6 +57,9 @@
                 v-if="nav.currentTab === 'offers'"
                 :offers="this.product.offers"
         ></offers-tab>
+        <orders-tab
+                v-if="nav.currentTab === 'orders'"
+        ></orders-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
@@ -63,6 +70,13 @@
                 @onSave="refresh"
                 modal-name="productReject">
         </product-reject-modal>
+        <product-status-modal
+                :currentStatus ="this.product.approval_status"
+                :approval-options="this.options.approval"
+                :productId = "this.product.id"
+                @onSave="refresh"
+                modal-name="productStatusEdit">
+        </product-status-modal>
     </layout-main>
 </template>
 
@@ -75,8 +89,10 @@
     import ContentTab from './components/content-tab.vue';
     import CategoriesTab from './components/categories-tab.vue';
     import OffersTab from './components/offers-tab.vue';
+    import OrdersTab from './components/orders-tab.vue';
     import HistoryTab from './components/history-tab.vue';
     import ProductRejectModal from './components/product-reject-modal.vue';
+    import ProductStatusModal from './components/product-status-modal.vue';
     import Services from '../../../../scripts/services/services';
     import modalMixin from '../../../mixins/modal';
 
@@ -89,8 +105,10 @@
         ContentTab,
         CategoriesTab,
         OffersTab,
+        OrdersTab,
         HistoryTab,
         ProductRejectModal,
+        ProductStatusModal,
     },
     mixins: [modalMixin],
     props: {
@@ -113,6 +131,7 @@
                     {value: 'content', text: 'Контент'},
                     {value: 'categories', text: 'Категории'},
                     {value: 'offers', text: 'Предложения'},
+                    {value: 'orders', text: 'В заказах'},
                     {value: 'history', text: 'История'},
                 ]
             }
