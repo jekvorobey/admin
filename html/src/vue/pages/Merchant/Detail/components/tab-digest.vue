@@ -21,7 +21,11 @@
         <tbody>
         <tr>
             <th width="400px">Товаров на витрине</th>
-            <td>{{ products_count }}</td>
+            <td v-if="products.count">
+                <b>{{ products.count }}</b> активных товаров общей стоимостью
+                <b>{{ products.price }} руб.</b>
+            </td>
+            <td v-else>0</td>
         </tr>
         <tr>
             <th>Принято заказов</th>
@@ -63,7 +67,10 @@ export default {
     props: ['model'],
     data() {
         return {
-            products_count: '',
+            products: {
+                count: '',
+                price: ''
+            },
             shipments_count: '',
             arrived_count: '',
             sold_count: '',
@@ -113,7 +120,7 @@ export default {
     created() {
         Services.showLoader();
         Services.net().get(this.getRoute('merchant.detail.digest', {id: this.model.id})).then(data => {
-            this.products_count = data.products_count;
+            this.products = data.products;
             this.shipments_count = data.shipments_count;
             this.arrived_count = data.arrived_count;
             this.sold_count = data.sold_count

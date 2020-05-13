@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\Marketing\Dto\Price\PricesInDto;
+use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Illuminate\Contracts\Foundation\Application;
@@ -21,6 +23,7 @@ class TabDigestController extends Controller
     /**
      * Загрузить основную информацию
      * @param int $merchantId
+     * @param PriceService $priceService
      * @param MerchantService $merchantService
      * @param OfferService $offerService
      * @param ShipmentService $shipmentService
@@ -28,35 +31,52 @@ class TabDigestController extends Controller
      */
     public function load(
         int $merchantId,
+        PriceService $priceService,
         MerchantService $merchantService,
         OfferService $offerService,
         ShipmentService $shipmentService)
     {
         $period = $this->getPeriod();
-        //Товаров на витрине
-        $offersQuery = (new RestQuery())
-            ->include('product')
-            ->setFilter('merchant_id', $merchantId)
-            ->setFilter('updated_at', '>', $period);
-        $offersCount = $offerService->offersCount($offersQuery);
-        //Принято заказов
+
+        // Товаров на витрине //
+        $offerIds = $offerService->activeOffers($merchantId);
+        if (empty($offerIds)) {
+            $offers_total_count = 0;
+            $offers_total_price = 0;
+        } else {
+            $offers_prices = $priceService->prices(
+                (new PricesInDto())->setOffers($offerIds)
+            )->keyBy('price')->keys();
+            $offers_total_count = $offers_prices->count();
+            $offers_total_price = $offers_prices->sum();
+        }
+
+        // Принято заказов //
         $shipmentQuery = (new RestQuery())->setFilter('merchant_id', $merchantId)
             ->setFilter('is_canceled', false)
             ->setFilter('updated_at', '>', $period);
         $shipmentsCount = $shipmentService->shipmentsCount($shipmentQuery);
-        //Доставлено заказов
+
+        // Доставлено заказов //
         $arrivedQuery = (new RestQuery())->setFilter('merchant_id', $merchantId)
             ->setFilter('status', ShipmentStatus::DONE)
             ->setFilter('updated_at', '>', $period);
         $arrivedCount = $shipmentService->shipmentsCount($arrivedQuery);
-        //Продано товаров
+
+        // Продано товаров //
         $sold_total = $merchantService->getTotalSold($merchantId, $period);
-        //Начислено комиссии
+
+        // Начислено комиссии //
         $commission = $merchantService->accruedCommission($merchantId, $period);
-        //Комментарий к мерчанту
+
+        // Комментарий к мерчанту //
         $comment = $merchantService->merchant($merchantId)->comment;
+
         return response()->json([
-            'products_count' => $offersCount['total'],
+            'products' => [
+                'count' => $offers_total_count,
+                'price' => $offers_total_price
+            ],
             'shipments_count' => $shipmentsCount['total'],
             'arrived_count' => $arrivedCount['total'],
             'sold_count' => $sold_total['count'],
