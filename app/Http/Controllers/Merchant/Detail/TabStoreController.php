@@ -54,10 +54,22 @@ class TabStoreController extends Controller
         $filter = $this->getFilter();
         if ($filter) {
             foreach ($filter as $key => $value) {
-                if ($key === 'contact_phone') {
-                    $value = phone_format($value);
+                if ($value) {
+                    switch ($key) {
+                        case 'name':
+                            $restQuery->setFilter($key, 'like', "%{$value}%");
+                            break;
+                        case 'address_string':
+                            $field = 'address->' . $key;
+                            $restQuery->setFilter($field, 'like', "%{$value}%");
+                            break;
+                        default:
+                            if ($key === 'contact_phone') {
+                                $value = phone_format($value);
+                            }
+                            $restQuery->setFilter($key, $value);
+                    }
                 }
-                $restQuery->setFilter($key, $value);
             }
         }
 
@@ -69,7 +81,7 @@ class TabStoreController extends Controller
      */
     protected function getFilter(): array
     {
-        $filter = Validator::make(request('filter') ?? [],
+        return Validator::make(request('filter') ?? [],
             [
                 'id' => 'integer|someone',
                 'name' => 'string|someone',
@@ -78,20 +90,18 @@ class TabStoreController extends Controller
                 'contact_phone' => 'string|someone',
             ]
         )->attributes();
-
-        return $filter;
     }
 
     /**
      * @param DataQuery $restQuery
      * @return Collection
      */
-    public function loadStores(DataQuery $restQuery): Collection
+    protected function loadStores(DataQuery $restQuery): Collection
     {
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
 
-        $stores = $storeService->stores(
+        return $storeService->stores(
             $restQuery->addFields(StoreDto::entity(), 'id', 'name', 'address')
                 ->include('storeContact')
         )->map(function (StoreDto $store) {
@@ -104,7 +114,5 @@ class TabStoreController extends Controller
                     'contact_phone' => $contact ? $contact->phone : 'N/A',
                 ];
             });
-
-        return $stores;
     }
 }

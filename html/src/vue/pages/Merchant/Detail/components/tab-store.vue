@@ -161,7 +161,6 @@
         },
         mixins: [modalMixin],
         data() {
-            // let self = this;
             let filter = Object.assign({}, cleanFilter);
 
             return {
@@ -222,7 +221,7 @@
                         isAlwaysShown: false,
                     },
                 ],
-            }
+            };
         },
         created() {
             this.loadPage();
@@ -239,6 +238,7 @@
                     }
                 }
                 this.appliedFilter = tmpFilter;
+                this.currentPage = 1;
                 this.loadPage();
             },
             clearFilter() {
