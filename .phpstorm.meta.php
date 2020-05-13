@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-04-30 20:41:28.
+    * Generated on 2020-05-13 21:46:58.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -37,6 +37,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -243,6 +244,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -449,6 +451,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -655,6 +658,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -861,6 +865,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -1067,6 +1072,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -1273,6 +1279,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
@@ -1479,6 +1486,7 @@ namespace PHPSTORM_META {
         'Greensight\Logistics\Services\CourierCallService\CourierCallService' => \Greensight\Logistics\Services\CourierCallService\RestCourierCallService::class,
         'Greensight\Logistics\Services\DeliveryOrderService\DeliveryOrderService' => \Greensight\Logistics\Services\DeliveryOrderService\RestDeliveryOrderService::class,
         'Greensight\Logistics\Services\ListsService\ListsService' => \Greensight\Logistics\Services\ListsService\RestListsService::class,
+        'Greensight\Marketing\Services\BonusService\BonusService' => \Greensight\Marketing\Services\BonusService\RestBonusService::class,
         'Greensight\Marketing\Services\DiscountService\DiscountService' => \Greensight\Marketing\Services\DiscountService\RestDiscountService::class,
         'Greensight\Marketing\Services\MarketingService\MarketingService' => \Greensight\Marketing\Services\MarketingService\RestMarketingService::class,
         'Greensight\Marketing\Services\OptionService\OptionService' => \Greensight\Marketing\Services\OptionService\RestOptionService::class,
