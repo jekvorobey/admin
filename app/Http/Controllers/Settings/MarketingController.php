@@ -24,6 +24,8 @@ class MarketingController extends Controller
             'bonus_per_rubles' => $marketingOptionService->get(MarketingOptionDto::KEY_BONUS_PER_RUBLES),
             'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, []),
             'order_activation_bonus_delay' => $marketingOptionService->get(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, 0),
+            'max_debit_percentage_for_product' => $marketingOptionService->get(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_PRODUCT, 0),
+            'max_debit_percentage_for_order' => $marketingOptionService->get(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_ORDER, 0),
             'activation_bonus_name' => $activationBonus['name'] ?? null,
             'activation_bonus_value' => $activationBonus['value'] ?? null,
             'activation_bonus_valid_period' => $activationBonus['valid_period'] ?? null,
@@ -38,6 +40,8 @@ class MarketingController extends Controller
         $data = $this->validate(request(), [
             'bonus_per_rubles' => 'numeric|gte:0',
             'order_activation_bonus_delay' => 'integer|gte:0',
+            'max_debit_percentage_for_product' => 'integer|between:0,100',
+            'max_debit_percentage_for_order' => 'integer|between:0,100',
             'roles_available_for_bonuses'  => 'array',
             'roles_available_for_bonuses.*'  => [
                 Rule::in([
@@ -62,6 +66,12 @@ class MarketingController extends Controller
                     break;
                 case 'order_activation_bonus_delay':
                     $marketingOptionService->put(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, (int) $v);
+                    break;
+                case 'max_debit_percentage_for_product':
+                    $marketingOptionService->put(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_PRODUCT, (int) $v);
+                    break;
+                case 'max_debit_percentage_for_order':
+                    $marketingOptionService->put(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_ORDER, (int) $v);
                     break;
                 case 'activation_bonus':
                     $customerOptionService->put(CustomerOptionDto::KEY_ACTIVATION_BONUS, $v);
