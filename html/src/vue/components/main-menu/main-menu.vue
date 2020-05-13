@@ -1,16 +1,12 @@
 <template>
-    <nav class="bg-light sidebar">
-        <div class="navbar navbar-dark bg-dark">
-            <picture>
-                <source srcset="/assets/images/logo_white.webp" type="image/webp">
-                <img src="/assets/images/logo_white.png" width="128" height="46">
-            </picture>
-        </div>
-
-        <div class="sidebar-sticky">
-            <menu-item v-for="(item, index) in menu" :item="item" :key="index"></menu-item>
-        </div>
-    </nav>
+    <b-navbar toggleable="xl" class="p-0">
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+            <div class="sidebar-sticky">
+                <menu-item v-for="(item, index) in menu" :item="item" :key="index"></menu-item>
+            </div>
+        </b-collapse>
+    </b-navbar>
 </template>
 
 <script>
@@ -30,6 +26,7 @@
 </script>
 <style>
     .sidebar-sticky {
+        width:100%;
         position: -webkit-sticky;
         position: sticky;
         top: 48px;
