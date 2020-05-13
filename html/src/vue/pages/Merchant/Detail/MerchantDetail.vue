@@ -22,6 +22,7 @@
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
                     <tab-main v-else-if="key === 'main'" :model.sync="merchant"/>
+                    <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
@@ -43,6 +44,7 @@ import Infopanel from './components/infopanel.vue';
 import tabsMixin from '../../../mixins/tabs.js';
 import TabDigest from './components/tab-digest.vue';
 import TabMain from './components/tab-main.vue';
+import TabStore from './components/tab-store.vue';
 import TabCommission from './components/tab-commission.vue';
 import TabOperator from './components/tab-operator.vue';
 import TabProduct from './components/tab-product.vue';
@@ -57,6 +59,7 @@ export default {
         Infopanel,
         TabDigest,
         TabMain,
+        TabStore,
         TabCommission,
         TabOperator,
         TabProduct,
@@ -76,7 +79,7 @@ export default {
 
             tabs.digest = {i: i, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
-            tabs.storage = {i: i++, title: 'Склады'};
+            tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
             tabs.operator = {i: i++, title: 'Команда мерчанта'};
             tabs.product = {i: i++, title: 'Товары'};
