@@ -1,16 +1,9 @@
 <template>
     <nav class="navbar navbar-dark bg-dark" style="color: #dfdfdf;">
-
         <div class="d-flex">
-            <span>
-                <picture>
-                    <source srcset="/assets/images/logo_white.webp" type="image/webp">
-                    <img src="/assets/images/logo_white.png" width="128" height="46">
-                </picture>
-            </span>
             <span style="
                 font-size: 256%;
-                line-height: 40px;
+                line-height: 46px;
                 margin-right: 10px;
                 font-weight: 700;
                 transform: scaleX(0.5);

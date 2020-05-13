@@ -1,118 +1,118 @@
 <template>
     <layout-main>
-        <div class="card">
-            <div class="card-header">
+        <b-card>
+            <template v-slot:header>
                 Фильтр
                 <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
                     {{ opened ? 'Меньше' : 'Больше' }} фильтров
                     <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
                 </button>
+            </template>
+            <div class="row">
+                <f-input v-model="filter.number" class="col-sm-12 col-md-3 col-xl-2">
+                    № заказа
+                </f-input>
+                <f-input v-model="filter.customer" class="col-sm-12 col-md-3 col-xl-6">
+                    ФИО, e-mail или телефон покупателя
+                </f-input>
+                <f-date v-model="filter.created_at" class="col-sm-12 col-md-3 col-xl-2" range confirm>
+                    Дата заказа
+                </f-date>
+                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-3 col-xl-2">
+                    Статус
+                </f-multi-select>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <f-input v-model="filter.number" class="col-2">
-                        № заказа
-                    </f-input>
-                    <f-input v-model="filter.customer" class="col">
-                        ФИО, e-mail или телефон покупателя
-                    </f-input>
-                    <f-date v-model="filter.created_at" class="col" range confirm>
-                        Дата заказа
-                    </f-date>
-                    <f-multi-select v-model="filter.status" :options="statusOptions" class="col">
-                        Статус
-                    </f-multi-select>
-                </div>
-
-                <div>
-
-                </div>
-                <transition name="slide">
-                    <div v-if="opened">
-                        <div class="additional-filter pt-3 mt-3">
-                            <div class="row">
-                                <f-input v-model="filter.price_from" type="number" class="col-2">
-                                    Сумма заказа
-                                    <template #prepend><span class="input-group-text">от</span></template>
-                                    <template #append><span class="input-group-text">руб.</span></template>
-                                </f-input>
-                                <f-input v-model="filter.price_to" type="number" class="col-2">
-                                    &nbsp;
-                                    <template #prepend><span class="input-group-text">до</span></template>
-                                    <template #append><span class="input-group-text">руб.</span></template>
-                                </f-input>
-                                <f-input v-model="filter.offer_xml_id" type="text" class="col-2">
-                                    Код товара из ERP
-                                    <template #help>Код из внешней системы, по которому импортируется товар</template>
-                                </f-input>
-                                <f-input v-model="filter.product_vendor_code" type="text" class="col-2">
-                                    Артикул
-                                    <template #help>Артикул товара в системе iBT</template>
-                                </f-input>
-                            </div>
-                            <div class="row">
-                                <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-4">
-                                    Бренд
-                                    <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
-                                </f-multi-select>
-                                <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-3">
-                                    Способ оплаты
-                                </f-multi-select>
-                                <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col">
-                                    Тип доставки
-                                </f-multi-select>
-                            </div>
+            <transition name="slide">
+                <div v-if="opened">
+                    <div class="additional-filter pt-3 mt-3">
+                        <div class="row">
+                            <f-input v-model="filter.price_from" type="number" class="col-sm-12 col-md-3">
+                                Сумма заказа
+                                <template #prepend><span class="input-group-text">от</span></template>
+                                <template #append><span class="input-group-text">руб.</span></template>
+                            </f-input>
+                            <f-input v-model="filter.price_to" type="number" class="col-sm-12 col-md-3">
+                                &nbsp;
+                                <template #prepend><span class="input-group-text">до</span></template>
+                                <template #append><span class="input-group-text">руб.</span></template>
+                            </f-input>
+                            <f-input v-model="filter.offer_xml_id" type="text" class="col-sm-12 col-md-3">
+                                Код товара из ERP
+                                <template #help>Код из внешней системы, по которому импортируется товар</template>
+                            </f-input>
+                            <f-input v-model="filter.product_vendor_code" type="text" class="col-sm-12 col-md-3">
+                                Артикул
+                                <template #help>Артикул товара в системе iBT</template>
+                            </f-input>
+                        </div>
+                        <div class="row">
+                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-4">
+                                Бренд
+                                <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-sm-12 col-md-4">
+                                Способ оплаты
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-sm-12 col-md-4">
+                                Тип доставки
+                            </f-multi-select>
                         </div>
                     </div>
-                </transition>
-            </div>
-            <div class="card-footer">
+                </div>
+            </transition>
+            <template v-slot:footer>
                 <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
                 <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
                 <span class="float-right">Всего заказов: {{ pager.total }}.</span>
-            </div>
-        </div>
+            </template>
+        </b-card>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div>
                 <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
             </div>
         </div>
-        <table class="table table-condensed">
-            <thead>
-                <tr>
-                    <th>
-                        <input type="checkbox" id="select-all-page-orders" v-model="isSelectAllPageOrders" @click="selectAllPageOrders()">
-                        <label for="select-all-page-orders" class="mb-0">Все</label>
-                    </th>
-                    <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
-                    <th>
-                        <button class="btn btn-light float-right" @click="showChangeColumns">
-                            <fa-icon icon="cog"></fa-icon>
-                        </button>
-                        <modal-columns :i-columns="editedShowColumns"></modal-columns>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="order in orders">
-                    <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
-                    <td v-for="column in columns" v-if="column.isShown">
-                        <template v-if="column.code === 'status'">
-                            <order-status :status='order.status'/>
-                            <template v-if="order.is_canceled">
-                                <br><span class="badge badge-danger">Отменен</span>
+        <div class="table-responsive">
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="select-all-page-orders" v-model="isSelectAllPageOrders" @click="selectAllPageOrders()">
+                            <label for="select-all-page-orders" class="mb-0">Все</label>
+                        </th>
+                        <th v-for="column in columns" v-if="column.isShown">
+                            <span v-html="column.name"></span>
+                            <fa-icon v-if="column.description" icon="question-circle"
+                                     v-b-popover.hover="column.description"></fa-icon>
+                        </th>
+                        <th>
+                            <button class="btn btn-light float-right" @click="showChangeColumns">
+                                <fa-icon icon="cog"></fa-icon>
+                            </button>
+                            <modal-columns :i-columns="editedShowColumns"></modal-columns>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="order in orders">
+                        <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
+                        <td v-for="column in columns" v-if="column.isShown">
+                            <template v-if="column.code === 'status'">
+                                <order-status :status='order.status'/>
+                                <template v-if="order.is_canceled">
+                                    <br><span class="badge badge-danger">Отменен</span>
+                                </template>
+                                <template v-if="order.is_problem">
+                                    <br><span class="badge badge-danger">Проблемный</span>
+                                </template>
                             </template>
-                            <template v-if="order.is_problem">
-                                <br><span class="badge badge-danger">Проблемный</span>
-                            </template>
-                        </template>
-                        <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
-                        <div v-else v-html="column.value(order)"></div>
-                    </td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
+                            <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
+                            <div v-else v-html="column.value(order)"></div>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <b-pagination
                 v-if="pager.pages !== 1"
                 v-model="currentPage"
@@ -228,38 +228,86 @@
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Дата последнего изменения',
-                        code: 'status_at',
+                        name: 'Статус',
+                        code: 'status',
+                        isShown: true,
+                        isAlwaysShown: true,
+                    },
+                    {
+                        name: 'Тип подтверждения',
+                        code: 'confirmation_type',
                         value: function(order) {
-                            return order.status_at;
+                            return order.confirmation_type.name;
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Дата доставки',
-                        code: 'delivery_dates',
-                        value: function(order) {
-                            return order.delivery_dates;
-                        },
-                        isShown: true,
-                        isAlwaysShown: false,
-                    },
-                    {
-                        name: 'Сумма',
-                        code: 'price',
-                        value: function(order) {
-                            return self.preparePrice(order.price);
-                        },
-                        isShown: true,
-                        isAlwaysShown: false,
-                    },
-
-                    {
-                        name: 'Покупатель',
+                        name: 'Клиент',
                         code: 'customer',
                         value: function(order) {
-                            return order.customer ? order.customer.full_name : 'N/A';
+                            return order.customer ? order.customer.full_name + '<br><a href="tel:' + order.customer.phone + '" target="_blank">' + order.customer.phone + '</a>': 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    /*{
+                        name: 'RFM-сегмент клиента',
+                        code: 'customer_segment',
+                        value: function(order) {
+                            return '-';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },*/
+                    {
+                        name: 'Стоимость товаров',
+                        code: 'price_products',
+                        value: function(order) {
+                            return self.preparePrice(order.product_price) + ' руб.';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Стоимость доставки',
+                        code: 'price_delivery',
+                        value: function(order) {
+                            return self.preparePrice(order.delivery_price) + ' руб.';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Стоимость заказа',
+                        code: 'price',
+                        value: function(order) {
+                            return self.preparePrice(order.price) + ' руб.';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Способ оплаты',
+                        code: 'payment_method',
+                        value: function(order) {
+                            return order.payment_method.name;
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Статус оплаты',
+                        code: 'payment_status',
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Логистический оператор',
+                        description: 'Логистический оператор на последней миле',
+                        code: 'delivery_service',
+                        value: function(order) {
+                            return order.delivery_service.name;
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -274,31 +322,70 @@
                         isAlwaysShown: true,
                     },
                     {
-                        name: 'Статус',
-                        code: 'status',
-                        isShown: true,
-                        isAlwaysShown: true,
-                    },
-                    {
-                        name: 'Статус оплаты',
-                        code: 'payment_status',
-                        isShown: true,
-                        isAlwaysShown: true,
-                    },
-                    {
-                        name: 'Кол-во доставок',
-                        code: 'delivery_qty',
+                        name: 'Дата доставки',
+                        code: 'delivery_dates',
                         value: function(order) {
-                            return order.deliveries.length;
+                            return order.delivery_dates;
+                        },
+                        isShown: false,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Кол-во отправлений',
+                        code: 'shipments_qty',
+                        value: function(order) {
+                            return order.shipments_qty;
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
-                        name: 'Комментарий',
-                        code: 'comment',
+                        name: 'PSD',
+                        description: 'По последнему отправлению последней доставки',
+                        code: 'psd_last',
                         value: function(order) {
-                            return order.comment;
+                            return order.psd_last;
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'PDD',
+                        description: 'По последней доставки',
+                        code: 'pdd_last',
+                        value: function(order) {
+                            return order.pdd_last;
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Последнее изменение',
+                        code: 'last_updated_at',
+                        value: function(order) {
+                            if (order.latestHistory) {
+                                let last_updated_at = order.latestHistory.user ?
+                                    order.latestHistory.user.full_name : 'Система';
+                                return last_updated_at + '<br>' + order.latestHistory.updated_at;
+                            } else {
+                                return '';
+                            }
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Источник заказа',
+                        code: 'sources',
+                        value: function(order) {
+                            let sources = [];
+                            if (order.sources) {
+                                order.sources.forEach(function (item) {
+                                    sources.push((item.user ? item.user.full_name + ' ' : '') + (item.promo_code ? item.promo_code : ''));
+                                });
+                            }
+
+                            return sources.join('<br>');
                         },
                         isShown: true,
                         isAlwaysShown: false,
