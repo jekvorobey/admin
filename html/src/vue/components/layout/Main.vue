@@ -24,7 +24,6 @@
 </template>
 
 <script>
-    import LayoutFooter from './parts/layout-footer.vue';
     import LayoutHeader from './parts/layout-header.vue';
     import ModalMessage from '../modal-message/modal-message.vue';
     import MainMenu from '../main-menu/main-menu.vue';
@@ -43,7 +42,6 @@
             hideTitle: { type: Boolean, default: false },
         },
         components: {
-            LayoutFooter,
             LayoutHeader,
             ModalMessage,
             MainMenu,
