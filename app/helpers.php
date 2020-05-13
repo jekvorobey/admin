@@ -76,3 +76,13 @@ function url_showcase($path)
         ltrim($path, '/'),
     ]);
 }
+
+function date2str(DateTime $date): string
+{
+    return $date->format('d.m.Y');
+}
+
+function dateTime2str(DateTime $date): string
+{
+    return $date->format('d.m.Y H:i:s');
+}

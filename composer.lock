@@ -110,16 +110,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "1.4.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3"
+                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
-                "reference": "4111f6853aea6f28b2b1dcfdde83d12dd3d5e6e3",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/ab5de36233a1995f9c776c741b803eb8207aebef",
+                "reference": "ab5de36233a1995f9c776c741b803eb8207aebef",
                 "shasum": ""
             },
             "require": {
@@ -184,7 +184,21 @@
                 "uppercase",
                 "words"
             ],
-            "time": "2020-05-09T15:09:09+00:00"
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-05-06T11:01:57+00:00"
         },
         {
             "name": "doctrine/lexer",
@@ -653,6 +667,9 @@
                 }
             ],
             "description": "iBT common code for all microservices",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
+            },
             "time": "2020-05-06T19:18:09+00:00"
         },
         {
@@ -712,12 +729,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "6ac2534ccf8da22be50f5292ab4a951f705a9742"
+                "reference": "d84e05656182f6910fc160e886c4fae9f46be81f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=6ac2534ccf8da22be50f5292ab4a951f705a9742",
-                "reference": "6ac2534ccf8da22be50f5292ab4a951f705a9742",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=d84e05656182f6910fc160e886c4fae9f46be81f",
+                "reference": "d84e05656182f6910fc160e886c4fae9f46be81f",
                 "shasum": ""
             },
             "require": {
@@ -755,7 +772,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
             },
-            "time": "2020-05-13T06:20:16+00:00"
+            "time": "2020-05-08T14:59:32+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -792,6 +809,9 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12949457/issues"
+            },
             "time": "2020-05-06T19:08:48+00:00"
         },
         {
@@ -848,12 +868,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "aa457c4db4ea9433db6d31e082e1537c0e87356c"
+                "reference": "26a4136252bf9b528a6dc5d27c69d95fb2f26ed4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=aa457c4db4ea9433db6d31e082e1537c0e87356c",
-                "reference": "aa457c4db4ea9433db6d31e082e1537c0e87356c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=26a4136252bf9b528a6dc5d27c69d95fb2f26ed4",
+                "reference": "26a4136252bf9b528a6dc5d27c69d95fb2f26ed4",
                 "shasum": ""
             },
             "require": {
@@ -892,7 +912,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
             },
-            "time": "2020-05-08T14:52:13+00:00"
+            "time": "2020-05-13T18:24:56+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -929,6 +949,9 @@
                 }
             ],
             "description": "iBT PIM service client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
+            },
             "time": "2020-05-08T16:29:33+00:00"
         },
         {
@@ -937,12 +960,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "75e86f71ed795aba36e01b4fda486e79bc1a9685"
+                "reference": "66a6aaea79a7af4144405a71d2ed8fc47d260700"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=75e86f71ed795aba36e01b4fda486e79bc1a9685",
-                "reference": "75e86f71ed795aba36e01b4fda486e79bc1a9685",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=66a6aaea79a7af4144405a71d2ed8fc47d260700",
+                "reference": "66a6aaea79a7af4144405a71d2ed8fc47d260700",
                 "shasum": ""
             },
             "require": {
@@ -977,7 +1000,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2020-05-12T15:26:40+00:00"
+            "time": "2020-04-28T19:03:38+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -3263,16 +3286,16 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294"
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/1aab00e39cebaef4d8652497f46c15c1b7e45294",
-                "reference": "1aab00e39cebaef4d8652497f46c15c1b7e45294",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
+                "reference": "4719fa9c18b0464d399f1a63bf624b42b6fa8d14",
                 "shasum": ""
             },
             "require": {
@@ -3284,7 +3307,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3317,20 +3340,20 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2020-05-08T16:50:20+00:00"
+            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "symfony/polyfill-iconv",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-iconv.git",
-                "reference": "d51debc1391a609c514f6f072dd59a61b461502a"
+                "reference": "ad6d62792bfbcfc385dd34b424d4fcf9712a32c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/d51debc1391a609c514f6f072dd59a61b461502a",
-                "reference": "d51debc1391a609c514f6f072dd59a61b461502a",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/ad6d62792bfbcfc385dd34b424d4fcf9712a32c8",
+                "reference": "ad6d62792bfbcfc385dd34b424d4fcf9712a32c8",
                 "shasum": ""
             },
             "require": {
@@ -3342,7 +3365,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3376,20 +3399,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-05-08T16:50:20+00:00"
+            "time": "2020-03-09T19:04:49+00:00"
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
-                "reference": "ab0af41deab94ec8dceb3d1fb408bdd038eba4dc"
+                "reference": "47bd6aa45beb1cd7c6a16b7d1810133b728bdfcf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/ab0af41deab94ec8dceb3d1fb408bdd038eba4dc",
-                "reference": "ab0af41deab94ec8dceb3d1fb408bdd038eba4dc",
+                "url": "https://api.github.com/repos/symfony/polyfill-intl-idn/zipball/47bd6aa45beb1cd7c6a16b7d1810133b728bdfcf",
+                "reference": "47bd6aa45beb1cd7c6a16b7d1810133b728bdfcf",
                 "shasum": ""
             },
             "require": {
@@ -3403,7 +3426,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3438,20 +3461,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-05-08T16:50:20+00:00"
+            "time": "2020-03-09T19:04:49+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "a54881ec0ab3b2005c406aed0023c062879031e7"
+                "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/a54881ec0ab3b2005c406aed0023c062879031e7",
-                "reference": "a54881ec0ab3b2005c406aed0023c062879031e7",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
+                "reference": "81ffd3a9c6d707be22e3012b827de1c9775fc5ac",
                 "shasum": ""
             },
             "require": {
@@ -3463,7 +3486,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3497,20 +3520,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-05-08T16:50:20+00:00"
+            "time": "2020-03-09T19:04:49+00:00"
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
-                "reference": "42fda6d7380e5c940d7f68341ccae89d5ab9963b"
+                "reference": "37b0976c78b94856543260ce09b460a7bc852747"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/42fda6d7380e5c940d7f68341ccae89d5ab9963b",
-                "reference": "42fda6d7380e5c940d7f68341ccae89d5ab9963b",
+                "url": "https://api.github.com/repos/symfony/polyfill-php72/zipball/37b0976c78b94856543260ce09b460a7bc852747",
+                "reference": "37b0976c78b94856543260ce09b460a7bc852747",
                 "shasum": ""
             },
             "require": {
@@ -3519,7 +3542,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3552,20 +3575,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-05-08T17:28:34+00:00"
+            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "symfony/polyfill-php73",
-            "version": "v1.16.0",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php73.git",
-                "reference": "7e95fe59d12169fcf4041487e4bf34fca37ee0ed"
+                "reference": "0f27e9f464ea3da33cbe7ca3bdf4eb66def9d0f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/7e95fe59d12169fcf4041487e4bf34fca37ee0ed",
-                "reference": "7e95fe59d12169fcf4041487e4bf34fca37ee0ed",
+                "url": "https://api.github.com/repos/symfony/polyfill-php73/zipball/0f27e9f464ea3da33cbe7ca3bdf4eb66def9d0f7",
+                "reference": "0f27e9f464ea3da33cbe7ca3bdf4eb66def9d0f7",
                 "shasum": ""
             },
             "require": {
@@ -3574,7 +3597,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.16-dev"
+                    "dev-master": "1.15-dev"
                 }
             },
             "autoload": {
@@ -3610,7 +3633,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-05-02T14:56:09+00:00"
+            "time": "2020-02-27T09:26:54+00:00"
         },
         {
             "name": "symfony/process",
@@ -4253,12 +4276,6 @@
                 "phpstorm",
                 "sublime"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-22T09:57:26+00:00"
         },
         {
@@ -4856,20 +4873,6 @@
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-04-20T17:19:26+00:00"
         },

@@ -1,21 +1,23 @@
 <template>
-    <div class="fake-vue-body">
-        <LayoutHeader :on-index="onIndex"></LayoutHeader>
-        <div class="d-flex flex-row middle-area">
-            <div style="width: 210px;" class="bg-light" v-if="!user.isGuest">
+    <div class="container-fluid fake-vue-body">
+        <div class="row d-flex flex-row h-100">
+            <div class="bg-light col-md-2 no-padding" v-if="!user.isGuest">
                 <MainMenu></MainMenu>
             </div>
-            <div class="container-fluid flex-grow-1 pb-5 pl-4">
-                <div v-if="back" class="mt-3">
-                    <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+            <div class="flex-grow-1 col-md-10 no-padding">
+                <LayoutHeader :on-index="onIndex"></LayoutHeader>
+                <div class="container-fluid px-3 pb-5">
+                    <div v-if="back" class="mt-3">
+                        <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+                    </div>
+                    <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
+                    <slot></slot>
+                    <div class="clearfix"></div>
                 </div>
-                <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
-                <slot></slot>
             </div>
         </div>
 
         <modal-message></modal-message>
-        <LayoutFooter></LayoutFooter>
 
         <div id="preloader" v-show="loaderShow"><div id="loader"></div></div>
     </div>
@@ -104,11 +106,9 @@
     .fake-vue-body {
         height: 100%;
     }
-    .breadcrumbs {
-        margin-top: 15px;
-    }
-    .middle-area {
-        background: #fff;
+    .no-padding {
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* ============= Loader ===================== */

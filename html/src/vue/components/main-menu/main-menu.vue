@@ -1,5 +1,12 @@
 <template>
-    <nav class="d-none d-md-block bg-light sidebar">
+    <nav class="bg-light sidebar">
+        <div class="navbar navbar-dark bg-dark">
+            <picture>
+                <source srcset="/assets/images/logo_white.webp" type="image/webp">
+                <img src="/assets/images/logo_white.png" width="128" height="46">
+            </picture>
+        </div>
+
         <div class="sidebar-sticky">
             <menu-item v-for="(item, index) in menu" :item="item" :key="index"></menu-item>
         </div>

@@ -6,13 +6,15 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
@@ -136,12 +138,38 @@ class OrderListController extends Controller
         /** @var Collection|CustomerDto[] $customers */
         $customers = $customerService->customers($customerQuery)->keyBy('id');
 
+        //Получаем операторов обработки заказов
+        $operatorIds = collect();
+        foreach ($orders as $order) {
+            if ($order->latestHistory) {
+                $operatorIds->push($order->latestHistory->user_id);
+            }
+        }
+        $operatorIds = $operatorIds->unique();
+
+        //Полдучаем рефералльных партнеров заказов
+        $referralIds = collect();
+        foreach ($orders as $order) {
+            $referralIds->merge($order->basket->items->pluck('referrer_id')->filter()->unique());
+            $referralIds->merge($order->promoCodes->pluck('owner_id')->filter()->unique());
+        }
+        $referralIds = $referralIds->unique();
+
         // Получаем самих пользователей
-        $userQuery = $userService->newQuery()
-            ->setFilter('id', array_values($customers->pluck('user_id')->unique()->toArray()))
-            ->setFilter('front', Front::FRONT_SHOWCASE);
-        /** @var Collection|UserDto[] $users */
-        $users = $userService->users($userQuery)->keyBy('id');
+        $userIds = $customers->pluck('user_id')
+            ->unique()
+            ->merge($operatorIds)
+            ->merge($referralIds)
+            ->unique()
+            ->values()
+            ->all();
+        $users = collect();
+        if ($userIds) {
+            $userQuery = $userService->newQuery()
+                ->setFilter('id', $userIds);
+            /** @var Collection|UserDto[] $users */
+            $users = $userService->users($userQuery)->keyBy('id');
+        }
 
         /** @var Collection|PointDto[] $points */
         $points = collect();
@@ -159,15 +187,19 @@ class OrderListController extends Controller
             $data = $order->toArray();
 
             $data['customer'] = $customers->has($order->customer_id) && $users->has($customers[$order->customer_id]->user_id)
-                ? $users[$customers[$order->customer_id]->user_id] : [];
+                ? $users[$customers[$order->customer_id]->user_id] : null;
 
             $delivery_dates = collect();
             $cities = collect();
+            $psdLast = null;
+            $pddLast = null;
             foreach ($order->deliveries as $delivery) {
                 $delivery_dates->push(
-                    Carbon::createFromFormat(AbstractDto::DATE_TIME_FORMAT, $delivery->delivery_at)
-                        ->format(AbstractDto::DATE_FORMAT)
+                    date2str(Carbon::createFromFormat(AbstractDto::DATE_TIME_FORMAT, $delivery->delivery_at))
                 );
+                if (is_null($pddLast) || $pddLast < $delivery->pdd) {
+                    $pddLast = $delivery->pdd;
+                }
 
                 if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                     if ($points->has($delivery->point_id)) {
@@ -176,16 +208,53 @@ class OrderListController extends Controller
                 } else {
                     $cities->push($delivery->getCity());
                 }
+
+                foreach ($delivery->shipments as $shipment) {
+                    if (is_null($psdLast) || $psdLast < $shipment->psd) {
+                        $psdLast = $shipment->psd;
+                    }
+                }
             }
 
             $data['status'] = $order->status()->toArray();
+            $data['confirmation_type'] = $order->confirmationType()->toArray();
             $data['payment_status'] = $order->paymentStatus()->toArray();
             $data['delivery_method'] = $order->deliveries[0]->deliveryMethod()->toArray();
-            $data['created_at'] = (new Carbon($order->created_at))->format('H:i:s Y-m-d');
-            $data['updated_at'] = (new Carbon($order->updated_at))->format('H:i:s Y-m-d');
-            $data['status_at'] = (new Carbon($order->status_at))->format('H:i:s Y-m-d');
+            $data['delivery_service'] = DeliveryService::serviceById($order->deliveries[0]->delivery_service)->toArray();
+            $data['payment_method'] = $order->payments[0]->paymentMethod()->toArray();
+            $data['created_at'] = dateTime2str(new Carbon($order->created_at));
+            $data['updated_at'] = dateTime2str(new Carbon($order->updated_at));
+            $data['status_at'] = dateTime2str(new Carbon($order->status_at));
             $data['delivery_dates'] = $delivery_dates->unique()->join(', ');
             $data['cities'] = $cities->unique()->join(', ');
+            $data['product_price'] = $order->price - $order->delivery_price;
+            $data['shipments_qty'] = $order->deliveries->sum(function (DeliveryDto $delivery) {
+                return $delivery->shipments->count();
+            });
+            $data['psd_last'] = $psdLast ? dateTime2str($psdLast) : '';
+            $data['pdd_last'] = $pddLast ? dateTime2str($pddLast) : '';
+            $data['latestHistory'] = $order->latestHistory ? $order->latestHistory->toArray() : null;
+            if ($order->latestHistory) {
+                $data['latestHistory']['updated_at'] = dateTime2str(new Carbon($order->latestHistory->updated_at));
+                $data['latestHistory']['user'] = $users->has($order->latestHistory->user_id) ?
+                    $users[$order->latestHistory->user_id] : null;
+            }
+            $sources = [];
+            $referralIds = $order->basket->items->pluck('referrer_id')->filter()->unique();
+            foreach ($referralIds as $referralId) {
+                $sources[] = [
+                    'user' => $users->has($referralId) ?
+                        $users[$referralId] : null,
+                ];
+            }
+            foreach ($order->promoCodes as $promoCode) {
+                $sources[] = [
+                    'user' => $promoCode->owner_id && $users->has($promoCode->owner_id) ?
+                        $users[$promoCode->owner_id] : null,
+                    'promo_code' => $promoCode->code,
+                ];
+            }
+            $data['sources'] = $sources;
 
             return $data;
         });
@@ -201,7 +270,13 @@ class OrderListController extends Controller
      */
     protected function makeRestQuery(OrderService $orderService, bool $withDefaultFilter = false): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include('deliveries');
+        $restQuery = $orderService->newQuery()->include(
+            'payments',
+            'deliveries.shipments',
+            'history',
+            'basketitem',
+            'promoCodes'
+        );
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20);
