@@ -1,25 +1,27 @@
 <template>
-    <div class="container-fluid fake-vue-body">
-        <div class="row d-flex flex-row h-100">
-            <div class="bg-light col-md-2 no-padding" v-if="!user.isGuest">
-                <MainMenu></MainMenu>
-            </div>
-            <div class="flex-grow-1 col-md-10 no-padding">
-                <LayoutHeader :on-index="onIndex"></LayoutHeader>
-                <div class="container-fluid px-3 pb-5">
-                    <div v-if="back" class="mt-3">
-                        <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
-                    </div>
-                    <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
-                    <slot></slot>
-                    <div class="clearfix"></div>
+    <div class="fake-vue-body">
+        <LayoutHeader :on-index="onIndex"></LayoutHeader>
+        <div class="container-fluid">
+            <div class="row flex-xl-nowrap">
+                <div class="bg-light col-xl-2 no-padding" v-if="!user.isGuest">
+                    <MainMenu></MainMenu>
                 </div>
+                <main class="flex-grow-1 col-xl-10 no-padding">
+                    <div class="container-fluid px-3 pb-5">
+                        <div v-if="back" class="mt-3">
+                            <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+                        </div>
+                        <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
+                        <slot></slot>
+                        <div class="clearfix"></div>
+                    </div>
+                </main>
             </div>
+
+            <modal-message></modal-message>
+
+            <div id="preloader" v-show="loaderShow"><div id="loader"></div></div>
         </div>
-
-        <modal-message></modal-message>
-
-        <div id="preloader" v-show="loaderShow"><div id="loader"></div></div>
     </div>
 </template>
 
