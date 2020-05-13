@@ -42,7 +42,6 @@
             hideTitle: { type: Boolean, default: false },
         },
         components: {
-            LayoutFooter,
             LayoutHeader,
             ModalMessage,
             MainMenu,
