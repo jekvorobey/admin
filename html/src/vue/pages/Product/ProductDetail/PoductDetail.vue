@@ -57,6 +57,9 @@
                 v-if="nav.currentTab === 'offers'"
                 :offers="this.product.offers"
         ></offers-tab>
+        <orders-tab
+                v-if="nav.currentTab === 'orders'"
+        ></orders-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
@@ -86,6 +89,7 @@
     import ContentTab from './components/content-tab.vue';
     import CategoriesTab from './components/categories-tab.vue';
     import OffersTab from './components/offers-tab.vue';
+    import OrdersTab from './components/orders-tab.vue';
     import HistoryTab from './components/history-tab.vue';
     import ProductRejectModal from './components/product-reject-modal.vue';
     import ProductStatusModal from './components/product-status-modal.vue';
@@ -101,6 +105,7 @@
         ContentTab,
         CategoriesTab,
         OffersTab,
+        OrdersTab,
         HistoryTab,
         ProductRejectModal,
         ProductStatusModal,
@@ -126,6 +131,7 @@
                     {value: 'content', text: 'Контент'},
                     {value: 'categories', text: 'Категории'},
                     {value: 'offers', text: 'Предложения'},
+                    {value: 'orders', text: 'В заказах'},
                     {value: 'history', text: 'История'},
                 ]
             }
