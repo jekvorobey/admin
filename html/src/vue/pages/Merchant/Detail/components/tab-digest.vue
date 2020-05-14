@@ -48,7 +48,7 @@
             <th>Принято заказов</th>
             <td v-if="orders.count">
                 <b>{{ orders.count }}</b> заказов на сумму
-                <b>{{ orders.price | integer }}</b> руб.
+                <b>{{ orders.price | integer }} руб.</b>
             </td>
             <td v-else>0</td>
         </tr>
@@ -56,7 +56,7 @@
             <th>Доставлено заказов</th>
             <td v-if="shipments.count">
                 <b>{{ shipments.count }}</b> заказов на сумму
-                <b>{{ shipments.price | integer }}</b> руб.
+                <b>{{ shipments.price | integer }} руб.</b>
             </td>
             <td v-else>0</td>
         </tr>
@@ -64,7 +64,7 @@
             <th>Продано товаров</th>
             <td v-if="sold.count">
                 <b>{{ sold.count }}</b> товаров на сумму
-                <b>{{ sold.price | integer }}</b> руб.
+                <b>{{ sold.price | integer }} руб. </b>
             </td>
             <td v-else>0</td>        </tr>
         <tr>
