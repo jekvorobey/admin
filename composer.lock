@@ -845,12 +845,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "26a4136252bf9b528a6dc5d27c69d95fb2f26ed4"
+                "reference": "1da0f88a3193fe659017091c7353440d41865ac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=26a4136252bf9b528a6dc5d27c69d95fb2f26ed4",
-                "reference": "26a4136252bf9b528a6dc5d27c69d95fb2f26ed4",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=1da0f88a3193fe659017091c7353440d41865ac3",
+                "reference": "1da0f88a3193fe659017091c7353440d41865ac3",
                 "shasum": ""
             },
             "require": {
@@ -886,10 +886,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
-            },
-            "time": "2020-05-13T18:24:56+00:00"
+            "time": "2020-05-14T16:52:31+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
