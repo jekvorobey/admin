@@ -6,7 +6,7 @@
                 <div class="bg-light col-xl-2 no-padding" v-if="!user.isGuest">
                     <MainMenu></MainMenu>
                 </div>
-                <main class="flex-grow-1 col-xl-10 no-padding">
+                <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
                     <div class="container-fluid px-3 pb-5">
                         <div v-if="back" class="mt-3">
                             <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>

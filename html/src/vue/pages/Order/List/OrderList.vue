@@ -69,7 +69,7 @@
                                 Логистический оператор
                             </f-multi-select>
                             <v-dadata
-                                    :value="filter.delivery_city_string"
+                                    :value.sync="filter.delivery_city_string"
                                     bounds="city-settlement"
                                     @onSelect="onDeliveryCitySelect"
                                     class="col-sm-12 col-md-4"
@@ -82,15 +82,15 @@
                             </f-date>
                         </div>
                         <div class="row">
-                            <f-checkbox v-model="filter.is_canceled" value="1" class="col-sm-12 col-md-2">
+                            <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-sm-12 col-md-2">
                                 Отменен
-                            </f-checkbox>
-                            <f-checkbox v-model="filter.is_problem" value="1" class="col-sm-12 col-md-2">
+                            </f-select>
+                            <f-select v-model="filter.is_problem" :options="booleanOptions" class="col-sm-12 col-md-2">
                                 Проблемный
-                            </f-checkbox>
-                            <f-checkbox v-model="filter.is_require_check" value="1" class="col-sm-12 col-md-2">
+                            </f-select>
+                            <f-select v-model="filter.is_require_check" :options="booleanOptions" class="col-sm-12 col-md-2">
                                 Требует проверки
-                            </f-checkbox>
+                            </f-select>
                             <f-multi-select v-model="filter.confirmation_type" :options="confirmationTypeOptions" class="col-sm-12 col-md-2">
                                 Тип подтверждения
                             </f-multi-select>
@@ -145,11 +145,17 @@
                                 <template v-if="order.is_problem">
                                     <br><span class="badge badge-danger">Проблемный</span>
                                 </template>
+                                <template v-if="order.is_require_check">
+                                    <br><span class="badge badge-danger">Требует проверки</span>
+                                </template>
                             </template>
                             <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
                             <div v-else v-html="column.value(order)"></div>
                         </td>
                         <td></td>
+                    </tr>
+                    <tr v-if="!orders.length">
+                        <td :colspan="columns.length + 1">Заказов нет</td>
                     </tr>
                 </tbody>
             </table>
@@ -175,7 +181,7 @@
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
-    import FCheckbox from '../../../components/filter/f-checkbox.vue';
+    import FSelect from '../../../components/filter/f-select.vue';
     import VDadata from '../../../components/controls/VDaData/VDaData.vue';
     import Dropdown from '../../../components/dropdown/dropdown.vue';
     import Helpers from '../../../../scripts/helpers';
@@ -194,8 +200,13 @@
         stores: [],
         delivery_type: [],
         delivery_service: [],
+        delivery_city: '',
+        delivery_city_string: '',
         psd: [],
         pdd: [],
+        is_canceled: 0,
+        is_problem: 0,
+        is_require_check: 0,
         confirmation_type: [],
         manager_comment: '',
     };
@@ -217,12 +228,18 @@
         'offer_xml_id',
         'product_vendor_code',
         'brands',
+        'merchants',
         'payment_method',
         'stores',
         'delivery_type',
         'delivery_service',
+        'delivery_city',
+        'delivery_city_string',
         'psd',
         'pdd',
+        'is_canceled',
+        'is_problem',
+        'is_require_check',
         'confirmation_type',
         'manager_comment',
     ];
@@ -248,7 +265,7 @@
             FInput,
             FDate,
             FMultiSelect,
-            FCheckbox,
+            FSelect,
             VDadata,
             Dropdown,
             ModalColumns,
@@ -357,7 +374,7 @@
                         name: 'Способ оплаты',
                         code: 'payment_method',
                         value: function(order) {
-                            return order.payment_method.name;
+                            return order.payment_method;
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -373,7 +390,7 @@
                         description: 'Логистический оператор на последней миле',
                         code: 'delivery_service',
                         value: function(order) {
-                            return order.delivery_service.name;
+                            return order.delivery_service;
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -561,6 +578,9 @@
             },
             storeOptions() {
                 return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));
+            },
+            booleanOptions() {
+                return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
             },
             editedShowColumns() {
                 return this.columns.filter(function(column) {

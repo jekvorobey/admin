@@ -8,7 +8,7 @@
                 v-bind="$attrs"
                 v-on="inputListeners"
                 :id="inputId"
-                :model="model"
+                :model.sync="model"
                 :placeholder="placeholder"
                 class="form-control"
                 :class="{ 'is-invalid': error }"
@@ -54,7 +54,6 @@
 
             return {
                 inputId: `v-input-id-${this._uid}`,
-                model: this.value,
                 suggestionOptions: {
                     // @see https://confluence.hflabs.ru/pages/viewpage.action?pageId=207454318
                     token: 'bb3fff1d45a8efed30a90f600fbfd3dd4320dfaa', //todo Вынести ключ
@@ -72,6 +71,16 @@
                     }
                 },
             };
+        },
+        computed: {
+            model: {
+                get() {
+                    return this.value
+                },
+                set(value) {
+                    this.$emit('update:value', value)
+                },
+            },
         },
     };
 </script>

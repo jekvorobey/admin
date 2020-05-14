@@ -19,6 +19,7 @@ use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\Order\OrderConfirmationType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
+use Greensight\Oms\Dto\Payment\PaymentDto;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Dto\StoreDto;
@@ -103,40 +104,46 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param bool $withDefault
+     * @param  bool  $withDefault
      * @return array
+     * @throws \Illuminate\Validation\ValidationException
      */
     protected function getFilter(bool $withDefault = false): array
     {
-        return Validator::make(request('filter') ??
-            [],
+        return Validator::validate(
+            request('filter') ?? [],
             [
-                'number' => 'string|someone',
-                'customer' => 'string|someone',
-                'created_at' => 'array|someone',
+                'number' => 'string|sometimes',
+                'customer' => 'string|sometimes',
+                'created_at' => 'array|sometimes',
                 'created_at.*' => 'string',
-                'status' => Rule::in(array_keys(OrderStatus::allStatuses())),
-                'price_from' => 'numeric|someone',
-                'price_to' => 'numeric|someone',
-                'offer_xml_id' => 'string|someone',
-                'product_vendor_code' => 'string|someone',
-                'brands' => 'array|someone',
+                'status.*' => Rule::in(array_keys(OrderStatus::allStatuses())),
+                'price_from' => 'numeric|sometimes',
+                'price_to' => 'numeric|sometimes',
+                'offer_xml_id' => 'string|sometimes',
+                'product_vendor_code' => 'string|sometimes',
+                'brands' => 'array|sometimes',
                 'brands.*' => 'integer',
-                'merchants' => 'array|someone',
+                'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
-                'payment_method' => Rule::in(array_keys(PaymentMethod::allMethods())),
-                'stores' => 'array|someone',
+                'payment_method.*' => Rule::in(array_keys(PaymentMethod::allMethods())),
+                'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
-                'delivery_type' => Rule::in(array_keys(DeliveryType::allTypes())),
-                'delivery_service' => Rule::in(array_keys(DeliveryService::allServices())),
-                'psd' => 'array|someone',
-                'psd.*' => 'string',
-                'pdd' => 'array|someone',
-                'pdd.*' => 'string',
-                'confirmation_type' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
-                'manager_comment' => 'string|someone',
+                'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),
+                'delivery_service.*' => Rule::in(array_keys(DeliveryService::allServices())),
+                'delivery_city' => 'string|sometimes',
+                'delivery_city_string' => 'string|sometimes',
+                'psd' => 'array|sometimes',
+                'psd.*' => 'string|nullable',
+                'pdd' => 'array|sometimes',
+                'pdd.*' => 'string|nullable',
+                'is_canceled' => 'boolean|sometimes',
+                'is_problem' => 'boolean|sometimes',
+                'is_require_check' => 'boolean|sometimes',
+                'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
+                'manager_comment' => 'string|sometimes',
             ]
-        )->attributes();
+        );
     }
 
     /**
@@ -243,9 +250,15 @@ class OrderListController extends Controller
             $data['status'] = $order->status()->toArray();
             $data['confirmation_type'] = $order->confirmationType()->toArray();
             $data['payment_status'] = $order->paymentStatus()->toArray();
-            $data['delivery_method'] = $order->deliveries[0]->deliveryMethod()->toArray();
-            $data['delivery_service'] = DeliveryService::serviceById($order->deliveries[0]->delivery_service)->toArray();
-            $data['payment_method'] = $order->payments[0]->paymentMethod()->toArray();
+            $data['delivery_method'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+                return $delivery->deliveryMethod()->name;
+            })->unique()->join(', ');
+            $data['delivery_service'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+                return DeliveryService::serviceById($delivery->delivery_service)->name;
+            })->unique()->join(', ');
+            $data['payment_method'] = $order->payments->map(function (PaymentDto $payment) {
+                return $payment->paymentMethod()->name;
+            })->unique()->join(', ');
             $data['created_at'] = dateTime2str(new Carbon($order->created_at));
             $data['updated_at'] = dateTime2str(new Carbon($order->updated_at));
             $data['status_at'] = dateTime2str(new Carbon($order->status_at));
@@ -328,6 +341,11 @@ class OrderListController extends Controller
                         break;
                     case 'manager_comment':
                         $restQuery->setFilter($key, 'like', "%{$value}%");
+                        break;
+                    case 'merchants':
+                        $restQuery->setFilter('merchant_id', $value);
+                        break;
+                    case 'delivery_city_string':
                         break;
 
                     default:
