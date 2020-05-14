@@ -52,16 +52,10 @@ class TabDigestController extends Controller
         }
 
         // Принято заказов //
-        $shipmentQuery = (new RestQuery())->setFilter('merchant_id', $merchantId)
-            ->setFilter('is_canceled', false)
-            ->setFilter('updated_at', '>', $period);
-        $shipmentsCount = $shipmentService->shipmentsCount($shipmentQuery);
+        $accepted_orders = $shipmentService->acceptedOrdersIds($merchantId, $period);
 
         // Доставлено заказов //
-        $arrivedQuery = (new RestQuery())->setFilter('merchant_id', $merchantId)
-            ->setFilter('status', ShipmentStatus::DONE)
-            ->setFilter('updated_at', '>', $period);
-        $arrivedCount = $shipmentService->shipmentsCount($arrivedQuery);
+        $delivered_shipments = $shipmentService->deliveredShipmentIds($merchantId, $period);
 
         // Продано товаров //
         $sold_total = $merchantService->getTotalSold($merchantId, $period);
@@ -77,10 +71,9 @@ class TabDigestController extends Controller
                 'count' => $offers_total_count,
                 'price' => $offers_total_price
             ],
-            'shipments_count' => $shipmentsCount['total'],
-            'arrived_count' => $arrivedCount['total'],
-            'sold_count' => $sold_total['count'],
-            'sold_price' => $sold_total['price'],
+            'orders' => $accepted_orders,
+            'shipments' => $delivered_shipments,
+            'sold' => $sold_total,
             'commission' => $commission,
             'comment' => $comment,
         ]);

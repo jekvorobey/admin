@@ -9,12 +9,29 @@
                 <a href="#" class="btn btn-warning btn-md">
                     Войти под мерчантом <fa-icon icon="eye"/>
                 </a>
-                <a href="#" class="btn btn-info btn-md">
-                    Поиск информации <fa-icon icon="question-circle"/>
-                </a>
                 <button @click="save()" class="btn btn-success btn-md">
                     Сохранить изменения <fa-icon icon="check"/>
                 </button>
+                <button v-if="!inputMode"
+                        class="btn btn-info btn-md"
+                        @click="inputMode = !inputMode">
+                    Поиск информации <fa-icon icon="question-circle"/>
+                </button>
+                <div v-else style="float: right">
+                    <div class="input-group ml-1">
+                        <input type="text"
+                               @blur="inputMode = !inputMode"
+                               class="form-control"
+                               placeholder="Поиск"
+                               aria-label="Поиск по ключевым словам"
+                               aria-describedby="question_icon">
+                        <div class="input-group-append">
+                            <span class="input-group-text" id="question_icon">
+                                <fa-icon icon="question-circle"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </th>
         </tr>
         </thead>
@@ -23,25 +40,36 @@
             <th width="400px">Товаров на витрине</th>
             <td v-if="products.count">
                 <b>{{ products.count }}</b> активных товаров общей стоимостью
-                <b>{{ products.price }} руб.</b>
+                <b>{{ products.price | integer }} руб.</b>
             </td>
             <td v-else>0</td>
         </tr>
         <tr>
             <th>Принято заказов</th>
-            <td>{{ shipments_count }}</td>
+            <td v-if="orders.count">
+                <b>{{ orders.count }}</b> заказов на сумму
+                <b>{{ orders.price | integer }}</b> руб.
+            </td>
+            <td v-else>0</td>
         </tr>
         <tr>
             <th>Доставлено заказов</th>
-            <td>{{ arrived_count }}</td>
+            <td v-if="shipments.count">
+                <b>{{ shipments.count }}</b> заказов на сумму
+                <b>{{ shipments.price | integer }}</b> руб.
+            </td>
+            <td v-else>0</td>
         </tr>
         <tr>
             <th>Продано товаров</th>
-            <td>Продано <b>{{ sold_count }}</b> товаров на сумму <b>{{ sold_price }} руб.</b></td>
-        </tr>
+            <td v-if="sold.count">
+                <b>{{ sold.count }}</b> товаров на сумму
+                <b>{{ sold.price | integer }}</b> руб.
+            </td>
+            <td v-else>0</td>        </tr>
         <tr>
             <th>Начислено комиссии</th>
-            <td>{{ commission }} руб.</td>
+            <td>{{ commission || 0 | integer }} руб.</td>
         </tr>
         <tr>
             <th>Примечание к мерчанту</th>
@@ -60,10 +88,10 @@ import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
-
+import FInput from '../../../../components/filter/f-input.vue';
 export default {
     name: 'tab-digest',
-    components: {FileInput, VDeleteButton, DatePicker},
+    components: {FInput, FileInput, VDeleteButton, DatePicker},
     props: ['model'],
     data() {
         return {
@@ -71,16 +99,24 @@ export default {
                 count: '',
                 price: ''
             },
-            shipments_count: '',
-            arrived_count: '',
-            sold_count: '',
-            sold_price: '',
+            orders: {
+                count: '',
+                price: '',
+            },
+            shipments: {
+                count: '',
+                price: '',
+            },
+            sold: {
+                count: '',
+                price: '',
+            },
             commission: '',
             comment: '',
+            inputMode: false,
         }
     },
     methods: {
-
         save() {
             Services.showLoader();
             Services.net().put(this.getRoute('merchant.detail.digest.comment',
@@ -121,10 +157,9 @@ export default {
         Services.showLoader();
         Services.net().get(this.getRoute('merchant.detail.digest', {id: this.model.id})).then(data => {
             this.products = data.products;
-            this.shipments_count = data.shipments_count;
-            this.arrived_count = data.arrived_count;
-            this.sold_count = data.sold_count
-            this.sold_price = data.sold_price;
+            this.orders = data.orders;
+            this.shipments = data.shipments;
+            this.sold = data.sold
             this.commission = data.commission;
             this.comment = data.comment;
         }).finally(() => {

@@ -99,3 +99,10 @@ export default {
     },
 };
 </script>
+
+<style>
+    .highlighted{
+        background: #ffeebc;
+        box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);
+    }
+</style>
