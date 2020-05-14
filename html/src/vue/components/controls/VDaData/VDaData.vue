@@ -40,6 +40,10 @@
                 type: String,
                 default: 'ADDRESS',
             },
+            bounds: {
+                type: String,
+                default: '',
+            },
             placeholder: {
                 type: String,
                 default: 'Начните вводить',
@@ -55,6 +59,7 @@
                     // @see https://confluence.hflabs.ru/pages/viewpage.action?pageId=207454318
                     token: 'bb3fff1d45a8efed30a90f600fbfd3dd4320dfaa', //todo Вынести ключ
                     type: this.type,
+                    bounds: this.bounds,
                     scrollOnFocus: false,
                     triggerSelectOnBlur: false,
                     triggerSelectOnEnter: false,

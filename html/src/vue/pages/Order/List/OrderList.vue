@@ -46,16 +46,57 @@
                             </f-input>
                         </div>
                         <div class="row">
-                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-4">
+                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-3">
                                 Бренд
                                 <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
                             </f-multi-select>
-                            <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-sm-12 col-md-4">
+                            <f-multi-select v-model="filter.merchants" :options="merchantOptions" class="col-sm-12 col-md-3">
+                                Мерчант
+                                <template #help>Будут показаны заказы в которых есть товары указанного мерчанта</template>
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-sm-12 col-md-3">
                                 Способ оплаты
                             </f-multi-select>
-                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-sm-12 col-md-4">
+                            <f-multi-select v-model="filter.stores" :options="storeOptions" class="col-sm-12 col-md-3">
+                                Склад отгрузки
+                            </f-multi-select>
+                        </div>
+                        <div class="row">
+                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-sm-12 col-md-2">
                                 Тип доставки
                             </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-sm-12 col-md-2">
+                                Логистический оператор
+                            </f-multi-select>
+                            <v-dadata
+                                    :value="filter.delivery_city_string"
+                                    bounds="city-settlement"
+                                    @onSelect="onDeliveryCitySelect"
+                                    class="col-sm-12 col-md-4"
+                            >Город доставки</v-dadata>
+                            <f-date v-model="filter.psd" class="col-sm-12 col-md-2" range confirm>
+                                PSD
+                            </f-date>
+                            <f-date v-model="filter.pdd" class="col-sm-12 col-md-2" range confirm>
+                                PDD
+                            </f-date>
+                        </div>
+                        <div class="row">
+                            <f-checkbox v-model="filter.is_canceled" value="1" class="col-sm-12 col-md-2">
+                                Отменен
+                            </f-checkbox>
+                            <f-checkbox v-model="filter.is_problem" value="1" class="col-sm-12 col-md-2">
+                                Проблемный
+                            </f-checkbox>
+                            <f-checkbox v-model="filter.is_require_check" value="1" class="col-sm-12 col-md-2">
+                                Требует проверки
+                            </f-checkbox>
+                            <f-multi-select v-model="filter.confirmation_type" :options="confirmationTypeOptions" class="col-sm-12 col-md-2">
+                                Тип подтверждения
+                            </f-multi-select>
+                            <f-input v-model="filter.manager_comment" class="col-sm-12 col-md-4">
+                                Комментарий менеджера
+                            </f-input>
                         </div>
                     </div>
                 </div>
@@ -134,6 +175,8 @@
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+    import FCheckbox from '../../../components/filter/f-checkbox.vue';
+    import VDadata from '../../../components/controls/VDaData/VDaData.vue';
     import Dropdown from '../../../components/dropdown/dropdown.vue';
     import Helpers from '../../../../scripts/helpers';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
@@ -146,8 +189,15 @@
         offer_xml_id: '',
         product_vendor_code: '',
         brands: [],
+        merchants: [],
         payment_method: [],
+        stores: [],
         delivery_type: [],
+        delivery_service: [],
+        psd: [],
+        pdd: [],
+        confirmation_type: [],
+        manager_comment: '',
     };
 
     const cleanFilter = Object.assign({
@@ -168,7 +218,13 @@
         'product_vendor_code',
         'brands',
         'payment_method',
+        'stores',
         'delivery_type',
+        'delivery_service',
+        'psd',
+        'pdd',
+        'confirmation_type',
+        'manager_comment',
     ];
 
     export default {
@@ -180,14 +236,20 @@
             'orderStatuses',
             'deliveryTypes',
             'paymentMethods',
+            'deliveryServices',
+            'merchants',
+            'confirmationTypes',
             'iFilter',
             'iSort',
-            'brands'
+            'brands',
+            'stores',
         ],
         components: {
             FInput,
             FDate,
             FMultiSelect,
+            FCheckbox,
+            VDadata,
             Dropdown,
             ModalColumns,
         },
@@ -197,7 +259,11 @@
             filter.status = filter.status.map(value => parseInt(value));
             filter.delivery_type = filter.delivery_type.map(value => parseInt(value));
             filter.payment_method = filter.payment_method.map(value => parseInt(value));
+            filter.delivery_service = filter.delivery_service.map(value => parseInt(value));
             filter.brands = filter.brands.map(value => parseInt(value));
+            filter.merchants = filter.merchants.map(value => parseInt(value));
+            filter.confirmation_type = filter.confirmation_type.map(value => parseInt(value));
+            filter.stores = filter.stores.map(value => parseInt(value));
             return {
                 opened: false,
                 currentPage: this.iCurrentPage,
@@ -359,7 +425,7 @@
                         isShown: true,
                         isAlwaysShown: false,
                     },
-                    {
+                    /*{
                         name: 'Последнее изменение',
                         code: 'last_updated_at',
                         value: function(order) {
@@ -373,7 +439,7 @@
                         },
                         isShown: true,
                         isAlwaysShown: false,
-                    },
+                    },*/
                     {
                         name: 'Источник заказа',
                         code: 'sources',
@@ -460,6 +526,12 @@
             showChangeColumns() {
                 this.openModal('list_columns');
             },
+            onDeliveryCitySelect(suggestion) {
+                let address = suggestion.data;
+
+                this.filter.delivery_city = address.settlement_fias_id ? address.settlement_fias_id :
+                    address.city_fias_id;
+            },
         },
         computed: {
             ...mapGetters(['getRoute']),
@@ -477,6 +549,18 @@
             },
             paymentMethodOptions() {
                 return Object.values(this.paymentMethods).map(method => ({value: method.id, text: method.name}));
+            },
+            deliveryServiceOptions() {
+                return Object.values(this.deliveryServices).map(service => ({value: service.id, text: service.name}));
+            },
+            merchantOptions() {
+                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+            },
+            confirmationTypeOptions() {
+                return Object.values(this.confirmationTypes).map(confirmation_type => ({value: confirmation_type.id, text: confirmation_type.name}));
+            },
+            storeOptions() {
+                return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));
             },
             editedShowColumns() {
                 return this.columns.filter(function(column) {

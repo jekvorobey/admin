@@ -16,10 +16,13 @@ use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\DeliveryType;
+use Greensight\Oms\Dto\Order\OrderConfirmationType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Store\Dto\StoreDto;
+use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -36,13 +39,19 @@ use Pim\Services\BrandService\BrandService;
 class OrderListController extends Controller
 {
     /**
-     * @param Request $request
-     * @param OrderService $orderService
-     * @param BrandService $brandService
+     * @param  Request  $request
+     * @param  OrderService  $orderService
+     * @param  BrandService  $brandService
+     * @param  StoreService  $storeService
      * @return mixed
      * @throws \Exception
      */
-    public function index(Request $request, OrderService $orderService, BrandService $brandService) {
+    public function index(
+        Request $request,
+        OrderService $orderService,
+        BrandService $brandService,
+        StoreService $storeService
+    ) {
         $this->title = 'Список заказов';
 
         $restQuery = $this->makeRestQuery($orderService, true);
@@ -56,6 +65,10 @@ class OrderListController extends Controller
             'orderStatuses' => OrderStatus::allStatuses(),
             'deliveryTypes' => DeliveryType::allTypes(),
             'paymentMethods' => PaymentMethod::allMethods(),
+            'deliveryServices' => DeliveryService::allServices(),
+            'merchants' => $this->getMerchants(),
+            'confirmationTypes' => OrderConfirmationType::allTypes(),
+            'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
             'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
@@ -109,8 +122,19 @@ class OrderListController extends Controller
                 'product_vendor_code' => 'string|someone',
                 'brands' => 'array|someone',
                 'brands.*' => 'integer',
+                'merchants' => 'array|someone',
+                'merchants.*' => 'integer',
                 'payment_method' => Rule::in(array_keys(PaymentMethod::allMethods())),
+                'stores' => 'array|someone',
+                'stores.*' => 'integer',
                 'delivery_type' => Rule::in(array_keys(DeliveryType::allTypes())),
+                'delivery_service' => Rule::in(array_keys(DeliveryService::allServices())),
+                'psd' => 'array|someone',
+                'psd.*' => 'string',
+                'pdd' => 'array|someone',
+                'pdd.*' => 'string',
+                'confirmation_type' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
+                'manager_comment' => 'string|someone',
             ]
         )->attributes();
     }
@@ -273,7 +297,7 @@ class OrderListController extends Controller
         $restQuery = $orderService->newQuery()->include(
             'payments',
             'deliveries.shipments',
-            'history',
+            //'history',
             'basketitem',
             'promoCodes'
         );
@@ -301,6 +325,9 @@ class OrderListController extends Controller
                         if ($value) {
                             $restQuery->setFilter('price', '<=', $value);
                         }
+                        break;
+                    case 'manager_comment':
+                        $restQuery->setFilter($key, 'like', "%{$value}%");
                         break;
 
                     default:
