@@ -20,7 +20,8 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-main v-if="key === 'main'" :model.sync="merchant"/>
+                    <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
+                    <tab-main v-else-if="key === 'main'" :model.sync="merchant"/>
                     <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
@@ -41,6 +42,7 @@
 import Infopanel from './components/infopanel.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
+import TabDigest from './components/tab-digest.vue';
 import TabMain from './components/tab-main.vue';
 import TabStore from './components/tab-store.vue';
 import TabCommission from './components/tab-commission.vue';
@@ -55,6 +57,7 @@ export default {
     props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
     components: {
         Infopanel,
+        TabDigest,
         TabMain,
         TabStore,
         TabCommission,
@@ -74,7 +77,7 @@ export default {
             let tabs = {};
             let i = 0;
 
-            tabs.digest = {i: i++, title: 'Дайджест'};
+            tabs.digest = {i: i, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
             tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
@@ -96,3 +99,10 @@ export default {
     },
 };
 </script>
+
+<style>
+    .highlighted{
+        background: #ffeebc;
+        box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);
+    }
+</style>

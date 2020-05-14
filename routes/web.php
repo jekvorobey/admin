@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
                     Route::get('data', 'TabOperatorController@loadData')->name('merchant.detail.operator.data');
                     Route::get('page', 'TabOperatorController@loadOperators')->name('merchant.detail.operator.pagination');
                 });
+                Route::prefix('digest')->group(function () {
+                    Route::get('', 'TabDigestController@load')->name('merchant.detail.digest');
+                    Route::put('comment', 'TabDigestController@comment')->name('merchant.detail.digest.comment');
+                });
                 Route::prefix('main')->group(function () {
                     Route::get('', 'TabMainController@load')->name('merchant.detail.main');
 
