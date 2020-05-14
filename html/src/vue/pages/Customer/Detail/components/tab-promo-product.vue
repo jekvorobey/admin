@@ -44,12 +44,16 @@
                 </td>
                 <td>
                     <textarea class="form-control"
-                              :class="{'is-invalid': promoProducts[index].description === ''}"
+                              :class="[
+                                  {'is-invalid': promoProducts[index].description === ''},
+                                  {'is-invalid': promoProducts[index].description.length > 1000}
+                                  ]"
                               v-model="promoProduct.description"
                               rows="6"
                               v-if="!!promoProduct.active"
                               placeholder="Обязательное поле"
-                              aria-required="true"/>
+                              aria-required="true"
+                              maxlength="1000"/>
                     <span v-if="!promoProduct.active">{{ promoProduct.description }}</span>
                 </td>
                 <td>
@@ -62,10 +66,16 @@
                 </td>
                 <td>
                     <template v-if="!!promoProduct.active">
-                        <button class="btn btn-success btn-sm" @click="savePromoProduct(promoProduct, 'update')">
+                        <button class="btn btn-success btn-sm"
+                                @click="savePromoProduct(promoProduct, 'update')"
+                                :disabled="promoProducts[index].description === ''
+                                ||promoProducts[index].description.length > 1000">
                             <fa-icon icon="save"/>
                         </button>
-                        <button class="btn btn-danger btn-sm" @click="archivePromoProduct(promoProduct)">
+                        <button class="btn btn-danger btn-sm"
+                                @click="archivePromoProduct(promoProduct)"
+                                :disabled="promoProducts[index].description === ''
+                                ||promoProducts[index].description.length > 1000">
                             <fa-icon icon="file-archive"/>
                         </button>
                     </template>
@@ -85,7 +95,8 @@
                               :class="newDescriptionError"
                               v-model="newPromoProduct.description"
                               placeholder="Описание товара"
-                              aria-required="true"/>
+                              aria-required="true"
+                              maxlength="1000"/>
                 </td>
                 <td>
                     <div v-for="(file, i) in newPromoProduct.files" class="mb-1">
@@ -97,6 +108,7 @@
                 </td>
                 <td>
                     <button class="btn btn-success btn-sm"
+                            :disabled="this.$v.$invalid"
                             @click="savePromoProduct(newPromoProduct, 'create')">
                         <fa-icon icon="plus"/>
                     </button>
@@ -113,7 +125,7 @@ import VDeleteButton from '../../../../components/controls/VDeleteButton/VDelete
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 
 import {validationMixin} from 'vuelidate';
-import {required, integer} from 'vuelidate/lib/validators';
+import {required, integer, maxLength} from 'vuelidate/lib/validators';
 
 export default {
     name: 'tab-promo-product',
@@ -137,7 +149,7 @@ export default {
     validations: {
         newPromoProduct: {
             product_id: {required, integer},
-            description: {required},
+            description: {required, maxLength: maxLength(1000)},
         },
     },
     methods: {
@@ -196,6 +208,10 @@ export default {
                 if (!this.$v.newPromoProduct.description.required) {
                     this.$refs.newDescription.focus();
                     this.$refs.newDescription.placeholder="Введите описание товара";
+                    return 'is-invalid'
+                }
+                if (!this.$v.newPromoProduct.description.maxLength) {
+                    this.$refs.newDescription.focus();
                     return 'is-invalid'
                 }
             }

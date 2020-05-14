@@ -6,6 +6,7 @@
                     <button class="btn btn-outline-success ml-2" @click="saveCustomer">Сохранить</button>
                     <label class="mx-2" for="product_id">Добавить товар по ID</label>
                     <v-input id="product_id"
+                             type="number"
                              v-model="form.product_id"
                              :error="productIdError"
                              placeholder="ID товара"
@@ -138,6 +139,7 @@ export default {
                 this.categories = data.categories;
                 this.form.product_id = '';
             }).finally(() => {
+                this.$v.$reset();
                 Services.hideLoader();
             })
         },
