@@ -132,12 +132,12 @@ class OrderDetailController extends Controller
 
         /** @var OrderDto $order */
         $order = $orders->first();
-        $data = $order->toArray();
+        $data = json_decode(json_encode($order->toArray()), true);
 
         if (isset($data['basket']['items']) && !empty($data['basket']['items'])) {
             $basketItems = &$data['basket']['items'];
 
-            $offersIds = array_column($basketItems, 'offer_id');
+            $offersIds = $order->basket->items->pluck('offer_id')->toArray();
             $restQuery = $productService->newQuery()
                 ->addFields(ProductDto::entity(), 'vendor_code')
                 ->include(CategoryDto::entity(), BrandDto::entity());

@@ -71,19 +71,21 @@ class Controller extends BaseController
     }
     
     /**
-     * @param  array  $merchantIds
+     * @param  array|null  $merchantIds
      * @return Collection|MerchantDto[]
      */
-    protected function getMerchants(array $merchantIds): Collection
+    protected function getMerchants(array $merchantIds = null): Collection
     {
         $merchants = collect();
         
-        if ($merchantIds) {
+        if (is_null($merchantIds) || count($merchantIds) > 1) {
             /** @var MerchantService $merchantService */
             $merchantService = resolve(MerchantService::class);
             $merchantQuery = $merchantService->newQuery()
-                ->setFilter('id', $merchantIds)
                 ->addFields(MerchantDto::entity(), 'id', 'legal_name');
+            if ($merchantIds) {
+                $merchantQuery->setFilter('id', $merchantIds);
+            }
             $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
         }
         
