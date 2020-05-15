@@ -8,6 +8,7 @@ use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
@@ -60,6 +61,7 @@ class ViewRender
     private $promoCodeStatus = [];
     private $bonusValueTypes = [];
     private $bonusTypes = [];
+    private $customerBonusStatus = [];
 
     public function __construct($componentName, $props)
     {
@@ -375,6 +377,25 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadCustomerBonusStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->customerBonusStatus = [
+                'onHold' => CustomerBonusDto::STATUS_ON_HOLD,
+                'active' => CustomerBonusDto::STATUS_ACTIVE,
+                'expired' => CustomerBonusDto::STATUS_EXPIRED,
+                'debited' => CustomerBonusDto::STATUS_DEBITED,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -414,6 +435,7 @@ class ViewRender
                 'promoCodeStatus' => $this->promoCodeStatus,
                 'bonusValueTypes' => $this->bonusValueTypes,
                 'bonusTypes' => $this->bonusTypes,
+                'customerBonusStatus' => $this->customerBonusStatus,
             ],
             [
                 'title' => $this->title,

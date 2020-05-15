@@ -173,6 +173,10 @@ Vue.mixin({
         /** @return {BonusTypes} */
         bonusTypes() {
             return this.$store.state.layout.bonusTypes;
+        },
+        /** @return {CustomerBonusStatus} */
+        customerBonusStatus() {
+            return this.$store.state.layout.customerBonusStatus;
         }
     },
 });
@@ -415,3 +419,12 @@ Vue.mixin({
  @property {integer} anyCategory
  @property {integer} anyService
  */
+/**
+ @typedef customerBonusStatus
+ @type {Object}
+ @property {integer} onHold
+ @property {integer} active
+ @property {integer} expired
+ @property {integer} debited
+ */
+

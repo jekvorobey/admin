@@ -45,6 +45,7 @@ class CustomerDetailController extends Controller
         $this->loadCommunicationTypes = true;
         $this->loadPromoCodeTypes = true;
         $this->loadPromoCodeStatus = true;
+        $this->loadCustomerBonusStatus = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
