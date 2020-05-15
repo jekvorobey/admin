@@ -184,6 +184,20 @@
                 "uppercase",
                 "words"
             ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-05-09T15:09:09+00:00"
         },
         {
@@ -653,6 +667,9 @@
                 }
             ],
             "description": "iBT common code for all microservices",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
+            },
             "time": "2020-05-06T19:18:09+00:00"
         },
         {
@@ -851,12 +868,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "1da0f88a3193fe659017091c7353440d41865ac3"
+                "reference": "d5ddf86bab55c46e36b1057cea08aa434612cccb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=1da0f88a3193fe659017091c7353440d41865ac3",
-                "reference": "1da0f88a3193fe659017091c7353440d41865ac3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=d5ddf86bab55c46e36b1057cea08aa434612cccb",
+                "reference": "d5ddf86bab55c46e36b1057cea08aa434612cccb",
                 "shasum": ""
             },
             "require": {
@@ -895,7 +912,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
             },
-            "time": "2020-05-14T16:52:31+00:00"
+            "time": "2020-05-15T12:01:08+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -983,6 +1000,9 @@
                 }
             ],
             "description": "iBT store client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
+            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
@@ -4350,12 +4370,6 @@
                 "phpstorm",
                 "sublime"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-22T09:57:26+00:00"
         },
         {
@@ -4953,20 +4967,6 @@
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-04-20T17:19:26+00:00"
         },
