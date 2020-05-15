@@ -1,14 +1,14 @@
 <template>
     <div>
         <div class="row mt-4">
-            <v-input v-model="$v.form.bonus.limit.$model" class="col-6" type="number" :error="errorBonusLimit" :disabled="bonusLimitBtn">
+            <v-input v-model="$v.form.bonus.maxPercentagePayment.$model" class="col-6" type="number" :error="errorBonusMaxPercentagePayment" :disabled="bonusMPPBtn">
                 Максимальный процент от единицы товара, который можно оплатить бонусами
             </v-input>
 
             <div class="col-5">
                 <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="bonusLimitBtn" key="bonusLimitBtn" v-model="bonusLimitBtn">
-                    <label class="custom-control-label" for="bonusLimitBtn">Использовать глобальные настройки</label>
+                    <input type="checkbox" class="custom-control-input" id="bonusMPPBtn" key="bonusMPPBtn" v-model="bonusMPPBtn">
+                    <label class="custom-control-label" for="bonusMPPBtn">Использовать глобальные настройки</label>
                 </div>
             </div>
         </div>
@@ -36,16 +36,16 @@
             return {
                 form: {
                     bonus: {
-                        limit: this.marketing.bonus.limit,
+                        maxPercentagePayment: this.marketing.bonus.maxPercentagePayment,
                     },
                 },
-                bonusLimitBtn: this.marketing.bonus.limit === null,
+                bonusMPPBtn: this.marketing.bonus.maxPercentagePayment === null,
             }
         },
         validations: {
             form: {
                 bonus: {
-                    limit: {required, integer, minValue: minValue(0), maxValue: maxValue(100)}
+                    maxPercentagePayment: {required, integer, minValue: minValue(0), maxValue: maxValue(100)}
                 },
             },
         },
@@ -57,14 +57,11 @@
                 }
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('bonus.changeProductLimit'), {}, {
+                Services.net().put(this.getRoute('bonus.changeMPP'), {}, {
                     product_id: this.product.id,
-                    value: !this.bonusLimitBtn ? parseInt(this.form.bonus.limit) : null,
+                    value: !this.bonusMPPBtn ? parseInt(this.form.bonus.maxPercentagePayment) : null,
                 }).then(() => {
                     Services.msg("Значение обновлено!");
-                    setTimeout(() => {
-                     //   location = location.reload();
-                    }, 1000);
                 }).catch(() => {
                     Services.msg("Ошибка при обновлении!", "danger");
                 }).finally(() => {
@@ -73,12 +70,12 @@
             }
         },
         computed: {
-            errorBonusLimit() {
-                if (this.$v.form.bonus.limit.$dirty) {
-                    if (this.$v.form.bonus.limit.required === false) return "Обязательное поле!";
-                    if (this.$v.form.bonus.limit.minValue === false) return "От 0 до 100!";
-                    if (this.$v.form.bonus.limit.maxValue === false) return "От 0 до 100!";
-                    if (this.$v.form.bonus.limit.integer === false) return "Только целые числа!";
+            errorBonusMaxPercentagePayment() {
+                if (this.$v.form.bonus.maxPercentagePayment.$dirty) {
+                    if (this.$v.form.bonus.maxPercentagePayment.required === false) return "Обязательное поле!";
+                    if (this.$v.form.bonus.maxPercentagePayment.minValue === false) return "От 0 до 100!";
+                    if (this.$v.form.bonus.maxPercentagePayment.maxValue === false) return "От 0 до 100!";
+                    if (this.$v.form.bonus.maxPercentagePayment.integer === false) return "Только целые числа!";
                 }
             },
         }

@@ -7,7 +7,9 @@ use Greensight\Marketing\Builder\Bonus\BonusBuilder;
 use Greensight\Marketing\Core\MarketingException;
 use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Bonus\BonusInDto;
+use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Services\BonusService\BonusService;
+use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
@@ -164,7 +166,13 @@ class BonusController extends Controller
             'value' => 'integer|nullable'
         ]);
 
-        // todo
+        $key = ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT;
+        $productBonusOptionService = resolve(ProductBonusOptionService::class);
+        if (isset($data['value'])) {
+            $productBonusOptionService->put($data['product_id'], $key, $data['value']);
+        } else {
+            $productBonusOptionService->delete($data['product_id'], $key);
+        }
 
         return response('', 204);
     }

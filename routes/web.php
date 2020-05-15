@@ -125,7 +125,7 @@ Route::middleware('auth')->group(function () {
             Route::post('status', 'BonusController@status')->name('bonus.status');
             Route::delete('delete', 'BonusController@delete')->name('bonus.delete');
 
-            Route::put('productLimit', 'BonusController@changeProductLimit')->name('bonus.changeProductLimit');
+            Route::put('productLimit', 'BonusController@changeProductLimit')->name('bonus.changeMPP');
         });
     });
 

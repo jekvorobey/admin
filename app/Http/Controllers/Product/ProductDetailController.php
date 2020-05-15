@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
+use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -45,6 +47,9 @@ class ProductDetailController extends Controller
         $brands = $brandService->newQuery()->prepare($brandService)->brands();
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
 
+        $productBonusOptionService = resolve(ProductBonusOptionService::class);
+        $maxPercentagePayment = $productBonusOptionService->get($id, ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT);
+
         return $this->render('Product/ProductDetail', [
             'iProduct' => $product,
             'iImages' => $images,
@@ -58,7 +63,7 @@ class ProductDetailController extends Controller
                 'categories' => $categories,
                 'marketing' => [
                     'bonus' => [
-                        'limit' => null, // todo
+                        'maxPercentagePayment' => $maxPercentagePayment,
                     ]
                 ]
             ],
