@@ -3,36 +3,19 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Oms\Dto\Delivery\ShipmentDto;
-use Greensight\Oms\Dto\Delivery\ShipmentStatus;
-use Greensight\Oms\Dto\DeliveryType;
-use Greensight\Oms\Dto\OrderDto;
-use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\ShipmentService\ShipmentService;
-use Greensight\Store\Dto\StoreDto;
-use Greensight\Store\Services\StoreService\StoreService;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Logistics\Dto\Lists\DeliveryService;
-use Greensight\Logistics\Dto\Lists\DeliveryMethod;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Offer\OfferDto;
-use Pim\Services\OfferService\OfferService;
 use Pim\Dto\Offer\OfferSaleStatus;
-use Pim\Services\ProductService\ProductService;
-use Greensight\Marketing\Services\PriceService\PriceService;
+use Pim\Core\PimException;
+use Pim\Services\OfferService\OfferService;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\PricesInDto;
+use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
-use Greensight\Store\Dto\StockDto;
 
 
 class TabProductController extends Controller
@@ -41,11 +24,10 @@ class TabProductController extends Controller
      * AJAX подгрузка информации для фильтрации оферов
      *
      * @param int $merchantId
-     * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
-    public function loadProductsData(int $merchantId, Request $request)
+    public function loadProductsData(int $merchantId)
     {
         return response()->json([
             'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
@@ -81,6 +63,7 @@ class TabProductController extends Controller
      *
      * @param int $merchantId
      * @return RestQuery
+     * @throws \Exception
      */
     protected function makeQuery(int $merchantId)
     {
@@ -89,25 +72,20 @@ class TabProductController extends Controller
         $restQuery = (new RestQuery())
             ->include('product')
             ->setFilter('merchant_id', $merchantId)
-            ->pageNumber($page, 10);
+            ->pageNumber($page, 20);
 
         $filter = $this->getFilter();
 
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
-                    case 'price_from':
-                        $restQuery->setFilter('price', '>=', $value);
+                    case 'created_at':
+                        $value = array_filter($value);
+                        if ($value) {
+                            $restQuery->setFilter($key, '>=', $value[0]);
+                            $restQuery->setFilter($key, '<=', (new Carbon($value[1]))->modify('+1 day')->format('Y-m-d'));
+                        }
                         break;
-                    case 'price_to':
-                        $restQuery->setFilter('price', '<=', $value);
-                        break;
-//                    case 'qty_from':
-//                        $restQuery->setFilter('qty', '>=', $value);
-//                        break;
-//                    case 'qty_to':
-//                        $restQuery->setFilter('qty', '<=', $value);
-//                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -138,6 +116,11 @@ class TabProductController extends Controller
         return $filter;
     }
 
+    /**
+     * @param RestQuery $query
+     * @return Collection
+     * @throws PimException
+     */
     protected function loadItems(RestQuery $query)
     {
         /** @var OfferService $offerService */
@@ -154,16 +137,13 @@ class TabProductController extends Controller
         $offerIds = $offers->pluck('id')
             ->all();
 
-        $prices = $priceService->prices(
+        $prices = $offerIds ? $priceService->prices(
             (new PricesInDto())->setOffers($offerIds)
         )->keyBy('offer_id')
-        ->all();
+        ->all() :
+        [];
 
-        $qtys = $stockService->stocks(
-            (new RestQuery())->addFields(StockDto::class, 'offer_id', 'qty')
-                ->setFilter('offer_id', $offerIds)
-        )->keyBy('offer_id')
-            ->all();
+        $qtys = $offerIds ? $stockService->qtyByOffers($offerIds) : [];
 
         $offers = $offers->map(function (OfferDto $offer) use ($prices, $qtys) {
             return [
@@ -174,7 +154,7 @@ class TabProductController extends Controller
                 ],
                 'sale_status' => OfferSaleStatus::statusById($offer->sale_status),
                 'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : "Нет данных",
-                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id]->qty : "Нет данных",
+                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id] : "Нет данных",
                 'created_at' => $offer->created_at,
             ];
         })->all();

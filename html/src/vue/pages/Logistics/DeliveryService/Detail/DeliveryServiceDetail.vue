@@ -75,7 +75,6 @@
         ],
         data() {
             return {
-                editStatus: false,
                 deliveryService: this.iDeliveryService,
             };
         },

@@ -282,7 +282,7 @@
                         name: '№ заказа',
                         code: 'order',
                         value: function(shipment) {
-                            return '<a href="' + self.getRoute('orders.flowDetail', {id: shipment.order.id}) + '">' +
+                            return '<a href="' + self.getRoute('orders.detail', {id: shipment.order.id}) + '">' +
                                 shipment.order.number + '</a>';
                         },
                         isShown: true,
@@ -301,8 +301,10 @@
                         name: 'ФИО + ID клиента',
                         code: 'customer',
                         value: function(shipment) {
-                            return '<a href="' + self.getRoute('customers.detail', {id: shipment.customer.id}) + '">' +
-                                shipment.customer.id + ': ' + shipment.customer.full_name + '</a>';
+                            return shipment.customer.id !== 'N/A' ?
+                                '<a href="' + self.getRoute('customers.detail', {id: shipment.customer.id}) +
+                                '">' + shipment.customer.id + ': ' + shipment.customer.full_name + '</a>' :
+                                shipment.customer.id + ': ' + shipment.customer.full_name;
                         },
                         isShown: true,
                         isAlwaysShown: false,

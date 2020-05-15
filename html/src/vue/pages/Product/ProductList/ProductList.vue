@@ -146,7 +146,7 @@
                     <td>{{product.categoryName}}</td>
                     <td>{{formatDate(product.dateAdd)}}</td>
                     <td>{{product.price ? product.price : '--'}}</td>
-                    <td>{{product.qty ? Math.round(product.qty) : '--'}}</td>
+                    <td>{{product.qty ? roundValue(product.qty) : '--'}}</td>
                     <td>
                         <span class="badge" :class="{'badge-success':product.active,'badge-danger':!product.active}">
                             {{product.active ? 'Да' : 'Нет'}}
@@ -199,7 +199,6 @@
 <script>
     import withQuery from 'with-query';
 
-    import Services from "../../../../scripts/services/services.js";
     import FSelect from '../../../components/filter/f-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
@@ -321,6 +320,9 @@
             statusComment: {required},
         },
         methods: {
+            roundValue(value) {
+                return Helpers.roundValue(value)
+            },
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
                 ACT_UPDATE_PRODUCTION,
@@ -328,7 +330,6 @@
                 ACT_UPDATE_APPROVAL
             ]),
             loadPage(page) {
-                Services.showLoader();
                 let cleanFilter = {};
                 for (let [key, value] of Object.entries(this.filter)) {
                     if (value !== undefined && value !== null && value !== '') {

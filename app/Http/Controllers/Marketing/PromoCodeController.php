@@ -12,12 +12,14 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Marketing\Builder\PromoCode\PromoCodeBuilder;
+use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
+use Greensight\Marketing\Services\BonusService\BonusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
@@ -47,9 +49,8 @@ class PromoCodeController extends Controller
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
 
-        $merchants = $merchantService->merchants()->map(function (MerchantDto $merchant) {
-            return ['id' => $merchant->id, 'name' => $merchant->legal_name];
-        });
+        $merchantsIds = $promoCodes->pluck('merchant_id')->unique()->all();
+        $merchants = $this->getMerchants($merchantsIds)->values();
 
         $users = collect();
         $referrals = collect();
@@ -165,21 +166,15 @@ class PromoCodeController extends Controller
      *
      * @return mixed
      */
-    public function createPage(Request $request,
-        DiscountService $discountService,
-        PromoCodeService $promoCodeService,
-        MerchantService $merchantService
-    ) {
+    public function createPage(Request $request) {
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
-        $promoCodeInDto = new PromoCodeInDto();
-        $promoCodes = $promoCodeService->promoCodes($promoCodeInDto)
-            ->sortByDesc('created_at')
-            ->map(function (PromoCodeOutDto $item) {
-                return ['value' => $item['id'], 'text' => "#{$item['id']} – {$item['name']}"];
-            })
-            ->values();
+
+        $discountService = resolve(DiscountService::class);
+        $merchantService = resolve(MerchantService::class);
+        $bonusesService = resolve(BonusService::class);
+        $bonuses = $bonusesService->bonuses(new BonusInDto());
 
         $params = (new DiscountInDto())->toQuery();
         $discounts = $discountService->discounts($params)
@@ -198,16 +193,17 @@ class PromoCodeController extends Controller
         });
 
         return $this->render('Marketing/PromoCode/Create', [
-            'iPromoCodes' => $promoCodes,
             'iTypesForMerchant' => PromoCodeOutDto::availableTypesForMerchant(),
             'iTypes' => Helpers::getSelectOptions($promoCodeTypes),
             'iStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
             'iDiscounts' => $discounts,
             'gifts' => [],
-            'bonuses' => [],
+            'bonuses' => Helpers::getSelectOptions($bonuses),
             'merchants' => Helpers::getSelectOptions($merchants),
             'iRoles' => Helpers::getOptionRoles(false),
             'iSegments' => [['text' => 'A', 'value' => 1], ['text' => 'B', 'value' => 2]], // todo
+            'returnUrl' => $request->get('returnUrl', route('promo-code.list')),
+            'referral' => $request->get('referral'),
         ]);
     }
 
@@ -239,8 +235,6 @@ class PromoCodeController extends Controller
             'conditions.roles.*' => 'numeric|nullable',
             'conditions.customers' => 'array|nullable',
             'conditions.customers.*' => 'numeric|nullable',
-            'conditions.synergy' => 'array|nullable',
-            'conditions.synergy.*' => 'numeric|nullable'
         ]);
 
         $data['creator_id'] = $requestInitiator->userId();
@@ -271,5 +265,23 @@ class PromoCodeController extends Controller
     {
         $r = $promoCodeService->generate();
         return response()->json($r);
+    }
+
+    /**
+     * Проверка промокода на уникальность
+     * @param PromoCodeService $promoCodeService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkUnique(PromoCodeService $promoCodeService)
+    {
+        $data = $this->validate(request(),[
+            'code' => 'required|string|max:32'
+        ]);
+
+        $status = $promoCodeService->checkUnique($data['code']);
+
+        return response()->json([
+            'status' => $status,
+        ], 200);
     }
 }

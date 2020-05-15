@@ -1,7 +1,7 @@
 <template>
     <div>
         <communication-chat-list :filter="{user_ids: userIds}"
-                                 :chatUsers="Object.values(merchant.operators)"/>
+                                 :usersProp="operators"/>
     </div>
 </template>
 
@@ -10,11 +10,11 @@
 
     export default {
         name: 'tab-communication',
-        props: ['merchant'],
+        props: ['operators'],
         components: {CommunicationChatList},
         data() {
             let userIds = [];
-            Object.values(this.merchant.operators).forEach(operator => {
+            Object.values(this.operators).forEach(operator => {
                 userIds.push(operator.id);
             });
 

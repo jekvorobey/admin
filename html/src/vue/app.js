@@ -73,7 +73,7 @@ Vue.mixin({
             return '/' + this.$store.state.routes[name].replace(/^\//, '');
         },
         datePrint(date) {
-            return moment(date, "YYYY-MM-DD").format('LL');
+            return moment(date, "YYYY-MM-DD").format('L');
         },
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
@@ -150,10 +150,34 @@ Vue.mixin({
         publicEventSprintStatus() {
             return this.$store.state.layout.publicEventSprintStatus;
         },
+        /** @return {PublicEventStatus} */
+        publicEventStatus() {
+            return this.$store.state.layout.publicEventStatus;
+        },
         /** @return {DeliveryType} */
         discountTypes() {
             return this.$store.state.layout.discountTypes;
         },
+        /** @return {PromoCodeType} */
+        promoCodeTypes() {
+            return this.$store.state.layout.promoCodeTypes;
+        },
+        /** @return {PromoCodeStatus} */
+        promoCodeStatus() {
+            return this.$store.state.layout.promoCodeStatus;
+        },
+        /** @return {BonusValueTypes} */
+        bonusValueTypes() {
+            return this.$store.state.layout.bonusValueTypes;
+        },
+        /** @return {BonusTypes} */
+        bonusTypes() {
+            return this.$store.state.layout.bonusTypes;
+        },
+        /** @return {CustomerBonusStatus} */
+        customerBonusStatus() {
+            return this.$store.state.layout.customerBonusStatus;
+        }
     },
 });
 
@@ -329,11 +353,23 @@ Vue.mixin({
  @typedef DeliveryType
  @type {Object}
  @property {integer} offer
- @property {integer} bundle
+ @property {integer} bundleOffer
+ @property {integer} bundleMasterclass
  @property {integer} brand
  @property {integer} category
  @property {integer} delivery
  @property {integer} cartTotal
+ @property {integer} anyOffer
+ @property {integer} anyBundle
+ @property {integer} anyBrand
+ @property {integer} anyCategory
+ */
+/**
+ @typedef PublicEventStatus
+ @type {Object}
+ @property {integer} created
+ @property {integer} disabled
+ @property {integer} active
  */
 /**
  @typedef PublicEventSprintStatus
@@ -344,3 +380,51 @@ Vue.mixin({
  @property {integer} in_process
  @property {integer} done
  */
+/**
+ @typedef PromoCodeStatus
+ @type {Object}
+ @property {integer} created
+ @property {integer} sent
+ @property {integer} checking
+ @property {integer} active
+ @property {integer} rejected
+ @property {integer} paused
+ @property {integer} expired
+ @property {integer} test
+ */
+/**
+ @typedef PromoCodeType
+ @type {Object}
+ @property {integer} discount
+ @property {integer} delivery
+ @property {integer} gift
+ @property {integer} bonus
+ */
+ /**
+ @typedef BonusValueTypes
+ @type {Object}
+ @property {integer} percent
+ @property {integer} absolute
+ */
+/**
+ @typedef BonusTypes
+ @type {Object}
+ @property {integer} offer
+ @property {integer} brand
+ @property {integer} category
+ @property {integer} service
+ @property {integer} cartTotal
+ @property {integer} anyOffer
+ @property {integer} anyBrand
+ @property {integer} anyCategory
+ @property {integer} anyService
+ */
+/**
+ @typedef customerBonusStatus
+ @type {Object}
+ @property {integer} onHold
+ @property {integer} active
+ @property {integer} expired
+ @property {integer} debited
+ */
+

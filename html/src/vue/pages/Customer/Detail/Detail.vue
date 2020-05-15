@@ -42,6 +42,7 @@
                     <tab-order-referrer v-else-if="key === 'orderReferrer'" :id="customer.id"/>
                     <tab-billing v-else-if="key === 'billing'" :model.sync="customer"/>
                     <tab-bonus v-else-if="key === 'bonuses'" :model.sync="customer"/>
+                    <tab-promocodes v-else-if="key === 'referralPromocodes'" :id="customer.id" :options="options"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -78,12 +79,13 @@ import TabPromoPage from './components/tab-promo-page.vue';
 import TabOrderReferrer from './components/tab-order-referrer.vue';
 import TabBilling from './components/tab-billing.vue';
 import TabBonus from './components/tab-bonus.vue';
+import TabPromocodes from './components/tab-promocodes.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
 
 export default {
     mixins: [tabsMixin],
-    props: ['iCustomer', 'order', 'referralLevels'],
+    props: ['iCustomer', 'order', 'referralLevels', 'options'],
     components: {
         TabBilling,
         TabCommunication,
@@ -94,6 +96,7 @@ export default {
         TabPromoPage,
         TabPromoProduct,
         TabBonus,
+        TabPromocodes,
         ModalMarkStatus,
         ModalPortfolios,
         Infopanel,
@@ -113,7 +116,6 @@ export default {
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
-                tabs.referralActive = {i: i++, title: 'Реферальная активность'};
                 tabs.promoPage = {i: i++, title: 'Промостраница'};
                 tabs.promoProduct = {i: i++, title: 'Товары  для продвижения'};
                 tabs.orderReferrer = {i: i++, title: 'Реферальные заказы'};

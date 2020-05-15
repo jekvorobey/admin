@@ -4,7 +4,16 @@
             <v-input v-model="promoCode.name" class="col-12">Название</v-input>
         </div>
         <div class="form-row">
-            <v-input v-model="promoCode.code" class="col-3" maxlength="32" autocomplete="off">Код</v-input>
+            <v-input v-model="promoCode.code"
+                     class="col-3"
+                     maxlength="32"
+                     @input="existCheck(promoCode.code)"
+                     autocomplete="off"
+                     :error="uniqueError"
+                     :help="promoCodeCheckProgress"
+                     aria-required="true">
+                Код
+            </v-input>
             <div class="col-auto">
                 <label>Сгенерировать случайный промокод</label>
                 <button type="button" class="btn btn-info btn-block" @click="generate()">Сгенерировать</button>
@@ -112,20 +121,6 @@
                 class="col-4"
                 :options="iSegments"
                 :multiple="true"></v-select>
-
-            <div class="col-12 mt-3">
-                <div class="custom-control custom-switch">
-                    <input type="checkbox" class="custom-control-input" id="synergyBtn" key="synergyBtn" v-model="synergyBtn">
-                    <label class="custom-control-label" for="synergyBtn">Суммируется с промокодами</label>
-                </div>
-            </div>
-
-            <div class="col-12 mt-3" v-if="synergyBtn">
-                <label>Выберите промокоды</label>
-                <v-select2 v-model="promoCodes" class="form-control" width="100%" multiple>
-                    <option v-for="promoCode in iPromoCodes" :value="promoCode.value">{{ promoCode.text }}</option>
-                </v-select2>
-            </div>
         </div>
 
         <div class="row">
@@ -162,17 +157,17 @@
             bonuses: Object|Array,
             iSegments: Array,
             iRoles: Array,
-            iPromoCodes: Array,
             processing: Boolean,
             submitText: String,
             action: Function,
+            referral: {},
         },
         data() {
             return {
                 types: [],
                 discounts: [],
                 promoCode: {
-                    owner_id: null,
+                    owner_id: this.referral,
                     merchant_id: null,
                     name: null,
                     code: null,
@@ -186,15 +181,15 @@
                     bonus_id: null,
                     conditions: null,
                 },
+                promoCodeExistStatus: '',
+                promoCodeCheckProgress: 'Промокод должен быть уникальным',
                 merchantBtn: false,
                 limitedBtn: false,
-                ownerBtn: false,
+                ownerBtn: !!this.referral,
                 customersBtn: false,
                 roleBtn: false,
                 segmentsBtn: false,
-                synergyBtn: false,
 
-                promoCodes: [],
                 customers: [],
                 segments: [],
                 roleId: null,
@@ -217,9 +212,6 @@
                 if (this.segmentsBtn) {
                     this.promoCode.conditions.segments = this.segments;
                 }
-                if (this.synergyBtn) {
-                    this.promoCode.conditions.synergy = this.promoCodes;
-                }
                 this.promoCode.owner_id = this.ownerBtn ? this.promoCode.owner_id : null;
                 this.promoCode.counter = this.limitedBtn ? this.promoCode.counter : null;
                 this.promoCode.merchant_id = this.merchantBtn ? this.promoCode.merchant_id : null;
@@ -231,6 +223,7 @@
                     portfolios: this.portfolios
                 }).then(code => {
                     this.promoCode.code = code;
+                    this.existCheck(code);
                 }).finally(data => {
                     Services.hideLoader();
                 });
@@ -272,9 +265,45 @@
                         this.promoCode.discount_id = null;
                     }
                 }
-            }
+            },
+            /**
+             * Проверка промокода на уникальность по коду
+             * @param code
+             */
+            existCheck(code) {
+                if (code.length === 0) {
+                    this.promoCodeExistStatus = null;
+                    return;
+                }
+                this.promoCodeExistStatus='';
+                this.promoCodeCheckProgress = 'Проверка...';
+                
+                setTimeout(() =>
+                        Services.net().get(this.getRoute('promo-code.check') +
+                            `?code=${code}`
+                        ).then(data => {
+                            this.promoCodeExistStatus = data.status;
+                        }).finally(() => {
+                            if (this.promoCodeExistStatus === 'ok')
+                                this.promoCodeCheckProgress = 'Промокод уникален'
+                            else this.promoCodeCheckProgress = ''
+                        }),
+                    2000);
+            },
         },
         computed: {
+            uniqueError() {
+                switch (this.promoCodeExistStatus) {
+                case 'error':
+                    this.promoCodeCheckProgress = '';
+                    return 'Промокод уже существует!';
+                case null:
+                    this.promoCodeCheckProgress = '';
+                    return 'Введите уникальный промокод';
+                default:
+                    return;
+                }
+            },
             checkType() {
                 switch (this.promoCode.type) {
                     case this.PROMO_CODE_TYPE_DISCOUNT:
@@ -320,6 +349,7 @@
                 let required = this.promoCode.name
                     && this.promoCode.type
                     && this.promoCode.code
+                    && this.promoCodeExistStatus === 'ok'
                     && this.promoCode.status
                     && !this.processing;
 

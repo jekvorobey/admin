@@ -1,28 +1,31 @@
 <template>
     <div class="fake-vue-body">
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
-        <div class="d-flex flex-row middle-area">
-            <div style="width: 210px;" class="bg-light" v-if="!user.isGuest">
-                <MainMenu></MainMenu>
-            </div>
-            <div class="container-fluid flex-grow-1 pb-5 pl-4">
-                <div v-if="back" class="mt-3">
-                    <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+        <div class="container-fluid">
+            <div class="row flex-xl-nowrap">
+                <div class="bg-light col-xl-2 no-padding" v-if="!user.isGuest">
+                    <MainMenu></MainMenu>
                 </div>
-                <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
-                <slot></slot>
+                <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
+                    <div class="container-fluid px-3 pb-5">
+                        <div v-if="back" class="mt-3">
+                            <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+                        </div>
+                        <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
+                        <slot></slot>
+                        <div class="clearfix"></div>
+                    </div>
+                </main>
             </div>
+
+            <modal-message></modal-message>
+
+            <div id="preloader" v-show="loaderShow"><div id="loader"></div></div>
         </div>
-
-        <modal-message></modal-message>
-        <LayoutFooter></LayoutFooter>
-
-        <div id="preloader" v-show="loaderShow"><div id="loader"></div></div>
     </div>
 </template>
 
 <script>
-    import LayoutFooter from './parts/layout-footer.vue';
     import LayoutHeader from './parts/layout-header.vue';
     import ModalMessage from '../modal-message/modal-message.vue';
     import MainMenu from '../main-menu/main-menu.vue';
@@ -41,7 +44,6 @@
             hideTitle: { type: Boolean, default: false },
         },
         components: {
-            LayoutFooter,
             LayoutHeader,
             ModalMessage,
             MainMenu,
@@ -104,11 +106,9 @@
     .fake-vue-body {
         height: 100%;
     }
-    .breadcrumbs {
-        margin-top: 15px;
-    }
-    .middle-area {
-        background: #fff;
+    .no-padding {
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* ============= Loader ===================== */

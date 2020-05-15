@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\FileDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -204,35 +203,4 @@ class ChatsController extends Controller
 
         return [$chats, $users, $files];
     }
-
-    /**
-     * Получение пользователей по массиву ролей
-     *
-     * @param UserService $userService
-     * @param RequestInitiator $user
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function userListForBroadcast(UserService $userService, RequestInitiator $user)
-    {
-        $roleIds = request('role_ids');
-
-        $users = $userService->users(
-            (new RestQuery())
-                ->addFields(UserDto::class, 'id', 'full_name', 'phone', 'email')
-                ->setFilter('id', '!=', $user->userId())
-                ->setFilter('role', $roleIds)
-        )->map(function (UserDto $user) {
-                return [
-                    'id' => $user->id,
-                    'title' => $user->getTitle(),
-                    'email' => $user->email,
-                ];
-            })->keyBy('id')
-            ->all();
-
-        return response()->json([
-            'users' => $users,
-        ]);
-    }
-
 }

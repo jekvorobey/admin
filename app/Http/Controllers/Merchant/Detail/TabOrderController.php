@@ -135,9 +135,10 @@ class TabOrderController extends Controller
             /** @var StoreService $storeService */
             $storeService = resolve(StoreService::class);
 
-            $restQuery = $storeService->newQuery();
-            $restQuery->addFields(StoreDto::entity(), 'id', 'name');
-            $stores = $storeService->stores($restQuery, $merchantId)->keyBy('id');
+            $stores = $storeService->stores(
+                (new RestQuery())->addFields(StoreDto::entity(), 'id', 'name'),
+                $merchantId
+            )->keyBy('id');
         }
 
         return $stores;
@@ -152,22 +153,46 @@ class TabOrderController extends Controller
         Request $request,
         int $merchantId
     ): DataQuery {
-        /** @var ShipmentService $shipmentService */
-        $shipmentService = resolve(ShipmentService::class);
-
-        /** @var RestQuery $restQuery */
-        $restQuery = $shipmentService->newQuery();
-        $restQuery->setFilter('merchant_id', $merchantId)
-            ->setFilter('is_canceled', false)
-            ->setFilter('user_exist', intval(true));
-
         $page = $request->get('page', 1);
-        $restQuery->pageNumber($page, 20);
+        $restQuery = (new RestQuery())->setFilter('merchant_id', $merchantId)
+            ->setFilter('is_canceled', false)
+            ->pageNumber($page, 20);
 
         $filter = $this->getFilter();
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
+                    case 'customer_full_name':
+                        /** @var UserService $userService */
+                        $userService = resolve(UserService::class);
+
+                        /** @var CustomerService $customerService */
+                        $customerService = resolve(CustomerService::class);
+
+                        $userIds = $userService->users(
+                            (new RestQuery())->addFields(UserDto::class, 'id')
+                                ->setFilter('full_name', $value)
+                        )->pluck('id')
+                            ->all();
+
+                        if (!$userIds) {
+                            $restQuery->setFilter('customer_id', -1);
+                            break;
+                        }
+
+                        $customerIds = $customerService->customers(
+                            (new RestQuery())->addFields(CustomerDto::class, 'id')
+                                ->setFilter('user_id', $userIds)
+                        )->pluck('id')
+                            ->all();
+
+                        $existCustomerIds = $restQuery->getFilter('customer_id') ? $restQuery->getFilter('customer_id')[0][1] : [];
+                        if ($existCustomerIds) {
+                            $customerIds = array_values(array_intersect($existCustomerIds, $customerIds));
+                        }
+                        $customerIds = $customerIds ?? -1;
+                        $restQuery->setFilter('customer_id', $customerIds);
+                        break;
                     case 'package_qty_from':
                         $restQuery->setFilter('package_qty', '>=', $value);
                         break;
@@ -272,22 +297,20 @@ class TabOrderController extends Controller
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
 
-        $restQuery->addFields(
-            ShipmentDto::entity(),
-            'id',
-            'status',
-            'package_qty',
-            'weight',
-            'is_problem',
-            'cost',
-            'delivery_service_zero_mile',
-            'store_id',
-            'required_shipping_at'
+        $shipments = $shipmentService->shipments(
+            $restQuery->addFields(
+                ShipmentDto::entity(),
+                'id',
+                'status',
+                'package_qty',
+                'weight',
+                'is_problem',
+                'cost',
+                'delivery_service_zero_mile',
+                'store_id',
+                'required_shipping_at'
+            )->include('delivery')
         );
-
-        $restQuery->include('delivery');
-
-        $shipments = $shipmentService->shipments($restQuery);
 
         $orderIds = $shipments->pluck('delivery.order_id')->all();
         $orders = $orderService->orders(
@@ -314,7 +337,12 @@ class TabOrderController extends Controller
         $stores = $storeService->stores(
             (new RestQuery)->addFields(StoreDto::class, 'id', 'name')
                 ->setFilter('id', $storesIds)
-        )->keyBy('id');
+        )->keyBy('id')
+            ->all();
+
+        $orders = $orders->all();
+        $customers = $customers->all();
+        $users = $users->all();
 
         $shipments = $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores) {
             $delivery = $shipment->delivery();
@@ -329,11 +357,19 @@ class TabOrderController extends Controller
                 'number' => $shipment->number,
             ];
 
-            $customerId = $orders[$delivery->order_id]->customer_id;
-            $user = $users[$customers[$customerId]->user_id];
+            $customerId = array_key_exists($orders[$delivery->order_id]->customer_id, $customers) ?
+                $orders[$delivery->order_id]->customer_id :
+                'N/A';
+            $userFullName = (
+                    array_key_exists($customerId, $customers) &&
+                    array_key_exists($customers[$customerId]->user_id, $users) &&
+                    $users[$customers[$customerId]->user_id]->full_name
+                ) ?
+                $users[$customers[$customerId]->user_id]->full_name :
+                'N/A';
             $data['customer'] = [
                 'id' => $customerId,
-                'full_name' => $user->full_name,
+                'full_name' => $userFullName,
             ];
 
             $data['status'] = ShipmentStatus::statusById($shipment->status);

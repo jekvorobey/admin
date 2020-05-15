@@ -60,13 +60,6 @@
             return {
                 processing: false,
                 result: '',
-                // Тип скидки
-                TYPE_OFFER: 1,
-                TYPE_BUNDLE: 2,
-                TYPE_BRAND: 3,
-                TYPE_CATEGORY: 4,
-                TYPE_DELIVERY: 5,
-                TYPE_CART_TOTAL: 6,
 
                 // Тип условия скидки
                 CONDITION_TYPE_USER: 9,
@@ -87,18 +80,19 @@
                 };
 
                 switch (discount.type) {
-                    case this.TYPE_OFFER:
+                    case this.discountTypes.offer:
                         data.offers = this.formatIds(discount.offers);
                         break;
-                    case this.TYPE_BUNDLE:
+                    case this.discountTypes.bundleOffer:
+                    case this.discountTypes.bundleMasterclass:
                         data.bundles = this.formatIds(discount.bundles);
                         break;
-                    case this.TYPE_BRAND:
+                    case this.discountTypes.brand:
                         data.brands = discount.brands;
                         data.except = {};
                         data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
                         break;
-                    case this.TYPE_CATEGORY:
+                    case this.discountTypes.category:
                         data.categories = discount.categories;
                         data.except = {};
                         data.except.brands = discount.brands ? discount.brands : [];

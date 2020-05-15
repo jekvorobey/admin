@@ -3,13 +3,26 @@
         <div class="card">
             <div class="card-body">
                 <b-form @submit.prevent="">
-                    <b-row class="mb-2" v-if="chatUsers && chatUsers.length !== 1">
+                    <b-row class="mb-2" v-if="roles">
                         <b-col cols="3">
-                            <label for="chat-users">Пользователь</label>
+                            <label for="chat-users-role">Роли пользователей</label>
+                        </b-col>
+                        <b-col cols="9">
+                            <v-select2 v-model="form.role_ids" class="form-control form-control-sm" multiple>
+                                <b-form-select-option :value="role_id" v-for="(role_name, role_id) in roles" :key="role_id">
+                                    {{ role_name }}
+                                </b-form-select-option>
+                            </v-select2>
+                        </b-col>
+                    </b-row>
+
+                    <b-row class="mb-2" v-if="usersProp && (!userSendIds || (usersProp.length !== userSendIds.length))">
+                        <b-col cols="3">
+                            <label for="chat-users">Пользователи</label>
                         </b-col>
                         <b-col cols="9">
                             <v-select2 v-model="form.user_ids" class="form-control form-control-sm" multiple>
-                                <option v-for="user in chatUsers" :value="user.id">{{ user.title }}</option>
+                                <option v-for="user in users" :value="user.id">{{ user.title }}</option>
                             </v-select2>
                         </b-col>
                     </b-row>
@@ -27,20 +40,7 @@
                         </b-col>
                     </b-row>
 
-                    <b-row class="mb-2" v-if="!chatUsers">
-                        <b-col cols="3">
-                            <label for="chat-users-role">Роли пользователей</label>
-                        </b-col>
-                        <b-col cols="9">
-                            <v-select2 v-model="form.role_ids" class="form-control form-control-sm" multiple>
-                                <b-form-select-option :value="role_id" v-for="(role_name, role_id) in roles" :key="role_id">
-                                    {{ role_name }}
-                                </b-form-select-option>
-                            </v-select2>
-                        </b-col>
-                    </b-row>
-
-                    <b-row class="mb-2" v-if="!chatUsers">
+                    <b-row class="mb-2" v-if="!usersProp && !userSendIds">
                         <b-col cols="3">
                             <label for="chat-users">Пользователи</label>
                         </b-col>
@@ -120,21 +120,17 @@
     export default {
         name: 'communication-chat-creator',
         components: {VSelect2, CommunicationChatMessage},
-        props: ['chatUsers', 'roles'],
+        props: ['usersProp', 'userSendIds', 'roles'],
         data() {
-            let user_ids;
-            if (this.chatUsers) {
-                user_ids = [this.chatUsers[0].id];
-            } else {
-                user_ids = [];
-            }
+            let users = this.usersProp ? this.usersProp : {};
+            let userIds = this.userSendIds ? this.userSendIds : [];
 
             return {
-                users: {},
+                users: users,
                 form: {
                     channel_id: null,
                     role_ids: [],
-                    user_ids: user_ids,
+                    user_ids: userIds,
                     theme: '',
                     status_id: null,
                     type_id: null,
@@ -143,14 +139,8 @@
         },
         methods: {
             initUsers() {
-                if (this.chatUsers && this.chatUsers.length === 1) {
-                    this.form.user_ids = [this.chatUsers[0].id];
-                } else {
-                    if (this.chatUsers) {
-                        this.form.user_ids = [];
-                    }
-                }
-                this.users = [];
+                this.users = this.usersProp ? this.usersProp : {};
+                this.form.user_ids = this.userSendIds ? this.userSendIds : [];
             },
             initComponent() {
                 this.form.channel_id = null;
@@ -178,6 +168,7 @@
                     });
                     this.initComponent();
                     Services.event().$emit('closeModalCreate');
+                }).finally(() => {
                     Services.hideLoader();
                 });
             },
@@ -185,22 +176,16 @@
         computed: {
             ...mapGetters(['getRoute']),
             availableChannels() {
-                if (this.chatUsers && this.chatUsers.length === 1) {
+                if (this.usersProp) {
                     return Object.values(this.communicationChannels).filter(channel => {
-                        return Number(channel.id) !== this.communicationChannelTypes.internal_email || this.chatUsers[0].email;
+                        let hasEmail = true;
+                        this.usersProp.forEach(userProp => {
+                            hasEmail = this.form.user_ids.includes(userProp.id) ? userProp.email : hasEmail;
+                        });
+                        return Number(channel.id) !== this.communicationChannelTypes.internal_email || hasEmail;
                     });
                 } else {
-                    if (this.chatUsers) {
-                        return Object.values(this.communicationChannels).filter(channel => {
-                            let hasEmail = true;
-                            this.chatUsers.forEach(chatUser => {
-                                hasEmail = this.form.user_ids.includes(chatUser.id) ? chatUser.email : hasEmail;
-                            });
-                            return Number(channel.id) !== this.communicationChannelTypes.internal_email || hasEmail;
-                        });
-                    } else {
-                        return this.communicationChannels;
-                    }
+                    return this.communicationChannels;
                 }
             },
             availableUsers() {
@@ -236,7 +221,7 @@
 
                 if (val.length > 0) {
                     Services.showLoader();
-                    Services.net().get(this.getRoute('communications.chats.user.list'), {
+                    Services.net().get(this.getRoute('user.byRoles'), {
                         'role_ids': this.form.role_ids
                     }).then(data => {
                         this.users = data.users;
@@ -245,11 +230,6 @@
                     });
                 }
             },
-            'form.channel_id': function (val, oldVal) {
-                if (!this.chatUsers) {
-                    this.initUsers();
-                }
-            }
         },
     };
 </script>

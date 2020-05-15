@@ -219,6 +219,22 @@ class MerchantStoreController extends Controller
         $storeService->deleteStore($id);
         return response()->json([]);
     }
+
+    /**
+     * @param Request $request
+     * @param StoreService $storeService
+     * @return JsonResponse
+     */
+    public function deleteArray(Request $request, StoreService $storeService)
+    {
+        $data = $request->validate([
+            'ids' => 'array|required',
+            'ids.*' => 'integer',
+        ]);
+
+        $storeService->deleteStores($data['ids']);
+        return response()->json([]);
+    }
     
     /**
      * @param int $id

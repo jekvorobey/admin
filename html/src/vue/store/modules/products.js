@@ -41,6 +41,7 @@ export default {
     },
     actions: {
         [ACT_LOAD_PAGE]({commit, rootGetters}, {filter, page}) {
+            Services.showLoader();
             return Services.net().get(rootGetters.getRoute('products.listPage'), {page, filter})
                 .then(data => {
                     commit(SET_PAGE, {

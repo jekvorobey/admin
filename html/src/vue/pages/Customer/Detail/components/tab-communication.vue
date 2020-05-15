@@ -1,7 +1,7 @@
 <template>
     <div>
         <communication-chat-list :filter="{user_ids: [customer.user_id]}"
-                                 :chatUsers="[{user_id: customer.user_id, email: customer.email}]"/>
+                                 :usersProp="[{id: customer.user_id, email: customer.email}]"/>
     </div>
 </template>
 

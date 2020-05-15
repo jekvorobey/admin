@@ -70,7 +70,7 @@
                         Маркетплейс
                     </template>
                 </td>
-                <td>{{ item.value }}</td>
+                <td>{{ item.status === customerBonusStatus.debited ? -item.value : item.value }}</td>
                 <td>{{ statusName(item.status) }}</td>
                 <td>{{ item.expiration_date ? datePrint(item.expiration_date) : 'Без ограничений' }}</td>
             </tr>

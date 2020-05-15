@@ -24,14 +24,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="offer in offers">
+                <tr v-for="(offer, index) in offers">
                     <td>{{offer.id}}</td>
                     <td>{{offer.productName}}</td>
                     <td>{{offer.merchantName}}</td>
-                    <td>{{saleStatusName(offer.sale_status)}}</td>
+                    <td v-on:click="editeOffer(index)">{{saleStatusName(offer.sale_status)}}</td>
                 </tr>
             </tbody>
         </table>
+        <offer-edit-modal
+                :offer = "this.offerModal"
+                modal-name="offerEdit"/>
         <div>
             <b-pagination
                     v-if="pager.pages !== 1"
@@ -53,6 +56,9 @@
 
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
+    import Modal from '../../../components/controls/modal/modal.vue';
+    import modalMixin from '../../../mixins/modal';
+    import offerEditModal from './components/offer-edit-modal.vue';
 
     const cleanFilter = {
         saleStatus: []
@@ -62,13 +68,16 @@
         components: {
             FMultiSelect,
             FInput,
+            Modal,
+            offerEditModal,
         },
+        mixins: [modalMixin],
         props: {
             iOffers: {},
             iPager: {},
             iCurrentPage: {},
             iFilter: {},
-            options: {}
+            options: {},
         },
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
@@ -78,6 +87,7 @@
                 pager: this.iPager,
                 currentPage: this.iCurrentPage || 1,
                 filter,
+                offerModal: null,
             };
         },
         methods: {
@@ -111,7 +121,12 @@
 
             saleStatusName(statusId) {
                 return this.options.saleStatus[statusId] ? this.options.saleStatus[statusId].name : 'N/A';
-            }
+            },
+
+            editeOffer: function (id) {
+                this.offerModal = this.offers[id];
+                this.openModal('offerEdit');
+            },
         },
         created() {
             window.onpopstate = () => {

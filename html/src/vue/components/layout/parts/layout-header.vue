@@ -1,22 +1,22 @@
 <template>
-    <nav class="navbar navbar-dark bg-dark" style="color: #dfdfdf;">
-
+    <header class="navbar navbar-dark bg-dark" style="color: #dfdfdf;">
         <div class="d-flex">
-            <span>
+            <b-navbar-brand href="/" title="Бессовестно Талантливый">
                 <picture>
                     <source srcset="/assets/images/logo_white.webp" type="image/webp">
                     <img src="/assets/images/logo_white.png" width="128" height="46">
                 </picture>
-            </span>
-            <span style="
-                font-size: 256%;
-                line-height: 40px;
-                margin-right: 10px;
-                font-weight: 700;
-                transform: scaleX(0.5);
-            ">|</span>
-            <span style="color:white">
-                Administration System
+            </b-navbar-brand>
+            <span class="d-none d-md-block">
+                <span style="
+                    font-size: 256%;
+                    line-height: 40px;
+                    margin-right: 10px;
+                    transform: scaleX(0.5);
+                ">|</span>
+                <span style="color:white">
+                    Administration System
+                </span>
             </span>
         </div>
 
@@ -27,7 +27,7 @@
 
             <button @click="logout" class="btn btn-dark">Выйти</button>
         </div>
-    </nav>
+    </header>
 </template>
 
 <script>

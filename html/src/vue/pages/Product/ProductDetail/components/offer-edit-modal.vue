@@ -6,9 +6,9 @@
             </div>
             <div slot="body">
                 <div class="row">
-                    <v-input v-model="offer.sale_status" class="col-md-6 col-sm-12">
+                    <f-select :options="saleOptions" v-model="offer.sale_status" class="col-md-6 col-sm-12">
                         Статус
-                    </v-input>
+                    </f-select>
                     <v-input v-model="offer.manual_sort" class="col-md-6 col-sm-12">
                         Сортировка
                     </v-input>
@@ -24,9 +24,11 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import modalMixin from '../../../../mixins/modal.js';
     import Services from "../../../../../scripts/services/services";
+    import FSelect from "../../../../components/filter/f-select.vue";
 
     export default {
         components: {
+            FSelect,
             modal,
             VInput,
         },
@@ -35,16 +37,17 @@
             modalName: String,
             title: String,
             offer: Object,
+            saleOptions: Array,
         },
         methods: {
             save() {
+                this.closeModal();
                 Services.showLoader();
                 let data = {"props": {"status": this.offer.sale_status, "manual_sort" : this.offer.manual_sort}};
                 Services.net().post(this.getRoute('offers.saveOfferProps', {id: this.offer.offer_id}), {}, data).catch(() => {
-                }).then((response)=> {
+                }).then(()=> {
                     Services.hideLoader();
                     this.$emit('onSave');
-                    this.closeModal();
                 });
             },
         },

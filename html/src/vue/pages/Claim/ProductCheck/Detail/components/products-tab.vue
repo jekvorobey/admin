@@ -9,7 +9,16 @@
                         <th>Артикул</th>
                         <th>Статус согласования</th>
                         <th>Комментарий по статусу согласования</th>
-                        <th></th>
+                        <th>
+                            <template v-if="isWorkStatus">
+                                <button class="btn btn-primary"
+                                        @click="doForAll('accept')"
+                                        title="Принять все товары из заявления">Согласовать все</button><br>
+                                <button class="btn btn-primary mt-1"
+                                        @click="openModal('offerProductReject')"
+                                        title="Отклонить все товары из заявления">Отклонить все</button>
+                            </template>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,29 +45,83 @@
                 </tbody>
             </table>
         </div>
+        <modal-products-reject
+                :comment.sync="comment"
+                @submit="doForAll"
+                modal-name="offerProductReject">
+        </modal-products-reject>
     </div>
 </template>
 
 <script>
 
+    import Services from "../../../../../../scripts/services/services";
+    import modalMixin from "../../../../../mixins/modal";
+    import ModalProductsReject from './modal-products-reject.vue';
+
     export default {
-    props: [
-        'claim',
-    ],
-    methods: {
-        isStatus(statusId) {
-            return this.claim.status === statusId;
+        components: {ModalProductsReject},
+        mixins: [modalMixin],
+        props: [
+            'claim',
+            'claimId',
+        ],
+        data() {
+            return {
+                comment: '',
+            }
         },
-        isProductChecked(approvalStatusId) {
-            return approvalStatusId === 4 || approvalStatusId === 5;
-        }
-    },
-    computed: {
-        isWorkStatus() {
-            return this.isStatus(2);
+        methods: {
+            isStatus(statusId) {
+                return this.claim.status === statusId;
+            },
+            isProductChecked(approvalStatusId) {
+                return approvalStatusId === 4 || approvalStatusId === 5;
+            },
+            /**
+             * Выполнить действие для всех ID в заявке
+             * @example accept - одобрить все товары в заявке
+             * @example reject - отклонить все товары в заявке
+             * @param action
+             */
+            doForAll(action) {
+                let ids = Object.values(this.claim.products).map(merchant => merchant.id);
+                let status = '';
+                switch (action) {
+                    case 'accept':
+                        status = 5;
+                        break;
+                    case 'reject':
+                        status = 4;
+                        break;
+                    default: return;
+                }
+
+                Services.showLoader();
+                Services.net().put(this.getRoute('products.massApproval', {}), {},
+                    {
+                        productIds: ids,
+                        status: status,
+                        comment: this.comment
+                    }).then(data => {
+                        Services.msg("Изменения сохраняются...");
+                }, () => {
+                    this.showMessageBox({title: 'Ошибка', text: 'Не удалось согласовать или отклонить продукты'});
+                }).finally(() => {
+                    Services.hideLoader();
+                    setTimeout(() => {
+                        window.location = this.getRoute(
+                            'productCheckClaims.detail', {id: this.claimId}
+                            )}, 1000);
+                })
+            },
         },
-    },
-};
+        computed: {
+            isWorkStatus() {
+                return this.isStatus(2);
+            },
+        },
+    };
 </script>
 <style scoped>
     th {

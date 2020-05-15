@@ -24,14 +24,18 @@ Route::middleware('auth')->group(function () {
             Route::get('user-exists', 'MerchantListController@checkEmailExists')->name('check.emailExists');
         });
 
-
         Route::prefix('detail/{id}')->group(function () {
             Route::get('', 'MerchantDetailController@index')->name('merchant.detail');
             Route::post('', 'MerchantDetailController@updateMerchant')->name('merchant.detail.edit');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('operators')->group(function () {
-                    Route::get('', 'TabOperatorController@load')->name('merchant.detail.operator');
+                    Route::get('data', 'TabOperatorController@loadData')->name('merchant.detail.operator.data');
+                    Route::get('page', 'TabOperatorController@loadOperators')->name('merchant.detail.operator.pagination');
+                });
+                Route::prefix('digest')->group(function () {
+                    Route::get('', 'TabDigestController@load')->name('merchant.detail.digest');
+                    Route::put('comment', 'TabDigestController@comment')->name('merchant.detail.digest.comment');
                 });
                 Route::prefix('main')->group(function () {
                     Route::get('', 'TabMainController@load')->name('merchant.detail.main');
@@ -62,12 +66,26 @@ Route::middleware('auth')->group(function () {
                     Route::get('data', 'TabProductController@loadProductsData')->name('merchant.detail.product.data');
                     Route::get('page', 'TabProductController@page')->name('merchant.detail.product.pagination');
                 });
+                Route::prefix('store')->group(function () {
+                    Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
+                });
             });
         });
 
         Route::prefix('commission')->group(function () {
             Route::get('', 'MerchantCommissionController@index')->name('merchant.commission');
             Route::post('', 'MerchantCommissionController@save')->name('merchant.commission.save');
+        });
+
+        Route::prefix('operator')->group(function () {
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'MerchantOperatorController@indexEdit')->name('merchant.operator.indexEdit');
+                Route::put('update', 'MerchantOperatorController@update')->name('merchant.operator.update');
+            });
+            Route::get('', 'MerchantOperatorController@indexCreate')->name('merchant.operator.indexCreate');
+            Route::post('save', 'MerchantOperatorController@save')->name('merchant.operator.save');
+            Route::put('change-roles', 'MerchantOperatorController@changeRoles')->name('merchant.operator.changeRoles');
+            Route::delete('', 'MerchantOperatorController@delete')->name('merchant.operator.delete');
         });
     });
 
@@ -95,12 +113,19 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'PromoCodeController@create')->name('promo-code.save');
             Route::get('create', 'PromoCodeController@createPage')->name('promo-code.create');
             Route::get('generate', 'PromoCodeController@generate')->name('promo-code.generate');
+            Route::get('check', 'PromoCodeController@checkUnique')->name('promo-code.check');
             Route::post('status', 'PromoCodeController@status')->name('promo-code.status');
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });
 
         Route::prefix('bonus')->group(function () {
             Route::get('', 'BonusController@index')->name('bonus.list');
+            Route::post('', 'BonusController@create')->name('bonus.save');
+            Route::get('create', 'BonusController@createPage')->name('bonus.create');
+            Route::post('status', 'BonusController@status')->name('bonus.status');
+            Route::delete('delete', 'BonusController@delete')->name('bonus.delete');
+
+            Route::put('productLimit', 'BonusController@changeProductLimit')->name('bonus.changeMPP');
         });
     });
 
@@ -144,6 +169,7 @@ Route::middleware('auth')->group(function () {
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+            Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
         });
 
         Route::prefix('organization-card')->group(function () {
@@ -162,28 +188,21 @@ Route::middleware('auth')->group(function () {
         Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
     });
 
-    Route::prefix('orders')->namespace('Orders')->group(function () {
+    Route::prefix('orders')->namespace('Order')->group(function () {
+        Route::get('', 'OrderListController@index')->name('orders.list');
+        Route::get('page', 'OrderListController@page')->name('orders.pagination');
+
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-            Route::post('userComment', 'FlowController@userComment')->name('orders.userComment');
-        });
+            Route::get('', 'OrderDetailController@detail')->name('orders.detail');
+            Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
+            Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
+            Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
 
-        Route::prefix('flow')->namespace('Flow')->group(function () {
-            Route::get('', 'FlowListController@index')->name('orders.flowList');
-            Route::get('page', 'FlowListController@page')->name('orders.FlowPagination');
-
-            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'FlowDetailController@detail')->name('orders.flowDetail');
-                Route::put('changeStatus', 'FlowDetailController@changeStatus')->name('orders.changeStatus');
-                Route::put('pay', 'FlowDetailController@pay')->name('orders.pay');
-                Route::put('cancel', 'FlowDetailController@cancel')->name('orders.cancel');
-
-                Route::prefix('delivery')->group(function () {
-                    Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
-                    Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');
-                    Route::put('editShipment', 'FlowDeliveryController@editShipment')->name('orders.delivery.editShipment');
-                });
+            Route::prefix('delivery')->group(function () {
+                Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
+                Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');
+                Route::put('editShipment', 'FlowDeliveryController@editShipment')->name('orders.delivery.editShipment');
             });
-
         });
 
         Route::prefix('create')->namespace('Create')->group(function () {
@@ -194,7 +213,7 @@ Route::middleware('auth')->group(function () {
             Route::post('order', 'OrderCreateController@createOrder')->name('orders.createOrder');
         });
 
-        Route::prefix('cargo')->namespace('Cargo')->group(function () {
+        Route::prefix('cargos')->namespace('Cargo')->group(function () {
             Route::get('/', 'CargoListController@index')->name('cargo.list');
             Route::get('/page', 'CargoListController@page')->name('cargo.pagination');
 
@@ -221,15 +240,19 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        Route::prefix('order-statuses')->namespace('Directory')->group(function () {
-            Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
-            Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
+        Route::prefix('directories')->namespace('Directory')->group(function () {
+            Route::prefix('order-statuses')->group(function () {
+                Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
+                Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
+            });
         });
     });
 
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
+        Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->group(function () {
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
         });
@@ -334,6 +357,9 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'MerchantStoreController@delete')
                 ->where(['id' => '[0-9]+'])
                 ->name('merchantStore.delete');
+            Route::delete('', 'MerchantStoreController@deleteArray')
+                ->where(['id' => '[0-9]+'])
+                ->name('merchantStore.deleteArray');
 
             Route::prefix('working')->group(function () {
                 Route::put('/{id}', 'MerchantStoreController@updateWorking')
@@ -435,7 +461,6 @@ Route::middleware('auth')->group(function () {
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
-            Route::get('user-list', 'ChatsController@userListForBroadcast')->name('communications.chats.user.list');
         });
     });
 
@@ -504,6 +529,7 @@ Route::middleware('auth')->group(function () {
                         Route::post('', 'TabBonusController@add')->name('customers.detail.bonus.add');
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
+                    Route::get('promocodes', 'TabPromocodesController@load')->name('customers.detail.promocodes');
                 });
 
             });
@@ -559,6 +585,7 @@ Route::middleware('auth')->group(function () {
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
+        Route::get('', 'PublicEventListController@page')->name('public-event.list');
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

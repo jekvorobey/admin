@@ -86,7 +86,8 @@
         </table>
 
         <b-modal id="modal-create" title="Создание чата" hide-footer>
-            <communication-chat-creator :chatUsers="chatUsers"
+            <communication-chat-creator :usersProp="usersProp"
+                                        :userSendIds="usersProp ? [usersProp[0].id] : null"
                                         :roles="roles"
             />
         </b-modal>
@@ -169,7 +170,7 @@
         },
         props: {
             filter: Object,
-            chatUsers: Array,
+            usersProp: Array,
             roles: Object,
         },
         data() {

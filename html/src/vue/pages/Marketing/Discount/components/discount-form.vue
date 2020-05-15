@@ -20,7 +20,7 @@
                 >Офферы</v-input>
             </div>
 
-            <div v-if="discount.type === discountTypes.bundle" class="col-9">
+            <div v-if="discount.type === discountTypes.bundleOffer || discount.type === discountTypes.bundleMasterclass" class="col-9">
                 <v-input v-model="discount.bundles"
                          :help="'ID бандлов через запятую'"
                          :error="discountErrors.bundles"
@@ -149,9 +149,9 @@
     import moment from 'moment';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
-    import BrandsSearch from './brands-search.vue';
+    import BrandsSearch from '../../components/brands-search.vue';
     import Conditions from './conditions.vue';
-    import CategoriesSearch from './categories-search.vue';
+    import CategoriesSearch from '../../components/categories-search.vue';
     import Services from '../../../../../scripts/services/services';
 
     moment.locale('ru');
@@ -236,7 +236,8 @@
                                 bool = false;
                             }
                             break;
-                        case this.discountTypes.bundle:
+                        case this.discountTypes.bundleOffer:
+                        case this.discountTypes.bundleMasterclass:
                             if (!(this.discount.bundles)) {
                                 this.discountErrors.bundles = "Введите значения ID бандлов!";
                                 bool = false;

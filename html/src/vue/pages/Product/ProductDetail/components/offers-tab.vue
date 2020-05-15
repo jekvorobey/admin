@@ -57,6 +57,7 @@
         <offer-edit-modal
                 title="Редактировать предложение"
                 :offer = "this.offerModal"
+                :saleOptions = "this.saleOptions"
                 modal-name="offerEdit"
                 @onSave="$emit('onSave')"/>
     </div>
@@ -85,6 +86,13 @@
                 qtyTo: '',
                 status: '',
                 offerModal: null,
+                saleOptions:[
+                        {value: 1, text: 'В продаже'},
+                        {value: 2, text: 'Предзаказ'},
+                        {value: 3, text: 'Снято с продажи'},
+                        {value: 4, text: 'Доступен к продаже'},
+                        {value: 5, text: 'Недоступен к продаже'},
+                    ],
             }
         },
         props: {
@@ -104,9 +112,9 @@
                 return items;
             },
             editeOffer: function (id) {
-                this.offerModal = this.offers[id];
+                this.offerModal = this.filteredOffers[id];
                 this.openModal('offerEdit');
-            }
+            },
         },
         mounted() {
         },
@@ -120,7 +128,7 @@
                     .filter(offer => this.priceTo > 0 ? (offer.price <= this.priceTo) : true)
                     .filter(offer => offer.qty >= this.qtyFrom)
                     .filter(offer => this.qtyTo > 0 ? (offer.qty <= this.qtyTo) : true)
-            }
+            },
         }
     }
 </script>

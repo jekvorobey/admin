@@ -8,8 +8,11 @@ use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
+use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Message\Dto\Communication\CommunicationChannelDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
@@ -22,6 +25,7 @@ use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
+use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Dto\PublicEvent\PublicEventTypeDto;
 use Pim\Services\PublicEventTypeService\PublicEventTypeService;
 
@@ -49,9 +53,15 @@ class ViewRender
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
     private $publicEventMediaCollections = [];
-    private $loadPublicEventSprintStatus = [];
+    private $publicEventStatus = [];
+    private $publicEventSprintStatus = [];
 
     private $discountTypes = [];
+    private $promoCodeTypes = [];
+    private $promoCodeStatus = [];
+    private $bonusValueTypes = [];
+    private $bonusTypes = [];
+    private $customerBonusStatus = [];
 
     public function __construct($componentName, $props)
     {
@@ -255,10 +265,22 @@ class ViewRender
         return $this;
     }
 
+    public function loadPublicEventStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->publicEventStatus = [
+                'created' => PublicEventStatus::CREATED,
+                'disabled' => PublicEventStatus::DISABLED,
+                'active' => PublicEventStatus::ACTIVE,
+            ];
+        }
+        return $this;
+    }
+
     public function loadPublicEventSprintStatus(bool $load = false): self
     {
         if ($load) {
-            $this->loadPublicEventSprintStatus = [
+            $this->publicEventSprintStatus = [
                 'created' => PublicEventSprintStatus::CREATED,
                 'disabled' => PublicEventSprintStatus::DISABLED,
                 'ready' => PublicEventSprintStatus::READY,
@@ -274,16 +296,106 @@ class ViewRender
         if ($load) {
             $this->discountTypes = [
                 'offer' => DiscountTypeDto::TYPE_OFFER,
-                'bundle' => DiscountTypeDto::TYPE_BUNDLE,
+                'bundleOffer' => DiscountTypeDto::TYPE_BUNDLE_OFFER,
+                'bundleMasterclass' => DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
                 'brand' => DiscountTypeDto::TYPE_BRAND,
                 'category' => DiscountTypeDto::TYPE_CATEGORY,
                 'delivery' => DiscountTypeDto::TYPE_DELIVERY,
                 'cartTotal' => DiscountTypeDto::TYPE_CART_TOTAL,
+                'anyOffer' => DiscountTypeDto::TYPE_ANY_OFFER,
+                'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
+                'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
+                'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
             ];
         }
         return $this;
     }
-    
+
+    public function loadPromoCodeTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->promoCodeTypes = [
+                'discount' => PromoCodeOutDto::TYPE_DISCOUNT,
+                'delivery' => PromoCodeOutDto::TYPE_DELIVERY,
+                'gift' => PromoCodeOutDto::TYPE_GIFT,
+                'bonus' => PromoCodeOutDto::TYPE_BONUS,
+            ];
+        }
+        return $this;
+    }
+
+    public function loadPromoCodeStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->promoCodeStatus = [
+                'created' => PromoCodeOutDto::STATUS_CREATED,
+                'sent' => PromoCodeOutDto::STATUS_SENT,
+                'checking' => PromoCodeOutDto::STATUS_ON_CHECKING,
+                'active' => PromoCodeOutDto::STATUS_ACTIVE,
+                'rejected' => PromoCodeOutDto::STATUS_REJECTED,
+                'paused' => PromoCodeOutDto::STATUS_PAUSED,
+                'expired' => PromoCodeOutDto::STATUS_EXPIRED,
+                'test' => PromoCodeOutDto::STATUS_TEST,
+            ];
+        }
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadBonusTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->bonusTypes = [
+                'offer' => BonusDto::TYPE_OFFER,
+                'brand' => BonusDto::TYPE_BRAND,
+                'category' => BonusDto::TYPE_CATEGORY,
+                'service' => BonusDto::TYPE_SERVICE,
+                'cartTotal' => BonusDto::TYPE_CART_TOTAL,
+                'anyOffer' => BonusDto::TYPE_ANY_OFFER,
+                'anyBrand' => BonusDto::TYPE_ANY_BRAND,
+                'anyCategory' => BonusDto::TYPE_ANY_CATEGORY,
+                'anyService' => BonusDto::TYPE_ANY_SERVICE,
+            ];
+        }
+
+        return $this;
+    }
+
+    public function loadBonusValueTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->bonusValueTypes = [
+                'percent' => BonusDto::VALUE_TYPE_PERCENT,
+                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadCustomerBonusStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->customerBonusStatus = [
+                'onHold' => CustomerBonusDto::STATUS_ON_HOLD,
+                'active' => CustomerBonusDto::STATUS_ACTIVE,
+                'expired' => CustomerBonusDto::STATUS_EXPIRED,
+                'debited' => CustomerBonusDto::STATUS_DEBITED,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -314,9 +426,16 @@ class ViewRender
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
                 'publicEventMediaCollections' => $this->publicEventMediaCollections,
-                'loadPublicEventSprintStatus' => $this->loadPublicEventSprintStatus,
+                'publicEventSprintStatus' => $this->publicEventSprintStatus,
+                'publicEventStatus' => $this->publicEventStatus,
 
                 'discountTypes' => $this->discountTypes,
+
+                'promoCodeTypes' => $this->promoCodeTypes,
+                'promoCodeStatus' => $this->promoCodeStatus,
+                'bonusValueTypes' => $this->bonusValueTypes,
+                'bonusTypes' => $this->bonusTypes,
+                'customerBonusStatus' => $this->customerBonusStatus,
             ],
             [
                 'title' => $this->title,
@@ -324,7 +443,7 @@ class ViewRender
             ]
         );
     }
-    
+
     private function getAssets()
     {
         if (frontend()->isInDevMode()) {

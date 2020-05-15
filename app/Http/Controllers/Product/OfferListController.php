@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Offer\OfferSaleStatus;
@@ -56,6 +57,40 @@ class OfferListController extends Controller
             $data['pager'] = $offerService->offersCount($query);
         }
         return response()->json($data);
+    }
+
+    public function changeSaleStatus(
+        Request $request,
+        OfferService $offerService
+    )
+    {
+        $data = $request->validate([
+            'offer_ids' => 'array|required',
+            'offer_ids.*' => 'integer',
+            'sale_status' => [
+                'required',
+                Rule::in(array_keys(OfferSaleStatus::allStatuses()))
+            ],
+        ]);
+
+        $offerService->changeSaleStatus($data['offer_ids'], $data['sale_status']);
+
+        return response('', 204);
+    }
+
+    public function deleteOffers(
+        Request $request,
+        OfferService $offerService
+    )
+    {
+        $data = $request->validate([
+            'offer_ids' => 'array|required',
+            'offer_ids.*' => 'integer',
+        ]);
+
+        $offerService->deleteOffers($data['offer_ids']);
+
+        return response('', 204);
     }
 
     protected function makeQuery(Request $request)
