@@ -59,6 +59,7 @@
         ></offers-tab>
         <orders-tab
                 v-if="nav.currentTab === 'orders'"
+                :orders="this.product.orders"
         ></orders-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"
@@ -69,7 +70,6 @@
                 :product="product"
                 :marketing="options.marketing"
         ></marketing-tab>
-
         <product-reject-modal
                 :product-id="product.id"
                 @onSave="refresh"
