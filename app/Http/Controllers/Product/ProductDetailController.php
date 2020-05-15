@@ -7,6 +7,7 @@ use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
+use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -237,6 +238,7 @@ class ProductDetailController extends Controller
         }
         $stockService = resolve(StockService::class);
         $priceService = resolve(PriceService::class);
+        $orderService = resolve(OrderService::class);
         $listOffers = collect($products->first()->offers)
             ->map(function ($item) use ($priceService, $stockService) {
                 $item['offer_id'] = $item['id'];
@@ -263,6 +265,9 @@ class ProductDetailController extends Controller
         $product = $products->first();
         $images = $productService->images($product->id);
         
+        $offersIds = (collect($products->first()->offers->pluck('offer_id'))->toArray());
+        $orders = $orderService->ordersByOffers(['offersIds' => $offersIds]);
+        $products->first()->orders = $orders;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
         return [
             $product,

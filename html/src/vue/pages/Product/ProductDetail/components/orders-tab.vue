@@ -15,15 +15,15 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>100001/100001-1</td>
-                    <td>13.05.2020</td>
+                <tr v-for="(order, index) in orders">
+                    <td>{{ order.number }}</td>
+                    <td>{{ getDate(order.created_at) }}</td>
                     <td>18.05.2020</td>
-                    <td>4195 р.</td>
+                    <td>{{ parseInt(order.cost) }}</td>
                     <td>Баринов Виктор Петрович</td>
                     <td>г. Москва, Большая шоссейная, д 12</td>
                     <td>14.05.2020</td>
-                    <td>Доставлено</td>
+                    <td>{{ order.status }}</td>
                     <td>Доставлено получателю</td>
                 </tr>
             </tbody>
@@ -43,8 +43,17 @@
             }
         },
         props: {
+            orders: Array,
         },
         methods: {
+            getDate(str) {
+                let date = new Date(str);
+                return date.toLocaleString('ru', {
+                    day: 'numeric',
+                    month: 'numeric',
+                    year: 'numeric'
+                });
+            },
         },
         computed: {
         },
