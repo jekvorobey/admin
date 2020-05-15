@@ -20,7 +20,7 @@
                 >Офферы</v-input>
             </div>
 
-            <div v-if="discount.type === discountTypes.bundle" class="col-9">
+            <div v-if="discount.type === discountTypes.bundleOffer || discount.type === discountTypes.bundleMasterclass" class="col-9">
                 <v-input v-model="discount.bundles"
                          :help="'ID бандлов через запятую'"
                          :error="discountErrors.bundles"
@@ -236,7 +236,8 @@
                                 bool = false;
                             }
                             break;
-                        case this.discountTypes.bundle:
+                        case this.discountTypes.bundleOffer:
+                        case this.discountTypes.bundleMasterclass:
                             if (!(this.discount.bundles)) {
                                 this.discountErrors.bundles = "Введите значения ID бандлов!";
                                 bool = false;

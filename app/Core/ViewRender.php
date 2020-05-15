@@ -294,7 +294,8 @@ class ViewRender
         if ($load) {
             $this->discountTypes = [
                 'offer' => DiscountTypeDto::TYPE_OFFER,
-                'bundle' => DiscountTypeDto::TYPE_BUNDLE,
+                'bundleOffer' => DiscountTypeDto::TYPE_BUNDLE_OFFER,
+                'bundleMasterclass' => DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
                 'brand' => DiscountTypeDto::TYPE_BRAND,
                 'category' => DiscountTypeDto::TYPE_CATEGORY,
                 'delivery' => DiscountTypeDto::TYPE_DELIVERY,

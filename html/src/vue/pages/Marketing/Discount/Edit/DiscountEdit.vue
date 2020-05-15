@@ -83,7 +83,8 @@
                     case this.discountTypes.offer:
                         data.offers = this.formatIds(discount.offers);
                         break;
-                    case this.discountTypes.bundle:
+                    case this.discountTypes.bundleOffer:
+                    case this.discountTypes.bundleMasterclass:
                         data.bundles = this.formatIds(discount.bundles);
                         break;
                     case this.discountTypes.brand:

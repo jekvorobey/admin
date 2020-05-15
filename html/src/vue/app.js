@@ -349,7 +349,8 @@ Vue.mixin({
  @typedef DeliveryType
  @type {Object}
  @property {integer} offer
- @property {integer} bundle
+ @property {integer} bundleOffer
+ @property {integer} bundleMasterclass
  @property {integer} brand
  @property {integer} category
  @property {integer} delivery
