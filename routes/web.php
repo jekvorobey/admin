@@ -124,6 +124,8 @@ Route::middleware('auth')->group(function () {
             Route::get('create', 'BonusController@createPage')->name('bonus.create');
             Route::post('status', 'BonusController@status')->name('bonus.status');
             Route::delete('delete', 'BonusController@delete')->name('bonus.delete');
+
+            Route::put('productLimit', 'BonusController@changeProductLimit')->name('bonus.changeProductLimit');
         });
     });
 

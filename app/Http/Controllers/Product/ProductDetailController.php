@@ -56,7 +56,12 @@ class ProductDetailController extends Controller
                 'approval' => $approvalStatuses,
                 'brands' => $brands,
                 'categories' => $categories,
-            ]
+                'marketing' => [
+                    'bonus' => [
+                        'limit' => null, // todo
+                    ]
+                ]
+            ],
         ]);
     }
     

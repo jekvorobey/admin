@@ -151,4 +151,21 @@ class BonusController extends Controller
             ]
         ], BonusService::FAILED_DEPENDENCY_CODE);
     }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function changeProductLimit(Request $request)
+    {
+        $data = $request->validate([
+            'product_id' => 'integer|required',
+            'value' => 'integer|nullable'
+        ]);
+
+        // todo
+
+        return response('', 204);
+    }
 }

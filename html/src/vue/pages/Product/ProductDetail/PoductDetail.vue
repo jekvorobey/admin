@@ -64,6 +64,11 @@
                 v-if="nav.currentTab === 'history'"
                 :operator="operator"
         ></history-tab>
+        <marketing-tab
+                v-if="nav.currentTab === 'marketing'"
+                :product="product"
+                :marketing="options.marketing"
+        ></marketing-tab>
 
         <product-reject-modal
                 :product-id="product.id"
@@ -91,6 +96,7 @@
     import OffersTab from './components/offers-tab.vue';
     import OrdersTab from './components/orders-tab.vue';
     import HistoryTab from './components/history-tab.vue';
+    import MarketingTab from './components/marketing-tab.vue';
     import ProductRejectModal from './components/product-reject-modal.vue';
     import ProductStatusModal from './components/product-status-modal.vue';
     import Services from '../../../../scripts/services/services';
@@ -107,6 +113,7 @@
         OffersTab,
         OrdersTab,
         HistoryTab,
+        MarketingTab,
         ProductRejectModal,
         ProductStatusModal,
     },
@@ -133,6 +140,7 @@
                     {value: 'offers', text: 'Предложения'},
                     {value: 'orders', text: 'В заказах'},
                     {value: 'history', text: 'История'},
+                    {value: 'marketing', text: 'Маркетинг'},
                 ]
             }
         };
