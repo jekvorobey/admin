@@ -95,23 +95,23 @@
             ></b-pagination>
         </div>
 
-        <modal-create-merchant :id="modalIdCreateMerchant"/>
+        <modal-create-merchant :id="modalIdCreateMerchant" :communication-methods="options.communicationMethods"/>
     </layout-main>
 </template>
 
 <script>
 
-import Services from '../../../../scripts/services/services';
-import withQuery from 'with-query';
+    import Services from '../../../../scripts/services/services';
+    import withQuery from 'with-query';
 
-import FMultiSelect from '../../../components/filter/f-multi-select.vue';
-import FInput from '../../../components/filter/f-input.vue';
+    import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+    import FInput from '../../../components/filter/f-input.vue';
 
-import FDate from '../../../components/filter/f-date.vue';
+    import FDate from '../../../components/filter/f-date.vue';
 
-import ModalCreateMerchant from "./components/modal-create-merchant.vue";
+    import ModalCreateMerchant from "./components/modal-create-merchant.vue";
 
-const cleanFilter = {
+    const cleanFilter = {
     id: '',
     legal_name: '',
     operator_first_name: '',
@@ -128,7 +128,15 @@ const cleanFilter = {
 export default {
     name: 'page-index',
     components: {FDate, FMultiSelect, FInput, ModalCreateMerchant},
-    props: ['done', 'iMerchants', 'iPager', 'iFilter', 'iCurrentPage', 'options', 'managers'],
+    props: [
+        'done',
+        'iMerchants',
+        'iPager',
+        'iFilter',
+        'iCurrentPage',
+        'options',
+        'managers'
+    ],
     data() {
         let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
         filter.status = filter.status.map(status => parseInt(status));

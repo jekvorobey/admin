@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
+use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\Dto\RegisterNewMerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -59,6 +60,7 @@ class MerchantListController extends Controller
             'options' => [
                 'statuses' => MerchantStatus::statusesByMode(!$done),
                 'ratings' => $merchantService->ratings(),
+                'communicationMethods' => OperatorCommunicationMethod::allMethods(),
             ],
         ]);
     }
@@ -247,6 +249,7 @@ class MerchantListController extends Controller
             'middle_name' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
+            'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
             'password' => 'required|string|min:8|confirmed',
 
             'storage_address' => 'required|string',
@@ -277,6 +280,7 @@ class MerchantListController extends Controller
                 ->setSite($data['site'])
                 ->setCanIntegration((bool)$data['can_integration'])
                 ->setSaleInfo($data['sale_info'])
+                ->setCommunicationMethod($data['communication_method'])
         );
 
         if (!$merchantId) {
