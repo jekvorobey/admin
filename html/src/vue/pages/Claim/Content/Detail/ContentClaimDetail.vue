@@ -14,9 +14,13 @@
                         </td>
                     </tr>
                 </table>
-                <div v-if="claim.payload.comment" class="comment">
+<!--                <div v-if="claim.payload.comment" class="comment">-->
+<!--                    <b>Комментарий</b><br>-->
+<!--                    <p>{{ claim.payload.comment }}</p>-->
+<!--                </div>-->
+                <div v-if="claim.merchant_message" class="comment">
                     <b>Комментарий</b><br>
-                    <p>{{ claim.payload.comment }}</p>
+                    <p>{{ claim.merchant_message }}</p>
                 </div>
             </div>
         </div>

@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Message\Dto\Claim\ClaimDto;
-use Greensight\Message\Dto\Claim\ClaimTypeDto;
-use Greensight\Message\Dto\Claim\Content\AllClaimDto;
-use Greensight\Message\Services\ClaimService\ClaimService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Message\Dto\Claim\ContentClaimDto;
+use Greensight\Message\Services\ClaimService\ContentClaimService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Dto\MerchantStatus;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Product\ProductDto;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -22,43 +27,46 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ContentClaimController extends Controller
 {
-    /** @var array */
-    protected $contentTypes = [
-        ClaimTypeDto::TYPE_CONTENT_TEXT,
-        ClaimTypeDto::TYPE_CONTENT_PHOTO,
-        ClaimTypeDto::TYPE_CONTENT_ALL
-    ];
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
+     * @param Request $request
+     * @param ContentClaimService $claimService
+     * @param UserService $userService
+     * @param MerchantService $merchantService
      * @return mixed
      */
     public function index(
         Request $request,
-        ClaimService $claimService,
-        OperatorService $operatorService
+        ContentClaimService $claimService,
+        UserService $userService,
+        MerchantService $merchantService
     )
     {
         $this->title = 'Заявки на производство контента';
 
-        /** @var Collection|ClaimTypeDto[] $claimTypes */
-        $claimTypes = $claimService->newQuery()
+        /** @var Collection|ContentClaimMetaDto[] $claimMeta */
+        $claimMeta = $claimService->newQuery()
+            ->include('typeNames')
+            ->include('unpackNames')
             ->include('statusNames')
-            ->setFilter('type', $this->contentTypes)
-            ->claimTypes();
+            ->claimMeta();
+        $meta = $claimMeta->pluck('value', 'propName');
 
-        $query = $this->prepareQuery($request, $claimService, $operatorService);
-        $claims = $this->loadClaims($query, $operatorService);
-        $pager = $query->countClaims();
+        $query = $this->prepareQuery($request, $claimService, $userService);
+        $claims = $query? $this->loadClaims($query, $userService, $merchantService) : [];
+        $pager = $query? $query->countClaims() : [];
 
-        $types = $claimTypes->pluck('name', 'id')->toArray();
+        $merchantsQuery = (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name');
+        $merchants = $merchantService->merchants($merchantsQuery)->pluck('legal_name', 'id');
 
         return $this->render('Claim/Content/List', [
             'iClaims' => $claims,
-            'statuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_CONTENT_ALL)->statusNames,
-            'types' => $types,
+            'options' => [
+                'statuses' => $meta['statusNames'],
+                'types' => $meta['typeNames'],
+                'unpack' => $meta['unpackNames'],
+                'merchants' => $merchants,
+            ],
             'iPager' => $pager,
             'iCurrentPage' => (int) $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
@@ -66,117 +74,266 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
+     * @param ContentClaimService $claimService
+     * @param MerchantService $merchantService
+     * @return mixed
+     */
+    public function create(
+        ContentClaimService $claimService,
+        MerchantService $merchantService
+    ) {
+        $this->title = 'Создание заявки на производство контента';
+
+        $claimMeta = $claimService->newQuery()
+            ->include('typeNames')
+            ->include('unpackNames')
+            ->include('noUnpack')
+            ->include('statusNames')
+            ->claimMeta();
+
+        $meta = $claimMeta->pluck('value', 'propName');
+
+        $merchantsQuery = (new RestQuery())
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->setFilter('status', MerchantStatus::STATUS_WORK);
+        $merchants = $merchantService
+            ->merchants($merchantsQuery)
+            ->pluck('legal_name', 'id');;
+
+        return $this->render('Claim/Content/Create', [
+            'options' => [
+                'merchantOptions' => $merchants,
+                'typeOptions' => $meta['typeNames'],
+                'unpackOptions' => $meta['unpackNames'],
+                'noUnpack' => $meta['noUnpack']
+            ]
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param RequestInitiator $user
+     * @param ContentClaimService $contentClaimService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveClaim(
+        Request $request,
+        RequestInitiator $user,
+        ContentClaimService $contentClaimService
+    ) {
+        $data = $this->validate($request, [
+            'merchant_id' => 'required|integer',
+            'type' => 'required|integer',
+            'unpacking' => 'nullable|boolean',
+            'product_ids' => 'required|array'
+        ]);
+        $data['user_id'] = $user->userId();
+
+        $contentClaim = new ContentClaimDto($data);
+
+        $id = $contentClaimService->createClaim($contentClaim);
+        return response()->json($id);
+    }
+
+    /**
+     * @param Request $request
+     * @param ContentClaimService $claimService
+     * @param UserService $userService
+     * @param MerchantService $merchantService
      * @return \Illuminate\Http\JsonResponse
      */
     public function page(
         Request $request,
-        ClaimService $claimService,
-        OperatorService $operatorService
+        ContentClaimService $claimService,
+        UserService $userService,
+        MerchantService $merchantService
     ) {
-        $query = $this->prepareQuery($request, $claimService, $operatorService);
-        $result = [
-            'items' => $this->loadClaims($query, $operatorService),
-        ];
-        if ($request->get('page') == 1) {
+        $query = $this->prepareQuery($request, $claimService, $userService);
+        $result = $query? [
+            'items' => $this->loadClaims($query, $userService, $merchantService),
+        ] : [];
+        if ($query && $request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
         }
         return response()->json($result);
     }
 
     /**
-     * @param  int  $id
-     * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
-     * @param  ProductService  $productService
+     * @param int $id
+     * @param ContentClaimService $claimService
+     * @param UserService $userService
+     * @param MerchantService $merchantService
+     * @param ProductService $productService
      * @return mixed
      */
     public function detail(
         int $id,
-        ClaimService $claimService,
-        OperatorService $operatorService,
+        ContentClaimService $claimService,
+        UserService $userService,
+        MerchantService $merchantService,
         ProductService $productService
     ) {
         $this->title = 'Заявка на производство контента';
 
         $query = $claimService->newQuery()->setFilter('id', $id);
-        $claim = $this->loadClaims($query, $operatorService)->first();
+        /** @var ContentClaimDto $claim */
+        $claim = $this->loadClaims($query, $userService, $merchantService)->first();
 
         if (!$claim) {
             throw new NotFoundHttpException();
         }
 
-        /** @var Collection|ClaimTypeDto[] $claimTypes */
-        $claimTypes = $claimService->newQuery()
+        /** @var Collection|ContentClaimMetaDto[] $claimMeta */
+        $claimMeta = $claimService->newQuery()
+            ->include('typeNames')
+            ->include('unpackNames')
             ->include('statusNames')
-            ->setFilter('type', $this->contentTypes)
-            ->claimTypes();
+            ->claimMeta();
 
-        $productIds = $claim->payload['productId'];
+        $meta = $claimMeta->pluck('value', 'propName');
+
+        $productIds = $claim->product_ids;
         /** @var Collection|ProductDto[] $products */
         $products = $productService->newQuery()->setFilter('id', $productIds)->products();
 
         return $this->render('Claim/Content/Detail', [
             'claim' => $claim,
-            'statuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_CONTENT_ALL)->statusNames,
+            'statuses' => $meta['statusNames'],
             'products' => $products
         ]);
     }
 
-    //    public function create(
-    //        ClaimService $claimService,
-    //        OperatorService $operatorService,
-    //        RequestInitiator $user,
-    //        ProductBuffer $buffer
-    //    )
-    //    {
-    //        $productIds = $buffer->all();
-    //        if (empty($productIds)) {
-    //            throw new BadRequestHttpException('po products selected');
-    //        }
-    //        $operator = $operatorService->current();
-    //        if (!$operator) {
-    //            throw new BadRequestHttpException('user is not operator');
-    //        }
-    //
-    //        $claim = new PhotoClaimDto();
-    //        $claim->type = ClaimTypeDto::TYPE_PHOTO;
-    //        $claim->user_id = $user->userId();
-    //        $claim->setProductId(array_values($productIds));
-    //        $claim->setMerchantId($operator->merchant_id);
-    //
-    //        $claimService->createClaim($claim);
-    //        return response()->json();
-    //    }
+    /**
+     * @param Request $request
+     * @param ContentClaimService $contentClaimService
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeStatuses(
+        Request $request,
+        ContentClaimService $contentClaimService
+    ) {
+        $data = $this->validate($request, [
+            'claim_ids' => 'required|array',
+            'status' => 'required|integer',
+        ]);
+
+        $contentClaimService->updateClaims($data['claim_ids'], $data['status']);
+        return response()->json(['status' => 'ok']);
+    }
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  OperatorService  $operatorService
-     * @return \Greensight\CommonMsa\Dto\DataQuery
+     * @param Request $request
+     * @param ContentClaimService $contentClaimService
+     * @return \Illuminate\Http\JsonResponse
      */
-    protected function prepareQuery(Request $request, ClaimService $claimService, OperatorService $operatorService)
+    public function deleteClaims(
+        Request $request,
+        ContentClaimService $contentClaimService
+    ) {
+        $data = $this->validate($request, [
+            'claim_ids' => 'required|array',
+        ]);
+
+        $contentClaimService->deleteClaims($data['claim_ids']);
+        return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * @param Request $request
+     * @param OfferService $offerService
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function loadProductsByMerchantId(
+        Request $request,
+        OfferService $offerService
+    ) {
+        $data = $this->validate($request, [
+            'id' => 'required|integer',
+        ]);
+        $query = $offerService->newQuery()
+            ->addFields(OfferDto::entity(), 'product_id')
+            ->setFilter('merchant_id', $data['id']);
+        $products = $offerService->offers($query);
+        $availableIds = $products->pluck('product_id')->all();
+
+        return response()->json([
+            'ids' => $availableIds
+        ]);
+    }
+
+
+
+//    public function create(
+//        ClaimService $claimService,
+//        OperatorService $operatorService,
+//        RequestInitiator $user,
+//        ProductBuffer $buffer
+//    )
+//    {
+//        $productIds = $buffer->all();
+//        if (empty($productIds)) {
+//            throw new BadRequestHttpException('po products selected');
+//        }
+//        $operator = $operatorService->current();
+//        if (!$operator) {
+//            throw new BadRequestHttpException('user is not operator');
+//        }
+//
+//        $claim = new PhotoClaimDto();
+//        $claim->type = ClaimTypeDto::TYPE_PHOTO;
+//        $claim->user_id = $user->userId();
+//        $claim->setProductId(array_values($productIds));
+//        $claim->setMerchantId($operator->merchant_id);
+//
+//        $claimService->createClaim($claim);
+//        return response()->json();
+//    }
+
+    /**
+     * @param Request $request
+     * @param ContentClaimService $claimService
+     * @param UserService $userService
+     * @return \Greensight\CommonMsa\Dto\DataQuery|null
+     */
+    protected function prepareQuery(Request $request, ContentClaimService $claimService, UserService $userService)
     {
         $page = $request->get('page', 1);
-        $filters = array_filter($request->get('filter', []));
+        $filters = array_filter($request->get('filter', []), function ($v, $k) {
+            return $v || ($k == 'unpack');
+        }, ARRAY_FILTER_USE_BOTH );
 
-        $restQuery = $claimService->newQuery()->addSort('created_at', 'desc');
-        $restQuery->setFilter('type', $this->contentTypes);
+        $restQuery = $claimService->newQuery();
 
         foreach ($filters as $key => $value) {
             switch ($key) {
-                case 'showDone':
-                    if($value == "true") {
-                        $restQuery->setFilter('status', AllClaimDto::STATUS_DONE);
-                    } else {
-                        $restQuery->setFilter('status', '!=', AllClaimDto::STATUS_DONE);
-                    }
+                case 'merchant':
+                    $restQuery->setFilter('merchant_id', $value);
+                    break;
+
+                case 'unpack':
+                    $restQuery->setFilter('unpacking', $value);
                     break;
 
                 case 'created_at':
-                    $restQuery->setFilter('created_at', '>=', Carbon::parse($value));
+                    $value = array_filter($value);
+                    if ($value){
+                        $restQuery->setFilter('created_at', '>=', $value[0]);
+                        $restQuery->setFilter('created_at', '<', Carbon::parse($value[1])
+                            ->addDay()
+                            ->toDateTimeString());
+                    }
+                    break;
+
+                case 'user':
+                    $userQuery = $userService
+                        ->newQuery()
+                        ->prepare($userService)
+                        ->addFields('id')
+                        ->setFilter('login', $value);
+                    $user = $userQuery->users()->first();
+                    if (!$user) return null;
+                    $restQuery->setFilter('user_id', $user->id);
                     break;
 
                 default:
@@ -190,20 +347,28 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  OperatorService  $operatorService
+     * @param RestQuery $query
+     * @param UserService $userService
+     * @param MerchantService $merchantService
      * @return Collection
      */
-    protected function loadClaims(RestQuery $query, OperatorService $operatorService)
+    protected function loadClaims(RestQuery $query, UserService $userService, MerchantService $merchantService)
     {
-        /** @var Collection|ClaimDto[] $claims */
+        /** @var Collection|ContentClaimDto[] $claims */
         $claims = $query->claims();
 
         $userIds = $claims->pluck('user_id')->all();
-        $operatorsQuery = (new RestQuery())->setFilter('user_id', $userIds);
-        $users = $operatorService->operators($operatorsQuery)->keyBy('user_id');
-        return $claims->map(function (ClaimDto $claim) use ($users) {
-            $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->name : 'N/A';
+        $usersQuery = (new RestQuery())->setFilter('id', $userIds);
+        /** @var Collection|UserDto[] $users */
+        $users = $userService->users($usersQuery)->keyBy('id');
+
+        $merchantIds = $claims->pluck('merchant_id')->all();
+        $merchantQuery = (new RestQuery())->setFilter('id', $merchantIds);
+        $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
+
+        return $claims->map(function (ContentClaimDto $claim) use ($users, $merchants) {
+            $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->login : 'N/A';
+            $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
             return $claim;
         });
     }
