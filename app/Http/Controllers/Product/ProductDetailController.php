@@ -7,6 +7,7 @@ use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
+use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
@@ -58,7 +59,7 @@ class ProductDetailController extends Controller
             'options' => [
                 'availableProperties' => $availableProps,
                 'directoryValues' => $directoryValues,
-                
+                'orderStatuses' => OrderStatus::allStatuses(),
                 'approval' => $approvalStatuses,
                 'brands' => $brands,
                 'categories' => $categories,
