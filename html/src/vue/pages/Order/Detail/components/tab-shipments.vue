@@ -53,8 +53,8 @@
                                 <small>{{ item.product.vendor_code }}</small>
                             </td>
                             <td class="with-small">
-                                {{ item.product.category.name }}
-                                <small>{{ item.product.brand.name }}</small>
+                                {{ item.product && item.product.category ? item.product.category.name : '' }}
+                                <small>{{ tem.product && item.product.category ? item.product.brand.name : '' }}</small>
                             </td>
                             <td>{{ item.qty | integer }}</td>
                             <td>{{ item.cost}}</td>
@@ -76,8 +76,8 @@
                             <small>{{ item.product.vendor_code }}</small>
                         </td>
                         <td class="with-small">
-                            {{ item.product.category.name }}
-                            <small>{{ item.product.brand.name }}</small>
+                            {{ item.product && item.product.category ? item.product.category.name : ''}}
+                            <small>{{ item.product && item.product.brand ? item.product.brand.name : ''}}</small>
                         </td>
                         <td>{{ item.qty | integer }}</td>
                         <td>{{ roundValue(item.cost) }} руб.</td>
@@ -103,7 +103,7 @@
         }
     },
     props: {
-        shipments: {},
+        model: {},
     },
     methods: {
         roundValue(value) {
@@ -122,7 +122,11 @@
 
         }
     },
-    mounted() {
+    computed: {
+        shipments: {
+            get() {return this.model},
+            set(value) {this.$emit('update:model', value)},
+        },
     }
 }
 </script>

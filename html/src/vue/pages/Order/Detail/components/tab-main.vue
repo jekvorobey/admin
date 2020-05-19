@@ -68,16 +68,23 @@ export default {
             new_addition: null,
         }
     },
-    props: {
-        customer_notes: Array,
-        order: {},
-    },
+    props: [
+        'model',
+    ],
     methods: {
         addAddition() {
 
         }
     },
-    mounted() {
+    computed: {
+        order: {
+            get() {
+                return this.model
+            },
+            set(value) {
+                this.$emit('update:model', value)
+            },
+        },
     }
 }
 </script>

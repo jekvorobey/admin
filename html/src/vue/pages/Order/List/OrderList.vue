@@ -372,9 +372,9 @@
                     },
                     {
                         name: 'Способ оплаты',
-                        code: 'payment_method',
+                        code: 'payment_methods',
                         value: function(order) {
-                            return order.payment_method;
+                            return order.payment_methods;
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -388,18 +388,18 @@
                     {
                         name: 'Логистический оператор',
                         description: 'Логистический оператор на последней миле',
-                        code: 'delivery_service',
+                        code: 'delivery_services',
                         value: function(order) {
-                            return order.delivery_service;
+                            return order.delivery_services;
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
                         name: 'Город доставки',
-                        code: 'cities',
+                        code: 'delivery_cities',
                         value: function(order) {
-                            return order.cities;
+                            return order.delivery_cities;
                         },
                         isShown: true,
                         isAlwaysShown: true,

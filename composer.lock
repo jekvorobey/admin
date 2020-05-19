@@ -820,12 +820,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "c0c42b6d0058764aa04c69bf3e7ecec733c59d7c"
+                "reference": "9bc74719b6cac58b3b83733c7c17e63f047587f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=c0c42b6d0058764aa04c69bf3e7ecec733c59d7c",
-                "reference": "c0c42b6d0058764aa04c69bf3e7ecec733c59d7c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=9bc74719b6cac58b3b83733c7c17e63f047587f2",
+                "reference": "9bc74719b6cac58b3b83733c7c17e63f047587f2",
                 "shasum": ""
             },
             "require": {
@@ -860,7 +860,10 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-04-03T16:40:09+00:00"
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13390453/issues"
+            },
+            "time": "2020-05-19T14:01:33+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -868,12 +871,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "9ff68aea4c681c18093d99873de8bfe6143f85f7"
+                "reference": "81c77742111fbdd106bf95c3261f2f2858fd9b02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=9ff68aea4c681c18093d99873de8bfe6143f85f7",
-                "reference": "9ff68aea4c681c18093d99873de8bfe6143f85f7",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=81c77742111fbdd106bf95c3261f2f2858fd9b02",
+                "reference": "81c77742111fbdd106bf95c3261f2f2858fd9b02",
                 "shasum": ""
             },
             "require": {
@@ -912,7 +915,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
             },
-            "time": "2020-05-15T16:30:59+00:00"
+            "time": "2020-05-19T19:11:54+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -920,12 +923,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "39ae578a5d13c047641352a33bc8115944cb081a"
+                "reference": "573131a98f9bb9c83cc29e573c47e7a8e2d84bb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=39ae578a5d13c047641352a33bc8115944cb081a",
-                "reference": "39ae578a5d13c047641352a33bc8115944cb081a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=573131a98f9bb9c83cc29e573c47e7a8e2d84bb8",
+                "reference": "573131a98f9bb9c83cc29e573c47e7a8e2d84bb8",
                 "shasum": ""
             },
             "require": {
@@ -952,7 +955,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
             },
-            "time": "2020-05-13T22:03:22+00:00"
+            "time": "2020-05-19T19:10:36+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1497,16 +1500,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.68",
+            "version": "1.0.69",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "3e4198372276ec99ac3409a21d7c9d1ced9026e4"
+                "reference": "7106f78428a344bc4f643c233a94e48795f10967"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3e4198372276ec99ac3409a21d7c9d1ced9026e4",
-                "reference": "3e4198372276ec99ac3409a21d7c9d1ced9026e4",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/7106f78428a344bc4f643c233a94e48795f10967",
+                "reference": "7106f78428a344bc4f643c233a94e48795f10967",
                 "shasum": ""
             },
             "require": {
@@ -1583,7 +1586,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2020-05-12T20:33:44+00:00"
+            "time": "2020-05-18T15:13:39+00:00"
         },
         {
             "name": "mikehaertl/php-shellcommand",

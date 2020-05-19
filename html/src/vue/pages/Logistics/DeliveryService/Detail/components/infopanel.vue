@@ -1,10 +1,10 @@
 <template>
-    <div>
-        <div class="row">
-            <div class="col">
+    <b-card>
+        <b-row>
+            <b-col>
                 <p class="font-weight-bold">Инфопанель</p>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <div class="float-right">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
@@ -13,34 +13,34 @@
                         Отмена
                     </button>
                 </div>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
 
-        <div class="row">
-            <div class="col">
+        <b-row>
+            <b-col>
                 <v-input v-model="$v.form.name.$model" :error="errorName">
                     Название
                 </v-input>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-date v-model="$v.form.registered_at.$model" :error="errorRegisteredAt">
                     Дата регистрации
                 </v-date>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col>
                 <v-select v-model="$v.form.status.$model" :options="deliveryServiceStatusOptions">
                     Статус
                 </v-select>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-input v-model="$v.form.priority.$model" :error="errorPriority">
                     Приоритет
                 </v-input>
-            </div>
-        </div>
-    </div>
+            </b-col>
+        </b-row>
+    </b-card>
 </template>
 
 <script>
