@@ -80,7 +80,7 @@
                         break;
                     case this.discountTypes.bundleOffer:
                     case this.discountTypes.bundleMasterclass:
-                        data.bundles = this.formatIds(discount.bundles);
+                        data.bundle_items = this.formatIds(discount.bundleItems);
                         break;
                     case this.discountTypes.brand:
                         data.brands = discount.brands;

@@ -108,6 +108,12 @@ Route::middleware('auth')->group(function () {
                 ->name('discount.update');
         });
 
+        Route::prefix('bundles')->group(function () {
+            Route::get('/', 'BundleController@index')->name('bundle.list');
+            Route::get('page', 'BundleController@page')->name('bundle.pagination');
+            Route::get('/create', 'BundleController@createPage')->name('bundle.create');
+        });
+
         Route::prefix('promo-code')->group(function () {
             Route::get('', 'PromoCodeController@index')->name('promo-code.list');
             Route::post('', 'PromoCodeController@create')->name('promo-code.save');
@@ -140,12 +146,16 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('content')->group(function () {
-            Route::post('', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
+            Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
+            Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');
+            Route::put('changeStatus', 'ContentClaimController@changeStatuses')->name('contentClaims.changeStatuses');
+            Route::delete('', 'ContentClaimController@deleteClaims')->name('contentClaims.deleteClaims');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
             });
+            Route::get('products-by-merchant', 'ContentClaimController@loadProductsByMerchantId')->name('contentClaims.productsByMerchant');
         });
 
         Route::prefix('price-change')->group(function () {
