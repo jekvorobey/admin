@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Core\DiscountHelper;
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
+use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
+use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -15,6 +21,76 @@ use Pim\Services\CategoryService\CategoryService;
  */
 class BundleController extends Controller
 {
+    /**
+     * Список бандлов
+     *
+     * @param Request $request
+     * @param DiscountService $discountService
+     * @param RequestInitiator $user
+     * @return mixed
+     */
+    public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
+    {
+        $userId = $user->userId();
+        $pager = DiscountHelper::getDefaultPager($request);
+        $params = DiscountHelper::getParams($request, $userId, $pager, null, [
+            DiscountTypeDto::TYPE_BUNDLE_OFFER,
+            DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
+        ]);
+        $countParams = DiscountHelper::getParams($request, $userId, [], null, [
+            DiscountTypeDto::TYPE_BUNDLE_OFFER,
+            DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
+        ]);
+        $discounts = DiscountHelper::load($params, $discountService);
+        $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService, $userId);
+        $pager['total'] = DiscountHelper::count($countParams, $discountService);
+
+        $this->title = 'Бандлы';
+        $this->loadDiscountTypes = true;
+        return $this->render('Marketing/Discount/List', [
+            'iDiscounts' => $discounts,
+            'iCurrentPage' => $pager['page'],
+            'roles' => Helpers::getOptionRoles(),
+            'iFilter' => $params['filter'],
+            'discountStatuses' => DiscountStatusDto::allStatuses(),
+            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->filter(function ($value, $key) {
+                return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
+            }),
+            'merchantNames' => DiscountHelper::getMerchantNames(),
+            'userNames' => DiscountHelper::getUserNames(),
+            'authors' => $discountUserInfo['authors'],
+            'initiators' => $discountUserInfo['initiators'],
+            'iPager' => $pager,
+        ]);
+    }
+
+    /**
+     * AJAX пагинация страниц с бандлами
+     *
+     * @param Request $request
+     * @param DiscountService $discountService
+     * @param RequestInitiator $user
+     * @return JsonResponse
+     */
+    public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
+    {
+        $userId = $user->userId();
+        $pager = DiscountHelper::getDefaultPager($request);
+        $params = DiscountHelper::getParams($request, $userId, $pager, null, [
+            DiscountTypeDto::TYPE_BUNDLE_OFFER,
+            DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
+        ]);
+        $countParams = DiscountHelper::getParams($request, $userId, [], null, [
+            DiscountTypeDto::TYPE_BUNDLE_OFFER,
+            DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
+        ]);
+        $discounts = DiscountHelper::load($params, $discountService);
+        return response()->json([
+            'iDiscounts' => $discounts,
+            'total' => DiscountHelper::count($countParams, $discountService),
+        ]);
+    }
+
     /**
      * Страница для создания бандла
      *

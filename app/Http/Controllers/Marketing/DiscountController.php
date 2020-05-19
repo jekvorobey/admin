@@ -47,6 +47,7 @@ class DiscountController extends Controller
         $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService, $userId);
         $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
+        $this->loadDiscountTypes = true;
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => $pager['page'],

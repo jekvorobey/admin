@@ -34,10 +34,16 @@ class DiscountHelper
      * @param int     $userId
      * @param array   $pager
      * @param int     $merchantId
+     * @param array $type
      * @return array
      */
-    public static function getParams(Request $request, int $userId, array $pager = [], int $merchantId = null)
-    {
+    public static function getParams(
+        Request $request,
+        int $userId,
+        array $pager = [],
+        int $merchantId = null,
+        array $type = []
+    ) {
         $discountInDto = new DiscountInDto();
 
         if (!empty($pager)) {
@@ -64,6 +70,7 @@ class DiscountHelper
         isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
         ($merchantId) ? $discountInDto->merchant($merchantId) : null;
+        ($type) ? $discountInDto->type($type) : null;
 
         return $discountInDto
             ->status(DiscountStatusDto::STATUS_CREATED, true, $userId)

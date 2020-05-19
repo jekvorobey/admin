@@ -109,7 +109,8 @@
 
         <div class="row mb-3">
             <div class="col-12 mt-3">
-                <a :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
+                <a v-if="!ifBundle()" :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
+                <a v-if="ifBundle()" :href="getRoute('bundle.create')" class="btn btn-success">Создать бандл</a>
 
                 <button class="btn btn-secondary" disabled v-if="discountId <= 0">Редактировать скидку</button>
                 <a :href="getRoute('discount.edit', {id: discountId})" class="btn btn-secondary" v-else>Редактировать скидку</a>
@@ -359,13 +360,18 @@
             },
             loadPage() {
                 this.processing = true;
-                Service.net().get(this.route('discount.pagination'), {
+                let route = this.ifBundle() ?
+                    this.route('bundle.pagination') :
+                    this.route('discount.pagination');
+                Service.showLoader();
+                Service.net().get(route, {
                     page: this.currentPage,
                     filter: this.appliedFilter,
                 }).then(data => {
                     this.discounts = data.iDiscounts;
                     this.total = data.total;
                     this.processing = false;
+                    Service.hideLoader();
                 });
             },
             statusClass(discount) {
@@ -419,6 +425,10 @@
                     checkboxes[discountId] = newValue;
                 });
                 this.checkboxes = checkboxes;
+            },
+            ifBundle() {
+                return JSON.stringify(Object.keys(this.optionDiscountTypes).map(type => parseInt(type))) ===
+                    JSON.stringify([this.discountTypes.bundleOffer, this.discountTypes.bundleMasterclass]);
             },
         },
         computed: {

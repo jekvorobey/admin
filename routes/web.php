@@ -109,8 +109,8 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('bundles')->group(function () {
-//            Route::get('/', 'BundleController@index')->name('bundle.list');
-//            Route::get('page', 'BundleController@page')->name('bundle.pagination');
+            Route::get('/', 'BundleController@index')->name('bundle.list');
+            Route::get('page', 'BundleController@page')->name('bundle.pagination');
             Route::get('/create', 'BundleController@createPage')->name('bundle.create');
         });
 
