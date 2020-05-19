@@ -373,7 +373,7 @@ class ContentClaimController extends Controller
         $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
 
         return $claims->map(function (ContentClaimDto $claim) use ($users, $merchants) {
-            $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->login : 'N/A';
+            $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->short_name : 'N/A';
             $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
             return $claim;
         });
