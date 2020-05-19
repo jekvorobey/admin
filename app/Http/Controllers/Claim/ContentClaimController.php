@@ -49,12 +49,15 @@ class ContentClaimController extends Controller
             ->include('typeNames')
             ->include('unpackNames')
             ->include('statusNames')
+            ->include('noUnpack')
+            ->include('adjustStatuses')
+            ->include('deliveryConfirm')
             ->claimMeta();
         $meta = $claimMeta->pluck('value', 'propName');
 
         $query = $this->prepareQuery($request, $claimService, $userService);
-        $claims = $query? $this->loadClaims($query, $userService, $merchantService) : [];
-        $pager = $query? $query->countClaims() : [];
+        $claims = $query ? $this->loadClaims($query, $userService, $merchantService) : [];
+        $pager = $query ? $query->countClaims() : [];
 
         $merchantsQuery = (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name');
         $merchants = $merchantService->merchants($merchantsQuery)->pluck('legal_name', 'id');
@@ -62,13 +65,16 @@ class ContentClaimController extends Controller
         return $this->render('Claim/Content/List', [
             'iClaims' => $claims,
             'options' => [
+                'merchants' => $merchants,
                 'statuses' => $meta['statusNames'],
                 'types' => $meta['typeNames'],
                 'unpack' => $meta['unpackNames'],
-                'merchants' => $merchants,
+                'adjustStatuses' => $meta['adjustStatuses'],
+                'noUnpack' => $meta['noUnpack'],
+                'deliveryConfirm' => $meta['deliveryConfirm']
             ],
             'iPager' => $pager,
-            'iCurrentPage' => (int) $request->get('page', 1),
+            'iCurrentPage' => (int)$request->get('page', 1),
             'iFilter' => $request->get('filter', []),
         ]);
     }
