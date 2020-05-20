@@ -3,7 +3,7 @@
         <b-row>
             <b-col>
                 <p class="font-weight-bold">KPIs</p>
-                <b-row v-for="kpi in kpis">
+                <b-row v-for="kpi in kpis" v-bind:key="kpi.status.id">
                     <b-col>
                         <span class="font-weight-bold">{{kpi.status.name}}:</span>
                         {{kpi.status_at}}

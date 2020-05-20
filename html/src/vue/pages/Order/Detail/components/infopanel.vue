@@ -37,6 +37,7 @@
         <b-row class="mb-3">
             <b-col><span class="font-weight-bold">Заказ {{ order.number }} от {{order.created_at}}</span></b-col>
             <b-col>
+                <span class="font-weight-bold">Статус заказа:</span>
                 <order-status :status='order.status'/>
                 <span class="badge badge-danger" v-if="isCancel">Отменен</span>
                 <span class="badge badge-danger" v-if="isProblem">Проблемный</span>
@@ -78,6 +79,7 @@
                 <fa-icon icon="question-circle" v-b-popover.hover="tooltipOrderCost"></fa-icon>
             </b-col>
             <b-col>
+                <span class="font-weight-bold">Статус оплаты:</span>
                 <payment-status :status='order.payment_status'/>
             </b-col>
         </b-row>
