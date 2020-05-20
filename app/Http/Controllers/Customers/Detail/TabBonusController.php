@@ -22,7 +22,7 @@ class TabBonusController extends Controller
     {
         /** @var CustomerService $customerService */
         $customerService = resolve(CustomerService::class);
-        $bonuses = $customerService->getBonuses($id);
+        $searchBonuses = $customerService->getBonuses($id);
         $bonusInfo = $customerService->getBonusInfo($id);
 
         $userService = resolve(UserService::class);
@@ -34,7 +34,7 @@ class TabBonusController extends Controller
             'bonuses' => [
                 'available' => $bonusInfo->available,
                 'on_hold' => $bonusInfo->on_hold,
-                'items' => $bonuses,
+                'items' => $searchBonuses->bonuses,
             ],
             'statusNames' => CustomerBonusDto::statusesNames(),
             'userNames' => collect($users)->pluck('full_name', 'id'),

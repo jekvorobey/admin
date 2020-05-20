@@ -1,26 +1,27 @@
 <?php
+
 namespace App\Http\Controllers\Order;
 
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Logistics\Dto\Lists\PointDto;
+use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
-use Greensight\Oms\Dto\Delivery\DeliveryStatus;
-use Greensight\Oms\Dto\Delivery\ShipmentDto;
-use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\PaymentMethod;
-use Greensight\Oms\Services\DeliveryService\DeliveryService;
+use Greensight\Oms\Dto\Payment\PaymentDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
@@ -35,17 +36,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class OrderDetailController extends Controller
 {
     /**
-     * @param int $id
+     * @param  int  $id
      * @return mixed
      * @throws \Exception
      */
     public function detail(int $id)
     {
-        $data = $this->getDetailData($id);
-        $this->title = 'Редактирование заказа ' . $data['number'];
+        $order = $this->getOrder($id);
+        $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 
         return $this->render('Order/Detail', [
-            'iOrder' => $data
+            'iOrder' => $order,
+            'kpis' => $order ? $this->getKpis($order) : [],
         ]);
     }
 
@@ -83,7 +85,7 @@ class OrderDetailController extends Controller
         $orderService->payOrder($id);
 
         return response()->json([
-            'order' => $this->getDetailData($id),
+            'order' => $this->getOrder($id),
         ]);
     }
 
@@ -99,32 +101,34 @@ class OrderDetailController extends Controller
         $orderService->cancelOrder($id);
 
         return response()->json([
-            'order' => $this->getDetailData($id),
+            'order' => $this->getOrder($id),
         ]);
     }
 
     /**
      * @param  int  $id
-     * @return array
+     * @return OrderDto
      * @throws \Exception
      */
-    protected function getDetailData(int $id): array
+    protected function getOrder(int $id): OrderDto
     {
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
         /** @var ProductService $productService */
         $productService = resolve(ProductService::class);
+        /** @var CustomerService $customerService */
+        $customerService = resolve(CustomerService::class);
         /** @var UserService $userService */
         $userService = resolve(UserService::class);
-        /** @var DeliveryService $deliveryService */
-        $deliveryService = resolve(DeliveryService::class);
-        /** @var ShipmentService $shipmentService */
-        $shipmentService = resolve(ShipmentService::class);
+        /** @var ListsService $listsService */
+        $listsService = resolve(ListsService::class);
+        /** @var StoreService $storeService */
+        $storeService = resolve(StoreService::class);
 
         $restQuery = $orderService
             ->newQuery()
             ->setFilter('id', $id)
-            ->include(BasketItemDto::entity());
+            ->include('all');
         $orders = $orderService->orders($restQuery);
         if (!$orders->count()) {
             throw new NotFoundHttpException();
@@ -132,177 +136,143 @@ class OrderDetailController extends Controller
 
         /** @var OrderDto $order */
         $order = $orders->first();
-        $data = json_decode(json_encode($order->toArray()), true);
 
-        if (isset($data['basket']['items']) && !empty($data['basket']['items'])) {
-            $basketItems = &$data['basket']['items'];
+        // Получаем покупателей заказа
+        $customerQuery = $customerService->newQuery()
+            ->setFilter('id', $order->customer_id);
+        /** @var CustomerDto $customer */
+        $customer = $customerService->customers($customerQuery)->first();
+        if ($customer) {
+            $userQuery = $userService->newQuery()
+                ->setFilter('id', $customer->user_id);
+            $customer['user'] = $userService->users($userQuery)->first();
+            $order['customer'] = $customer;
+        }
 
+        // Получаем склады заказа
+        $storeIds = collect();
+        foreach ($order->deliveries as $delivery) {
+            $storeIds->merge($delivery->shipments->pluck('store_id'));
+        }
+        $storeIds = $storeIds->unique();
+        $storeQuery = $storeService->newQuery()
+            ->setFilter('id', $storeIds);
+        $stores = $storeService->stores($storeQuery);
+
+        /** @var Collection|PointDto[] $points */
+        $points = collect();
+        $pointIds = $order->deliveries->pluck('point_id')->filter()->unique()->values()->all();
+        if ($pointIds) {
+            $points = $listsService->points($listsService->newQuery()->setFilter('id', $pointIds))
+                ->keyBy('id');
+        }
+
+        $shipments = collect();
+        $cities = collect();
+        foreach ($order->deliveries as $delivery) {
+            if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
+                if ($points->has($delivery->point_id)) {
+                    $cities->push($points[$delivery->point_id]->getCityWithType());
+                }
+            } else {
+                $cities->push($delivery->getCity());
+            }
+
+            $delivery->status = $delivery->status();
+            $delivery->delivery_method = $delivery->deliveryMethod();
+            $delivery->delivery_service = $delivery->deliveryService();
+            $delivery->payment_status = $delivery->paymentStatus();
+            $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
+
+            foreach ($delivery->shipments as $shipment) {
+                $shipment->status = $shipment->status();
+                $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile();
+                $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
+                $shipment['cargo'] = $shipment->cargo;
+                $shipment->payment_status = $shipment->paymentStatus();
+            }
+            $shipments = $shipments->merge($delivery->shipments);
+        }
+        $order['shipments'] = $shipments;
+
+        $order->status = $order->status();
+
+        $order->delivery_type = $order->deliveryType();
+        $order['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+            return $delivery->delivery_service;
+        })->unique();
+        $order['delivery_methods'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+            return $delivery->delivery_method;
+        })->unique();
+        $order['delivery_cities'] = $cities->unique()->join(', ');
+
+        $order->created_at = dateTime2str(new Carbon($order->created_at));
+        $order->updated_at = dateTime2str(new Carbon($order->updated_at));
+
+        $order['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
+            return $payment->paymentMethod()->name;
+        })->unique()->join(', ');
+        $order['product_price'] = $order->price - $order->delivery_price;
+        $order['to_pay'] = $order->isPayed() ? 0 : $order->price;
+        $order->payment_status = $order->paymentStatus();
+
+        $order['weight'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
+            int $sum,
+            BasketItemDto $item
+        ) {
+            return $sum + $item->getProductWeight();
+        }, 0) : 0;
+        $order['total_qty'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
+            int $sum,
+            BasketItemDto $item
+        ) {
+            return $sum + $item->qty;
+        }, 0) : 0;
+
+        if ($order->basket->items->isNotEmpty()) {
             $offersIds = $order->basket->items->pluck('offer_id')->toArray();
             $restQuery = $productService->newQuery()
                 ->addFields(ProductDto::entity(), 'vendor_code')
-                ->include(CategoryDto::entity(), BrandDto::entity());
+                ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
-            $productsIds = $productsByOffers->keyBy(function ($item) {
-                return $item['product']->id;
-            })->keys()->toArray();
-            if ($productsIds) {
-                $images = $productService
-                    ->allImages($productsIds, 1)
-                    ->pluck('url', 'productId'); //todo Добавить типы фото и константы для них
-            }
 
-            foreach ($basketItems as &$basketItem) {
-                if (!isset($productsByOffers[$basketItem['offer_id']])) {
-                    continue;
-                }
-                $productByOffers = $productsByOffers[$basketItem['offer_id']];
-                /** @var ProductDto $product */
-                $product = $productByOffers['product'];
+            $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use (
+                $productsByOffers
+            ) {
+                $basketItemDto['product'] = $productsByOffers->has($basketItemDto->offer_id) ?
+                    $productsByOffers[$basketItemDto->offer_id]->product : null;
 
-                $basketItem['product'] = $product->toArray();
-                $basketItem['product']['photo'] = $images[$product->id] ?? '';
-            }
-
-            $basketItems = collect($basketItems);
+                return $basketItemDto;
+            });
         }
 
-        $userQuery = new RestQuery();
-        $userQuery->addFields('profile', '*');
-        $userQuery->setFilter('id', $data['customer_id']);
-        $userQuery->setFilter('front', Front::FRONT_SHOWCASE);
+        return $order;
+    }
 
-        $data['customer'] = $userService->users($userQuery)->first();
-
-        // Получаем пользователя заказа
-        $customerQuery = new RestQuery();
-        $customerQuery->setFilter('id', $data['customer_id']);
-
-        // Все заказы пользователя
-        $previousQuery = new RestQuery();
-        $previousQuery->setFilter('id', '!=', $data['id']);
-        $previousQuery->setFilter('customer_id', $data['customer_id']);
-        $previousOrders = $orderService->orders($customerQuery);
-        $data['customer_history'] = $previousOrders ?? null;
-
-        // Доставки заказа
-        $deliveries = $deliveryService->deliveries(null, $order->id);
-
-        // Отправления заказа
-        $shipmentQuery = $shipmentService
-            ->newQuery()
-            ->addFields(
-                ShipmentDto::entity(),
-                'id',
-                'store_id',
-                'status',
-                'number',
-                'required_shipping_at',
-                'cost',
-                'package_qty',
-                'created_at',
-                'updated_at'
-            )
-            ->setFilter('delivery_id', $deliveries->pluck('id')->unique()->values()->toArray())
-            ->include('basketItems', 'items', 'packages.items');
-        $shipments = $shipmentService->shipments($shipmentQuery);
-
-        // Добавляем отправления в доставки
-        $data['deliveries'] = $deliveries->map(function (DeliveryDto $item) use ($shipments) {
-            $data = $item->toArray();
-            $data['shipments'] = $shipments->where('delivery_id', $item->id)->values()->toArray();
-
-            return $data;
-        });
-
-
-        // Берем информацию по товарам из корзин и объединяем ее с товарами в отправлениях и коробках
-        $shipments->transform(function (ShipmentDto $shipment) use ($basketItems) {
-            $shipmentItems = [];
-
-            foreach ($shipment->basketItems as $item) {
-                $basketItem = $basketItems->where('offer_id', $item['offer_id'])->first();
-                foreach ($basketItem as $key => $value) {
-                    $item[$key] = $value;
+    /**
+     * @param  OrderDto  $order
+     * @return Collection
+     */
+    protected function getKpis(OrderDto $order): Collection
+    {
+        $kpis = collect([
+            OrderStatus::CREATED => [
+                'status' => OrderStatus::statusById(OrderStatus::CREATED),
+                'status_at' => $order->created_at,
+            ]
+        ]);
+        if ($order->history->isNotEmpty()) {
+            foreach ($order->history as $historyDto) {
+                $data = $historyDto->data;
+                if (mb_strtolower($historyDto->entity_type) == OrderDto::entity() && isset($data['status'])) {
+                    $kpis->put($data['status'], [
+                        'status' => OrderStatus::statusById($data['status']),
+                        'status_at' => dateTime2str(new Carbon($data['status_at'])),
+                    ]);
                 }
-                $shipmentItems[] = $item;
             }
-
-            if($shipment->packages) {
-                $shipmentPackages = [];
-
-                foreach ($shipment->packages as $package) {
-                    $itemBasketIds = collect($package['items'])->pluck('basket_item_id')->toArray();
-                    $items = $basketItems->whereIn('id', $itemBasketIds)->values()->toArray();
-                    $package['items'] = $items;
-
-                    $shipmentPackages[] = $package;
-                }
-
-                $shipment->packages = $shipmentPackages;
-            }
-
-            $shipment->basketItems = $shipmentItems;
-
-            return $shipment;
-        });
-
-        $data['shipments'] = $shipments;
-
-        // История заказа
-        $data['history'] = [];
-        try {
-            $history = $orderService->orderHistory($order->id);
-
-            if (!empty($history) && count($history) > 0) {
-                $users = $history->pluck('user_id')->unique()->toArray();
-
-                $restQuery = $userService
-                    ->newQuery()
-                    ->setFilter('id', $users);
-
-                $users = $userService->users($restQuery);
-
-                $history = $history->map(function (HistoryDto $item) use ($users) {
-                    $data = $item->toArray();
-                    $data['type'] = $item->type()->toArray();
-
-                    if ($item->user_id) {
-                        $data['user'] = $users->filter(function ($user) use ($item) {
-                            return $user->id == $item->user_id;
-                        })->first();
-                    }
-
-                    return $data;
-                });
-            }
-
-            $data['history'] = $history->sortByDesc('created_at')->values()->toArray();
-
-        } catch (\Exception $e) {
         }
 
-        $data['delivery_statuses'] = DeliveryStatus::allStatuses();
-        $data['delivery_services'] = DeliveryServiceDto::allServices();
-        $data['notification'] = collect(['Упаковать с особой любовью', 'Обязательно вложить в заказ подарок', 'Обработать заказ в первую очередь', '', '', ''])->random(); //todo
-        $data['status'] = $order->status()->toArray();
-        $data['payment_status'] = $order->paymentStatus()->toArray();
-        $data['delivery_type'] = $order->deliveryType()->toArray();
-        $data['delivery_method'] = []; // todo
-        $data['delivery_cost'] = $order->delivery_cost;
-        $data['created_at'] = (new Carbon($order->created_at))->format('d.m.y H:i');
-        $data['updated_at'] = (new Carbon($order->updated_at))->format('y.m.d H:i');
-        $data['total_qty'] = !empty($data['basket']['items']) ? $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
-            return $sum + $item->qty;
-        }, 0) : null;
-        $data['payment_method'] = PaymentMethod::allMethods()[array_rand(PaymentMethod::allMethods())]->toArray(); //todo
-        $data['discount'] = $order->cost - $order->price;
-        $data['products_cost'] = $order->cost - $order->delivery_cost;
-        $data['weight'] = $order->basket()->items()->reduce(function (int $sum, BasketItemDto $item) {
-            return $sum + isset($item->product['weight']) ? $item->product['weight'] : 0;
-        }, 0);
-        $data['packaging_type'] = collect(['стандартная', 'подарочная', 'специальная'])->random(); //todo
-        $data['delivery_address'] = 'г. Москва, г. Зеленоград, Центральный проспект, корпус 305'; //todo
-
-        return $data;
+        return $kpis->sortBy('status_at')->values();
     }
 }

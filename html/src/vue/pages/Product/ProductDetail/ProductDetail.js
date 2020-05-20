@@ -1,4 +1,4 @@
 import boot from '../../../default-entry';
-import Page from './PoductDetail.vue';
+import Page from './ProductDetail.vue';
 
 boot(Page);

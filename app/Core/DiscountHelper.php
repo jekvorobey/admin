@@ -11,12 +11,13 @@ use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
+use Greensight\Marketing\Dto\Discount\BundleItemDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -33,10 +34,16 @@ class DiscountHelper
      * @param int     $userId
      * @param array   $pager
      * @param int     $merchantId
+     * @param array $type
      * @return array
      */
-    public static function getParams(Request $request, int $userId, array $pager = [], int $merchantId = null)
-    {
+    public static function getParams(
+        Request $request,
+        int $userId,
+        array $pager = [],
+        int $merchantId = null,
+        array $type = []
+    ) {
         $discountInDto = new DiscountInDto();
 
         if (!empty($pager)) {
@@ -63,6 +70,7 @@ class DiscountHelper
         isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
         ($merchantId) ? $discountInDto->merchant($merchantId) : null;
+        ($type) ? $discountInDto->type($type) : null;
 
         return $discountInDto
             ->status(DiscountStatusDto::STATUS_CREATED, true, $userId)
@@ -134,7 +142,7 @@ class DiscountHelper
             'promo_code_only' => 'boolean|required',
             'status'          => 'numeric|required',
             'offers'          => 'array',
-            'bundles'         => 'array',
+            'bundle_items'    => 'array',
             'brands'          => 'array',
             'categories'      => 'array',
             'except'          => 'array',
@@ -159,6 +167,7 @@ class DiscountHelper
             'start_date'      => $data['start_date'],
             'end_date'        => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
+            'relations'       => [],
         ]);
 
         $arRelations = DiscountHelper::getDiscountRelations($data);
@@ -191,6 +200,7 @@ class DiscountHelper
             DiscountDto::DISCOUNT_CATEGORY_RELATION  => [],
             DiscountDto::DISCOUNT_SEGMENT_RELATION   => [],
             DiscountDto::DISCOUNT_USER_ROLE_RELATION => [],
+            DiscountDto::DISCOUNT_BUNDLE_RELATION => [],
         ];
 
         switch ($data['type']) {
@@ -199,6 +209,13 @@ class DiscountHelper
                     $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOfferDto())
                         ->setExcept(false)
                         ->setOffer($offer);
+                }
+                break;
+            case DiscountTypeDto::TYPE_BUNDLE_OFFER:
+            case DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS:
+                foreach ($data['bundle_items'] as $bundleItem) {
+                    $relations[DiscountDto::DISCOUNT_BUNDLE_RELATION][] = (new BundleItemDto())
+                        ->setItem($bundleItem);
                 }
                 break;
             case DiscountTypeDto::TYPE_BRAND:

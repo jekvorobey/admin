@@ -250,20 +250,20 @@ class OrderListController extends Controller
             $data['status'] = $order->status()->toArray();
             $data['confirmation_type'] = $order->confirmationType()->toArray();
             $data['payment_status'] = $order->paymentStatus()->toArray();
-            $data['delivery_method'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+            $data['delivery_methods'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return $delivery->deliveryMethod()->name;
             })->unique()->join(', ');
-            $data['delivery_service'] = $order->deliveries->map(function (DeliveryDto $delivery) {
+            $data['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return DeliveryService::serviceById($delivery->delivery_service)->name;
             })->unique()->join(', ');
-            $data['payment_method'] = $order->payments->map(function (PaymentDto $payment) {
+            $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
                 return $payment->paymentMethod()->name;
             })->unique()->join(', ');
             $data['created_at'] = dateTime2str(new Carbon($order->created_at));
             $data['updated_at'] = dateTime2str(new Carbon($order->updated_at));
             $data['status_at'] = dateTime2str(new Carbon($order->status_at));
             $data['delivery_dates'] = $delivery_dates->unique()->join(', ');
-            $data['cities'] = $cities->unique()->join(', ');
+            $data['delivery_cities'] = $cities->unique()->join(', ');
             $data['product_price'] = $order->price - $order->delivery_price;
             $data['shipments_qty'] = $order->deliveries->sum(function (DeliveryDto $delivery) {
                 return $delivery->shipments->count();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
@@ -15,8 +16,11 @@ use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Core\PimException;
+use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 
 /**
  * Class DiscountController
@@ -43,6 +47,7 @@ class DiscountController extends Controller
         $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService, $userId);
         $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
+        $this->loadDiscountTypes = true;
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => $pager['page'],
@@ -147,14 +152,34 @@ class DiscountController extends Controller
 
     /**
      * @param int             $id
+     * @param OfferService $offerService
      *
      * @return mixed
      * @throws PimException
      */
-    public function edit(int $id)
+    public function edit(int $id, OfferService $offerService)
     {
         $this->loadDiscountTypes = true;
         $data = DiscountHelper::detail($id);
+        if ($data['iDiscount']['type'] === DiscountTypeDto::TYPE_BUNDLE_OFFER) {
+            $data['offers'] = $offerService->offers(
+                (new RestQuery())->include('product')
+                    ->addFields(OfferDto::entity(), 'id')
+                    ->addFields(ProductDto::entity(), 'id', 'name')
+                    ->setFilter(
+                        'id',
+                        collect($data['iDiscount']->bundleItems)->pluck('item_id')
+                            ->unique()
+                            ->all()
+                    )
+            )->keyBy('id')
+                ->map(function (OfferDto $offer) {
+                    return [
+                        'product_id' => $offer->product_id,
+                        'name' => $offer->product->name,
+                    ];
+                })->all();
+        }
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Edit', $data);
     }

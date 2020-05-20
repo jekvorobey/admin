@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col">
+        <b-row>
+            <b-col>
                 <div class="float-right">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
@@ -10,23 +10,23 @@
                         Отмена
                     </button>
                 </div>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
 
-        <div class="row">
-            <div class="col-md-6">
+        <b-row>
+            <b-col class="col-md-6">
                 <v-select v-model="$v.form.do_dangerous_products_delivery.$model" :options="booleanOptions">
                     Доставка опасных грузов
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col class="col-md-6">
                 <v-input type="number" v-model="$v.form.max_shipments_per_day.$model" :error="errorMaxShipmentsPerDay">
                     Максимальное кол-во отправленией в день
                 </v-input>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
     </div>
 </template>
 

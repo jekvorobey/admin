@@ -1,35 +1,11 @@
 <template>
-    <layout-main back>
+    <layout-main back hide-title>
         <b-row class="mb-2">
-            <b-col>
-                <b-card>
-                    <infopanel :model.sync="deliveryService" :delivery-service-statuses="deliveryServiceStatuses"/>
-                </b-card>
+            <b-col class="col-12 col-md-6 mb-2">
+                <infopanel :model.sync="deliveryService" :delivery-service-statuses="deliveryServiceStatuses"/>
             </b-col>
-            <b-col>
-                <b-card>
-                    <div class="row">
-                        <div class="col">
-                            <p class="font-weight-bold">KPIs</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p class="font-weight-bold">Количество отправлений</p>
-                        </div>
-                        <div class="col">
-                            <div class="float-right">{{ shipmentsInfo.allCount }}</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <p class="font-weight-bold">Сумма отправлений</p>
-                        </div>
-                        <div class="col">
-                            <div class="float-right">{{ shipmentsInfo.allPrice }}</div>
-                        </div>
-                    </div>
-                </b-card>
+            <b-col class="col-12 col-md-6">
+                <kpi :shipments-info="shipmentsInfo"/>
             </b-col>
         </b-row>
 
@@ -56,6 +32,7 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
 
     import Infopanel from './components/infopanel.vue';
+    import Kpi from './components/kpi.vue';
     import TabSettings from './components/tab-settings.vue';
     import TabLimitations from './components/tab-limitations.vue';
     import tabsMixin from "../../../../mixins/tabs";
@@ -64,6 +41,7 @@
         mixins: [tabsMixin],
         components: {
             Infopanel,
+            Kpi,
             VInput,
             TabSettings,
             TabLimitations,

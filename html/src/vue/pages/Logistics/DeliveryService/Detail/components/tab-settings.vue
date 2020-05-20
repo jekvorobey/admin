@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div class="row">
-            <div class="col">
+        <b-row>
+            <b-col>
                 <div class="float-right">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
@@ -10,42 +10,42 @@
                         Отмена
                     </button>
                 </div>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
 
-        <div class="row">
-            <div class="col">
+        <b-row>
+            <b-col>
                 <v-select v-model="$v.form.do_consolidation.$model" :options="booleanOptions">
                     Консолидация многоместных отправлений
                 </v-select>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-select v-model="$v.form.do_deconsolidation.$model" :options="booleanOptions">
                     Расконсолидация
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col>
                 <v-select v-model="$v.form.do_zero_mile.$model" :options="booleanOptions">
                     Нулевая миля
                 </v-select>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-select v-model="$v.form.do_express_delivery.$model" :options="booleanOptions">
                     Экспресс-доставка
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col class="col-md-6">
                 <v-select v-model="$v.form.do_return.$model" :options="booleanOptions">
                     Принимает возвраты
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col>
                 <div class="form-group">
                     <label for="max_cargo_export_time">
                         Крайнее время для заданий на забор
@@ -60,45 +60,45 @@
                             :time-picker-options="timePickerOptions"
                     />
                 </div>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
 
-        <div class="row">
-            <div class="col">
+        <b-row>
+            <b-col>
                 <p class="font-weight-bold">Услуги логистического оператора</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col>
                 <v-select v-model="$v.form.add_partial_reject_service.$model" :options="booleanOptions">
                     Частичный отказ
                 </v-select>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-select v-model="$v.form.add_return_service.$model" :options="booleanOptions">
                     Возможность возврата
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col>
                 <v-select v-model="$v.form.add_fitting_service.$model" :options="booleanOptions">
                     Примерка
                 </v-select>
-            </div>
-            <div class="col">
+            </b-col>
+            <b-col>
                 <v-select v-model="$v.form.add_open_service.$model" :options="booleanOptions">
                     Вскрытие разрешено
                 </v-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
+            </b-col>
+        </b-row>
+        <b-row>
+            <b-col class="col-md-6">
                 <v-select v-model="$v.form.add_insurance_service.$model" :options="booleanOptions">
                     Страхование груза
                 </v-select>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
     </div>
 </template>
 

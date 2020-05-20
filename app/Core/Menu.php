@@ -253,13 +253,13 @@ class Menu
                         'route' => route('discount.list'),
                     ],
                     [
+                        'title' => 'Бандлы',
+                        'route' => route('bundle.list'),
+                    ],
+                    [
                         'title' => 'Бонусы',
                         'route' => route('bonus.list'),
                     ],
-//                    [
-//                        'title' => 'Бандлы',
-//                        'route' => '#',
-//                    ],
                 ],
             ],
 //            [

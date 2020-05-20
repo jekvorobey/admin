@@ -24,8 +24,8 @@
                         </template>
                     </td>
                     <td>{{ delivery.delivery_at }}</td>
-                    <td>{{ serviceName(delivery.delivery_service) }}</td>
-                    <td>{{ statusName(delivery.status) }}</td>
+                    <td>{{ delivery.delivery_service.name }}</td>
+                    <td>{{ delivery.status.name }}</td>
                 </tr>
             </tbody>
         </table>
@@ -40,9 +40,7 @@
             }
         },
         props: {
-            deliveries: {},
-            statuses: {},
-            services: {},
+            model: {},
         },
         methods: {
             editDelivery(id) {
@@ -57,16 +55,12 @@
             deleteShipment(id) {
 
             },
-            statusName(id) {
-                let status = this.statuses[id];
-                return status ? status.name : 'N/A';
-            },
-            serviceName(id) {
-                let service = this.services[id];
-                return service ? service.name : 'N/A';
-            },
         },
-        mounted() {
+        computed: {
+            deliveries: {
+                get() {return this.model},
+                set(value) {this.$emit('update:model', value)},
+            },
         }
     }
 </script>

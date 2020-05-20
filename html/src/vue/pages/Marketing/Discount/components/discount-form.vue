@@ -20,12 +20,34 @@
                 >Офферы</v-input>
             </div>
 
-            <div v-if="discount.type === discountTypes.bundleOffer || discount.type === discountTypes.bundleMasterclass" class="col-9">
-                <v-input v-model="discount.bundles"
-                         :help="'ID бандлов через запятую'"
-                         :error="discountErrors.bundles"
-                         @change="initErrorBundles"
-                >Бандлы</v-input>
+            <div v-if="discount.type === discountTypes.bundleOffer" class="col-9 mb-3">
+                <v-input v-model="discount.bundleItems"
+                         :help="'ID офферов через запятую'"
+                         :error="discountErrors.bundleOffers"
+                         @change="initErrorBundleOffers"
+                >Офферы</v-input>
+                <div v-if="iDiscount">
+                    <template v-for="bundleItem in iDiscount.bundleItems">
+                        <a :href="getRoute('products.detail', {id: offers[bundleItem.item_id].product_id})">
+                            {{ bundleItem.item_id }}: {{ offers[bundleItem.item_id].name }}
+                        </a><br>
+                    </template>
+                </div>
+            </div>
+
+            <div v-if="discount.type === discountTypes.bundleMasterclass" class="col-9">
+                <v-input v-model="discount.bundleItems"
+                         :help="'ID мастер-классов через запятую'"
+                         :error="discountErrors.bundleMasterClasses"
+                         @change="initErrorBundleMasterClasses"
+                >Мастер-классы</v-input>
+                <div v-if="iDiscount">
+                    <template v-for="bundleItem in iDiscount.bundleItems">
+<!--                        <a :href="getRoute('master-class.edit', {id: masters[bundleItem.item_id].product_id})">-->
+                            {{ bundleItem.item_id }}: Название мастеркласса
+<!--                        </a><br>-->
+                    </template>
+                </div>
             </div>
 
             <template v-if="discount.type === discountTypes.brand">
@@ -80,7 +102,7 @@
                      class="col-3"
                      type="number"
                      min="1"
-                     :help="isPercentType(discount.value_type) ? 'Значение от 1 до 100' : ''"
+                     :help="isPercentType(discount.value_type) ?  ifBundleType(discount.type) : ''"
                      :error="discountErrors.value"
                      @change="initErrorValue"
             >Значение в {{ isPercentType(discount.value_type) ? 'процентах' : 'рублях' }}
@@ -179,6 +201,7 @@
             submitText: String,
             processing: Boolean,
             action: Function,
+            offers: Object,
         },
         data() {
             return {
@@ -190,7 +213,7 @@
                     start_date: null,
                     end_date: null,
                     offers: null,
-                    bundles: null,
+                    bundle_items: null,
                     status: 1, // STATUS_ACTIVE
                     brands: [],
                     categories: [],
@@ -201,7 +224,8 @@
                     name: null,
                     type: null,
                     offers: null,
-                    bundles: null,
+                    bundleOffers: null,
+                    bundleMasterClasses: null,
                     brands: null,
                     categories: null,
                     value_type: null,
@@ -237,12 +261,20 @@
                             }
                             break;
                         case this.discountTypes.bundleOffer:
-                        case this.discountTypes.bundleMasterclass:
-                            if (!(this.discount.bundles)) {
-                                this.discountErrors.bundles = "Введите значения ID бандлов!";
+                            if (!(this.discount.bundleItems)) {
+                                this.discountErrors.bundleOffers = "Введите значения ID офферов!";
                                 bool = false;
-                            } else if (!(!!this.discount.bundles && this.formatIds(this.discount.bundles).length > 0)) {
-                                this.discountErrors.bundles = "Введите значения ID бандлов через запятую!";
+                            } else if (!(!!this.discount.bundleItems && this.formatIds(this.discount.bundleItems).length > 0)) {
+                                this.discountErrors.bundleOffers = "Введите значения ID офферов через запятую!";
+                                bool = false;
+                            }
+                            break;
+                        case this.discountTypes.bundleMasterclass:
+                            if (!(this.discount.bundleItems)) {
+                                this.discountErrors.bundleMasterClasses = "Введите значения ID мастер-классов!";
+                                bool = false;
+                            } else if (!(!!this.discount.bundleItems && this.formatIds(this.discount.bundleItems).length > 0)) {
+                                this.discountErrors.bundleMasterClasses = "Введите значения ID мастер-классов через запятую!";
                                 bool = false;
                             }
                             break;
@@ -266,15 +298,23 @@
                         this.discountErrors.value_type = 'Обязательное поле!';
                         bool = false;
                     }
-                    if (!(this.discount.value)) {
+                    if (!(this.discount.value) && this.discount.value !== 0) {
                         this.discountErrors.value = "Обязательное поле!";
                         bool = false;
                     } else {
                         switch (this.discount.value_type) {
                             case 1:
-                                if (!(this.discount.value > 0 && this.discount.value <= 100)) {
-                                    this.discountErrors.value = "Значение должно быть в диапазоне от 1 до 100!";
-                                    bool = false;
+                                if (this.discount.type === this.discountTypes.bundleOffer ||
+                                    this.discount.type === this.discountTypes.bundleMasterclass) {
+                                    if (!(this.discount.value > -1 && this.discount.value <= 100)) {
+                                        this.discountErrors.value = "Значение должно быть в диапазоне от 0 до 100!";
+                                        bool = false;
+                                    }
+                                } else {
+                                    if (!(this.discount.value > 0 && this.discount.value <= 100)) {
+                                        this.discountErrors.value = "Значение должно быть в диапазоне от 1 до 100!";
+                                        bool = false;
+                                    }
                                 }
                                 break;
                             case 2:
@@ -309,6 +349,11 @@
             isPercentType(type) {
                 return type === 1;
             },
+            ifBundleType(type) {
+                return (type === this.discountTypes.bundleOffer || type === this.discountTypes.bundleMasterclass) ?
+                    'Значение от 0 до 100' :
+                    'Значение от 1 до 100';
+            },
             updateCategories(categories) {
                 this.discount = {...this.discount, categories};
                 this.initErrorCategories();
@@ -330,6 +375,7 @@
 
                 let discount = {...this.iDiscount};
                 discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
+                discount.bundleItems = Object.values(discount.bundleItems).map(bundleItem => bundleItem.item_id).join(',');
                 discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
                 discount.categories = Object.values(discount.categories).map(category => category.category_id);
 
@@ -384,8 +430,11 @@
             initErrorOffers() {
                 this.discountErrors.offers = null;
             },
-            initErrorBundles() {
-                this.discountErrors.bundles = null;
+            initErrorBundleOffers() {
+                this.discountErrors.bundleOffers = null;
+            },
+            initErrorBundleMasterClasses() {
+                this.discountErrors.bundleMasterClasses = null;
             },
             initErrorBrands() {
                 this.discountErrors.brands = null;
@@ -444,14 +493,14 @@
                     }
                 },
             },
-            'discount.bundles': {
+            'discount.bundleItems': {
                 handler(val, oldVal) {
                     if (val && val !== oldVal) {
-                        let format = this.formatIds(this.discount.bundles).join(', ');
+                        let format = this.formatIds(this.discount.bundleItems).join(', ');
                         let separator = val.slice(-1) === ','
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
-                        this.discount.bundles = format + separator;
+                        this.discount.bundleItems = format + separator;
                     }
                 },
             },

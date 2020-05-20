@@ -44,7 +44,7 @@
                         v-model="$v.form.email.$model"
                         :placeholder="emailPlaceholder"
                         :error="errorEmail"
-                        class="col-md-6 col-12"
+                        class="col-md-4 col-12"
                         autocomplete="off"
                 >E-mail</v-input>
                 <v-input
@@ -52,9 +52,15 @@
                         :placeholder="telPlaceholder"
                         :error="errorPhone"
                         v-mask="telMask"
-                        class="col-md-6 col-12"
+                        class="col-md-4 col-12"
                         autocomplete="off"
                 >Телефон</v-input>
+                <v-select
+                        v-model="$v.form.communication_method.$model"
+                        :error="errorCommunicationMethod"
+                        :options="communicationMethodOptions"
+                        class="col-md-4 col-12"
+                >Способ связи</v-select>
             </div>
             <div class="row">
                 <v-input
@@ -104,9 +110,10 @@
     import {telMask} from '../../../../../scripts/mask';
     import {emailPlaceholder, telPlaceholder} from '../../../../../scripts/placeholder';
     import {validationMixin} from 'vuelidate';
-    import {email, minLength, maxLength, required, sameAs} from 'vuelidate/lib/validators';
+    import {email, maxLength, minLength, required, sameAs} from 'vuelidate/lib/validators';
 
     import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     const cleanForm = {
         legal_name: '',
@@ -126,6 +133,7 @@
         middle_name: '',
         email: '',
         phone: '',
+        communication_method: '',
         password: '',
         password_confirmation: '',
 
@@ -138,8 +146,11 @@
     export default {
         name: 'modal-create-merchant',
         mixins: [validationMixin],
-        props: ['id'],
-        components: {VInput},
+        props: [
+            'id',
+            'communicationMethods',
+        ],
+        components: {VInput, VSelect},
         data() {
             let form = JSON.parse(JSON.stringify(cleanForm));
             return {
@@ -198,6 +209,7 @@
                     }
                 },
                 phone: {required},
+                communication_method: {required},
                 password: {
                     required,
                     minLength: minLength(8)
@@ -241,6 +253,11 @@
             },
             emailPlaceholder() {
                 return emailPlaceholder;
+            },
+            communicationMethodOptions() {
+                return Object.values(this.communicationMethods).map(
+                    communication_method => ({value: communication_method.id, text: communication_method.name})
+                );
             },
             // ===============================
             errorLegalName() {
@@ -328,6 +345,11 @@
             errorPhone() {
                 if (this.$v.form.phone.$dirty) {
                     if (!this.$v.form.phone.required) return "Обязательное поле!";
+                }
+            },
+            errorCommunicationMethod() {
+                if (this.$v.form.communication_method.$dirty) {
+                    if (!this.$v.form.communication_method.required) return "Обязательное поле!";
                 }
             },
             errorPassword() {

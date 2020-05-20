@@ -15,6 +15,7 @@
             :submit-text="'Сохранить скидку'"
             :processing="processing"
             :action="save"
+            :offers="offers"
         ></discount-form>
 
         <transition name="modal">
@@ -55,6 +56,7 @@
             brands: Array,
             roles: Array,
             iDistricts: Array,
+            offers: Object,
         },
         data() {
             return {
@@ -85,7 +87,7 @@
                         break;
                     case this.discountTypes.bundleOffer:
                     case this.discountTypes.bundleMasterclass:
-                        data.bundles = this.formatIds(discount.bundles);
+                        data.bundle_items = this.formatIds(discount.bundleItems);
                         break;
                     case this.discountTypes.brand:
                         data.brands = discount.brands;

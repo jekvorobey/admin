@@ -8,15 +8,16 @@ use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\Request;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
+use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\Dto\RegisterNewMerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
-use MerchantManagement\Services\MerchantService\Dto\RegisterNewMerchantDto;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MerchantListController extends Controller
@@ -59,6 +60,7 @@ class MerchantListController extends Controller
             'options' => [
                 'statuses' => MerchantStatus::statusesByMode(!$done),
                 'ratings' => $merchantService->ratings(),
+                'communicationMethods' => OperatorCommunicationMethod::allMethods(),
             ],
         ]);
     }
@@ -118,7 +120,7 @@ class MerchantListController extends Controller
             ->groupBy('merchant_id')
             ->mapWithKeys(function (Collection $operators) {
                 /** @var OperatorDto $first */
-                $first = $operators->sortBy('id')->first();
+                $first = $operators->where('is_main', true)->first() ? : $operators->sortBy('id')->first();
 
                 return [$first->merchant_id => $first];
             });
@@ -130,8 +132,8 @@ class MerchantListController extends Controller
         return $merchants->map(function (MerchantDto $merchant) use ($operators, $users) {
             /** @var OperatorDto $operator */
             $operator = $operators->get($merchant->id);
-            $merchant['operator'] = $operator;
-            $merchant['user'] = $users->get($operator->user_id);
+            $merchant['operator'] = $operator ? : [];
+            $merchant['user'] = $operator ? $users->get($operator->user_id) : [];
 
             return $merchant;
         });
@@ -247,6 +249,7 @@ class MerchantListController extends Controller
             'middle_name' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
+            'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
             'password' => 'required|string|min:8|confirmed',
 
             'storage_address' => 'required|string',
@@ -277,6 +280,7 @@ class MerchantListController extends Controller
                 ->setSite($data['site'])
                 ->setCanIntegration((bool)$data['can_integration'])
                 ->setSaleInfo($data['sale_info'])
+                ->setCommunicationMethod($data['communication_method'])
         );
 
         if (!$merchantId) {
