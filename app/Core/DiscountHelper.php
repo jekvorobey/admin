@@ -17,7 +17,7 @@ use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
-use Greensight\Oms\Dto\PaymentMethod;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -167,6 +167,7 @@ class DiscountHelper
             'start_date'      => $data['start_date'],
             'end_date'        => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
+            'relations'       => [],
         ]);
 
         $arRelations = DiscountHelper::getDiscountRelations($data);
