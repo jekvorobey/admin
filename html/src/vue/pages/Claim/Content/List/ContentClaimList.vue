@@ -119,7 +119,7 @@
                 </div>
                 <div slot="body">
                     <claim-list :claims="selectedClaims"></claim-list>
-                    <v-select v-model="newStatus" :options="toOptionsArray(this.options.statuses)" class="mt-3">Выберите новый статус</v-select>
+                    <v-select v-model="newStatus" :options="availableStatusOptions" class="mt-3">Выберите новый статус</v-select>
                     <button class="btn btn-warning mt-3" type="button" @click="approveChangeStatus()" :disabled="processing">Изменить статус</button>
                 </div>
             </modal>
@@ -136,9 +136,6 @@
                 </div>
             </modal>
         </transition>
-
-        <button class="" type="button" @click="approveDelete()" :disabled="processing">Удалить</button>
-
     </layout-main>
 </template>
 
@@ -256,20 +253,18 @@ export default {
             }
         },
         clearFilter() {
-            for (let entry of Object.entries(cleanFilter)) {
-                this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
-            }
-            this.applyFilter();
-            // console.log(this.statusOptions);
-            // console.log(this.availableStatusOptions);
+            // for (let entry of Object.entries(cleanFilter)) {
+            //     this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+            // }
+            // this.applyFilter();
+            console.log(this.availableStatusOptions);
             // console.log(this.options.statuses);
+            // console.log(this.options.merchants);
         },
         toOptionsArray(options) {
-            let a = [];
-            for (let [k, v] of Object.entries(options)) {
-                a.push({value: parseInt(k), text: v});
-            }
-            return a;
+            Object.entries(options).filter(([k,v]) => {
+                return {value: parseInt(k), text: v};
+            })
         },
         changeClaimStatus() {
             this.openModal('ChangeClaimStatus');
@@ -340,23 +335,24 @@ export default {
                 return (claim.id in this.checkboxes) && this.checkboxes[claim.id];
             }).map(claim => claim.id);
         },
-        // availableStatusOptions() {
-        //     // return [];
-        //     let noDeliveryClaim = this.selectedClaims.some(claim => {
-        //         return this.options.noUnpack.includes(claim.type);
-        //     });
-        //     // if (!noDeliveryClaim) return this.options.adjustStatuses;
-        //     if (!noDeliveryClaim) {
-        //         console.log('no');
-        //         return this.options.adjustStatuses;
-        //     }
-        //     console.log('yes');
-        //
-        //     return this.options.statuses.filter(status => {
-        //         console.log(status);
-        //         return (!this.options.deliveryConfirm.includes(status));
-        //     });
-        // }
+        availableStatusOptions() {
+            let options = Object.entries(this.options.statuses).filter(([k,v]) => {
+                return this.options.adjustStatuses.includes(parseInt(k));
+            });
+
+            let noDeliveryClaim = this.selectedClaims.some(claim => {
+                return this.options.noUnpack.includes(claim.type);
+            });
+            if (noDeliveryClaim) {
+                options = options.filter(([k,v]) => {
+                    return !this.options.deliveryConfirm.includes(parseInt(k));
+                })
+            }
+
+            return options.map(([k,v]) => {
+                return {value: parseInt(k), text: v};
+            })
+        }
     },
     created() {
         window.onpopstate = () => {

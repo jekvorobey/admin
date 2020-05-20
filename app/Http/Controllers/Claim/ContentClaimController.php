@@ -179,7 +179,7 @@ class ContentClaimController extends Controller
         MerchantService $merchantService,
         ProductService $productService
     ) {
-        $this->title = 'Заявка на производство контента';
+//        $this->title = 'Заявка на производство контента';
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ContentClaimDto $claim */
@@ -204,7 +204,11 @@ class ContentClaimController extends Controller
 
         return $this->render('Claim/Content/Detail', [
             'claim' => $claim,
-            'statuses' => $meta['statusNames'],
+            'options' => [
+                'statuses' => $meta['statusNames'],
+                'types' => $meta['typeNames'],
+                'unpack' => $meta['unpackNames'],
+            ],
             'products' => $products
         ]);
     }
@@ -309,7 +313,9 @@ class ContentClaimController extends Controller
             return $v || ($k == 'unpack');
         }, ARRAY_FILTER_USE_BOTH );
 
-        $restQuery = $claimService->newQuery();
+        $restQuery = $claimService
+            ->newQuery()
+            ->addSort('created_at', 'desc');
 
         foreach ($filters as $key => $value) {
             switch ($key) {
