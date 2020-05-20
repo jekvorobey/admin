@@ -105,7 +105,6 @@
 <script>
     import Services from '../../../../../../scripts/services/services.js';
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
-    import VInput from '../../../../../components/controls/VInput/VInput.vue';
     import DatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
@@ -118,7 +117,6 @@
 export default {
     name: 'tab-settings',
     components: {
-        VInput,
         VSelect,
         DatePicker,
     },

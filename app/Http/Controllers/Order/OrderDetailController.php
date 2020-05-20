@@ -169,13 +169,26 @@ class OrderDetailController extends Controller
 
         $shipments = collect();
         $cities = collect();
+        $courierDelivery = null;
+        $pickupDelivery = null;
         foreach ($order->deliveries as $delivery) {
             if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                 if ($points->has($delivery->point_id)) {
                     $cities->push($points[$delivery->point_id]->getCityWithType());
                 }
+
+                if (is_null($courierDelivery)) {
+                    $pickupDelivery = $delivery;
+                }
             } else {
                 $cities->push($delivery->getCity());
+                $deliveryAddress = $delivery->delivery_address;
+                $deliveryAddress['address_string'] = $delivery->getAddressString();
+                $delivery->delivery_address = $deliveryAddress;
+
+                if (is_null($courierDelivery)) {
+                    $courierDelivery = $delivery;
+                }
             }
 
             $delivery->status = $delivery->status();
@@ -193,9 +206,20 @@ class OrderDetailController extends Controller
             }
             $shipments = $shipments->merge($delivery->shipments);
         }
+        $order['firstDelivery'] = $order->deliveries->first();
+        $order['courierDelivery'] = $courierDelivery;
+        $order['pickupDelivery'] = $pickupDelivery;
         $order['shipments'] = $shipments;
 
+        $order->confirmation_type = $order->confirmationType();
         $order->status = $order->status();
+        $order->status_at = dateTime2str(new Carbon($order->status_at));
+        if ($order->is_problem_at) {
+            $order->is_problem_at = dateTime2str(new Carbon($order->is_problem_at));
+        }
+        if ($order->is_canceled_at) {
+            $order->is_canceled_at = dateTime2str(new Carbon($order->is_canceled_at));
+        }
 
         $order->delivery_type = $order->deliveryType();
         $order['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
@@ -212,9 +236,16 @@ class OrderDetailController extends Controller
         $order['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
             return $payment->paymentMethod()->name;
         })->unique()->join(', ');
+        $order['discount'] = $order->getDiscount();
+        $order['delivery_discount'] = $order->getDeliveryDiscount();
+        $order['product_cost'] = $order->cost - $order->delivery_cost;
         $order['product_price'] = $order->price - $order->delivery_price;
+        $order['product_discount'] = $order['product_cost'] - $order['product_price'];
         $order['to_pay'] = $order->isPayed() ? 0 : $order->price;
         $order->payment_status = $order->paymentStatus();
+        if ($order->payment_status_at) {
+            $order->payment_status_at = dateTime2str(new Carbon($order->payment_status_at));
+        }
 
         $order['weight'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
             int $sum,
@@ -252,6 +283,7 @@ class OrderDetailController extends Controller
     /**
      * @param  OrderDto  $order
      * @return Collection
+     * @throws \Exception
      */
     protected function getKpis(OrderDto $order): Collection
     {

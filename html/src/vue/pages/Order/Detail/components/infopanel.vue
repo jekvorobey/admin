@@ -35,77 +35,87 @@
         </b-row>
 
         <b-row class="mb-3">
-            <b-col><span class="font-weight-bold">Заказ {{ order.number }} от {{order.created_at}}</span></b-col>
-            <b-col>
+            <div class="col-sm-6"><span class="font-weight-bold">Заказ {{ order.number }} от {{order.created_at}}</span></div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Статус заказа:</span>
-                <order-status :status='order.status'/>
-                <span class="badge badge-danger" v-if="isCancel">Отменен</span>
-                <span class="badge badge-danger" v-if="isProblem">Проблемный</span>
-            </b-col>
+                <span>
+                    <order-status :status='order.status'/>
+                    {{order.status_at}}
+                </span>
+                <p v-if="order.is_require_check">
+                    <span class="badge badge-danger">Требует проверки АОЗ</span>
+                </p>
+                <p v-if="isProblem">
+                    <span class="badge badge-danger">Проблемный</span>
+                    {{order.is_canceled_at}}
+                </p>
+                <p v-if="isCancel">
+                    <span class="badge badge-danger">Отменен</span>
+                    {{order.is_problem_at}}
+                </p>
+            </div>
         </b-row>
         <b-row class="mb-3">
-            <b-col>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Покупатель:</span> <a :href="getRoute('customers.detail', {id: order.customer_id})" target="_blank" v-if="order.customer && order.customer.user">{{ order.customer.user.full_name }}</a><span v-else>N/A</span>
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Сегмент:</span> N/A
-            </b-col>
+            </div>
         </b-row>
         <b-row>
-            <b-col>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Тип доставки:</span> {{ order.delivery_type.name }}
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Город доставки:</span> {{ order.delivery_cities }}
-            </b-col>
+            </div>
         </b-row>
         <b-row class="mb-3">
-            <b-col>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Способ доставки:</span>
                 <template v-for="(delivery_method, key) in order.delivery_methods">
                     <span v-if="key > 0">, </span>{{ delivery_method.name }}
                 </template>
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Логистический оператор:</span>
                 <template v-for="(delivery_service, key) in order.delivery_services">
                     <span v-if="key > 0">, </span><a :href="getRoute('deliveryService.detail', {id: delivery_service.id})" target="_blank">{{ delivery_service.name }}</a>
                 </template>
-            </b-col>
+            </div>
         </b-row>
         <b-row>
-            <b-col>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Сумма заказа:</span> {{preparePrice(order.price)}} руб.
                 <fa-icon icon="question-circle" v-b-popover.hover="tooltipOrderCost"></fa-icon>
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Статус оплаты:</span>
                 <payment-status :status='order.payment_status'/>
-            </b-col>
+                {{order.payment_status_at}}
+            </div>
         </b-row>
-        <b-row>
-            <b-col>
+        <b-row class="mb-3">
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Способ оплаты:</span> {{order.payment_methods}}
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">К оплате:</span> {{preparePrice(order.to_pay)}} руб.
-            </b-col>
+            </div>
         </b-row>
         <b-row class="mb-3">
             <b-col>
-                <span class="font-weight-bold">Стоимость товаров:</span> {{preparePrice(order.product_price)}} руб.
-            </b-col>
-            <b-col>
-                <span class="font-weight-bold">Стоимость доставки:</span> {{preparePrice(order.delivery_price)}} руб.
+                <span class="font-weight-bold">Тип подтверждения :</span> {{order.confirmation_type.name}}
             </b-col>
         </b-row>
         <b-row>
-            <b-col>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Кол-во ед. товара:</span> {{order.total_qty}} шт.
-            </b-col>
-            <b-col>
+            </div>
+            <div class="col-sm-6">
                 <span class="font-weight-bold">Вес заказа:</span> {{order.weight}} г.
-            </b-col>
+            </div>
         </b-row>
     </b-card>
 </template>
