@@ -184,6 +184,20 @@
                 "uppercase",
                 "words"
             ],
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Finflector",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-05-09T15:09:09+00:00"
         },
         {
@@ -516,12 +530,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "7b95ada124ca33aa2572a85fe24888adb1b1ecc9"
+                "reference": "1be0774cbc2b4390206684ea168a75265c3271ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=7b95ada124ca33aa2572a85fe24888adb1b1ecc9",
-                "reference": "7b95ada124ca33aa2572a85fe24888adb1b1ecc9",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=1be0774cbc2b4390206684ea168a75265c3271ef",
+                "reference": "1be0774cbc2b4390206684ea168a75265c3271ef",
                 "shasum": ""
             },
             "require": {
@@ -559,7 +573,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/14329212/issues"
             },
-            "time": "2020-05-20T07:41:05+00:00"
+            "time": "2020-05-20T14:06:23+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -653,6 +667,9 @@
                 }
             ],
             "description": "iBT common code for all microservices",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
+            },
             "time": "2020-05-06T19:18:09+00:00"
         },
         {
@@ -661,12 +678,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "f974e64c867c2cb91d325a93f0befce4a0d41738"
+                "reference": "1093674b5de49ed9a2d655070d30d8612c07fd64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=f974e64c867c2cb91d325a93f0befce4a0d41738",
-                "reference": "f974e64c867c2cb91d325a93f0befce4a0d41738",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=1093674b5de49ed9a2d655070d30d8612c07fd64",
+                "reference": "1093674b5de49ed9a2d655070d30d8612c07fd64",
                 "shasum": ""
             },
             "require": {
@@ -704,7 +721,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/15546031/issues"
             },
-            "time": "2020-04-30T16:12:26+00:00"
+            "time": "2020-05-20T20:09:59+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -854,12 +871,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "81c77742111fbdd106bf95c3261f2f2858fd9b02"
+                "reference": "846b473ca086b7675eef8d7c552017ce08aee8f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=81c77742111fbdd106bf95c3261f2f2858fd9b02",
-                "reference": "81c77742111fbdd106bf95c3261f2f2858fd9b02",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=846b473ca086b7675eef8d7c552017ce08aee8f0",
+                "reference": "846b473ca086b7675eef8d7c552017ce08aee8f0",
                 "shasum": ""
             },
             "require": {
@@ -898,7 +915,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
             },
-            "time": "2020-05-19T19:11:54+00:00"
+            "time": "2020-05-20T20:10:39+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -986,6 +1003,9 @@
                 }
             ],
             "description": "iBT store client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
+            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
@@ -1775,16 +1795,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.34.0",
+            "version": "2.34.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "52ea68aebbad8a3b27b5d24e4c66ebe1933f8399"
+                "reference": "3e87404329b8072295ea11d548b47a1eefe5a162"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/52ea68aebbad8a3b27b5d24e4c66ebe1933f8399",
-                "reference": "52ea68aebbad8a3b27b5d24e4c66ebe1933f8399",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/3e87404329b8072295ea11d548b47a1eefe5a162",
+                "reference": "3e87404329b8072295ea11d548b47a1eefe5a162",
                 "shasum": ""
             },
             "require": {
@@ -1854,7 +1874,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-12T19:53:34+00:00"
+            "time": "2020-05-19T22:14:16+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -4353,12 +4373,6 @@
                 "phpstorm",
                 "sublime"
             ],
-            "funding": [
-                {
-                    "url": "https://github.com/barryvdh",
-                    "type": "github"
-                }
-            ],
             "time": "2020-04-22T09:57:26+00:00"
         },
         {
@@ -4956,20 +4970,6 @@
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
-            ],
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fdbal",
-                    "type": "tidelift"
-                }
             ],
             "time": "2020-04-20T17:19:26+00:00"
         },

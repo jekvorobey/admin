@@ -208,6 +208,13 @@ Route::middleware('auth')->group(function () {
             Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
 
+            Route::namespace('Detail')->group(function () {
+                Route::prefix('main')->group(function () {
+                    Route::get('', 'TabMainController@load')->name('orders.detail.main');
+                    Route::put('', 'TabMainController@save')->name('orders.detail.main.save');
+                });
+            });
+
             Route::prefix('delivery')->group(function () {
                 Route::get('{deliveryId}', 'FlowDeliveryController@detail')->where(['deliveryId' => '[0-9]+'])->name('orders.delivery');
                 Route::put('editDelivery', 'FlowDeliveryController@editDelivery')->name('orders.delivery.editDelivery');

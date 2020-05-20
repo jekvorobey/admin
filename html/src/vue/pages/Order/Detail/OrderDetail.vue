@@ -1,10 +1,10 @@
 <template>
     <layout-main back>
         <b-row class="mb-2">
-            <b-col class="col-12 col-md-6 mb-2">
+            <b-col class="col-12 col-md-8 mb-2">
                 <infopanel :model.sync="order"/>
             </b-col>
-            <b-col class="col-12 col-md-6 mb-2">
+            <b-col class="col-12 col-md-4 mb-2">
                 <kpi :kpis="kpis"/>
             </b-col>
         </b-row>
@@ -13,6 +13,7 @@
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="order"/>
+                    <tab-composition v-else-if="key === 'composition'" :model.sync="order"/>
                     <tab-deliveries v-else-if="key === 'deliveries'" :model.sync="order.deliveries"/>
                     <tab-shipments v-else-if="key === 'shipments'" :model.sync="order.shipments"/>
                     <tab-customer-order-history v-else-if="key === 'customer_order_history'" :model.sync="order.customer_history"/>
@@ -35,6 +36,7 @@
     import Infopanel from './components/infopanel.vue';
     import Kpi from './components/kpi.vue';
     import TabMain from './components/tab-main.vue';
+    import TabComposition from './components/tab-composition.vue';
     import TabDeliveries from './components/tab-deliveries.vue';
     import TabShipments from './components/tab-shipments.vue';
     import TabCustomerOrderHistory from './components/tab-customer-order-history.vue';
@@ -47,6 +49,7 @@
             Infopanel,
             Kpi,
             TabMain,
+            TabComposition,
             TabDeliveries,
             TabShipments,
             TabCustomerOrderHistory,
