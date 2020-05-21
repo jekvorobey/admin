@@ -238,7 +238,6 @@ export default {
                 }
             }
             this.appliedFilter = tmpFilter;
-            console.log(JSON.stringify(tmpFilter));
             this.currentPage = 1;
             this.changePage(1);
             this.loadPage();
@@ -253,16 +252,13 @@ export default {
             }
         },
         clearFilter() {
-            // for (let entry of Object.entries(cleanFilter)) {
-            //     this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
-            // }
-            // this.applyFilter();
-            console.log(this.availableStatusOptions);
-            // console.log(this.options.statuses);
-            // console.log(this.options.merchants);
+            for (let entry of Object.entries(cleanFilter)) {
+                this.filter[entry[0]] = JSON.parse(JSON.stringify(entry[1]));
+            }
+            this.applyFilter();
         },
         toOptionsArray(options) {
-            Object.entries(options).filter(([k,v]) => {
+            return Object.entries(options).map(([k,v]) => {
                 return {value: parseInt(k), text: v};
             })
         },
