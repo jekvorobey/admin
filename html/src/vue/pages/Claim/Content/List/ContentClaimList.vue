@@ -238,7 +238,6 @@ export default {
                 }
             }
             this.appliedFilter = tmpFilter;
-            console.log(JSON.stringify(tmpFilter));
             this.currentPage = 1;
             this.changePage(1);
             this.loadPage();
@@ -259,7 +258,7 @@ export default {
             this.applyFilter();
         },
         toOptionsArray(options) {
-            Object.entries(options).map(([k,v]) => {
+            return Object.entries(options).map(([k,v]) => {
                 return {value: parseInt(k), text: v};
             })
         },
