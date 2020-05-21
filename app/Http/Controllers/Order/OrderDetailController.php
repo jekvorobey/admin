@@ -168,6 +168,7 @@ class OrderDetailController extends Controller
         }
 
         $shipments = collect();
+        $merchantIds = collect();
         $cities = collect();
         $courierDelivery = null;
         $pickupDelivery = null;
@@ -183,7 +184,15 @@ class OrderDetailController extends Controller
             } else {
                 $cities->push($delivery->getCity());
                 $deliveryAddress = $delivery->delivery_address;
-                $deliveryAddress['address_string'] = $delivery->getAddressString();
+                $deliveryAddress['address_string'] = join(', ', array_filter([
+                    isset($deliveryAddress['post_index']) ? $deliveryAddress['post_index'] : '',
+                    isset($deliveryAddress['region']) ? $delivery->delivery_address['region'] : '',
+                    isset($deliveryAddress['city']) ? $delivery->delivery_address['city'] : '',
+                    isset($deliveryAddress['street']) ? $delivery->delivery_address['street'] : '',
+                    isset($deliveryAddress['house']) ? $delivery->delivery_address['house'] : '',
+                    isset($deliveryAddress['block']) ? $delivery->delivery_address['block'] : '',
+                    isset($deliveryAddress['flat']) ? $delivery->delivery_address['flat'] : '',
+                ]));
                 $delivery->delivery_address = $deliveryAddress;
 
                 if (is_null($courierDelivery)) {
@@ -198,6 +207,7 @@ class OrderDetailController extends Controller
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
 
             foreach ($delivery->shipments as $shipment) {
+                $merchantIds->push($shipment->merchant_id);
                 $shipment->status = $shipment->status();
                 $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile();
                 $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
@@ -206,6 +216,7 @@ class OrderDetailController extends Controller
             }
             $shipments = $shipments->merge($delivery->shipments);
         }
+        $order['merchants'] = $this->getMerchants($merchantIds->unique()->all())->values();
         $order['firstDelivery'] = $order->deliveries->first();
         $order['courierDelivery'] = $courierDelivery;
         $order['pickupDelivery'] = $pickupDelivery;

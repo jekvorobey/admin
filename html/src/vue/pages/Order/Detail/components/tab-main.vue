@@ -3,10 +3,37 @@
         <b-card>
             <b-row>
                 <b-col>
-                    <p class="font-weight-bold">Деньги</p>
+                    <p class="font-weight-bold">Общая информация</p>
                 </b-col>
             </b-row>
             <b-row>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Кол-во доставок:</span> {{order.deliveries.length}} шт.
+                </div>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Кол-во отправлений:</span> {{order.shipments.length}} шт.
+                </div>
+            </b-row>
+            <b-row>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Кол-во товаров:</span> {{order.total_qty}} шт.
+                </div>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Вес заказа:</span> {{order.weight}} г.
+                </div>
+            </b-row>
+            <b-row>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Мерчанты:</span>
+                    <template v-for="(merchant, key) in order.merchants">
+                        <span v-if="key > 0">, </span><a :href="getRoute('merchant.detail', {id: merchant.id})" target="_blank">{{ merchant.legal_name }}</a>
+                    </template>
+                </div>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Тип подтверждения :</span> {{order.confirmation_type.name}}
+                </div>
+            </b-row>
+            <b-row class="mt-2">
                 <div class="col-sm-4">
                     <span class="font-weight-bold">Стоимость заказа:</span> {{preparePrice(order.price)}} руб.
                 </div>
@@ -51,7 +78,10 @@
 
         <b-card class="mt-4">
             <b-row>
-                <b-col>
+                <div class="col-sm-6">
+                    <p class="font-weight-bold">Получатель</p>
+                </div>
+                <div class="col-sm-6">
                     <div class="float-right">
                         <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                             Сохранить
@@ -60,12 +90,7 @@
                             Отмена
                         </button>
                     </div>
-                </b-col>
-            </b-row>
-            <b-row>
-                <b-col>
-                    <p class="font-weight-bold">Получатель</p>
-                </b-col>
+                </div>
             </b-row>
             <b-row>
                 <div class="col-sm-4">
@@ -94,7 +119,7 @@
             <template v-if="this.order.courierDelivery">
                 <b-row>
                     <b-col>
-                        <v-dadata v-model="$v.form.delivery_address.address_string.$model"
+                        <v-dadata v-model.sync="$v.form.delivery_address.address_string.$model"
                                   :error="errorDeliveryAddress"
                                   @onSelect="onDeliveryAddressSelect">
                             Адрес до квартиры/офиса включительно
@@ -103,24 +128,24 @@
                 </b-row>
                 <b-row>
                     <div class="col-sm-4">
-                        <v-input v-model="form.delivery_address.porch">
+                        <v-input v-model="$v.form.delivery_address.porch.$model">
                             Подъезд
                         </v-input>
                     </div>
                     <div class="col-sm-4">
-                        <v-input v-model="form.delivery_address.floor">
+                        <v-input v-model="$v.form.delivery_address.floor.$model">
                             Этаж
                         </v-input>
                     </div>
                     <div class="col-sm-4">
-                        <v-input v-model="form.delivery_address.intercom">
+                        <v-input v-model="$v.form.delivery_address.intercom.$model">
                             Домофон
                         </v-input>
                     </div>
                 </b-row>
                 <b-row>
                     <b-col>
-                        <v-input v-model="form.delivery_address.comment" tag="textarea">
+                        <v-input v-model="$v.form.delivery_address.comment.$model" tag="textarea">
                             Комментарий курьеру от клиента
                         </v-input>
                     </b-col>
@@ -142,7 +167,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <v-input v-model="form.manager_comment" tag="textarea">
+                    <v-input v-model="$v.form.manager_comment.$model" tag="textarea">
                         Комментарий менеджера
                     </v-input>
                 </b-col>
@@ -186,6 +211,16 @@
                     receiver_email: this.model.firstDelivery.receiver_email,
                     delivery_address: {
                         address_string: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.address_string : '',
+                        country_code: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.country_code : '',
+                        post_index: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.post_index : '',
+                        region: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.region : '',
+                        region_guid: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.region_guid : '',
+                        city: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.city : '',
+                        city_guid: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.city_guid : '',
+                        street: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.street : '',
+                        house: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.house : '',
+                        block: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.block : '',
+                        flat: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.flat : '',
                         porch: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.porch : '',
                         floor: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.floor : '',
                         intercom: this.model.courierDelivery ? this.model.courierDelivery.delivery_address.intercom : '',
@@ -205,6 +240,7 @@
             const requiredIfPickupDeliveryExist = {required: requiredIf(() => {
                 return self.model.pickupDelivery && Object.keys(self.model.pickupDelivery).length > 0;
             })};
+            const notRequired = {required: requiredIf(() => {return false;})};
 
             return {
                 form: {
@@ -219,6 +255,7 @@
                         region_guid: requiredIfCourierDeliveryExist,
                         city: requiredIfCourierDeliveryExist,
                         city_guid: requiredIfCourierDeliveryExist,
+                        street: notRequired,
                         house: {
                             required: requiredIf(() => {
                                 return isCourierDeliveryExist && !self.form.delivery_address.block;
@@ -229,8 +266,14 @@
                                 return isCourierDeliveryExist && !self.form.delivery_address.house;
                             })
                         },
+                        flat: notRequired,
+                        porch: notRequired,
+                        floor: notRequired,
+                        intercom: notRequired,
+                        comment: notRequired,
                     },
                     point_id: requiredIfPickupDeliveryExist,
+                    manager_comment: notRequired,
                 }
             };
         },
@@ -256,6 +299,7 @@
                 this.form.delivery_address.house = address.house ? [address.house_type, address.house].join(' ') : '';
                 this.form.delivery_address.block = address.block ? [address.block_type, address.block].join(' ') : '';
                 this.form.delivery_address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
+                this.$v.$touch();
             },
             save() {
                 this.$v.$touch();
@@ -264,33 +308,8 @@
                 }
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('order.detail.main.save', {id: this.order.id}), {}, this.form).then(() => {
-                    this.order.firstDelivery.receiver_name = this.form.receiver_name;
-                    this.order.firstDelivery.receiver_phone = this.form.receiver_phone;
-                    this.order.firstDelivery.receiver_email = this.form.receiver_email;
-                    if (this.order.courierDelivery) {
-                        this.order.courierDelivery.delivery_address.address_string = this.form.delivery_address.address_string;
-                        this.order.courierDelivery.delivery_address.country_code = this.form.delivery_address.country_code;
-                        this.order.courierDelivery.delivery_address.post_index = this.form.delivery_address.post_index;
-                        this.order.courierDelivery.delivery_address.region = this.form.delivery_address.region;
-                        this.order.courierDelivery.delivery_address.region_guid = this.form.delivery_address.region_guid;
-                        this.order.courierDelivery.delivery_address.area = this.form.delivery_address.area;
-                        this.order.courierDelivery.delivery_address.area_guid = this.form.delivery_address.area_guid;
-                        this.order.courierDelivery.delivery_address.city = this.form.delivery_address.city;
-                        this.order.courierDelivery.delivery_address.city_guid = this.form.delivery_address.city_guid;
-                        this.order.courierDelivery.delivery_address.street = this.form.delivery_address.street;
-                        this.order.courierDelivery.delivery_address.house = this.form.delivery_address.house;
-                        this.order.courierDelivery.delivery_address.block = this.form.delivery_address.block;
-                        this.order.courierDelivery.delivery_address.flat = this.form.delivery_address.flat;
-                        this.order.courierDelivery.delivery_address.porch = this.form.delivery_address.porch;
-                        this.order.courierDelivery.delivery_address.floor = this.form.delivery_address.floor;
-                        this.order.courierDelivery.delivery_address.intercom = this.form.delivery_address.intercom;
-                        this.order.courierDelivery.delivery_address.comment = this.form.delivery_address.comment;
-                    }
-                    if (this.order.pickupDelivery) {
-                        this.order.pickupDelivery.point_id = this.form.point_id;
-                    }
-                    this.order.manager_comment = this.form.manager_comment;
+                Services.net().put(this.getRoute('orders.detail.main.save', {id: this.order.id}), {}, this.form).then((data) => {
+                    this.order = data.order;
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
@@ -301,13 +320,18 @@
                 this.form.receiver_name = this.order.firstDelivery.receiver_name;
                 this.form.receiver_phone = this.order.firstDelivery.receiver_phone;
                 this.form.receiver_email = this.order.firstDelivery.receiver_email;
-                this.form.delivery_address.address_string = this.order.courierDelivery.delivery_address.address_string;
-                this.form.delivery_address.porch = this.order.courierDelivery.delivery_address.porch;
-                this.form.delivery_address.floor = this.order.courierDelivery.delivery_address.floor;
-                this.form.delivery_address.intercom = this.order.courierDelivery.delivery_address.intercom;
-                this.form.delivery_address.comment = this.order.courierDelivery.delivery_address.comment;
-                this.form.point_id = this.order.pickupDelivery.point_id;
+                if (this.model.courierDelivery) {
+                    this.form.delivery_address.address_string = this.order.courierDelivery.delivery_address.address_string;
+                    this.form.delivery_address.porch = this.order.courierDelivery.delivery_address.porch;
+                    this.form.delivery_address.floor = this.order.courierDelivery.delivery_address.floor;
+                    this.form.delivery_address.intercom = this.order.courierDelivery.delivery_address.intercom;
+                    this.form.delivery_address.comment = this.order.courierDelivery.delivery_address.comment;
+                }
+                if (this.model.pickupDelivery) {
+                    this.form.point_id = this.order.pickupDelivery.point_id;
+                }
                 this.form.manager_comment = this.order.manager_comment;
+                this.$v.$reset();
             },
         },
         computed: {

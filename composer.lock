@@ -820,12 +820,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "9bc74719b6cac58b3b83733c7c17e63f047587f2"
+                "reference": "6088b13e400d293921c10f09e6129510fa5b0508"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=9bc74719b6cac58b3b83733c7c17e63f047587f2",
-                "reference": "9bc74719b6cac58b3b83733c7c17e63f047587f2",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=6088b13e400d293921c10f09e6129510fa5b0508",
+                "reference": "6088b13e400d293921c10f09e6129510fa5b0508",
                 "shasum": ""
             },
             "require": {
@@ -863,7 +863,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13390453/issues"
             },
-            "time": "2020-05-19T14:01:33+00:00"
+            "time": "2020-05-21T09:59:01+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -871,12 +871,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "846b473ca086b7675eef8d7c552017ce08aee8f0"
+                "reference": "af3b66dfc44a3be83b740afc4810540bd3d9450d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=846b473ca086b7675eef8d7c552017ce08aee8f0",
-                "reference": "846b473ca086b7675eef8d7c552017ce08aee8f0",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=af3b66dfc44a3be83b740afc4810540bd3d9450d",
+                "reference": "af3b66dfc44a3be83b740afc4810540bd3d9450d",
                 "shasum": ""
             },
             "require": {
@@ -915,7 +915,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
             },
-            "time": "2020-05-20T20:10:39+00:00"
+            "time": "2020-05-21T10:43:05+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",

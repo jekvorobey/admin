@@ -80,7 +80,7 @@ class Controller extends BaseController
     {
         $merchants = collect();
         
-        if (is_null($merchantIds) || count($merchantIds) > 1) {
+        if (is_null($merchantIds) || count($merchantIds) > 0) {
             /** @var MerchantService $merchantService */
             $merchantService = resolve(MerchantService::class);
             $merchantQuery = $merchantService->newQuery()
