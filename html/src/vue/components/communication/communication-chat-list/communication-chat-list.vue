@@ -50,7 +50,7 @@
                 <template v-for="chat in chats">
                     <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;">
                         <td @click="openChat(chat)">{{ chat.theme }}</td>
-                        <td @click="openChat(chat)">{{ users[chat.user_id].short_name }}</td>
+                        <td @click="openChat(chat)">{{ userShortName(chat.user_id) }}</td>
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
@@ -66,7 +66,7 @@
                     </tr>
                     <template v-if="showChat === chat.id">
                         <tr v-for="message in chat.messages">
-                            <td>{{ users[message.user_id].short_name }}</td>
+                            <td>{{ userShortName(message.user_id) }}</td>
                             <td colspan="4">{{ message.message }}</td>
                             <td>
                                 <div v-for="file in message.files">
@@ -226,6 +226,13 @@
             }
         },
         methods: {
+            userShortName(userId) {
+                if (!userId) {
+                    return 'Маркетплейс';
+                }
+
+                return this.users[userId].short_name;
+            },
             filterChats() {
                 Services.showLoader();
                 let filter = {};
