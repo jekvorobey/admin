@@ -1,23 +1,26 @@
 <template>
-    <div class="col-4">
-        <div class="shadow p-3 w-100">
-            <ul v-for="(delivery, key) in order.deliveries" class="list-group list-group-flush">
-                <li class="list-group-item">
-                    Доставка {{ delivery.number }}
-                    <ul v-if="delivery.shipments" v-for="(shipment, key) in delivery.shipments">
-                        <li>
-                            Отправление {{ shipment.number }}
-                            <ul v-if="shipment.packages" v-for="(pack, key) in shipment.packages">
-                                <li>
-                                    Коробка #{{ key+1 }}
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <b-card>
+        <ul v-for="delivery in order.deliveries" class="list-group list-group-flush">
+            <li class="list-group-item">
+                <a :href="deliveryLink(delivery)">Доставка {{ delivery.number }}</a>
+                <ul v-for="shipment in delivery.shipments" class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        Отправление {{ shipment.number }}
+                        <ul v-if="shipment.packages" v-for="(shipmentPackage, key) in shipment.packages" class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                Коробка #{{ key+1 }}
+                                <ul v-for="packageItem in shipmentPackage.items" class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        Товар {{ packageItem.basket_item_id }} {{packageItem.qty}} шт.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </b-card>
 </template>
 
 <script>
@@ -26,6 +29,11 @@
         props: [
             'model',
         ],
+        methods: {
+            deliveryLink(delivery) {
+                return '?tab=deliveries#' + delivery.id;
+            }
+        },
         computed: {
             order: {
                 get() {
@@ -34,7 +42,7 @@
                 set(value) {
                     this.$emit('update:model', value)
                 },
-            },
+            }
         }
     }
 </script>

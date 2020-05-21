@@ -107,6 +107,7 @@ class OrderDetailController extends Controller
     }
 
     /**
+     * todo Разбить метод на несколько мелких методов
      * @param  int  $id
      * @return OrderDto
      * @throws \Exception
@@ -321,11 +322,39 @@ class OrderDetailController extends Controller
             $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use (
                 $productsByOffers
             ) {
+                $product = $basketItemDto->product;
                 $basketItemDto['product'] = $productsByOffers->has($basketItemDto->offer_id) ?
-                    $productsByOffers[$basketItemDto->offer_id]->product : null;
+                    $productsByOffers[$basketItemDto->offer_id]->product : [];
+                foreach ($product as $key => $value) {
+                    $basketItemDto['product'][$key] = $value;
+                }
 
                 return $basketItemDto;
             });
+
+            foreach ($order->deliveries as $delivery) {
+                foreach ($delivery->shipments as $shipment) {
+                    foreach ($shipment->basketItems as $basketItem) {
+                        $product = $basketItem->product;
+                        $basketItem['product'] = $productsByOffers->has($basketItem->offer_id) ?
+                            $productsByOffers[$basketItem->offer_id]->product : [];
+                        foreach ($product as $key => $value) {
+                            $basketItem['product'][$key] = $value;
+                        }
+                    }
+
+                    foreach ($shipment->packages as $package) {
+                        foreach ($package->items as $item) {
+                            $product = $item->basketItem->product;
+                            $item->basketItem['product'] = $productsByOffers->has($item->basketItem->offer_id) ?
+                                $productsByOffers[$item->basketItem->offer_id]->product : [];
+                            foreach ($product as $key => $value) {
+                                $item->basketItem['product'][$key] = $value;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return $order;
