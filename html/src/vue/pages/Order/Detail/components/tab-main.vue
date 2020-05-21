@@ -7,10 +7,10 @@
                 </b-col>
             </b-row>
             <b-row>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <span class="font-weight-bold">Кол-во доставок:</span> {{order.deliveries.length}} шт.
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <span class="font-weight-bold">Кол-во отправлений:</span> {{order.shipments.length}} шт.
                 </div>
             </b-row>
@@ -72,6 +72,52 @@
                 </div>
                 <div class="col-sm-4">
                     <span class="font-weight-bold">Начислено бонусов:</span> {{preparePrice(order.added_bonus)}} руб.
+                </div>
+            </b-row>
+            <b-row class="mt-3">
+                <b-col>
+                    <b-table-simple hover small caption-top responsive>
+                        <b-thead>
+                            <b-tr>
+                                <b-th>Реферальный партнер</b-th>
+                                <b-th>Элемент корзины</b-th>
+                                <b-th>Промокод</b-th>
+                            </b-tr>
+                        </b-thead>
+                        <b-tbody>
+                            <b-tr v-for="referral in order.referrals">
+                                <b-td>
+                                    <a :href="getRoute('customers.detail', {id: referral.referral_id})" target="_blank">
+                                        {{referral.user ? (referral.user.full_name ? referral.user.full_name : referral.user.login) : referral.referral_id}}
+                                    </a>
+                                </b-td>
+                                <b-td>
+                                    <p v-for="basketItem in referral.basketItems">
+                                        <a :href="getRoute('products.detail', {id: basketItem.product.id})" target="_blank">
+                                            {{basketItem.name}}
+                                        </a>
+                                    </p>
+                                </b-td>
+                                <b-td>
+                                    <p v-for="promoCode in referral.promoCodes">
+                                        <span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.id}})</span>
+                                    </p>
+                                </b-td>
+                            </b-tr>
+                            <b-tr v-if="!order.referrals.length">
+                                <b-td colspan="3">Реферальных партнеров нет</b-td>
+                            </b-tr>
+                        </b-tbody>
+                    </b-table-simple>
+                </b-col>
+            </b-row>
+            <b-row>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Промокоды:</span>
+                    <template v-for="(promoCode, key) in order.promoCodes">
+                        <span v-if="key > 0">, </span><span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.id}})</span>
+                    </template>
+                    <template v-if="!order.promoCodes.length">нет</template>
                 </div>
             </b-row>
         </b-card>

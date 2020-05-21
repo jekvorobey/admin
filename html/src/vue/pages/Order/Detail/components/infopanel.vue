@@ -55,12 +55,17 @@
                 </p>
             </div>
         </b-row>
-        <b-row class="mb-3">
+        <b-row>
             <div class="col-sm-6">
-                <span class="font-weight-bold">Покупатель:</span> <a :href="getRoute('customers.detail', {id: order.customer_id})" target="_blank" v-if="order.customer && order.customer.user">{{ order.customer.user.full_name }}</a><span v-else>N/A</span>
+                <span class="font-weight-bold">Покупатель:</span> <a :href="getRoute('customers.detail', {id: order.customer_id})" target="_blank" v-if="order.customer && order.customer.user">{{ order.customer.user.full_name ? order.customer.user.full_name : order.customer.user.login}}</a><span v-else>N/A</span>
             </div>
             <div class="col-sm-6">
                 <span class="font-weight-bold">Сегмент:</span> N/A
+            </div>
+        </b-row>
+        <b-row class="mb-3">
+            <div class="col-sm-6">
+                <span class="font-weight-bold">Телефон:</span> <a :href="customerPhoneLink" target="_blank" v-if="order.customer && order.customer.user">{{ order.customer.user.phone}}</a><span v-else>N/A</span>
             </div>
         </b-row>
         <b-row>
@@ -214,6 +219,9 @@
         isProblem() {
             return this.order.is_problem;
         },
+        customerPhoneLink() {
+            return 'tel:' + (this.order.customer && this.order.customer.user ? this.order.customer.user.phone : '');
+        }
     },
 };
 </script>

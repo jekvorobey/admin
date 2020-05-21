@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Order;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -137,17 +138,56 @@ class OrderDetailController extends Controller
         /** @var OrderDto $order */
         $order = $orders->first();
 
-        // Получаем покупателей заказа
+        //Получаем рефералльных партнеров заказов
+        $referralIds = $order->basket->items->pluck('referrer_id')->filter()
+            ->merge($order->promoCodes->pluck('owner_id')->filter())
+            ->unique();
+        // Получаем покупателя заказа
         $customerQuery = $customerService->newQuery()
             ->setFilter('id', $order->customer_id);
         /** @var CustomerDto $customer */
         $customer = $customerService->customers($customerQuery)->first();
-        if ($customer) {
+
+        // Получаем самих пользователей
+        $userIds = collect($customer->user_id)
+            ->merge($referralIds)
+            ->unique()
+            ->values()
+            ->all();
+        $users = collect();
+        if ($userIds) {
             $userQuery = $userService->newQuery()
-                ->setFilter('id', $customer->user_id);
-            $customer['user'] = $userService->users($userQuery)->first();
+                ->setFilter('id', $userIds);
+            /** @var Collection|UserDto[] $users */
+            $users = $userService->users($userQuery)->keyBy('id');
+        }
+
+        if ($customer && $users->has($customer->user_id)) {
+            $customer['user'] = $users[$customer->user_id];
             $order['customer'] = $customer;
         }
+
+        $referrals = collect();
+        $referralIds = $order->basket->items->pluck('referrer_id')->filter()->unique();
+        foreach ($referralIds as $referralId) {
+            $referral = [
+                'referral_id' => $referralId,
+                'user' => $users->has($referralId) ?
+                    $users[$referralId] : null,
+            ];
+            foreach ($order->basket->items as $item) {
+                if ($item->referrer_id == $referralId) {
+                    $referral['basketItems'][] = $item;
+                }
+            }
+            foreach ($order->promoCodes as $promoCode) {
+                if ($promoCode->owner_id == $referralId) {
+                    $referral['promoCodes'][] = $promoCode;
+                }
+            }
+            $referrals->push($referral);
+        }
+        $order['referrals'] = $referrals;
 
         // Получаем склады заказа
         $storeIds = collect();
