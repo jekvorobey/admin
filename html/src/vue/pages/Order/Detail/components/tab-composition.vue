@@ -2,10 +2,12 @@
     <b-card>
         <ul v-for="delivery in order.deliveries" class="list-group list-group-flush">
             <li class="list-group-item border-top">
-                <fa-icon icon="truck"></fa-icon> <a :href="deliveryLink(delivery)">Доставка {{ delivery.number }}</a>
+                <fa-icon icon="truck"></fa-icon>
+                <button @click="openTab('deliveries')" class="btn btn-link">Доставка {{ delivery.number }}</button>
                 <ul v-for="shipment in delivery.shipments" class="list-group list-group-flush">
                     <li class="list-group-item border-bottom">
-                        <fa-icon icon="truck-loading"></fa-icon> Отправление {{ shipment.number }}
+                        <fa-icon icon="truck-loading"></fa-icon>
+                        <button @click="openTab('shipments')" class="btn btn-link">Отправление {{ shipment.number }}</button>
                         <ul v-if="shipment.nonPackedBasketItems" v-for="nonPackedBasketItem in shipment.nonPackedBasketItems" class="list-group list-group-flush">
                             <li class="list-group-item border-top">
                                 <img :src="productPhoto(nonPackedBasketItem.product)" class="preview" :alt="nonPackedBasketItem.name"
@@ -40,14 +42,16 @@
 </template>
 
 <script>
+    import Services from "../../../../../scripts/services/services";
+
     export default {
         name: "tab-composition",
         props: [
             'model',
         ],
         methods: {
-            deliveryLink(delivery) {
-                return '?tab=deliveries#' + delivery.id;
+            openTab(tab) {
+                Services.event().$emit('showTab', tab);
             },
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';

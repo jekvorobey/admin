@@ -47,11 +47,11 @@
                 </p>
                 <p v-if="isProblem">
                     <span class="badge badge-danger">Проблемный</span>
-                    {{order.is_canceled_at}}
+                    {{order.is_problem_at}}
                 </p>
                 <p v-if="isCancel">
                     <span class="badge badge-danger">Отменен</span>
-                    {{order.is_problem_at}}
+                    {{order.is_canceled_at}}
                 </p>
             </div>
         </b-row>

@@ -13,6 +13,7 @@ use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentDto;
@@ -27,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use MerchantManagement\Dto\MerchantDto;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -228,6 +230,11 @@ class OrderDetailController extends Controller
         $pointIds = $order->deliveries->pluck('point_id')->filter()->unique()->values()->all();
         if ($pointIds) {
             $points = $listsService->points($listsService->newQuery()->setFilter('id', $pointIds))
+                ->map(function(PointDto $point) {
+                    $point->type = $point->type();
+
+                    return $point;
+                })
                 ->keyBy('id');
         }
 
@@ -239,6 +246,7 @@ class OrderDetailController extends Controller
         foreach ($order->deliveries as $delivery) {
             if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                 if ($points->has($delivery->point_id)) {
+                    $delivery['point'] = $points[$delivery->point_id];
                     $cities->push($points[$delivery->point_id]->getCityWithType());
                 }
 
@@ -257,6 +265,7 @@ class OrderDetailController extends Controller
                     isset($deliveryAddress['block']) ? $delivery->delivery_address['block'] : '',
                     isset($deliveryAddress['flat']) ? $delivery->delivery_address['flat'] : '',
                 ]));
+                $deliveryAddress['full_address_string'] = $delivery->getAddressString();
                 $delivery->delivery_address = $deliveryAddress;
 
                 if (is_null($courierDelivery)) {
@@ -268,7 +277,14 @@ class OrderDetailController extends Controller
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();
+            $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
+            $delivery['product_cost'] = $delivery->shipments->reduce(function (
+                int $sum,
+                ShipmentDto $shipment
+            ) {
+                return $sum + $shipment->cost;
+            }, 0);
 
             foreach ($delivery->shipments as $shipment) {
                 $merchantIds->push($shipment->merchant_id);
@@ -278,15 +294,30 @@ class OrderDetailController extends Controller
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
+                $shipment['product_qty'] = $shipment->basketItems->reduce(function (
+                    int $sum,
+                    BasketItemDto $item
+                ) {
+                    return $sum + $item->qty;
+                }, 0);
 
                 foreach ($shipment->packages as $package) {
                     $package['package'] = $packages->has($package->package_id) ? $packages[$package->package_id] : null;
                 }
             }
             $shipments = $shipments->merge($delivery->shipments);
+            $delivery['product_qty'] = $shipments->sum('product_qty');
+        }
+        $merchants = $this->getMerchants($merchantIds->unique()->all());
+
+        foreach ($order->deliveries as $delivery) {
+            $shipmentMerchantIds = $delivery->shipments->pluck('merchant_id')->unique();
+            $delivery['merchants'] = $merchants->filter(function (MerchantDto $merchant) use ($shipmentMerchantIds) {
+                return $shipmentMerchantIds->search($merchant->id) !== false;
+            })->values();
         }
 
-        $order['merchants'] = $this->getMerchants($merchantIds->unique()->all())->values();
+        $order['merchants'] = $merchants->values();
         $order['firstDelivery'] = $order->deliveries->first();
         $order['courierDelivery'] = $courierDelivery;
         $order['pickupDelivery'] = $pickupDelivery;

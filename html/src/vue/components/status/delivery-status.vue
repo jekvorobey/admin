@@ -4,7 +4,7 @@
 
 <script>
 export default {
-    name: 'order-status',
+    name: 'delivery-status',
     props: ['status'],
     methods: {
         statusClass(statusId) {
@@ -17,9 +17,15 @@ export default {
                 case 5: return 'badge-dark';
                 case 6: return 'badge-dark';
                 case 7: return 'badge-dark';
-                case 8: return 'badge-dark';
-                case 9: return 'badge-success';
-                case 10: return 'badge-danger';
+                case 21: return 'badge-info';
+                case 22: return 'badge-info';
+                case 23: return 'badge-info';
+                case 24: return 'badge-info';
+                case 25: return 'badge-info';
+                case 26: return 'badge-success';
+                case 41: return 'badge-secondary';
+                case 42: return 'badge-secondary';
+                case 43: return 'badge-danger';
                 default: return 'badge-dark';
             }
         },
