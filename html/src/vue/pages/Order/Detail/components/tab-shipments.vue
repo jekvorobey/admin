@@ -44,17 +44,17 @@
                             </td>
                         </tr>
                         <tr v-for="(item, key) in pack.items">
-                            <td><img :src="item.product.photo" class="preview" :alt="item.product.name"
-                                     v-if="item.product.photo"></td>
+                            <td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
+                                     v-if="item.basketItem.product.mainImage"></td>
                             <td class="with-small">
-                                <a :href="getRoute('products.detail', {id: item.product.id})">
-                                    {{ item.name }}
+                                <a :href="getRoute('products.detail', {id: item.basketItem.product.id})" target="_blank">
+                                    {{ item.basketItem.name }}
                                 </a>
-                                <small>{{ item.product.vendor_code }}</small>
+                                <small>{{ item.basketItem.product.vendor_code }}</small>
                             </td>
                             <td class="with-small">
-                                {{ item.product && item.product.category ? item.product.category.name : '' }}
-                                <small>{{ tem.product && item.product.category ? item.product.brand.name : '' }}</small>
+                                {{ item.basketItem.product && item.basketItem.product.category ? item.basketItem.product.category.name : '' }}
+                                <small>{{ item.basketItem.product && item.basketItem.product.category ? item.basketItem.product.brand.name : '' }}</small>
                             </td>
                             <td>{{ item.qty | integer }}</td>
                             <td>{{ item.cost}}</td>
@@ -67,10 +67,9 @@
                 </template>
                 <template v-else>
                     <tr v-for="(item, key) in shipment.basketItems">
-                        <td><img :src="item.product.photo" class="preview" :alt="item.product.name"
-                                 v-if="item.product.photo"></td>
+                        <td><img :src="productPhoto(item.product)" class="preview" :alt="item.name" v-if="item.product.mainImage"></td>
                         <td class="with-small">
-                            <a :href="getRoute('products.detail', {id: item.product.id})">
+                            <a :href="getRoute('products.detail', {id: item.product.id})" target="_blank">
                                 {{ item.name }}
                             </a>
                             <small>{{ item.product.vendor_code }}</small>
@@ -106,6 +105,9 @@
         model: {},
     },
     methods: {
+        productPhoto(product) {
+            return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
+        },
         roundValue(value) {
             return Helpers.roundValue(value)
         },
