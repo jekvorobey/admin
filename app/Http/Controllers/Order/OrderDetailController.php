@@ -116,16 +116,6 @@ class OrderDetailController extends Controller
     {
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
-        /** @var ProductService $productService */
-        $productService = resolve(ProductService::class);
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-        /** @var ListsService $listsService */
-        $listsService = resolve(ListsService::class);
-        /** @var StoreService $storeService */
-        $storeService = resolve(StoreService::class);
 
         $restQuery = $orderService
             ->newQuery()
@@ -139,7 +129,22 @@ class OrderDetailController extends Controller
         /** @var OrderDto $order */
         $order = $orders->first();
 
-        //Получаем рефералльных партнеров заказов
+        $this->addOrderUserInfo($order);
+        $this->addOrderDeliveryInfo($order);
+        $this->addOrderCommonInfo($order);
+        $this->addOrderProductInfo($order);
+
+        return $order;
+    }
+
+    protected function addOrderUserInfo(OrderDto $order): void
+    {
+        /** @var CustomerService $customerService */
+        $customerService = resolve(CustomerService::class);
+        /** @var UserService $userService */
+        $userService = resolve(UserService::class);
+
+        //Получаем реферальных партнеров заказов
         $referralIds = $order->basket->items->pluck('referrer_id')->filter()
             ->merge($order->promoCodes->pluck('owner_id')->filter())
             ->unique();
@@ -189,6 +194,14 @@ class OrderDetailController extends Controller
             $referrals->push($referral);
         }
         $order['referrals'] = $referrals;
+    }
+
+    protected function addOrderDeliveryInfo(OrderDto $order): void
+    {
+        /** @var ListsService $listsService */
+        $listsService = resolve(ListsService::class);
+        /** @var StoreService $storeService */
+        $storeService = resolve(StoreService::class);
 
         // Получаем склады заказа
         $storeIds = collect();
@@ -257,12 +270,17 @@ class OrderDetailController extends Controller
             }
             $shipments = $shipments->merge($delivery->shipments);
         }
+
         $order['merchants'] = $this->getMerchants($merchantIds->unique()->all())->values();
         $order['firstDelivery'] = $order->deliveries->first();
         $order['courierDelivery'] = $courierDelivery;
         $order['pickupDelivery'] = $pickupDelivery;
         $order['shipments'] = $shipments;
+        $order['delivery_cities'] = $cities->unique()->join(', ');
+    }
 
+    protected function addOrderCommonInfo(OrderDto $order): void
+    {
         $order->confirmation_type = $order->confirmationType();
         $order->status = $order->status();
         $order->status_at = dateTime2str(new Carbon($order->status_at));
@@ -280,7 +298,6 @@ class OrderDetailController extends Controller
         $order['delivery_methods'] = $order->deliveries->map(function (DeliveryDto $delivery) {
             return $delivery->delivery_method;
         })->unique();
-        $order['delivery_cities'] = $cities->unique()->join(', ');
 
         $order->created_at = dateTime2str(new Carbon($order->created_at));
         $order->updated_at = dateTime2str(new Carbon($order->updated_at));
@@ -311,6 +328,12 @@ class OrderDetailController extends Controller
         ) {
             return $sum + $item->qty;
         }, 0) : 0;
+    }
+
+    protected function addOrderProductInfo(OrderDto $order): void
+    {
+        /** @var ProductService $productService */
+        $productService = resolve(ProductService::class);
 
         if ($order->basket->items->isNotEmpty()) {
             $offersIds = $order->basket->items->pluck('offer_id')->toArray();
@@ -356,8 +379,6 @@ class OrderDetailController extends Controller
                 }
             }
         }
-
-        return $order;
     }
 
     /**

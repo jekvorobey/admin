@@ -85,7 +85,7 @@
                             </b-tr>
                         </b-thead>
                         <b-tbody>
-                            <b-tr v-for="referral in order.referrals">
+                            <b-tr v-for="referral in order.referrals" v-bind:key="referral.referral_id">
                                 <b-td>
                                     <a :href="getRoute('customers.detail', {id: referral.referral_id})" target="_blank">
                                         {{referral.user ? (referral.user.full_name ? referral.user.full_name : referral.user.login) : referral.referral_id}}
@@ -100,7 +100,7 @@
                                 </b-td>
                                 <b-td>
                                     <p v-for="promoCode in referral.promoCodes">
-                                        <span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.id}})</span>
+                                        <span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.promo_code_id}})</span>
                                     </p>
                                 </b-td>
                             </b-tr>
@@ -115,7 +115,7 @@
                 <div class="col-sm-4">
                     <span class="font-weight-bold">Промокоды:</span>
                     <template v-for="(promoCode, key) in order.promoCodes">
-                        <span v-if="key > 0">, </span><span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.id}})</span>
+                        <span v-if="key > 0">, </span><span :title="promoCode.name">{{promoCode.code}} (ID={{promoCode.promo_code_id}})</span>
                     </template>
                     <template v-if="!order.promoCodes.length">нет</template>
                 </div>

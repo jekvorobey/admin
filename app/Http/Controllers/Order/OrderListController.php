@@ -178,7 +178,7 @@ class OrderListController extends Controller
         }
         $operatorIds = $operatorIds->unique();
 
-        //Получаем рефералльных партнеров заказов
+        //Получаем реферальных партнеров заказов
         $referralIds = collect();
         foreach ($orders as $order) {
             $referralIds->merge($order->basket->items->pluck('referrer_id')->filter()->unique());
