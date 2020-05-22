@@ -678,12 +678,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "1093674b5de49ed9a2d655070d30d8612c07fd64"
+                "reference": "1c3ea9fa9f2405b2af7be03fc6bb2fe07e585071"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=1093674b5de49ed9a2d655070d30d8612c07fd64",
-                "reference": "1093674b5de49ed9a2d655070d30d8612c07fd64",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=1c3ea9fa9f2405b2af7be03fc6bb2fe07e585071",
+                "reference": "1c3ea9fa9f2405b2af7be03fc6bb2fe07e585071",
                 "shasum": ""
             },
             "require": {
@@ -721,7 +721,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/15546031/issues"
             },
-            "time": "2020-05-20T20:09:59+00:00"
+            "time": "2020-05-22T12:18:47+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
