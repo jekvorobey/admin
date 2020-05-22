@@ -18,6 +18,9 @@ use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Greensight\Store\Dto\Package\PackageDto;
+use Greensight\Store\Dto\Package\PackageType;
+use Greensight\Store\Services\PackageService\PackageService;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -202,6 +205,13 @@ class OrderDetailController extends Controller
         $listsService = resolve(ListsService::class);
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
+        /** @var PackageService $brandService */
+        $packageService = resolve(PackageService::class);
+
+        //Справочник типов коробок
+        $packages = $packageService->packages($packageService->newQuery()
+            ->setFilter('type', PackageType::TYPE_BOX)
+            ->addFields(PackageDto::entity(), 'id', 'name'))->keyBy('id');
 
         // Получаем склады заказа
         $storeIds = collect();
@@ -267,6 +277,11 @@ class OrderDetailController extends Controller
                 $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
+                $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
+
+                foreach ($shipment->packages as $package) {
+                    $package['package'] = $packages->has($package->package_id) ? $packages[$package->package_id] : null;
+                }
             }
             $shipments = $shipments->merge($delivery->shipments);
         }

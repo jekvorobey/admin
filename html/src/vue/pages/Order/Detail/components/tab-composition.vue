@@ -1,17 +1,33 @@
 <template>
     <b-card>
         <ul v-for="delivery in order.deliveries" class="list-group list-group-flush">
-            <li class="list-group-item">
-                <a :href="deliveryLink(delivery)">Доставка {{ delivery.number }}</a>
+            <li class="list-group-item border-top">
+                <fa-icon icon="truck"></fa-icon> <a :href="deliveryLink(delivery)">Доставка {{ delivery.number }}</a>
                 <ul v-for="shipment in delivery.shipments" class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        Отправление {{ shipment.number }}
+                    <li class="list-group-item border-bottom">
+                        <fa-icon icon="truck-loading"></fa-icon> Отправление {{ shipment.number }}
+                        <ul v-if="shipment.nonPackedBasketItems" v-for="nonPackedBasketItem in shipment.nonPackedBasketItems" class="list-group list-group-flush">
+                            <li class="list-group-item border-top">
+                                <img :src="productPhoto(nonPackedBasketItem.product)" class="preview" :alt="nonPackedBasketItem.name"
+                                     v-if="nonPackedBasketItem.product.mainImage">
+                                <a :href="getRoute('products.detail', {id: nonPackedBasketItem.product.id})" target="_blank">
+                                    {{ nonPackedBasketItem.name }}
+                                </a>,
+                                {{nonPackedBasketItem.qty | integer}} шт.
+                            </li>
+                        </ul>
+
                         <ul v-if="shipment.packages" v-for="(shipmentPackage, key) in shipment.packages" class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                Коробка #{{ key+1 }}
+                            <li class="list-group-item border-top">
+                                <fa-icon icon="box"></fa-icon> Коробка #{{ key+1 }} ({{ shipmentPackage.package ? shipmentPackage.package.name + ', ' : ''}}вес брутто {{shipmentPackage.weight}} г, вес пустой коробки {{shipmentPackage.wrapper_weight}} г)
                                 <ul v-for="packageItem in shipmentPackage.items" class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        Товар {{ packageItem.basket_item_id }} {{packageItem.qty}} шт.
+                                    <li class="list-group-item border-top">
+                                        <img :src="productPhoto(packageItem.basketItem.product)" class="preview" :alt="packageItem.basketItem.name"
+                                             v-if="packageItem.basketItem.product.mainImage">
+                                        <a :href="getRoute('products.detail', {id: packageItem.basketItem.product.id})"  target="_blank">
+                                            {{ packageItem.basketItem.name }}
+                                        </a>,
+                                        {{packageItem.qty | integer}} шт.
                                     </li>
                                 </ul>
                             </li>
@@ -32,7 +48,10 @@
         methods: {
             deliveryLink(delivery) {
                 return '?tab=deliveries#' + delivery.id;
-            }
+            },
+            productPhoto(product) {
+                return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
+            },
         },
         computed: {
             order: {
