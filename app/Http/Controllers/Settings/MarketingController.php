@@ -20,6 +20,7 @@ class MarketingController extends Controller
         $marketingOptionService = resolve(MarketingOptionService::class);
         $customerOptionService = resolve(CustomerOptionService::class);
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);
+        $bonusExpireDaysNotify = $customerOptionService->get(CustomerOptionDto::BONUS_EXPIRE_DAYS_NOTIFY);
         return $this->render('Settings/Marketing', [
             'bonus_per_rubles' => $marketingOptionService->get(MarketingOptionDto::KEY_BONUS_PER_RUBLES),
             'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, []),
@@ -30,7 +31,7 @@ class MarketingController extends Controller
             'activation_bonus_value' => $activationBonus['value'] ?? null,
             'activation_bonus_valid_period' => $activationBonus['valid_period'] ?? null,
             'activation_bonus' => $activationBonus ?? null,
-
+            'bonus_expire_days_notify' => $bonusExpireDaysNotify ?? null,
             'roles' => Helpers::getOptionRoles(false),
         ]);
     }
@@ -75,6 +76,9 @@ class MarketingController extends Controller
                     break;
                 case 'activation_bonus':
                     $customerOptionService->put(CustomerOptionDto::KEY_ACTIVATION_BONUS, $v);
+                    break;
+                case 'bonus_expire_days_notify':
+                    $customerOptionService->put(CustomerOptionDto::BONUS_EXPIRE_DAYS_NOTIFY, $v ? (int)$v : null);
                     break;
             }
         }
