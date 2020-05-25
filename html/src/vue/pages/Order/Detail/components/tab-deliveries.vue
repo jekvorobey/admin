@@ -69,7 +69,7 @@
             </b-row>
             <b-row>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">DT:</span> {{delivery.dt ? pluralForm(delivery.dt, ['день', 'дня', 'дней']) : ''}}
+                    <span class="font-weight-bold">DT:</span> {{delivery.dt ? delivery.dt + ' ' + pluralForm(delivery.dt, ['день', 'дня', 'дней']) : ''}}
                 </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">PDD:</span>
