@@ -322,6 +322,36 @@ class Menu
                 ],
             ],
             [
+                'title' => 'Мастер-классы',
+                'items' => [
+                    [
+                        'title' => 'Каталог мастер-классов',
+                        'route' => route('public-event.list'),
+                    ],
+                    [
+                        'title' => 'Справочники',
+                        'items' => [
+                            [
+                                'title' => 'Организаторы',
+                                'route' => route('public-event.organizers.list'),
+                            ],
+                            [
+                                'title' => 'Площадки',
+                                'route' => route('public-event.places.list'),
+                            ],
+                            [
+                                'title' => 'Спикеры',
+                                'route' => route('public-event.speakers.list'),
+                            ],
+                            [
+                                'title' => 'Типы событий',
+                                'route' => route('public-event.types.list'),
+                            ],
+                        ]
+                    ],
+                ],
+            ],
+            [
                 'title' => 'Настройки',
                 'items' => [
                     [

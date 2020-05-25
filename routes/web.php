@@ -586,6 +586,34 @@ Route::middleware('auth')->group(function () {
         Route::get('is-code-unique', 'PublicEventDetailController@isCodeUnique')->name('public-event.isCodeUnique');
         Route::post('save', 'PublicEventDetailController@save')->name('public-event.save');
         
+        Route::prefix('organizers')->group(function () {
+            Route::get('', 'OrganizerController@list')->name('public-event.organizers.list');
+            Route::get('page', 'OrganizerController@page')->name('public-event.organizers.page');
+            Route::post('save', 'OrganizerController@save')->name('public-event.organizers.save');
+            Route::post('delete', 'OrganizerController@delete')->name('public-event.organizers.delete');
+        });
+
+        Route::prefix('types')->group(function () {
+            Route::get('', 'EventTypeController@list')->name('public-event.types.list');
+            Route::get('page', 'EventTypeController@page')->name('public-event.types.page');
+            Route::post('save', 'EventTypeController@save')->name('public-event.types.save');
+            Route::post('delete', 'EventTypeController@delete')->name('public-event.types.delete');
+        });
+
+        Route::prefix('speakers')->group(function () {
+            Route::get('', 'SpeakerController@list')->name('public-event.speakers.list');
+            Route::get('page', 'SpeakerController@page')->name('public-event.speakers.page');
+            Route::post('save', 'SpeakerController@save')->name('public-event.speakers.save');
+            Route::post('delete', 'SpeakerController@delete')->name('public-event.speakers.delete');
+        });
+
+        Route::prefix('places')->group(function () {
+            Route::get('', 'PlaceController@list')->name('public-event.places.list');
+            Route::get('page', 'PlaceController@page')->name('public-event.places.page');
+            Route::post('save', 'PlaceController@save')->name('public-event.places.save');
+            Route::post('delete', 'PlaceController@delete')->name('public-event.places.delete');
+        });
+
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
@@ -599,9 +627,12 @@ Route::middleware('auth')->group(function () {
                 Route::post('delete', 'PublicEventDetailController@deleteSprint')->name('public-event.deleteSprint');
             });
 
+            
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
+
+
         Route::get('', 'PublicEventListController@page')->name('public-event.list');
     });
     
