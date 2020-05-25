@@ -201,6 +201,10 @@ class OrderDetailController extends Controller
         $order['referrals'] = $referrals;
     }
 
+    /**
+     * @param  OrderDto  $order
+     * @throws \Exception
+     */
     protected function addOrderDeliveryInfo(OrderDto $order): void
     {
         /** @var ListsService $listsService */
@@ -238,12 +242,23 @@ class OrderDetailController extends Controller
                 ->keyBy('id');
         }
 
+        /** @var Collection|PointDto[] $points */
+        $tariffs = collect();
+        $tariffIds = $order->deliveries->pluck('tariff_id')->filter()->unique()->values()->all();
+        if ($tariffIds) {
+            $tariffs = $listsService->tariffs($listsService->newQuery()->setFilter('id', $tariffIds))->keyBy('id');
+        }
+
         $shipments = collect();
         $merchantIds = collect();
         $cities = collect();
         $courierDelivery = null;
         $pickupDelivery = null;
         foreach ($order->deliveries as $delivery) {
+            if ($tariffs->has($delivery->tariff_id)) {
+                $delivery['tariff'] = $tariffs[$delivery->tariff_id];
+            }
+
             if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                 if ($points->has($delivery->point_id)) {
                     $delivery['point'] = $points[$delivery->point_id];
@@ -274,6 +289,8 @@ class OrderDetailController extends Controller
             }
 
             $delivery->status = $delivery->status();
+            $delivery->status_at = $delivery->status_at ? date2str(new Carbon($delivery->status_at)) : '';
+            $delivery->status_xml_id_at = $delivery->status_xml_id_at ? date2str(new Carbon($delivery->status_xml_id_at)) : '';
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();

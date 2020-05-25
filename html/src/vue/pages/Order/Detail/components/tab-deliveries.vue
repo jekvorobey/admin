@@ -32,7 +32,17 @@
                     </p>
                 </div>
             </b-row>
-            <b-row class="mt-2">
+            <b-row>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Статус оплаты:</span>
+                    <payment-status :status='delivery.payment_status'/>
+                </div>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Статус доставки у ЛО:</span>
+                    {{delivery.status_xml_id}} {{delivery.status_xml_id_at}}
+                </div>
+            </b-row>
+            <b-row class="mt-2 border-top">
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Мерчанты:</span>
                     <template v-for="(merchant, key) in delivery.merchants">
@@ -46,7 +56,7 @@
                     </template>
                 </div>
             </b-row>
-            <b-row class="mt-2">
+            <b-row class="mt-2 border-top">
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Способ доставки:</span> {{delivery.delivery_method.name}}
                 </div>
@@ -59,14 +69,18 @@
             </b-row>
             <b-row>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">PDD:</span> {{delivery.pdd}}
+                    <span class="font-weight-bold">DT:</span> {{delivery.dt ? pluralForm(delivery.dt, ['день', 'дня', 'дней']) : ''}}
                 </div>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">PDD:</span>
+                    {{delivery.pdd}}
+                </div>
+            </b-row>
+            <b-row>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Желаемая покупателем дата доставки:</span>
                     {{delivery.delivery_at}}
                 </div>
-            </b-row>
-            <b-row>
                 <div class="col-sm-6">
                     <template v-if="delivery.point">
                         <p>{{delivery.point.type.name}} {{points[selectedPointId].name}}</p>
@@ -80,12 +94,26 @@
                         {{delivery.delivery_address.full_address_string}}
                     </template>
                 </div>
+            </b-row>
+            <b-row>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Трекинг-номер у ЛО:</span>
                     {{delivery.xml_id ? delivery.xml_id : 'Заказ на доставку ещё не создан'}}
                 </div>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Последняя ошибка при создании заказа на доставку у ЛО:</span>
+                    {{delivery.error_xml_id}}
+                </div>
             </b-row>
-            <b-row class="mt-2">
+            <b-row>
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Тариф ЛО:</span>
+                    <template v-if="delivery.tariff">
+                        <span :title="delivery.tariff.description">{{delivery.tariff.name}} (ID={{delivery.tariff.xml_id}})</span>
+                    </template>
+                </div>
+            </b-row>
+            <b-row class="mt-2 border-top">
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Стоимость товаров:</span> {{preparePrice(delivery.product_cost)}} руб.
                 </div>
@@ -94,10 +122,15 @@
                     {{preparePrice(delivery.cost)}} руб.
                 </div>
             </b-row>
-            <b-row class="mt-2">
+            <b-row class="mt-2 border-top">
+                <div class="col-sm-6">
+                    <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{delivery.length|integer}}x{{delivery.width|integer}}x{{delivery.height|integer}} мм
+                </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Вес:</span> {{delivery.weight}} г
                 </div>
+            </b-row>
+            <b-row>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Кол-во товаров:</span> {{delivery.product_qty}} шт.
                 </div>
