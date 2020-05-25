@@ -77,12 +77,12 @@ function url_showcase($path)
     ]);
 }
 
-function date2str(DateTime $date): string
+function date2str(?DateTime $date): string
 {
-    return $date->format('d.m.Y');
+    return $date ? $date->format('d.m.Y') : '';
 }
 
-function dateTime2str(DateTime $date): string
+function dateTime2str(?DateTime $date): string
 {
-    return $date->format('d.m.Y H:i:s');
+    return $date ? $date->format('d.m.Y H:i:s') : '';
 }
