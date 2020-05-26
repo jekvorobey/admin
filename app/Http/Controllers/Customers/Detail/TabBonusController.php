@@ -55,6 +55,7 @@ class TabBonusController extends Controller
             'name' => 'string|required',
             'status' => 'integer|required',
             'value' => 'integer|required',
+            'message' => 'string|min:1|required',
             'expiration_date' => 'date|nullable',
         ]);
 

@@ -1,10 +1,12 @@
-import { library } from '@fortawesome/fontawesome-svg-core';
+import {library} from '@fortawesome/fontawesome-svg-core';
 import {
     faAngleDown,
     faAngleLeft,
     faAngleRight,
+    faAngleUp,
     faArchive,
     faArrowUp,
+    faBox,
     faCalendarAlt,
     faCamera,
     faCaretDown,
@@ -13,6 +15,7 @@ import {
     faCog,
     faCommentDots,
     faCompressArrowsAlt,
+    faCopy,
     faDollarSign,
     faDownload,
     faEdit,
@@ -36,8 +39,7 @@ import {
     faTimes,
     faTrashAlt,
     faTruck,
-    faCopy,
-    faAngleUp,
+    faTruckLoading
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -68,3 +70,5 @@ library.add(faFileExcel);
 library.add(faPercent);
 library.add(faCopy);
 library.add(faAngleUp);
+library.add(faBox);
+library.add(faTruckLoading);

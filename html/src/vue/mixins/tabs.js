@@ -43,7 +43,7 @@ export default {
     },
     created() {
         Services.event().$on('showTab', (tab) => {
-            this.tabIndex = this.tabs[tab];
+            this.tabIndex = this.tabs[tab].i;
         });
 
         let currentTab = Services.route().get('tab', 'main');

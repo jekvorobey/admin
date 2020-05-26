@@ -96,6 +96,30 @@
 
             </div>
 
+            <h4 class="mb-3 mt-3">Нотификационные сообщения</h4>
+            <div class="mb-3 row">
+                <v-input v-model="$v.form.bonus_expire_days_notify.$model" class="col-6"
+                         :error="errorBonusExpireDaysNotify"
+                         type="number"
+                         min="1"
+                         @change="() => {updateInput('bonus_expire_days_notify')}"
+                         :disabled="bonusExpireDaysNotifyBtn"
+                >За сколько дней до окончания срока действия бонуса информировать клиента</v-input>
+
+                <div class="col-12">
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox"
+                               class="custom-control-input"
+                               id="bonus-expire-days-notify-btn"
+                               key="bonusExpireDaysNotifyBtn"
+                               v-model="bonusExpireDaysNotifyBtn"
+                        >
+                        <label class="custom-control-label" for="bonus-expire-days-notify-btn"></label>
+                        <label for="bonus-expire-days-notify-btn">Не информировать клиента</label>
+                    </span>
+                </div>
+            </div>
+
             <div class="form-group mt-3">
                 <button type="submit" class="btn btn-primary">Сохранить</button>
             </div>
@@ -121,6 +145,7 @@
             max_debit_percentage_for_order: Number,
             roles_available_for_bonuses: Array,
             activation_bonus: [Object, null],
+            bonus_expire_days_notify: [Number, null],
             roles: Array,
         },
         mixins: [validationMixin],
@@ -132,6 +157,7 @@
                     order_activation_bonus_delay: this.order_activation_bonus_delay,
                     max_debit_percentage_for_product: this.max_debit_percentage_for_product,
                     max_debit_percentage_for_order: this.max_debit_percentage_for_order,
+                    bonus_expire_days_notify: this.bonus_expire_days_notify,
 
                     activation_bonus_name: this.activation_bonus ? this.activation_bonus.name : null,
                     activation_bonus_value: this.activation_bonus ? this.activation_bonus.value : null,
@@ -140,6 +166,7 @@
                 requestData: {},
                 bonusActivationBtn: this.activation_bonus && this.activation_bonus.value > 0,
                 bonusUnlimitedPeriodBtn: !this.activation_bonus || this.activation_bonus.valid_period <= 0,
+                bonusExpireDaysNotifyBtn: !this.bonus_expire_days_notify || this.bonus_expire_days_notify <= 0,
             }
         },
         validations: {
@@ -156,6 +183,11 @@
                 },
                 activation_bonus_valid_period: {
                     required: requiredIf(function () { return this.bonusActivationBtn && !this.bonusUnlimitedPeriodBtn }),
+                    minValue: minValue(1),
+                    integer
+                },
+                bonus_expire_days_notify: {
+                    required: requiredIf(function () { return !this.bonusExpireDaysNotifyBtn }),
                     minValue: minValue(1),
                     integer
                 },
@@ -183,6 +215,7 @@
                     this.requestData
                 ).then(() => {
                     Services.msg('Данные успешно изменены');
+                    location.reload();
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -250,6 +283,13 @@
                     if (!this.$v.form.max_debit_percentage_for_order.maxValue) return "Значение должно быть ≤ 100";
                 }
             },
+            errorBonusExpireDaysNotify() {
+                if (this.$v.form.bonus_expire_days_notify.$dirty) {
+                    if (!this.$v.form.bonus_expire_days_notify.required) return "Обязательное поле!";
+                    if (!this.$v.form.bonus_expire_days_notify.integer) return "Введите целое число!";
+                    if (!this.$v.form.bonus_expire_days_notify.minValue) return "Значение должно быть ≥ 0";
+                }
+            },
         },
         watch: {
             bonusActivationBtn() {
@@ -257,6 +297,12 @@
             },
             bonusUnlimitedPeriodBtn() {
                 this.updateInput('activation_bonus');
+            },
+            bonusExpireDaysNotifyBtn() {
+                if (this.bonusExpireDaysNotifyBtn) {
+                    this.form.bonus_expire_days_notify = null;
+                    this.updateInput('bonus_expire_days_notify');
+                }
             }
         },
     }

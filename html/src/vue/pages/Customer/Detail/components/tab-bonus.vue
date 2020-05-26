@@ -2,12 +2,18 @@
     <div>
         <form novalidate v-on:submit.prevent.stop="createBonus">
             <div class="row">
-                <v-input v-model="bonus.name" class="col-6">Название</v-input>
-                <v-input v-model="bonus.value" type="number" class="col-3">Сумма</v-input>
-            </div>
-            <div class="row">
-                <v-select v-model="bonus.status" :options="statusNames" class="col-3">Статус</v-select>
+                <v-input v-model="$v.bonus.name.$model" class="col-12" :error="errorBonusName">Название</v-input>
 
+                <div class="col-12">
+                    <label for="bonusMessage">Сообщение для клиента</label>
+                    <textarea class="form-control" v-model="bonus.message" id="bonusMessage" :class="{ 'is-invalid': errorBonusMessage }"></textarea>
+                    <small class="invalid-feedback" v-if="errorBonusMessage" role="alert">{{ errorBonusMessage }}</small>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <v-input v-model="$v.bonus.value.$model" type="number" class="col-3" :error="errorBonusValue">Сумма</v-input>
+
+                <v-select v-model="$v.bonus.status.$model" :options="statusNames" class="col-3" :error="errorBonusStatus">Статус</v-select>
 
                 <div class="col-3">
                     <label for="expiration_date">Срок действия</label>
@@ -16,7 +22,7 @@
             </div>
             <div class="row">
                 <div class="col-12 mt-1">
-                    <button type="submit" class="btn btn-success" :disabled="!valid">Добавить бонус</button>
+                    <button type="submit" class="btn btn-success">Добавить бонус</button>
                 </div>
             </div>
         </form>
@@ -80,6 +86,8 @@
 </template>
 
 <script>
+    import {validationMixin} from 'vuelidate';
+    import {required, minValue, integer} from 'vuelidate/lib/validators';
     import Services from '../../../../../scripts/services/services.js';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
@@ -90,6 +98,7 @@
             VInput,
             VSelect
         },
+        mixins: [validationMixin],
         props: {
             model: Object,
         },
@@ -107,15 +116,29 @@
                     value: '',
                     status: '',
                     expiration_date: '',
+                    message: '',
                 },
-
+                afterMounted: false,
                 STATUS_ON_HOLD: 1,
                 STATUS_ACTIVE: 2,
                 STATUS_EXPIRED: 3,
             }
         },
+        validations: {
+            bonus: {
+                name: {required},
+                value: {required, integer, minValue: minValue(1)},
+                status: {required},
+                message: {required},
+            }
+        },
         methods: {
             createBonus() {
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
+
                 Services.net().post(this.getRoute('customers.detail.bonus.add', {id: this.model.id}), {}, this.bonus).then(data => {
                     Services.msg("Бонус добавлен");
                     this.refresh();
@@ -138,7 +161,12 @@
                         value: '',
                         status: this.STATUS_ACTIVE,
                         expiration_date: '',
+                        message: '',
                     };
+
+                    this.$nextTick(() => {
+                        this.$v.$reset();
+                    });
                 }).finally(() => {
                     Services.hideLoader();
                 })
@@ -151,14 +179,41 @@
             }
         },
         computed: {
-            valid() {
-                return this.bonus.name
-                    && (parseInt(this.bonus.value) > 0)
-                    && this.bonus.status;
-            }
+            errorBonusName() {
+                if (this.$v.bonus.name.$dirty) {
+                    if (!this.$v.bonus.name.required) return "Обязательное поле!";
+                }
+            },
+            errorBonusValue() {
+                if (this.$v.bonus.value.$dirty) {
+                    if (!this.$v.bonus.value.required) return "Обязательное поле!";
+                    if (!this.$v.bonus.value.integer) return "Введите целое число!";
+                    if (!this.$v.bonus.value.minValue) return "Значение должно быть > 0";
+                }
+            },
+            errorBonusStatus() {
+                if (this.$v.bonus.status.$dirty) {
+                    if (!this.$v.bonus.status.required) return "Обязательное поле!";
+                }
+            },
+            errorBonusMessage() {
+                if (this.$v.bonus.message.$dirty) {
+                    if (!this.$v.bonus.message.required) return "Обязательное поле!";
+                }
+            },
         },
         created() {
             this.refresh();
+        },
+        watch: {
+            'bonus.message': function (val, oldVal) {
+                if (!this.afterMounted) {
+                    this.afterMounted = true;
+                    return;
+                }
+
+                this.$v.bonus.message.$touch();
+            }
         }
     }
 </script>

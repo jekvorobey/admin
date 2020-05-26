@@ -171,13 +171,15 @@ class PublicEventDetailController extends Controller
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto
     {
         try {
-            return $publicEvent = $publicEventService
+            return $publicEventService
                 ->query()
                 ->setFilter('id', $id)
                 ->withOrganizer()
                 ->withActualSprint()
                 ->withSprintTicketsCount()
                 ->withPlace()
+                ->withSpeakers()
+                ->withType()
                 ->withMedia()
                 ->get()
                 ->first();

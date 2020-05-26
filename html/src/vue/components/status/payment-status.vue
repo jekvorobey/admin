@@ -13,7 +13,7 @@ export default {
                 case 2: return 'badge-success';
                 case 3: return 'badge-danger';
                 case 4: return 'badge-primary';
-                default: return 'badge-secondary';
+                default: return 'badge-dark';
             }
         },
     }
