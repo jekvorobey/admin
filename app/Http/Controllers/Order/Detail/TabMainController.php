@@ -54,14 +54,18 @@ class TabMainController extends OrderDetailController
         if ($pickupDelivery) {
             $pointQuery = $listsService->newQuery()
                 ->setFilter('id', $pickupDelivery->point_id)
-                ->addFields(PointDto::entity(), 'id', 'city_guid');
+                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable', 'city_guid');
             /** @var PointDto $point */
             $point = $listsService->points($pointQuery)->first();
             $pointsQuery = $listsService->newQuery()
                 ->setFilter('city_guid', $point->city_guid)
                 ->setFilter('delivery_service', $pickupDelivery->delivery_service)
                 ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable');
-            $points = $listsService->points($pointsQuery)->keyBy('id')->map(function(PointDto $point) {
+            $points = $listsService->points($pointsQuery)->keyBy('id');
+            if (!$points->has($point->id)) {
+                $points->put($point->id, $point);
+            }
+            $points = $points->map(function(PointDto $point) {
                 $point->type = $point->type();
 
                 return $point;

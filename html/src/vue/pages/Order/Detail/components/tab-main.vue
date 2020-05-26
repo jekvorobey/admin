@@ -203,11 +203,18 @@
                         Точка выдачи заказа
                     </v-select>
                     <template v-if="points[selectedPointId]">
-                        <p>{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
+                        <p class="font-weight-bold">{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
                         <p><span class="font-weight-bold">Адрес:</span> {{points[selectedPointId].address.address_string}}</p>
                         <p><span class="font-weight-bold">Телефон:</span> {{points[selectedPointId].phone}}</p>
                         <p><span class="font-weight-bold">График работы:</span> {{points[selectedPointId].timetable}}</p>
                         <p><span class="font-weight-bold">Способы оплаты:</span> {{points[selectedPointId].has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
+                    </template>
+                    <template v-else>
+                        <p class="font-weight-bold">{{this.model.pickupDelivery.point.type.name}} {{this.model.pickupDelivery.point.name}}</p>
+                        <p><span class="font-weight-bold">Адрес:</span> {{this.model.pickupDelivery.point.address.address_string}}</p>
+                        <p><span class="font-weight-bold">Телефон:</span> {{this.model.pickupDelivery.point.phone}}</p>
+                        <p><span class="font-weight-bold">График работы:</span> {{this.model.pickupDelivery.point.timetable}}</p>
+                        <p><span class="font-weight-bold">Способы оплаты:</span> {{this.model.pickupDelivery.point.has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
                     </template>
                 </b-col>
             </b-row>

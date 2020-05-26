@@ -83,11 +83,11 @@
                 </div>
                 <div class="col-sm-6">
                     <template v-if="delivery.point">
-                        <p>{{delivery.point.type.name}} {{points[selectedPointId].name}}</p>
-                        <p><span class="font-weight-bold">Адрес:</span> {{points[selectedPointId].address.address_string}}</p>
-                        <p><span class="font-weight-bold">Телефон:</span> {{points[selectedPointId].phone}}</p>
-                        <p><span class="font-weight-bold">График работы:</span> {{points[selectedPointId].timetable}}</p>
-                        <p><span class="font-weight-bold">Способы оплаты:</span> {{points[selectedPointId].has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
+                        <p class="font-weight-bold">{{delivery.point.type.name}} {{delivery.point.name}}</p>
+                        <p><span class="font-weight-bold">Адрес:</span> {{delivery.point.address.address_string}}</p>
+                        <p><span class="font-weight-bold">Телефон:</span> {{delivery.point.phone}}</p>
+                        <p><span class="font-weight-bold">График работы:</span> {{delivery.point.timetable}}</p>
+                        <p><span class="font-weight-bold">Способы оплаты:</span> {{delivery.point.has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
                     </template>
                     <template v-else>
                         <span class="font-weight-bold">Адрес доставки:</span>
