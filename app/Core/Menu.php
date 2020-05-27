@@ -206,6 +206,10 @@ class Menu
                         'route' => route('referralPartner.list'),
                     ],
                     [
+                        'title' => 'Товары для продвижения',
+                        'route' => route('referral.promo-products.list'),
+                    ],
+                    [
                         'title' => 'Вознаграждения',
                         'route' => route('referral.levels'),
                     ],
