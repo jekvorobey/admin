@@ -746,6 +746,9 @@
                 }
             ],
             "description": "iBT marketing client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
+            },
             "time": "2020-05-22T20:43:40+00:00"
         },
         {
@@ -894,12 +897,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "209e9311c6148e326ee0bce00eac71b16ad65355"
+                "reference": "f193c0e5db9659cd00b6ec43be8cd1c1c8b7f2b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=209e9311c6148e326ee0bce00eac71b16ad65355",
-                "reference": "209e9311c6148e326ee0bce00eac71b16ad65355",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=f193c0e5db9659cd00b6ec43be8cd1c1c8b7f2b1",
+                "reference": "f193c0e5db9659cd00b6ec43be8cd1c1c8b7f2b1",
                 "shasum": ""
             },
             "require": {
@@ -923,7 +926,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-05-25T13:27:28+00:00"
+            "time": "2020-05-27T17:51:28+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -971,6 +974,9 @@
                 }
             ],
             "description": "iBT store client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
+            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
@@ -4461,20 +4467,20 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "382e7f4db9a12dc6c19431743a2b096041bcdd62"
+                "reference": "35a4a70cd94e09e2259dfae7488afc6b474ecbd3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/382e7f4db9a12dc6c19431743a2b096041bcdd62",
-                "reference": "382e7f4db9a12dc6c19431743a2b096041bcdd62",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/35a4a70cd94e09e2259dfae7488afc6b474ecbd3",
+                "reference": "35a4a70cd94e09e2259dfae7488afc6b474ecbd3",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.1"
+                "php": "~7.1 || ^8.0"
             },
             "conflict": {
                 "doctrine/common": ">2.2,<2.4"
@@ -4539,7 +4545,7 @@
                 "redis",
                 "xcache"
             ],
-            "time": "2019-11-29T15:36:20+00:00"
+            "time": "2020-05-27T16:24:54+00:00"
         },
         {
             "name": "doctrine/dbal",
