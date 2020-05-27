@@ -14,6 +14,7 @@ use Greensight\Customer\Services\ReferralService\Dto\PutPromotionDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
+use Illuminate\Http\Request;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -23,23 +24,33 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoProductController extends Controller
 {
-    public function load($id)
+    /**
+     * Возвращает список промо-товаров
+     * @param int|null $merchantId
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function load(int $merchantId = null)
     {
         return response()->json([
-            'promoProducts' => $this->loadPromotionProducts($id),
+            'promoProducts' => $this->loadPromotionProducts($merchantId),
         ]);
     }
 
     /**
-     * @param $id
+     * Обновить/Добавить промо-товар
+     * @param int|null $merchantId
+     * @param Request $request
      * @param ProductService $productService
      * @param ReferralService $referralService
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Pim\Core\PimException
      */
-    public function save($id, ProductService $productService, ReferralService $referralService)
+    public function save(?int $merchantId, Request $request, ProductService $productService, ReferralService $referralService)
     {
-        $data = $this->validate(request(), [
+        $data = $this->validate($request, [
             'product_id' => 'required|integer',
+            'mass' => 'required|integer',
             'active' => 'integer',
             'files' => 'nullable',
             'description' => 'required'
@@ -53,16 +64,23 @@ class TabPromoProductController extends Controller
             throw new BadRequestHttpException('Ошибка: товар не найден');
         }
 
-        $referralService->putPromotions((new PutPromotionDto())
-            ->setCustomerId($id)
+        $promotionDto = new PutPromotionDto();
+        $promotionDto
             ->setProductId($data['product_id'])
+            ->setMass((bool)$data['mass'])
             ->setActive((bool)$data['active'])
             ->setFiles(request('files', []))
             ->setDescription($data['description'])
-        );
+            ->setCustomerId($merchantId);
+
+        if ($merchantId) {
+            $referralService->putPromotions($promotionDto);
+        } else {
+            $referralService->putMassPromotions($promotionDto);
+        }
 
         return response()->json([
-            'promoProducts' => $this->loadPromotionProducts($id),
+            'promoProducts' => $this->loadPromotionProducts($merchantId),
         ]);
     }
 
@@ -103,7 +121,13 @@ class TabPromoProductController extends Controller
         $writer->close();
     }
 
-    protected function loadPromotionProducts($id)
+    /**
+     * Подгрузить информацию о промо-товарах
+     * @param int|null $merchantId
+     * @return array
+     * @throws \Pim\Core\PimException
+     */
+    public function loadPromotionProducts(int $merchantId = null)
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
@@ -114,7 +138,13 @@ class TabPromoProductController extends Controller
         /** @var PriceService $priceService */
         $priceService = resolve(PriceService::class);
 
-        $promoProducts = $referralService->getPromotions((new GetPromotionDto())->setReferralId($id));
+        if ($merchantId) {
+            $promoProducts = $referralService
+                ->getPromotions((new GetPromotionDto())->setReferralId($merchantId));
+        } else {
+            $promoProducts = $referralService
+                ->getMassPromotions((new GetPromotionDto())->setMass(true));
+        }
 
         $product_ids = $promoProducts->pluck('product_id');
         $result = $promoProducts->toArray();

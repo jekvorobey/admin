@@ -585,6 +585,13 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::prefix('promo-products')->group(function () {
+            Route::get('', 'MassPromoProductsController@list')->name('referral.promo-products.list');
+            Route::put('edit', 'MassPromoProductsController@editProduct')->name('referral.promo-products.edit');
+            Route::put('attach', 'MassPromoProductsController@attachProduct')->name('referral.promo-products.attach');
+            Route::delete('', 'MassPromoProductsController@removeProduct')->name('referral.promo-products.delete');
+        });
+
         Route::prefix('options')->group(function () {
             Route::get('', 'OptionsController@index')->name('referral.options');
             Route::put('', 'OptionsController@save')->name('referral.options.save');
