@@ -8,6 +8,7 @@ use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
@@ -130,6 +131,10 @@ class TabMainController extends OrderDetailController
         $orderService->updateOrder($id, $newOrderDto);
 
         foreach ($order->deliveries as $delivery) {
+            if ($delivery->status > DeliveryStatus::ASSEMBLED) {
+                continue;
+            }
+
             $newDeliveryDto = new DeliveryDto();
             $newDeliveryDto->receiver_name = $data['receiver_name'];
             $newDeliveryDto->receiver_phone = $data['receiver_phone'];

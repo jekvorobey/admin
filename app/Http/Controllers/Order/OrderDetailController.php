@@ -294,6 +294,7 @@ class OrderDetailController extends Controller
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();
+            $delivery->pdd_original = $delivery->pdd->format('Y-m-d');
             $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
             $delivery['product_cost'] = $delivery->shipments->reduce(function (

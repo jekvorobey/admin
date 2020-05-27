@@ -213,6 +213,15 @@ Route::middleware('auth')->group(function () {
                     Route::get('', 'TabMainController@load')->name('orders.detail.main');
                     Route::put('', 'TabMainController@save')->name('orders.detail.main.save');
                 });
+                Route::prefix('deliveries')->group(function () {
+                    Route::prefix('{deliveryId}')->where(['deliveryId' => '[0-9]+'])->group(function () {
+                        Route::get('', 'TabDeliveriesController@load')->name('orders.detail.deliveries');
+                        Route::put('', 'TabDeliveriesController@save')->name('orders.detail.deliveries.save');
+                        Route::put('save-delivery-order', 'TabDeliveriesController@saveDeliveryOrder')->name('orders.detail.deliveries.saveDeliveryOrder');
+                        Route::put('cancel-delivery-order', 'TabDeliveriesController@cancelDeliveryOrder')->name('orders.detail.deliveries.cancelDeliveryOrder');
+                        Route::put('cancel', 'TabDeliveriesController@cancelDelivery')->name('orders.detail.deliveries.cancel');
+                    });
+                });
             });
 
             Route::prefix('delivery')->group(function () {

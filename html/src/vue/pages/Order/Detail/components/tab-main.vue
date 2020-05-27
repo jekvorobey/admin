@@ -125,9 +125,9 @@
         <b-card class="mt-4">
             <b-row>
                 <div class="col-sm-6">
-                    <p class="font-weight-bold">Получатель</p>
+                    <p class="font-weight-bold">Получатель <span class="badge badge-warning" v-if="canEdit">(изменения применятся ко всем доставкам!)</span></p>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6" v-if="canEdit">
                     <div class="float-right">
                         <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                             Сохранить
@@ -140,7 +140,7 @@
             </b-row>
             <b-row>
                 <div class="col-sm-4">
-                    <v-input v-model="$v.form.receiver_name.$model" :error="errorReceiverName">
+                    <v-input v-model="$v.form.receiver_name.$model" :error="errorReceiverName" :disabled="!canEdit">
                         ФИО
                     </v-input>
                 </div>
@@ -149,6 +149,7 @@
                              :error="errorReceiverPhone"
                              :placeholder="telPlaceholder"
                              autocomplete="off"
+                             :disabled="!canEdit"
                              v-mask="telMask">
                         Телефон
                     </v-input>
@@ -157,6 +158,7 @@
                     <v-input v-model="$v.form.receiver_email.$model"
                              :error="errorReceiverEmail"
                              :placeholder="emailPlaceholder"
+                             :disabled="!canEdit"
                              autocomplete="off">
                         E-mail
                     </v-input>
@@ -167,6 +169,7 @@
                     <b-col>
                         <v-dadata v-model.sync="$v.form.delivery_address.address_string.$model"
                                   :error="errorDeliveryAddress"
+                                  :disabled="!canEdit"
                                   @onSelect="onDeliveryAddressSelect">
                             Адрес до квартиры/офиса включительно
                         </v-dadata>
@@ -174,24 +177,24 @@
                 </b-row>
                 <b-row>
                     <div class="col-sm-4">
-                        <v-input v-model="$v.form.delivery_address.porch.$model">
+                        <v-input v-model="$v.form.delivery_address.porch.$model" :disabled="!canEdit">
                             Подъезд
                         </v-input>
                     </div>
                     <div class="col-sm-4">
-                        <v-input v-model="$v.form.delivery_address.floor.$model">
+                        <v-input v-model="$v.form.delivery_address.floor.$model" :disabled="!canEdit">
                             Этаж
                         </v-input>
                     </div>
                     <div class="col-sm-4">
-                        <v-input v-model="$v.form.delivery_address.intercom.$model">
+                        <v-input v-model="$v.form.delivery_address.intercom.$model" :disabled="!canEdit">
                             Домофон
                         </v-input>
                     </div>
                 </b-row>
                 <b-row>
                     <b-col>
-                        <v-input v-model="$v.form.delivery_address.comment.$model" tag="textarea">
+                        <v-input v-model="$v.form.delivery_address.comment.$model" tag="textarea" :disabled="!canEdit">
                             Комментарий курьеру от клиента
                         </v-input>
                     </b-col>
@@ -199,7 +202,7 @@
             </template>
             <b-row v-if="this.order.pickupDelivery">
                 <b-col>
-                    <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint">
+                    <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint" :disabled="!canEdit">
                         Точка выдачи заказа
                     </v-select>
                     <template v-if="points[selectedPointId]">
@@ -220,7 +223,7 @@
             </b-row>
             <b-row>
                 <b-col>
-                    <v-input v-model="$v.form.manager_comment.$model" tag="textarea">
+                    <v-input v-model="$v.form.manager_comment.$model" tag="textarea" :disabled="!canEdit">
                         Комментарий менеджера
                     </v-input>
                 </b-col>
@@ -392,6 +395,9 @@
                 get() {return this.model},
                 set(value) {this.$emit('update:model', value)},
             },
+            canEdit() {
+                return this.order.status.id < 6 && !this.order.is_canceled;
+            },
             pointOptions() {
                 return Object.values(this.points).map(point => ({
                     value: point.id,
@@ -410,21 +416,21 @@
             errorReceiverName() {
                 if (this.$v.form.receiver_name.$dirty) {
                     if (!this.$v.form.receiver_name.required) {
-                        return "Обязательное поле!";
+                        return "Обязательное поле";
                     }
                 }
             },
             errorReceiverPhone() {
                 if (this.$v.form.receiver_phone.$dirty) {
                     if (!this.$v.form.receiver_phone.required) {
-                        return "Обязательное поле!";
+                        return "Обязательное поле";
                     }
                 }
             },
             errorReceiverEmail() {
                 if (this.$v.form.receiver_email.$dirty) {
                     if (!this.$v.form.receiver_email.email) {
-                        return "Введите валидный e-mail!";
+                        return "Введите валидный e-mail";
                     }
                 }
             },
