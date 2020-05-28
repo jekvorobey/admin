@@ -135,10 +135,10 @@ class TabDeliveriesController extends OrderDetailController
             $deliveryAddress['house'] = isset($dataDeliveryAddress['house']) ? $dataDeliveryAddress['house'] : '';
             $deliveryAddress['block'] = isset($dataDeliveryAddress['block']) ? $dataDeliveryAddress['block'] : '';
             $deliveryAddress['flat'] = isset($dataDeliveryAddress['flat']) ? $dataDeliveryAddress['flat'] : '';
-            $deliveryAddress['porch'] = $dataDeliveryAddress['porch'];
-            $deliveryAddress['floor'] = $dataDeliveryAddress['floor'];
-            $deliveryAddress['intercom'] = $dataDeliveryAddress['intercom'];
-            $deliveryAddress['comment'] = $dataDeliveryAddress['comment'];
+            $deliveryAddress['porch'] = isset($dataDeliveryAddress['porch']) ? $dataDeliveryAddress['porch'] : '';
+            $deliveryAddress['floor'] = isset($dataDeliveryAddress['floor']) ? $dataDeliveryAddress['floor'] : '';
+            $deliveryAddress['intercom'] = isset($dataDeliveryAddress['intercom']) ? $dataDeliveryAddress['intercom'] : '';
+            $deliveryAddress['comment'] = isset($dataDeliveryAddress['comment']) ? $dataDeliveryAddress['comment'] : '';
             $deliveryDto->delivery_address = $deliveryAddress;
         } else {
             $deliveryDto->point_id = $data['point_id'];
