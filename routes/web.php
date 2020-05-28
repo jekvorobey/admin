@@ -222,6 +222,17 @@ Route::middleware('auth')->group(function () {
                         Route::put('cancel', 'TabDeliveriesController@cancelDelivery')->name('orders.detail.deliveries.cancel');
                     });
                 });
+                Route::prefix('shipments')->group(function () {
+                    Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
+                        Route::get('', 'TabShipmentsController@load')->name('orders.detail.shipments');
+                        Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
+                        Route::put('mark-as-problem', 'TabDeliveriesController@markAsProblem')->name('orders.detail.shipments.markAsProblem');
+                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblem')->name('orders.detail.shipments.markAsNonProblem');
+                        Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
+                        Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
+                        Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+                    });
+                });
             });
 
             Route::prefix('delivery')->group(function () {

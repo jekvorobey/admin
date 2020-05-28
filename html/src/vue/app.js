@@ -16,6 +16,7 @@ import './fontawesome';
 import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
 import OrderStatus from './components/status/order-status.vue';
 import DeliveryStatus from './components/status/delivery-status.vue';
+import ShipmentStatus from './components/status/shipment-status.vue';
 import PaymentStatus from './components/status/payment-status.vue';
 import Media from '../scripts/media.js';
 import * as moment from 'moment';
@@ -43,6 +44,7 @@ store.commit('routes', JSON.parse(root.dataset.routes));
 
 Vue.component('order-status', OrderStatus);
 Vue.component('delivery-status', DeliveryStatus);
+Vue.component('shipment-status', ShipmentStatus);
 Vue.component('payment-status', PaymentStatus);
 
 Services.instance().register('store', () => {

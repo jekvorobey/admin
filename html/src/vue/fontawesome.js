@@ -6,6 +6,7 @@ import {
     faAngleUp,
     faArchive,
     faArrowUp,
+    faBarcode,
     faBox,
     faCalendarAlt,
     faCamera,
@@ -20,12 +21,14 @@ import {
     faDownload,
     faEdit,
     faEnvelope,
+    faExclamation,
     faExclamationTriangle,
     faExpandArrowsAlt,
     faEye,
     faFileArchive,
     faFileDownload,
     faFileExcel,
+    faFileInvoice,
     faInfo,
     faLink,
     faPencilAlt,
@@ -41,7 +44,7 @@ import {
     faTrashAlt,
     faTruck,
     faTruckLoading,
-    faUnlink
+    faUnlink,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -76,3 +79,6 @@ library.add(faAngleUp);
 library.add(faBox);
 library.add(faTruckLoading);
 library.add(faUnlink);
+library.add(faExclamation);
+library.add(faFileInvoice);
+library.add(faBarcode);

@@ -310,11 +310,18 @@ class OrderDetailController extends Controller
             foreach ($delivery->shipments as $shipment) {
                 $merchantIds->push($shipment->merchant_id);
                 $shipment->status = $shipment->status();
-                $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile();
+                $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile() ? : $delivery->delivery_service;
+                $shipment['delivery_service'] = $delivery->delivery_service;
                 $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
+                $shipment->psd = dateTime2str($shipment->psd);
+                $shipment->fsd = date2str($shipment->fsd);
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
+                $shipment['delivery_xml_id'] = $delivery->xml_id;
+                $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;
+                $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;
+                $shipment['delivery_pdd'] = $delivery->pdd;
                 $shipment['product_qty'] = $shipment->basketItems->reduce(function (
                     int $sum,
                     BasketItemDto $item
@@ -336,6 +343,10 @@ class OrderDetailController extends Controller
             $delivery['merchants'] = $merchants->filter(function (MerchantDto $merchant) use ($shipmentMerchantIds) {
                 return $shipmentMerchantIds->search($merchant->id) !== false;
             })->values();
+
+            foreach ($delivery->shipments as $shipment) {
+                $shipment['merchant'] = $merchants->has($shipment->merchant_id) ? $merchants[$shipment->merchant_id] : null;
+            }
         }
 
         $order['merchants'] = $merchants->values();
