@@ -154,17 +154,19 @@ class OrderDetailController extends Controller
             ->merge($order->promoCodes->pluck('owner_id')->filter())
             ->unique();
         // Получаем покупателя заказа
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $order->customer_id);
-        /** @var CustomerDto $customer */
-        $customer = $customerService->customers($customerQuery)->first();
-
-        // Получаем самих пользователей
-        $userIds = collect($customer->user_id)
+        $customerIds = collect($order->customer_id)
             ->merge($referralIds)
             ->unique()
             ->values()
             ->all();
+        $customerQuery = $customerService->newQuery()
+            ->setFilter('id', $customerIds);
+        /** @var Collection|CustomerDto[] $customers */
+        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customer = $customers->has($order->customer_id) ? $customers[$order->customer_id] : null;
+
+        // Получаем самих пользователей
+        $userIds = $customers->pluck('user_id')->all();
         $users = collect();
         if ($userIds) {
             $userQuery = $userService->newQuery()
@@ -179,12 +181,13 @@ class OrderDetailController extends Controller
         }
 
         $referrals = collect();
-        $referralIds = $order->basket->items->pluck('referrer_id')->filter()->unique();
         foreach ($referralIds as $referralId) {
+            /** @var CustomerDto|null $referralCustomer */
+            $referralCustomer = $customers->has($referralId) ? $customers[$referralId] : null;
             $referral = [
                 'referral_id' => $referralId,
-                'user' => $users->has($referralId) ?
-                    $users[$referralId] : null,
+                'user' => $referralCustomer && $users->has($referralCustomer->user_id) ?
+                    $users[$referralCustomer->user_id] : null,
             ];
             foreach ($order->basket->items as $item) {
                 if ($item->referrer_id == $referralId) {
