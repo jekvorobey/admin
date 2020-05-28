@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('', 'ContentClaimController@deleteClaims')->name('contentClaims.deleteClaims');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
+                Route::put('', 'ContentClaimController@update')->name('contentClaims.update');
             });
             Route::get('products-by-merchant', 'ContentClaimController@loadProductsByMerchantId')->name('contentClaims.productsByMerchant');
         });
