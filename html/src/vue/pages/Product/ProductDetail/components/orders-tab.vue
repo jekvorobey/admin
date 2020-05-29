@@ -14,7 +14,7 @@
                     <th>Статус отправления</th>
                 </tr>
             </thead>
-            <tbody v-for="(order, index) in orders">
+            <tbody v-for="(order, index) in orderList">
             <tr class="table-primary">
                 <td>{{ order.number }}</td>
                 <td>{{ order.created_at }}</td>
@@ -39,11 +39,14 @@
                 </tr>
             </tbody>
         </table>
+        <b-button variant="dark" v-if="page > 1" v-on:click="prevItems()">Назад</b-button>
+        <b-button variant="dark" v-if="orderList.length === 5" v-on:click="nextItems()">Вперед</b-button>
     </div>
 </template>
 
 <script>
     import FInput from "../../../../components/filter/f-input.vue";
+    import Services from "../../../../../scripts/services/services";
 
     export default {
         components:{
@@ -51,11 +54,14 @@
         },
         data: function() {
             return {
+                page: 1,
+                orderList: this.orders,
             }
         },
         props: {
             orders: Array,
             orderStatuses: Object,
+            offersIds: Array,
         },
         methods: {
             getDate(str) {
@@ -77,6 +83,16 @@
                         addressObj.street + ", дом: " + addressObj.house + ", этаж: " + addressObj.floor +
                         ", квартира: " + addressObj.flat;
                 }
+            },
+            nextItems() {
+                this.page++;
+                Services.net().post(this.getRoute('orders.byOffers'), {}, {page: this.page, offersIds: this.offersIds})
+                    .then(data => { this.orderList = data });
+            },
+            prevItems() {
+                this.page--;
+                Services.net().post(this.getRoute('orders.byOffers'), {}, {page: this.page, offersIds: this.offersIds})
+                    .then(data => { this.orderList = data });
             },
         },
         computed: {

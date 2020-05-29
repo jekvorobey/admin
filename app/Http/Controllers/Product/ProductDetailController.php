@@ -269,6 +269,7 @@ class ProductDetailController extends Controller
         $offersIds = (collect($products->first()->offers->pluck('offer_id'))->toArray());
         $orders = $orderService->ordersByOffers(['offersIds' => $offersIds]);
         $products->first()->orders = $orders;
+        $products->first()->offersIds = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
         return [
             $product,
