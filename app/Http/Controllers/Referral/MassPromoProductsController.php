@@ -19,7 +19,7 @@ class MassPromoProductsController extends Controller
     /**
      * Список промо-товаров, которые назначаются на реф. партнеров массово
      * @return mixed
-     * @throws PimException
+     * @throws PimException|\Greensight\Customer\Core\CustomerException
      */
     public function list(
         CustomerService $customerService,
@@ -48,6 +48,7 @@ class MassPromoProductsController extends Controller
      * @param Request $request
      * @param ProductService $productService
      * @param ReferralService $referralService
+     * @return \Illuminate\Http\JsonResponse
      * @throws PimException
      */
     public function editProduct(
@@ -62,9 +63,30 @@ class MassPromoProductsController extends Controller
 
     /**
      * Назначить промо-товар реф. партнерам по критериям
+     * @param ReferralService $referralService
+     * @return \Illuminate\Http\JsonResponse
+     * @throws PimException
      */
-    public function attachProduct() {
+    public function attachProduct(ReferralService $referralService) {
+        $data = $this->validate(request(), [
+            'promo_products' => 'required|json',
+            'segments' => 'nullable|array',
+            'segments.all' => 'nullable|string',
+            'segments.levels.*' => 'nullable|integer',
+            'segments.brand' => 'nullable|string',
+            'segments.category' => 'nullable|string',
+            'segments.activities.*' => 'nullable|integer',
+            'segments.user_ids.*' => 'nullable|integer',
+        ]);
 
+        $segments = isset($data['segments']) ? $data['segments'] : null;
+        $referralService->attachMassPromotions($data['promo_products'], $segments);
+
+        $helper = resolve(TabPromoProductController::class);
+        $promoProducts = $helper->loadPromotionProducts(null);
+        return response()->json([
+            'promoProducts' => $promoProducts,
+        ]);
     }
 
     /**

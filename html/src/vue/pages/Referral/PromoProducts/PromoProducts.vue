@@ -12,7 +12,7 @@
                 </th>
             </tr>
             <tr>
-                <th></th>
+                <th><!--space--></th>
                 <th>Товар</th>
                 <th>Описание</th>
                 <th>Файлы</th>
@@ -24,10 +24,14 @@
                 <td width="25px">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox"
+                               class="custom-control-input"
                                v-model="selectedItems"
-                               :value="promoProduct.id"
-                               :id="'checkbox' + index"
-                               class="custom-control-input"/>
+                               :value="{
+                                   id: promoProduct.id,
+                                   brand: promoProduct.brand.id,
+                                   category: promoProduct.category.id
+                               }"
+                               :id="'checkbox' + index"/>
                         <label class="custom-control-label bigger"
                                :for="'checkbox' + index"/>
                     </div>
@@ -42,9 +46,11 @@
                     <div v-if="promoProduct.category">Категория: {{ promoProduct.category.name }}</div>
                     <div v-if="promoProduct.price">Цена: {{ promoProduct.price }}</div>
                     <div>Дата создания: {{ promoProduct.created_at }}</div>
-                    <!--<div class="text-muted"><fa-icon icon="link"/> Назначен</div> -->
-                    <div class="text-muted">
-                        <small><fa-icon icon="unlink"/> Не назначен</small>
+                    <div v-if="promoProduct.segments">
+                        <small class="text-muted"><fa-icon icon="link"/> Назначен</small>
+                    </div>
+                    <div v-else>
+                        <small class="text-muted"><fa-icon icon="unlink"/> Не назначен</small>
                     </div>
 
                 </td>
@@ -123,9 +129,10 @@
             </tbody>
         </table>
 
-        <ModalAttach :promo-ids="selectedItems"
-        :activities="this.activities"
-        :ref_levels="this.ref_levels"/>
+        <ModalAttach :promoProducts.sync="promoProducts"
+                     :selectedPromos="selectedItems"
+                     :activities="this.activities"
+                     :ref_levels="this.ref_levels"/>
 
     </layout-main>
 </template>
@@ -255,9 +262,6 @@ export default {
             }
         },
     },
-    created() {
-
-    }
 };
 </script>
 
