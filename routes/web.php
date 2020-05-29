@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('store')->group(function () {
                     Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
                 });
+                Route::prefix('billing')->group(function () {
+                    Route::get('', 'TabBillingController@load')->name('merchant.detail.billing');
+                    Route::put('billing_cycle', 'TabBillingController@billingCycle')->name('merchant.detail.billing.billing_cycle');
+                });
             });
         });
 

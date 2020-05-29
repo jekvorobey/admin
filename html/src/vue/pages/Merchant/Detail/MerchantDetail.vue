@@ -29,7 +29,7 @@
                     <tab-product v-else-if="key === 'product'" :id="merchant.id"/>
                     <tab-communication v-else-if="key === 'communication'" :operators="merchant.operators"/>
                     <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id" :legal_name="merchant.legal_name"/>
-                    <tab-billing v-else-if="key === 'bill'" :id="merchant.id"/>
+                    <tab-billing v-else-if="key === 'bill'" :model.sync="merchant"/>
                     <template v-else>
                         Заглушка
                     </template>
