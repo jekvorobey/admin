@@ -7,7 +7,14 @@ import massSelection from './modules/mass-selection.js';
 
 import products from './modules/products.js';
 import brands from './modules/brands.js';
+import organizers from './modules/organizers.js';
 import publicEvents from './modules/public-events.js';
+import places from './modules/places.js';
+import speakers from './modules/speakers.js';
+import types from './modules/types.js';
+import professions from './modules/professions.js';
+
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -23,7 +30,12 @@ export default new Vuex.Store({
         massSelection,
         products,
         brands,
-        publicEvents
+        places,
+        publicEvents,
+        organizers,
+        speakers,
+        types,
+        professions,
     },
     mutations: {
         loaderShow(state, loaderShow) {
