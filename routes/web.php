@@ -213,6 +213,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('orders')->namespace('Order')->group(function () {
         Route::get('', 'OrderListController@index')->name('orders.list');
         Route::get('page', 'OrderListController@page')->name('orders.pagination');
+        Route::post('byOffers', 'OrderListController@byOffers')->name('orders.byOffers');
 
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');

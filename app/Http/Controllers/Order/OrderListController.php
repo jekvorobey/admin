@@ -76,6 +76,11 @@ class OrderListController extends Controller
         ]);
     }
 
+    public function byOffers(OrderService $orderService, Request $request)
+    {
+        return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
+    }
+
     /**
      * @return int
      */
