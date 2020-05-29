@@ -516,12 +516,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "a39aa7433869a3818ad533d2cd93c6a0dde2a4d3"
+                "reference": "2fbf029b67300b4c8efa468ec7b2863cb56957a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=a39aa7433869a3818ad533d2cd93c6a0dde2a4d3",
-                "reference": "a39aa7433869a3818ad533d2cd93c6a0dde2a4d3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=2fbf029b67300b4c8efa468ec7b2863cb56957a2",
+                "reference": "2fbf029b67300b4c8efa468ec7b2863cb56957a2",
                 "shasum": ""
             },
             "require": {
@@ -556,7 +556,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-05-27T03:07:04+00:00"
+            "time": "2020-05-29T04:22:01+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -783,6 +783,9 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/12949457/issues"
+            },
             "time": "2020-05-18T11:33:08+00:00"
         },
         {
@@ -880,6 +883,9 @@
                 }
             ],
             "description": "iBT oms client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
+            },
             "time": "2020-05-28T16:17:37+00:00"
         },
         {
