@@ -163,7 +163,7 @@ export default {
         savePromoProduct(promoProduct, mode) {
             if (mode === 'create') {
                 this.$v.$touch();
-                if (this.$v.$invalid) {
+                if (this.$v.$invalid || !this.uniqueId(promoProduct.product_id)) {
                     return;
                 }
             }
@@ -183,6 +183,11 @@ export default {
             promoProduct.active = 0;
             this.savePromoProduct(promoProduct, 'update');
         },
+        uniqueId(productId) {
+            return !this.promoProducts.map((item) => {
+                return item.product_id;
+            }).includes(parseInt(productId));
+        },
     },
     computed: {
         /**
@@ -196,6 +201,9 @@ export default {
                 }
                 if (!this.$v.newPromoProduct.product_id.integer) {
                     return "Введите ID товара - целое число!";
+                }
+                if (!this.uniqueId(this.$v.newPromoProduct.product_id.$model)) {
+                    return "Этот товар уже добавлен, введите другой ID";
                 }
             }
         },
