@@ -285,24 +285,31 @@ export default {
             Services.net().put(this.route('contentClaims.changeStatuses'), {
                 claim_ids: this.selectedIds,
                 status: this.newStatus,
-            }).then(data => {
+            }, {}, {}, true).then(data => {
                 this.processing = false;
                 this.closeModal('ChangeClaimStatus');
                 let message = this.countSelected > 1 ? "Статус заявок изменён!" : "Статус заявки изменён!";
                 Services.msg(message);
                 window.location.reload();
+            }, () => {
+                this.closeModal('ChangeClaimStatus');
+                Services.msg('Не удалось изменить статус', 'danger');
             });
         },
         approveDelete() {
             this.processing = true;
             Services.net().delete(this.route('contentClaims.deleteClaims'), {
                 claim_ids: this.selectedIds,
-            }).then(data => {
+            }, {}, true).then(data => {
                 this.processing = false;
                 this.closeModal('DeleteClaim');
                 let message = this.countSelected > 1 ? "Заявки удалены!" : "Заявка удалена!";
                 Services.msg(message);
                 window.location.reload();
+            }, () => {
+                this.closeModal('DeleteClaim');
+                let message = this.countSelected > 1 ? "Не удалось удалить заявки" : "Не удалось удалить заявку";
+                Services.msg(message, 'danger');
             });
         },
         statusClass(statusId) {

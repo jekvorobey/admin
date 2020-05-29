@@ -1,89 +1,84 @@
 <template>
-    <layout-main back>
-        <div class="card">
-            <div class="card-body d-flex">
-                <table>
-                    <tr><td class="name">№</td><td class="value">{{ claim.id }}</td></tr>
-                    <tr><td class="name">Создана</td><td class="value">{{ claim.created_at }}</td></tr>
-                    <tr><td class="name">Автор</td><td class="value">{{ claim.userName }}</td></tr>
-                    <tr><td class="name">Тип</td><td class="value">{{ claim.type }}</td></tr>
-                    <tr>
-                        <td class="name">Статус</td>
-                        <td class="value">
-                            <span class="badge" :class="statusClass(claim.status)">{{ statusName(claim.status) }}</span>
-                        </td>
-                    </tr>
-                </table>
-<!--                <div v-if="claim.payload.comment" class="comment">-->
-<!--                    <b>Комментарий</b><br>-->
-<!--                    <p>{{ claim.payload.comment }}</p>-->
-<!--                </div>-->
-                <div v-if="claim.merchant_message" class="comment">
-                    <b>Комментарий</b><br>
-                    <p>{{ claim.merchant_message }}</p>
-                </div>
-            </div>
-        </div>
-        <h2>Товары</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Название</th>
-                    <th>Артикул</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="product in products">
-                    <td>{{ product.id }}</td>
-                    <td><a :href="getRoute('product.edit', {id: product.id})" target="_blank">{{ product.name }}</a></td>
-                    <td>{{ product.vendor_code }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <layout-main back :back-url="backUrl">
+        <infopanel
+                :claim="claim"
+                :options="options"
+                @onMessageSave="onMessageSave"
+        ></infopanel>
+
+        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
+        <products-tab
+                v-if="nav.currentTab === 'products'"
+                :products="products"
+        ></products-tab>
+        <logs-tab
+                v-if="nav.currentTab === 'history'"
+                :history="history"
+                :history-meta="historyMeta"
+                :role-names="roleNames"
+        ></logs-tab>
     </layout-main>
 </template>
 
 <script>
+    import VTabs from '../../../../components/tabs/tabs.vue';
+    import Infopanel from '../components/infopanel.vue';
+    import ProductsTab from '../components/tab-products.vue';
+    import LogsTab from '../components/tab-logs.vue';
+    import Services from "../../../../../scripts/services/services";
 
     export default {
-    props: {
-        claim: {},
-        statuses: {},
-        products: Array
-    },
-    data() {
-        return {
-
-        };
-    },
-    methods: {
-        statusName(statusId) {
-            return this.statuses[statusId] || 'N/A';
+        components: {
+            VTabs,
+            Infopanel,
+            ProductsTab,
+            LogsTab
         },
-        statusClass(statusId) {
-            switch (statusId) {
-                case 1: return 'badge-info';
-                case 2: return 'badge-secondary';
-                case 3: return 'badge-primary';
-                case 4: return 'badge-success';
-                case 5: return 'badge-warning';
-                default: return 'badge-light';
+        props: {
+            claim: {},
+            options: {},
+            products: Array,
+            history: Array,
+            historyMeta: {},
+            roleNames: {}
+        },
+        data() {
+            return {
+                backUrl: this.route('contentClaims.list'),
+                nav: {
+                    currentTab: 'products',
+                    tabs: [
+                        {value: 'products', text: 'Товары'},
+                        {value: 'history', text: 'История'},
+                    ]
+                }
+            };
+        },
+        methods: {
+            onMessageSave(result) {
+                Services.msg("Комментарий сохранен!");
+                window.location.reload();
             }
-        },
-    },
-};
+        }
+    };
 </script>
 
 <style scoped>
-    .name {
-        font-weight: bold;
-        text-align: end;
+    .product-header {
+        min-height: 200px;
     }
-    .value {
-        padding-left: 10px;
+    .product-header > div {
+        padding: 16px;
     }
-    .comment {
-        margin-left: 50px;
+    .product-header img {
+        max-height: calc( 200px - 16px * 2 );
+    }
+    .product-header p {
+        margin: 0;
+        padding: 0;
+    }
+    .measure {
+        width: 30px;
+        margin-left: 10px;
     }
 </style>

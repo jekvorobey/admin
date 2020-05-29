@@ -746,9 +746,6 @@
                 }
             ],
             "description": "iBT marketing client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13354105/issues"
-            },
             "time": "2020-05-22T20:43:40+00:00"
         },
         {
@@ -786,9 +783,6 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/12949457/issues"
-            },
             "time": "2020-05-18T11:33:08+00:00"
         },
         {
@@ -797,12 +791,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "6088b13e400d293921c10f09e6129510fa5b0508"
+                "reference": "22d4688719f83ae7fc33610d682605b7179f22e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=6088b13e400d293921c10f09e6129510fa5b0508",
-                "reference": "6088b13e400d293921c10f09e6129510fa5b0508",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=22d4688719f83ae7fc33610d682605b7179f22e1",
+                "reference": "22d4688719f83ae7fc33610d682605b7179f22e1",
                 "shasum": ""
             },
             "require": {
@@ -837,10 +831,7 @@
                 }
             ],
             "description": "iBT message client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13390453/issues"
-            },
-            "time": "2020-05-21T09:59:01+00:00"
+            "time": "2020-05-28T23:28:31+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -974,9 +965,6 @@
                 }
             ],
             "description": "iBT store client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
-            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
