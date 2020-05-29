@@ -5,19 +5,26 @@
         </template>
         <template v-slot:default="{close}">
             <b-form-row>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <v-select v-model="$v.form.status.$model" :options="shipmentStatusOptions">
-                        Статус отправления
+                        Статус отправления*
                     </v-select>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <v-select v-model="$v.form.delivery_service_zero_mile.$model" :options="deliveryServiceOptions">
                         Логистический оператор для нулевой мили
                     </v-select>
                 </div>
-                <div class="col-sm-4">
-                    <v-date v-model="$v.form.psd.$model" :error="errorPdd">
-                        PSD
+            </b-form-row>
+            <b-form-row>
+                <div class="col-sm-6">
+                    <v-date v-model="$v.form.psd.$model" type="datetime-local" :error="errorPsd">
+                        PSD*
+                    </v-date>
+                </div>
+                <div class="col-sm-6" v-if="shipment.fsd">
+                    <v-date v-model="$v.form.fsd.$model" :error="errorFsd">
+                        FSD
                     </v-date>
                 </div>
             </b-form-row>
@@ -61,11 +68,13 @@
                 form: {
                     status: this.modelShipment.status.id,
                     delivery_service_zero_mile: this.modelShipment.tariff_id,
-                    psd: this.modelShipment.pdd_original,
+                    psd: this.modelShipment.psd_original,
+                    fsd: this.modelShipment.fsd_original,
                 },
             }
         },
         validations() {
+            let self = this;
             const notRequired = {required: requiredIf(() => {return false;})};
 
             return {
@@ -73,6 +82,9 @@
                     status: {required},
                     delivery_service_zero_mile: {notRequired},
                     psd: {required},
+                    fsd: {required: requiredIf(() => {
+                        return self.shipment.fsd;
+                    })},
                 }
             };
         },
@@ -96,6 +108,7 @@
                 this.form.status = this.modelShipment.status;
                 this.form.delivery_service_zero_mile = this.modelShipment.delivery_service_zero_mile;
                 this.form.psd = this.modelShipment.psd;
+                this.form.fsd = this.modelShipment.fsd;
                 this.$v.$reset();
             },
             resetModal() {
@@ -112,13 +125,13 @@
                 set(value) {this.$emit('update:modelShipment', value)},
             },
             shipmentStatusOptions() {
-                return Object.values(this.shipmentStatuses).map(deliveryStatus => ({
+                return Object.values(this.shipmentStatuses).map(shipmentStatus => ({
                     value: shipmentStatus.id,
                     text: shipmentStatus.name
                 }));
             },
             deliveryServiceOptions() {
-                return Object.values(this.deliveryServicees).map(deliveryService => ({
+                return Object.values(this.deliveryServices).map(deliveryService => ({
                     value: deliveryService.id,
                     text: deliveryService.name
                 }));
@@ -126,6 +139,13 @@
             errorPsd() {
                 if (this.$v.form.psd.$dirty) {
                     if (!this.$v.form.psd.required) {
+                        return "Обязательное поле";
+                    }
+                }
+            },
+            errorFsd() {
+                if (this.$v.form.fsd.$dirty) {
+                    if (!this.$v.form.fsd.required) {
                         return "Обязательное поле";
                     }
                 }

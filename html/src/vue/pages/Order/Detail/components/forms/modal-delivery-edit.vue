@@ -7,24 +7,24 @@
             <b-form-row>
                 <div class="col-sm-4">
                     <v-select v-model="$v.form.status.$model" :options="deliveryStatusOptions">
-                        Статус доставки
+                        Статус доставки*
                     </v-select>
                 </div>
                 <div class="col-sm-4">
                     <v-select v-model="$v.form.tariff_id.$model" :options="tariffOptions">
-                        Тариф ЛО
+                        Тариф ЛО*
                     </v-select>
                 </div>
                 <div class="col-sm-4">
                     <v-date v-model="$v.form.pdd.$model" :error="errorPdd">
-                        PDD
+                        PDD*
                     </v-date>
                 </div>
             </b-form-row>
             <b-form-row v-if="delivery.point_id">
                 <b-col>
                     <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint">
-                        Точка выдачи заказа
+                        Точка выдачи заказа*
                     </v-select>
                     <template v-if="points[selectedPointId]">
                         <p class="font-weight-bold">{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
@@ -48,7 +48,7 @@
                         <v-dadata v-model.sync="$v.form.delivery_address.address_string.$model"
                                   :error="errorDeliveryAddress"
                                   @onSelect="onDeliveryAddressSelect">
-                            Адрес до квартиры/офиса включительно
+                            Адрес до квартиры/офиса включительно*
                         </v-dadata>
                     </b-col>
                 </b-form-row>
@@ -80,7 +80,7 @@
             <b-form-row>
                 <div class="col-sm-4">
                     <v-input v-model="$v.form.receiver_name.$model" :error="errorReceiverName">
-                        ФИО получателя
+                        ФИО получателя*
                     </v-input>
                 </div>
                 <div class="col-sm-4">
@@ -89,7 +89,7 @@
                              :placeholder="telPlaceholder"
                              autocomplete="off"
                              v-mask="telMask">
-                        Телефон получателя
+                        Телефон получателя*
                     </v-input>
                 </div>
                 <div class="col-sm-4">

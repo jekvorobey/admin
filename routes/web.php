@@ -203,6 +203,13 @@ Route::middleware('auth')->group(function () {
         Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
     });
 
+    Route::prefix('document-templates')->group(function () {
+        Route::get('claim-act', 'DocumentTemplatesController@claimAct')->name('documentTemplates.claimAct');
+        Route::get('acceptance-act', 'DocumentTemplatesController@acceptanceAct')->name('documentTemplates.acceptanceAct');
+        Route::get('inventory', 'DocumentTemplatesController@inventory')->name('documentTemplates.inventory');
+        Route::get('assembling-card', 'DocumentTemplatesController@assemblingCard')->name('documentTemplates.assemblingCard');
+    });
+
     Route::prefix('orders')->namespace('Order')->group(function () {
         Route::get('', 'OrderListController@index')->name('orders.list');
         Route::get('page', 'OrderListController@page')->name('orders.pagination');
@@ -231,11 +238,16 @@ Route::middleware('auth')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::get('', 'TabShipmentsController@load')->name('orders.detail.shipments');
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
-                        Route::put('mark-as-problem', 'TabDeliveriesController@markAsProblem')->name('orders.detail.shipments.markAsProblem');
-                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblem')->name('orders.detail.shipments.markAsNonProblem');
+                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
                         Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+
+                        Route::prefix('documents')->group(function () {
+                            Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
+                            Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
+                            Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                        });
                     });
                 });
             });

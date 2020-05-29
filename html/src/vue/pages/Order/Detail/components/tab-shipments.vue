@@ -5,10 +5,17 @@
                 <div class="col-sm-6"><h4 class="card-title">Отправление {{shipment.number}}</h4></div>
                 <div class="col-sm-6">
                     <div class="float-right">
-                        <b-dropdown text="Действия" size="sm" v-if="canMarkAsProblem(shipment) || canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
-                            <b-dropdown-item-button v-if="canMarkAsProblem(shipment)" @click="markAsProblem(shipment)">
-                                <fa-icon icon="exclamation"></fa-icon> Пометить как проблемное
+                        <b-dropdown text="Документы" size="sm" v-if="documents(shipment)">
+                            <b-dropdown-item-button v-for="document in documents(shipment)" @click="downloadDocument(shipment, document.value)">
+                                {{document.text}}
                             </b-dropdown-item-button>
+                        </b-dropdown>
+                        <b-dropdown text="Шаблоны документов" size="sm">
+                            <b-dropdown-item-button v-for="document in documentTemplates" @click="downloadDocumentTemplate(document.value)">
+                                {{document.text}}
+                            </b-dropdown-item-button>
+                        </b-dropdown>
+                        <b-dropdown text="Действия" size="sm" v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
@@ -83,8 +90,8 @@
                 <div class="col-sm-6">
                     <p>
                         <span class="font-weight-bold">Логистический оператор для нулевой мили:</span>
-                        <a :href="getRoute('deliveryService.detail', {id: shipment.delivery_service_zero_mile.id})" target="_blank">
-                            {{shipment.delivery_service_zero_mile.name}}
+                        <a :href="getRoute('deliveryService.detail', {id: shipment.delivery_service_zero_mile ? shipment.delivery_service_zero_mile.id : shipment.delivery_service.id})" target="_blank">
+                            {{shipment.delivery_service_zero_mile ? shipment.delivery_service_zero_mile.name : shipment.delivery_service.name}}
                         </a>
                     </p>
                     <p>
@@ -115,7 +122,7 @@
                     <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{shipment.length|integer}}x{{shipment.width|integer}}x{{shipment.height|integer}} мм
                 </div>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Вес:</span> {{shipment.weight}} г
+                    <span class="font-weight-bold">Вес:</span> {{shipment.weight|integer}} г
                 </div>
             </b-row>
             <b-row>
@@ -227,11 +234,23 @@
         data() {
             return {
                 selectedShipment: {},
+                documentTemplates: [
+                    {value: 'claimAct', text: 'Акт-претензия'},
+                    {value: 'acceptanceAct', text: 'Акт приема-передачи'},
+                    {value: 'assemblingCard', text: 'Карточка сборки'},
+                    {value: 'inventory', text: 'Опись'},
+                ],
             }
         },
         methods: {
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
+            },
+            downloadDocument(shipment, type) {
+                window.open(this.getRoute('orders.detail.shipments.documents.' + type, {id: this.order.id, shipmentId: shipment.id}));
+            },
+            downloadDocumentTemplate(type) {
+                window.open(this.getRoute('documentTemplates.' + type));
             },
             isAssembledStatus(shipment) {
                 return shipment.status.id === 6;
@@ -244,39 +263,19 @@
                 return shipment.delivery_xml_id;
             },
             canGetCdekReceipt(shipment) {
-                return shipment.delivery.xml_id && shipment.delivery.delivery_service === 3;
-            },
-            canMarkAsProblem(shipment) {
-                return shipment.is_problem;
+                return shipment.delivery_xml_id && shipment.delivery.delivery_service === 3;
             },
             canMarkAsNonProblem(shipment) {
-                return !shipment.is_problem;
+                return shipment.is_problem;
             },
             canCancelShipment(shipment) {
                 return shipment.status.id < 26 && !shipment.is_canceled
-            },
-            markAsProblem(shipment) {
-                let errorMessage = 'Ошибка при изменении отправления';
-
-                Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.markAsProblem', {id: order.id, shipmentId: shipment.id})).then(data => {
-                    if (data.order) {
-                        this.order = data.order;
-                        Services.msg("Изменения сохранены");
-                    } else {
-                        Services.msg(errorMessage, 'danger');
-                    }
-                }, () => {
-                    Services.msg(errorMessage, 'danger');
-                }).finally(data => {
-                    Services.hideLoader();
-                });
             },
             markAsNonProblem(shipment) {
                 let errorMessage = 'Ошибка при изменении отправления';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.markAsNonProblem', {id: order.id, shipmentId: shipment.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.shipments.markAsNonProblem', {id: this.order.id, shipmentId: shipment.id})).then(data => {
                     if (data.order) {
                         this.order = data.order;
                         Services.msg("Изменения сохранены");
@@ -293,7 +292,7 @@
                 let errorMessage = 'Ошибка при отмене отправления';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: order.id, shipmentId: shipment.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: this.order.id, shipmentId: shipment.id})).then(data => {
                     if (data.order) {
                         this.order = data.order;
                         Services.msg("Изменения сохранены");
@@ -312,7 +311,19 @@
             editShipment(shipment) {
                 this.selectedShipment = shipment;
                 this.$bvModal.show('modal-shipment-edit');
-            }
+            },
+            documents(shipment) {
+                let documents = [{value: 'assemblingCard', text: 'Карточка сборки'}];
+
+                if (shipment.status.id >= 5) {
+                    documents.push({value: 'inventory', text: 'Опись'});
+                }
+                if (shipment.status.id >= 6) {
+                    documents.push({value: 'acceptanceAct', text: 'Акт приема-передачи'});
+                }
+
+                return documents;
+            },
         },
         computed: {
             order: {

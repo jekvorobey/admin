@@ -297,7 +297,7 @@ class OrderDetailController extends Controller
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();
-            $delivery->pdd_original = $delivery->pdd->format('Y-m-d');
+            $delivery->pdd_original = $delivery->pdd ? $delivery->pdd->format('Y-m-d') : '';
             $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
             $delivery['product_cost'] = $delivery->shipments->reduce(function (
@@ -310,12 +310,14 @@ class OrderDetailController extends Controller
             foreach ($delivery->shipments as $shipment) {
                 $merchantIds->push($shipment->merchant_id);
                 $shipment->status = $shipment->status();
-                $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile() ? : $delivery->delivery_service;
+                $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile();
                 $shipment['delivery_service'] = $delivery->delivery_service;
                 $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
+                $shipment['psd_original'] = $shipment->psd ? str_replace(' ', 'T', $shipment->psd->format('Y-m-d H:i')) : '';
                 $shipment->psd = dateTime2str($shipment->psd);
+                $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
                 $shipment['delivery_xml_id'] = $delivery->xml_id;

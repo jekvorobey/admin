@@ -77,14 +77,14 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Обновить доставку
-     * @param $orderId
-     * @param $deliveryId
+     * @param int $orderId
+     * @param int $deliveryId
      * @param  OrderService  $orderService
      * @param  DeliveryService  $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function save($orderId, $deliveryId, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
+    public function save(int $orderId, int $deliveryId, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
     {
         $requiredIfDeliveryAddressExist = function() {
             return count(array_filter(request()->get('delivery_address'))) > 0;

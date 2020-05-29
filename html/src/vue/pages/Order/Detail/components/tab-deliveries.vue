@@ -135,7 +135,7 @@
                     <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{delivery.length|integer}}x{{delivery.width|integer}}x{{delivery.height|integer}} мм
                 </div>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Вес:</span> {{delivery.weight}} г
+                    <span class="font-weight-bold">Вес:</span> {{delivery.weight|integer}} г
                 </div>
             </b-row>
             <b-row>
