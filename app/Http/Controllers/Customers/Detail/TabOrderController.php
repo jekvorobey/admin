@@ -19,7 +19,7 @@ class TabOrderController extends Controller
     public function load($id, OrderService $orderService, PaymentService $paymentService, DeliveryService $deliveryService)
     {
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
-        if ($orders) {
+        if ($orders->count()) {
             $orderIds = $orders->pluck('id')->all();
             $payments = $paymentService->payments($orderIds)->groupBy('order_id');
 
