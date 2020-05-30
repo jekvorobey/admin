@@ -91,6 +91,12 @@
                             <fa-icon icon="file-archive"/>
                         </button>
                     </template>
+                    <template v-if="!promoProduct.$model.active">
+                        <button class="btn btn-success btn-sm"
+                                @click="makeActive(promoProduct.$model)">
+                            <fa-icon icon="file-archive"/>
+                        </button>
+                    </template>
                 </td>
             </tr>
             <tr v-if="filter.active">
@@ -202,6 +208,10 @@ export default {
         },
         archivePromoProduct(promoProduct) {
             promoProduct.active = 0;
+            this.savePromoProduct(promoProduct, 'update');
+        },
+        makeActive(promoProduct) {
+            promoProduct.active = 1;
             this.savePromoProduct(promoProduct, 'update');
         },
         uniqueId(productId) {

@@ -1,5 +1,5 @@
 <template>
-    <table class="table table-sm">
+    <table class="table table-sm" v-if="orders && orders.length > 0">
         <thead>
         <tr>
             <th colspan="14">Заказы</th>
@@ -40,6 +40,7 @@
         </tr>
         </tbody>
     </table>
+    <p v-else class="text-center p-3">Заказов не найдено!</p>
 </template>
 
 <script>
