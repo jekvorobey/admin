@@ -42,7 +42,7 @@
 
                 <b>Назначить на отдельных реф. партнеров:</b>
                 <v-input placeholder="Введите ID через запятую"
-                         v-model="segments.user_ids"
+                         v-model="str_user_ids"
                          aria-valuemin="0"/>
             </div>
 
@@ -70,13 +70,14 @@
         data() {
             return {
                 promo_products: this.promoProducts,
+                str_user_ids: '',
                 segments_null: {
                     all: false,
                     levels: [],
                     brand: false,
                     category: false,
                     activities: [],
-                    user_ids: ''
+                    user_ids: []
                 },
                 segments: {
                     all: false,
@@ -84,11 +85,26 @@
                     brand: false,
                     category: false,
                     activities: [],
-                    user_ids: ''
+                    user_ids: [],
                 }
             }
         },
         methods: {
+            /**
+             * Преобразует строку со списком ID в массив
+             * @param ids
+             * @returns {*[]|number[]}
+             */
+            formatIds(ids) {
+                if (!ids) {
+                    return [];
+                }
+
+                return ids
+                    .split(',')
+                    .map(id => { return parseInt(id); })
+                    .filter(id => { return id > 0 });
+            },
             attachPromoProducts() {
                 Services.showLoader();
                 
@@ -105,6 +121,7 @@
                 ).then(data => {
                     Services.msg('Изменения сохранены');
                     this.$emit('update:promoProducts', data.promoProducts)
+                    this.$emit('update:selectedPromos', [])
                 }, () => {
                     Services.msg('Не удалось сохранить изменения','danger')
                 }).finally(() => {
@@ -112,31 +129,17 @@
                     Services.hideLoader();
                 })
             },
-            /**
-             * Преобразует строку со списком ID в массив
-             * @param ids
-             * @returns {*[]|number[]}
-             */
-            formatIds(ids) {
-                if (!ids) {
-                    return [];
-                }
-
-                return ids
-                    .split(',')
-                    .map(id => { return parseInt(id); })
-                    .filter(id => { return id > 0 });
-            },
         },
         watch: {
-            'segments.user_ids': {
+            'str_user_ids': {
                 handler(val, oldVal) {
                     if (val && val !== oldVal) {
-                        let format = this.formatIds(this.segments.user_ids).join(', ');
+                        let format = this.formatIds(this.str_user_ids).join(', ');
                         let separator = val.slice(-1) === ','
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
-                        this.segments.user_ids = format + separator;
+                        this.str_user_ids = format + separator;
+                        this.segments.user_ids = this.formatIds(this.str_user_ids);
                     }
                 },
             },
