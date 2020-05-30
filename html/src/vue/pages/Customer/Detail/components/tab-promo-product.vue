@@ -29,53 +29,65 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(promoProduct, index) in promoProducts" v-if="filter.active === !!promoProduct.active">
+            <tr v-for="(promoProduct, index) in $v.promoProducts.$each.$iter" v-if="filter.active === !!promoProduct.$model.active">
                 <td>
                     <div>
-                        <a :href="getRoute('products.detail', {id: promoProduct.product_id})">
-                            {{ promoProduct.product_name }}
+                        <a :href="getRoute('products.detail', {id: promoProduct.$model.product_id})">
+                            {{ promoProduct.$model.product_name }}
                         </a>
                     </div>
-                    <div v-if="promoProduct.brand">Бренд: {{ promoProduct.brand.name }}</div>
-                    <div v-if="promoProduct.category">Категория: {{ promoProduct.category.name }}</div>
-                    <div v-if="promoProduct.price">Цена: {{ promoProduct.price }}</div>
-                    <div>Дата создания: {{ promoProduct.created_at }}</div>
-                    <div v-if="!promoProduct.active">Дата архивации: {{ promoProduct.updated_at }}</div>
+                    <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
+                    <div v-if="promoProduct.$model.category">Категория: {{ promoProduct.$model.category.name }}</div>
+                    <div v-if="promoProduct.$model.price">Цена: {{ promoProduct.$model.price }}</div>
+                    <div>Дата создания: {{ promoProduct.$model.created_at }}</div>
+                    <div v-if="!promoProduct.$model.active">Дата архивации: {{ promoProduct.$model.updated_at }}</div>
                 </td>
                 <td>
                     <textarea class="form-control"
                               :class="[
-                                  {'is-invalid': promoProducts[index].description === ''},
-                                  {'is-invalid': promoProducts[index].description.length > 1000}
+                                  {'is-invalid': promoProduct.description.$model === ''},
+                                  {'is-invalid': promoProduct.description.$model.length > 1000}
                                   ]"
-                              v-model="promoProduct.description"
+                              v-model="promoProduct.description.$model"
                               rows="6"
-                              v-if="!!promoProduct.active"
+                              v-if="!!promoProduct.$model.active"
                               placeholder="Обязательное поле"
                               aria-required="true"
                               maxlength="1000"/>
-                    <span v-if="!promoProduct.active">{{ promoProduct.description }}</span>
+                    <span v-if="!promoProduct.$model.active">{{ promoProduct.description.$model }}</span>
                 </td>
                 <td>
-                    <div v-for="(file, i) in promoProduct.files" class="mb-1">
+                    <div v-for="(file, i) in promoProduct.files.$model" class="mb-1">
                         <img :src="media.file(file)" style="max-width: 150px;"/>
-                        <v-delete-button btn-class="btn-danger btn-sm" @delete="$delete(promoProduct.files, i)" v-if="!!promoProduct.active"/>
+                        <v-delete-button
+                                @delete="() => {
+                                    $delete(promoProduct.files.$model, i);
+                                    promoProduct.files.$touch();
+                                }"
+                                btn-class="btn-danger btn-sm"
+                                v-if="!!promoProduct.$model.active"/>
                     </div>
 
-                    <file-input @uploaded="(data) => $set(promoProduct.files, promoProduct.files.length, data.id)" class="mb-3" v-if="!!promoProduct.active"></file-input>
+                    <file-input
+                            @uploaded="(data) => {
+                                $set(promoProduct.files.$model, promoProduct.files.$model.length, data.id);
+                                promoProduct.files.$touch();
+                            }"
+                            class="mb-3"
+                            v-if="!!promoProduct.$model.active"></file-input>
                 </td>
                 <td>
-                    <template v-if="!!promoProduct.active">
+                    <template v-if="!!promoProduct.$model.active">
                         <button class="btn btn-success btn-sm"
-                                @click="savePromoProduct(promoProduct, 'update')"
-                                :disabled="promoProducts[index].description === ''
-                                ||promoProducts[index].description.length > 1000">
+                                @click="savePromoProduct(promoProduct.$model, 'update')"
+                                :disabled="promoProduct.description.$invalid
+                                ||!(promoProduct.description.$dirty
+                                ||promoProduct.files.$dirty)">
                             <fa-icon icon="save"/>
                         </button>
                         <button class="btn btn-danger btn-sm"
-                                @click="archivePromoProduct(promoProduct)"
-                                :disabled="promoProducts[index].description === ''
-                                ||promoProducts[index].description.length > 1000">
+                                @click="archivePromoProduct(promoProduct.$model)"
+                                :disabled="promoProduct.description.$invalid">
                             <fa-icon icon="file-archive"/>
                         </button>
                     </template>
@@ -108,7 +120,7 @@
                 </td>
                 <td>
                     <button class="btn btn-success btn-sm"
-                            :disabled="this.$v.$invalid"
+                            :disabled="this.$v.newPromoProduct.$invalid"
                             @click="savePromoProduct(newPromoProduct, 'create')">
                         <fa-icon icon="plus"/>
                     </button>
@@ -151,6 +163,15 @@ export default {
             product_id: {required, integer},
             description: {required, maxLength: maxLength(1000)},
         },
+        promoProducts: {
+            $each: {
+                description: {
+                    required,
+                    maxLength: maxLength(1000)
+                },
+                files: {},
+            },
+        },
     },
     methods: {
         /**
@@ -162,8 +183,8 @@ export default {
          */
         savePromoProduct(promoProduct, mode) {
             if (mode === 'create') {
-                this.$v.$touch();
-                if (this.$v.$invalid || !this.uniqueId(promoProduct.product_id)) {
+                this.$v.newPromoProduct.$touch();
+                if (this.$v.newPromoProduct.$invalid || !this.uniqueId(promoProduct.product_id)) {
                     return;
                 }
             }
