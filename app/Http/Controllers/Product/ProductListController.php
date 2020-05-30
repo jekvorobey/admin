@@ -63,6 +63,16 @@ class ProductListController extends Controller
         $ids = $request->get('productIds');
         $status = $request->get('status');
         $comment = $request->get('comment');
+
+        switch ($status) {
+            case 'accept':
+                $status = ProductApprovalStatus::STATUS_APPROVED;
+                break;
+            case 'reject':
+                $status = ProductApprovalStatus::STATUS_REJECT;
+                break;
+            default: $status = $request->get('status');
+        }
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
         }
