@@ -13,7 +13,7 @@
         <tbody>
             <tr class="table-info">
                 <td colspan="3">Всего</td>
-                <td>{{ customer.referral_bill }}</td>
+                <td>{{ roundValue(customer.referral_bill) }}</td>
                 <td>
                     <button class="btn btn-sm btn-danger" v-b-modal="modalIdBillCorrect">Корректировка</button>
                 </td>
@@ -34,7 +34,7 @@
                 <td>{{ operation.action_id }}</td>
                 <td>{{ operation.created_at }}</td>
                 <td>{{ operation.comment }}</td>
-                <td>{{ operation.value }}</td>
+                <td>{{ roundValue(operation.value) }}</td>
                 <td>{{ operation.type_name }}</td>
             </tr>
         </tbody>
@@ -46,6 +46,7 @@
 <script>
 import Services from '../../../../../scripts/services/services.js';
 import ModalBillCorrect from './modal-bill-correct.vue';
+import Helpers from "../../../../../scripts/helpers.js";
 
 export default {
     name: 'tab-billing',
@@ -79,6 +80,9 @@ export default {
         },
     },
     methods: {
+        roundValue(value) {
+            return Helpers.roundValue(value)
+        },
         saveOperation({comment, value}) {
             Services.showLoader();
             Services.net().post(this.getRoute('customers.detail.billing.correct', {id: this.customer.id}), {

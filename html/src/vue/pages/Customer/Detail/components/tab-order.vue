@@ -25,11 +25,11 @@
         <tr v-for="order in orders">
             <td><a :href="getRoute('orders.detail', {id: order.id})">{{ order.number }}</a></td>
             <td>{{ datetimePrint(order.created_at) }}</td>
-            <td>{{ order.price }}</td>
+            <td>{{ roundValue(order.price) }}</td>
             <td><fa-icon :icon="order.isPayed ? 'check' : 'times'" :class="order.isPayed ? 'text-success': 'text-danger'"/></td>
             <td>{{ order.paymentMethod || '-' }}</td>
             <td>{{ order.deliveryMethod || '-' }}</td>
-            <td>{{ order.delivery_cost }}</td>
+            <td>{{ roundValue(order.delivery_cost) }}</td>
             <td>{{ order.deliveryType.name }}</td>
             <td>{{ order.deliveryCount }}</td>
             <td>{{ order.deliverySystems || '-' }}</td>
@@ -45,6 +45,7 @@
 
 <script>
     import Services from '../../../../../scripts/services/services.js';
+    import Helpers from "../../../../../scripts/helpers.js";
 
     export default {
     name: 'tab-order',
@@ -53,6 +54,11 @@
         return {
             orders: [],
         }
+    },
+    methods: {
+        roundValue(value) {
+            return Helpers.roundValue(value)
+        },
     },
     created() {
         Services.showLoader();
