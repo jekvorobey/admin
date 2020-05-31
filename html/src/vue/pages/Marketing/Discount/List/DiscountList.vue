@@ -111,10 +111,7 @@
             <div class="col-12 mt-3">
                 <a v-if="!ifBundle()" :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
                 <a v-if="ifBundle()" :href="getRoute('bundle.create')" class="btn btn-success">Создать бандл</a>
-
-                <button class="btn btn-secondary" disabled v-if="discountId <= 0">Редактировать скидку</button>
-                <a :href="getRoute('discount.edit', {id: discountId})" class="btn btn-secondary" v-else>Редактировать скидку</a>
-
+                
                 <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteDiscount()">Удалить
                     <template v-if="countSelected <= 1">скидку</template>
                     <template v-else>скидки</template>
@@ -139,6 +136,7 @@
                 <th>Инициатор</th>
                 <th>Автор</th>
                 <th>Статус</th>
+                <td><fa-icon icon="cog"/></td>
             </tr>
             </thead>
             <tbody>
@@ -158,6 +156,17 @@
                 <td>{{ userName(discount.user_id) }}</td>
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
+                </td>
+                <td>
+                    <a :href="getRoute('discount.detail', {id: discount.id})"
+                       class="btn btn-info btn-sm">
+                        <fa-icon icon="eye"/>
+                    </a>
+
+                    <a :href="getRoute('discount.edit', {id: discount.id})"
+                       class="btn btn-success btn-sm mt-1">
+                        <fa-icon icon="edit"/>
+                    </a>
                 </td>
             </tr>
             </tbody>
