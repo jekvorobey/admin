@@ -156,6 +156,7 @@ export default {
             newPromoProduct: {
                 product_id: '',
                 description: '',
+                mass: 0,
                 active: 1,
                 files: [],
             },
