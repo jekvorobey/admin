@@ -85,14 +85,22 @@
                 }
             },
             nextItems() {
+                Services.showLoader();
                 this.page++;
                 Services.net().post(this.getRoute('orders.byOffers'), {}, {page: this.page, offersIds: this.offersIds})
-                    .then(data => { this.orderList = data });
+                    .then(data => {
+                        this.orderList = data
+                        Services.hideLoader()
+                    });
             },
             prevItems() {
+                Services.showLoader();
                 this.page--;
                 Services.net().post(this.getRoute('orders.byOffers'), {}, {page: this.page, offersIds: this.offersIds})
-                    .then(data => { this.orderList = data });
+                    .then(data => {
+                        this.orderList = data
+                        Services.hideLoader()
+                    });
             },
         },
         computed: {
