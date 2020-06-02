@@ -45,7 +45,7 @@ class CargoListController extends Controller
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);
         
-        return $this->render('Orders/Cargo/List', [
+        return $this->render('Order/Cargo/List', [
             'iCargos' => $cargos,
             'iCurrentPage' => $request->get('page', 1),
             'iPager' => $pager,
