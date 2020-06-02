@@ -82,13 +82,12 @@
                     <td v-for="column in columns" v-if="column.isShown">
                         <template v-if="column.code === 'status'">
                             <cargo-status :status='cargo.status'/>
-                            <template v-if="order.is_canceled">
+                            <template v-if="cargo.is_canceled">
                                 <br><span class="badge badge-danger">Отменен</span>
                             </template>
                         </template>
                         <div v-else v-html="column.value(cargo)"></div>
                     </td>
-                    <td v-for="column in columns" v-if="column.isShown" v-html="column.value(cargo)"></td>
                     <td></td>
                 </tr>
                 <tr v-if="!cargos.length">

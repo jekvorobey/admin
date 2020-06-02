@@ -10,7 +10,7 @@
 
                         <template v-if="isCreatedStatus && !isCancel">
                             <button class="btn btn-primary" v-if="isRequestSend"
-                                    @click="changeCargoStatus(this.cargoStatuses.shipped.id)">Груз передан курьеру</button>
+                                    @click="changeCargoStatus(cargoStatuses.shipped.id)">Груз передан курьеру</button>
                             <button class="btn btn-warning" v-else
                                     title="Задание на забор груза не создано">Груз передан курьеру</button>
                         </template>
@@ -24,7 +24,7 @@
                                     Создать задание на забор груза
                                 </b-dropdown-item-button>
                             </template>
-                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(this.cargoStatuses.taken.id)">
+                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(cargoStatuses.taken.id)">
                                 Принят Логистическим Оператором
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isCreatedStatus" @click="cancelCargo()">

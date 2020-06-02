@@ -5,7 +5,7 @@
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
             <b-col>
-                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || this.order.status.id < this.orderStatuses.done.id) && !isCancel">
+                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || this.order.status.id < orderStatuses.done.id) && !isCancel">
                     <b-dropdown-item-button>
                         Пометить, как проблемный
                     </b-dropdown-item-button>
@@ -21,7 +21,7 @@
                     <b-dropdown-item-button>
                         Отправить уведомление мерчанту
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(this.orderStatuses.awaitingConfirmation.id)">
+                    <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
                     </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="this.order.status.id < 9 && !isCancel" @click="cancelOrder()">
