@@ -62,9 +62,6 @@
         ],
         data() {
             return {
-                shipmentStatuses: {},
-                deliveryServices: {},
-
                 form: {
                     status: this.modelShipment.status.id,
                     delivery_service_zero_mile: this.modelShipment.tariff_id,
@@ -151,15 +148,5 @@
                 }
             },
         },
-        created() {
-            Services.showLoader();
-            Services.net().get(this.getRoute('orders.detail.shipments', {id: this.order.id, shipmentId: this.shipment.id})).then(data => {
-                this.shipmentStatuses = data.shipmentStatuses;
-                this.deliveryServices = data.deliveryServices;
-                this.$bvModal.show('modal-shipment-edit');
-            }).finally(() => {
-                Services.hideLoader();
-            });
-        }
 };
 </script>

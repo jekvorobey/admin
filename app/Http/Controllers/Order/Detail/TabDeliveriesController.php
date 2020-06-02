@@ -69,7 +69,6 @@ class TabDeliveriesController extends OrderDetailController
         $tariffs = $listsService->tariffs($tariffQuery);
 
         return response()->json([
-            'deliveryStatuses' => DeliveryStatus::allStatuses(),
             'points' => $points,
             'tariffs' => $tariffs,
         ]);

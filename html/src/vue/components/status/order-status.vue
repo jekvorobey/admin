@@ -9,17 +9,17 @@ export default {
     methods: {
         statusClass(statusId) {
             switch (statusId) {
-                case 0: return 'badge-light';
-                case 1: return 'badge-primary';
-                case 2: return 'badge-warning';
-                case 3: return 'badge-warning';
-                case 4: return 'badge-info';
-                case 5: return 'badge-dark';
-                case 6: return 'badge-dark';
-                case 7: return 'badge-dark';
-                case 8: return 'badge-dark';
-                case 9: return 'badge-success';
-                case 10: return 'badge-danger';
+                case this.orderStatuses.preOrder.id: return 'badge-light';
+                case this.orderStatuses.created.id: return 'badge-primary';
+                case this.orderStatuses.awaitingCheck.id: return 'badge-warning';
+                case this.orderStatuses.checking.id: return 'badge-warning';
+                case this.orderStatuses.awaitingConfirmation.id: return 'badge-info';
+                case this.orderStatuses.inProcessing.id: return 'badge-dark';
+                case this.orderStatuses.transferredToDelivery.id: return 'badge-dark';
+                case this.orderStatuses.delivering.id: return 'badge-dark';
+                case this.orderStatuses.readyForRecipient.id: return 'badge-dark';
+                case this.orderStatuses.done.id: return 'badge-success';
+                case this.orderStatuses.returned.id: return 'badge-danger';
                 default: return 'badge-dark';
             }
         },

@@ -9,23 +9,23 @@ export default {
     methods: {
         statusClass(statusId) {
             switch (statusId) {
-                case 0: return 'badge-light';
-                case 1: return 'badge-primary';
-                case 2: return 'badge-warning';
-                case 3: return 'badge-warning';
-                case 4: return 'badge-info';
-                case 5: return 'badge-dark';
-                case 6: return 'badge-dark';
-                case 7: return 'badge-dark';
-                case 21: return 'badge-info';
-                case 22: return 'badge-info';
-                case 23: return 'badge-info';
-                case 24: return 'badge-info';
-                case 25: return 'badge-info';
-                case 26: return 'badge-success';
-                case 41: return 'badge-secondary';
-                case 42: return 'badge-secondary';
-                case 43: return 'badge-danger';
+                case this.shipmentStatuses.preOrder.id: return 'badge-light';
+                case this.shipmentStatuses.created.id: return 'badge-primary';
+                case this.shipmentStatuses.awaitingCheck.id: return 'badge-warning';
+                case this.shipmentStatuses.checking.id: return 'badge-warning';
+                case this.shipmentStatuses.awaitingConfirmation.id: return 'badge-info';
+                case this.shipmentStatuses.assembling.id: return 'badge-dark';
+                case this.shipmentStatuses.assembled.id: return 'badge-dark';
+                case this.shipmentStatuses.shipped.id: return 'badge-dark';
+                case this.shipmentStatuses.onPointIn.id: return 'badge-info';
+                case this.shipmentStatuses.arrivedAtDestinationCity.id: return 'badge-info';
+                case this.shipmentStatuses.onPointOut.id: return 'badge-info';
+                case this.shipmentStatuses.readyForRecipient.id: return 'badge-info';
+                case this.shipmentStatuses.delivering.id: return 'badge-info';
+                case this.shipmentStatuses.done.id: return 'badge-success';
+                case this.shipmentStatuses.cancellationExpected.id: return 'badge-secondary';
+                case this.shipmentStatuses.returnExpectedFromCustomer.id: return 'badge-secondary';
+                case this.shipmentStatuses.returned.id: return 'badge-danger';
                 default: return 'badge-dark';
             }
         },

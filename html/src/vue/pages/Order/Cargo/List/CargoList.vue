@@ -79,6 +79,15 @@
             <tbody>
                 <tr v-for="cargo in cargos">
                     <td><input type="checkbox" value="true" class="cargo-select" :value="cargo.id"></td>
+                    <td v-for="column in columns" v-if="column.isShown">
+                        <template v-if="column.code === 'status'">
+                            <cargo-status :status='cargo.status'/>
+                            <template v-if="order.is_canceled">
+                                <br><span class="badge badge-danger">Отменен</span>
+                            </template>
+                        </template>
+                        <div v-else v-html="column.value(cargo)"></div>
+                    </td>
                     <td v-for="column in columns" v-if="column.isShown" v-html="column.value(cargo)"></td>
                     <td></td>
                 </tr>
@@ -225,14 +234,6 @@ export default {
                 {
                     name: 'Статус',
                     code: 'status',
-                    value: function(cargo) {
-                        let status = '<span class="badge ' + self.statusClass(cargo.status.id) + '">' + cargo.status.name + '</span>';
-                        if (cargo.is_canceled) {
-                            status += '<br><span class="badge badge-danger">Отменен</span>';
-                        }
-
-                        return status;
-                    },
                     isShown: true,
                     isAlwaysShown: true,
                 },
@@ -314,14 +315,6 @@ export default {
                 }
             }
             return false;
-        },
-        statusClass(statusId) {
-            switch (statusId) {
-                case 1: return 'badge-info';
-                case 2: return 'badge-primary';
-                case 3: return 'badge-success';
-                default: return 'badge-light';
-            }
         },
         selectAllPageCargos() {
             let checkboxes = document.getElementsByClassName('cargo-select');

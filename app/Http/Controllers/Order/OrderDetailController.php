@@ -48,6 +48,12 @@ class OrderDetailController extends Controller
      */
     public function detail(int $id)
     {
+        $this->loadOrderStatuses = true;
+        $this->loadPaymentStatuses = true;
+        $this->loadDeliveryStatuses = true;
+        $this->loadShipmentStatuses = true;
+        $this->loadDeliveryServices = true;
+
         $order = $this->getOrder($id);
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 

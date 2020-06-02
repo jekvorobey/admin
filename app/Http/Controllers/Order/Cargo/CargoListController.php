@@ -39,6 +39,7 @@ class CargoListController extends Controller
         MerchantService $merchantService
     ) {
         $this->title = 'Грузы';
+        $this->loadCargoStatuses = true;
         $restQuery = $this->makeRestQuery($cargoService, $request, true);
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);

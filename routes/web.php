@@ -237,7 +237,6 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
-                        Route::get('', 'TabShipmentsController@load')->name('orders.detail.shipments');
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
                         Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');

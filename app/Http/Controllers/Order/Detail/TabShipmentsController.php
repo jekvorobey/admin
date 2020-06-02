@@ -21,16 +21,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class TabShipmentsController extends OrderDetailController
 {
     /**
-     * @return JsonResponse
-     */
-    public function load() {
-        return response()->json([
-            'shipmentStatuses' => ShipmentStatus::allStatuses(),
-            'deliveryServices' => DeliveryService::allServices(),
-        ]);
-    }
-
-    /**
      * Обновить отправление
      * @param int $orderId
      * @param int $shipmentId

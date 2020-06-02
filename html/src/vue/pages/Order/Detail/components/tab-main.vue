@@ -222,6 +222,11 @@
                 </b-col>
             </b-row>
             <b-row>
+                <div class="col-sm-6">
+                    <p class="font-weight-bold">Дополнительная информация</p>
+                </div>
+            </b-row>
+            <b-row>
                 <b-col>
                     <v-input v-model="$v.form.manager_comment.$model" tag="textarea" :disabled="!canEdit">
                         Комментарий менеджера
@@ -396,7 +401,7 @@
                 set(value) {this.$emit('update:model', value)},
             },
             canEdit() {
-                return this.order.status.id < 6 && !this.order.is_canceled;
+                return this.order.status.id < this.orderStatuses.transferredToDelivery.id && !this.order.is_canceled;
             },
             pointOptions() {
                 return Object.values(this.points).map(point => ({

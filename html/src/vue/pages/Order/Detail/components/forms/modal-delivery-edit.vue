@@ -142,7 +142,6 @@
             let isCourierDelivery = !this.modelDelivery.point_id;
 
             return {
-                deliveryStatuses: {},
                 points: {},
                 tariffs: {},
                 selectedPointId: this.modelDelivery.point_id,
@@ -377,7 +376,6 @@
         created() {
             Services.showLoader();
             Services.net().get(this.getRoute('orders.detail.deliveries', {id: this.order.id, deliveryId: this.delivery.id})).then(data => {
-                this.deliveryStatuses = data.deliveryStatuses;
                 this.points = data.points;
                 this.tariffs = data.tariffs;
                 this.$bvModal.show('modal-delivery-edit');

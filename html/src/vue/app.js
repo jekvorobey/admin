@@ -18,6 +18,7 @@ import OrderStatus from './components/status/order-status.vue';
 import DeliveryStatus from './components/status/delivery-status.vue';
 import ShipmentStatus from './components/status/shipment-status.vue';
 import PaymentStatus from './components/status/payment-status.vue';
+import CargoStatus from './components/status/cargo-status.vue';
 import Media from '../scripts/media.js';
 import * as moment from 'moment';
 import {mapGetters} from 'vuex';
@@ -46,6 +47,7 @@ Vue.component('order-status', OrderStatus);
 Vue.component('delivery-status', DeliveryStatus);
 Vue.component('shipment-status', ShipmentStatus);
 Vue.component('payment-status', PaymentStatus);
+Vue.component('cargo-status', CargoStatus);
 
 Services.instance().register('store', () => {
     return store;
@@ -181,7 +183,39 @@ Vue.mixin({
         /** @return {CustomerBonusStatus} */
         customerBonusStatus() {
             return this.$store.state.layout.customerBonusStatus;
-        }
+        },
+        /** @return {OrderStatuses} */
+        orderStatuses() {
+            return this.$store.state.layout.orderStatuses;
+        },
+        /** @return {PaymentStatuses} */
+        paymentStatuses() {
+            return this.$store.state.layout.paymentStatuses;
+        },
+        /** @return {DeliveryStatuses} */
+        deliveryStatuses() {
+            return this.$store.state.layout.deliveryStatuses;
+        },
+        /** @return {ShipmentStatus} */
+        shipmentStatuses() {
+            return this.$store.state.layout.shipmentStatuses;
+        },
+        /** @return {CargoStatuses} */
+        cargoStatuses() {
+            return this.$store.state.layout.cargoStatuses;
+        },
+        /** @return {DeliveryTypes} */
+        deliveryTypes() {
+            return this.$store.state.layout.deliveryTypes;
+        },
+        /** @return {DeliveryMethods} */
+        deliveryMethods() {
+            return this.$store.state.layout.deliveryMethods;
+        },
+        /** @return {DeliveryServices} */
+        deliveryServices() {
+            return this.$store.state.layout.deliveryServices;
+        },
     },
 });
 
@@ -424,11 +458,152 @@ Vue.mixin({
  @property {integer} anyService
  */
 /**
- @typedef customerBonusStatus
+ @typedef CustomerBonusStatus
  @type {Object}
  @property {integer} onHold
  @property {integer} active
  @property {integer} expired
  @property {integer} debited
  */
-
+/**
+ @typedef OrderStatuses - статусы заказа
+ @type {Object}
+ @property {OrderStatus} created - оформлен
+ @property {OrderStatus} awaitingCheck - ожидает проверки АОЗ
+ @property {OrderStatus} checking - проверка АОЗ
+ @property {OrderStatus} awaitingConfirmation - ожидает подтверждения Мерчантом
+ @property {OrderStatus} inProcessing - в обработке
+ @property {OrderStatus} transferredToDelivery - передан на доставку
+ @property {OrderStatus} delivering - в процессе доставки
+ @property {OrderStatus} readyForRecipient - находится в Пункте Выдачи
+ @property {OrderStatus} done - доставлен
+ @property {OrderStatus} returned - возвращен
+ @property {OrderStatus} preOrder - предзаказ: ожидаем поступления товара
+ */
+/**
+ @typedef OrderStatus - статус заказа
+ @type {Object}
+ @property {integer} id
+ @property {string} name - название в админке
+ @property {string} description - все Отправления данного Заказа были переведены в статус /// или Смысл статуса если оно не зависит от Отправлений
+ @property {string} display_name - название для клиента на витрине
+ */
+/**
+ @typedef PaymentStatuses - статусы оплаты
+ @type {Object}
+ @property {PaymentStatus} notPaid - не оплачено
+ @property {PaymentStatus} paid - оплачено
+ @property {PaymentStatus} timeout - просрочено
+ @property {PaymentStatus} hold - средства захолдированы
+ @property {PaymentStatus} error - ошибка
+ */
+/**
+ @typedef PaymentStatus - статус оплаты
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef DeliveryStatuses - статусы доставки
+ @type {Object}
+ @property {DeliveryStatus} created - оформлена
+ @property {DeliveryStatus} awaitingCheck - ожидает проверки АОЗ
+ @property {DeliveryStatus} checking - проверка АОЗ
+ @property {DeliveryStatus} awaitingConfirmation - ожидает подтверждения Мерчантом
+ @property {DeliveryStatus} assembling - на комплектации
+ @property {DeliveryStatus} assembled - готова к отгрузке
+ @property {DeliveryStatus} shipped - передана Логистическому Оператору
+ @property {DeliveryStatus} onPointIn - принята логистическим оператором (принята на склад в пункте отправления)
+ @property {DeliveryStatus} arrivedAtDestinationCity - прибыла в город назначения
+ @property {DeliveryStatus} onPointOut - принята в пункте назначения (принята на складе в пункте назначения)
+ @property {DeliveryStatus} readyForRecipient - находится в Пункте Выдачи (готова к выдаче в пункте назначения)
+ @property {DeliveryStatus} delivering - выдана курьеру для доставки (передана на доставку в пункте назначения)
+ @property {DeliveryStatus} done - доставлена получателю
+ @property {DeliveryStatus} cancellationExpected - ожидается отмена
+ @property {DeliveryStatus} returnExpectedFromCustomer - ожидается возврат от клиента
+ @property {DeliveryStatus} returned - возвращена
+ @property {DeliveryStatus} preOrder - предзаказ: ожидаем поступления товара
+ */
+/**
+ @typedef DeliveryStatus - статус доставки
+ @type {Object}
+ @property {integer} id
+ @property {string} name - название в админке
+ @property {string} display_name - название для клиента на витрине
+ */
+/**
+ @typedef ShipmentStatuses - статусы отправления
+ @type {Object}
+ @property {ShipmentStatus} created - оформлено
+ @property {ShipmentStatus} awaitingCheck - ожидает проверки АОЗ
+ @property {ShipmentStatus} checking - проверка АОЗ
+ @property {ShipmentStatus} awaitingConfirmation - ожидает подтверждения Мерчантом
+ @property {ShipmentStatus} assembling - на комплектации
+ @property {ShipmentStatus} assembled - готова к отгрузке
+ @property {ShipmentStatus} shipped - передано Логистическому Оператору
+ @property {ShipmentStatus} onPointIn - принято логистическим оператором (принята на склад в пункте отправления)
+ @property {ShipmentStatus} arrivedAtDestinationCity - прибыло в город назначения
+ @property {ShipmentStatus} onPointOut - принято в пункте назначения (принята на складе в пункте назначения)
+ @property {ShipmentStatus} readyForRecipient - находится в Пункте Выдачи (готова к выдаче в пункте назначения)
+ @property {ShipmentStatus} delivering - выдано курьеру для доставки (передана на доставку в пункте назначения)
+ @property {ShipmentStatus} done - доставлено получателю
+ @property {ShipmentStatus} cancellationExpected - ожидается отмена
+ @property {ShipmentStatus} returnExpectedFromCustomer - ожидается возврат от клиента
+ @property {ShipmentStatus} returned - возвращено
+ @property {ShipmentStatus} preOrder - предзаказ: ожидаем поступления товара
+ */
+/**
+ @typedef ShipmentStatus - статус отправления
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef CargoStatuses - статусы груза
+ @type {Object}
+ @property {CargoStatus} created - сформирован
+ @property {CargoStatus} shipped - передан логистическому оператору
+ @property {CargoStatus} taken - принят Логистическим Оператором
+ */
+/**
+ @typedef CargoStatus - статус груза
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef DeliveryTypes - типы доставки
+ @type {Object}
+ @property {DeliveryType} split - несколькими доставками
+ @property {DeliveryType} consolidation - одной доставкой
+ */
+/**
+ @typedef DeliveryType - тип доставки
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef DeliveryMethods - методы доставки
+ @type {Object}
+ @property {DeliveryMethod} delivery - курьерская доставка
+ @property {DeliveryMethod} pickup - самовывоз
+ */
+/**
+ @typedef DeliveryMethod - метод доставки
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef DeliveryServices - службы доставки
+ @type {Object}
+ @property {DeliveryService} b2cpl
+ @property {DeliveryService} cdek
+ */
+/**
+ @typedef DeliveryService - служба доставки
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
