@@ -40,6 +40,7 @@ class CargoListController extends Controller
     ) {
         $this->title = 'Грузы';
         $this->loadCargoStatuses = true;
+        $this->loadDeliveryServices = true;
         $restQuery = $this->makeRestQuery($cargoService, $request, true);
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);
@@ -48,8 +49,6 @@ class CargoListController extends Controller
             'iCargos' => $cargos,
             'iCurrentPage' => $request->get('page', 1),
             'iPager' => $pager,
-            'cargoStatuses' => CargoStatus::allStatuses(),
-            'deliveryServices' => DeliveryService::allServices(),
             'stores' => $this->loadStores(),
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
