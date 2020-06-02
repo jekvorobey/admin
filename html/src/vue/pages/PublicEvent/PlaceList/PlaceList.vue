@@ -1,10 +1,10 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createBrand">Создать бренд</button>
+            <button class="btn btn-success" @click="createPlace">Создать Место</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
-                <v-delete-button @delete="() => deleteBrands(massAll(massSelectionType))"/>
+                <v-delete-button @delete="() => deletePlaces(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -12,26 +12,26 @@
                 <tr>
                     <td></td>
                     <th>ID</th>
-                    <th>Логотип</th>
                     <th>Название</th>
-                    <th>Код</th>
+                    <th>Город</th>
+                    <th>Адрес</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="brand in brands">
+                <tr v-for="place in places">
                     <td>
                         <input type="checkbox"
-                                :checked="massHas({type: massSelectionType, id: brand.id})"
-                                @change="e => massCheckbox(e, massSelectionType, brand.id)">
+                                :checked="massHas({type: massSelectionType, id: place.id})"
+                                @change="e => massCheckbox(e, massSelectionType, place.id)">
                     </td>
-                    <td>{{brand.id}}</td>
-                    <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
-                    <td>{{brand.name}}</td>
-                    <td>{{brand.code}}</td>
+                    <td>{{place.id}}</td>
+                    <td>{{place.name}}</td>
+                    <td>{{place.city_name}}</td>
+                    <td>{{place.address}}</td>
                     <td>
-                        <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
-                        <button class="btn btn-warning float-right" @click="editBrand(brand)">
+                        <v-delete-button @delete="() => deletePlace([place.id])" class="float-right ml-1"/>
+                        <button class="btn btn-warning float-right" @click="editPlace(place)">
                             <fa-icon icon="edit"></fa-icon>
                         </button>
                     </td>
@@ -49,17 +49,18 @@
             ></b-pagination>
         </div>
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('BrandFormModal')">
+            <modal :close="closeModal" v-if="isModalOpen('PlaceFormModal')">
                 <div slot="header">
-                    Бренд
+                    Место
                 </div>
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
+                        <v-input v-model="$v.form.city_name.$model" :error="errorCityName">Город</v-input>
+                        <v-input v-model="$v.form.address.$model" :error="errorAddress">Адрес</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
-                        <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
-                        <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
+                        <v-input v-model="$v.form.latitude.$model" :error="errorLatitude">Широта</v-input>
+                        <v-input v-model="$v.form.longitude.$model" :error="errorLongitude">Долгота</v-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -77,9 +78,9 @@
     import { mapActions, mapGetters } from 'vuex';
 
     import {
-        ACT_DELETE_BRAND,
+        ACT_DELETE_PLACES,
         ACT_LOAD_PAGE,
-        ACT_SAVE_BRAND,
+        ACT_SAVE_PLACES,
         GET_LIST,
         GET_NUM_PAGES,
         GET_PAGE_NUMBER,
@@ -87,7 +88,7 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
-    } from '../../../store/modules/brands';
+    } from '../../../store/modules/places';
 
     import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
@@ -115,43 +116,45 @@
             VDeleteButton
         },
         props: {
-            iBrands: {},
+            iPlaces: {},
             iTotal: {},
             iCurrentPage: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
-                list: this.iBrands,
+                list: this.iPlaces,
                 total: this.iTotal,
                 page: this.iCurrentPage
             });
 
             return {
-                editBrandId: null,
+                editPlaceId: null,
                 form: {
                     name: null,
-                    code: null,
+                    city_name: null,
                     description: null,
-                    file_id: null,
+                    address: null,
+                    latitude: null,
+                    longitude: null,
                 },
-                massSelectionType: 'brands',
+                massSelectionType: 'places',
             };
         },
         validations: {
             form: {
                 name: {required},
-                code: {
-                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
-                },
+                city_name: {required},
                 description: {required},
-                file_id: {required}
+                address: {required},
+                latitude: {required},
+                longitude: {required},
             }
         },
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
-                ACT_SAVE_BRAND,
-                ACT_DELETE_BRAND,
+                ACT_SAVE_PLACES,
+                ACT_DELETE_PLACES,
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -161,24 +164,29 @@
                 return this[ACT_LOAD_PAGE]({page});
             },
 
-            createBrand() {
+            createPlace() {
                 this.$v.form.$reset();
-                this.editBrandId = null;
+                this.editPlaceId = null;
                 this.form.name = null;
-                this.form.code = null;
+                this.form.city_name = null;
+                this.form.address = null;
                 this.form.description = null;
                 this.form.file_id = null;
-                this.openModal('BrandFormModal');
+                this.form.latitude = null;
+                this.form.longitude = null;
+                this.openModal('PlaceFormModal');
             },
 
-            editBrand(brand) {
+            editPlace(place) {
                 this.$v.form.$reset();
-                this.editBrandId = brand.id;
-                this.form.name = brand.name;
-                this.form.code = brand.code;
-                this.form.description = brand.description;
-                this.form.file_id = brand.file_id;
-                this.openModal('BrandFormModal');
+                this.editPlaceId = place.id;
+                this.form.name = place.name;
+                this.form.city_name = place.city_name;
+                this.form.address = place.address;
+                this.form.description = place.description
+                this.form.latitude = place.latitude
+                this.form.longitude = place.longitude
+                this.openModal('PlaceFormModal');
             },
             onSave() {
                 this.$v.$touch();
@@ -186,9 +194,9 @@
                     return;
                 }
                 Services.showLoader();
-                this[ACT_SAVE_BRAND]({
-                    id: this.editBrandId,
-                    brand: this.form
+                this[ACT_SAVE_PLACES]({
+                    id: this.editPlaceId,
+                    place: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});
                 }).finally(() => {
@@ -199,9 +207,9 @@
             onCancel() {
                 this.closeModal();
             },
-            deleteBrands(ids) {
+            deletePlace(ids) {
                 Services.showLoader();
-                this[ACT_DELETE_BRAND]({ids})
+                this[ACT_DELETE_PLACES]({ids})
                     .then(() => {
                         return this[ACT_LOAD_PAGE]({page: this.page});
                     })
@@ -212,7 +220,8 @@
             },
             onFileUpload(file) {
                 this.$v.form.file_id.$model = file.id;
-            }
+            },
+            
         },
         created() {
             window.onpopstate = () => {
@@ -228,7 +237,7 @@
                 total: GET_TOTAL,
                 pageSize: GET_PAGE_SIZE,
                 numPages: GET_NUM_PAGES,
-                brands: GET_LIST,
+                places: GET_LIST,
             }),
             page: {
                 get: function () {
@@ -249,14 +258,24 @@
                     if (!this.$v.form.description.required) return "Обязательное поле!";
                 }
             },
-            errorFile() {
-                if (this.$v.form.file_id.$dirty) {
-                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
+            errorLongitude() {
+                if (this.$v.form.latitude.$dirty) {
+                    if (!this.$v.form.latitude.required) return "Обязательное поле!";
                 }
             },
-            errorCode() {
-                if (this.$v.form.code.$dirty) {
-                    if (!this.$v.form.code.pattern) return "Только латиница, цифры и подчёркивание!";
+            errorLatitude() {
+                if (this.$v.form.latitude.$dirty) {
+                    if (!this.$v.form.latitude.required) return "Обязательное поле!";
+                }
+            },
+            errorAddress() {
+                if (this.$v.form.address.$dirty) {
+                    if (!this.$v.form.address.required) return "Обязательное поле!";
+                }
+            },
+            errorCityName() {
+                if (this.$v.form.city_name.$dirty) {
+                    if (!this.$v.form.address.required) return "Обязательное поле!";
                 }
             },
         }

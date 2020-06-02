@@ -54,6 +54,12 @@ class OrderListController extends Controller
         StoreService $storeService
     ) {
         $this->title = 'Список заказов';
+        $this->loadOrderStatuses = true;
+        $this->loadPaymentStatuses = true;
+        $this->loadPaymentMethods = true;
+        $this->loadDeliveryTypes = true;
+        $this->loadDeliveryMethods = true;
+        $this->loadDeliveryServices = true;
 
         $restQuery = $this->makeRestQuery($orderService, true);
         $pager = $orderService->ordersCount($restQuery);
@@ -63,10 +69,6 @@ class OrderListController extends Controller
             'iOrders' => $orders,
             'iCurrentPage' => $this->getPage(),
             'iPager' => $pager,
-            'orderStatuses' => OrderStatus::allStatuses(),
-            'deliveryTypes' => DeliveryType::allTypes(),
-            'paymentMethods' => PaymentMethod::allMethods(),
-            'deliveryServices' => DeliveryService::allServices(),
             'merchants' => $this->getMerchants(),
             'confirmationTypes' => OrderConfirmationType::allTypes(),
             'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
@@ -74,6 +76,11 @@ class OrderListController extends Controller
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
         ]);
+    }
+
+    public function byOffers(OrderService $orderService, Request $request)
+    {
+        return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }
 
     /**
@@ -163,12 +170,6 @@ class OrderListController extends Controller
 
         $orders = $orderService->orders($restQuery);
 
-        // Получаем покупателей заказов
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', array_values($orders->pluck('customer_id')->unique()->toArray()));
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
-
         //Получаем операторов обработки заказов
         $operatorIds = collect();
         foreach ($orders as $order) {
@@ -186,14 +187,15 @@ class OrderListController extends Controller
         }
         $referralIds = $referralIds->unique();
 
+        // Получаем покупателей и реферальных партнеров заказов
+        $customerIds = $orders->pluck('customer_id')->merge($referralIds)->unique()->all();
+        $customerQuery = $customerService->newQuery()
+            ->setFilter('id', $customerIds);
+        /** @var Collection|CustomerDto[] $customers */
+        $customers = $customerService->customers($customerQuery)->keyBy('id');
+
         // Получаем самих пользователей
-        $userIds = $customers->pluck('user_id')
-            ->unique()
-            ->merge($operatorIds)
-            ->merge($referralIds)
-            ->unique()
-            ->values()
-            ->all();
+        $userIds = $customers->pluck('user_id')->all();
         $users = collect();
         if ($userIds) {
             $userQuery = $userService->newQuery()
@@ -279,15 +281,19 @@ class OrderListController extends Controller
             $sources = [];
             $referralIds = $order->basket->items->pluck('referrer_id')->filter()->unique();
             foreach ($referralIds as $referralId) {
+                /** @var CustomerDto|null $referralCustomer */
+                $referralCustomer = $customers->has($referralId) ? $customers[$referralId] : null;
                 $sources[] = [
-                    'user' => $users->has($referralId) ?
-                        $users[$referralId] : null,
+                    'user' => $referralCustomer && $users->has($referralCustomer->user_id) ?
+                        $users[$referralCustomer->user_id] : null,
                 ];
             }
             foreach ($order->promoCodes as $promoCode) {
+                /** @var CustomerDto|null $referralCustomer */
+                $referralCustomer = $customers->has($promoCode->owner_id) ? $customers[$promoCode->owner_id] : null;
                 $sources[] = [
-                    'user' => $promoCode->owner_id && $users->has($promoCode->owner_id) ?
-                        $users[$promoCode->owner_id] : null,
+                    'user' => $referralCustomer && $users->has($referralCustomer->user_id) ?
+                        $users[$referralCustomer->user_id] : null,
                     'promo_code' => $promoCode->code,
                 ];
             }

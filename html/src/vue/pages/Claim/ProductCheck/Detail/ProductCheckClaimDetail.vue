@@ -36,7 +36,6 @@
         <products-tab
                 v-if="nav.currentTab === 'products'"
                 :claim="claim"
-                :claim-id="claim.id"
         ></products-tab>
     </layout-main>
 </template>

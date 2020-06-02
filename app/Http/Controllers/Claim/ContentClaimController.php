@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Dto\Claim\ContentClaimDto;
+use Greensight\Message\Dto\Claim\History\ClaimHistoryDto;
+use Greensight\Message\Dto\Claim\History\ClaimHistoryTypeDto;
 use Greensight\Message\Services\ClaimService\ContentClaimService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -200,7 +203,17 @@ class ContentClaimController extends Controller
 
         $productIds = $claim->product_ids;
         /** @var Collection|ProductDto[] $products */
-        $products = $productService->newQuery()->setFilter('id', $productIds)->products();
+        $products = $productService->newQuery()
+            ->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code')
+            ->setFilter('id', $productIds)
+            ->include('brand', 'category')
+            ->products();
+
+        $historyQuery = $claimService->newQuery()
+            ->addFields(ClaimHistoryDto::entity(), 'user_id', 'type', 'data', 'created_at')
+            ->setFilter('entity_id', $id)
+            ->addSort('created_at', 'desc');
+        $history = $this->loadClaimHistory($historyQuery, $userService);
 
         return $this->render('Claim/Content/Detail', [
             'claim' => $claim,
@@ -209,8 +222,27 @@ class ContentClaimController extends Controller
                 'types' => $meta['typeNames'],
                 'unpack' => $meta['unpackNames'],
             ],
-            'products' => $products
+            'products' => $products,
+            'history' => $history,
+            'historyMeta' => ClaimHistoryTypeDto::claimHistoryMeta(),
+            'roleNames' => UserDto::roles(),
         ]);
+    }
+
+    public function update(
+        int $id,
+        Request $request,
+        ContentClaimService $contentClaimService
+    ) {
+        $data = $this->validate($request, [
+            'service_message' => 'sometimes|required|string',
+            'status' => 'sometimes|required|integer'
+        ]);
+
+        $contentClaim = new ContentClaimDto($data);
+        $contentClaimService->updateClaim($id, $contentClaim);
+
+        return response()->json(['status' => 'ok']);
     }
 
     /**
@@ -382,6 +414,23 @@ class ContentClaimController extends Controller
             $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->short_name : 'N/A';
             $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
             return $claim;
+        });
+    }
+
+    protected function loadClaimHistory(RestQuery $query, UserService $userService) {
+
+        /** @var Collection|ClaimHistoryDto[] $history */
+        $history = $query->claimHistory();
+
+        $userIds = $history->pluck('user_id')->unique()->all();
+        $usersRoles = [];
+        foreach ($userIds as $k => $v) {
+            $usersRoles[$v] = $userService->userRoles($v);
+        }
+
+        return $history->map(function (ClaimHistoryDto $event) use ($usersRoles) {
+            $event['userRoleIds'] = $usersRoles[$event->user_id];
+            return $event;
         });
     }
 }

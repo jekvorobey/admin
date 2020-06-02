@@ -6,7 +6,7 @@
         <input
                 v-bind="$attrs"
                 v-on="inputListeners"
-                type="date"
+                :type="type"
                 :class="{ 'is-invalid': error }"
                 class="form-control"
                 :id="inputId"
@@ -29,6 +29,10 @@
     mixins: [inputMixin],
     props: {
         value: {},
+        type: {
+            type: String,
+            default: 'date',
+        },
     },
     data() {
         return {

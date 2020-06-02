@@ -1,10 +1,10 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createBrand">Создать бренд</button>
+            <button class="btn btn-success" @click="createType">Создать тип события</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
-                <v-delete-button @delete="() => deleteBrands(massAll(massSelectionType))"/>
+                <v-delete-button @delete="() => deleteTypes(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -12,26 +12,25 @@
                 <tr>
                     <td></td>
                     <th>ID</th>
-                    <th>Логотип</th>
                     <th>Название</th>
                     <th>Код</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="brand in brands">
+                <tr v-for="type in types">
                     <td>
                         <input type="checkbox"
-                                :checked="massHas({type: massSelectionType, id: brand.id})"
-                                @change="e => massCheckbox(e, massSelectionType, brand.id)">
+                                :checked="massHas({type: massSelectionType, id: type.id})"
+                                @change="e => massCheckbox(e, massSelectionType, type.id)">
                     </td>
-                    <td>{{brand.id}}</td>
-                    <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
-                    <td>{{brand.name}}</td>
-                    <td>{{brand.code}}</td>
+                    <td>{{type.id}}</td>
+                    <td>{{type.name}}</td>
+                    <td>{{type.code}}</td>
+                    
                     <td>
-                        <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
-                        <button class="btn btn-warning float-right" @click="editBrand(brand)">
+                        <v-delete-button @delete="() => deleteTypes([type.id])" class="float-right ml-1"/>
+                        <button class="btn btn-warning float-right" @click="editType(type)">
                             <fa-icon icon="edit"></fa-icon>
                         </button>
                     </td>
@@ -49,7 +48,7 @@
             ></b-pagination>
         </div>
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('BrandFormModal')">
+            <modal :close="closeModal" v-if="isModalOpen('TypeFormModal')">
                 <div slot="header">
                     Бренд
                 </div>
@@ -57,9 +56,6 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
-                        <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
-                        <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -77,9 +73,9 @@
     import { mapActions, mapGetters } from 'vuex';
 
     import {
-        ACT_DELETE_BRAND,
+        ACT_DELETE_TYPES,
         ACT_LOAD_PAGE,
-        ACT_SAVE_BRAND,
+        ACT_SAVE_TYPES,
         GET_LIST,
         GET_NUM_PAGES,
         GET_PAGE_NUMBER,
@@ -87,7 +83,7 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
-    } from '../../../store/modules/brands';
+    } from '../../../store/modules/types';
 
     import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
@@ -115,26 +111,24 @@
             VDeleteButton
         },
         props: {
-            iBrands: {},
+            iTypes: {},
             iTotal: {},
             iCurrentPage: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
-                list: this.iBrands,
+                list: this.iTypes,
                 total: this.iTotal,
                 page: this.iCurrentPage
             });
 
             return {
-                editBrandId: null,
+                editTypedId: null,
                 form: {
                     name: null,
                     code: null,
-                    description: null,
-                    file_id: null,
                 },
-                massSelectionType: 'brands',
+                massSelectionType: 'types',
             };
         },
         validations: {
@@ -143,15 +137,13 @@
                 code: {
                     pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
                 },
-                description: {required},
-                file_id: {required}
             }
         },
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
-                ACT_SAVE_BRAND,
-                ACT_DELETE_BRAND,
+                ACT_SAVE_TYPES,
+                ACT_DELETE_TYPES,
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -161,24 +153,20 @@
                 return this[ACT_LOAD_PAGE]({page});
             },
 
-            createBrand() {
+            createType() {
                 this.$v.form.$reset();
-                this.editBrandId = null;
+                this.editTypeId = null;
                 this.form.name = null;
                 this.form.code = null;
-                this.form.description = null;
-                this.form.file_id = null;
-                this.openModal('BrandFormModal');
+                this.openModal('TypeFormModal');
             },
 
-            editBrand(brand) {
+            editType(type) {
                 this.$v.form.$reset();
-                this.editBrandId = brand.id;
-                this.form.name = brand.name;
-                this.form.code = brand.code;
-                this.form.description = brand.description;
-                this.form.file_id = brand.file_id;
-                this.openModal('BrandFormModal');
+                this.editTypeId = type.id;
+                this.form.name = type.name;
+                this.form.code = type.code;
+                this.openModal('TypeFormModal');
             },
             onSave() {
                 this.$v.$touch();
@@ -186,9 +174,9 @@
                     return;
                 }
                 Services.showLoader();
-                this[ACT_SAVE_BRAND]({
-                    id: this.editBrandId,
-                    brand: this.form
+                this[ACT_SAVE_TYPES]({
+                    id: this.editTypesdId,
+                    type: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});
                 }).finally(() => {
@@ -199,9 +187,9 @@
             onCancel() {
                 this.closeModal();
             },
-            deleteBrands(ids) {
+            deleteTypes(ids) {
                 Services.showLoader();
-                this[ACT_DELETE_BRAND]({ids})
+                this[ACT_DELETE_TYPES]({ids})
                     .then(() => {
                         return this[ACT_LOAD_PAGE]({page: this.page});
                     })
@@ -210,9 +198,6 @@
                         this.massClear(this.massSelectionType);
                     });
             },
-            onFileUpload(file) {
-                this.$v.form.file_id.$model = file.id;
-            }
         },
         created() {
             window.onpopstate = () => {
@@ -228,7 +213,7 @@
                 total: GET_TOTAL,
                 pageSize: GET_PAGE_SIZE,
                 numPages: GET_NUM_PAGES,
-                brands: GET_LIST,
+                types: GET_LIST,
             }),
             page: {
                 get: function () {
@@ -242,16 +227,6 @@
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
-                }
-            },
-            errorDescription() {
-                if (this.$v.form.description.$dirty) {
-                    if (!this.$v.form.description.required) return "Обязательное поле!";
-                }
-            },
-            errorFile() {
-                if (this.$v.form.file_id.$dirty) {
-                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
                 }
             },
             errorCode() {

@@ -48,6 +48,12 @@ class OrderDetailController extends Controller
      */
     public function detail(int $id)
     {
+        $this->loadOrderStatuses = true;
+        $this->loadPaymentStatuses = true;
+        $this->loadDeliveryStatuses = true;
+        $this->loadShipmentStatuses = true;
+        $this->loadDeliveryServices = true;
+
         $order = $this->getOrder($id);
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 
@@ -154,17 +160,19 @@ class OrderDetailController extends Controller
             ->merge($order->promoCodes->pluck('owner_id')->filter())
             ->unique();
         // Получаем покупателя заказа
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $order->customer_id);
-        /** @var CustomerDto $customer */
-        $customer = $customerService->customers($customerQuery)->first();
-
-        // Получаем самих пользователей
-        $userIds = collect($customer->user_id)
+        $customerIds = collect($order->customer_id)
             ->merge($referralIds)
             ->unique()
             ->values()
             ->all();
+        $customerQuery = $customerService->newQuery()
+            ->setFilter('id', $customerIds);
+        /** @var Collection|CustomerDto[] $customers */
+        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customer = $customers->has($order->customer_id) ? $customers[$order->customer_id] : null;
+
+        // Получаем самих пользователей
+        $userIds = $customers->pluck('user_id')->all();
         $users = collect();
         if ($userIds) {
             $userQuery = $userService->newQuery()
@@ -179,12 +187,13 @@ class OrderDetailController extends Controller
         }
 
         $referrals = collect();
-        $referralIds = $order->basket->items->pluck('referrer_id')->filter()->unique();
         foreach ($referralIds as $referralId) {
+            /** @var CustomerDto|null $referralCustomer */
+            $referralCustomer = $customers->has($referralId) ? $customers[$referralId] : null;
             $referral = [
                 'referral_id' => $referralId,
-                'user' => $users->has($referralId) ?
-                    $users[$referralId] : null,
+                'user' => $referralCustomer && $users->has($referralCustomer->user_id) ?
+                    $users[$referralCustomer->user_id] : null,
             ];
             foreach ($order->basket->items as $item) {
                 if ($item->referrer_id == $referralId) {
@@ -294,6 +303,7 @@ class OrderDetailController extends Controller
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();
+            $delivery->pdd_original = $delivery->pdd ? $delivery->pdd->format('Y-m-d') : '';
             $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
             $delivery['product_cost'] = $delivery->shipments->reduce(function (
@@ -307,10 +317,19 @@ class OrderDetailController extends Controller
                 $merchantIds->push($shipment->merchant_id);
                 $shipment->status = $shipment->status();
                 $shipment->delivery_service_zero_mile = $shipment->deliveryServiceZeroMile();
+                $shipment['delivery_service'] = $delivery->delivery_service;
                 $shipment['store'] = $stores->has($shipment->store_id) ? $stores[$shipment->store_id] : null;
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
+                $shipment['psd_original'] = $shipment->psd ? str_replace(' ', 'T', $shipment->psd->format('Y-m-d H:i')) : '';
+                $shipment->psd = dateTime2str($shipment->psd);
+                $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
+                $shipment->fsd = date2str($shipment->fsd);
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
+                $shipment['delivery_xml_id'] = $delivery->xml_id;
+                $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;
+                $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;
+                $shipment['delivery_pdd'] = $delivery->pdd;
                 $shipment['product_qty'] = $shipment->basketItems->reduce(function (
                     int $sum,
                     BasketItemDto $item
@@ -332,6 +351,10 @@ class OrderDetailController extends Controller
             $delivery['merchants'] = $merchants->filter(function (MerchantDto $merchant) use ($shipmentMerchantIds) {
                 return $shipmentMerchantIds->search($merchant->id) !== false;
             })->values();
+
+            foreach ($delivery->shipments as $shipment) {
+                $shipment['merchant'] = $merchants->has($shipment->merchant_id) ? $merchants[$shipment->merchant_id] : null;
+            }
         }
 
         $order['merchants'] = $merchants->values();

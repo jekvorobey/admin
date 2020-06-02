@@ -8,6 +8,7 @@ use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Oms\Services\OrderService\OrderService;
@@ -54,14 +55,18 @@ class TabMainController extends OrderDetailController
         if ($pickupDelivery) {
             $pointQuery = $listsService->newQuery()
                 ->setFilter('id', $pickupDelivery->point_id)
-                ->addFields(PointDto::entity(), 'id', 'city_guid');
+                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable', 'city_guid');
             /** @var PointDto $point */
             $point = $listsService->points($pointQuery)->first();
             $pointsQuery = $listsService->newQuery()
                 ->setFilter('city_guid', $point->city_guid)
                 ->setFilter('delivery_service', $pickupDelivery->delivery_service)
                 ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable');
-            $points = $listsService->points($pointsQuery)->keyBy('id')->map(function(PointDto $point) {
+            $points = $listsService->points($pointsQuery)->keyBy('id');
+            if (!$points->has($point->id)) {
+                $points->put($point->id, $point);
+            }
+            $points = $points->map(function(PointDto $point) {
                 $point->type = $point->type();
 
                 return $point;
@@ -74,13 +79,13 @@ class TabMainController extends OrderDetailController
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param  OrderService  $orderService
      * @param  DeliveryService  $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function save($id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
+    public function save(int $id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
     {
         $requiredIfDeliveryAddressExist = function() {
             return count(array_filter(request()->get('delivery_address'))) > 0;
@@ -126,6 +131,10 @@ class TabMainController extends OrderDetailController
         $orderService->updateOrder($id, $newOrderDto);
 
         foreach ($order->deliveries as $delivery) {
+            if ($delivery->status > DeliveryStatus::ASSEMBLED) {
+                continue;
+            }
+
             $newDeliveryDto = new DeliveryDto();
             $newDeliveryDto->receiver_name = $data['receiver_name'];
             $newDeliveryDto->receiver_phone = $data['receiver_phone'];
@@ -142,10 +151,10 @@ class TabMainController extends OrderDetailController
                 $deliveryAddress['house'] = isset($dataDeliveryAddress['house']) ? $dataDeliveryAddress['house'] : '';
                 $deliveryAddress['block'] = isset($dataDeliveryAddress['block']) ? $dataDeliveryAddress['block'] : '';
                 $deliveryAddress['flat'] = isset($dataDeliveryAddress['flat']) ? $dataDeliveryAddress['flat'] : '';
-                $deliveryAddress['porch'] = $dataDeliveryAddress['porch'];
-                $deliveryAddress['floor'] = $dataDeliveryAddress['floor'];
-                $deliveryAddress['intercom'] = $dataDeliveryAddress['intercom'];
-                $deliveryAddress['comment'] = $dataDeliveryAddress['comment'];
+                $deliveryAddress['porch'] = isset($dataDeliveryAddress['porch']) ? $dataDeliveryAddress['porch'] : '';
+                $deliveryAddress['floor'] = isset($dataDeliveryAddress['floor']) ? $dataDeliveryAddress['floor'] : '';
+                $deliveryAddress['intercom'] = isset($dataDeliveryAddress['intercom']) ? $dataDeliveryAddress['intercom'] : '';
+                $deliveryAddress['comment'] = isset($dataDeliveryAddress['comment']) ? $dataDeliveryAddress['comment'] : '';
                 $newDeliveryDto->delivery_address = $deliveryAddress;
             } elseif ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                 $newDeliveryDto->point_id = $data['point_id'];

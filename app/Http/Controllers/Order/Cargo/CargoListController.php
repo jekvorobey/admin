@@ -39,16 +39,16 @@ class CargoListController extends Controller
         MerchantService $merchantService
     ) {
         $this->title = 'Грузы';
+        $this->loadCargoStatuses = true;
+        $this->loadDeliveryServices = true;
         $restQuery = $this->makeRestQuery($cargoService, $request, true);
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);
         
-        return $this->render('Orders/Cargo/List', [
+        return $this->render('Order/Cargo/List', [
             'iCargos' => $cargos,
             'iCurrentPage' => $request->get('page', 1),
             'iPager' => $pager,
-            'cargoStatuses' => CargoStatus::allStatuses(),
-            'deliveryServices' => DeliveryService::allServices(),
             'stores' => $this->loadStores(),
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),

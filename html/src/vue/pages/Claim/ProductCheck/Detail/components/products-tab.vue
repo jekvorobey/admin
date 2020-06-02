@@ -62,10 +62,7 @@
     export default {
         components: {ModalProductsReject},
         mixins: [modalMixin],
-        props: [
-            'claim',
-            'claimId',
-        ],
+        props: ['claim',],
         data() {
             return {
                 comment: '',
@@ -85,14 +82,13 @@
              * @param action
              */
             doForAll(action) {
-                let ids = Object.values(this.claim.products).map(merchant => merchant.id);
                 let status = '';
                 switch (action) {
                     case 'accept':
-                        status = 5;
+                        status = action;
                         break;
                     case 'reject':
-                        status = 4;
+                        status = action;
                         break;
                     default: return;
                 }
@@ -100,7 +96,7 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('products.massApproval', {}), {},
                     {
-                        productIds: ids,
+                        productIds: Object.keys(this.claim.products),
                         status: status,
                         comment: this.comment
                     }).then(data => {
@@ -111,7 +107,7 @@
                     Services.hideLoader();
                     setTimeout(() => {
                         window.location = this.getRoute(
-                            'productCheckClaims.detail', {id: this.claimId}
+                            'productCheckClaims.detail', {id: this.claim.id}
                             )}, 1000);
                 })
             },

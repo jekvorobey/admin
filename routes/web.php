@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('store')->group(function () {
                     Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
                 });
+                Route::prefix('billing')->group(function () {
+                    Route::get('', 'TabBillingController@load')->name('merchant.detail.billing');
+                    Route::put('billing_cycle', 'TabBillingController@billingCycle')->name('merchant.detail.billing.billing_cycle');
+                });
             });
         });
 
@@ -154,6 +158,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('', 'ContentClaimController@deleteClaims')->name('contentClaims.deleteClaims');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
+                Route::put('', 'ContentClaimController@update')->name('contentClaims.update');
             });
             Route::get('products-by-merchant', 'ContentClaimController@loadProductsByMerchantId')->name('contentClaims.productsByMerchant');
         });
@@ -198,9 +203,17 @@ Route::middleware('auth')->group(function () {
         Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
     });
 
+    Route::prefix('document-templates')->group(function () {
+        Route::get('claim-act', 'DocumentTemplatesController@claimAct')->name('documentTemplates.claimAct');
+        Route::get('acceptance-act', 'DocumentTemplatesController@acceptanceAct')->name('documentTemplates.acceptanceAct');
+        Route::get('inventory', 'DocumentTemplatesController@inventory')->name('documentTemplates.inventory');
+        Route::get('assembling-card', 'DocumentTemplatesController@assemblingCard')->name('documentTemplates.assemblingCard');
+    });
+
     Route::prefix('orders')->namespace('Order')->group(function () {
         Route::get('', 'OrderListController@index')->name('orders.list');
         Route::get('page', 'OrderListController@page')->name('orders.pagination');
+        Route::post('byOffers', 'OrderListController@byOffers')->name('orders.byOffers');
 
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
@@ -212,6 +225,30 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('main')->group(function () {
                     Route::get('', 'TabMainController@load')->name('orders.detail.main');
                     Route::put('', 'TabMainController@save')->name('orders.detail.main.save');
+                });
+                Route::prefix('deliveries')->group(function () {
+                    Route::prefix('{deliveryId}')->where(['deliveryId' => '[0-9]+'])->group(function () {
+                        Route::get('', 'TabDeliveriesController@load')->name('orders.detail.deliveries');
+                        Route::put('', 'TabDeliveriesController@save')->name('orders.detail.deliveries.save');
+                        Route::put('save-delivery-order', 'TabDeliveriesController@saveDeliveryOrder')->name('orders.detail.deliveries.saveDeliveryOrder');
+                        Route::put('cancel-delivery-order', 'TabDeliveriesController@cancelDeliveryOrder')->name('orders.detail.deliveries.cancelDeliveryOrder');
+                        Route::put('cancel', 'TabDeliveriesController@cancelDelivery')->name('orders.detail.deliveries.cancel');
+                    });
+                });
+                Route::prefix('shipments')->group(function () {
+                    Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
+                        Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
+                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
+                        Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
+                        Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
+                        Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+
+                        Route::prefix('documents')->group(function () {
+                            Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
+                            Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
+                            Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                        });
+                    });
                 });
             });
 
@@ -574,6 +611,13 @@ Route::middleware('auth')->group(function () {
                     Route::delete('', 'LevelsController@removeSpecialCommission')->name('referral.levels.special-commission.remove');
                 });
             });
+        });
+
+        Route::prefix('promo-products')->group(function () {
+            Route::get('', 'MassPromoProductsController@list')->name('referral.promo-products.list');
+            Route::put('edit', 'MassPromoProductsController@editProduct')->name('referral.promo-products.edit');
+            Route::put('attach', 'MassPromoProductsController@attachProduct')->name('referral.promo-products.attach');
+            Route::delete('', 'MassPromoProductsController@removeProduct')->name('referral.promo-products.delete');
         });
 
         Route::prefix('options')->group(function () {

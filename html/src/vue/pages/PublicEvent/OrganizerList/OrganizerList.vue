@@ -1,10 +1,10 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createBrand">Создать бренд</button>
+            <button class="btn btn-success" @click="createOrganizer">Создать организатора</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
-                <v-delete-button @delete="() => deleteBrands(massAll(massSelectionType))"/>
+                <v-delete-button @delete="() => deleteOrganizers(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -12,26 +12,24 @@
                 <tr>
                     <td></td>
                     <th>ID</th>
-                    <th>Логотип</th>
                     <th>Название</th>
-                    <th>Код</th>
+                    <th>Сайт</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="brand in brands">
+                <tr v-for="organizer in organizers">
                     <td>
                         <input type="checkbox"
-                                :checked="massHas({type: massSelectionType, id: brand.id})"
-                                @change="e => massCheckbox(e, massSelectionType, brand.id)">
+                                :checked="massHas({type: massSelectionType, id: organizer.id})"
+                                @change="e => massCheckbox(e, massSelectionType, organizer.id)">
                     </td>
-                    <td>{{brand.id}}</td>
-                    <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
-                    <td>{{brand.name}}</td>
-                    <td>{{brand.code}}</td>
+                    <td>{{organizer.id}}</td>
+                    <td>{{organizer.name}}</td>
+                    <td>{{organizer.site}}</td>
                     <td>
-                        <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
-                        <button class="btn btn-warning float-right" @click="editBrand(brand)">
+                        <v-delete-button @delete="() => deleteOrganizers([organizer.id])" class="float-right ml-1"/>
+                        <button class="btn btn-warning float-right" @click="editOrganizers(organizer)">
                             <fa-icon icon="edit"></fa-icon>
                         </button>
                     </td>
@@ -49,17 +47,25 @@
             ></b-pagination>
         </div>
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('BrandFormModal')">
+            <modal :close="closeModal" v-if="isModalOpen('OrganizerFormModal')">
                 <div slot="header">
-                    Бренд
+                    Организатор
                 </div>
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
-                        <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
-                        <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
+                        <v-input v-model="$v.form.phone.$model" :error="errorPhone">Телефон</v-input>
+                        <v-input v-model="$v.form.email.$model" :error="errorEmail">Email</v-input>
+                        <v-input v-model="$v.form.site" >Ссылка на сайт</v-input>
+                        <span>Добавить контакты</span>
+                        <button  type="button" class="btn btn-light" @click="addRow()"><fa-icon icon="plus"></fa-icon></button>
+                        <div v-for="(contact, index) in form.contacts" class="d-flex align-items-center justify-content-between">
+                            <v-input type="text" placeholder="Название" class="mr-2" :value="index" v-model="tmpContacts.key"></v-input>
+                            <v-input type="text" placeholder="Cсылка" class="mr-2" :value="contact" v-model="tmpContacts.value"></v-input>
+                            
+                            <button type="button" class="btn btn-danger float-right mr-2" @click="deleteRow(index)"><fa-icon icon="times"></fa-icon></button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -77,9 +83,9 @@
     import { mapActions, mapGetters } from 'vuex';
 
     import {
-        ACT_DELETE_BRAND,
+        ACT_DELETE_ORGANIZER,
         ACT_LOAD_PAGE,
-        ACT_SAVE_BRAND,
+        ACT_SAVE_ORGANIZER,
         GET_LIST,
         GET_NUM_PAGES,
         GET_PAGE_NUMBER,
@@ -87,7 +93,7 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
-    } from '../../../store/modules/brands';
+    } from '../../../store/modules/organizers';
 
     import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
@@ -115,43 +121,48 @@
             VDeleteButton
         },
         props: {
-            iBrands: {},
+            iOrganizers: {},
             iTotal: {},
             iCurrentPage: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
-                list: this.iBrands,
+                list: this.iOrganizers,
                 total: this.iTotal,
                 page: this.iCurrentPage
             });
 
             return {
-                editBrandId: null,
+                editOrganizerId: null,
                 form: {
+                    owner_id: null,
+                    global: true,
                     name: null,
-                    code: null,
                     description: null,
-                    file_id: null,
+                    phone: null,
+                    email: null,
+                    site: null,
+                    contacts: [
+                    ]
                 },
-                massSelectionType: 'brands',
+                tmpContacts: [
+                ],
+                massSelectionType: 'organizers',
             };
         },
         validations: {
             form: {
                 name: {required},
-                code: {
-                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
-                },
                 description: {required},
-                file_id: {required}
+                phone: {required},
+                email: {required}
             }
         },
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
-                ACT_SAVE_BRAND,
-                ACT_DELETE_BRAND,
+                ACT_SAVE_ORGANIZER,
+                ACT_DELETE_ORGANIZER,
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -161,24 +172,40 @@
                 return this[ACT_LOAD_PAGE]({page});
             },
 
-            createBrand() {
-                this.$v.form.$reset();
-                this.editBrandId = null;
-                this.form.name = null;
-                this.form.code = null;
-                this.form.description = null;
-                this.form.file_id = null;
-                this.openModal('BrandFormModal');
+            addRow() {
+                this.form.contacts.push({
+                    name: '',
+                    link: ''
+                })
             },
 
-            editBrand(brand) {
+            deleteRow(index) {
+                this.form.contacts.splice(index,1)
+            },
+
+            createOrganizer() {
                 this.$v.form.$reset();
-                this.editBrandId = brand.id;
-                this.form.name = brand.name;
-                this.form.code = brand.code;
-                this.form.description = brand.description;
-                this.form.file_id = brand.file_id;
-                this.openModal('BrandFormModal');
+                this.editOrganizersId = null;
+                this.form.name = null;
+                this.form.description = null;
+                this.form.phone = null;
+                this.form.email = null;
+                this.form.site = null;
+                this.form.contacts = []
+                this.openModal('OrganizerFormModal');
+            },
+
+            editOrganizers(organizer) {
+                this.$v.form.$reset();
+                this.editOrganizersId = organizer.id;
+                this.form.name = organizer.name;
+                this.form.code = organizer.code;
+                this.form.description = organizer.description;
+                this.form.phone = organizer.phone;
+                this.form.email = organizer.email;
+                this.form.site = organizer.site;
+                this.form.contacts = organizer.contacts;
+                this.openModal('OrganizerFormModal');
             },
             onSave() {
                 this.$v.$touch();
@@ -186,9 +213,9 @@
                     return;
                 }
                 Services.showLoader();
-                this[ACT_SAVE_BRAND]({
-                    id: this.editBrandId,
-                    brand: this.form
+                this[ACT_SAVE_ORGANIZER]({
+                    id: this.editOrganizersId,
+                    organizer: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});
                 }).finally(() => {
@@ -199,9 +226,9 @@
             onCancel() {
                 this.closeModal();
             },
-            deleteBrands(ids) {
+            deleteOrganizers(ids) {
                 Services.showLoader();
-                this[ACT_DELETE_BRAND]({ids})
+                this[ACT_DELETE_ORGANIZER]({ids})
                     .then(() => {
                         return this[ACT_LOAD_PAGE]({page: this.page});
                     })
@@ -228,7 +255,7 @@
                 total: GET_TOTAL,
                 pageSize: GET_PAGE_SIZE,
                 numPages: GET_NUM_PAGES,
-                brands: GET_LIST,
+                organizers: GET_LIST,
             }),
             page: {
                 get: function () {
@@ -249,14 +276,14 @@
                     if (!this.$v.form.description.required) return "Обязательное поле!";
                 }
             },
-            errorFile() {
-                if (this.$v.form.file_id.$dirty) {
-                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
+            errorPhone() {
+                if (this.$v.form.phone.$dirty) {
+                    if (!this.$v.form.phone.required) return "Обязательное поле!";
                 }
             },
-            errorCode() {
-                if (this.$v.form.code.$dirty) {
-                    if (!this.$v.form.code.pattern) return "Только латиница, цифры и подчёркивание!";
+            errorEmail() {
+                if (this.$v.form.email.$dirty) {
+                    if (!this.$v.form.email.required) return "Обязательное поле!";
                 }
             },
         }

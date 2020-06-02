@@ -36,6 +36,7 @@
                     <tab-preference v-else-if="key === 'preference'" :id="customer.id"/>
                     <tab-order v-else-if="key === 'order'" :id="customer.id"/>
                     <tab-communication v-else-if="key === 'communication'" :customer="customer"/>
+                    <tab-subscriptions v-else-if="key === 'subscriptions'" :model.sync="customer"/>
                     <tab-document v-else-if="key === 'document'" :model.sync="customer"/>
                     <tab-promo-product v-else-if="key === 'promoProduct'" :id="customer.id"/>
                     <tab-promo-page v-else-if="key === 'promoPage'" :model.sync="customer"/>
@@ -73,6 +74,7 @@ import TabMain from './components/tab-main.vue';
 import TabPreference from './components/tab-preference.vue';
 import TabOrder from './components/tab-order.vue';
 import TabDocument from './components/tab-document.vue';
+import TabSubscriptions from "./components/tab-subscriptions.vue";
 import TabCommunication from './components/tab-communication.vue';
 import TabPromoProduct from './components/tab-promo-product.vue';
 import TabPromoPage from './components/tab-promo-page.vue';
@@ -87,6 +89,7 @@ export default {
     mixins: [tabsMixin],
     props: ['iCustomer', 'order', 'referralLevels', 'options'],
     components: {
+        TabSubscriptions,
         TabBilling,
         TabCommunication,
         TabMain,
@@ -125,7 +128,7 @@ export default {
             }
             if (this.showAllTabs) {
                 tabs.preference = {i: i++, title: 'Предпочтения'};
-                tabs.subscribe = {i: i++, title: 'Подписки'};
+                tabs.subscriptions = {i: i++, title: 'Подписки'};
             }
             if (!this.customer.referral) {
                 tabs.transaction = {i: i++, title: 'Транзакции'};

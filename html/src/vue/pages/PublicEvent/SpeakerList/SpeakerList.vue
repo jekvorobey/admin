@@ -1,10 +1,10 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createBrand">Создать бренд</button>
+            <button class="btn btn-success" @click="createSpeaker">Добавить спикера</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
-                <v-delete-button @delete="() => deleteBrands(massAll(massSelectionType))"/>
+                <v-delete-button @delete="() => deleteSpeackers(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -12,26 +12,30 @@
                 <tr>
                     <td></td>
                     <th>ID</th>
-                    <th>Логотип</th>
-                    <th>Название</th>
-                    <th>Код</th>
+                    <th>Аватар</th>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="brand in brands">
+                <tr v-for="speaker in speakers">
                     <td>
                         <input type="checkbox"
-                                :checked="massHas({type: massSelectionType, id: brand.id})"
-                                @change="e => massCheckbox(e, massSelectionType, brand.id)">
+                                :checked="massHas({type: massSelectionType, id: speaker.id})"
+                                @change="e => massCheckbox(e, massSelectionType, speaker.id)">
                     </td>
-                    <td>{{brand.id}}</td>
-                    <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
-                    <td>{{brand.name}}</td>
-                    <td>{{brand.code}}</td>
+                    <td>{{speaker.id}}</td>
+                    <td><img :src="fileUrl(speaker.file_id)" class="preview"></td>
+                    <td>{{speaker.first_name }}</td>
+                    <td>{{speaker.last_name}}</td>
+                    <td>{{speaker.phone}}</td>
+                    <td>{{speaker.email}}</td>
                     <td>
-                        <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
-                        <button class="btn btn-warning float-right" @click="editBrand(brand)">
+                        <v-delete-button @delete="() => deleteSpeakers([speaker.id])" class="float-right ml-1"/>
+                        <button class="btn btn-warning float-right" @click="editSpeaker(speaker)">
                             <fa-icon icon="edit"></fa-icon>
                         </button>
                     </td>
@@ -49,17 +53,20 @@
             ></b-pagination>
         </div>
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('BrandFormModal')">
+            <modal :close="closeModal" v-if="isModalOpen('SpeakerFormModal')">
                 <div slot="header">
-                    Бренд
+                    Спикер
                 </div>
                 <div slot="body">
                     <div class="form-group">
-                        <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
+                        <v-input v-model="$v.form.first_name.$model" :error="errorFirstName">Название*</v-input>
+                        <v-input v-model="$v.form.last_name.$model" :error="errorLastName">Фамилия</v-input>
+                        <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество</v-input>
+                        <v-input v-model="$v.form.phone.$model" :error="errorPhone" >Телефон*</v-input>
+                        <v-input v-model="$v.form.email.$model" :error="errorEmail" >Email*</v-input>
+                        <b-form-checkbox v-model="$v.form.global.$model" >Глобальный спикер</b-form-checkbox>
                         <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
-                        <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
+                        <file-input destination="speaker" :error="errorFile" @uploaded="onFileUpload">Аватар*</file-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -77,9 +84,9 @@
     import { mapActions, mapGetters } from 'vuex';
 
     import {
-        ACT_DELETE_BRAND,
+        ACT_DELETE_SPEAKERS,
         ACT_LOAD_PAGE,
-        ACT_SAVE_BRAND,
+        ACT_SAVE_SPEAKERS,
         GET_LIST,
         GET_NUM_PAGES,
         GET_PAGE_NUMBER,
@@ -87,7 +94,15 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
-    } from '../../../store/modules/brands';
+    } from '../../../store/modules/speakers';
+
+    import {
+        PROF_NAMESPACE,
+        SET_PROFESSIONS,
+        GET_PROFESSION_LIST,
+        ACT_PROFESSION_LOAD,
+    } from '../../../store/modules/professions';
+
 
     import modalMixin from '../../../mixins/modal';
     import mediaMixin from '../../../mixins/media';
@@ -115,70 +130,88 @@
             VDeleteButton
         },
         props: {
-            iBrands: {},
+            iSpeakers: {},
             iTotal: {},
             iCurrentPage: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
-                list: this.iBrands,
+                list: this.iSpeakers,
                 total: this.iTotal,
-                page: this.iCurrentPage
+                page: this.iCurrentPage,
+            });
+            this.$store.commit(`${PROF_NAMESPACE}/${SET_PROFESSIONS}`, {
+                list: {
+                    name: 'qweqwe'
+                }
             });
 
             return {
-                editBrandId: null,
+                editSpeakerId: null,
                 form: {
-                    name: null,
-                    code: null,
-                    description: null,
+                    first_name: null,
+                    middle_name: null,
+                    last_name: null,
+                    phone: null,
+                    email: null,
                     file_id: null,
+                    global: false,
                 },
-                massSelectionType: 'brands',
+                massSelectionType: 'speakers',
             };
         },
         validations: {
             form: {
-                name: {required},
-                code: {
-                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
-                },
-                description: {required},
-                file_id: {required}
+                first_name: {required},
+                middle_name: {required},
+                last_name: {required},
+                email: {required},
+                phone: {required},
+                file_id: {required},
+                global: {required}
             }
         },
         methods: {
             ...mapActions(NAMESPACE, [
                 ACT_LOAD_PAGE,
-                ACT_SAVE_BRAND,
-                ACT_DELETE_BRAND,
+                ACT_SAVE_SPEAKERS,
+                ACT_DELETE_SPEAKERS,
+            ]
+            ),
+            ...mapActions(PROF_NAMESPACE, [
+                ACT_PROFESSION_LOAD
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
                 }));
-
                 return this[ACT_LOAD_PAGE]({page});
             },
 
-            createBrand() {
+            createSpeaker() {
                 this.$v.form.$reset();
-                this.editBrandId = null;
-                this.form.name = null;
-                this.form.code = null;
-                this.form.description = null;
+                this.editSpeakerId = null;
+                this.form.first_name = null;
+                this.form.last_name = null;
+                this.form.middle_name = null;
+                this.form.phone = null;
+                this.form.email = null;
                 this.form.file_id = null;
-                this.openModal('BrandFormModal');
+                this.form.global = null;
+                this.openModal('SpeakerFormModal');
             },
 
-            editBrand(brand) {
+            editSpeaker(speaker) {
                 this.$v.form.$reset();
-                this.editBrandId = brand.id;
-                this.form.name = brand.name;
-                this.form.code = brand.code;
-                this.form.description = brand.description;
-                this.form.file_id = brand.file_id;
-                this.openModal('BrandFormModal');
+                this.editSpeakerId = speaker.id;
+                this.form.first_name = speaker.first_name;
+                this.form.last_name = speaker.last_name;
+                this.form.middle_name = speaker.middle_name;
+                this.form.phone = speaker.phone;
+                this.form.email = speaker.email;
+                this.form.file_id = speaker.file_id;
+                this.form.global = speaker.global;
+                this.openModal('SpeakerFormModal');
             },
             onSave() {
                 this.$v.$touch();
@@ -186,9 +219,9 @@
                     return;
                 }
                 Services.showLoader();
-                this[ACT_SAVE_BRAND]({
-                    id: this.editBrandId,
-                    brand: this.form
+                this[ACT_SAVE_SPEAKERS]({
+                    id: this.editSpeakerId,
+                    speaker: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});
                 }).finally(() => {
@@ -201,7 +234,7 @@
             },
             deleteBrands(ids) {
                 Services.showLoader();
-                this[ACT_DELETE_BRAND]({ids})
+                this[ACT_DELETE_SPEAKERS]({ids})
                     .then(() => {
                         return this[ACT_LOAD_PAGE]({page: this.page});
                     })
@@ -212,7 +245,7 @@
             },
             onFileUpload(file) {
                 this.$v.form.file_id.$model = file.id;
-            }
+            },
         },
         created() {
             window.onpopstate = () => {
@@ -228,8 +261,12 @@
                 total: GET_TOTAL,
                 pageSize: GET_PAGE_SIZE,
                 numPages: GET_NUM_PAGES,
-                brands: GET_LIST,
+                speakers: GET_LIST,
             }),
+            ...mapGetters(PROF_NAMESPACE, {
+                professions: GET_PROFESSION_LIST,
+            }),
+
             page: {
                 get: function () {
                     return this.GET_PAGE_NUMBER;
@@ -239,24 +276,34 @@
                 }
             },
 
-            errorName() {
-                if (this.$v.form.name.$dirty) {
-                    if (!this.$v.form.name.required) return "Обязательное поле!";
+            errorFirstName() {
+                if (this.$v.form.first_name.$dirty) {
+                    if (!this.$v.form.first_name.required) return "Обязательное поле!";
                 }
             },
-            errorDescription() {
-                if (this.$v.form.description.$dirty) {
-                    if (!this.$v.form.description.required) return "Обязательное поле!";
+            errorMiddleName() {
+                if (this.$v.form.middle_name.$dirty) {
+                    if (!this.$v.form.middle_name.required) return "Обязательное поле!";
+                }
+            },
+            errorLastName() {
+                if (this.$v.form.last_name.$dirty) {
+                    if (!this.$v.form.last_name.required) return "Обязательное поле!";
+                }
+            },
+            errorPhone() {
+                if (this.$v.form.phone.$dirty) {
+                    if (!this.$v.form.phone.required) return "Обязательное поле!";
+                }
+            },
+            errorEmail() {
+                if (this.$v.form.email.$dirty) {
+                    if (!this.$v.form.email.required) return "Обязательное поле!";
                 }
             },
             errorFile() {
                 if (this.$v.form.file_id.$dirty) {
                     if (!this.$v.form.file_id.required) return "Обязательное поле!";
-                }
-            },
-            errorCode() {
-                if (this.$v.form.code.$dirty) {
-                    if (!this.$v.form.code.pattern) return "Только латиница, цифры и подчёркивание!";
                 }
             },
         }

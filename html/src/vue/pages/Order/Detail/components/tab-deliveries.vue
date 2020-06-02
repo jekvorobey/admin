@@ -1,15 +1,23 @@
 <template>
     <div>
-        <b-card v-for="delivery in deliveries" v-bind:key="delivery.id" class="mb-4">
+        <b-card v-for="delivery in order.deliveries" v-bind:key="delivery.id" class="mb-4">
             <b-row>
-                <div class="col-sm-6"><h4 class="card-title">Доставка {{delivery.number}}</h4></div>
+                <div class="col-sm-6"><h4 class="card-title"><fa-icon icon="truck"></fa-icon> Доставка {{delivery.number}}</h4></div>
                 <div class="col-sm-6">
                     <div class="float-right">
-                        <button class="btn btn-light btn-sm" @click="editDelivery(delivery)">
+                        <b-dropdown text="Действия" size="sm" v-if="canSaveDeliveryOrder(delivery) || canCancelDeliveryOrder(delivery) || canCancelDelivery(delivery)">
+                            <b-dropdown-item-button v-if="canSaveDeliveryOrder(delivery)" @click="saveDeliveryOrder(delivery)">
+                                Создать/обновить заказ на доставку у ЛО
+                            </b-dropdown-item-button>
+                            <b-dropdown-item-button v-if="canCancelDeliveryOrder(delivery)" @click="cancelDeliveryOrder(delivery)">
+                                Отменить заказ на доставку у ЛО
+                            </b-dropdown-item-button>
+                            <b-dropdown-item-button v-if="canCancelDelivery(delivery)" @click="cancelDelivery(delivery)">
+                                Отменить доставку
+                            </b-dropdown-item-button>
+                        </b-dropdown>
+                        <button class="btn btn-light btn-sm" @click="editDelivery(delivery)" v-if="canEditDelivery(delivery)">
                             <fa-icon icon="pencil-alt" title="Изменить"/>
-                        </button>
-                        <button class="btn btn-light btn-sm">
-                            <fa-icon icon="times" title="Удалить"/>
                         </button>
                     </div>
                 </div>
@@ -83,11 +91,11 @@
                 </div>
                 <div class="col-sm-6">
                     <template v-if="delivery.point">
-                        <p>{{delivery.point.type.name}} {{points[selectedPointId].name}}</p>
-                        <p><span class="font-weight-bold">Адрес:</span> {{points[selectedPointId].address.address_string}}</p>
-                        <p><span class="font-weight-bold">Телефон:</span> {{points[selectedPointId].phone}}</p>
-                        <p><span class="font-weight-bold">График работы:</span> {{points[selectedPointId].timetable}}</p>
-                        <p><span class="font-weight-bold">Способы оплаты:</span> {{points[selectedPointId].has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
+                        <p class="font-weight-bold">{{delivery.point.type.name}} {{delivery.point.name}}</p>
+                        <p><span class="font-weight-bold">Адрес:</span> {{delivery.point.address.address_string}}</p>
+                        <p><span class="font-weight-bold">Телефон:</span> {{delivery.point.phone}}</p>
+                        <p><span class="font-weight-bold">График работы:</span> {{delivery.point.timetable}}</p>
+                        <p><span class="font-weight-bold">Способы оплаты:</span> {{delivery.point.has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
                     </template>
                     <template v-else>
                         <span class="font-weight-bold">Адрес доставки:</span>
@@ -127,7 +135,7 @@
                     <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{delivery.length|integer}}x{{delivery.width|integer}}x{{delivery.height|integer}} мм
                 </div>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Вес:</span> {{delivery.weight}} г
+                    <span class="font-weight-bold">Вес:</span> {{delivery.weight|integer}} г
                 </div>
             </b-row>
             <b-row>
@@ -137,7 +145,7 @@
             </b-row>
         </b-card>
 
-        <modal-delivery-edit :model.sync="selectedDelivery"/>
+        <modal-delivery-edit :model-delivery.sync="selectedDelivery" :model-order.sync="order" v-if="Object.values(selectedDelivery).length > 0"/>
     </div>
 </template>
 <script>
@@ -153,12 +161,75 @@
         },
         data() {
             return {
-                selectedDelivery: {}
+                selectedDelivery: {},
             }
         },
         methods: {
             openTab(tab) {
                 Services.event().$emit('showTab', tab);
+            },
+            canSaveDeliveryOrder(delivery) {
+                return (delivery.status.id === this.deliveryStatuses.assembling.id || delivery.status.id === this.deliveryStatuses.assembled.id) && !delivery.is_canceled;
+            },
+            saveDeliveryOrder(delivery) {
+                let errorMessage = 'Ошибка при создании/обновлении заказа на доставку у ЛО';
+
+                Services.showLoader();
+                Services.net().put(this.getRoute('orders.detail.deliveries.saveDeliveryOrder', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
+                    if (data.order) {
+                        this.order = data.order;
+                        Services.msg("Изменения сохранены");
+                    } else {
+                        Services.msg(errorMessage, 'danger');
+                    }
+                }, () => {
+                    Services.msg(errorMessage, 'danger');
+                }).finally(data => {
+                    Services.hideLoader();
+                });
+            },
+            canCancelDeliveryOrder(delivery) {
+                return delivery.status.id < this.deliveryStatuses.onPointIn.id && delivery.xml_id;
+            },
+            cancelDeliveryOrder(delivery) {
+                let errorMessage = 'Ошибка при отмене заказа на доставку у ЛО';
+
+                Services.showLoader();
+                Services.net().put(this.getRoute('orders.detail.deliveries.cancelDeliveryOrder', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
+                    if (data.order) {
+                        this.order = data.order;
+                        Services.msg("Изменения сохранены");
+                    } else {
+                        Services.msg(errorMessage, 'danger');
+                    }
+                }, () => {
+                    Services.msg(errorMessage, 'danger');
+                }).finally(data => {
+                    Services.hideLoader();
+                });
+            },
+            canCancelDelivery(delivery) {
+               return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
+            },
+            cancelDelivery(delivery) {
+                let errorMessage = 'Ошибка при отмене доставки';
+
+                Services.showLoader();
+                Services.net().put(this.getRoute('orders.detail.deliveries.cancel', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
+                    if (data.order) {
+                        this.order = data.order;
+                        Services.msg("Изменения сохранены");
+                    } else {
+                        Services.msg(errorMessage, 'danger');
+                    }
+                }, () => {
+                    Services.msg(errorMessage, 'danger');
+                }).finally(data => {
+                    Services.hideLoader();
+                });
+            },
+            canEditDelivery(delivery) {
+                return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled;
             },
             editDelivery(delivery) {
                 this.selectedDelivery = delivery;
@@ -166,7 +237,7 @@
             }
         },
         computed: {
-            deliveries: {
+            order: {
                 get() {return this.model},
                 set(value) {this.$emit('update:model', value)},
             },

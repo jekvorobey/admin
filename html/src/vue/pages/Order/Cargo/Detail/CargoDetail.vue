@@ -5,14 +5,12 @@
                 <div class="shadow p-3 height-100">
                     <h2>Груз #{{ cargo.id }} от {{ cargo.created_at }}</h2>
                     <div style="height: 40px">
-                        <span class="badge" :class="statusClass(cargo.status.id)">
-                            {{ cargo.status.name || 'N/A' }}
-                        </span>
+                        <cargo-status :status='cargo.status'/>
                         <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
                         <template v-if="isCreatedStatus && !isCancel">
                             <button class="btn btn-primary" v-if="isRequestSend"
-                                    @click="changeCargoStatus(2)">Груз передан курьеру</button>
+                                    @click="changeCargoStatus(cargoStatuses.shipped.id)">Груз передан курьеру</button>
                             <button class="btn btn-warning" v-else
                                     title="Задание на забор груза не создано">Груз передан курьеру</button>
                         </template>
@@ -26,7 +24,7 @@
                                     Создать задание на забор груза
                                 </b-dropdown-item-button>
                             </template>
-                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(3)">
+                            <b-dropdown-item-button v-if="isShippedStatus" @click="changeCargoStatus(cargoStatuses.taken.id)">
                                 Принят Логистическим Оператором
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isCreatedStatus" @click="cancelCargo()">
@@ -135,14 +133,6 @@
     },
 
     methods: {
-        statusClass(statusId) {
-            switch (statusId) {
-                case 1: return 'badge-info';
-                case 2: return 'badge-primary';
-                case 3: return 'badge-success';
-                default: return 'badge-light';
-            }
-        },
         isStatus(statusId) {
             return this.cargo.status.id === statusId;
         },
@@ -238,13 +228,13 @@
             return this.cargo.is_canceled;
         },
         isCreatedStatus() {
-            return this.isStatus(1);
+            return this.isStatus(this.cargoStatuses.created.id);
         },
         isShippedStatus() {
-            return this.isStatus(2);
+            return this.isStatus(this.cargoStatuses.shipped.id);
         },
         isTakenStatus() {
-            return this.isStatus(3);
+            return this.isStatus(this.cargoStatuses.taken.id);
         },
     },
 };

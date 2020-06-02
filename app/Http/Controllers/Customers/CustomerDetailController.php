@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\FileDto;
@@ -16,15 +17,12 @@ use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
-use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
-use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Core\Helpers;
 
 class CustomerDetailController extends Controller
 {
@@ -46,6 +44,7 @@ class CustomerDetailController extends Controller
         $this->loadPromoCodeTypes = true;
         $this->loadPromoCodeStatus = true;
         $this->loadCustomerBonusStatus = true;
+        $this->loadOrderStatuses = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
