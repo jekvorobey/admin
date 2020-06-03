@@ -10,6 +10,7 @@ use Greensight\Message\Dto\Claim\ContentClaimDto;
 use Greensight\Message\Dto\Claim\History\ClaimHistoryDto;
 use Greensight\Message\Dto\Claim\History\ClaimHistoryTypeDto;
 use Greensight\Message\Services\ClaimService\ContentClaimService;
+use Greensight\Message\Dto\Document\DocumentDto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -22,6 +23,7 @@ use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -304,6 +306,29 @@ class ContentClaimController extends Controller
         ]);
     }
 
+    /**
+     * @param int $id
+     * @param ContentClaimService $contentClaimService
+     * @return StreamedResponse
+     */
+    public function acceptanceAct(
+        int $id,
+        ContentClaimService $contentClaimService
+    ) : StreamedResponse {
+
+        return $this->getDocumentResponse($contentClaimService->claimAcceptanceAct($id));
+    }
+
+    /**
+     * @param DocumentDto $documentDto
+     * @return StreamedResponse
+     */
+    protected function getDocumentResponse(DocumentDto $documentDto) : StreamedResponse
+    {
+        return response()->streamDownload(function () use ($documentDto) {
+            echo file_get_contents($documentDto->absolute_url);
+        }, $documentDto->original_name);
+    }
 
 
 //    public function create(
