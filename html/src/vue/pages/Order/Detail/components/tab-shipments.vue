@@ -192,7 +192,7 @@
                 return shipment.delivery_xml_id;
             },
             canGetCdekReceipt(shipment) {
-                return shipment.delivery_xml_id && shipment.delivery.delivery_service === this.deliveryServices.cdek.id;
+                return shipment.delivery_xml_id && shipment.delivery_service === this.deliveryServices.cdek.id;
             },
             canMarkAsNonProblem(shipment) {
                 return shipment.is_problem;
