@@ -199,6 +199,10 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'MarketingController@index')->name('settings.marketing');
             Route::put('', 'MarketingController@update')->name('settings.marketing.update');
         });
+
+        Route::prefix('packages')->group(function () {
+            Route::get('', 'PackagesController@list')->name('settings.packages.list');
+        });
     });
 
     Route::prefix('notifications')->group(function () {
@@ -250,6 +254,28 @@ Route::middleware('auth')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
                             Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
                             Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                        });
+
+                        Route::prefix('/shipment-packages')->group(function () {
+                            Route::post('addShipmentPackage', 'TabShipmentsController@addShipmentPackage')
+                                ->name('orders.detail.shipments.addShipmentPackage');
+
+                            Route::prefix('/{shipmentPackageId}')->where(['shipmentPackageId' => '[0-9]+'])->group(function () {
+                                Route::delete('', 'TabShipmentsController@deleteShipmentPackage')
+                                    ->name('orders.detail.shipments.deleteShipmentPackage');
+
+                                Route::prefix('/items')->group(function () {
+                                    Route::post('', 'TabShipmentsController@addShipmentPackageItems')
+                                        ->name('orders.detail.shipments.addShipmentPackageItems');
+
+                                    Route::prefix('/{basketItemId}')->where(['basketItemId' => '[0-9]+'])->group(function () {
+                                        Route::put('', 'TabShipmentsController@editShipmentPackageItem')
+                                            ->name('orders.detail.shipments.editShipmentPackageItem');
+                                        Route::delete('', 'TabShipmentsController@deleteShipmentPackageItem')
+                                            ->name('orders.detail.shipments.deleteShipmentPackageItem');
+                                    });
+                                });
+                            });
                         });
                     });
                 });

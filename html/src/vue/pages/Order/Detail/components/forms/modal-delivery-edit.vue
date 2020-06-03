@@ -104,7 +104,7 @@
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
-                <button class="btn btn-info" @click="save">Сохранить</button>
+                <button class="btn btn-info" @click="save" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </template>
     </b-modal>
@@ -253,29 +253,12 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.save', {id: this.order.id, deliveryId: this.delivery.id}), {}, this.form).then((data) => {
                     this.order = data.order;
+                    this.$bvModal.hide('modal-delivery-edit');
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
                 });
-            },
-            cancel() {
-                this.form.status = this.modelDelivery.status;
-                this.form.tariff_id = this.modelDelivery.tariff_id;
-                this.form.pdd = this.modelDelivery.pdd;
-                this.form.receiver_name = this.modelDelivery.receiver_name;
-                this.form.receiver_phone = this.modelDelivery.receiver_phone;
-                this.form.receiver_email = this.modelDelivery.receiver_email;
-                if (!this.modelDelivery.point_id) {
-                    this.form.delivery_address.address_string = this.modelDelivery.delivery_address.address_string;
-                    this.form.delivery_address.porch = this.modelDelivery.delivery_address.porch;
-                    this.form.delivery_address.floor = this.modelDelivery.delivery_address.floor;
-                    this.form.delivery_address.intercom = this.modelDelivery.delivery_address.intercom;
-                    this.form.delivery_address.comment = this.modelDelivery.delivery_address.comment;
-                } else {
-                    this.form.point_id = this.modelDelivery.point_id;
-                }
-                this.$v.$reset();
             },
             resetModal() {
                 this.delivery = {};

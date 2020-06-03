@@ -325,7 +325,7 @@ class OrderDetailController extends Controller
                 $shipment->psd = dateTime2str($shipment->psd);
                 $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
-                $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems();
+                $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems()->keyBy('id');
                 $shipment['delivery_xml_id'] = $delivery->xml_id;
                 $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;
                 $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;

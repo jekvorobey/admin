@@ -196,7 +196,7 @@ Vue.mixin({
         deliveryStatuses() {
             return this.$store.state.layout.deliveryStatuses;
         },
-        /** @return {ShipmentStatus} */
+        /** @return {ShipmentStatuses} */
         shipmentStatuses() {
             return this.$store.state.layout.shipmentStatuses;
         },
