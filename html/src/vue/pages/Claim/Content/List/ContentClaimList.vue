@@ -69,7 +69,7 @@
                     <template v-if="countSelected <= 1">заявку</template>
                     <template v-else>заявки</template>
                 </button>
-                <button class="btn btn-secondary">Скачать документы</button>
+                <button class="btn btn-secondary" :disabled="!canDownload" @click="downloadDocuments()">Скачать документы</button>
             </div>
         </div>
 
@@ -222,6 +222,7 @@ export default {
                 filter: this.appliedFilter,
                 //sort: this.sort,
             }).then(data => {
+                this.checkboxes = {};
                 this.claims = data.items;
                 if (data.pager) {
                     this.pager = data.pager
@@ -312,6 +313,13 @@ export default {
                 Services.msg(message, 'danger');
             });
         },
+        downloadDocuments() {
+            if (this.countSelected !== 1
+                || this.options.noUnpack.includes(this.selectedClaims[0].type)) {
+                return;
+            }
+            window.open(this.getRoute('contentClaims.documents.acceptanceAct', {id: this.selectedClaims[0].id}));
+        },
         statusClass(statusId) {
             switch (statusId) {
                 case 1: return 'badge-info';
@@ -329,14 +337,18 @@ export default {
             return Object.values(this.checkboxes).reduce((acc, val) => acc + val, 0);
         },
         selectedClaims() {
-            return this.iClaims.filter(claim => {
+            return this.claims.filter(claim => {
                 return (claim.id in this.checkboxes) && this.checkboxes[claim.id];
             });
         },
         selectedIds() {
-            return this.iClaims.filter(claim => {
+            return this.claims.filter(claim => {
                 return (claim.id in this.checkboxes) && this.checkboxes[claim.id];
             }).map(claim => claim.id);
+        },
+        canDownload() {
+            return (this.countSelected === 1
+                && !this.options.noUnpack.includes(this.selectedClaims[0].type));
         },
         availableStatusOptions() {
             let options = Object.entries(this.options.statuses).filter(([k,v]) => {

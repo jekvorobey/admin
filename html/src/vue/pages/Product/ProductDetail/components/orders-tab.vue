@@ -14,29 +14,18 @@
                     <th>Статус отправления</th>
                 </tr>
             </thead>
-            <tbody v-for="(order, index) in orderList">
-            <tr class="table-primary">
-                <td>{{ order.number }}</td>
-                <td>{{ order.created_at }}</td>
-                <td></td>
+            <tbody v-for="(order, index) in orderList" class="table table-striped">
+            <tr class="table">
+                <td>{{ order.number }} / {{ order.delivery_number }}</td>
+                <td>{{ getDate(order.created_at) }}</td>
+                <td>{{ getDate(order.delivery_at) }}</td>
                 <td>{{ parseInt(order.cost) }} р.</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ order.receiver_name }}</td>
+                <td>{{ getAdress(JSON.parse(order.delivery_address)) }}</td>
+                <td>{{ order.fsd }}</td>
                 <td>{{ getStatusName(order.status) }}</td>
-                <td></td>
+                <td>{{ order.status_xml_id }}</td>
             </tr>
-                <tr v-for="delivery in order.deliveries">
-                    <td>{{ delivery.number }}</td>
-                    <td></td>
-                    <td>{{ getDate(delivery.delivery_at) }}</td>
-                    <td></td>
-                    <td>{{ delivery.receiver_name }}</td>
-                    <td>{{ getAdress(delivery.delivery_address) }}</td>
-                    <td>{{ delivery.fsd }}</td>
-                    <td></td>
-                    <td>{{ delivery.status_xml_id }}</td>
-                </tr>
             </tbody>
         </table>
         <b-button variant="dark" v-if="page > 1" v-on:click="prevItems()">Назад</b-button>

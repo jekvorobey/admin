@@ -159,6 +159,9 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
                 Route::put('', 'ContentClaimController@update')->name('contentClaims.update');
+                Route::prefix('documents')->group(function () {
+                    Route::get('acceptance-act', 'ContentClaimController@acceptanceAct')->name('contentClaims.documents.acceptanceAct');
+                });
             });
             Route::get('products-by-merchant', 'ContentClaimController@loadProductsByMerchantId')->name('contentClaims.productsByMerchant');
         });
