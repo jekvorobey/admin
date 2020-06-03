@@ -21,14 +21,13 @@
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isAssembledStatus(shipment)">
                                 <a :href="canGetBarcodes(shipment) ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : '#'"
-                                   class="btn" :class="canGetBarcodes(shipment) ? 'btn-primary' : 'btn-danger'"
+                                   :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
                                    :title="getBarcodesTitle(shipment)">
                                     <fa-icon icon="barcode"></fa-icon> Получить штрихкоды
                                 </a>
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isAssembledStatus(shipment) && canGetCdekReceipt(shipment)">
-                                <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})"
-                                   class="btn btn-primary">
+                                <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})" class="text-dark">
                                     <fa-icon icon="file-invoice"></fa-icon> Получить квитанцию
                                 </a>
                             </b-dropdown-item-button>
@@ -192,7 +191,7 @@
                 return shipment.delivery_xml_id;
             },
             canGetCdekReceipt(shipment) {
-                return shipment.delivery_xml_id && shipment.delivery_service === this.deliveryServices.cdek.id;
+                return shipment.delivery_xml_id && shipment.delivery_service.id === this.deliveryServices.cdek.id;
             },
             canMarkAsNonProblem(shipment) {
                 return shipment.is_problem;
