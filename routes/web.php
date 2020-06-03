@@ -578,6 +578,12 @@ Route::middleware('auth')->group(function () {
                             Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
                         });
                     });
+
+                    Route::prefix('newsletter')->group(function () {
+                        Route::get('', 'TabNewsletterController@load')->name('customers.detail.newsletter');
+                        Route::put('edit', 'TabNewsletterController@edit')->name('customers.detail.newsletter.edit');
+                    });
+                    
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
                         Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');
