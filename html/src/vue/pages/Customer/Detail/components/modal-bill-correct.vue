@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="id" title="Редактирование личных брендов" hide-footer ref="modal">
+    <b-modal :id="id" title="Корректировка биллинга" hide-footer ref="modal">
         <template v-slot:default="{close}">
             <div>
                 <label>Сумма</label>
