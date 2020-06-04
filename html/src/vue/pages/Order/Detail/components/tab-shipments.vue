@@ -194,7 +194,7 @@
                 return shipment.delivery_xml_id && shipment.delivery_service.id === this.deliveryServices.cdek.id;
             },
             canMarkAsNonProblem(shipment) {
-                return shipment.is_problem;
+                return shipment.is_problem && !shipment.is_canceled;
             },
             canCancelShipment(shipment) {
                 return shipment.status.id < this.shipmentStatuses.done.id && !shipment.is_canceled
