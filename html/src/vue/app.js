@@ -192,6 +192,10 @@ Vue.mixin({
         paymentStatuses() {
             return this.$store.state.layout.paymentStatuses;
         },
+        /** @return {PaymentMethods} */
+        paymentMethods() {
+            return this.$store.state.layout.paymentMethods;
+        },
         /** @return {DeliveryStatuses} */
         deliveryStatuses() {
             return this.$store.state.layout.deliveryStatuses;
@@ -499,6 +503,17 @@ Vue.mixin({
  */
 /**
  @typedef PaymentStatus - статус оплаты
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef PaymentMethods - способы оплаты
+ @type {Object}
+ @property {PaymentMethod} online - онлайн
+ */
+/**
+ @typedef PaymentMethod - способ оплаты
  @type {Object}
  @property {integer} id
  @property {string} name
