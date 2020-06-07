@@ -10,10 +10,10 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <f-input v-model="filter.id" class="col-2" type="number">
+                    <f-input v-model="filter.id" class="col-3" type="number">
                         ID
                     </f-input>
-                    <f-input v-model="filter.name" class="col-4">
+                    <f-input v-model="filter.name" class="col-6">
                         Название
                     </f-input>
                     <f-multi-select v-model="filter.status"
@@ -22,6 +22,7 @@
                         Статус
                     </f-multi-select>
                 </div>
+
                 <transition name="slide">
                     <div v-show="opened">
                         <div class="additional-filter pt-3 mt-3">
@@ -58,43 +59,49 @@
                                 </div>
                             </div>
                             <div class="row mt-4">
-                                <div class="col-12">
-                                    <label><b>Дата создания</b></label>
-                                </div>
-                                <f-date v-model="filter.created_at_from" class="col-3">От</f-date>
-                                <f-date v-model="filter.created_at_to" class="col-3">До</f-date>
-                            </div>
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <label><b>Период действия скидки</b></label>
-                                </div>
-                                <f-date v-model="filter.start_date" class="col-3">От</f-date>
-                                <div class="col-3">
-                                    <label>Точная дата
-                                        <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
-                                    </label>
-                                    <div>
-                                        <input class="ml-5" type="checkbox" v-model="filter.fix_start_date">
+                                <div class="col-6">
+                                    <div class="row">
+                                        <label><b>Дата создания</b></label>
+                                    </div>
+                                    <div class="row">
+                                        <f-date v-model="filter.created_at_from" class="col-6">От</f-date>
+                                        <f-date v-model="filter.created_at_to" class="col-6">До</f-date>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-2">
-                                <f-date v-model="filter.end_date" class="col-3">До</f-date>
-                                <div class="col-3">
-                                    <label>&nbsp;</label>
-                                    <div>
-                                        <input class="ml-5" type="checkbox" v-model="filter.fix_end_date">
+
+                                <div class="col-6">
+                                    <div class="row">
+                                        <label><b>Период действия скидки</b></label>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row mt-1">
-                                <div class="col-3">
-                                    <label>Бессрочная</label>
-                                    <input class="ml-3 mt-3"
-                                           type="checkbox"
-                                           v-model="filter.indefinitely"
-                                           :checked="iFilter.indefinitely"
-                                    >
+                                    <div class="row">
+                                        <f-date v-model="filter.start_date" class="col-5">От</f-date>
+                                        <div class="col-4">
+                                            <label>Точная дата
+                                                <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
+                                            </label>
+                                            <div>
+                                                <input class="ml-5" type="checkbox" v-model="filter.fix_start_date">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <f-date v-model="filter.end_date" class="col-5">До</f-date>
+                                        <div class="col-4">
+                                            <label>Точная дата
+                                                <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
+                                            </label>
+                                            <div>
+                                                <input class="ml-5" type="checkbox" v-model="filter.fix_end_date">
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <label>Бессрочная</label>
+                                            <input class="ml-3 mt-3"
+                                                   type="checkbox"
+                                                   v-model="filter.indefinitely"
+                                                   :checked="iFilter.indefinitely">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

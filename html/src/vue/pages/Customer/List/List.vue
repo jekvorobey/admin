@@ -25,6 +25,7 @@
 
                     <b-button type="submit" variant="dark">Искать</b-button>
                     <b-button type="button" variant="outline-dark" v-if="!isReferral" v-b-modal="modalIdCreateUser">Создать</b-button>
+                    <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
                 </b-form>
             </div>
         </div>
@@ -120,6 +121,11 @@ export default {
                 this.users = data.users;
                 this.pager.count = data.count;
             });
+        },
+        cleanFilter() {
+            Object.keys(this.filter).forEach(key =>
+                this.filter[key] = null
+            )
         }
     },
     created() {
