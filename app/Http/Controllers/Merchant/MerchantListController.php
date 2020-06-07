@@ -39,6 +39,11 @@ class MerchantListController extends Controller
     protected function list($done)
     {
         $this->loadMerchantStatuses = true;
+        $this->loadCommunicationChannelTypes = true;
+        $this->loadCommunicationChannels = true;
+        $this->loadCommunicationThemes = true;
+        $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
         /** @var UserService $userService */
@@ -116,8 +121,10 @@ class MerchantListController extends Controller
             ->setFilter('merchant_id', $merchantIds)
             ->addFields(OperatorDto::entity(), 'id', 'merchant_id', 'user_id');
         $operators = $operatorService
-            ->operators($operatorsQuery)
-            ->groupBy('merchant_id')
+            ->operators($operatorsQuery);
+        $operatorsByMerchant = $operators
+            ->groupBy('merchant_id');
+        $mainOperators = $operatorsByMerchant
             ->mapWithKeys(function (Collection $operators) {
                 /** @var OperatorDto $first */
                 $first = $operators->where('is_main', true)->first() ? : $operators->sortBy('id')->first();
@@ -129,11 +136,15 @@ class MerchantListController extends Controller
             ->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
             ->keyBy('id');
 
-        return $merchants->map(function (MerchantDto $merchant) use ($operators, $users) {
+        return $merchants->map(function (MerchantDto $merchant) use ($mainOperators, $operatorsByMerchant, $users) {
             /** @var OperatorDto $operator */
-            $operator = $operators->get($merchant->id);
+            $operator = $mainOperators->get($merchant->id);
             $merchant['operator'] = $operator ? : [];
             $merchant['user'] = $operator ? $users->get($operator->user_id) : [];
+            $merchant['users'] = $users->filter(function ($user) use ($operatorsByMerchant, $merchant) {
+                $haystack = $operatorsByMerchant->get($merchant->id);
+                return in_array($user->id, $haystack ? $haystack->pluck('user_id')->all() : []);
+            });
 
             return $merchant;
         });
@@ -162,17 +173,11 @@ class MerchantListController extends Controller
         if (isset($filter['legal_name'])) {
             $query->setFilter('legal_name', 'like', "%{$filter['legal_name']}%");
         }
-        if (isset($filter['operator_first_name']) || isset($filter['operator_last_name']) || isset($filter['operator_middle_name']) || isset($filter['operator_email']) || isset($filter['operator_phone'])) {
+        if (isset($filter['operator_full_name']) || isset($filter['operator_email']) || isset($filter['operator_phone'])) {
             $userQuery = new RestQuery();
 
-            if (isset($filter['operator_first_name'])) {
-                $userQuery->setFilter('first_name', 'like', "%{$filter['operator_first_name']}%");
-            }
-            if (isset($filter['operator_last_name'])) {
-                $userQuery->setFilter('last_name', 'like', "%{$filter['operator_last_name']}%");
-            }
-            if (isset($filter['operator_middle_name'])) {
-                $userQuery->setFilter('middle_name', 'like', "%{$filter['operator_middle_name']}%");
+            if (isset($filter['operator_full_name'])) {
+                $userQuery->setFilter('full_name', "%{$filter['operator_full_name']}%");
             }
             if (isset($filter['operator_email'])) {
                 $userQuery->setFilter('email', $filter['operator_email']);
