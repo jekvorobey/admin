@@ -379,7 +379,7 @@ class MerchantStoreController extends Controller
                             if ($value1) {
                                 switch ($key1) {
                                     case 'city':
-                                        $restQuery->setFilter($field, 'like', "%{$value1}%");
+                                        $restQuery->setFilter($field, 'like', $value1);
                                         break;
                                 }
                             }
