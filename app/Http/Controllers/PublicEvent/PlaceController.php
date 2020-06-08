@@ -33,6 +33,15 @@ class PlaceController extends Controller
             'total' => $total['total'],
         ]);
     }
+
+    public function fullList(PublicEventPlaceService $publicEventPlaceService)
+    {
+        $query = $publicEventPlaceService->query();
+
+        return response()->json([
+            'places' => $publicEventPlaceService->find($query),
+        ]);
+    }
     
     public function save(Request $request, PublicEventPlaceService $publicEventPlaceService)
     {

@@ -18,7 +18,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="type in types">
+                <tr v-for="type in types" :key="type.id">
                     <td>
                         <input type="checkbox"
                                 :checked="massHas({type: massSelectionType, id: type.id})"
@@ -175,7 +175,7 @@
                 }
                 Services.showLoader();
                 this[ACT_SAVE_TYPES]({
-                    id: this.editTypesdId,
+                    id: this.editTypeId,
                     type: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});

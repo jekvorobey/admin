@@ -30,6 +30,26 @@
                 :sprint-statuses="sprintStatuses"
                 @onChange="onTabChange"
         />
+        <sprint-stages-tab
+                v-if="nav.currentTab === 'spritnStages'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
+        <ticket-types-tab
+                v-if="nav.currentTab === 'ticketTypes'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
+        <speakers-tab
+                v-if="nav.currentTab === 'speakers'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
+        <professions-tab
+                v-if="nav.currentTab === 'professions'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
     </layout-main>
 </template>
 
@@ -41,6 +61,10 @@
     import MainTab from './components/main-tab.vue';
     import ContentTab from './components/content-tab.vue';
     import SprintsTab from './components/sprints-tab.vue';
+    import SprintStagesTab from './components/sprint-stages-tab.vue';
+    import TicketTypesTab from './components/ticket-types-tab.vue';
+    import SpeakersTab from './components/speakers-tab.vue';
+    import ProfessionsTab from './components/professions-tab.vue';
 
     import modalMixin from '../../../mixins/modal';
     import {ACT_LOAD_PUBLIC_EVENT, GET_DETAIL, NAMESPACE, SET_DETAIL,} from '../../../store/modules/public-events';
@@ -51,6 +75,10 @@
         MainTab,
         ContentTab,
         SprintsTab,
+        SprintStagesTab,
+        TicketTypesTab,
+        SpeakersTab,
+        ProfessionsTab
     },
     mixins: [modalMixin],
     props: {
@@ -67,6 +95,10 @@
                     {value: 'main', text: 'Основное'},
                     {value: 'content', text: 'Контент'},
                     {value: 'sprints', text: 'Спринты'},
+                    {value: 'spritnStages', text: 'Этапы'},
+                    {value: 'ticketTypes', text: 'Типы билетов'},
+                    {value: 'speakers', text: 'Спикеры'},
+                    {value: 'professions', text: 'Профессии'},
                 ]
             }
         };

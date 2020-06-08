@@ -13,8 +13,6 @@ export const GET_NUM_PAGES = 'get_num_pages';
 export const GET_PROFESSION_LIST = 'get_profesion_list';
 export const API_URL = 'https://dev_cm.ibt-mas.greensight.ru/';
 
-export const ACT_PROFESSION_LOAD = 'act_profession_load';
-
 export const ACT_LOAD_PAGE = 'act_load_page';
 export const ACT_SAVE_SPEAKERS = 'act_save_speakers';
 export const ACT_DELETE_SPEAKERS = 'act_delete_speakers';
@@ -32,7 +30,7 @@ export default {
     },
 
     mutations: {
-        [SET_PAGE](state, {list, page, total, profession}) {
+        [SET_PAGE](state, {list, page, total}) {
             state.list = list;
             state.page = page;
             state.total = total;
@@ -44,8 +42,6 @@ export default {
         [GET_TOTAL]: state => state.total,
         [GET_PAGE_SIZE]: () => PAGE_SIZE,
         [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE),
-
-        [GET_PROFESSION_LIST]: state => state.profession
     },
     actions: {
         [ACT_LOAD_PAGE]({commit, rootGetters}, {page}) {
@@ -55,16 +51,6 @@ export default {
                         list: data.speakers,
                         total: data.total,
                         page
-                    })
-                });
-        },
-
-        [ACT_PROFESSION_LOAD]({commit}) {
-            return Services.net().get('https://dev_cm.ibt-mas.greensight.ru/api/v1/activities')
-                .then(data => {
-                    console.log(data)
-                    commit(SET_PAGE, {
-                        profession: data.items,
                     })
                 });
         },

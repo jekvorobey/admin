@@ -33,6 +33,15 @@ class SpeakerController extends Controller
             'total' => $total['total'],
         ]);
     }
+
+    public function fullPage(PublicEventSpeakerService $publicEventSpeakerService)
+    {
+        $query = $publicEventSpeakerService->query();
+        
+        return response()->json([
+            'speakers' => $publicEventSpeakerService->find($query),
+        ]);
+    }
     
     public function save(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
@@ -68,7 +77,38 @@ class SpeakerController extends Controller
         
         return response()->json();
     }
-    
+
+    public function getByStage(int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
+    {
+        $speakers = $publicEventSpeakerService->getByStage($stage_id);
+
+        return response()->json([
+            'speakers' => $speakers['items'],
+        ]);
+    }
+
+    public function attachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventSpeakerService->attachStage($request->input('id'), $stage_id);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function detachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventSpeakerService->detachStage($request->input('id'), $stage_id);
+
+        return response()->json(['status' => 'ok']);
+    }
+
     /**
      * @param PublicEventSpeakerService $publicEventSpeakerService
      * @param $page

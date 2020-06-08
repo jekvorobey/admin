@@ -26,8 +26,29 @@ export const ACT_SAVE_EVENT_MEDIA = 'act_save_event_media';
 export const ACT_DELETE_EVENT_MEDIA = 'act_delete_event_media';
 
 export const ACT_LOAD_SPRINTS = 'act_load_sprints';
-export const ACT_CREATE_SPRINT = 'act_create_sprint';
+export const ACT_SAVE_SPRINT = 'act_save_sprint';
 export const ACT_DELETE_SPRINT = 'act_delete_sprint';
+
+export const ACT_LOAD_SPEAKERS = 'act_load_speakers';
+export const ACT_LOAD_EVENT_SPEAKERS = 'act_load_event_speakers';
+export const ACT_SAVE_EVENT_SPEAKER = 'act_save_event_speaker';
+export const ACT_DELETE_EVENT_SPEAKER = 'act_delete_event_speaker';
+
+export const ACT_LOAD_TICKET_TYPES = 'act_load_ticket_types';
+export const ACT_SAVE_TICKET_TYPE = 'act_save_ticket_type';
+export const ACT_DELETE_TICKET_TYPE = 'act_delete_ticket_type';
+
+export const ACT_LOAD_SPRINT_STAGES = 'act_load_sprint_stages';
+export const ACT_SAVE_SPRINT_STAGE = 'act_save_sprint_stage';
+export const ACT_DELETE_SPRINT_STAGE = 'act_delete_sprint_stage';
+
+export const ACT_LOAD_PROFESSIONS = 'act_load_professions';
+export const ACT_LOAD_EVENT_PROFESSIONS = 'act_load_event_professions';
+export const ACT_SAVE_EVENT_PROFESSION = 'act_save_event_profession';
+export const ACT_DELETE_EVENT_PROFESSION = 'act_delete_event_profession';
+
+export const ACT_LOAD_PLACES = 'act_load_places';
+
 
 const PAGE_SIZE = 10;
 
@@ -109,17 +130,92 @@ export default {
         },
         [ACT_LOAD_SPRINTS]({rootGetters, commit}, {publicEventId}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().get(rootGetters.getRoute('public-event.getSprints', {event_id: publicEventId}))
+            return Services.net().get(rootGetters.getRoute('public-event.sprints.list'), {event_id: publicEventId})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
-        [ACT_CREATE_SPRINT]({rootGetters, commit}, {publicEventId}) {
+        [ACT_SAVE_SPRINT]({rootGetters, commit}, {id, sprint}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().post(rootGetters.getRoute('public-event.createSprint', {event_id: publicEventId}))
+            return Services.net().post(rootGetters.getRoute('public-event.sprints.save'), {}, {id, sprint})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
-        [ACT_DELETE_SPRINT]({rootGetters, commit}, {publicEventId, sprintId}) {
+        [ACT_DELETE_SPRINT]({rootGetters, commit}, {ids}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().post(rootGetters.getRoute('public-event.deleteSprint', {event_id: publicEventId}), {}, {sprintId})
+            return Services.net().post(rootGetters.getRoute('public-event.sprints.delete'), {}, {ids})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_TICKET_TYPES]({rootGetters, commit}, {sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.ticket-types.list'), {sprint_id: sprintId})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_TICKET_TYPE]({rootGetters, commit}, {id, ticketType}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.ticket-types.save'), {}, {id, ticketType})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_TICKET_TYPE]({rootGetters, commit}, {ids}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.ticket-types.delete'), {}, {ids})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_SPEAKERS]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.speakers.fullPage'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_EVENT_SPEAKERS]({rootGetters, commit}, {sprintStageId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.sprint-stage.getSpeakers', {stage_id: sprintStageId}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_EVENT_SPEAKER]({rootGetters, commit}, {stageId, id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-stage.attachSpeaker', {stage_id: stageId}), {}, {id})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_EVENT_SPEAKER]({rootGetters, commit}, {stageId, id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().delete(rootGetters.getRoute('public-event.sprint-stage.detachSpeaker', {stage_id: stageId}), {id})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_SPRINT_STAGES]({rootGetters, commit}, {sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.sprint-stages.list'), {sprint_id: sprintId})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_SPRINT_STAGE]({rootGetters, commit}, {id, sprintStage}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-stages.save'), {}, {id, sprintStage})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_SPRINT_STAGE]({rootGetters, commit}, {ids}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-stages.delete'), {}, {ids})
+            .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_EVENT_PROFESSIONS]({rootGetters, commit}, {publicEventId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.event.getProfessions', {event_id: publicEventId}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_PROFESSIONS]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.professions.names'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_EVENT_PROFESSION]({rootGetters, commit}, {publicEventProfession}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.professions.save'), {}, {publicEventProfession})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_EVENT_PROFESSION]({rootGetters, commit}, {ids}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.professions.delete'), {}, {ids})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_PLACES]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.places.fullList'))
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
     }

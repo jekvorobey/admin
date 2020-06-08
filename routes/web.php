@@ -635,15 +635,55 @@ Route::middleware('auth')->group(function () {
         Route::prefix('speakers')->group(function () {
             Route::get('', 'SpeakerController@list')->name('public-event.speakers.list');
             Route::get('page', 'SpeakerController@page')->name('public-event.speakers.page');
+            Route::get('fullPage', 'SpeakerController@fullPage')->name('public-event.speakers.fullPage');
             Route::post('save', 'SpeakerController@save')->name('public-event.speakers.save');
             Route::post('delete', 'SpeakerController@delete')->name('public-event.speakers.delete');
+            Route::get('{stage_id}', 'SpeakerController@getByStage')->name('public-event.sprint-stage.getSpeakers');
+            Route::post('{stage_id}', 'SpeakerController@attachStage')->name('public-event.sprint-stage.attachSpeaker');
+            Route::delete('{stage_id}', 'SpeakerController@detachStage')->name('public-event.sprint-stage.detachSpeaker');
+        });
+
+        Route::prefix('ticket-types')->group(function () {
+            Route::get('', 'PublicEventTicketTypeController@list')->name('public-event.ticket-types.list');
+            Route::get('page', 'PublicEventTicketTypeController@page')->name('public-event.ticket-types.page');
+            //Route::get('{sprint_id}', 'PublicEventTicketTypeController@getBySprint')->name('public-event.sprint.getTicketTypes');
+            Route::post('save', 'PublicEventTicketTypeController@save')->name('public-event.ticket-types.save');
+            Route::post('delete', 'PublicEventTicketTypeController@delete')->name('public-event.ticket-types.delete');
+            //Route::post('{sprint_id}', 'PublicEventTicketTypeController@createBySprint')->name('public-event.sprint.createTicketType');
+        });
+
+        Route::prefix('sprint-stages')->group(function () {
+            Route::get('', 'PublicEventSprintStageController@list')->name('public-event.sprint-stages.list');
+            Route::get('page', 'PublicEventSprintStageController@page')->name('public-event.sprint-stages.page');
+            // Route::get('{sprint_id}', 'PublicEventSprintStageController@getBySprint')->name('public-event.sprint.getSprintStages');
+            Route::post('save', 'PublicEventSprintStageController@save')->name('public-event.sprint-stages.save');
+            Route::post('delete', 'PublicEventSprintStageController@delete')->name('public-event.sprint-stages.delete');
+            // Route::post('{sprint_id}', 'PublicEventSprintStageController@createBySprint')->name('public-event.sprint.createSprintStage');
+        });
+
+        Route::prefix('professions')->group(function () {
+            Route::get('', 'PublicEventProfessionController@list')->name('public-event.professions.list');
+            Route::get('names', 'PublicEventProfessionController@names')->name('public-event.professions.names');
+            Route::get('page', 'PublicEventProfessionController@page')->name('public-event.professions.page');
+            Route::get('{event_id}', 'PublicEventProfessionController@getByEvent')->name('public-event.event.getProfessions');
+            Route::post('save', 'PublicEventProfessionController@save')->name('public-event.professions.save');
+            Route::post('delete', 'PublicEventProfessionController@delete')->name('public-event.professions.delete');
+            Route::post('{event_id}', 'PublicEventProfessionController@createByEvent')->name('public-event.event.createProfession');
         });
 
         Route::prefix('places')->group(function () {
             Route::get('', 'PlaceController@list')->name('public-event.places.list');
             Route::get('page', 'PlaceController@page')->name('public-event.places.page');
+            Route::get('fullList', 'PlaceController@fullList')->name('public-event.places.fullList');
             Route::post('save', 'PlaceController@save')->name('public-event.places.save');
             Route::post('delete', 'PlaceController@delete')->name('public-event.places.delete');
+        });
+
+        Route::prefix('sprints')->group(function () {
+            Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
+            Route::get('page', 'PublicEventSprintController@page')->name('public-event.sprints.page');
+            Route::post('save', 'PublicEventSprintController@save')->name('public-event.sprints.save');
+            Route::post('delete', 'PublicEventSprintController@delete')->name('public-event.sprints.delete');
         });
 
         Route::prefix('{event_id}')->group(function () {
