@@ -130,7 +130,7 @@
         </table>
 
         <ModalAttach :promoProducts.sync="promoProducts"
-                     :selectedPromos="selectedItems"
+                     :selectedPromos.sync="selectedItems"
                      :activities="this.activities"
                      :ref_levels="this.ref_levels"/>
 

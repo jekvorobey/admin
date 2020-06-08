@@ -54,6 +54,12 @@ class OrderListController extends Controller
         StoreService $storeService
     ) {
         $this->title = 'Список заказов';
+        $this->loadOrderStatuses = true;
+        $this->loadPaymentStatuses = true;
+        $this->loadPaymentMethods = true;
+        $this->loadDeliveryTypes = true;
+        $this->loadDeliveryMethods = true;
+        $this->loadDeliveryServices = true;
 
         $restQuery = $this->makeRestQuery($orderService, true);
         $pager = $orderService->ordersCount($restQuery);
@@ -63,10 +69,6 @@ class OrderListController extends Controller
             'iOrders' => $orders,
             'iCurrentPage' => $this->getPage(),
             'iPager' => $pager,
-            'orderStatuses' => OrderStatus::allStatuses(),
-            'deliveryTypes' => DeliveryType::allTypes(),
-            'paymentMethods' => PaymentMethod::allMethods(),
-            'deliveryServices' => DeliveryService::allServices(),
             'merchants' => $this->getMerchants(),
             'confirmationTypes' => OrderConfirmationType::allTypes(),
             'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
@@ -74,6 +76,11 @@ class OrderListController extends Controller
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
         ]);
+    }
+
+    public function byOffers(OrderService $orderService, Request $request)
+    {
+        return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }
 
     /**

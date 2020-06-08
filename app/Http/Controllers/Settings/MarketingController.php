@@ -16,7 +16,7 @@ class MarketingController extends Controller
 {
     public function index()
     {
-        $this->title = 'Маректинговые инструменты iBT.Studio';
+        $this->title = 'Маркетинговые инструменты iBT.Studio';
         $marketingOptionService = resolve(MarketingOptionService::class);
         $customerOptionService = resolve(CustomerOptionService::class);
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);

@@ -13,9 +13,7 @@
                 </f-multi-select>
                 <f-input v-model="filter.id" class="col-lg-3 col-md-6">ID</f-input>
                 <f-input v-model="filter.legal_name" class="col-lg-3 col-md-6">Название организации</f-input>
-                <f-input v-model="filter.operator_first_name" class="col-lg-3 col-md-6">Имя</f-input>
-                <f-input v-model="filter.operator_last_name" class="col-lg-3 col-md-6">Фамилия</f-input>
-                <f-input v-model="filter.operator_middle_name" class="col-lg-3 col-md-6">Отчество</f-input>
+                <f-input v-model="filter.operator_full_name" class="col-lg-3 col-md-6">ФИО</f-input>
                 <f-input v-model="filter.operator_email" class="col-lg-3 col-md-6">Email</f-input>
                 <f-input v-model="filter.operator_phone" class="col-lg-3 col-md-6">Телефон</f-input>
                 <div class="form-group col-lg-3 col-md-6">
@@ -32,7 +30,7 @@
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
         <div class="mb-3">
-            Всего: {{ pager.total }}. <span v-if="selectedMerchants.length">Выбрано: {{selectedMerchants.length}}</span>
+            Всего: {{ pager.total }}. <span v-if="selectedMerchantIds.length">Выбрано: {{selectedMerchantIds.length}}</span>
         </div>
 
         <div class="btn-toolbar mb-3">
@@ -42,13 +40,13 @@
                     <option v-for="status in options.statuses" :value="status.id">{{ status.name }}</option>
                 </select>
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" :disabled="!selectedMerchants.length || !newStatus" @click="changeStatus">
+                    <button class="btn btn-outline-secondary" type="button" :disabled="!selectedMerchantIds.length || !newStatus" @click="changeStatus">
                         <fa-icon icon="save"/>
                     </button>
                 </div>
             </div>
             <b-button class="btn btn-success ml-2" v-b-modal="modalIdCreateMerchant">Создать мерчанта</b-button>
-
+            <button class="btn btn-outline-primary ml-2" :disabled="!selectedMerchantIds.length" @click="onShowModalCreate()">Отправить сообщение</button>
         </div>
 
         <table class="table">
@@ -70,7 +68,7 @@
             <tr v-for="merchant in merchants">
                 <td>
                     <input type="checkbox" :checked="merchantSelected(merchant.id)"
-                            @change="e => selectMerchant(e, merchant.id)">
+                            @change="e => selectMerchant(e, merchant)">
                 </td>
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.created_at }}</td>
@@ -96,6 +94,14 @@
         </div>
 
         <modal-create-merchant :id="modalIdCreateMerchant" :communication-methods="options.communicationMethods"/>
+
+        <b-modal id="modal-broadcast-create" title="Создание чата" hide-footer>
+            <communication-chat-creator v-if="this.selectedOperators.length"
+                                        :usersProp="selectedOperators.map(operator => {return {'id': operator.id, 'email': operator.email}})"
+                                        :userSendIds="selectedOperators.map(operator => operator.id)"
+            />
+            <span v-else>Операторы отсутствуют</span>
+        </b-modal>
     </layout-main>
 </template>
 
@@ -110,13 +116,13 @@
     import FDate from '../../../components/filter/f-date.vue';
 
     import ModalCreateMerchant from "./components/modal-create-merchant.vue";
+    import CommunicationChatCreator
+        from "../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
 
     const cleanFilter = {
     id: '',
     legal_name: '',
-    operator_first_name: '',
-    operator_last_name: '',
-    operator_middle_name: '',
+    operator_full_name: '',
     operator_email: '',
     operator_phone: '',
     manager_id: '',
@@ -127,7 +133,7 @@
 
 export default {
     name: 'page-index',
-    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant},
+    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant, CommunicationChatCreator},
     props: [
         'done',
         'iMerchants',
@@ -148,6 +154,7 @@ export default {
             currentPage: this.iCurrentPage || 1,
             filter,
             selectedMerchants: [],
+            selectedMerchantIds: [],
             newStatus: null,
         };
     },
@@ -169,6 +176,7 @@ export default {
                 if (data.pager) {
                     this.pager = data.pager
                 }
+                this.selectedMerchantIds = [];
                 this.selectedMerchants = [];
                 this.pushRoute(this.currentPage);
             }).finally(() => {
@@ -179,7 +187,7 @@ export default {
             Services.showLoader();
             Services.net().put(this.route('merchant.listPage.changeStatus'), {
                 status: this.newStatus,
-                ids: this.selectedMerchants,
+                ids: this.selectedMerchantIds,
             }).catch(() => {
                 Services.hideLoader();
             }).then(data => {
@@ -216,17 +224,25 @@ export default {
             }
         },
         merchantSelected(id) {
-            return this.selectedMerchants.indexOf(id) !== -1;
+            return this.selectedMerchantIds.indexOf(id) !== -1;
         },
-        selectMerchant(e, id) {
+        selectMerchant(e, merchant) {
             if (e.target.checked) {
-                this.selectedMerchants.push(id);
+                this.selectedMerchantIds.push(merchant.id);
+                this.selectedMerchants.push(merchant);
             } else {
-                let index = this.selectedMerchants.indexOf(id);
+                let index = this.selectedMerchantIds.indexOf(merchant.id);
                 if (index !== -1) {
+                    this.selectedMerchantIds.splice(index, 1);
                     this.selectedMerchants.splice(index, 1);
                 }
             }
+        },
+        onShowModalCreate() {
+            this.$bvModal.show('modal-broadcast-create');
+        },
+        onCloseModalCreate() {
+            this.$bvModal.hide('modal-broadcast-create');
         },
     },
     watch: {
@@ -241,6 +257,18 @@ export default {
         ratingOptions() {
             return Object.values(this.options.ratings).map(rating => ({value: rating.id, text: rating.name}));
         },
+        selectedOperators() {
+            let operators = [];
+            if (this.selectedMerchants.length) {
+                this.selectedMerchants.forEach(function (merchant) {
+                    operators.push(...Object.values(merchant.users));
+                });
+            }
+            return operators;
+        },
     },
+    created() {
+        Services.event().$on('closeModalCreate', this.onCloseModalCreate);
+    }
 };
 </script>

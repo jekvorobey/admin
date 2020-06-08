@@ -141,7 +141,7 @@
             <b-row>
                 <div class="col-sm-4">
                     <v-input v-model="$v.form.receiver_name.$model" :error="errorReceiverName" :disabled="!canEdit">
-                        ФИО
+                        ФИО*
                     </v-input>
                 </div>
                 <div class="col-sm-4">
@@ -151,7 +151,7 @@
                              autocomplete="off"
                              :disabled="!canEdit"
                              v-mask="telMask">
-                        Телефон
+                        Телефон*
                     </v-input>
                 </div>
                 <div class="col-sm-4">
@@ -171,7 +171,7 @@
                                   :error="errorDeliveryAddress"
                                   :disabled="!canEdit"
                                   @onSelect="onDeliveryAddressSelect">
-                            Адрес до квартиры/офиса включительно
+                            Адрес до квартиры/офиса включительно*
                         </v-dadata>
                     </b-col>
                 </b-row>
@@ -203,7 +203,7 @@
             <b-row v-if="this.order.pickupDelivery">
                 <b-col>
                     <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint" :disabled="!canEdit">
-                        Точка выдачи заказа
+                        Точка выдачи заказа*
                     </v-select>
                     <template v-if="points[selectedPointId]">
                         <p class="font-weight-bold">{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
@@ -220,6 +220,11 @@
                         <p><span class="font-weight-bold">Способы оплаты:</span> {{this.model.pickupDelivery.point.has_payment_card ? 'Наличные и банковские карты' : 'Только наличные'}}</p>
                     </template>
                 </b-col>
+            </b-row>
+            <b-row>
+                <div class="col-sm-6">
+                    <p class="font-weight-bold">Дополнительная информация</p>
+                </div>
             </b-row>
             <b-row>
                 <b-col>
@@ -396,7 +401,7 @@
                 set(value) {this.$emit('update:model', value)},
             },
             canEdit() {
-                return this.order.status.id < 6 && !this.order.is_canceled;
+                return this.order.status.id < this.orderStatuses.transferredToDelivery.id && !this.order.is_canceled;
             },
             pointOptions() {
                 return Object.values(this.points).map(point => ({

@@ -159,6 +159,9 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'ContentClaimController@detail')->name('contentClaims.detail');
                 Route::put('', 'ContentClaimController@update')->name('contentClaims.update');
+                Route::prefix('documents')->group(function () {
+                    Route::get('acceptance-act', 'ContentClaimController@acceptanceAct')->name('contentClaims.documents.acceptanceAct');
+                });
             });
             Route::get('products-by-merchant', 'ContentClaimController@loadProductsByMerchantId')->name('contentClaims.productsByMerchant');
         });
@@ -196,6 +199,10 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'MarketingController@index')->name('settings.marketing');
             Route::put('', 'MarketingController@update')->name('settings.marketing.update');
         });
+
+        Route::prefix('packages')->group(function () {
+            Route::get('', 'PackagesController@list')->name('settings.packages.list');
+        });
     });
 
     Route::prefix('notifications')->group(function () {
@@ -203,9 +210,17 @@ Route::middleware('auth')->group(function () {
         Route::post('', 'NotificationsController@markAll')->name('notifications.markAll');
     });
 
+    Route::prefix('document-templates')->group(function () {
+        Route::get('claim-act', 'DocumentTemplatesController@claimAct')->name('documentTemplates.claimAct');
+        Route::get('acceptance-act', 'DocumentTemplatesController@acceptanceAct')->name('documentTemplates.acceptanceAct');
+        Route::get('inventory', 'DocumentTemplatesController@inventory')->name('documentTemplates.inventory');
+        Route::get('assembling-card', 'DocumentTemplatesController@assemblingCard')->name('documentTemplates.assemblingCard');
+    });
+
     Route::prefix('orders')->namespace('Order')->group(function () {
         Route::get('', 'OrderListController@index')->name('orders.list');
         Route::get('page', 'OrderListController@page')->name('orders.pagination');
+        Route::post('byOffers', 'OrderListController@byOffers')->name('orders.byOffers');
 
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
@@ -229,13 +244,39 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
-                        Route::get('', 'TabShipmentsController@load')->name('orders.detail.shipments');
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
-                        Route::put('mark-as-problem', 'TabDeliveriesController@markAsProblem')->name('orders.detail.shipments.markAsProblem');
-                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblem')->name('orders.detail.shipments.markAsNonProblem');
+                        Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
                         Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+
+                        Route::prefix('documents')->group(function () {
+                            Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
+                            Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
+                            Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                        });
+
+                        Route::prefix('/shipment-packages')->group(function () {
+                            Route::post('addShipmentPackage', 'TabShipmentsController@addShipmentPackage')
+                                ->name('orders.detail.shipments.addShipmentPackage');
+
+                            Route::prefix('/{shipmentPackageId}')->where(['shipmentPackageId' => '[0-9]+'])->group(function () {
+                                Route::delete('', 'TabShipmentsController@deleteShipmentPackage')
+                                    ->name('orders.detail.shipments.deleteShipmentPackage');
+
+                                Route::prefix('/items')->group(function () {
+                                    Route::post('', 'TabShipmentsController@addShipmentPackageItems')
+                                        ->name('orders.detail.shipments.addShipmentPackageItems');
+
+                                    Route::prefix('/{basketItemId}')->where(['basketItemId' => '[0-9]+'])->group(function () {
+                                        Route::put('', 'TabShipmentsController@editShipmentPackageItem')
+                                            ->name('orders.detail.shipments.editShipmentPackageItem');
+                                        Route::delete('', 'TabShipmentsController@deleteShipmentPackageItem')
+                                            ->name('orders.detail.shipments.deleteShipmentPackageItem');
+                                    });
+                                });
+                            });
+                        });
                     });
                 });
             });
@@ -537,6 +578,12 @@ Route::middleware('auth')->group(function () {
                             Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
                         });
                     });
+
+                    Route::prefix('newsletter')->group(function () {
+                        Route::get('', 'TabNewsletterController@load')->name('customers.detail.newsletter');
+                        Route::put('edit', 'TabNewsletterController@edit')->name('customers.detail.newsletter.edit');
+                    });
+                    
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
                         Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');

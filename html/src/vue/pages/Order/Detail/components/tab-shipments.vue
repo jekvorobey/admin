@@ -2,26 +2,32 @@
     <div>
         <b-card v-for="shipment in order.shipments" v-bind:key="shipment.id" class="mb-4">
             <b-row>
-                <div class="col-sm-6"><h4 class="card-title">Отправление {{shipment.number}}</h4></div>
+                <div class="col-sm-6"><h4 class="card-title"><fa-icon icon="truck-loading"></fa-icon> Отправление {{shipment.number}}</h4></div>
                 <div class="col-sm-6">
                     <div class="float-right">
-                        <b-dropdown text="Действия" size="sm" v-if="canMarkAsProblem(shipment) || canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
-                            <b-dropdown-item-button v-if="canMarkAsProblem(shipment)" @click="markAsProblem(shipment)">
-                                <fa-icon icon="exclamation"></fa-icon> Пометить как проблемное
+                        <b-dropdown text="Документы" size="sm" v-if="documents(shipment)">
+                            <b-dropdown-item-button v-for="document in documents(shipment)" @click="downloadDocument(shipment, document.value)" v-bind:key="document.value">
+                                {{document.text}}
                             </b-dropdown-item-button>
+                        </b-dropdown>
+                        <b-dropdown text="Шаблоны документов" size="sm">
+                            <b-dropdown-item-button v-for="document in documentTemplates" @click="downloadDocumentTemplate(document.value)" v-bind:key="document.value">
+                                {{document.text}}
+                            </b-dropdown-item-button>
+                        </b-dropdown>
+                        <b-dropdown text="Действия" size="sm" v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isAssembledStatus(shipment)">
                                 <a :href="canGetBarcodes(shipment) ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : '#'"
-                                   class="btn" :class="canGetBarcodes(shipment) ? 'btn-primary' : 'btn-danger'"
+                                   :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
                                    :title="getBarcodesTitle(shipment)">
                                     <fa-icon icon="barcode"></fa-icon> Получить штрихкоды
                                 </a>
                             </b-dropdown-item-button>
                             <b-dropdown-item-button v-if="isAssembledStatus(shipment) && canGetCdekReceipt(shipment)">
-                                <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})"
-                                   class="btn btn-primary">
+                                <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})" class="text-dark">
                                     <fa-icon icon="file-invoice"></fa-icon> Получить квитанцию
                                 </a>
                             </b-dropdown-item-button>
@@ -83,8 +89,8 @@
                 <div class="col-sm-6">
                     <p>
                         <span class="font-weight-bold">Логистический оператор для нулевой мили:</span>
-                        <a :href="getRoute('deliveryService.detail', {id: shipment.delivery_service_zero_mile.id})" target="_blank">
-                            {{shipment.delivery_service_zero_mile.name}}
+                        <a :href="getRoute('deliveryService.detail', {id: shipment.delivery_service_zero_mile ? shipment.delivery_service_zero_mile.id : shipment.delivery_service.id})" target="_blank">
+                            {{shipment.delivery_service_zero_mile ? shipment.delivery_service_zero_mile.name : shipment.delivery_service.name}}
                         </a>
                     </p>
                     <p>
@@ -115,7 +121,7 @@
                     <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{shipment.length|integer}}x{{shipment.width|integer}}x{{shipment.height|integer}} мм
                 </div>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Вес:</span> {{shipment.weight}} г
+                    <span class="font-weight-bold">Вес:</span> {{shipment.weight|integer}} г
                 </div>
             </b-row>
             <b-row>
@@ -134,80 +140,7 @@
                 </b-col>
             </b-row>
 
-            <b-card class="mt-4">
-                <b-table-simple hover small caption-top responsive>
-                <b-thead>
-                    <b-tr>
-                        <b-th>Фото</b-th>
-                        <b-th class="with-small">Название <small>Артикул</small></b-th>
-                        <b-th class="with-small">Категория <small>Бренд</small></b-th>
-                        <b-th>Количество</b-th>
-                        <b-th>Цена без скидки</b-th>
-                        <b-th>Скидка</b-th>
-                        <b-th>Цена со скидкой</b-th>
-                        <th></th>
-                    </b-tr>
-                </b-thead>
-                <b-tbody>
-                    <template v-if="shipment.packages.length > 0">
-                        <template v-for="(pack, key) in shipment.packages">
-                            <tr>
-                                <b-td colspan="8">
-                                    Коробка #{{ key+1 }}
-                                </b-td>
-                                <b-td>
-                                    <fa-icon icon="pencil-alt" title="Изменить" class="cursor-pointer mr-3"
-                                             @click="editPackage(item.id)"
-                                    />
-                                    <fa-icon icon="times" title="Удалить" class="cursor-pointer"
-                                             @click="deletePackage(item.id)"
-                                    />
-                                </b-td>
-                            </tr>
-                            <tr v-for="(item, key) in pack.items">
-                                <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
-                                         v-if="item.basketItem.product.mainImage"></b-td>
-                                <b-td class="with-small">
-                                    <a :href="getRoute('products.detail', {id: item.basketItem.product.id})" target="_blank">
-                                        {{ item.basketItem.name }}
-                                    </a>
-                                    <small>{{ item.basketItem.product.vendor_code }}</small>
-                                </b-td>
-                                <b-td class="with-small">
-                                    {{ item.basketItem.product && item.basketItem.product.category ? item.basketItem.product.category.name : '' }}
-                                    <small>{{ item.basketItem.product && item.basketItem.product.category ? item.basketItem.product.brand.name : '' }}</small>
-                                </b-td>
-                                <b-td>{{ item.qty | integer }}</b-td>
-                                <b-td>{{ preparePrice(item.cost)}} руб.</b-td>
-                                <b-td>{{ preparePrice(item.cost - item.price) }} руб.</b-td>
-                                <b-td>{{ preparePrice(item.price) }} руб.</b-td>
-                                <b-td></b-td>
-                            </tr>
-                        </template>
-                    </template>
-                    <template v-else>
-                        <tr v-for="(item, key) in shipment.basketItems">
-                            <b-td><img :src="productPhoto(item.product)" class="preview" :alt="item.name" v-if="item.product.mainImage"></b-td>
-                            <b-td class="with-small">
-                                <a :href="getRoute('products.detail', {id: item.product.id})" target="_blank">
-                                    {{ item.name }}
-                                </a>
-                                <small>{{ item.product.vendor_code }}</small>
-                            </b-td>
-                            <b-td class="with-small">
-                                {{ item.product && item.product.category ? item.product.category.name : ''}}
-                                <small>{{ item.product && item.product.brand ? item.product.brand.name : ''}}</small>
-                            </b-td>
-                            <b-td>{{ item.qty | integer }}</b-td>
-                            <b-td>{{ preparePrice(item.cost) }} руб.</b-td>
-                            <b-td>{{ preparePrice((item.cost - item.price)) }} руб.</b-td>
-                            <b-td>{{ preparePrice(item.price) }} руб.</b-td>
-                            <b-td></b-td>
-                        </tr>
-                    </template>
-                </b-tbody>
-            </b-table-simple>
-            </b-card>
+            <shipment-items :model-order.sync="order" :model-shipment.sync="shipment" :can-edit="true" class="mt-4"/>
         </b-card>
 
         <modal-shipment-edit :model-shipment.sync="selectedShipment" :model-order.sync="order" v-if="Object.values(selectedShipment).length > 0"/>
@@ -215,6 +148,7 @@
 </template>
 <script>
     import ModalShipmentEdit from "./forms/modal-shipment-edit.vue";
+    import ShipmentItems from "./forms/shipment-items.vue";
     import Services from "../../../../../scripts/services/services";
 
     export default {
@@ -223,18 +157,31 @@
         },
         components: {
             ModalShipmentEdit,
+            ShipmentItems,
         },
         data() {
             return {
                 selectedShipment: {},
+                documentTemplates: [
+                    {value: 'claimAct', text: 'Акт-претензия'},
+                    {value: 'acceptanceAct', text: 'Акт приема-передачи'},
+                    {value: 'assemblingCard', text: 'Карточка сборки'},
+                    {value: 'inventory', text: 'Опись'},
+                ],
             }
         },
         methods: {
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
             },
+            downloadDocument(shipment, type) {
+                window.open(this.getRoute('orders.detail.shipments.documents.' + type, {id: this.order.id, shipmentId: shipment.id}));
+            },
+            downloadDocumentTemplate(type) {
+                window.open(this.getRoute('documentTemplates.' + type));
+            },
             isAssembledStatus(shipment) {
-                return shipment.status.id === 6;
+                return shipment.status.id === this.shipmentStatuses.assembled.id;
             },
             getBarcodesTitle(shipment) {
                 return this.canGetBarcodes(shipment) ? '' :
@@ -244,39 +191,19 @@
                 return shipment.delivery_xml_id;
             },
             canGetCdekReceipt(shipment) {
-                return shipment.delivery.xml_id && shipment.delivery.delivery_service === 3;
-            },
-            canMarkAsProblem(shipment) {
-                return shipment.is_problem;
+                return shipment.delivery_xml_id && shipment.delivery_service.id === this.deliveryServices.cdek.id;
             },
             canMarkAsNonProblem(shipment) {
-                return !shipment.is_problem;
+                return shipment.is_problem && !shipment.is_canceled;
             },
             canCancelShipment(shipment) {
-                return shipment.status.id < 26 && !shipment.is_canceled
-            },
-            markAsProblem(shipment) {
-                let errorMessage = 'Ошибка при изменении отправления';
-
-                Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.markAsProblem', {id: order.id, shipmentId: shipment.id})).then(data => {
-                    if (data.order) {
-                        this.order = data.order;
-                        Services.msg("Изменения сохранены");
-                    } else {
-                        Services.msg(errorMessage, 'danger');
-                    }
-                }, () => {
-                    Services.msg(errorMessage, 'danger');
-                }).finally(data => {
-                    Services.hideLoader();
-                });
+                return shipment.status.id < this.shipmentStatuses.done.id && !shipment.is_canceled
             },
             markAsNonProblem(shipment) {
                 let errorMessage = 'Ошибка при изменении отправления';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.markAsNonProblem', {id: order.id, shipmentId: shipment.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.shipments.markAsNonProblem', {id: this.order.id, shipmentId: shipment.id})).then(data => {
                     if (data.order) {
                         this.order = data.order;
                         Services.msg("Изменения сохранены");
@@ -293,7 +220,7 @@
                 let errorMessage = 'Ошибка при отмене отправления';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: order.id, shipmentId: shipment.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: this.order.id, shipmentId: shipment.id})).then(data => {
                     if (data.order) {
                         this.order = data.order;
                         Services.msg("Изменения сохранены");
@@ -307,12 +234,24 @@
                 });
             },
             canEditShipment(shipment) {
-                return shipment.status.id < 7 && !shipment.is_canceled;
+                return shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
             },
             editShipment(shipment) {
                 this.selectedShipment = shipment;
                 this.$bvModal.show('modal-shipment-edit');
-            }
+            },
+            documents(shipment) {
+                let documents = [{value: 'assemblingCard', text: 'Карточка сборки'}];
+
+                if (shipment.status.id >= this.shipmentStatuses.assembling.id) {
+                    documents.push({value: 'inventory', text: 'Опись'});
+                }
+                if (shipment.status.id >= this.shipmentStatuses.assembled.id) {
+                    documents.push({value: 'acceptanceAct', text: 'Акт приема-передачи'});
+                }
+
+                return documents;
+            },
         },
         computed: {
             order: {
@@ -322,16 +261,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .with-small small {
-        display: block;
-        color: gray;
-        line-height: 1rem;
-        overflow: hidden;
-    }
-    .preview {
-        height: 50px;
-        border-radius: 5px;
-    }
-</style>

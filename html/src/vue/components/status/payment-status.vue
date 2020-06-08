@@ -9,10 +9,11 @@ export default {
     methods: {
         statusClass(statusId) {
             switch (statusId) {
-                case 1: return 'badge-warning';
-                case 2: return 'badge-success';
-                case 3: return 'badge-danger';
-                case 4: return 'badge-primary';
+                case this.paymentStatuses.notPaid.id: return 'badge-warning';
+                case this.paymentStatuses.paid.id: return 'badge-success';
+                case this.paymentStatuses.timeout.id: return 'badge-danger';
+                case this.paymentStatuses.hold.id: return 'badge-primary';
+                case this.paymentStatuses.error.id: return 'badge-info';
                 default: return 'badge-dark';
             }
         },

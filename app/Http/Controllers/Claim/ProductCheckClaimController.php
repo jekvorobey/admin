@@ -113,7 +113,9 @@ class ProductCheckClaimController extends Controller
 
         return $this->render('Claim/ProductCheck/Detail', [
             'iClaim' => $claim,
-            'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
+            'claimStatuses' => $claimTypes
+                ->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)
+                ->statusNames
         ]);
     }
 

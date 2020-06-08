@@ -2,7 +2,7 @@
     <div>
         <b-card v-for="delivery in order.deliveries" v-bind:key="delivery.id" class="mb-4">
             <b-row>
-                <div class="col-sm-6"><h4 class="card-title">Доставка {{delivery.number}}</h4></div>
+                <div class="col-sm-6"><h4 class="card-title"><fa-icon icon="truck"></fa-icon> Доставка {{delivery.number}}</h4></div>
                 <div class="col-sm-6">
                     <div class="float-right">
                         <b-dropdown text="Действия" size="sm" v-if="canSaveDeliveryOrder(delivery) || canCancelDeliveryOrder(delivery) || canCancelDelivery(delivery)">
@@ -135,7 +135,7 @@
                     <span class="font-weight-bold">Габариты (ДxШxВ):</span> {{delivery.length|integer}}x{{delivery.width|integer}}x{{delivery.height|integer}} мм
                 </div>
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Вес:</span> {{delivery.weight}} г
+                    <span class="font-weight-bold">Вес:</span> {{delivery.weight|integer}} г
                 </div>
             </b-row>
             <b-row>
@@ -169,7 +169,7 @@
                 Services.event().$emit('showTab', tab);
             },
             canSaveDeliveryOrder(delivery) {
-                return (delivery.status.id === 5 || delivery.status.id === 6) && !delivery.is_canceled;
+                return (delivery.status.id === this.deliveryStatuses.assembling.id || delivery.status.id === this.deliveryStatuses.assembled.id) && !delivery.is_canceled;
             },
             saveDeliveryOrder(delivery) {
                 let errorMessage = 'Ошибка при создании/обновлении заказа на доставку у ЛО';
@@ -189,7 +189,7 @@
                 });
             },
             canCancelDeliveryOrder(delivery) {
-                return delivery.status.id < 21 && delivery.xml_id;
+                return delivery.status.id < this.deliveryStatuses.onPointIn.id && delivery.xml_id;
             },
             cancelDeliveryOrder(delivery) {
                 let errorMessage = 'Ошибка при отмене заказа на доставку у ЛО';
@@ -209,7 +209,7 @@
                 });
             },
             canCancelDelivery(delivery) {
-               return delivery.status.id < 26 && !delivery.is_canceled
+               return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
             },
             cancelDelivery(delivery) {
                 let errorMessage = 'Ошибка при отмене доставки';
@@ -229,7 +229,7 @@
                 });
             },
             canEditDelivery(delivery) {
-                return delivery.status.id < 7 && !delivery.is_canceled;
+                return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled;
             },
             editDelivery(delivery) {
                 this.selectedDelivery = delivery;

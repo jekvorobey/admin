@@ -10,6 +10,8 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Logistics\Dto\Lists\DeliveryMethod;
+use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Marketing\Dto\Bonus\BonusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
@@ -18,6 +20,13 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
+use Greensight\Oms\Dto\Delivery\CargoStatus;
+use Greensight\Oms\Dto\Delivery\DeliveryStatus;
+use Greensight\Oms\Dto\Delivery\ShipmentStatus;
+use Greensight\Oms\Dto\DeliveryType;
+use Greensight\Oms\Dto\OrderStatus;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
+use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
@@ -62,6 +71,16 @@ class ViewRender
     private $bonusValueTypes = [];
     private $bonusTypes = [];
     private $customerBonusStatus = [];
+
+    private $orderStatuses = [];
+    private $paymentStatuses = [];
+    private $paymentMethods = [];
+    private $deliveryStatuses = [];
+    private $shipmentStatuses = [];
+    private $cargoStatuses = [];
+    private $deliveryTypes = [];
+    private $deliveryMethods = [];
+    private $deliveryServices = [];
 
     public function __construct($componentName, $props)
     {
@@ -396,6 +415,255 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadOrderStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapOrderStatuses = [
+                OrderStatus::CREATED => 'created',
+                OrderStatus::AWAITING_CHECK => 'awaitingCheck',
+                OrderStatus::CHECKING => 'checking',
+                OrderStatus::AWAITING_CONFIRMATION => 'awaitingConfirmation',
+                OrderStatus::IN_PROCESSING => 'inProcessing',
+                OrderStatus::TRANSFERRED_TO_DELIVERY => 'transferredToDelivery',
+                OrderStatus::DELIVERING => 'delivering',
+                OrderStatus::READY_FOR_RECIPIENT => 'readyForRecipient',
+                OrderStatus::DONE => 'done',
+                OrderStatus::RETURNED => 'returned',
+                OrderStatus::PRE_ORDER => 'preOrder',
+            ];
+            foreach (OrderStatus::allStatuses() as $id => $status) {
+                if (!isset($mapOrderStatuses[$id])) {
+                    continue;
+                }
+                $this->orderStatuses[$mapOrderStatuses[$id]] = $status->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadPaymentStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapPaymentStatuses = [
+                PaymentStatus::NOT_PAID => 'notPaid',
+                PaymentStatus::PAID => 'paid',
+                PaymentStatus::TIMEOUT => 'timeout',
+                PaymentStatus::HOLD => 'hold',
+                PaymentStatus::ERROR => 'error',
+            ];
+            foreach (PaymentStatus::allStatuses() as $id => $status) {
+                if (!isset($mapPaymentStatuses[$id])) {
+                    continue;
+                }
+                $this->paymentStatuses[$mapPaymentStatuses[$id]] = $status->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadPaymentMethods(bool $load = false): self
+    {
+        if ($load) {
+            $mapPaymentMethods = [
+                PaymentMethod::ONLINE => 'online',
+            ];
+            foreach (PaymentMethod::allMethods() as $id => $method) {
+                if (!isset($mapPaymentMethods[$id])) {
+                    continue;
+                }
+                $this->paymentMethods[$mapPaymentMethods[$id]] = $method->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadDeliveryStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapDeliveryStatuses = [
+                DeliveryStatus::CREATED => 'created',
+                DeliveryStatus::AWAITING_CHECK => 'awaitingCheck',
+                DeliveryStatus::CHECKING => 'checking',
+                DeliveryStatus::AWAITING_CONFIRMATION => 'awaitingConfirmation',
+                DeliveryStatus::ASSEMBLING => 'assembling',
+                DeliveryStatus::ASSEMBLED => 'assembled',
+                DeliveryStatus::SHIPPED => 'shipped',
+                DeliveryStatus::ON_POINT_IN => 'onPointIn',
+                DeliveryStatus::ARRIVED_AT_DESTINATION_CITY => 'arrivedAtDestinationCity',
+                DeliveryStatus::ON_POINT_OUT => 'onPointOut',
+                DeliveryStatus::READY_FOR_RECIPIENT => 'readyForRecipient',
+                DeliveryStatus::DELIVERING => 'delivering',
+                DeliveryStatus::DONE => 'done',
+                DeliveryStatus::CANCELLATION_EXPECTED => 'cancellationExpected',
+                DeliveryStatus::RETURN_EXPECTED_FROM_CUSTOMER => 'returnExpectedFromCustomer',
+                DeliveryStatus::RETURNED => 'returned',
+                DeliveryStatus::PRE_ORDER => 'preOrder',
+            ];
+            foreach (DeliveryStatus::allStatuses() as $id => $status) {
+                if (!isset($mapDeliveryStatuses[$id])) {
+                    continue;
+                }
+                $this->deliveryStatuses[$mapDeliveryStatuses[$id]] = $status->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadShipmentStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapShipmentStatuses = [
+                ShipmentStatus::CREATED => 'created',
+                ShipmentStatus::AWAITING_CHECK => 'awaitingCheck',
+                ShipmentStatus::CHECKING => 'checking',
+                ShipmentStatus::AWAITING_CONFIRMATION => 'awaitingConfirmation',
+                ShipmentStatus::ASSEMBLING => 'assembling',
+                ShipmentStatus::ASSEMBLED => 'assembled',
+                ShipmentStatus::SHIPPED => 'shipped',
+                ShipmentStatus::ON_POINT_IN => 'onPointIn',
+                ShipmentStatus::ARRIVED_AT_DESTINATION_CITY => 'arrivedAtDestinationCity',
+                ShipmentStatus::ON_POINT_OUT => 'onPointOut',
+                ShipmentStatus::READY_FOR_RECIPIENT => 'readyForRecipient',
+                ShipmentStatus::DELIVERING => 'delivering',
+                ShipmentStatus::DONE => 'done',
+                ShipmentStatus::CANCELLATION_EXPECTED => 'cancellationExpected',
+                ShipmentStatus::RETURN_EXPECTED_FROM_CUSTOMER => 'returnExpectedFromCustomer',
+                ShipmentStatus::RETURNED => 'returned',
+                ShipmentStatus::PRE_ORDER => 'preOrder',
+            ];
+            foreach (ShipmentStatus::allStatuses() as $id => $status) {
+                if (!isset($mapShipmentStatuses[$id])) {
+                    continue;
+                }
+                $this->shipmentStatuses[$mapShipmentStatuses[$id]] = $status->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadCargoStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapCargoStatuses = [
+                CargoStatus::CREATED => 'created',
+                CargoStatus::SHIPPED => 'shipped',
+                CargoStatus::TAKEN => 'taken',
+            ];
+            foreach (CargoStatus::allStatuses() as $id => $status) {
+                if (!isset($mapCargoStatuses[$id])) {
+                    continue;
+                }
+                $this->cargoStatuses[$mapCargoStatuses[$id]] = $status->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadDeliveryTypes(bool $load = false): self
+    {
+        if ($load) {
+            $mapDeliveryTypes = [
+                DeliveryType::TYPE_SPLIT => 'split',
+                DeliveryType::TYPE_CONSOLIDATION => 'consolidation',
+            ];
+            foreach (DeliveryType::allTypes() as $id => $type) {
+                if (!isset($mapDeliveryTypes[$id])) {
+                    continue;
+                }
+                $this->deliveryTypes[$mapDeliveryTypes[$id]] = $type->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadDeliveryMethods(bool $load = false): self
+    {
+        if ($load) {
+            $mapDeliveryMethods = [
+                DeliveryMethod::METHOD_DELIVERY => 'delivery',
+                DeliveryMethod::METHOD_PICKUP => 'pickup',
+            ];
+            foreach (DeliveryMethod::allMethods() as $id => $method) {
+                if (!isset($mapDeliveryMethods[$id])) {
+                    continue;
+                }
+                $this->deliveryMethods[$mapDeliveryMethods[$id]] = $method->toArray();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadDeliveryServices(bool $load = false): self
+    {
+        if ($load) {
+            $mapDeliveryService = [
+                DeliveryService::SERVICE_B2CPL => 'b2cpl',
+                DeliveryService::SERVICE_CDEK => 'cdek',
+            ];
+            foreach (DeliveryService::allServices() as $id => $service) {
+                if (!isset($mapDeliveryService[$id])) {
+                    continue;
+                }
+                $this->deliveryServices[$mapDeliveryService[$id]] = $service->toArray();
+            }
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -436,6 +704,16 @@ class ViewRender
                 'bonusValueTypes' => $this->bonusValueTypes,
                 'bonusTypes' => $this->bonusTypes,
                 'customerBonusStatus' => $this->customerBonusStatus,
+
+                'orderStatuses' => $this->orderStatuses,
+                'paymentStatuses' => $this->paymentStatuses,
+                'paymentMethods' => $this->paymentMethods,
+                'deliveryStatuses' => $this->deliveryStatuses,
+                'shipmentStatuses' => $this->shipmentStatuses,
+                'cargoStatuses' => $this->cargoStatuses,
+                'deliveryTypes' => $this->deliveryTypes,
+                'deliveryMethods' => $this->deliveryMethods,
+                'deliveryServices' => $this->deliveryServices,
             ],
             [
                 'title' => $this->title,

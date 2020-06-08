@@ -27,6 +27,7 @@ class CargoDetailController extends Controller
      */
     public function index(int $id)
     {
+        $this->loadCargoStatuses = true;
         $page = new CargoPage($id);
         
         return $this->render('Order/Cargo/Detail', [

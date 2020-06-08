@@ -5,26 +5,33 @@
         </template>
         <template v-slot:default="{close}">
             <b-form-row>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <v-select v-model="$v.form.status.$model" :options="shipmentStatusOptions">
-                        Статус отправления
+                        Статус отправления*
                     </v-select>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <v-select v-model="$v.form.delivery_service_zero_mile.$model" :options="deliveryServiceOptions">
                         Логистический оператор для нулевой мили
                     </v-select>
                 </div>
-                <div class="col-sm-4">
-                    <v-date v-model="$v.form.psd.$model" :error="errorPdd">
-                        PSD
+            </b-form-row>
+            <b-form-row>
+                <div class="col-sm-6">
+                    <v-date v-model="$v.form.psd.$model" type="datetime-local" :error="errorPsd">
+                        PSD*
+                    </v-date>
+                </div>
+                <div class="col-sm-6" v-if="shipment.fsd">
+                    <v-date v-model="$v.form.fsd.$model" :error="errorFsd">
+                        FSD
                     </v-date>
                 </div>
             </b-form-row>
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
-                <button class="btn btn-info" @click="save">Сохранить</button>
+                <button class="btn btn-info" @click="save" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </template>
     </b-modal>
@@ -55,17 +62,16 @@
         ],
         data() {
             return {
-                shipmentStatuses: {},
-                deliveryServices: {},
-
                 form: {
                     status: this.modelShipment.status.id,
                     delivery_service_zero_mile: this.modelShipment.tariff_id,
-                    psd: this.modelShipment.pdd_original,
+                    psd: this.modelShipment.psd_original,
+                    fsd: this.modelShipment.fsd_original,
                 },
             }
         },
         validations() {
+            let self = this;
             const notRequired = {required: requiredIf(() => {return false;})};
 
             return {
@@ -73,6 +79,9 @@
                     status: {required},
                     delivery_service_zero_mile: {notRequired},
                     psd: {required},
+                    fsd: {required: requiredIf(() => {
+                        return self.shipment.fsd;
+                    })},
                 }
             };
         },
@@ -86,17 +95,12 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.shipments.save', {id: this.order.id, shipmentId: this.shipment.id}), {}, this.form).then((data) => {
                     this.order = data.order;
+                    this.$bvModal.hide('modal-shipment-edit');
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
                 });
-            },
-            cancel() {
-                this.form.status = this.modelShipment.status;
-                this.form.delivery_service_zero_mile = this.modelShipment.delivery_service_zero_mile;
-                this.form.psd = this.modelShipment.psd;
-                this.$v.$reset();
             },
             resetModal() {
                 this.shipment = {};
@@ -112,13 +116,13 @@
                 set(value) {this.$emit('update:modelShipment', value)},
             },
             shipmentStatusOptions() {
-                return Object.values(this.shipmentStatuses).map(deliveryStatus => ({
+                return Object.values(this.shipmentStatuses).map(shipmentStatus => ({
                     value: shipmentStatus.id,
                     text: shipmentStatus.name
                 }));
             },
             deliveryServiceOptions() {
-                return Object.values(this.deliveryServicees).map(deliveryService => ({
+                return Object.values(this.deliveryServices).map(deliveryService => ({
                     value: deliveryService.id,
                     text: deliveryService.name
                 }));
@@ -130,16 +134,16 @@
                     }
                 }
             },
+            errorFsd() {
+                if (this.$v.form.fsd.$dirty) {
+                    if (!this.$v.form.fsd.required) {
+                        return "Обязательное поле";
+                    }
+                }
+            },
         },
         created() {
-            Services.showLoader();
-            Services.net().get(this.getRoute('orders.detail.shipments', {id: this.order.id, shipmentId: this.shipment.id})).then(data => {
-                this.shipmentStatuses = data.shipmentStatuses;
-                this.deliveryServices = data.deliveryServices;
-                this.$bvModal.show('modal-shipment-edit');
-            }).finally(() => {
-                Services.hideLoader();
-            });
+            setTimeout(() => this.$bvModal.show('modal-shipment-edit'), 100);
         }
 };
 </script>

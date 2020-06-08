@@ -133,7 +133,7 @@
             </div>
         </div>
 
-        <table class="table table-condensed">
+        <table class="table table-condensed table-responsive">
             <thead>
             <tr>
                 <th>
@@ -184,6 +184,7 @@
 
     import modalMixin from '../../../../mixins/modal';
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
+    import {integer} from "../../../../../scripts/filters";
 
     const cleanHiddenFilter = {
         customer_id: null,
@@ -336,7 +337,7 @@
                         name: 'Вес отправления',
                         code: 'weight',
                         value: function(shipment) {
-                            return shipment.weight;
+                            return integer(shipment.weight);
                         },
                         isShown: true,
                         isAlwaysShown: false,

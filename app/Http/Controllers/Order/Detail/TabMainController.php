@@ -79,13 +79,13 @@ class TabMainController extends OrderDetailController
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @param  OrderService  $orderService
      * @param  DeliveryService  $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function save($id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
+    public function save(int $id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
     {
         $requiredIfDeliveryAddressExist = function() {
             return count(array_filter(request()->get('delivery_address'))) > 0;

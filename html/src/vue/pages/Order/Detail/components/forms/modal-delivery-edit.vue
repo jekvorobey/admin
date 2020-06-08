@@ -7,24 +7,24 @@
             <b-form-row>
                 <div class="col-sm-4">
                     <v-select v-model="$v.form.status.$model" :options="deliveryStatusOptions">
-                        Статус доставки
+                        Статус доставки*
                     </v-select>
                 </div>
                 <div class="col-sm-4">
                     <v-select v-model="$v.form.tariff_id.$model" :options="tariffOptions">
-                        Тариф ЛО
+                        Тариф ЛО*
                     </v-select>
                 </div>
                 <div class="col-sm-4">
                     <v-date v-model="$v.form.pdd.$model" :error="errorPdd">
-                        PDD
+                        PDD*
                     </v-date>
                 </div>
             </b-form-row>
             <b-form-row v-if="delivery.point_id">
                 <b-col>
                     <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint">
-                        Точка выдачи заказа
+                        Точка выдачи заказа*
                     </v-select>
                     <template v-if="points[selectedPointId]">
                         <p class="font-weight-bold">{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
@@ -48,7 +48,7 @@
                         <v-dadata v-model.sync="$v.form.delivery_address.address_string.$model"
                                   :error="errorDeliveryAddress"
                                   @onSelect="onDeliveryAddressSelect">
-                            Адрес до квартиры/офиса включительно
+                            Адрес до квартиры/офиса включительно*
                         </v-dadata>
                     </b-col>
                 </b-form-row>
@@ -80,7 +80,7 @@
             <b-form-row>
                 <div class="col-sm-4">
                     <v-input v-model="$v.form.receiver_name.$model" :error="errorReceiverName">
-                        ФИО получателя
+                        ФИО получателя*
                     </v-input>
                 </div>
                 <div class="col-sm-4">
@@ -89,7 +89,7 @@
                              :placeholder="telPlaceholder"
                              autocomplete="off"
                              v-mask="telMask">
-                        Телефон получателя
+                        Телефон получателя*
                     </v-input>
                 </div>
                 <div class="col-sm-4">
@@ -104,7 +104,7 @@
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
-                <button class="btn btn-info" @click="save">Сохранить</button>
+                <button class="btn btn-info" @click="save" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </template>
     </b-modal>
@@ -142,7 +142,6 @@
             let isCourierDelivery = !this.modelDelivery.point_id;
 
             return {
-                deliveryStatuses: {},
                 points: {},
                 tariffs: {},
                 selectedPointId: this.modelDelivery.point_id,
@@ -254,29 +253,12 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.save', {id: this.order.id, deliveryId: this.delivery.id}), {}, this.form).then((data) => {
                     this.order = data.order;
+                    this.$bvModal.hide('modal-delivery-edit');
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
                 });
-            },
-            cancel() {
-                this.form.status = this.modelDelivery.status;
-                this.form.tariff_id = this.modelDelivery.tariff_id;
-                this.form.pdd = this.modelDelivery.pdd;
-                this.form.receiver_name = this.modelDelivery.receiver_name;
-                this.form.receiver_phone = this.modelDelivery.receiver_phone;
-                this.form.receiver_email = this.modelDelivery.receiver_email;
-                if (!this.modelDelivery.point_id) {
-                    this.form.delivery_address.address_string = this.modelDelivery.delivery_address.address_string;
-                    this.form.delivery_address.porch = this.modelDelivery.delivery_address.porch;
-                    this.form.delivery_address.floor = this.modelDelivery.delivery_address.floor;
-                    this.form.delivery_address.intercom = this.modelDelivery.delivery_address.intercom;
-                    this.form.delivery_address.comment = this.modelDelivery.delivery_address.comment;
-                } else {
-                    this.form.point_id = this.modelDelivery.point_id;
-                }
-                this.$v.$reset();
             },
             resetModal() {
                 this.delivery = {};
@@ -377,7 +359,6 @@
         created() {
             Services.showLoader();
             Services.net().get(this.getRoute('orders.detail.deliveries', {id: this.order.id, deliveryId: this.delivery.id})).then(data => {
-                this.deliveryStatuses = data.deliveryStatuses;
                 this.points = data.points;
                 this.tariffs = data.tariffs;
                 this.$bvModal.show('modal-delivery-edit');

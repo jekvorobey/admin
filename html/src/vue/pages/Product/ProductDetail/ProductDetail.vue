@@ -60,7 +60,8 @@
         <orders-tab
                 v-if="nav.currentTab === 'orders'"
                 :orders="this.product.orders"
-                :orderStatuses="this.options.orderStatuses"
+                :allStatuses="this.options.orderStatuses"
+                :offersIds="this.product.offersIds"
         ></orders-tab>
         <history-tab
                 v-if="nav.currentTab === 'history'"

@@ -20,8 +20,8 @@
             <tr v-for="order in orders">
                 <td>{{ order.order_number }}</td>
                 <td>{{ order.name }}</td>
-                <td>{{ order.qty }}</td>
-                <td>{{ order.price_commission }}</td>
+                <td>{{ order.qty | integer}}</td>
+                <td>{{ roundValue(order.price_commission) }}</td>
                 <td>{{ order.order_date }}</td>
                 <td>{{ order.source_name }}</td>
                 <td>{{ order.customer_id }}</td>
@@ -37,6 +37,7 @@
 <script>
 import Services from '../../../../../scripts/services/services.js';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+import Helpers from "../../../../../scripts/helpers.js";
 
 export default {
     name: 'tab-order-referrer',
@@ -48,6 +49,9 @@ export default {
         }
     },
     methods: {
+        roundValue(value) {
+            return Helpers.roundValue(value)
+        },
         deleteOrderHistory(order_id) {
             Services.showLoader();
             Services.net().delete(this.getRoute('customers.detail.orderReferrer.delete', {
