@@ -57,7 +57,7 @@
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
                         <v-input v-model="$v.form.phone.$model" :error="errorPhone">Телефон</v-input>
                         <v-input v-model="$v.form.email.$model" :error="errorEmail">Email</v-input>
-                        <v-input v-model="$v.form.site" >Ссылка на сайт</v-input>
+                        <v-input v-model="$v.form.site.$model" >Ссылка на сайт</v-input>
                         <span>Добавить контакты</span>
                         <button  type="button" class="btn btn-light" @click="addRow()"><fa-icon icon="plus"></fa-icon></button>
                         <div v-for="(contact, index) in form.contacts" class="d-flex align-items-center justify-content-between">
@@ -142,8 +142,7 @@
                     phone: null,
                     email: null,
                     site: null,
-                    contacts: [
-                    ]
+                    contacts: []
                 },
                 tmpContacts: [
                 ],
@@ -191,7 +190,7 @@
                 this.form.phone = null;
                 this.form.email = null;
                 this.form.site = null;
-                this.form.contacts = []
+                this.form.contacts = [];
                 this.openModal('OrganizerFormModal');
             },
 
@@ -214,7 +213,7 @@
                 }
                 Services.showLoader();
                 this[ACT_SAVE_ORGANIZER]({
-                    id: this.editOrganizersId,
+                    id: this.editOrganizerId,
                     organizer: this.form
                 }).then(() => {
                     return this[ACT_LOAD_PAGE]({page: this.page});

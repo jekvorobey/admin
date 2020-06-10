@@ -199,6 +199,10 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'MarketingController@index')->name('settings.marketing');
             Route::put('', 'MarketingController@update')->name('settings.marketing.update');
         });
+
+        Route::prefix('packages')->group(function () {
+            Route::get('', 'PackagesController@list')->name('settings.packages.list');
+        });
     });
 
     Route::prefix('notifications')->group(function () {
@@ -250,6 +254,28 @@ Route::middleware('auth')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
                             Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
                             Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                        });
+
+                        Route::prefix('/shipment-packages')->group(function () {
+                            Route::post('addShipmentPackage', 'TabShipmentsController@addShipmentPackage')
+                                ->name('orders.detail.shipments.addShipmentPackage');
+
+                            Route::prefix('/{shipmentPackageId}')->where(['shipmentPackageId' => '[0-9]+'])->group(function () {
+                                Route::delete('', 'TabShipmentsController@deleteShipmentPackage')
+                                    ->name('orders.detail.shipments.deleteShipmentPackage');
+
+                                Route::prefix('/items')->group(function () {
+                                    Route::post('', 'TabShipmentsController@addShipmentPackageItems')
+                                        ->name('orders.detail.shipments.addShipmentPackageItems');
+
+                                    Route::prefix('/{basketItemId}')->where(['basketItemId' => '[0-9]+'])->group(function () {
+                                        Route::put('', 'TabShipmentsController@editShipmentPackageItem')
+                                            ->name('orders.detail.shipments.editShipmentPackageItem');
+                                        Route::delete('', 'TabShipmentsController@deleteShipmentPackageItem')
+                                            ->name('orders.detail.shipments.deleteShipmentPackageItem');
+                                    });
+                                });
+                            });
                         });
                     });
                 });
@@ -552,6 +578,12 @@ Route::middleware('auth')->group(function () {
                             Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
                         });
                     });
+
+                    Route::prefix('newsletter')->group(function () {
+                        Route::get('', 'TabNewsletterController@load')->name('customers.detail.newsletter');
+                        Route::put('edit', 'TabNewsletterController@edit')->name('customers.detail.newsletter.edit');
+                    });
+                    
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
                         Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');
@@ -650,15 +682,55 @@ Route::middleware('auth')->group(function () {
         Route::prefix('speakers')->group(function () {
             Route::get('', 'SpeakerController@list')->name('public-event.speakers.list');
             Route::get('page', 'SpeakerController@page')->name('public-event.speakers.page');
+            Route::get('fullPage', 'SpeakerController@fullPage')->name('public-event.speakers.fullPage');
             Route::post('save', 'SpeakerController@save')->name('public-event.speakers.save');
             Route::post('delete', 'SpeakerController@delete')->name('public-event.speakers.delete');
+            Route::get('{stage_id}', 'SpeakerController@getByStage')->name('public-event.sprint-stage.getSpeakers');
+            Route::post('{stage_id}', 'SpeakerController@attachStage')->name('public-event.sprint-stage.attachSpeaker');
+            Route::delete('{stage_id}', 'SpeakerController@detachStage')->name('public-event.sprint-stage.detachSpeaker');
+        });
+
+        Route::prefix('ticket-types')->group(function () {
+            Route::get('', 'PublicEventTicketTypeController@list')->name('public-event.ticket-types.list');
+            Route::get('page', 'PublicEventTicketTypeController@page')->name('public-event.ticket-types.page');
+            //Route::get('{sprint_id}', 'PublicEventTicketTypeController@getBySprint')->name('public-event.sprint.getTicketTypes');
+            Route::post('save', 'PublicEventTicketTypeController@save')->name('public-event.ticket-types.save');
+            Route::post('delete', 'PublicEventTicketTypeController@delete')->name('public-event.ticket-types.delete');
+            //Route::post('{sprint_id}', 'PublicEventTicketTypeController@createBySprint')->name('public-event.sprint.createTicketType');
+        });
+
+        Route::prefix('sprint-stages')->group(function () {
+            Route::get('', 'PublicEventSprintStageController@list')->name('public-event.sprint-stages.list');
+            Route::get('page', 'PublicEventSprintStageController@page')->name('public-event.sprint-stages.page');
+            // Route::get('{sprint_id}', 'PublicEventSprintStageController@getBySprint')->name('public-event.sprint.getSprintStages');
+            Route::post('save', 'PublicEventSprintStageController@save')->name('public-event.sprint-stages.save');
+            Route::post('delete', 'PublicEventSprintStageController@delete')->name('public-event.sprint-stages.delete');
+            // Route::post('{sprint_id}', 'PublicEventSprintStageController@createBySprint')->name('public-event.sprint.createSprintStage');
+        });
+
+        Route::prefix('professions')->group(function () {
+            Route::get('', 'PublicEventProfessionController@list')->name('public-event.professions.list');
+            Route::get('names', 'PublicEventProfessionController@names')->name('public-event.professions.names');
+            Route::get('page', 'PublicEventProfessionController@page')->name('public-event.professions.page');
+            Route::get('{event_id}', 'PublicEventProfessionController@getByEvent')->name('public-event.event.getProfessions');
+            Route::post('save', 'PublicEventProfessionController@save')->name('public-event.professions.save');
+            Route::post('delete', 'PublicEventProfessionController@delete')->name('public-event.professions.delete');
+            Route::post('{event_id}', 'PublicEventProfessionController@createByEvent')->name('public-event.event.createProfession');
         });
 
         Route::prefix('places')->group(function () {
             Route::get('', 'PlaceController@list')->name('public-event.places.list');
             Route::get('page', 'PlaceController@page')->name('public-event.places.page');
+            Route::get('fullList', 'PlaceController@fullList')->name('public-event.places.fullList');
             Route::post('save', 'PlaceController@save')->name('public-event.places.save');
             Route::post('delete', 'PlaceController@delete')->name('public-event.places.delete');
+        });
+
+        Route::prefix('sprints')->group(function () {
+            Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
+            Route::get('page', 'PublicEventSprintController@page')->name('public-event.sprints.page');
+            Route::post('save', 'PublicEventSprintController@save')->name('public-event.sprints.save');
+            Route::post('delete', 'PublicEventSprintController@delete')->name('public-event.sprints.delete');
         });
 
         Route::prefix('{event_id}')->group(function () {

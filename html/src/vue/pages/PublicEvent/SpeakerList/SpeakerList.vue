@@ -59,7 +59,7 @@
                 </div>
                 <div slot="body">
                     <div class="form-group">
-                        <v-input v-model="$v.form.first_name.$model" :error="errorFirstName">Название*</v-input>
+                        <v-input v-model="$v.form.first_name.$model" :error="errorFirstName">Имя*</v-input>
                         <v-input v-model="$v.form.last_name.$model" :error="errorLastName">Фамилия</v-input>
                         <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество</v-input>
                         <v-input v-model="$v.form.phone.$model" :error="errorPhone" >Телефон*</v-input>
@@ -95,13 +95,6 @@
         NAMESPACE,
         SET_PAGE,
     } from '../../../store/modules/speakers';
-
-    import {
-        PROF_NAMESPACE,
-        SET_PROFESSIONS,
-        GET_PROFESSION_LIST,
-        ACT_PROFESSION_LOAD,
-    } from '../../../store/modules/professions';
 
 
     import modalMixin from '../../../mixins/modal';
@@ -140,11 +133,6 @@
                 total: this.iTotal,
                 page: this.iCurrentPage,
             });
-            this.$store.commit(`${PROF_NAMESPACE}/${SET_PROFESSIONS}`, {
-                list: {
-                    name: 'qweqwe'
-                }
-            });
 
             return {
                 editSpeakerId: null,
@@ -178,9 +166,7 @@
                 ACT_DELETE_SPEAKERS,
             ]
             ),
-            ...mapActions(PROF_NAMESPACE, [
-                ACT_PROFESSION_LOAD
-            ]),
+            
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
@@ -262,9 +248,6 @@
                 pageSize: GET_PAGE_SIZE,
                 numPages: GET_NUM_PAGES,
                 speakers: GET_LIST,
-            }),
-            ...mapGetters(PROF_NAMESPACE, {
-                professions: GET_PROFESSION_LIST,
             }),
 
             page: {

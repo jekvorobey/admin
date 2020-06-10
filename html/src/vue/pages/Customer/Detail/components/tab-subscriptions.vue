@@ -5,38 +5,23 @@
                 <div class="card p-4">
                     <div class="card-body">
                         <h5 class="card-title">Подписки пользователя</h5>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="newsletter1" checked>
-                            <label class="custom-control-label" for="newsletter1">
-                                Новинки лучших мировых брендов
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="newsletter2" checked>
-                            <label class="custom-control-label" for="newsletter2">
-                                Персональные рекомендации
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="newsletter3">
-                            <label class="custom-control-label" for="newsletter3">
-                                Избранные статьи от стилистов
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="newsletter4">
-                            <label class="custom-control-label" for="newsletter4">
-                                Новости бренда R+Co
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="newsletter5" checked>
-                            <label class="custom-control-label" for="newsletter5">
-                                Новости Украины
+
+                        <div v-for="(topic, index) in topics" class="custom-control custom-checkbox">
+                            <input type="checkbox"
+                                   v-model="customer.topics"
+                                   :value="topic.id"
+                                   :id="'topic'+index"
+                                   class="custom-control-input"
+                                   :disabled="customer.periodicity === 0">
+                            <label class="custom-control-label" :for="'topic'+index">
+                                {{topic.name}}
                             </label>
                         </div>
 
-                        <button class="btn btn-md btn-success mt-3" disabled>
+                        <button @click="save"
+                                class="btn btn-md btn-success mt-3"
+                                :title="customer.periodicity === null ? 'Не указана периодичность уведомлений':''"
+                                :disabled="customer.periodicity === null">
                             Сохранить изменения
                         </button>
                     </div>
@@ -46,21 +31,16 @@
                 <div class="card p-3 mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Периодичность уведомлений</h5>
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="daily" name="customRadio" class="custom-control-input" checked>
-                            <label class="custom-control-label" for="daily">Каждый день</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="weekly" name="customRadio" class="custom-control-input">
-                            <label class="custom-control-label" for="weekly">1 раз в неделю</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="twiceAMonth" name="customRadio" class="custom-control-input">
-                            <label class="custom-control-label" for="twiceAMonth">2 раза в месяц</label>
-                        </div>
-                        <div class="custom-control custom-radio">
-                            <input type="radio" id="never" name="customRadio" class="custom-control-input">
-                            <label class="custom-control-label" for="never">Никогда</label>
+                        <div v-for="(period, index) in periods" class="custom-control custom-radio">
+                            <input type="radio"
+                                   v-model="customer.periodicity"
+                                   :value="index"
+                                   :id="'period'+index"
+                                   class="custom-control-input"
+                                   checked>
+                            <label class="custom-control-label" :for="'period'+index">
+                                {{period}}
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -68,16 +48,15 @@
                     <div class="card p-3">
                         <div class="card-body">
                             <h5 class="card-title">Предпочитаемый способ связи</h5>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="SMS" checked>
-                                <label class="custom-control-label" for="SMS">
-                                    SMS
-                                </label>
-                            </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="Email" checked>
-                                <label class="custom-control-label" for="Email">
-                                    Email
+                            <div v-for="(channel, index) in channels" class="custom-control custom-checkbox">
+                                <input type="checkbox"
+                                       v-model="customer.channels"
+                                       :value="index"
+                                       :id="'channel'+index"
+                                       class="custom-control-input"
+                                       :disabled="customer.periodicity === 0">
+                                <label class="custom-control-label" :for="'channel'+index">
+                                    {{channel}}
                                 </label>
                             </div>
                         </div>
@@ -88,8 +67,56 @@
 </template>
 
 <script>
+    import Services from "../../../../../scripts/services/services.js";
+
     export default {
-        name: "tab-subscriptions"
+        name: "tab-subscriptions",
+        props: ['model'],
+        data() {
+            return {
+                topics: null,
+                periods: null,
+                channels: null,
+                customer: {
+                    topics: null,
+                    periodicity: null,
+                    channels: null,
+                }
+            }
+        },
+        methods: {
+            refresh() {
+                Services.showLoader();
+                Services.net().get(this.getRoute('customers.detail.newsletter',
+                    {id: this.model.id}))
+                    .then(data => {
+                        this.topics = data.topics;
+                        this.periods = data.periods;
+                        this.channels = data.channels;
+                        this.customer.topics = JSON.parse(data.customer.topics) || [];
+                        this.customer.periodicity = data.customer.periodicity;
+                        this.customer.channels = JSON.parse(data.customer.channels) || [];
+                    }).finally(() => {
+                    Services.hideLoader();
+                })
+            },
+            save() {
+                Services.showLoader();
+                Services.net().put(this.getRoute('customers.detail.newsletter.edit',
+                    {id: this.model.id}), this.customer)
+                    .then(() => {
+                        this.refresh();
+                        Services.msg('Изменения сохранены')
+                    }, () => {
+                        Services.msg('Не удалось сохранить параметры подписки','danger')
+                    }).finally(() => {
+                    Services.hideLoader();
+                })
+            }
+        },
+        created() {
+            this.refresh();
+        }
     }
 </script>
 

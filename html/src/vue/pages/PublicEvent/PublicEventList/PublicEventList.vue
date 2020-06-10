@@ -16,17 +16,17 @@
                         <td>{{ placeName(publicEvent) }}</td>
                         <td v-html="ticketsCount(publicEvent)"></td>
                         <td v-html="statusIndicator(publicEvent)"></td>
-                        <td>
+                        <!-- <td>
                             <button class="btn btn-outline-dark" v-b-toggle="'collapse' + publicEvent.id">Раскрыть</button>
-                        </td>
+                        </td> -->
                     </tr>
-                    <tr class="table-light">
+                    <!-- <tr class="table-light">
                         <td class="td-collapse-wrapper" colspan="3">
                             <b-collapse :id="'collapse' + publicEvent.id" accordion="publicEventList">
                                 WIP
                             </b-collapse>
                         </td>
-                    </tr>
+                    </tr> -->
                 </template>
             </tbody>
         </table>

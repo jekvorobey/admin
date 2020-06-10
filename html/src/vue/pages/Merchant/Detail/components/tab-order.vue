@@ -133,7 +133,7 @@
             </div>
         </div>
 
-        <table class="table table-condensed">
+        <table class="table table-condensed table-responsive">
             <thead>
             <tr>
                 <th>

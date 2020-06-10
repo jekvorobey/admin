@@ -12,7 +12,6 @@ import publicEvents from './modules/public-events.js';
 import places from './modules/places.js';
 import speakers from './modules/speakers.js';
 import types from './modules/types.js';
-import professions from './modules/professions.js';
 
 
 Vue.use(Vuex);
@@ -35,7 +34,6 @@ export default new Vuex.Store({
         organizers,
         speakers,
         types,
-        professions,
     },
     mutations: {
         loaderShow(state, loaderShow) {

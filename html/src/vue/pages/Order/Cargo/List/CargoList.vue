@@ -31,7 +31,7 @@
                     <div v-if="opened" class="additional-filter pt-3 mt-3">
                         <div class="row">
                             <f-input v-model="filter.shipment_number" class="col-2">
-                                № заказа в грузе
+                                № отправления
                             </f-input>
                             <f-date v-model="filter.created_at" class="col-2" range confirm>
                                 Дата создания

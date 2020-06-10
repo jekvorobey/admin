@@ -12113,6 +12113,11 @@ vue2-datepicker@^3.4.1:
     date-fns "^2.0.1"
     date-format-parse "^0.2.5"
 
+vue2-timepicker@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/vue2-timepicker/-/vue2-timepicker-1.1.2.tgz#052627861a090f42b1d566bf71beb0360e26935a"
+  integrity sha512-kjAvjQ0q/UkdsaWQ2mUfNvYGRzDN8qJeRA6MPFj76kp7dVeMt5vwUYg2ZR5QvenR9Mug0W8ZZ5H+lwmcZsXdkg==
+
 vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"

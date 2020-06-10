@@ -59,6 +59,14 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <button @click="filtratePromoCodes"
+                        class="btn btn-dark btn-sm ml-2">Применить
+                </button>
+                <button @click="cleanFilter"
+                        class="btn btn-outline-dark btn-sm ml-2">Очистить
+                </button>
+            </div>
         </div>
         <div class="row mb-3">
             <div class="col-12 mt-3">
@@ -107,10 +115,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-if="filtratePromoCodes.length < 1">
+                <tr v-if="filtratedPromoCodes.length < 1">
                     <td colspan="11" class="text-center">Промокоды не найдены!</td>
                 </tr>
-                <tr v-if="filtratePromoCodes.length" v-for="(promoCode, index) in filtratePromoCodes">
+                <tr v-if="filtratedPromoCodes.length" v-for="(promoCode, index) in filtratedPromoCodes">
                     <td>
                         <input v-model="selectPromoCodes" type='checkbox' :value="promoCode.id"/>
                     </td>
@@ -180,6 +188,7 @@ export default {
                 code: '',
                 owner: null,
             },
+            filtratedPromoCodes: [...this.iPromoCodes],
             total: 0,
             currentPage: this.iCurrentPage,
             promoCodes: [...this.iPromoCodes],
@@ -219,10 +228,18 @@ export default {
         promoCodeStatusName(status) {
             return (status in this.statuses) ? this.statuses[status]['name'] : 'N/A';
         },
-    },
-    computed: {
+        cleanFilter() {
+            Object.keys(this.filter).forEach(key =>
+                this.filter[key] = null
+            )
+            this.filtratePromoCodes();
+        },
+        /**
+         * Отфильтровать промокоды
+         * @returns {[]}
+         */
         filtratePromoCodes() {
-            let promoCodes = [];
+            this.filtratedPromoCodes = []
 
             this.promoCodes.forEach(promoCode => {
                 if(this.filter.created_at) {
@@ -315,10 +332,13 @@ export default {
                     }
                 }
 
-                promoCodes.push(promoCode);
+                this.filtratedPromoCodes.push(promoCode);
             });
-            return promoCodes;
+            //return promoCodes;
         },
+
+    },
+    computed: {
     }
 }
 </script>

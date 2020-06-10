@@ -31,7 +31,7 @@
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
-                <button class="btn btn-info" @click="save">Сохранить</button>
+                <button class="btn btn-info" @click="save" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </template>
     </b-modal>
@@ -95,18 +95,12 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.shipments.save', {id: this.order.id, shipmentId: this.shipment.id}), {}, this.form).then((data) => {
                     this.order = data.order;
+                    this.$bvModal.hide('modal-shipment-edit');
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {
                     Services.hideLoader();
                 });
-            },
-            cancel() {
-                this.form.status = this.modelShipment.status;
-                this.form.delivery_service_zero_mile = this.modelShipment.delivery_service_zero_mile;
-                this.form.psd = this.modelShipment.psd;
-                this.form.fsd = this.modelShipment.fsd;
-                this.$v.$reset();
             },
             resetModal() {
                 this.shipment = {};
@@ -148,5 +142,8 @@
                 }
             },
         },
+        created() {
+            setTimeout(() => this.$bvModal.show('modal-shipment-edit'), 100);
+        }
 };
 </script>
