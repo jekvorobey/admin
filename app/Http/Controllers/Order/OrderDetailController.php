@@ -236,7 +236,7 @@ class OrderDetailController extends Controller
         $storeIds = $storeIds->unique();
         $storeQuery = $storeService->newQuery()
             ->setFilter('id', $storeIds);
-        $stores = $storeService->stores($storeQuery);
+        $stores = $storeService->stores($storeQuery)->keyBy('id');
 
         /** @var Collection|PointDto[] $points */
         $points = collect();
