@@ -231,7 +231,7 @@ class OrderDetailController extends Controller
         // Получаем склады заказа
         $storeIds = collect();
         foreach ($order->deliveries as $delivery) {
-            $storeIds->merge($delivery->shipments->pluck('store_id'));
+            $storeIds = $storeIds->merge($delivery->shipments->pluck('store_id'));
         }
         $storeIds = $storeIds->unique();
         $storeQuery = $storeService->newQuery()
