@@ -122,8 +122,9 @@ class OrderListController extends Controller
             [
                 'number' => 'string|sometimes',
                 'customer' => 'string|sometimes',
-                'created_at' => 'array|sometimes',
-                'created_at.*' => 'string',
+                'created_at' => 'string',
+                'created_between' => 'array|sometimes',
+                'created_between.*' => 'string',
                 'status.*' => Rule::in(array_keys(OrderStatus::allStatuses())),
                 'price_from' => 'numeric|sometimes',
                 'price_to' => 'numeric|sometimes',
@@ -328,11 +329,16 @@ class OrderListController extends Controller
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
-                    case 'created_at':
+                    case 'created_between':
                         $value = array_filter($value);
                         if ($value) {
-                            $restQuery->setFilter($key, '>=', $value[0]);
-                            $restQuery->setFilter($key, '<=', $value[1]);
+                            $restQuery->setFilter('created_at', '>=', $value[0]);
+                            $restQuery->setFilter('created_at', '<=', $value[1]);
+                        }
+                        break;
+                    case 'created_at':
+                        if ($value) {
+                            $restQuery->setFilter($key, 'like', "{$value}%");
                         }
                         break;
                     case 'price_from':
