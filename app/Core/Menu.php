@@ -104,6 +104,10 @@ class Menu
                         'title' => 'Управление страницами',
                         'route' => route('landing.listPage'),
                     ],
+                    /*[
+                        'title' => 'Управление соц. сетями',
+                        'route' => route('socialMedia.list'),
+                    ],*/
 //                    [
 //                        'title' => 'Шаблоны страниц',
 //                        'route' => '#',
