@@ -106,7 +106,7 @@ class Menu
                     ],
                     /*[
                         'title' => 'Управление соц. сетями',
-                        'route' => route('socialMedia.list'),
+                        'route' => route('contacts.list'),
                     ],*/
 //                    [
 //                        'title' => 'Шаблоны страниц',

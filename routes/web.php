@@ -419,11 +419,11 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
         });
 
-        Route::prefix('social-media')->namespace('SocialMedia')->group(function () {
-            Route::get('', 'SocialMediaController@read')->name('socialMedia.list');
-            Route::post('create', 'SocialMediaController@create')->name('socialMedia.create');
-            Route::put('edit', 'SocialMediaController@edit')->name('socialMedia.edit');
-            Route::delete('', 'SocialMediaController@delete')->name('socialMedia.delete');
+        Route::prefix('contacts')->namespace('Contacts')->group(function () {
+            Route::get('', 'ContactsController@list')->name('contacts.list');
+            Route::post('add', 'ContactsController@add')->name('contacts.add');
+            Route::put('edit', 'ContactsController@edit')->name('contacts.edit');
+            Route::delete('remove', 'ContactsController@remove')->name('contacts.remove');
         });
     });
 
