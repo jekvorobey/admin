@@ -190,7 +190,13 @@
             },
             availableUsers() {
                 return Object.values(this.users).filter(user => {
-                    return Number(this.form.channel_id) !== this.communicationChannelTypes.internal_email || user.email;
+                    switch (Number(this.form.channel_id)) {
+                        case this.communicationChannelTypes.internal_email:
+                            return user.email;
+                        case this.communicationChannelTypes.smsc:
+                            return user.receive_sms !== 0;
+                        default: return true;
+                    }
                 });
             },
             availableThemes() {
