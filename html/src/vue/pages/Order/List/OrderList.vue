@@ -12,11 +12,33 @@
                 <f-input v-model="filter.number" class="col-sm-12 col-md-3 col-xl-2">
                     № заказа
                 </f-input>
-                <f-input v-model="filter.customer" class="col-sm-12 col-md-3 col-xl-6">
+                <f-input v-model="filter.customer" class="col-sm-12 col-md-3 col-xl-5">
                     ФИО, e-mail или телефон покупателя
                 </f-input>
-                <f-date v-model="filter.created_at" class="col-sm-12 col-md-3 col-xl-2" range confirm>
-                    Дата заказа
+                <f-date v-if="!filter.use_period"
+                        v-model="filter.created_at"
+                        @change="filter.created_between = []"
+                        class="col-sm-12 col-md-3 col-xl-3">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox"
+                               v-model="filter.use_period"
+                               class="custom-control-input"
+                               id="created_at">
+                        <label class="custom-control-label" for="created_at">Дата заказа</label>
+                    </div>
+                </f-date>
+                <f-date v-else
+                        v-model="filter.created_between"
+                        @change="filter.created_at = []"
+                        class="col-sm-12 col-md-3 col-xl-3"
+                        range confirm>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox"
+                               v-model="filter.use_period"
+                               class="custom-control-input"
+                               id="created_between">
+                        <label class="custom-control-label" for="created_between">Период заказа</label>
+                    </div>
                 </f-date>
                 <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-3 col-xl-2">
                     Статус
@@ -215,6 +237,7 @@
         number: '',
         customer: '',
         created_at: [],
+        created_between: [],
         status: [],
     }, cleanHiddenFilter);
 
@@ -222,6 +245,7 @@
         'number',
         'customer',
         'created_at',
+        'created_between',
         'status',
         'price_from',
         'price_to',

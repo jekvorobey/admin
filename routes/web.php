@@ -418,6 +418,13 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
         });
+
+        Route::prefix('contacts')->namespace('Contacts')->group(function () {
+            Route::get('', 'ContactsController@list')->name('contacts.list');
+            Route::post('add', 'ContactsController@add')->name('contacts.add');
+            Route::put('edit', 'ContactsController@edit')->name('contacts.edit');
+            Route::delete('remove', 'ContactsController@remove')->name('contacts.remove');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
