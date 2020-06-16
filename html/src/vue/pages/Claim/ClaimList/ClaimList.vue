@@ -24,8 +24,16 @@
                 <transition name="slide">
                     <div v-if="opened" class="additional-filter pt-3 mt-3">
                         <div class="row">
-                            <f-date v-model="filter.created_at" class="col" range confirm>
-                                Дата создания
+                            <f-date v-model="filter.created_at"
+                                    class="col-6"
+                                    @change="filter.created_between = []">
+                                Дата создания <b>(Точная)</b>
+                            </f-date>
+                            <f-date v-model="filter.created_between"
+                                    class="col-6"
+                                    @change="filter.created_at = []"
+                                    range confirm>
+                                Дата создания <b>(Период)</b>
                             </f-date>
                         </div>
                     </div>
@@ -87,7 +95,7 @@
     import modalMixin from '../../../mixins/modal';
 
     const cleanHiddenFilter = {
-    created_at: [],
+    created_at: [], created_between: [],
 };
 
 const cleanFilter = Object.assign({
@@ -101,6 +109,7 @@ const serverKeys = [
     'merchantId',
     'status',
     'created_at',
+    'created_between',
 ];
 
 export default {

@@ -11,6 +11,8 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\OperatorService\OperatorService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -128,10 +130,14 @@ class UsersController extends Controller
      * Получение пользователей по массиву ролей
      *
      * @param UserService $userService
+     * @param OperatorService $operatorService
      * @param RequestInitiator $user
      * @return \Illuminate\Http\JsonResponse
      */
-    public function usersByRoles(UserService $userService, RequestInitiator $user)
+    public function usersByRoles(
+        UserService $userService,
+        OperatorService $operatorService,
+        RequestInitiator $user)
     {
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
@@ -143,14 +149,37 @@ class UsersController extends Controller
                 ->addFields(UserDto::class, 'id', 'full_name', 'phone', 'email')
                 ->setFilter('id', '!=', $user->userId())
                 ->setFilter('role', $data['role_ids'])
-        )->map(function (UserDto $user) {
+        );
+        $user_ids = $users->keyBy('id')->keys()->toArray();
+
+        // У сотрудников мерчанта подгружается информация о доступности SMS-канала //
+        $operators = null;
+        if (
+            (in_array(UserDto::MAS__MERCHANT_OPERATOR, $data['role_ids']))
+            ||(in_array(UserDto::MAS__MERCHANT_ADMIN, $data['role_ids']))
+        ) {
+            $operators = $operatorService->operators(
+                (new RestQuery())->setFilter('user_id', $user_ids)
+            )->keyBy('user_id');
+        }
+
+        $users = $users->map(function (UserDto $user) use ($operators) {
+            $sms_status = null;
+            if (isset($operators)) {
+                /** @var OperatorDto $operator */
+                foreach ($operators as $operator) {
+                    if ($user->id == $operator->user_id) {
+                        $sms_status = $operator->is_receive_sms;
+                    }
+                }
+            }
             return [
                 'id' => $user->id,
                 'title' => $user->getTitle(),
                 'email' => $user->email,
+                'receive_sms' => $sms_status
             ];
-        })->keyBy('id')
-            ->all();
+        })->keyBy('id')->all();
 
         return response()->json([
             'users' => $users,
