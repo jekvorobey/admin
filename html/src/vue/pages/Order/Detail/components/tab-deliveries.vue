@@ -47,7 +47,12 @@
                 </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Статус доставки у ЛО:</span>
-                    {{delivery.status_xml_id}} {{delivery.status_xml_id_at}}
+                    <span v-if="delivery.status_xml_id">
+                        {{delivery.status_xml_id.name}}
+                        <fa-icon icon="question-circle" v-if="delivery.status_xml_id.description"
+                                v-b-popover.hover="delivery.status_xml_id.description"></fa-icon>
+                    </span>
+                    {{delivery.status_xml_id_at}}
                 </div>
             </b-row>
             <b-row class="mt-2 border-top">
@@ -149,8 +154,8 @@
     </div>
 </template>
 <script>
-    import Services from "../../../../../scripts/services/services";
-    import ModalDeliveryEdit from "./forms/modal-delivery-edit.vue";
+    import Services from '../../../../../scripts/services/services';
+    import ModalDeliveryEdit from './forms/modal-delivery-edit.vue';
 
     export default {
         props: {

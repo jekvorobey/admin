@@ -298,8 +298,9 @@ class OrderDetailController extends Controller
             }
 
             $delivery->status = $delivery->status();
-            $delivery->status_at = $delivery->status_at ? date2str(new Carbon($delivery->status_at)) : '';
-            $delivery->status_xml_id_at = $delivery->status_xml_id_at ? date2str(new Carbon($delivery->status_xml_id_at)) : '';
+            $delivery->status_at = $delivery->status_at ? dateTime2str(new Carbon($delivery->status_at)) : '';
+            $delivery->status_xml_id = $delivery->statusXmlId();
+            $delivery->status_xml_id_at = $delivery->status_xml_id_at ? dateTime2str(new Carbon($delivery->status_xml_id_at)) : '';
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();

@@ -658,12 +658,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "42b664fcee6edb7e489cdd28398d4ce97e72e9a5"
+                "reference": "f48f49724ee68c89c9de1781da56419f346fcac5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=42b664fcee6edb7e489cdd28398d4ce97e72e9a5",
-                "reference": "42b664fcee6edb7e489cdd28398d4ce97e72e9a5",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=f48f49724ee68c89c9de1781da56419f346fcac5",
+                "reference": "f48f49724ee68c89c9de1781da56419f346fcac5",
                 "shasum": ""
             },
             "require": {
@@ -698,7 +698,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-05-25T14:16:46+00:00"
+            "time": "2020-06-16T09:15:40+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -839,12 +839,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "ac8f86e15463c43f63233278b33b06db2d17bf8c"
+                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=ac8f86e15463c43f63233278b33b06db2d17bf8c",
-                "reference": "ac8f86e15463c43f63233278b33b06db2d17bf8c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=eacf34cbd6b907e7dd787466d38eaddb191ea780",
+                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780",
                 "shasum": ""
             },
             "require": {
@@ -880,7 +880,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-06-09T20:12:01+00:00"
+            "time": "2020-06-16T09:27:56+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -888,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "40a81dfcaaeb0abfcdda563da78fe3c538f72951"
+                "reference": "2954f3ef8c8f41e8acd0cb174bb9a4310909978a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=40a81dfcaaeb0abfcdda563da78fe3c538f72951",
-                "reference": "40a81dfcaaeb0abfcdda563da78fe3c538f72951",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=2954f3ef8c8f41e8acd0cb174bb9a4310909978a",
+                "reference": "2954f3ef8c8f41e8acd0cb174bb9a4310909978a",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-06-15T09:44:10+00:00"
+            "time": "2020-06-15T17:52:43+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -2565,7 +2565,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -3055,7 +3055,7 @@
         },
         {
             "name": "symfony/mime",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mime.git",
@@ -6539,7 +6539,7 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.1.1",
+            "version": "v5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
