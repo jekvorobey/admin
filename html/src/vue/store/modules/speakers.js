@@ -17,6 +17,7 @@ export const ACT_LOAD_PAGE = 'act_load_page';
 export const ACT_SAVE_SPEAKERS = 'act_save_speakers';
 export const ACT_DELETE_SPEAKERS = 'act_delete_speakers';
 
+export const ACT_LOAD_PROFESSIONS = 'act_load_professions';
 
 const PAGE_SIZE = 10;
 
@@ -60,6 +61,11 @@ export default {
         },
         [ACT_DELETE_SPEAKERS]({rootGetters}, {ids}) {
             return Services.net().post(rootGetters.getRoute('public-event.speakers.delete'), {}, {ids});
-        }
+        },
+        [ACT_LOAD_PROFESSIONS]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.professions.names'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
     }
 }

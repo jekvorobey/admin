@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createType">Создать тип события</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
-                <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
+                <span class="mr-4 align-self-baseline">Выбрано типов события: {{massAll(massSelectionType).length}}</span>
                 <v-delete-button @delete="() => deleteTypes(massAll(massSelectionType))"/>
             </div>
         </div>
@@ -50,7 +50,7 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('TypeFormModal')">
                 <div slot="header">
-                    Бренд
+                    Тип события
                 </div>
                 <div slot="body">
                     <div class="form-group">

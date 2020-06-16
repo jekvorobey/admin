@@ -83,6 +83,15 @@ class PublicEventDetailController extends Controller
             'id' => $id
         ]);
     }
+
+    public function recommendations($event_id, PublicEventService $publicEventService)
+    {
+        $event = $publicEventService->query()->setFilter('id', $event_id)->withRecommendations()->get()->first()->recommendations;
+
+        return response()->json([
+            'recommendations' => $event
+        ]);
+    }
     
     public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService)
     {
@@ -167,6 +176,18 @@ class PublicEventDetailController extends Controller
         $publicEventService->deleteSprint($event_id, $sprintId);
         return response()->json();
     }
+
+    public function attachRecommendation(int $event_id, int $recommendation_id, PublicEventService $publicEventService)
+    {
+        $publicEventService->attachRecommendation($event_id, $recommendation_id);
+        return response()->json();
+    }
+
+    public function detachRecommendation(int $event_id, int $recommendation_id, PublicEventService $publicEventService)
+    {
+        $publicEventService->detachRecommendation($event_id, $recommendation_id);
+        return response()->json();
+    }
     
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto
     {
@@ -180,6 +201,7 @@ class PublicEventDetailController extends Controller
                 ->withPlace()
                 ->withSpeakers()
                 ->withProfessions()
+                ->withRecommendations()
                 ->withType()
                 ->withMedia()
                 ->get()

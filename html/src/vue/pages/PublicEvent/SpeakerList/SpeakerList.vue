@@ -3,8 +3,8 @@
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createSpeaker">Добавить спикера</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
-                <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
-                <v-delete-button @delete="() => deleteSpeackers(massAll(massSelectionType))"/>
+                <span class="mr-4 align-self-baseline">Выбрано спикеров: {{massAll(massSelectionType).length}}</span>
+                <v-delete-button @delete="() => deleteSpeakers(massAll(massSelectionType))"/>
             </div>
         </div>
         <table class="table">
@@ -15,13 +15,18 @@
                     <th>Аватар</th>
                     <th>Имя</th>
                     <th>Фамилия</th>
+                    <th>Описание</th>
                     <th>Телефон</th>
                     <th>Email</th>
+                    <th>Описание</th>
+                    <th>Instagram</th>
+                    <th>Facebook</th>
+                    <th>LinkedIn</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="speaker in speakers">
+                <tr v-for="speaker in speakers" :key="speaker.id">
                     <td>
                         <input type="checkbox"
                                 :checked="massHas({type: massSelectionType, id: speaker.id})"
@@ -31,8 +36,13 @@
                     <td><img :src="fileUrl(speaker.file_id)" class="preview"></td>
                     <td>{{speaker.first_name }}</td>
                     <td>{{speaker.last_name}}</td>
+                    <td>{{speaker.description}}</td>
                     <td>{{speaker.phone}}</td>
                     <td>{{speaker.email}}</td>
+                    <td>{{speaker.description}}</td>
+                    <td>{{speaker.instagram}}</td>
+                    <td>{{speaker.facebook}}</td>
+                    <td>{{speaker.linkedin}}</td>
                     <td>
                         <v-delete-button @delete="() => deleteSpeakers([speaker.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editSpeaker(speaker)">
@@ -64,7 +74,12 @@
                         <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество</v-input>
                         <v-input v-model="$v.form.phone.$model" :error="errorPhone" >Телефон*</v-input>
                         <v-input v-model="$v.form.email.$model" :error="errorEmail" >Email*</v-input>
-                        <b-form-checkbox v-model="$v.form.global.$model" >Глобальный спикер</b-form-checkbox>
+                        <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание</v-input>
+                        <v-input v-model="$v.form.instagram.$model" :error="errorInstagram">Instagram</v-input>
+                        <v-input v-model="$v.form.facebook.$model" :error="errorFacebook" >Facebook</v-input>
+                        <v-input v-model="$v.form.linkedin.$model" :error="errorLinkedin" >LinkedIn</v-input>
+                        <b-form-checkbox v-model="$v.form.global.$model">Глобальный спикер</b-form-checkbox>
+                        <v-select v-model="$v.form.profession_id.$model" text-field="name" value-field="id" :options="professions">Профессия</v-select>
                         <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
                         <file-input destination="speaker" :error="errorFile" @uploaded="onFileUpload">Аватар*</file-input>
                     </div>
@@ -94,6 +109,7 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
+        ACT_LOAD_PROFESSIONS
     } from '../../../store/modules/speakers';
 
 
@@ -109,6 +125,8 @@
     import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Services from "../../../../scripts/services/services";
 
+    import VSelect from '../../../components/controls/VSelect/VSelect.vue';
+
     export default {
         mixins: [
             modalMixin,
@@ -120,7 +138,8 @@
             Modal,
             VInput,
             FileInput,
-            VDeleteButton
+            VDeleteButton,
+            VSelect
         },
         props: {
             iSpeakers: {},
@@ -136,14 +155,20 @@
 
             return {
                 editSpeakerId: null,
+                professions: [],
                 form: {
                     first_name: null,
                     middle_name: null,
                     last_name: null,
                     phone: null,
                     email: null,
+                    description: null,
+                    instagram: null,
+                    facebook: null,
+                    linkedin: null,
                     file_id: null,
-                    global: false,
+                    global: true,
+                    profession_id: null,
                 },
                 massSelectionType: 'speakers',
             };
@@ -155,8 +180,13 @@
                 last_name: {required},
                 email: {required},
                 phone: {required},
+                description: {required},
+                instagram: {required},
+                facebook: {required},
+                linkedin: {required},
                 file_id: {required},
-                global: {required}
+                global: {required},
+                profession_id: {required},
             }
         },
         methods: {
@@ -164,8 +194,8 @@
                 ACT_LOAD_PAGE,
                 ACT_SAVE_SPEAKERS,
                 ACT_DELETE_SPEAKERS,
-            ]
-            ),
+                ACT_LOAD_PROFESSIONS
+            ]),
             
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
@@ -182,8 +212,13 @@
                 this.form.middle_name = null;
                 this.form.phone = null;
                 this.form.email = null;
+                this.form.description = null;
+                this.form.instagram = null;
+                this.form.facebook = null;
+                this.form.linkedin = null;
                 this.form.file_id = null;
-                this.form.global = null;
+                this.form.global = true;
+                this.form.profession_id = null;
                 this.openModal('SpeakerFormModal');
             },
 
@@ -195,8 +230,13 @@
                 this.form.middle_name = speaker.middle_name;
                 this.form.phone = speaker.phone;
                 this.form.email = speaker.email;
+                this.form.description = speaker.description;
+                this.form.instagram = speaker.instagram;
+                this.form.facebook = speaker.facebook;
+                this.form.linkedin = speaker.linkedin;
                 this.form.file_id = speaker.file_id;
-                this.form.global = speaker.global;
+                this.form.global = speaker.global ? true : false;
+                this.form.profession_id = speaker.profession_id;
                 this.openModal('SpeakerFormModal');
             },
             onSave() {
@@ -218,7 +258,7 @@
             onCancel() {
                 this.closeModal();
             },
-            deleteBrands(ids) {
+            deleteSpeakers(ids) {
                 Services.showLoader();
                 this[ACT_DELETE_SPEAKERS]({ids})
                     .then(() => {
@@ -240,6 +280,10 @@
                     this.page = query.page;
                 }
             };
+            this[ACT_LOAD_PROFESSIONS]()
+                .then(response => {
+                    this.professions = response.professions;
+                });
         },
         computed: {
             ...mapGetters(NAMESPACE, {
@@ -287,6 +331,31 @@
             errorFile() {
                 if (this.$v.form.file_id.$dirty) {
                     if (!this.$v.form.file_id.required) return "Обязательное поле!";
+                }
+            },
+             errorProfessionId() {
+                if (this.$v.form.profession_id.$dirty) {
+                    if (!this.$v.form.profession_id.required) return "Обязательное поле!";
+                }
+            },
+            errorDescription() {
+                if (this.$v.form.description.$dirty) {
+                    if (!this.$v.form.description.required) return "Обязательное поле!";
+                }
+            },
+            errorInstagram() {
+                if (this.$v.form.instagram.$dirty) {
+                    if (!this.$v.form.instagram.required) return "Обязательное поле!";
+                }
+            },
+            errorFacebook() {
+                if (this.$v.form.facebook.$dirty) {
+                    if (!this.$v.form.facebook.required) return "Обязательное поле!";
+                }
+            },
+             errorLinkedin() {
+                if (this.$v.form.linkedin.$dirty) {
+                    if (!this.$v.form.linkedin.required) return "Обязательное поле!";
                 }
             },
         }

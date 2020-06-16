@@ -38,7 +38,7 @@
         </div>
         <hr>
 
-        <h3 class="mt-3">Галлерея</h3>
+        <h3 class="mt-3">Галерея</h3>
         <div class="row">
             <div class="col">
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">

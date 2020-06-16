@@ -1,7 +1,7 @@
 <template>
     <div>
         <template>
-            <v-select v-model="selectedProfessionId" text-field="name" value-field="id" :options="professions" />
+            <v-select v-model="selectedProfessionId" text-field="name" value-field="id" disabled-field="active" :options="professions" />
         </template>
 
         <button @click="save" class="btn btn-dark">Добавить</button>
@@ -40,8 +40,13 @@
         }),
         getProfessions() {
             this.loadProfessions()
-                .then(data => {
-                    this.professions = data.professions;
+                .then(response => {
+                    this.professions = response.professions;
+                    if (this.professions.length) {
+                        this.professions.forEach(profession => {
+                                profession.active = !profession.active;
+                            });
+                    }
                 });
         },
         save() {

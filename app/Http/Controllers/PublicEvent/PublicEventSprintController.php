@@ -13,10 +13,10 @@ class PublicEventSprintController extends Controller
 {
     public function list(Request $request, PublicEventSprintService $publicEventPublicEventSprintService)
     {
-        $sprints = $publicEventPublicEventSprintService->getByEvent($request->input('event_id'));
+        $sprints = collect($publicEventPublicEventSprintService->getByEvent($request->input('event_id')))->flatten(1);
 
         return response()->json([
-            'sprints' => $sprints['items']
+            'sprints' => $sprints
         ]);
     }
     

@@ -18,6 +18,10 @@
                     <th>Фамилия</th>
                     <th>Телефон</th>
                     <th>Email</th>
+                    <th>Описание</th>
+                    <th>Instagram</th>
+                    <th>Facebook</th>
+                    <th>LinkedIn</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
@@ -29,6 +33,10 @@
                     <td>{{speaker.last_name}}</td>
                     <td>{{speaker.phone}}</td>
                     <td>{{speaker.email}}</td>
+                    <td>{{speaker.description}}</td>
+                    <td>{{speaker.instagram}}</td>
+                    <td>{{speaker.facebook}}</td>
+                    <td>{{speaker.linkedin}}</td>
                     <td>
                         <v-delete-button @delete="() => onDeleteSpeaker(speaker.id)" class="float-right ml-1"/>
                     </td>

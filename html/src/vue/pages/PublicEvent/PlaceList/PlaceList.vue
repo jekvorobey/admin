@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createPlace">Создать Место</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
-                <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
+                <span class="mr-4 align-self-baseline">Выбрано мест: {{massAll(massSelectionType).length}}</span>
                 <v-delete-button @delete="() => deletePlaces(massAll(massSelectionType))"/>
             </div>
         </div>
@@ -15,11 +15,12 @@
                     <th>Название</th>
                     <th>Город</th>
                     <th>Адрес</th>
+                    <th>Как пройти</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="place in places">
+                <tr v-for="place in places" :key="place.id">
                     <td>
                         <input type="checkbox"
                                 :checked="massHas({type: massSelectionType, id: place.id})"
@@ -29,8 +30,9 @@
                     <td>{{place.name}}</td>
                     <td>{{place.city_name}}</td>
                     <td>{{place.address}}</td>
+                    <td>{{place.description}}</td>
                     <td>
-                        <v-delete-button @delete="() => deletePlace([place.id])" class="float-right ml-1"/>
+                        <v-delete-button @delete="() => deletePlaces([place.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editPlace(place)">
                             <fa-icon icon="edit"></fa-icon>
                         </button>
@@ -56,11 +58,20 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.city_name.$model" :error="errorCityName">Город</v-input>
-                        <v-input v-model="$v.form.address.$model" :error="errorAddress">Адрес</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
-                        <v-input v-model="$v.form.latitude.$model" :error="errorLatitude">Широта</v-input>
-                        <v-input v-model="$v.form.longitude.$model" :error="errorLongitude">Долгота</v-input>
+                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Как пройти*</v-input>
+                        <img v-if="$v.form.file_id.$model" :src="fileUrl($v.form.file_id.$model)" class="preview">
+                        <file-input destination="place" @uploaded="onFileUpload">Аватар*</file-input>
+                        <b-form-checkbox v-model="$v.form.global.$model">Глобальное место</b-form-checkbox>
+                        <v-dadata
+                            :value="$v.form.address.$model"
+                            :error="errorAddress"
+                            @onSelect="onStoreAddressAdd">
+                                Адрес
+                        </v-dadata>
+                        <v-input v-model="$v.form.city_name.$model" disabled>Город</v-input>
+                        <v-input v-model="$v.form.city_id.$model" disabled>ID Города</v-input>
+                        <v-input v-model="$v.form.latitude.$model" disabled>Широта</v-input>
+                        <v-input v-model="$v.form.longitude.$model" disabled>Долгота</v-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -101,6 +112,7 @@
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Services from "../../../../scripts/services/services";
+    import VDadata from '../../../components/controls/VDaData/VDaData.vue';
 
     export default {
         mixins: [
@@ -113,7 +125,8 @@
             Modal,
             VInput,
             FileInput,
-            VDeleteButton
+            VDeleteButton,
+            VDadata
         },
         props: {
             iPlaces: {},
@@ -134,8 +147,10 @@
                     city_name: null,
                     description: null,
                     address: null,
+                    global: null,
                     latitude: null,
                     longitude: null,
+                    file_id: null
                 },
                 massSelectionType: 'places',
             };
@@ -146,8 +161,11 @@
                 city_name: {required},
                 description: {required},
                 address: {required},
-                latitude: {required},
+                global: {required},
+                city_id: {required},
                 longitude: {required},
+                latitude: {required},
+                file_id: {required}
             }
         },
         methods: {
@@ -163,29 +181,44 @@
 
                 return this[ACT_LOAD_PAGE]({page});
             },
+            onStoreAddressAdd(suggestion) {
+                this.form.address = suggestion.value;
 
+                const address = suggestion.data;
+
+                this.form.city_name = address.city;
+                this.form.city_id = address.fias_id;
+                this.form.latitude = address.geo_lat;
+                this.form.longitude = address.geo_lon;
+            },
             createPlace() {
                 this.$v.form.$reset();
                 this.editPlaceId = null;
                 this.form.name = null;
                 this.form.city_name = null;
+                this.form.city_id = null;
                 this.form.address = null;
                 this.form.description = null;
-                this.form.file_id = null;
                 this.form.latitude = null;
                 this.form.longitude = null;
+                this.form.global = true;
+                this.file_id = null;
                 this.openModal('PlaceFormModal');
             },
 
             editPlace(place) {
                 this.$v.form.$reset();
+                this.owner_id = place.owner_id;
                 this.editPlaceId = place.id;
                 this.form.name = place.name;
                 this.form.city_name = place.city_name;
+                this.form.city_id = place.city_id;
                 this.form.address = place.address;
-                this.form.description = place.description
-                this.form.latitude = place.latitude
-                this.form.longitude = place.longitude
+                this.form.description = place.description;
+                this.form.latitude = place.latitude;
+                this.form.longitude = place.longitude;
+                this.form.global = place.global ? true : false;
+                this.file_id = place.file_id;
                 this.openModal('PlaceFormModal');
             },
             onSave() {
@@ -207,7 +240,7 @@
             onCancel() {
                 this.closeModal();
             },
-            deletePlace(ids) {
+            deletePlaces(ids) {
                 Services.showLoader();
                 this[ACT_DELETE_PLACES]({ids})
                     .then(() => {
@@ -258,16 +291,6 @@
                     if (!this.$v.form.description.required) return "Обязательное поле!";
                 }
             },
-            errorLongitude() {
-                if (this.$v.form.latitude.$dirty) {
-                    if (!this.$v.form.latitude.required) return "Обязательное поле!";
-                }
-            },
-            errorLatitude() {
-                if (this.$v.form.latitude.$dirty) {
-                    if (!this.$v.form.latitude.required) return "Обязательное поле!";
-                }
-            },
             errorAddress() {
                 if (this.$v.form.address.$dirty) {
                     if (!this.$v.form.address.required) return "Обязательное поле!";
@@ -276,6 +299,11 @@
             errorCityName() {
                 if (this.$v.form.city_name.$dirty) {
                     if (!this.$v.form.address.required) return "Обязательное поле!";
+                }
+            },
+            errorFile() {
+                if (this.$v.form.file_id.$dirty) {
+                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
                 }
             },
         }

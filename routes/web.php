@@ -708,6 +708,14 @@ Route::middleware('auth')->group(function () {
             // Route::post('{sprint_id}', 'PublicEventSprintStageController@createBySprint')->name('public-event.sprint.createSprintStage');
         });
 
+        Route::prefix('sprint-documents')->group(function () {
+            Route::get('', 'PublicEventSprintDocumentController@list')->name('public-event.sprint-documents.list');
+            Route::get('page', 'PublicEventSprintDocumentController@page')->name('public-event.sprint-documents.page');
+            Route::post('save', 'PublicEventSprintDocumentController@save')->name('public-event.sprint-documents.save');
+            Route::post('delete', 'PublicEventSprintDocumentController@delete')->name('public-event.sprint-documents.delete');
+            Route::get('{sprint_id}', 'PublicEventSprintDocumentController@getBySprint')->name('public-event.sprint-documents.getBySprint');
+        });
+
         Route::prefix('professions')->group(function () {
             Route::get('', 'PublicEventProfessionController@list')->name('public-event.professions.list');
             Route::get('names', 'PublicEventProfessionController@names')->name('public-event.professions.names');
@@ -733,12 +741,19 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'PublicEventSprintController@delete')->name('public-event.sprints.delete');
         });
 
+        Route::get('statuses', 'PublicEventStatusController@index')->name('public-event.statuses.list');
+        Route::get('list', 'PublicEventListController@load')->name('public-event.fullList');
+
         Route::prefix('{event_id}')->group(function () {
             Route::post('add-organizer-by-id', 'PublicEventDetailController@addOrganizerById')->name('public-event.addOrganizerById');
             Route::post('add-organizer-by-value', 'PublicEventDetailController@addOrganizerByValue')->name('public-event.addOrganizerByValue');
 
             Route::post('save-media', 'PublicEventDetailController@saveMedia')->name('public-event.saveMedia');
             Route::post('delete-media', 'PublicEventDetailController@deleteMedia')->name('public-event.deleteMedia');
+
+            Route::get('recommendations', 'PublicEventDetailController@recommendations')->name('public-event.recommendations');
+            Route::post('recommendation/{recommendation_id}', 'PublicEventDetailController@attachRecommendation')->name('public-event.attachRecommendation');
+            Route::delete('recommendation/{recommendation_id}', 'PublicEventDetailController@detachRecommendation')->name('public-event.detachRecommendation');
 
             Route::prefix('sprints')->group(function () {
                 Route::get('', 'PublicEventDetailController@getSprints')->name('public-event.getSprints');
@@ -750,13 +765,14 @@ Route::middleware('auth')->group(function () {
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
-
-
+        
+        
         Route::get('', 'PublicEventListController@page')->name('public-event.list');
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {
         Route::get('available', 'PublicEventDetailController@availableOrganizers')->name('public-event.availableOrganizers');
     });
+
 
 });
