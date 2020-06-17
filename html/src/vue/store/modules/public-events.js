@@ -49,6 +49,17 @@ export const ACT_DELETE_EVENT_PROFESSION = 'act_delete_event_profession';
 
 export const ACT_LOAD_PLACES = 'act_load_places';
 
+export const ACT_LOAD_STATUSES = 'act_load_statuses';
+
+export const ACT_LOAD_EVENTS = 'act_load_events';
+
+export const ACT_LOAD_EVENT_RECOMMENDATIONS = 'act_load_event_recommendations';
+export const ACT_SAVE_EVENT_RECOMMENDATION = 'act_save_event_recommendation';
+export const ACT_DELETE_EVENT_RECOMMENDATION = 'act_delete_event_recommendation';
+
+export const ACT_LOAD_SPRINT_RESULTS = 'act_load_sprint_results';
+export const ACT_SAVE_SPRINT_RESULT = 'act_save_sprint_result';
+export const ACT_DELETE_SPRINT_RESULT = 'act_delete_sprint_result';
 
 const PAGE_SIZE = 10;
 
@@ -216,6 +227,46 @@ export default {
         [ACT_LOAD_PLACES]({rootGetters, commit}) {
             commit('loaderShow', true, {root:true});
             return Services.net().get(rootGetters.getRoute('public-event.places.fullList'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_STATUSES]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.statuses.list'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_EVENTS]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.fullList'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_EVENT_RECOMMENDATIONS]({rootGetters, commit}, {publicEventId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.recommendations', {event_id: publicEventId}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_EVENT_RECOMMENDATION]({rootGetters, commit}, {event_id, recommendation_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.attachRecommendation', {event_id, recommendation_id}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_EVENT_RECOMMENDATION]({rootGetters, commit}, {event_id, recommendation_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().delete(rootGetters.getRoute('public-event.detachRecommendation', {event_id, recommendation_id}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_SPRINT_RESULTS]({rootGetters, commit}, {sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.sprint-documents.list'), {sprint_id: sprintId})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_SPRINT_RESULT]({rootGetters, commit}, {id, sprintDocument}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-documents.save'), {}, {id, sprintDocument})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_SPRINT_RESULT]({rootGetters, commit}, {ids}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-documents.delete'), {}, {ids})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
     }

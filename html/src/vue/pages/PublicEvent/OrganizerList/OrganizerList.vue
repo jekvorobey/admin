@@ -13,12 +13,19 @@
                     <td></td>
                     <th>ID</th>
                     <th>Название</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Описание</th>
+                    <th>WhatsApp</th>
+                    <th>Viber</th>
+                    <th>Telegram</th>
                     <th>Сайт</th>
+                    <th>Соц. сеть</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="organizer in organizers">
+                <tr v-for="organizer in organizers" :key="organizer.id">
                     <td>
                         <input type="checkbox"
                                 :checked="massHas({type: massSelectionType, id: organizer.id})"
@@ -26,7 +33,14 @@
                     </td>
                     <td>{{organizer.id}}</td>
                     <td>{{organizer.name}}</td>
+                    <td>{{organizer.phone}}</td>
+                    <td>{{organizer.email}}</td>
+                    <td>{{organizer.description}}</td>
+                    <td>{{organizer.whatsapp}}</td>
+                    <td>{{organizer.viber}}</td>
+                    <td>{{organizer.telegram}}</td>
                     <td>{{organizer.site}}</td>
+                    <td>{{organizer.social_link}}</td>
                     <td>
                         <v-delete-button @delete="() => deleteOrganizers([organizer.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editOrganizers(organizer)">
@@ -54,18 +68,15 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
                         <v-input v-model="$v.form.phone.$model" :error="errorPhone">Телефон</v-input>
                         <v-input v-model="$v.form.email.$model" :error="errorEmail">Email</v-input>
+                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
+                        <v-input v-model="$v.form.whatsapp.$model" >WhatsApp</v-input>
+                        <v-input v-model="$v.form.viber.$model" >Viber</v-input>
+                        <v-input v-model="$v.form.telegram.$model" >Telegram</v-input>
                         <v-input v-model="$v.form.site.$model" >Ссылка на сайт</v-input>
-                        <span>Добавить контакты</span>
-                        <button  type="button" class="btn btn-light" @click="addRow()"><fa-icon icon="plus"></fa-icon></button>
-                        <div v-for="(contact, index) in form.contacts" class="d-flex align-items-center justify-content-between">
-                            <v-input type="text" placeholder="Название" class="mr-2" :value="index" v-model="tmpContacts.key"></v-input>
-                            <v-input type="text" placeholder="Cсылка" class="mr-2" :value="contact" v-model="tmpContacts.value"></v-input>
-                            
-                            <button type="button" class="btn btn-danger float-right mr-2" @click="deleteRow(index)"><fa-icon icon="times"></fa-icon></button>
-                        </div>
+                        <v-input v-model="$v.form.social_link.$model" >Соц. сеть</v-input>
+                        <b-form-checkbox v-model="$v.form.global.$model" >Глобальный организатор</b-form-checkbox>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -142,10 +153,12 @@
                     phone: null,
                     email: null,
                     site: null,
-                    contacts: []
+                    social_link: null,
+                    whatsapp: null,
+                    viber: null,
+                    telegram: null,
+                    social_link: null
                 },
-                tmpContacts: [
-                ],
                 massSelectionType: 'organizers',
             };
         },
@@ -154,7 +167,14 @@
                 name: {required},
                 description: {required},
                 phone: {required},
-                email: {required}
+                email: {required},
+                site: {required},
+                social_link: {required},
+                whatsapp: {required},
+                viber: {required},
+                telegram: {required},
+                social_link: {required},
+                global: {required}
             }
         },
         methods: {
@@ -171,39 +191,37 @@
                 return this[ACT_LOAD_PAGE]({page});
             },
 
-            addRow() {
-                this.form.contacts.push({
-                    name: '',
-                    link: ''
-                })
-            },
-
-            deleteRow(index) {
-                this.form.contacts.splice(index,1)
-            },
-
             createOrganizer() {
                 this.$v.form.$reset();
-                this.editOrganizersId = null;
+                this.editOrganizerId = null;
                 this.form.name = null;
                 this.form.description = null;
                 this.form.phone = null;
                 this.form.email = null;
                 this.form.site = null;
-                this.form.contacts = [];
+                this.form.whatsapp = null;
+                this.form.viber = null;
+                this.form.telegram = null;
+                this.form.social_link = null;
+                this.form.global = true;
                 this.openModal('OrganizerFormModal');
             },
 
             editOrganizers(organizer) {
                 this.$v.form.$reset();
-                this.editOrganizersId = organizer.id;
+                this.editOrganizerId = organizer.id;
+                this.form.owner_id = organizer.owner_id;
                 this.form.name = organizer.name;
                 this.form.code = organizer.code;
                 this.form.description = organizer.description;
                 this.form.phone = organizer.phone;
                 this.form.email = organizer.email;
                 this.form.site = organizer.site;
-                this.form.contacts = organizer.contacts;
+                this.form.whatsapp = organizer.whatsapp;
+                this.form.viber = organizer.viber;
+                this.form.telegram = organizer.telegram;
+                this.form.social_link = organizer.social_link;
+                this.form.global = organizer.global ? true : false;
                 this.openModal('OrganizerFormModal');
             },
             onSave() {

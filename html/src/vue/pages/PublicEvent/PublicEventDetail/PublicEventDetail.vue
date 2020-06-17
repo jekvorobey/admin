@@ -8,6 +8,7 @@
                 <template v-if="publicEvent.actualSprint">
                     <p class="text-secondary">Дата начала: <span class="float-right">{{ publicEvent.actualSprint.date_start }}</span></p>
                     <p class="text-secondary">Дата окончания: <span class="float-right">{{ publicEvent.actualSprint.date_end }}</span></p>
+                    <p class="text-secondary">Статус: <span class="float-right">{{statusName(publicEvent.actualSprint.status_id)}}</span></p>
                     <p v-if="publicEvent.actualSprint.place" class="text-secondary">Место проведения: <span class="float-right">{{ publicEvent.actualSprint.place.name }}</span></p>
                     <p class="text-secondary">Билеты: <span class="float-right">{{ publicEvent.actualSprint.ticketsSoldCount }} / {{ publicEvent.actualSprint.totalTicketsCount }}</span></p>
                 </template>
@@ -30,6 +31,11 @@
                 :sprint-statuses="sprintStatuses"
                 @onChange="onTabChange"
         />
+        <sprint-results-tab
+                v-if="nav.currentTab === 'sprintResults'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
         <sprint-stages-tab
                 v-if="nav.currentTab === 'spritnStages'"
                 :public-event="publicEvent"
@@ -50,6 +56,11 @@
                 :public-event="publicEvent"
                 @onChange="onTabChange"
         />
+        <recommendations-tab
+                v-if="nav.currentTab === 'recommendations'"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
     </layout-main>
 </template>
 
@@ -65,6 +76,8 @@
     import TicketTypesTab from './components/ticket-types-tab.vue';
     import SpeakersTab from './components/speakers-tab.vue';
     import ProfessionsTab from './components/professions-tab.vue';
+    import RecommendationsTab from './components/recommendations-tab.vue';
+    import SprintResultsTab from './components/sprint-results-tab.vue';
 
     import modalMixin from '../../../mixins/modal';
     import {ACT_LOAD_PUBLIC_EVENT, GET_DETAIL, NAMESPACE, SET_DETAIL,} from '../../../store/modules/public-events';
@@ -78,7 +91,9 @@
         SprintStagesTab,
         TicketTypesTab,
         SpeakersTab,
-        ProfessionsTab
+        ProfessionsTab,
+        RecommendationsTab,
+        SprintResultsTab
     },
     mixins: [modalMixin],
     props: {
@@ -95,10 +110,12 @@
                     {value: 'main', text: 'Основное'},
                     {value: 'content', text: 'Контент'},
                     {value: 'sprints', text: 'Спринты'},
-                    {value: 'spritnStages', text: 'Этапы'},
+                    {value: 'spritnStages', text: 'Программа'},
+                    {value: 'sprintResults', text: 'Результаты'},
                     {value: 'ticketTypes', text: 'Типы билетов'},
                     {value: 'speakers', text: 'Спикеры'},
                     {value: 'professions', text: 'Профессии'},
+                    {value: 'recommendations', text: 'Рекомендации'},
                 ]
             }
         };
@@ -110,7 +127,10 @@
         }),
         onTabChange() {
             this.reload({id: this.publicEvent.id});
-        }
+        },
+        statusName(statusId) {
+            return this.sprintStatuses[statusId] ? this.sprintStatuses[statusId].name : 'N/A';
+        },
     },
     computed: {
         ...mapGetters(NAMESPACE, {
