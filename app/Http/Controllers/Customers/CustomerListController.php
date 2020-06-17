@@ -33,9 +33,13 @@ class CustomerListController extends Controller
         $filter = request()->validate([
             'status' => 'nullable',
             'phone' => 'nullable',
+            'gender' => 'nullable',
             'last_name' => 'nullable',
             'first_name' => 'nullable',
             'middle_name' => 'nullable',
+            'full_name' => 'nullable',
+            'created_at' => 'nullable',
+            'created_between' => 'nullable',
             'isReferral' => 'required|boolean',
             'page' => 'nullable'
         ]);
@@ -43,6 +47,9 @@ class CustomerListController extends Controller
         $restQueryCustomer = new RestQuery();
         if (isset($filter['status']) && $filter['status']) {
             $restQueryCustomer->setFilter('status', $filter['status']);
+        }
+        if (!empty($filter['gender'])) {
+            $restQueryCustomer->setFilter('gender', '=', $filter['gender']);
         }
         $customers = $customerService->customers($restQueryCustomer);
         if (!$customers) {
@@ -65,6 +72,17 @@ class CustomerListController extends Controller
         if (isset($filter['middle_name']) && $filter['middle_name']) {
             $restQueryUser->setFilter('middle_name', $filter['middle_name']);
         }
+        if (!empty($filter['full_name'])) {
+            $restQueryUser->setFilter('full_name', $filter['full_name']);
+        }
+        if (!empty($filter['created_at'])) {
+            $restQueryUser->setFilter('created_at', 'like', "{$filter['created_at']}%");
+        }
+        if (!empty($filter['created_between'])) {
+            $restQueryUser->setFilter('created_at', '>=', $filter['created_between'][0]);
+            $restQueryUser->setFilter('created_at', '<=', $filter['created_between'][1]);
+        }
+
         $restQueryUser->setFilter('role', request('isReferral') ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL);
         $users = $userService->users($restQueryUser)->keyBy('id');
 
@@ -79,7 +97,12 @@ class CustomerListController extends Controller
                 'id' => $customer->id,
                 'full_name' => $user->full_name,
                 'phone' => $user->phone,
-                'status' => $customer->status
+                'status' => $customer->status,
+                'register_date' => $customer->created_at,
+                'email' => $user->email,
+                'segment' => '', //TODO
+                'last_visit' => '', //TODO
+                'gender' => $customer->gender,
             ];
         })->filter()->sortByDesc('id')->values();
 
