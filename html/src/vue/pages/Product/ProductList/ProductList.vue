@@ -169,9 +169,10 @@
                         </span>
                     </td>
                     <td>
-                        <span class="badge" :class="{'badge-success': product.shoppilotExist,'badge-danger':!product.shoppilotExist}">
+                        <span v-if="'shoppilotExist' in product" class="badge" :class="{'badge-success': product.shoppilotExist,'badge-danger':!product.shoppilotExist}">
                             {{(product.shoppilotExist) ? 'Да' : 'Нет'}}
                         </span>
+                        <template v-else>Информация временно недоступна</template>
                     </td>
                 </tr>
             </tbody>
