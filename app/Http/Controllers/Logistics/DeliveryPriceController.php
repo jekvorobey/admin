@@ -27,11 +27,11 @@ class DeliveryPriceController extends Controller
     public function index(ListsService $listsService)
     {
         $this->title = 'Стоимость доставки по регионам';
-        
+        $this->loadDeliveryServices = true;
+        $this->loadDeliveryMethods = true;
+
         return $this->render('Logistics/DeliveryPrice/Index', [
             'iData' => $this->loadData($listsService),
-            'deliveryServices' => DeliveryService::allServices(),
-            'deliveryMethods' => DeliveryMethod::allMethods(),
         ]);
     }
     

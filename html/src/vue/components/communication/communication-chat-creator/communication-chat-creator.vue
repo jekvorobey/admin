@@ -45,7 +45,7 @@
                             <label for="chat-users">Пользователи</label>
                         </b-col>
                         <b-col cols="9">
-                            <v-select2 v-model="form.user_ids" class="form-control form-control-sm" multiple>
+                            <v-select2 v-model="Object.keys(users)" class="form-control form-control-sm" multiple>
                                 <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
                             </v-select2>
                         </b-col>
