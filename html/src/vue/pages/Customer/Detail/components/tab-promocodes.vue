@@ -3,12 +3,12 @@
         <div class="mt-3 d-flex justify-content-between">
             <a :href="createPromocodeUrl()" class="btn btn-success">Создать промокод</a>
             <div v-if="!massEmpty(massSelectionType)">
-                <button @click="setStatus(promoCodeStatus.active)" class="btn btn-warning">Активировать</button>
-                <button @click="setStatus(promoCodeStatus.paused)" class="btn btn-danger">Деактивировать</button>
+                <button @click="setStatus(promoCodeStatus.active)" class="btn btn-warning" :style="toggleDisplayActive()">Активировать</button>
+                <button @click="setStatus(promoCodeStatus.paused)" class="btn btn-danger" :style="toggleDisplayArchive()">Деактивировать</button>
             </div>
             <div v-else>
-                <button class="btn" :class="classBtnActive()" @click="toggleArhive">Действующие</button>
-                <button class="btn" :class="classBtnArchive()" @click="toggleArhive">Архив</button>
+                <button class="btn" :class="classBtnActive()" @click="toggleArhive" :disabled="toggleDisableActive()">Действующие</button>
+                <button class="btn" :class="classBtnArchive()" @click="toggleArhive" :disabled="toggleDisableArchive()">Архив</button>
             </div>
         </div>
         <table class="table table-sm mt-3">
@@ -121,6 +121,18 @@
             },
             classBtnArchive() {
                 return this.mode === 'archive' ? 'btn-dark' : 'btn-outline-dark';
+            },
+            toggleDisableActive() {
+                return this.mode === 'active';
+            },
+            toggleDisableArchive() {
+                return this.mode === 'archive';
+            },
+            toggleDisplayActive() {
+                return this.mode === 'active' ? {display: 'none'} : {};
+            },
+            toggleDisplayArchive() {
+                return this.mode === 'archive' ? {display: 'none'} : {};
             }
         },
         watch: {
