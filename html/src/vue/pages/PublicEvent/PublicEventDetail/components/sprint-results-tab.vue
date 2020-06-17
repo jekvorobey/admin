@@ -39,7 +39,7 @@
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание</v-input>
                         <img v-if="$v.form.file_id.$model" :src="fileUrl($v.form.file_id.$model)" class="preview">
-                        <file-input destination="result" @uploaded="onFileUpload">Файл*</file-input>
+                        <file-input destination="result" @uploaded="onFileUpload">Файл</file-input>
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
                         <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
                     </div>

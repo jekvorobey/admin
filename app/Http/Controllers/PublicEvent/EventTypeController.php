@@ -48,7 +48,7 @@ class EventTypeController extends Controller
         if ($id) {
             $publicEventTypeService->update($id, $type);
         } else {
-            if($publicEventTypeService->checkExistence($type->code)) {
+            if($publicEventTypeService->checkExistence($type->code)['existence']) {
                 throw new BadRequestHttpException('Provided type already exists.');
             }
 
