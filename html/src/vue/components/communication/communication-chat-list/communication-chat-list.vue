@@ -41,6 +41,7 @@
                     <th>Тема</th>
                     <th>Пользователь</th>
                     <th>Канал</th>
+                    <th>ID коммуникации</th>
                     <th>Статус</th>
                     <th>Тип</th>
                     <th>Действия</th>
@@ -52,6 +53,7 @@
                         <td @click="openChat(chat)">{{ chat.theme }}</td>
                         <td @click="openChat(chat)">{{ userShortName(chat.user_id) }}</td>
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
+                        <td @click="openChat(chat)">{{ chat.id }}</td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
                         <td>

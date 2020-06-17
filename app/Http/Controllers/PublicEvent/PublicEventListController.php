@@ -28,6 +28,13 @@ class PublicEventListController extends Controller
         ]);
     }
 
+    public function load(PublicEventService $publicEventService)
+    {
+        return response()->json([
+            'events' => $publicEventService->query()->get()
+        ]);
+    }
+
     private function loadPublicEvents(PublicEventService $publicEventService, $page)
     {
         return $publicEventService
@@ -36,7 +43,8 @@ class PublicEventListController extends Controller
             ->withActualSprint()
             ->withPlace()
             ->withSprintTicketsCount()
-            ->get();
+            ->get()
+            ->sortBy('actualSprint.date_start');
     }
 
     private function loadTotalCount(PublicEventService $publicEventService): int

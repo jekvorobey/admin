@@ -3,7 +3,7 @@
         <div class="form-check">
             <input v-model="fromCatalog" class="form-check-input" type="checkbox" value="" id="catalogOrganizersCheck">
             <label class="form-check-label" for="catalogOrganizersCheck">
-                Из каталога
+                Выбрать из справочника
             </label>
         </div>
 

@@ -43,7 +43,6 @@ export default {
         [ACT_LOAD_PAGE]({commit, rootGetters}, {page}) {
             return Services.net().get(rootGetters.getRoute('public-event.organizers.page'), {page})
                 .then(data => {
-                    console.log(data)
                     commit(SET_PAGE, {
                         list: data.organizers,
                         total: data.total,

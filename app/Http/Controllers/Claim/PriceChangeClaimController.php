@@ -278,14 +278,19 @@ class PriceChangeClaimController extends Controller
 
         foreach ($filters as $key => $value) {
             switch ($key) {
-                case 'created_at':
+                case 'created_between':
                     $value = array_filter($value);
                     if ($value) {
-                        $restQuery->setFilter($key, '>=', $value[0]);
-                        $restQuery->setFilter($key, '<=', $value[1]);
+                        $restQuery->setFilter('created_at', '>=', $value[0]);
+                        $restQuery->setFilter('created_at', '<=', $value[1]);
                     }
                     break;
-
+                case 'created_at':
+                    if ($value) {
+                        $restQuery->setFilter($key, 'like', "{$value}%");
+                    }
+                    break;
+                    
                 default:
                     $restQuery->setFilter($key, $value);
             }

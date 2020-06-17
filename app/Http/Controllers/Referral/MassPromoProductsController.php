@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customers\Detail\TabPromoProductController;
+use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Core\PimException;
@@ -18,8 +20,11 @@ class MassPromoProductsController extends Controller
 {
     /**
      * Список промо-товаров, которые назначаются на реф. партнеров массово
+     * @param CustomerService $customerService
+     * @param ReferralService $referralService
      * @return mixed
-     * @throws PimException|\Greensight\Customer\Core\CustomerException
+     * @throws PimException
+     * @throws CustomerException
      */
     public function list(
         CustomerService $customerService,
@@ -48,7 +53,7 @@ class MassPromoProductsController extends Controller
      * @param Request $request
      * @param ProductService $productService
      * @param ReferralService $referralService
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws PimException
      */
     public function editProduct(
@@ -64,7 +69,7 @@ class MassPromoProductsController extends Controller
     /**
      * Назначить промо-товар реф. партнерам по критериям
      * @param ReferralService $referralService
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws PimException
      */
     public function attachProduct(ReferralService $referralService) {

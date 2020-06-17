@@ -4,7 +4,7 @@
         <b-form-select v-model="sprintId" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createSprintStage">Добавить этап события</button>
+            <button class="btn btn-success" @click="createSprintStage">Добавить программу                     </button>
         </div>
         <table class="table">
             <thead>
@@ -16,7 +16,7 @@
                     <th>Начало</th>
                     <th>Конец</th>
                     <th>Площадка</th>
-                    <th>Райдер</th>
+                    <th>Что взять с собой</th>
                     <th>Результат</th>
                     <th class="text-right">Действия</th>
                 </tr>
@@ -44,12 +44,16 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('SprintStageFormModal')">
                 <div slot="header">
-                    Этап события
+                    Программаэ
                 </div>
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание</v-input>
+                        <div class="form-group">
+                            <label for="description">Описание</label>
+                            <ckeditor id="description" type="classic" v-model="$v.form.description.$model" :error="errorDescription" />
+                        </div>
+                        
                         <div class="form-group">
                             <label for="date">Дата</label>
                             <date-picker id="date" input-class="form-control" v-model="$v.form.date.$model" value-type="format" format="YYYY-MM-DD"/>
@@ -62,9 +66,17 @@
                         <vue-timepicker id="timeTo"  v-model="$v.form.time_to.$model" format="HH:mm:ss" :error="errorTimeTo" />
                     
                         <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
-                        <v-input v-model="$v.form.raider.$model" :error="errorRaider">Райдер</v-input>
-                        <v-input v-model="$v.form.result.$model" :error="errorResult" >Результат</v-input>
-                    
+                        
+                        <div class="form-group">
+                            <label for="description">Что взять с собой</label>
+                            <ckeditor type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Результат</label>
+                            <ckeditor type="classic" v-model="$v.form.result.$model" :error="errorResult" />
+                        </div>
+                        
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
                         <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
                     </div>
@@ -101,6 +113,8 @@
     import 'vue2-timepicker/dist/VueTimepicker.css'
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
+    import VueCkeditor from '../../../../plugins/VueCkeditor';
+
     export default {
         mixins: [
             modalMixin,
@@ -112,7 +126,8 @@
             VDeleteButton,
             DatePicker,
             VueTimepicker,
-            VSelect
+            VSelect,
+            VueCkeditor
         },
         props: {
             publicEvent: {},

@@ -122,6 +122,7 @@
                     <th>В архиве</th>
                     <th>Контент</th>
                     <th>Согласование</th>
+                    <th>Отгружен в Shoppilot</th>
                 </tr>
             </thead>
             <tbody>
@@ -166,6 +167,12 @@
                         <span class="badge" :class="{'badge-success':isApprovalDone(product.approvalStatus),'badge-danger':!isApprovalDone(product.approvalStatus)}">
                             {{approvalName(product.approvalStatus)}}
                         </span>
+                    </td>
+                    <td>
+                        <span v-if="'shoppilotExist' in product" class="badge" :class="{'badge-success': product.shoppilotExist,'badge-danger':!product.shoppilotExist}">
+                            {{(product.shoppilotExist) ? 'Да' : 'Нет'}}
+                        </span>
+                        <template v-else>Информация временно недоступна</template>
                     </td>
                 </tr>
             </tbody>

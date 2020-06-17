@@ -12,6 +12,7 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
+use Pim\Services\ShoppilotService\ShoppilotService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ProductListController extends Controller
@@ -20,12 +21,24 @@ class ProductListController extends Controller
         Request $request,
         SearchService $searchService,
         CategoryService $categoryService,
-        BrandService $brandService
+        BrandService $brandService,
+        ShoppilotService $shoppilotService
     )
     {
         $this->title = 'Товары';
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
+
+        $shoppilotProductsExist = $shoppilotService->productsExist(
+            collect($productSearchResult->products)->pluck('id')->all()
+        );
+        if ($shoppilotProductsExist) {
+            $productSearchResult->products = array_map(function ($product) use ($shoppilotProductsExist) {
+                $product['shoppilotExist'] = $shoppilotProductsExist[$product['id']];
+                return $product;
+            }, $productSearchResult->products);
+        }
+
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
             'iTotal' => $productSearchResult->total,
@@ -46,11 +59,21 @@ class ProductListController extends Controller
     
     public function page(
         Request $request,
-        SearchService $searchService
+        SearchService $searchService,
+        ShoppilotService $shoppilotService
     )
     {
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
+
+        $shoppilotProductsExist = $shoppilotService->productsExist(
+            collect($productSearchResult->products)->pluck('id')->all()
+        );
+        $productSearchResult->products = array_map(function ($product) use ($shoppilotProductsExist) {
+            $product['shoppilotExist'] = $shoppilotProductsExist[$product['id']];
+            return $product;
+        }, $productSearchResult->products);
+
         $data = [
             'products' => $productSearchResult->products,
             'total' => $productSearchResult->total

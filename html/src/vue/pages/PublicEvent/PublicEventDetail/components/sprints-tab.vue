@@ -7,20 +7,24 @@
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Название</th>
                     <th>Начало</th>
                     <th>Конец</th>
                     <th>Статус</th>
                     <th>Площадка</th>
+                    <th>Что взять с собой</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="sprint in sprints" :key="sprint.id">
                     <td>{{sprint.id}}</td>
+                    <td>{{sprint.name ? sprint.name : '---'}}</td>
                     <td>{{date(sprint.date_start)}}</td>
                     <td>{{date(sprint.date_end)}}</td>
                     <td>{{statusName(sprint.status_id)}}</td>
-                    <td>{{sprint.place ? sprint.place.name : '---'}}</td>
+                    <td>{{places(sprint.places)}}</td>
+                    <td>{{sprint.raider}}</td>
                     <td>
                         <v-delete-button @delete="() => onDeleteSprint([sprint.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editSprint(sprint)">
@@ -37,6 +41,7 @@
                 </div>
                 <div slot="body">
                     <div class="form-group">
+                        <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
                         <div class="form-group">
                             <label for="date">Начало</label>
                             <date-picker id="date" input-class="form-control" v-model="$v.form.date_start.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateStart"/>
@@ -44,6 +49,11 @@
                         <div class="form-group">
                             <label for="date">Конец</label>
                             <date-picker id="date" input-class="form-control" v-model="$v.form.date_end.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateEnd"/>
+                        </div>
+                        <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
+                        <div class="form-group">
+                            <label for="description">Что взять с собой</label>
+                            <ckeditor type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -62,6 +72,7 @@
         ACT_LOAD_SPRINTS,
         ACT_SAVE_SPRINT,
         ACT_DELETE_SPRINT,
+        ACT_LOAD_STATUSES,
         NAMESPACE
     } from '../../../../store/modules/public-events';
     
@@ -77,6 +88,8 @@
     import DatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import VueCkeditor from '../../../../plugins/VueCkeditor';
 
     export default {
         mixins: [
@@ -87,7 +100,9 @@
             Modal,
             VInput,
             VDeleteButton,
-            DatePicker
+            DatePicker,
+            VSelect,
+            VueCkeditor
         },
         props: {
             publicEvent: {},
@@ -96,17 +111,24 @@
         data() {
             return {
                 sprints: [],
+                statuses: [],
                 editSprintId: null,
                 form: {
+                    name: null,
                     date_start: null,
                     date_end: null,
+                    status_id: null,
+                    raider: null,
                 },
             };
         },
         validations: {
             form: {
+                name: {required},
                 date_start: {required},
                 date_end: {required},
+                status_id: {required},
+                raider: {required},
             }
         },
         methods: {
@@ -114,6 +136,7 @@
                 loadSprints: ACT_LOAD_SPRINTS,
                 saveSprint: ACT_SAVE_SPRINT,
                 deleteSprint: ACT_DELETE_SPRINT,
+                loadStatuses: ACT_LOAD_STATUSES
             }),
             date(dateString) {
                 return dateString ? Helpers.onlyDate(dateString) : '---';
@@ -121,7 +144,18 @@
             statusName(statusId) {
                 return this.sprintStatuses[statusId] ? this.sprintStatuses[statusId].name : 'N/A';
             },
+            places(places) {
+                let result = [];
+                places.forEach(place => {
+                    result.push(place.name);
+                })
+                return result.join(', ');
+            },
             reload() {
+                this.loadStatuses()
+                    .then(response => {
+                        this.statuses = response.statuses;
+                    });
                 this.loadSprints({publicEventId: this.publicEvent.id})
                     .then(response => {
                         this.sprints = response.sprints;
@@ -131,18 +165,22 @@
                 this.$v.form.$reset();
                 this.editSprintId = null;
                 this.form.public_event_id = this.publicEvent.id;
+                this.form.name = null;
                 this.form.date_start = null;
                 this.form.date_end = null;
-                this.form.status_id = 1;
+                this.form.status_id = null;
+                this.form.raider = null;
                 this.openModal('SprintFormModal');
             },
             editSprint(sprint) {
                 this.$v.form.$reset();
                 this.editSprintId = sprint.id;
                 this.form.public_event_id = sprint.public_event_id;
+                this.form.name = sprint.name;
                 this.form.date_start = sprint.date_start;
                 this.form.date_end = sprint.date_end;
-                this.status_id = sprint.status_id;
+                this.form.status_id = sprint.status_id;
+                this.form.raider = sprint.raider;
                 this.openModal('SprintFormModal');
             },
             onDeleteSprint(ids) {
@@ -178,6 +216,11 @@
             },
         },
         computed: {
+            errorName() {
+                if (this.$v.form.name.$dirty) {
+                    if (!this.$v.form.name.required) return "Обязательное поле!";
+                }
+            },
             errorDateStart() {
                 if (this.$v.form.date_start.$dirty) {
                     if (!this.$v.form.date_start.required) return "Обязательное поле!";
@@ -186,6 +229,11 @@
             errorDateEnd() {
                 if (this.$v.form.date_end.$dirty) {
                     if (!this.$v.form.date_end.required) return "Обязательное поле!";
+                }
+            },
+            errorRaider() {
+                if (this.$v.form.raider.$dirty) {
+                    if (!this.$v.form.raider.required) return "Обязательное поле!";
                 }
             },
         },

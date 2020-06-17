@@ -3,7 +3,16 @@
         <h2>Мероприятия</h2>
         <button class="btn btn-sm btn-success">Создать</button>
         <table class="table mt-3">
-            <thead></thead>
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Площадка</th>
+                    <th>Билеты</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
             <tbody>
                 <template v-for="publicEvent in publicEvents">
                     <tr>
