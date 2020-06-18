@@ -5,6 +5,7 @@ export const NAMESPACE = 'publicEvents';
 
 export const SET_DETAIL = 'set_detail';
 export const SET_PAGE = 'set_page';
+export const ACT_LOAD_PAGE = 'act_load_page';
 
 export const GET_DETAIL = 'get_detail';
 export const GET_LIST = 'get_list';
@@ -51,6 +52,8 @@ export const ACT_LOAD_PLACES = 'act_load_places';
 
 export const ACT_LOAD_STATUSES = 'act_load_statuses';
 
+export const ACT_LOAD_EVENT_STATUSES = 'act_load_event_statuses';
+
 export const ACT_LOAD_EVENTS = 'act_load_events';
 
 export const ACT_LOAD_EVENT_RECOMMENDATIONS = 'act_load_event_recommendations';
@@ -60,6 +63,9 @@ export const ACT_DELETE_EVENT_RECOMMENDATION = 'act_delete_event_recommendation'
 export const ACT_LOAD_SPRINT_RESULTS = 'act_load_sprint_results';
 export const ACT_SAVE_SPRINT_RESULT = 'act_save_sprint_result';
 export const ACT_DELETE_SPRINT_RESULT = 'act_delete_sprint_result';
+
+export const ACT_SAVE_TICKET_TYPE_STAGE = 'act_save_ticket_type_stage';
+export const ACT_DELETE_TICKET_TYPE_STAGE = 'act_delete_ticket_type_stage';
 
 const PAGE_SIZE = 10;
 
@@ -91,6 +97,17 @@ export default {
         [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE)
     },
     actions: {
+        [ACT_LOAD_PAGE]({commit, rootGetters}, {page}) {
+            return Services.net().get(rootGetters.getRoute('public-event.list.page'), {page})
+                .then(data => {
+                    console.log(data);
+                    commit(SET_PAGE, {
+                        list: data.publicEvents,
+                        total: data.total,
+                        page
+                    })
+                });
+        },
         [ACT_IS_UNIQUE]({rootGetters, commit}, {id, code}) {
             commit('loaderShow', true, {root:true});
             return Services.net().get(rootGetters.getRoute('public-event.isCodeUnique'), {id, code})
@@ -267,6 +284,21 @@ export default {
         [ACT_DELETE_SPRINT_RESULT]({rootGetters, commit}, {ids}) {
             commit('loaderShow', true, {root:true});
             return Services.net().post(rootGetters.getRoute('public-event.sprint-documents.delete'), {}, {ids})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_EVENT_STATUSES]({rootGetters, commit}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.event-statuses.list'))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_TICKET_TYPE_STAGE]({rootGetters, commit}, {id, stage_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.ticket-types.attachStage', {stage_id}), {id})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_TICKET_TYPE_STAGE]({rootGetters, commit}, {id, stage_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().delete(rootGetters.getRoute('public-event.ticket-types.detachStage', {stage_id}), {id})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
     }

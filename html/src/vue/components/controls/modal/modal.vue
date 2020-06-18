@@ -1,5 +1,5 @@
 <template>
-    <div @click="onClose" class="modal-mask">
+    <div @click="onClose" class="modal-mask" >
         <div
                 ref="wrapper"
                 class="modal-wrapper"

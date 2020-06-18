@@ -38,10 +38,6 @@ export default {
     },
     methods: {
         saveStatus() {
-            if (!this.form.comment_status) {
-                Services.msg("Введите комментарий", 'danger');
-                return;
-            }
             Services.showLoader();
             Services.net().put(this.getRoute('customers.detail.save', {id: this.model.id}), {}, {
                 customer: {

@@ -97,6 +97,28 @@ class PublicEventTicketTypeController extends Controller
         
         return response()->json();
     }
+
+    public function attachStage(Request $request, int $stage_id, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventPublicEventTicketTypeService->attachStage($request->input('id'), $stage_id);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function detachStage(Request $request, int $stage_id, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventPublicEventTicketTypeService->detachStage($request->input('id'), $stage_id);
+
+        return response()->json(['status' => 'ok']);
+    }
     
     /**
      * @param PublicEventTicketTypeService $publicEventPublicEventTicketTypeService

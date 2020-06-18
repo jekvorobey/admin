@@ -61,7 +61,7 @@ class PublicEventProfessionController extends Controller
         if ($id) {
             $publicEventPublicEventProfessionService->update($id, $publicEventProfession);
         } else {
-            if($publicEventPublicEventProfessionService->checkExistence($publicEventProfession->public_event_id, $publicEventProfession->profession_id)) {
+            if($publicEventPublicEventProfessionService->checkExistence($publicEventProfession->public_event_id, $publicEventProfession->profession_id)['existence']) {
                 throw new BadRequestHttpException('Pair of public_event_id and profession_id already exists');
             }
 

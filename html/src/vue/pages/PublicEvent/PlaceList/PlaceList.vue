@@ -59,19 +59,19 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Как пройти*</v-input>
-                        <img v-if="$v.form.file_id.$model" :src="fileUrl($v.form.file_id.$model)" class="preview">
-                        <file-input destination="place" @uploaded="onFileUpload">Аватар*</file-input>
-                        <b-form-checkbox v-model="$v.form.global.$model">Глобальное место</b-form-checkbox>
                         <v-dadata
                             :value="$v.form.address.$model"
                             :error="errorAddress"
                             @onSelect="onStoreAddressAdd">
-                                Адрес
+                                Адрес*
                         </v-dadata>
+                        <b-form-checkbox v-model="$v.form.global.$model" :error="errorGlobal">Глобальное место*</b-form-checkbox>
                         <v-input v-model="$v.form.city_name.$model" disabled>Город</v-input>
-                        <v-input v-model="$v.form.city_id.$model" disabled>ID Города</v-input>
+                        <v-input v-model="$v.form.city_id.$model" disabled>ID Места</v-input>
                         <v-input v-model="$v.form.latitude.$model" disabled>Широта</v-input>
                         <v-input v-model="$v.form.longitude.$model" disabled>Долгота</v-input>
+                        <img v-if="$v.form.file_id.$model" :src="fileUrl($v.form.file_id.$model)" class="preview">
+                        <file-input destination="place" @uploaded="onFileUpload">Изображение</file-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -304,6 +304,11 @@
             errorFile() {
                 if (this.$v.form.file_id.$dirty) {
                     if (!this.$v.form.file_id.required) return "Обязательное поле!";
+                }
+            },
+            errorGlobal() {
+                if (this.$v.form.global.$dirty) {
+                    if (!this.$v.form.global.required) return "Обязательное поле!";
                 }
             },
         }

@@ -14,6 +14,7 @@
                     <th>Описание</th>
                     <th>Количество</th>
                     <th>Цена</th>
+                    <th>Программы</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
@@ -24,6 +25,7 @@
                     <td>{{ticketType.description}}</td>
                     <td>{{ticketType.qty}}</td>
                     <td>{{ticketType.price}}</td>
+                    <td>{{sprintStagesList(ticketType.sprintStages)}}</td>
                     <td>
                         <v-delete-button @delete="() => onDeleteTicketType([ticketType.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editTicketType(ticketType)">
@@ -44,6 +46,15 @@
                         <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание</v-input>
                         <v-input v-model="$v.form.qty.$model" type="number" :error="errorQty">Количество</v-input>
                         <v-input v-model="$v.form.price.$model" type="number" :error="errorPrice">Цена</v-input>
+                        <b-form-group label="Программы" :disabled="editTicketTypeId === null">
+                            <b-form-checkbox-group
+                                v-model="selectedSprintStages"
+                                :options="sprintStages"
+                                value-field="id"
+                                text-field="name"
+                                @change="toggleSprintStage"
+                            ></b-form-checkbox-group>
+                        </b-form-group>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -62,7 +73,10 @@
         ACT_SAVE_TICKET_TYPE,
         ACT_DELETE_TICKET_TYPE,
         ACT_LOAD_TICKET_TYPES,
-        NAMESPACE
+        NAMESPACE,
+        ACT_LOAD_SPRINT_STAGES,
+        ACT_SAVE_TICKET_TYPE_STAGE,
+        ACT_DELETE_TICKET_TYPE_STAGE
     } from '../../../../store/modules/public-events';
     
     import Helpers from '../../../../../scripts/helpers';
@@ -94,6 +108,8 @@
                 sprintId: null,
                 ticketTypes: [],
                 editTicketTypeId: null,
+                sprintStages: [],
+                selectedSprintStages: [],
                 form: {
                     name: null,
                     description: null,
@@ -115,9 +131,13 @@
                 loadSprints: ACT_LOAD_SPRINTS,
                 loadTicketTypes: ACT_LOAD_TICKET_TYPES,
                 saveTicketType: ACT_SAVE_TICKET_TYPE,
-                deleteTicketType: ACT_DELETE_TICKET_TYPE
+                deleteTicketType: ACT_DELETE_TICKET_TYPE,
+                loadSprintStages: ACT_LOAD_SPRINT_STAGES,
+                attachTicketTypeStage: ACT_SAVE_TICKET_TYPE_STAGE,
+                detachTicketTypeStage: ACT_DELETE_TICKET_TYPE_STAGE
             }),
             reload() {
+                
                 this.loadSprints({publicEventId: this.publicEvent.id})
                     .then(response => {
                         this.sprints = response.sprints;
@@ -127,11 +147,50 @@
                             });
                             this.sprintId = this.sprints[0].id;
                             this.onChangeSprint(this.sprintId);
+                            this.loadSprintStages({sprintId: this.sprintId})
+                                .then(response => {
+                                    this.sprintStages = response.sprintStages;
+                                });
                         }
                     });
             },
             interval(dateStartString, dateEndString) {
                 return Helpers.onlyDate(dateStartString) + ' - ' + Helpers.onlyDate(dateEndString);
+            },
+            toggleSprintStage(sprintStage) {
+                const difference = sprintStage
+                    .filter(x => !this.selectedSprintStages.includes(x))
+                    .concat(this.selectedSprintStages.filter(x => !sprintStage.includes(x)));
+
+                const found = this.selectedSprintStages.filter(x => difference.includes(x));
+
+                if (found.length) {
+                    this.detachTicketTypeStage({
+                        id: this.editTicketTypeId,
+                        stage_id: difference[0]
+                    });
+                } else {
+                    this.attachTicketTypeStage({
+                        id: this.editTicketTypeId,
+                        stage_id: difference[0]
+                    });
+                }
+            },
+            sprintStagesList(sprintStages) {
+                let result = [];
+                sprintStages.forEach(sprintStage => {
+                    result.push(sprintStage.name);
+                })
+                return result.join(', ');
+            },
+            checkActiveStage(sprintStages) {
+                let result = [];
+
+                sprintStages.forEach(sprintStage => {
+                    result.push(sprintStage.id);а
+                });
+
+                return result;
             },
             onChangeSprint(sprintId) {
                 this.loadTicketTypes({sprintId: sprintId})
@@ -147,6 +206,7 @@
                 this.form.description = null;
                 this.form.qty = null;
                 this.form.price = null;
+                this.selectedSprintStages = [];
                 this.openModal('TicketTypeFormModal');
             },
             editTicketType(ticketType) {
@@ -157,6 +217,7 @@
                 this.form.description = ticketType.description;
                 this.form.qty = ticketType.qty;
                 this.form.price = ticketType.price;
+                this.selectedSprintStages = this.checkActiveStage(ticketType.sprintStages);
                 this.openModal('TicketTypeFormModal');
             },
             onDeleteTicketType(ids) {
