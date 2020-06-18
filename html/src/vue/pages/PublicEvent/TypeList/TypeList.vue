@@ -55,7 +55,7 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код</v-input>
+                        <v-input v-model="$v.form.code.$model" :error="errorCode">Код*</v-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -135,7 +135,8 @@
             form: {
                 name: {required},
                 code: {
-                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
+                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value),
+                    required
                 },
             }
         },
@@ -231,6 +232,7 @@
             },
             errorCode() {
                 if (this.$v.form.code.$dirty) {
+                    if (!this.$v.form.code.required) return "Обязательное поле!";
                     if (!this.$v.form.code.pattern) return "Только латиница, цифры и подчёркивание!";
                 }
             },

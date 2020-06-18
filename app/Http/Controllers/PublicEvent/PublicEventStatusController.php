@@ -13,4 +13,11 @@ class PublicEventStatusController extends Controller
             'statuses' => $publicEventStatusService->get()['statuses']
         ]);
     }
+
+    public function event(PublicEventStatusService $publicEventStatusService)
+    {
+        return response()->json([
+            'statuses' => $publicEventStatusService->event()['statuses']
+        ]);
+    }
 }

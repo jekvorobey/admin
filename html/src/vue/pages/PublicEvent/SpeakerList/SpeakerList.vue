@@ -70,16 +70,16 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.first_name.$model" :error="errorFirstName">Имя*</v-input>
-                        <v-input v-model="$v.form.last_name.$model" :error="errorLastName">Фамилия</v-input>
-                        <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество</v-input>
-                        <v-input v-model="$v.form.phone.$model" :error="errorPhone" >Телефон*</v-input>
-                        <v-input v-model="$v.form.email.$model" :error="errorEmail" >Email*</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание</v-input>
-                        <v-input v-model="$v.form.instagram.$model" :error="errorInstagram">Instagram</v-input>
-                        <v-input v-model="$v.form.facebook.$model" :error="errorFacebook" >Facebook</v-input>
-                        <v-input v-model="$v.form.linkedin.$model" :error="errorLinkedin" >LinkedIn</v-input>
-                        <b-form-checkbox v-model="$v.form.global.$model">Глобальный спикер</b-form-checkbox>
-                        <v-select v-model="$v.form.profession_id.$model" text-field="name" value-field="id" :options="professions">Профессия</v-select>
+                        <v-input v-model="$v.form.last_name.$model" :error="errorLastName">Фамилия*</v-input>
+                        <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество*</v-input>
+                        <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
+                        <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email*</v-input>
+                        <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание*</v-input>
+                        <v-input v-model="$v.form.instagram">Instagram</v-input>
+                        <v-input v-model="$v.form.facebook">Facebook</v-input>
+                        <v-input v-model="$v.form.linkedin">LinkedIn</v-input>
+                        <b-form-checkbox v-model="$v.form.global.$model" :error="errorGlobal">Глобальный спикер*</b-form-checkbox>
+                        <v-select v-model="$v.form.profession_id.$model" text-field="name" value-field="id" :options="professions">Профессия*</v-select>
                         <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
                         <file-input destination="speaker" :error="errorFile" @uploaded="onFileUpload">Аватар*</file-input>
                     </div>
@@ -117,7 +117,9 @@
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
     import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import {required, email} from 'vuelidate/lib/validators';
+    import {telMask} from '../../../../scripts/mask';
+    import {emailPlaceholder, telPlaceholder} from '../../../../scripts/placeholder';
 
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';
@@ -178,12 +180,9 @@
                 first_name: {required},
                 middle_name: {required},
                 last_name: {required},
-                email: {required},
+                email: {required, email},
                 phone: {required},
                 description: {required},
-                instagram: {required},
-                facebook: {required},
-                linkedin: {required},
                 file_id: {required},
                 global: {required},
                 profession_id: {required},
@@ -293,7 +292,15 @@
                 numPages: GET_NUM_PAGES,
                 speakers: GET_LIST,
             }),
-
+            telMask() {
+                return telMask;
+            },
+            telPlaceholder() {
+                return telPlaceholder;
+            },
+            emailPlaceholder() {
+                return emailPlaceholder;
+            },
             page: {
                 get: function () {
                     return this.GET_PAGE_NUMBER;
@@ -326,6 +333,7 @@
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
                     if (!this.$v.form.email.required) return "Обязательное поле!";
+                    if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 }
             },
             errorFile() {
@@ -343,19 +351,9 @@
                     if (!this.$v.form.description.required) return "Обязательное поле!";
                 }
             },
-            errorInstagram() {
-                if (this.$v.form.instagram.$dirty) {
-                    if (!this.$v.form.instagram.required) return "Обязательное поле!";
-                }
-            },
-            errorFacebook() {
-                if (this.$v.form.facebook.$dirty) {
-                    if (!this.$v.form.facebook.required) return "Обязательное поле!";
-                }
-            },
-             errorLinkedin() {
-                if (this.$v.form.linkedin.$dirty) {
-                    if (!this.$v.form.linkedin.required) return "Обязательное поле!";
+            errorGlobal() {
+                if (this.$v.form.global.$dirty) {
+                    if (!this.$v.form.global.required) return "Обязательное поле!";
                 }
             },
         }

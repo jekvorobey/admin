@@ -68,8 +68,8 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.phone.$model" :error="errorPhone">Телефон</v-input>
-                        <v-input v-model="$v.form.email.$model" :error="errorEmail">Email</v-input>
+                        <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
+                        <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email*</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
                         <v-input v-model="$v.form.whatsapp.$model" >WhatsApp</v-input>
                         <v-input v-model="$v.form.viber.$model" >Viber</v-input>
@@ -110,7 +110,9 @@
     import mediaMixin from '../../../mixins/media';
     import massSelectionMixin from '../../../mixins/mass-selection';
     import {validationMixin} from 'vuelidate';
-    import {required} from 'vuelidate/lib/validators';
+    import {required, email} from 'vuelidate/lib/validators';
+    import {telMask} from '../../../../scripts/mask';
+    import {emailPlaceholder, telPlaceholder} from '../../../../scripts/placeholder';
 
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';
@@ -274,6 +276,15 @@
                 numPages: GET_NUM_PAGES,
                 organizers: GET_LIST,
             }),
+            telMask() {
+                return telMask;
+            },
+            telPlaceholder() {
+                return telPlaceholder;
+            },
+            emailPlaceholder() {
+                return emailPlaceholder;
+            },
             page: {
                 get: function () {
                     return this.GET_PAGE_NUMBER;
@@ -301,6 +312,7 @@
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
                     if (!this.$v.form.email.required) return "Обязательное поле!";
+                    if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 }
             },
         }

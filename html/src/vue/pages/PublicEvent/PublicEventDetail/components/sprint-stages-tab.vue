@@ -41,10 +41,9 @@
                 </tr>
             </tbody>
         </table>
-        <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('SprintStageFormModal')">
                 <div slot="header">
-                    Программаэ
+                    Программа
                 </div>
                 <div slot="body">
                     <div class="form-group">
@@ -68,13 +67,13 @@
                         <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
                         
                         <div class="form-group">
-                            <label for="description">Что взять с собой</label>
-                            <ckeditor type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
+                            <label for="raider">Что взять с собой</label>
+                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
                         </div>
 
                         <div class="form-group">
-                            <label for="description">Результат</label>
-                            <ckeditor type="classic" v-model="$v.form.result.$model" :error="errorResult" />
+                            <label for="result">Результат</label>
+                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" :error="errorResult" />
                         </div>
                         
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -82,7 +81,6 @@
                     </div>
                 </div>
             </modal>
-        </transition>
     </div>
 </template>
 
@@ -149,6 +147,7 @@
                     time_from: '00:00:00',
                     time_to: '00:00:00'
                 },
+                
             };
         },
         validations: {

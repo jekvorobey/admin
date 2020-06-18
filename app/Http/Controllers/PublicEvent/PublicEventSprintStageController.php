@@ -89,6 +89,28 @@ class PublicEventSprintStageController extends Controller
         
         return response()->json();
     }
+
+    public function attachType(Request $request, int $type_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventPublicEventSprintStageService->attachType($request->input('id'), $type_id);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function detachType(Request $request, int $type_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
+    {
+        if(!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventPublicEventSprintStageService->detachType($request->input('id'), $type_id);
+
+        return response()->json(['status' => 'ok']);
+    }
     
     /**
      * @param PublicEventSprintStageService $publicEventPublicEventSprintStageService
