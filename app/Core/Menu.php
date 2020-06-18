@@ -104,10 +104,10 @@ class Menu
                         'title' => 'Управление страницами',
                         'route' => route('landing.listPage'),
                     ],
-                    /*[
-                        'title' => 'Управление соц. сетями',
+                    [
+                        'title' => 'Управление контактами и соц. сетями',
                         'route' => route('contacts.list'),
-                    ],*/
+                    ],
 //                    [
 //                        'title' => 'Шаблоны страниц',
 //                        'route' => '#',
