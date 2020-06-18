@@ -9,6 +9,9 @@
                     <th>ID</th>
                     <th>Название</th>
                     <th>Площадка</th>
+                    <th>Активных</th>
+                    <th>Возвратов</th>
+                    <th>Куплено</th>
                     <th>Билеты</th>
                     <th>Статус</th>
                     <th>Действия</th>
@@ -24,25 +27,17 @@
                             <small>{{ dates(publicEvent) }}</small>
                         </td>
                         <td>{{ placeName(publicEvent) }}</td>
+                        <td>{{ publicEvent.actualSprint ? publicEvent.actualSprint.totalActiveTicketPrice + ' ₽' : '---' }} </td>
+                        <td>{{ publicEvent.actualSprint ? publicEvent.actualSprint.totalReturnedTicketPrice + ' ₽' : '---' }} </td>
+                        <td>{{ publicEvent.actualSprint ? publicEvent.actualSprint.totalTicketPrice + ' ₽' : '---' }} </td>
                         <td v-html="ticketsCount(publicEvent)"></td>
                         <td v-html="statusIndicator(publicEvent)"></td>
-                        <!-- <td>
-                            <button class="btn btn-outline-dark" v-b-toggle="'collapse' + publicEvent.id">Раскрыть</button>
-                        </td> -->
                         <td>
                             <button class="btn btn-warning float-right" @click="editEvent(publicEvent)">
                                 <fa-icon icon="edit"></fa-icon>
                             </button>
                         </td>
                     </tr>
-                    
-                    <!-- <tr class="table-light">
-                        <td class="td-collapse-wrapper" colspan="3">
-                            <b-collapse :id="'collapse' + publicEvent.id" accordion="publicEventList">
-                                WIP
-                            </b-collapse>
-                        </td>
-                    </tr> -->
                 </template>
             </tbody>
         </table>
@@ -144,7 +139,6 @@
             actLoadPage: ACT_LOAD_PAGE
         }),
         loadPage(page) {
-            console.log(page);
             history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                 page: page,
             }));
@@ -209,9 +203,9 @@
             if (!publicEvent.actualSprint) {
                 return '---';
             }
-            return `<span class="text-success" title="Продано">${publicEvent.actualSprint.ticketsSoldCount}</span> /
-                <span class="text-danger" title="Возвращено">${publicEvent.actualSprint.ticketsReturnedCount}</span> /
-                <span title="Всего">${publicEvent.actualSprint.totalTicketsCount}</span>`;
+            return `<span class="text-success" title="Продано билетов">${publicEvent.actualSprint.ticketsSoldCount}</span> /
+                <span class="text-danger" title="Возвращено билетов">${publicEvent.actualSprint.ticketsReturnedCount}</span> /
+                <span title="Всего билетов">${publicEvent.actualSprint.totalTicketsCount}</span>`;
         },
         statusIndicator(publicEvent) {
             let smallStatus = publicEvent.actualSprint ? this.sprintStatusName(publicEvent.actualSprint.status_id) : '';

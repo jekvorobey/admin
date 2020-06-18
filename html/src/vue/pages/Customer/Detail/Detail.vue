@@ -91,6 +91,7 @@ import TabBonus from './components/tab-bonus.vue';
 import TabPromocodes from './components/tab-promocodes.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
+import Services from "../../../../scripts/services/services";
 
 export default {
     mixins: [tabsMixin],
@@ -118,6 +119,30 @@ export default {
             editStatus: false,
             customer: this.iCustomer,
         };
+    },
+    methods: {
+        pushRoute() {
+            let route = {};
+            if (this.level_id) {
+                route.level_id = this.level_id;
+            }
+
+            let tmp = [];
+            let params = location.search
+                .substr(1)
+                .split("&");
+            let paramShowTab = params.filter(function (item) {
+                tmp = item.split("=");
+                return tmp[0] === 'showChat';
+            });
+
+            if (!(Array.isArray(paramShowTab) && paramShowTab.length)) {
+                Services.route().push({
+                    tab: this.currentTabName,
+                    allTab: this.showAllTabs ? 1 : 0,
+                }, location.pathname);
+            }
+        },
     },
     computed: {
         tabs() {

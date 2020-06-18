@@ -49,9 +49,10 @@
             </thead>
             <tbody>
                 <template v-for="chat in chats">
+                    <div :ref="chat.id.toString()"></div>
                     <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;">
                         <td @click="openChat(chat)">{{ chat.theme }}</td>
-                        <td @click="openChat(chat)">{{ userShortName(chat.user_id) }}</td>
+                        <td><a :href="linkUser(chat.user_id, chat.id)">{{ userShortName(chat.user_id) }}</a></td>
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.id }}</td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
@@ -193,6 +194,8 @@
                 chats: [],
                 users: {},
                 files: {},
+                customers: {},
+                operators: {},
             };
         },
         watch: {
@@ -251,14 +254,40 @@
                     filter.type_ids = this.searchForm.type_ids;
                 }
                 filter = Object.assign(filter, this.filter);
-                Services.net().get(this.getRoute('communications.chats.filter'), filter).then((data) => {
-                    this.chats = data.chats;
-                    this.users = data.users;
-                    this.files = data.files;
-                    this.statuses = data.statuses;
-                }).finally(() => {
-                    Services.hideLoader();
-                });
+                Services.net().get(
+                    this.getRoute('communications.chats.filter'), filter)
+                    .then((data) => {
+                        this.chats = data.chats;
+                        this.users = data.users;
+                        this.files = data.files;
+                        this.customers = data.customers;
+                        this.operators = data.operators;
+                        this.statuses = data.statuses;
+
+                        let showChat = parseInt(Services.route().get('showChat', null));
+                        if (showChat) {
+                            Services.route().push({
+                                tab: 'communication',
+                                allTab: this.showAllTabs ? 1 : 0,
+                            }, location.pathname);
+
+                            let chat = this.chats.find(function (chat) {
+                                return chat.id === showChat;
+                            });
+
+                            this.openChat(chat);
+
+                            this.$nextTick(function () {
+                                let element = this.$refs[showChat][0];
+
+                                let top = element.offsetTop + screen.height;
+
+                                window.scrollTo(0, top);
+                            })
+                        }
+                    }).finally(() => {
+                        Services.hideLoader();
+                    });
             },
             openChat(chat) {
                 this.showChat = this.showChat === chat.id ? null : chat.id;
@@ -273,10 +302,16 @@
                     files: files,
                     chat_ids: [chat_id],
                 }).then(data => {
-                    this.updateChatsList(data.chats, data.users, data.files);
+                    this.updateChatsList(
+                        data.chats,
+                        data.users,
+                        data.files,
+                        data.customers,
+                        data.operators
+                    );
                 });
             },
-            updateChatsList(chats, users, files) {
+            updateChatsList(chats, users, files, customers, operators) {
                 this.users = Object.assign(this.users, users);
                 this.files = Object.assign(this.files, files);
                 chats.forEach(data_chat => {
@@ -291,6 +326,8 @@
                         this.chats.push(data_chat);
                     }
                 });
+                this.customers = Object.assign(this.customers, customers);
+                this.operators = Object.assign(this.operators, operators);
             },
             onShowModalEdit(chat_id, channel_id, theme, status_id, type_id) {
                 this.editForm.chat_id = chat_id;
@@ -353,6 +390,25 @@
                     text: innerObject.name
                 }));
             },
+            linkUser(userId, chatId) {
+                let user = this.users[userId];
+                let userRole = parseInt(Object.keys(user.roles)[0]);
+                let result = '';
+                switch (userRole) {
+                    case this.userRoles.mas.merchant_admin:
+                    case this.userRoles.mas.merchant_operator:
+                        result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
+                        '?tab=communication&allTab=0&showChat=' + chatId;
+                        break;
+                    case this.userRoles.showcase.professional:
+                    case this.userRoles.showcase.referral_partner:
+                        result = this.getRoute('customers.detail', { id: this.customers[userId].id }) +
+                            '?tab=communication&allTab=1&showChat=' + chatId;
+                        break;
+                }
+
+                return result;
+            }
         },
         computed: {
             communicationChannelsOptions() {
@@ -375,7 +431,9 @@
             },
         },
         created() {
-            Services.event().$on('updateListEvent', ({chats, users, files}) => {this.updateChatsList(chats, users, files)});
+            Services.event().$on('updateListEvent', ({chats, users, files, customers, operators}) => {
+                this.updateChatsList(chats, users, files, customers, operators)
+            });
             Services.event().$on('closeModalCreate', this.onCloseModalCreate);
             this.filterChats();
         }
