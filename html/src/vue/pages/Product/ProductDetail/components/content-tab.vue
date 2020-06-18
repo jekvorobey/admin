@@ -36,9 +36,9 @@
         <div class="row">
             <div class="col d-flex flex-row justify-content-start align-items-start">
                 <template v-for="tip in product.tips">
-                    <shadow-card :buttons="{onEdit:'pencil-alt', onDeleteImage:'trash-alt'}"
+                    <shadow-card :buttons="{onEdit:'pencil-alt', onDeleteTip:'trash-alt'}"
                                  @onEdit="editTip(tip)"
-                                 @onDelete="deleteTip(product.id, tip.id)"
+                                 @onDeleteTip="deleteTip(product.id, tip.id)"
                                 class="tip">
                         <img :src="imageUrl(tip.file_id)" class="big-image">
                         <div class="tip-description">{{tip.description}}</div>

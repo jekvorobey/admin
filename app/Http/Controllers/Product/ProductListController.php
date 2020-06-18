@@ -32,10 +32,12 @@ class ProductListController extends Controller
         $shoppilotProductsExist = $shoppilotService->productsExist(
             collect($productSearchResult->products)->pluck('id')->all()
         );
-        $productSearchResult->products = array_map(function ($product) use ($shoppilotProductsExist) {
-            $product['shoppilotExist'] = $shoppilotProductsExist[$product['id']];
-            return $product;
-        }, $productSearchResult->products);
+        if ($shoppilotProductsExist) {
+            $productSearchResult->products = array_map(function ($product) use ($shoppilotProductsExist) {
+                $product['shoppilotExist'] = $shoppilotProductsExist[$product['id']];
+                return $product;
+            }, $productSearchResult->products);
+        }
 
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,

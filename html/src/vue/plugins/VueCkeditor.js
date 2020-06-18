@@ -12,4 +12,6 @@ const options = {
 
 Vue.use(VueCkeditor.plugin, options);
 
-export default VueCkeditor;
+export default {
+  VueCkeditor
+}
