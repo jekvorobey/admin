@@ -9,21 +9,37 @@
                 </button>
                 <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
 
-                <b-dropdown text="Действия" class="float-right" size="sm">
+                <b-dropdown text="Изменить статус" class="float-right" size="sm">
+
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-created>
+                        Создан профиль
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-new>
+                        Новый
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-consideration>
+                        На рассмотрении
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-rejected>
+                        Отклонен
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-active>
+                        Активный
+                    </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-problem>
                         Пометить проблемным
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp && !customer.referral" @click="makeReferral">
-                        Сделать реферальным партнером
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" @click="makeReferral">
+                        Потенциальный реферальный партнер
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.block" v-b-modal.modal-mark-status-block>
+                        Заблокировать
                     </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="customer.referral" @click="makeProfessional">
                         Сделать профессионалом
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
                         Приостановить сотрудничество
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.block" v-b-modal.modal-mark-status-block>
-                        Заблокировать
                     </b-dropdown-item-button>
                 </b-dropdown>
             </th>
@@ -60,16 +76,8 @@
         <tr>
             <th>Статус</th>
             <td>
-                <div class="input-group input-group-sm">
-                    <select class="form-control form-control-sm" v-model="form.status">
-                        <option
-                            v-for="id in customerStatusByRole[customer.referral ? userRoles.showcase.referral_partner : userRoles.showcase.professional]"
-                            :value="id"
-                            :disabled="disableStatus(id)"
-                        >
-                            {{ customerStatusName[id] }}
-                        </option>
-                    </select>
+                <div class="input-group input-grou  p-sm">
+                            {{ customerStatusName[customer.status] }}
                     <div class="input-group-append" v-if="customer.comment_status">
                         <button class="btn btn-outline-info" v-b-tooltip.hover :title="customer.comment_status">
                             <fa-icon icon="info"/>

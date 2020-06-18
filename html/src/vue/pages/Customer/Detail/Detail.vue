@@ -57,6 +57,13 @@
         </b-card>
         <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.problem" id="modal-mark-status-problem"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.created" id="modal-mark-status-created"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.new" id="modal-mark-status-new"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.consideration" id="modal-mark-status-consideration"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.rejected" id="modal-mark-status-rejected"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.potential_rp" id="modal-mark-status-potential_rp"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.temporarily_suspended" id="modal-mark-status-temporarily-suspended"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-block"/>
     </layout-main>
