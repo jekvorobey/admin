@@ -564,12 +564,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "4f39a11005e60d531516a72f4cb7b1e0db491d80"
+                "reference": "9ad2f95ec9582b7065efdcd846ac958369a8b4b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=4f39a11005e60d531516a72f4cb7b1e0db491d80",
-                "reference": "4f39a11005e60d531516a72f4cb7b1e0db491d80",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=9ad2f95ec9582b7065efdcd846ac958369a8b4b5",
+                "reference": "9ad2f95ec9582b7065efdcd846ac958369a8b4b5",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-06-14T22:28:49+00:00"
+            "time": "2020-06-18T21:47:55+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -601,12 +601,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "6d33953a1b8a888978af42f25349c4d1d14371aa"
+                "reference": "480227ec82683325613262fdddf1f85882a1b7d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=6d33953a1b8a888978af42f25349c4d1d14371aa",
-                "reference": "6d33953a1b8a888978af42f25349c4d1d14371aa",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=480227ec82683325613262fdddf1f85882a1b7d1",
+                "reference": "480227ec82683325613262fdddf1f85882a1b7d1",
                 "shasum": ""
             },
             "require": {
@@ -650,7 +650,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-05-29T15:43:14+00:00"
+            "time": "2020-06-17T18:27:48+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -658,12 +658,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "eb764226ce8645e68c66d7d6f461b2b9020084e3"
+                "reference": "14e8ea660c7a37e80c4f452d8eb487622c6f21a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=eb764226ce8645e68c66d7d6f461b2b9020084e3",
-                "reference": "eb764226ce8645e68c66d7d6f461b2b9020084e3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=14e8ea660c7a37e80c4f452d8eb487622c6f21a8",
+                "reference": "14e8ea660c7a37e80c4f452d8eb487622c6f21a8",
                 "shasum": ""
             },
             "require": {
@@ -698,7 +698,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-06-16T14:17:11+00:00"
+            "time": "2020-06-18T13:59:53+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -839,12 +839,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780"
+                "reference": "400f1cb15026d10198a28ac2ba2448413537c252"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=eacf34cbd6b907e7dd787466d38eaddb191ea780",
-                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=400f1cb15026d10198a28ac2ba2448413537c252",
+                "reference": "400f1cb15026d10198a28ac2ba2448413537c252",
                 "shasum": ""
             },
             "require": {
@@ -880,7 +880,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-06-16T09:27:56+00:00"
+            "time": "2020-06-18T14:19:39+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -888,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "a00439894af1210083696a21f2c317a7eaf1fc27"
+                "reference": "b219aafa0a6ed089e958332c11f60a305d5bcaa4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=a00439894af1210083696a21f2c317a7eaf1fc27",
-                "reference": "a00439894af1210083696a21f2c317a7eaf1fc27",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=b219aafa0a6ed089e958332c11f60a305d5bcaa4",
+                "reference": "b219aafa0a6ed089e958332c11f60a305d5bcaa4",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-06-17T16:13:51+00:00"
+            "time": "2020-06-18T14:49:31+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -965,9 +965,6 @@
                 }
             ],
             "description": "iBT store client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
-            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
