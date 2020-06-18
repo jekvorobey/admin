@@ -53,6 +53,7 @@ import TabOrder from './components/tab-order.vue';
 import TabCommunication from './components/tab-communication.vue';
 import TabMarketing from './components/tab-marketing.vue';
 import TabBilling from "./components/tab-billing.vue";
+import Services from "../../../../scripts/services/services";
 
 export default {
     mixins: [tabsMixin],
@@ -75,12 +76,40 @@ export default {
             merchant: this.iMerchant,
         };
     },
+    created() {
+        let currentTab = Services.route().get('tab', 'digest');
+        this.tabIndex = this.tabs[currentTab].i;
+    },
+    methods: {
+        pushRoute() {
+            let route = {};
+            if (this.level_id) {
+                route.level_id = this.level_id;
+            }
+
+            let tmp = [];
+            let params = location.search
+                .substr(1)
+                .split("&");
+            let paramShowTab = params.filter(function (item) {
+                tmp = item.split("=");
+                return tmp[0] === 'showChat';
+            });
+
+            if (!(Array.isArray(paramShowTab) && paramShowTab.length)) {
+                Services.route().push({
+                    tab: this.currentTabName,
+                    allTab: this.showAllTabs ? 1 : 0,
+                }, location.pathname);
+            }
+        },
+    },
     computed: {
         tabs() {
             let tabs = {};
             let i = 0;
 
-            tabs.digest = {i: i, title: 'Дайджест'};
+            tabs.digest = {i: i++, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
             tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
