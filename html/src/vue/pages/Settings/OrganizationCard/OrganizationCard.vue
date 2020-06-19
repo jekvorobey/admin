@@ -46,16 +46,18 @@
 
 
             <div class="mb-3">
-                <v-input v-model="$v.form.fact_address.$model"
-                         :error="errorFactAddress"
-                         @change="() => {updateInput('fact_address')}"
-                >Фактический адрес</v-input>
+                <v-dadata
+                        :value="$v.form.fact_address.$model"
+                        :error="errorFactAddress"
+                        @onSelect="onFactAddressAdd"
+                >Фактический адрес</v-dadata>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.legal_address.$model"
-                         :error="errorLegalAddress"
-                         @change="() => {updateInput('legal_address')}"
-                >Юридический адрес</v-input>
+                <v-dadata
+                        :value="$v.form.legal_address.$model"
+                        :error="errorLegalAddress"
+                        @onSelect="onLegalAddressAdd"
+                >Юридический адрес</v-dadata>
             </div>
 
             <hr/>
@@ -171,10 +173,14 @@ import {validationMixin} from 'vuelidate';
 import {required, minLength, maxLength, email} from 'vuelidate/lib/validators';
 
 import VInput from '../../../components/controls/VInput/VInput.vue';
+import VDadata from '../../../components/controls/VDaData/VDaData.vue';
 
 export default {
     name: 'page-organization-card',
-    components: {VInput},
+    components: {
+        VInput,
+        VDadata
+    },
     props: {
         short_name: String,
         full_name: String,
@@ -317,6 +323,14 @@ export default {
             }).finally(() => {
                 Services.hideLoader();
             });
+        },
+        onFactAddressAdd(suggestion) {
+            this.form.fact_address = suggestion.unrestricted_value;
+            this.requestData['fact_address'] = this.form['fact_address'];
+        },
+        onLegalAddressAdd(suggestion) {
+            this.form.legal_address = suggestion.unrestricted_value;
+            this.requestData['legal_address'] = this.form['legal_address'];
         },
     },
     computed: {
