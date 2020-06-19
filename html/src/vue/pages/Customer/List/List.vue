@@ -49,7 +49,7 @@
                         </f-date>
                     </div>
                     <div class="row mb-2">
-
+                        <v-select v-if="roles" v-model="filter.role" :options="roles" class="col-md-4 col-12">Роль</v-select>
                     </div>
 
                     <b-button type="submit" variant="dark">Искать</b-button>
@@ -111,7 +111,7 @@ import ModalCreateUser from './components/modal-create-user.vue';
 
 export default {
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate},
-    props: ['statuses', 'perPage', 'isReferral'],
+    props: ['statuses', 'perPage', 'isReferral','roles'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',
@@ -123,6 +123,7 @@ export default {
                 created_between: [],
                 created_at: null,
                 use_period: false,
+                role: 0,
             },
 
             users: [],

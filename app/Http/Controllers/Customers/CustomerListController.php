@@ -3,28 +3,45 @@
 namespace App\Http\Controllers\Customers;
 
 
-use App\Http\Controllers\Controller;use Greensight\CommonMsa\Dto\Front;use Greensight\CommonMsa\Dto\UserDto;use Greensight\CommonMsa\Rest\RestQuery;use Greensight\CommonMsa\Services\AuthService\UserService;use Greensight\Customer\Dto\CustomerDto;use Greensight\Customer\Services\CustomerService\CustomerService;use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
 {
     const PER_PAGE = 10;
+
+    /**
+     * Отображаем всех пользователей
+     * @return mixed
+     */
     public function listProfessional()
     {
-        return $this->list('Клиентская база', false);
+        return $this->list('Клиентская база');
     }
 
+    /**
+     * Отображаем только РП
+     * @return mixed
+     */
     public function listReferralPartner()
     {
         return $this->list('Список реферальных партнеров', true);
     }
 
-    protected function list($title, $isReferral)
+    protected function list($title, $isReferral=null)
     {
         $this->title = $title;
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
-            'perPage' => static::PER_PAGE
+            'perPage' => static::PER_PAGE,
+            'roles' => $this->getRoles($isReferral),
         ]);
     }
 
@@ -41,7 +58,8 @@ class CustomerListController extends Controller
             'created_at' => 'nullable',
             'created_between' => 'nullable',
             'isReferral' => 'required|boolean',
-            'page' => 'nullable'
+            'page' => 'nullable',
+            'role' => 'numeric'
         ]);
 
         $restQueryCustomer = new RestQuery();
@@ -83,7 +101,12 @@ class CustomerListController extends Controller
             $restQueryUser->setFilter('created_at', '<=', $filter['created_between'][1]);
         }
 
-        $restQueryUser->setFilter('role', request('isReferral') ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL);
+        if (!empty($filter['role'])) {
+            $restQueryUser->setFilter('role', $filter['role']);
+        } else {
+            $restQueryUser->setFilter('role', request('isReferral') ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL);
+        }
+
         $users = $userService->users($restQueryUser)->keyBy('id');
 
         $result = $customers->map(function (CustomerDto $customer) use ($users) {
@@ -147,4 +170,18 @@ class CustomerListController extends Controller
             'redirect' => route('customers.detail', ['id' => $customerId]),
         ]);
     }
+
+    /**
+     * @param $isReferral
+     *
+     * @return string[]|null
+     */
+    protected function getRoles($isReferral)
+    {
+        return $isReferral === null ? [
+            0                                   => 'Все',
+            UserDto::SHOWCASE__PROFESSIONAL     => 'Профессионалы',
+            UserDto::SHOWCASE__REFERRAL_PARTNER => 'Реферальные партнеры',
+        ] : null;
+}
 }
