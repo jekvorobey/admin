@@ -57,7 +57,14 @@ import Services from "../../../../scripts/services/services";
 
 export default {
     mixins: [tabsMixin],
-    props: ['iMerchant', 'statuses', 'isRequest', 'ratings', 'managers'],
+    props: [
+        'iMerchant',
+        'statuses',
+        'isRequest',
+        'ratings',
+        'managers',
+        'unreadMsgCount'
+    ],
     components: {
         TabBilling,
         Infopanel,
@@ -108,6 +115,8 @@ export default {
         tabs() {
             let tabs = {};
             let i = 0;
+            let unreadMsgIndicator = this.unreadMsgCount > 0 ?
+                ` (${this.unreadMsgCount})` : '';
 
             tabs.digest = {i: i++, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
@@ -119,7 +128,7 @@ export default {
             tabs.return = {i: i++, title: 'Возвраты'};
             tabs.publicEvent = {i: i++, title: 'Мастер-классы'};
             tabs.client = {i: i++, title: 'Клиенты'};
-            tabs.communication = {i: i++, title: 'Коммуникации'};
+            tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
             tabs.marketing = {i: i++, title: 'Маркетинг'};
             tabs.bill = {i: i++, title: 'Биллинг'};
             tabs.report = {i: i++, title: 'Отчеты'};

@@ -95,7 +95,13 @@ import Services from "../../../../scripts/services/services";
 
 export default {
     mixins: [tabsMixin],
-    props: ['iCustomer', 'order', 'referralLevels', 'options'],
+    props: [
+        'iCustomer',
+        'order',
+        'referralLevels',
+        'options',
+        'unreadMsgCount'
+    ],
     components: {
         TabSubscriptions,
         TabBilling,
@@ -148,6 +154,8 @@ export default {
         tabs() {
             let tabs = {};
             let i = 0;
+            let unreadMsgIndicator = this.unreadMsgCount > 0 ?
+                ` (${this.unreadMsgCount})` : '';
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
@@ -172,7 +180,7 @@ export default {
             if (this.showAllTabs) {
                 tabs.educationEvents = {i: i++, title: 'Образовательные события'};
                 tabs.orderBack = {i: i++, title: 'Возвраты'};
-                tabs.communication = {i: i++, title: 'Коммуникации'};
+                tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
                 tabs.review = {i: i++, title: 'Отзывы'};
                 tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
             }

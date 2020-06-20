@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Greensight\Message\Services\CommunicationService\CommunicationService;
 
 class Menu
 {
@@ -308,7 +309,7 @@ class Menu
                 'title' => 'Коммуникации',
                 'items' => [
                     [
-                        'title' => 'Непрочитанные сообщения',
+                        'title' => 'Непрочитанные сообщения' . static::unreadCount(),
                         'route' => route('communications.chats.unread'),
                     ],
                     [
@@ -394,5 +395,15 @@ class Menu
         }
 
         return $menuItems;
+    }
+
+    /**
+     * Получить кол-во непрочитанных сообщений для отображения у пункта меню
+     * @return int
+     */
+    private static function unreadCount()
+    {
+        $communicationService = resolve(CommunicationService::class);
+        return ' (' . $communicationService->unreadCount() . ')';
     }
 }
