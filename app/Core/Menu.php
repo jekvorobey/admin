@@ -399,7 +399,7 @@ class Menu
 
     /**
      * Получить кол-во непрочитанных сообщений для отображения у пункта меню
-     * @return int
+     * @return string
      */
     private static function unreadCount()
     {
