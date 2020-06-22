@@ -31,11 +31,11 @@ class PublicEventListController extends Controller
     public function page(Request $request, PublicEventService $publicEventService)
     {
         $page = $request->get('page', 1);
-        [$total, $publicEvents] = $this->loadPublicEvents($publicEventService, $page);
+        $publicEvents = $this->loadPublicEvents($publicEventService, $page);
         
         return response()->json([
             'publicEvents' => $publicEvents,
-            'total' => $total['total'],
+            'total' => $this->loadTotalCount($publicEventService),
         ]);
     }
 

@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createOrganizer">Создать организатора</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
-                <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
+                <span class="mr-4 align-self-baseline">Выбрано организаторов: {{massAll(massSelectionType).length}}</span>
                 <v-delete-button @delete="() => deleteOrganizers(massAll(massSelectionType))"/>
             </div>
         </div>
@@ -13,14 +13,14 @@
                     <td></td>
                     <th>ID</th>
                     <th>Название</th>
+                    <th>Юр. лицо</th>
+                    <th>ФИО контакта</th>
+                    <th>Описание контакта</th>
                     <th>Телефон</th>
                     <th>Email</th>
                     <th>Описание</th>
-                    <th>WhatsApp</th>
-                    <th>Viber</th>
-                    <th>Telegram</th>
+                    <th>WhatsApp/Viber/Telegram</th>
                     <th>Сайт</th>
-                    <th>Соц. сеть</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
@@ -33,14 +33,14 @@
                     </td>
                     <td>{{organizer.id}}</td>
                     <td>{{organizer.name}}</td>
+                    <td>{{organizer.company ? '✓' : 'X'}}</td>
+                    <td>{{organizer.contact_name}}</td>
+                    <td>{{organizer.contact_description}}</td>
                     <td>{{organizer.phone}}</td>
                     <td>{{organizer.email}}</td>
                     <td>{{organizer.description}}</td>
-                    <td>{{organizer.whatsapp}}</td>
-                    <td>{{organizer.viber}}</td>
-                    <td>{{organizer.telegram}}</td>
+                    <td>{{organizer.messenger_phone}}</td>
                     <td>{{organizer.site}}</td>
-                    <td>{{organizer.social_link}}</td>
                     <td>
                         <v-delete-button @delete="() => deleteOrganizers([organizer.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editOrganizers(organizer)">
@@ -68,15 +68,35 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
+                        <b-form-checkbox v-model="$v.form.company.$model" @change="changeCompany">Юр. лицо*</b-form-checkbox>
+                        <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_name.$model">ФИО контакта</v-input>
+                        <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_description.$model">Описание контакта</v-input>
                         <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
                         <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email*</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
-                        <v-input v-model="$v.form.whatsapp.$model" >WhatsApp</v-input>
-                        <v-input v-model="$v.form.viber.$model" >Viber</v-input>
-                        <v-input v-model="$v.form.telegram.$model" >Telegram</v-input>
+                        <v-input v-model="$v.form.messenger_phone.$model" :placeholder="telPlaceholder" v-mask="telMask" autocomplete="off">WhatsApp/Viber/Telegram</v-input>
                         <v-input v-model="$v.form.site.$model" >Ссылка на сайт</v-input>
-                        <v-input v-model="$v.form.social_link.$model" >Соц. сеть</v-input>
-                        <b-form-checkbox v-model="$v.form.global.$model" >Глобальный организатор</b-form-checkbox>
+                        <span>Социальные сети</span>
+                        <v-input type="text" placeholder="Название" class="mr-2" v-model="socialName">Название</v-input>
+                        <v-input type="text" placeholder="Cсылка" class="mr-2" v-model="socialLink">Ссылка</v-input>
+                        <button  type="button" class="btn btn-light" @click="addRow()"><fa-icon icon="plus"></fa-icon></button>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <table class="table">
+                                <thead>
+                                    <th>Название</th>
+                                    <th>Ссылка</th>
+                                    <th class="text-right">Действия</th>
+                                </thead>
+                                <tbody v-for="(social, index) in $v.form.social_links.$model" :key="social.name">
+                                    <td>{{social.name}}</td>
+                                    <td>{{social.link}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger float-right mr-2" @click="deleteRow(index)"><fa-icon icon="times"></fa-icon></button>
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                        <b-form-checkbox v-model="$v.form.global.$model">Глобальный организатор*</b-form-checkbox>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -151,16 +171,18 @@
                     owner_id: null,
                     global: true,
                     name: null,
+                    company: false,
+                    contact_name: null,
+                    contact_description: null,
                     description: null,
                     phone: null,
                     email: null,
                     site: null,
-                    social_link: null,
-                    whatsapp: null,
-                    viber: null,
-                    telegram: null,
-                    social_link: null
+                    social_links: [],
+                    messenger_phone: null,
                 },
+                socialName: null,
+                socialLink: null,
                 massSelectionType: 'organizers',
             };
         },
@@ -168,15 +190,15 @@
             form: {
                 name: {required},
                 description: {required},
+                company: {required},
+                contact_name: {},
+                contact_description: {},
                 phone: {required},
-                email: {required},
-                site: {required},
-                social_link: {required},
-                whatsapp: {required},
-                viber: {required},
-                telegram: {required},
-                social_link: {required},
-                global: {required}
+                email: {required, email},
+                site: {},
+                messenger_phone: {},
+                global: {required},
+                social_links: {}
             }
         },
         methods: {
@@ -192,19 +214,38 @@
 
                 return this[ACT_LOAD_PAGE]({page});
             },
+            addRow() {
+                const obj = {name: this.socialName, link: this.socialLink};
 
+                if (this.socialName && this.socialLink) {
+                    this.form.social_links.push(obj);
+                }
+                
+                this.socialName = null;
+                this.socialLink = null;
+            },
+            deleteRow(index) {
+                this.form.social_links.splice(index, 1);
+            },
+            changeCompany() {
+                if (this.form.company) {
+                    this.form.contact_name = null;
+                    this.form.contact_description = null;
+                }
+            },
             createOrganizer() {
                 this.$v.form.$reset();
                 this.editOrganizerId = null;
                 this.form.name = null;
+                this.form.company = false;
+                this.form.contact_name = null;
+                this.form.contact_description = null;
                 this.form.description = null;
                 this.form.phone = null;
                 this.form.email = null;
                 this.form.site = null;
-                this.form.whatsapp = null;
-                this.form.viber = null;
-                this.form.telegram = null;
-                this.form.social_link = null;
+                this.form.messenger_phone = null;
+                this.form.social_links = [];
                 this.form.global = true;
                 this.openModal('OrganizerFormModal');
             },
@@ -214,15 +255,15 @@
                 this.editOrganizerId = organizer.id;
                 this.form.owner_id = organizer.owner_id;
                 this.form.name = organizer.name;
-                this.form.code = organizer.code;
+                this.form.company = organizer.company ? true : false;
+                this.form.contact_name = organizer.contact_name;
+                this.form.contact_description = organizer.contact_description;
                 this.form.description = organizer.description;
                 this.form.phone = organizer.phone;
                 this.form.email = organizer.email;
                 this.form.site = organizer.site;
-                this.form.whatsapp = organizer.whatsapp;
-                this.form.viber = organizer.viber;
-                this.form.telegram = organizer.telegram;
-                this.form.social_link = organizer.social_link;
+                this.form.messenger_phone = organizer.messenger_phone;
+                this.form.social_links = organizer.social_links ? organizer.social_links : [];
                 this.form.global = organizer.global ? true : false;
                 this.openModal('OrganizerFormModal');
             },

@@ -564,12 +564,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "4f39a11005e60d531516a72f4cb7b1e0db491d80"
+                "reference": "b3bdabac52a47d7a81e225d195a6e978bd1b38b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=4f39a11005e60d531516a72f4cb7b1e0db491d80",
-                "reference": "4f39a11005e60d531516a72f4cb7b1e0db491d80",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=b3bdabac52a47d7a81e225d195a6e978bd1b38b2",
+                "reference": "b3bdabac52a47d7a81e225d195a6e978bd1b38b2",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-06-14T22:28:49+00:00"
+            "time": "2020-06-22T03:32:08+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -601,12 +601,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "6d33953a1b8a888978af42f25349c4d1d14371aa"
+                "reference": "8bf94f183958fe9b7d76b1f18214c29a862bedbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=6d33953a1b8a888978af42f25349c4d1d14371aa",
-                "reference": "6d33953a1b8a888978af42f25349c4d1d14371aa",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=8bf94f183958fe9b7d76b1f18214c29a862bedbd",
+                "reference": "8bf94f183958fe9b7d76b1f18214c29a862bedbd",
                 "shasum": ""
             },
             "require": {
@@ -650,7 +650,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-05-29T15:43:14+00:00"
+            "time": "2020-06-19T14:08:16+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -658,12 +658,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-logistics-lib.git",
-                "reference": "eb764226ce8645e68c66d7d6f461b2b9020084e3"
+                "reference": "14e8ea660c7a37e80c4f452d8eb487622c6f21a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=eb764226ce8645e68c66d7d6f461b2b9020084e3",
-                "reference": "eb764226ce8645e68c66d7d6f461b2b9020084e3",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-logistics-lib/repository/archive.zip?sha=14e8ea660c7a37e80c4f452d8eb487622c6f21a8",
+                "reference": "14e8ea660c7a37e80c4f452d8eb487622c6f21a8",
                 "shasum": ""
             },
             "require": {
@@ -698,7 +698,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2020-06-16T14:17:11+00:00"
+            "time": "2020-06-18T13:59:53+00:00"
         },
         {
             "name": "greensight/ibt-marketing-lib",
@@ -791,12 +791,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "f56badc240d613387ee1791ab292886783450d0e"
+                "reference": "076a59168c4b2e075defd3f8e6b72c4bf9526a27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=f56badc240d613387ee1791ab292886783450d0e",
-                "reference": "f56badc240d613387ee1791ab292886783450d0e",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=076a59168c4b2e075defd3f8e6b72c4bf9526a27",
+                "reference": "076a59168c4b2e075defd3f8e6b72c4bf9526a27",
                 "shasum": ""
             },
             "require": {
@@ -831,7 +831,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-06-17T16:05:59+00:00"
+            "time": "2020-06-20T03:22:51+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -839,12 +839,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780"
+                "reference": "24459b8e6d694158be281d7ac23e542bb32a4eaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=eacf34cbd6b907e7dd787466d38eaddb191ea780",
-                "reference": "eacf34cbd6b907e7dd787466d38eaddb191ea780",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=24459b8e6d694158be281d7ac23e542bb32a4eaa",
+                "reference": "24459b8e6d694158be281d7ac23e542bb32a4eaa",
                 "shasum": ""
             },
             "require": {
@@ -880,7 +880,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2020-06-16T09:27:56+00:00"
+            "time": "2020-06-19T17:33:19+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -888,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "a00439894af1210083696a21f2c317a7eaf1fc27"
+                "reference": "36e937951636d0032f49c5435369d478a719ef7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=a00439894af1210083696a21f2c317a7eaf1fc27",
-                "reference": "a00439894af1210083696a21f2c317a7eaf1fc27",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=36e937951636d0032f49c5435369d478a719ef7c",
+                "reference": "36e937951636d0032f49c5435369d478a719ef7c",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-06-17T16:13:51+00:00"
+            "time": "2020-06-19T18:35:04+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -965,9 +965,6 @@
                 }
             ],
             "description": "iBT store client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
-            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
@@ -5438,16 +5435,16 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95"
+                "reference": "30441f2752e493c639526b215ed81d54f369d693"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/7462d5f123dfc080dfdf26897032a6513644fc95",
-                "reference": "7462d5f123dfc080dfdf26897032a6513644fc95",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/30441f2752e493c639526b215ed81d54f369d693",
+                "reference": "30441f2752e493c639526b215ed81d54f369d693",
                 "shasum": ""
             },
             "require": {
@@ -5461,7 +5458,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-1.x": "1.x-dev"
                 }
             },
             "autoload": {
@@ -5480,7 +5477,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2020-02-18T18:59:58+00:00"
+            "time": "2020-06-19T20:22:09+00:00"
         },
         {
             "name": "phpspec/prophecy",

@@ -91,10 +91,17 @@ import TabBonus from './components/tab-bonus.vue';
 import TabPromocodes from './components/tab-promocodes.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
+import Services from "../../../../scripts/services/services";
 
 export default {
     mixins: [tabsMixin],
-    props: ['iCustomer', 'order', 'referralLevels', 'options'],
+    props: [
+        'iCustomer',
+        'order',
+        'referralLevels',
+        'options',
+        'unreadMsgCount'
+    ],
     components: {
         TabSubscriptions,
         TabBilling,
@@ -119,10 +126,36 @@ export default {
             customer: this.iCustomer,
         };
     },
+    methods: {
+        pushRoute() {
+            let route = {};
+            if (this.level_id) {
+                route.level_id = this.level_id;
+            }
+
+            let tmp = [];
+            let params = location.search
+                .substr(1)
+                .split("&");
+            let paramShowTab = params.filter(function (item) {
+                tmp = item.split("=");
+                return tmp[0] === 'showChat';
+            });
+
+            if (!(Array.isArray(paramShowTab) && paramShowTab.length)) {
+                Services.route().push({
+                    tab: this.currentTabName,
+                    allTab: this.showAllTabs ? 1 : 0,
+                }, location.pathname);
+            }
+        },
+    },
     computed: {
         tabs() {
             let tabs = {};
             let i = 0;
+            let unreadMsgIndicator = this.unreadMsgCount > 0 ?
+                ` (${this.unreadMsgCount})` : '';
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
@@ -147,7 +180,7 @@ export default {
             if (this.showAllTabs) {
                 tabs.educationEvents = {i: i++, title: 'Образовательные события'};
                 tabs.orderBack = {i: i++, title: 'Возвраты'};
-                tabs.communication = {i: i++, title: 'Коммуникации'};
+                tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
                 tabs.review = {i: i++, title: 'Отзывы'};
                 tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
             }
