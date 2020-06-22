@@ -425,6 +425,14 @@ Route::middleware('auth')->group(function () {
             Route::put('edit', 'ContactsController@edit')->name('contacts.edit');
             Route::delete('remove', 'ContactsController@remove')->name('contacts.remove');
         });
+
+        Route::prefix('product-badges')->namespace('ProductBadges')->group(function () {
+            Route::get('', 'ProductBadgesController@list')->name('productBadges.list');
+            Route::post('add', 'ProductBadgesController@add')->name('productBadges.add');
+            Route::put('edit', 'ProductBadgesController@edit')->name('productBadges.edit');
+            Route::put('reorder', 'ProductBadgesController@reorder')->name('productBadges.reorder');
+            Route::delete('remove', 'ProductBadgesController@remove')->name('productBadges.remove');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {

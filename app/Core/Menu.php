@@ -133,6 +133,10 @@ class Menu
                         'title' => 'Баннеры',
                         'route' => route('banner.listPage'),
                     ],
+                    [
+                        'title' => 'Товарные шильдики',
+                        'route' => route('productBadges.list'),
+                    ],
                 ]
             ],
             [
