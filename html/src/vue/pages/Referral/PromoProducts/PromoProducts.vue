@@ -20,77 +20,6 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(promoProduct, index) in promoProducts">
-                <td width="25px">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox"
-                               class="custom-control-input"
-                               v-model="selectedItems"
-                               :value="{
-                                   id: promoProduct.id,
-                                   brand: promoProduct.brand.id,
-                                   category: promoProduct.category.id
-                               }"
-                               :id="'checkbox' + index"/>
-                        <label class="custom-control-label bigger"
-                               :for="'checkbox' + index"/>
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <a :href="getRoute('products.detail', {id: promoProduct.product_id})">
-                            {{ promoProduct.product_name }}
-                        </a>
-                    </div>
-                    <div v-if="promoProduct.brand">Бренд: {{ promoProduct.brand.name }}</div>
-                    <div v-if="promoProduct.category">Категория: {{ promoProduct.category.name }}</div>
-                    <div v-if="promoProduct.price">Цена: {{ promoProduct.price }}</div>
-                    <div>Дата создания: {{ promoProduct.created_at }}</div>
-                    <div v-if="promoProduct.segments">
-                        <small class="text-muted"><fa-icon icon="link"/> Назначен</small>
-                    </div>
-                    <div v-else>
-                        <small class="text-muted"><fa-icon icon="unlink"/> Не назначен</small>
-                    </div>
-
-                </td>
-                <td>
-                    <textarea class="form-control"
-                              :class="[
-                                  {'is-invalid': promoProducts[index].description === ''},
-                                  {'is-invalid': promoProducts[index].description.length > 1000}
-                                  ]"
-                              v-model="promoProduct.description"
-                              rows="6"
-                              v-if="!!promoProduct.active"
-                              placeholder="Обязательное поле"
-                              aria-required="true"
-                              maxlength="1000"/>
-                    <span v-if="!promoProduct.active">{{ promoProduct.description }}</span>
-                </td>
-                <td>
-                    <div v-for="(file, i) in promoProduct.files" class="mb-1">
-                        <img :src="media.file(file)" style="max-width: 150px;"/>
-                        <v-delete-button btn-class="btn-danger btn-sm" @delete="$delete(promoProduct.files, i)" v-if="!!promoProduct.active"/>
-                    </div>
-
-                    <file-input @uploaded="(data) => $set(promoProduct.files, promoProduct.files.length, data.id)" class="mb-3" v-if="!!promoProduct.active"></file-input>
-                </td>
-                <td>
-                    <template >
-                        <button class="btn btn-success btn-sm"
-                                @click="savePromoProduct(promoProduct, 'update')"
-                                :disabled="promoProducts[index].description === ''
-                                ||promoProducts[index].description.length > 1000">
-                            <fa-icon icon="save"/>
-                        </button>
-                        <button class="btn btn-danger btn-sm"
-                                @click="deletePromoProduct(promoProduct.id, index)">
-                            <fa-icon icon="trash-alt"/>
-                        </button>
-                    </template>
-                </td>
-            </tr>
             <tr>
                 <td><!-- Отступ --></td>
                 <td>
@@ -120,10 +49,94 @@
                 </td>
                 <td>
                     <button class="btn btn-success btn-sm"
-                            :disabled="this.$v.$invalid"
+                            :disabled="this.$v.newPromoProduct.$invalid"
                             @click="savePromoProduct(newPromoProduct, 'create')">
                         <fa-icon icon="plus"/>
                     </button>
+                </td>
+            </tr>
+            <tr v-for="(promoProduct, index) in $v.promoProducts.$each.$iter">
+                <td width="25px">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox"
+                               class="custom-control-input"
+                               v-model="selectedItems"
+                               :value="{
+                                   id: promoProduct.$model.id,
+                                   brand: promoProduct.$model.brand.id,
+                                   category: promoProduct.$model.category.id
+                               }"
+                               :id="'checkbox' + index"/>
+                        <label class="custom-control-label bigger"
+                               :for="'checkbox' + index"/>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <a :href="getRoute('products.detail', {id: promoProduct.$model.product_id})">
+                            {{ promoProduct.$model.product_name }}
+                        </a>
+                    </div>
+                    <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
+                    <div v-if="promoProduct.$model.category">Категория: {{ promoProduct.$model.category.name }}</div>
+                    <div v-if="promoProduct.$model.price">Цена: {{ promoProduct.$model.price }}</div>
+                    <div>Дата создания: {{ promoProduct.$model.created_at }}</div>
+                    <div v-if="promoProduct.$model.segments">
+                        <small class="text-muted"><fa-icon icon="link"/> Назначен</small>
+                    </div>
+                    <div v-else>
+                        <small class="text-muted"><fa-icon icon="unlink"/> Не назначен</small>
+                    </div>
+
+                </td>
+                <td>
+                    <textarea class="form-control"
+                              :class="[
+                                  {'is-invalid': promoProduct.description.$model === ''},
+                                  {'is-invalid': promoProduct.description.$model.length > 1000}
+                                  ]"
+                              v-model="promoProduct.description.$model"
+                              rows="6"
+                              v-if="!!promoProduct.$model.active"
+                              placeholder="Обязательное поле"
+                              aria-required="true"
+                              maxlength="1000"/>
+                    <span v-if="!promoProduct.$model.active">{{ promoProduct.description.$model }}</span>
+                </td>
+                <td>
+                    <div v-for="(file, i) in promoProduct.files.$model" class="mb-1">
+                        <img :src="media.file(file)" style="max-width: 150px;"/>
+                        <v-delete-button
+                                btn-class="btn-danger btn-sm"
+                                @delete="() => {
+                                    $delete(promoProduct.files.$model, i);
+                                    promoProduct.files.$touch();
+                                }"
+                                v-if="!!promoProduct.$model.active"/>
+                    </div>
+
+                    <file-input
+                            @uploaded="(data) => {
+                                $set(promoProduct.files.$model, promoProduct.files.$model.length, data.id);
+                                promoProduct.files.$touch();
+                            }"
+                            class="mb-3"
+                            v-if="!!promoProduct.$model.active"></file-input>
+                </td>
+                <td>
+                    <template >
+                        <button class="btn btn-success btn-sm"
+                                @click="savePromoProduct(promoProduct.$model, 'update')"
+                                :disabled="promoProduct.description.$invalid
+                                ||!(promoProduct.description.$dirty
+                                ||promoProduct.files.$dirty)">
+                            <fa-icon icon="save"/>
+                        </button>
+                        <button class="btn btn-danger btn-sm"
+                                @click="deletePromoProduct(promoProduct.$model.id, index)">
+                            <fa-icon icon="trash-alt"/>
+                        </button>
+                    </template>
                 </td>
             </tr>
             </tbody>
@@ -179,6 +192,15 @@ export default {
             product_id: {required, integer},
             description: {required, maxLength: maxLength(1000)},
         },
+        promoProducts: {
+            $each: {
+                description: {
+                    required,
+                    maxLength: maxLength(1000)
+                },
+                files: {},
+            },
+        },
     },
     methods: {
         openAttachModal: async function() {
@@ -193,8 +215,8 @@ export default {
          */
         savePromoProduct(promoProduct, mode) {
             if (mode === 'create') {
-                this.$v.$touch();
-                if (this.$v.$invalid) {
+                this.$v.newPromoProduct.$touch();
+                if (this.$v.newPromoProduct.$invalid || !this.uniqueId(promoProduct.product_id)) {
                     return;
                 }
             }
@@ -227,7 +249,12 @@ export default {
                 Services.hideLoader();
                 this.$v.$reset();
             })
-        }
+        },
+        uniqueId(productId) {
+            return !this.promoProducts.map((item) => {
+                return item.product_id;
+            }).includes(parseInt(productId));
+        },
     },
     computed: {
         /**
@@ -241,6 +268,9 @@ export default {
                 }
                 if (!this.$v.newPromoProduct.product_id.integer) {
                     return "Введите ID товара - целое число!";
+                }
+                if (!this.uniqueId(this.$v.newPromoProduct.product_id.$model)) {
+                    return "Этот товар уже добавлен, введите другой ID";
                 }
             }
         },
