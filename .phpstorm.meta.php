@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-06-20 06:25:24.
+    * Generated on 2020-06-22 06:33:26.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -15,6 +15,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -236,6 +237,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -457,6 +459,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -678,6 +681,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -899,6 +903,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -1120,6 +1125,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -1341,6 +1347,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
@@ -1562,6 +1569,7 @@ namespace PHPSTORM_META {
         'Cms\Services\BannerService\BannerService' => \Cms\Services\BannerService\RestBannerService::class,
         'Cms\Services\BannerTypeService\BannerTypeService' => \Cms\Services\BannerTypeService\RestBannerTypeService::class,
         'Cms\Services\ContactsService\ContactsService' => \Cms\Services\ContactsService\RestContactsService::class,
+        'Cms\Services\ContentBadgesService\ContentBadgesService' => \Cms\Services\ContentBadgesService\RestContentBadgesService::class,
         'Cms\Services\ContentNewsletterService\ContentNewsletterService' => \Cms\Services\ContentNewsletterService\RestContentNewsletterService::class,
         'Cms\Services\LandingService\LandingService' => \Cms\Services\LandingService\RestLandingService::class,
         'Cms\Services\MenuService\MenuService' => \Cms\Services\MenuService\RestMenuService::class,
