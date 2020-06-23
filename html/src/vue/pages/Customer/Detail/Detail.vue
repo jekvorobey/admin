@@ -66,6 +66,7 @@
         <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.temporarily_suspended" id="modal-mark-status-temporarily-suspended"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-block"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-ptRef"/>
     </layout-main>
 </template>
 

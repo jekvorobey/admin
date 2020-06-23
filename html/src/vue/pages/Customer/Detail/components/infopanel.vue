@@ -29,7 +29,10 @@
                     <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-problem>
                         Пометить проблемным
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" @click="makeReferral">
+                    <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp && !customer.referral" @click="makeReferral">
+                        Сделать реферальным партнером
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-ptRef>
                         Потенциальный реферальный партнер
                     </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="customer.status != customerStatus.block" v-b-modal.modal-mark-status-block>
@@ -38,7 +41,7 @@
                     <b-dropdown-item-button v-if="customer.referral" @click="makeProfessional">
                         Сделать профессионалом
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
                         Приостановить сотрудничество
                     </b-dropdown-item-button>
                 </b-dropdown>
