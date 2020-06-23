@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content\Contacts;
 
 use App\Http\Controllers\Controller;
+use Cms\Dto\ContactDto;
 use Cms\Services\ContactsService\ContactsService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -22,17 +23,13 @@ class ContactsController extends Controller
      */
     public function list(ContactsService $contactsService)
     {
-        $contacts = $contactsService->getContacts();
+        $contacts = $contactsService->getContacts()->keyBy('id');
 
-        return response()->json([
-            'contacts' => $contacts
-        ]);
-
-        // TODO: Proceed with Vue integration //
-        /*$this->title = 'Социальные сети и контакты';
+        $this->title = 'Управление соц. сетями и контактами';
         return $this->render('Content/Contacts', [
-            'contacts' => $contacts
-        ]);*/
+            'iContacts' => $contacts,
+            'iContactTypes' => ContactDto::contactTypes()
+        ]);
     }
 
     /**
@@ -45,13 +42,16 @@ class ContactsController extends Controller
         $data = $this->validate(request(), [
             'name' => 'required|string',
             'address' => 'nullable|string',
-            'file_id' => 'nullable|numeric',
+            'icon_file.id' => 'nullable|integer',
             'description' => 'nullable|string',
+            'type' => 'required|integer'
         ]);
 
-        $contactsService->addContact($data);
+        $contactDto = $this->fulfillDto($data);
 
-        $contacts = $contactsService->getContacts();
+        $contactsService->addContact($contactDto);
+
+        $contacts = $contactsService->getContacts()->keyBy('id');
 
         return response()->json([
             'contacts' => $contacts
@@ -69,13 +69,16 @@ class ContactsController extends Controller
             'id' => 'required|integer',
             'name' => 'required|string',
             'address' => 'nullable|string',
-            'file_id' => 'nullable|numeric',
+            'icon_file.id' => 'nullable|integer',
             'description' => 'nullable|string',
+            'type' => 'required|integer'
         ]);
 
-        $contactsService->updateContact($data);
+        $contactDto = $this->fulfillDto($data);
 
-        $contacts = $contactsService->getContacts();
+        $contactsService->updateContact($contactDto);
+
+        $contacts = $contactsService->getContacts()->keyBy('id');
 
         return response()->json([
             'contacts' => $contacts
@@ -96,5 +99,23 @@ class ContactsController extends Controller
         $contactsService->deleteContact($data['id']);
 
         return response('', 204);
+    }
+
+    /**
+     * Вспомогательная функция, заполняющая Dto полями из Request
+     * @param array $data
+     * @return ContactDto
+     */
+    protected function fulfillDto(array $data)
+    {
+        $contactDto = new ContactDto();
+        $contactDto->id = isset($data['id']) ? $data['id'] : null;
+        $contactDto->name = isset($data['name']) ? $data['name'] : null;
+        $contactDto->address = isset($data['address']) ? $data['address'] : null;
+        $contactDto->icon_file = isset($data['icon_file']['id']) ? $data['icon_file']['id'] : null;
+        $contactDto->description = isset($data['description']) ? $data['description'] : null;
+        $contactDto->type = isset($data['type']) ? $data['type'] : null;
+
+        return $contactDto;
     }
 }

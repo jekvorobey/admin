@@ -39,7 +39,7 @@ class LevelsController extends Controller
                     'id' => $customerDto->id,
                     'title' => $user ? $user->getTitle() : 'Не определено',
                 ];
-            })->sortBy('label'),
+            })->sortBy('label')->values(),
         ]);
     }
 

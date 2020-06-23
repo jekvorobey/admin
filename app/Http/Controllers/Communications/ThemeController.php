@@ -19,6 +19,7 @@ class ThemeController extends Controller
         return $this->render('Communication/Theme', [
             'iThemes' => $themes,
             'channels' => $channels,
+            'iTypes' => CommunicationThemeDto::allThemeTypes(),
         ]);
     }
 
@@ -28,6 +29,7 @@ class ThemeController extends Controller
         $theme = new CommunicationThemeDto();
         $theme->name = $rTheme['name'];
         $theme->active = (bool)$rTheme['active'];
+        $theme->type = $rTheme['type'];
         $theme->channel_id = $rTheme['channel_id'];
 
         if ($rTheme['id']) {

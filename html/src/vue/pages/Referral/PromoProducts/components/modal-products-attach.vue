@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-products-attach" title="Назначить промо-товары реферальным партнерам" hide-footer ref="modal">
+    <b-modal id="modal-products-attach" title="Назначить промо-товары реферальным партнерам" hide-footer ref="modal" @show="resetFields()">
         <template v-slot:default="{close}">
             <b-form-group>
                 <b-form-checkbox v-model="segments.all">
@@ -128,6 +128,17 @@
                     this.$bvModal.hide("modal-products-attach");
                     Services.hideLoader();
                 })
+            },
+            resetFields() {
+                this.segments = {
+                    all: false,
+                    levels: [],
+                    brand: false,
+                    category: false,
+                    activities: [],
+                    user_ids: []
+                };
+                this.str_user_ids = '';
             },
         },
         watch: {

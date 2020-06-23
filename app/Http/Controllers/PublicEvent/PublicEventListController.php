@@ -10,7 +10,7 @@ use Pim\Services\PublicEventService\PublicEventService;
 
 class PublicEventListController extends Controller
 {
-    public function page(Request $request, PublicEventService $publicEventService)
+    public function list(Request $request, PublicEventService $publicEventService)
     {
         $this->loadPublicEventStatus = true;
         $this->loadPublicEventSprintStatus = true;
@@ -25,6 +25,17 @@ class PublicEventListController extends Controller
                 'eventStatuses' => PublicEventStatus::all(),
                 'sprintStatuses' => PublicEventSprintStatus::all(),
             ]
+        ]);
+    }
+
+    public function page(Request $request, PublicEventService $publicEventService)
+    {
+        $page = $request->get('page', 1);
+        $publicEvents = $this->loadPublicEvents($publicEventService, $page);
+        
+        return response()->json([
+            'publicEvents' => $publicEvents,
+            'total' => $this->loadTotalCount($publicEventService),
         ]);
     }
 

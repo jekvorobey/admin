@@ -34,7 +34,6 @@
                 </tr>
             </tbody>
         </table>
-        <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('SprintFormModal')">
                 <div slot="header">
                     Спринт
@@ -62,7 +61,6 @@
                     </div>
                 </div>
             </modal>
-        </transition>
     </div>
 </template>
 

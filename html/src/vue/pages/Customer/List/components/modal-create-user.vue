@@ -1,5 +1,5 @@
 <template>
-    <b-modal :id="id" title="Создание пользвоателя" hide-footer ref="modal">
+    <b-modal :id="id" title="Создание пользователя" hide-footer ref="modal">
         <template v-slot:default="{close}">
             <div>
                 <label>Телефон</label>

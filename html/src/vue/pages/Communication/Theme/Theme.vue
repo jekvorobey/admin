@@ -10,6 +10,7 @@
             <tr>
                 <th>Название</th>
                 <th>Активность</th>
+                <th>Тип</th>
                 <th>Канал</th>
                 <th>Действия</th>
             </tr>
@@ -18,6 +19,7 @@
             <tr v-for="theme in themes">
                 <td>{{ theme.name }}</td>
                 <td>{{ theme.active ? 'да' : 'нет' }}</td>
+                <td>{{ theme.type ? iTypes[theme.type].name : '-' }}</td>
                 <td>{{ theme.channel_id ? channels[theme.channel_id].name : '-' }}</td>
                 <td>
                     <button class="btn btn-warning btn-sm" @click="editTheme(theme)"><fa-icon icon="edit"/></button>
@@ -26,7 +28,7 @@
             </tr>
             </tbody>
         </table>
-        <form-modal modal-name="FormTheme" @accept="saveTheme" :model.sync="theme" :channels="channels"/>
+        <form-modal modal-name="FormTheme" @accept="saveTheme" :model.sync="theme" :types="types" :channels="channels"/>
     </layout-main>
 </template>
 
@@ -38,12 +40,13 @@ import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteBut
 
 export default {
     mixins: [modalMixin],
-    props: ['iThemes', 'channels'],
+    props: ['iThemes', 'channels', 'iTypes'],
     components: {VDeleteButton, FormModal},
     data() {
         return {
             themes: this.iThemes,
             theme: null,
+            types: null,
         };
     },
     methods: {
@@ -52,6 +55,7 @@ export default {
                 id: themes ? themes.id : false,
                 name: themes ? themes.name : '',
                 active: themes ? themes.active : 1,
+                type: themes ? themes.type : null,
                 channel_id: themes ? themes.channel_id : null,
             }
         },
@@ -71,11 +75,25 @@ export default {
         },
         createTheme() {
             this.theme = this.fillTheme();
+            this.typesCalc();
             this.openModal('FormTheme');
         },
         editTheme(theme) {
             this.theme = this.fillTheme(theme);
+            this.typesCalc(theme.type);
             this.openModal('FormTheme');
+        },
+        typesCalc(themeTypeId=0) {
+            this.types = Object.assign({}, this.iTypes);
+            for (let typeId in this.types) {
+                for (let themeId in this.themes) {
+                    if (this.themes[themeId].type === parseInt(typeId) &&
+                        this.themes[themeId].type !== themeTypeId) {
+                        delete this.types[typeId];
+                        break;
+                    }
+                }
+            }
         },
         saveTheme() {
             Services.net().post(this.getRoute('communications.themes.save'), {}, {theme: this.theme}).then((data)=> {

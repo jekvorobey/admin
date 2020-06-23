@@ -425,6 +425,14 @@ Route::middleware('auth')->group(function () {
             Route::put('edit', 'ContactsController@edit')->name('contacts.edit');
             Route::delete('remove', 'ContactsController@remove')->name('contacts.remove');
         });
+
+        Route::prefix('product-badges')->namespace('ProductBadges')->group(function () {
+            Route::get('', 'ProductBadgesController@list')->name('productBadges.list');
+            Route::post('add', 'ProductBadgesController@add')->name('productBadges.add');
+            Route::put('edit', 'ProductBadgesController@edit')->name('productBadges.edit');
+            Route::put('reorder', 'ProductBadgesController@reorder')->name('productBadges.reorder');
+            Route::delete('remove', 'ProductBadgesController@remove')->name('productBadges.remove');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
@@ -704,6 +712,8 @@ Route::middleware('auth')->group(function () {
             Route::post('save', 'PublicEventTicketTypeController@save')->name('public-event.ticket-types.save');
             Route::post('delete', 'PublicEventTicketTypeController@delete')->name('public-event.ticket-types.delete');
             //Route::post('{sprint_id}', 'PublicEventTicketTypeController@createBySprint')->name('public-event.sprint.createTicketType');
+            Route::post('{stage_id}', 'PublicEventTicketTypeController@attachStage')->name('public-event.ticket-types.attachStage');
+            Route::delete('{stage_id}', 'PublicEventTicketTypeController@detachStage')->name('public-event.ticket-types.detachStage');
         });
 
         Route::prefix('sprint-stages')->group(function () {
@@ -713,6 +723,8 @@ Route::middleware('auth')->group(function () {
             Route::post('save', 'PublicEventSprintStageController@save')->name('public-event.sprint-stages.save');
             Route::post('delete', 'PublicEventSprintStageController@delete')->name('public-event.sprint-stages.delete');
             // Route::post('{sprint_id}', 'PublicEventSprintStageController@createBySprint')->name('public-event.sprint.createSprintStage');
+            Route::post('{type_id}', 'PublicEventTicketTypeController@attachType')->name('public-event.sprint-stages.attachType');
+            Route::delete('{type_id}', 'PublicEventTicketTypeController@detachType')->name('public-event.sprint-stages.detachType');
         });
 
         Route::prefix('sprint-documents')->group(function () {
@@ -749,6 +761,7 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::get('statuses', 'PublicEventStatusController@index')->name('public-event.statuses.list');
+        Route::get('event-statuses', 'PublicEventStatusController@event')->name('public-event.event-statuses.list');
         Route::get('list', 'PublicEventListController@load')->name('public-event.fullList');
 
         Route::prefix('{event_id}')->group(function () {
@@ -774,7 +787,8 @@ Route::middleware('auth')->group(function () {
         });
         
         
-        Route::get('', 'PublicEventListController@page')->name('public-event.list');
+        Route::get('', 'PublicEventListController@list')->name('public-event.list');
+        Route::get('list/page', 'PublicEventListController@page')->name('public-event.list.page');
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

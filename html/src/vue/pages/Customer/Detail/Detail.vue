@@ -56,7 +56,13 @@
             </b-tabs>
         </b-card>
         <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.created" id="modal-mark-status-created"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.problem" id="modal-mark-status-problem"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.new" id="modal-mark-status-new"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.consideration" id="modal-mark-status-consideration"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.rejected" id="modal-mark-status-rejected"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.potential_rp" id="modal-mark-status-potential_rp"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.temporarily_suspended" id="modal-mark-status-temporarily-suspended"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-block"/>
     </layout-main>
@@ -64,30 +70,37 @@
 
 <script>
 
-import VInput from '../../../components/controls/VInput/VInput.vue';
+    import VInput from '../../../components/controls/VInput/VInput.vue';
 
-import Infopanel from './components/infopanel.vue';
-import ModalPortfolios from './components/modal-portfolios.vue';
-import ModalMarkStatus from './components/modal-mark-status.vue';
+    import Infopanel from './components/infopanel.vue';
+    import ModalPortfolios from './components/modal-portfolios.vue';
+    import ModalMarkStatus from './components/modal-mark-status.vue';
 
-import TabMain from './components/tab-main.vue';
-import TabPreference from './components/tab-preference.vue';
-import TabOrder from './components/tab-order.vue';
-import TabDocument from './components/tab-document.vue';
-import TabSubscriptions from "./components/tab-subscriptions.vue";
-import TabCommunication from './components/tab-communication.vue';
-import TabPromoProduct from './components/tab-promo-product.vue';
-import TabPromoPage from './components/tab-promo-page.vue';
-import TabOrderReferrer from './components/tab-order-referrer.vue';
-import TabBilling from './components/tab-billing.vue';
-import TabBonus from './components/tab-bonus.vue';
-import TabPromocodes from './components/tab-promocodes.vue';
+    import TabMain from './components/tab-main.vue';
+    import TabPreference from './components/tab-preference.vue';
+    import TabOrder from './components/tab-order.vue';
+    import TabDocument from './components/tab-document.vue';
+    import TabSubscriptions from './components/tab-subscriptions.vue';
+    import TabCommunication from './components/tab-communication.vue';
+    import TabPromoProduct from './components/tab-promo-product.vue';
+    import TabPromoPage from './components/tab-promo-page.vue';
+    import TabOrderReferrer from './components/tab-order-referrer.vue';
+    import TabBilling from './components/tab-billing.vue';
+    import TabBonus from './components/tab-bonus.vue';
+    import TabPromocodes from './components/tab-promocodes.vue';
 
-import tabsMixin from '../../../mixins/tabs.js';
+    import tabsMixin from '../../../mixins/tabs.js';
+    import Services from '../../../../scripts/services/services';
 
-export default {
+    export default {
     mixins: [tabsMixin],
-    props: ['iCustomer', 'order', 'referralLevels', 'options'],
+    props: [
+        'iCustomer',
+        'order',
+        'referralLevels',
+        'options',
+        'unreadMsgCount'
+    ],
     components: {
         TabSubscriptions,
         TabBilling,
@@ -112,10 +125,36 @@ export default {
             customer: this.iCustomer,
         };
     },
+    methods: {
+        pushRoute() {
+            let route = {};
+            if (this.level_id) {
+                route.level_id = this.level_id;
+            }
+
+            let tmp = [];
+            let params = location.search
+                .substr(1)
+                .split("&");
+            let paramShowTab = params.filter(function (item) {
+                tmp = item.split("=");
+                return tmp[0] === 'showChat';
+            });
+
+            if (!(Array.isArray(paramShowTab) && paramShowTab.length)) {
+                Services.route().push({
+                    tab: this.currentTabName,
+                    allTab: this.showAllTabs ? 1 : 0,
+                }, location.pathname);
+            }
+        },
+    },
     computed: {
         tabs() {
             let tabs = {};
             let i = 0;
+            let unreadMsgIndicator = this.unreadMsgCount > 0 ?
+                ` (${this.unreadMsgCount})` : '';
 
             tabs.main = {i: i++, title: 'Информация'};
             if (this.customer.referral) {
@@ -140,7 +179,7 @@ export default {
             if (this.showAllTabs) {
                 tabs.educationEvents = {i: i++, title: 'Образовательные события'};
                 tabs.orderBack = {i: i++, title: 'Возвраты'};
-                tabs.communication = {i: i++, title: 'Коммуникации'};
+                tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
                 tabs.review = {i: i++, title: 'Отзывы'};
                 tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
             }

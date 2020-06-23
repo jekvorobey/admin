@@ -6,7 +6,12 @@ const options = {
   editors: {
     classic: ClassicEditor,
   },
-  name: 'ckeditor'
+  name: 'ckeditor',
+  toolbar: [ 'bold', 'italic', '|', 'undo', 'redo' ]
 }
 
 Vue.use(VueCkeditor.plugin, options);
+
+export default {
+  VueCkeditor
+}

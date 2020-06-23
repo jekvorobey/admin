@@ -18,6 +18,7 @@ use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
+use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
@@ -26,13 +27,24 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CustomerDetailController extends Controller
 {
+    /**
+     * @param $id
+     * @param CustomerService $customerService
+     * @param UserService $userService
+     * @param OrderService $orderService
+     * @param FileService $fileService
+     * @param ReferralService $referralService
+     * @param CommunicationService $communicationService
+     * @return mixed
+     */
     public function detail(
         $id,
         CustomerService $customerService,
         UserService $userService,
         OrderService $orderService,
         FileService $fileService,
-        ReferralService $referralService
+        ReferralService $referralService,
+        CommunicationService $communicationService
     ) {
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
@@ -85,14 +97,17 @@ class CustomerDetailController extends Controller
             $avatar = $fileService->getFiles([$customer->avatar])->first();
         }
 
+        // Счетчик непрочитанных сообщений от пользователя //
+        $unreadMsgCount = $communicationService->unreadCount(
+            [$user->id],true
+        );
+
         /** @var UserDto $referrer_user */
         $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
 
-        $referralLevels = [];
+        $referralLevels = $referralService->getLevels();
         $commission_route = '';
         if ($referral) {
-            $referralLevels = $referralService->getLevels();
-
             $existCustomerCommission = $referralService->existCustomerCommission($customer->id);
             if ($existCustomerCommission) {
                 $commission_route = route('referral.levels', ['level_id' => $existCustomerCommission[0]]);
@@ -159,6 +174,7 @@ class CustomerDetailController extends Controller
                 'promoCodeTypes' => PromoCodeOutDto::allTypes(),
                 'promoCodeStatuses' => PromoCodeOutDto::allStatuses(),
             ],
+            'unreadMsgCount' => $unreadMsgCount
         ]);
     }
 
