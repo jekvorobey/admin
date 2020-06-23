@@ -29,9 +29,8 @@ class ProductListController extends Controller
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
 
-        $shoppilotProductsExist = $shoppilotService->productsExist(
-            collect($productSearchResult->products)->pluck('id')->all()
-        );
+        $productIds = collect($productSearchResult->products)->pluck('id')->all();
+        $shoppilotProductsExist = $productIds ? $shoppilotService->productsExist($productIds) : [];
         if ($shoppilotProductsExist) {
             $productSearchResult->products = array_map(function ($product) use ($shoppilotProductsExist) {
                 $product['shoppilotExist'] = $shoppilotProductsExist[$product['id']];
