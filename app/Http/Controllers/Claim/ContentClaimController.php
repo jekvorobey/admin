@@ -19,7 +19,10 @@ use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Dto\BrandDto;
+use Pim\Dto\CategoryDto;
 use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Product\ProductArchiveStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
@@ -206,9 +209,11 @@ class ContentClaimController extends Controller
         $productIds = $claim->product_ids;
         /** @var Collection|ProductDto[] $products */
         $products = $productService->newQuery()
+            ->include(BrandDto::entity(), CategoryDto::entity())
             ->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code')
+            ->addFields(BrandDto::entity(), 'id', 'name')
+            ->addFields(CategoryDto::entity(), 'id', 'name')
             ->setFilter('id', $productIds)
-            ->include('brand', 'category')
             ->products();
 
         $historyQuery = $claimService->newQuery()
@@ -297,7 +302,8 @@ class ContentClaimController extends Controller
         ]);
         $query = $offerService->newQuery()
             ->addFields(OfferDto::entity(), 'product_id')
-            ->setFilter('merchant_id', $data['id']);
+            ->setFilter('merchant_id', $data['id'])
+            ->setFilter('archive', ProductArchiveStatus::NO_ARCHIVE);
         $products = $offerService->offers($query);
         $availableIds = $products->pluck('product_id')->all();
 
