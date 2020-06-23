@@ -10,40 +10,45 @@
                 <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
 
                 <b-dropdown text="Изменить статус" class="float-right" size="sm">
-
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-created>
-                        Создан профиль
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-new>
-                        Новый
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-consideration>
-                        На рассмотрении
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-rejected>
-                        Отклонен
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-active>
-                        Активный
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-problem>
-                        Пометить проблемным
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp && !customer.referral" @click="makeReferral">
-                        Сделать реферальным партнером
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.problem && !customer.referral" v-b-modal.modal-mark-status-ptRef>
-                        Потенциальный реферальный партнер
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.block" v-b-modal.modal-mark-status-block>
+                    <template v-if="!customer.referral">
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.created " v-b-modal.modal-mark-status-created>
+                            Создан профиль
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.new" v-b-modal.modal-mark-status-new>
+                            Новый
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.consideration" v-b-modal.modal-mark-status-consideration>
+                            На рассмотрении
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.rejected" v-b-modal.modal-mark-status-rejected>
+                            Отклонен
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.active" v-b-modal.modal-mark-status-active>
+                            Активный
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.problem" v-b-modal.modal-mark-status-problem>
+                            Пометить проблемным
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.potential_rp"
+                                v-b-modal.modal-mark-status-potential_rp>
+                            Потенциальный реферальный партнер
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp" @click="makeReferral">
+                            Сделать реферальным партнером
+                        </b-dropdown-item-button>
+                    </template>
+                    <b-dropdown-item-button v-if="customer.status !== customerStatus.block"
+                            v-b-modal.modal-mark-status-block>
                         Заблокировать
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.referral" @click="makeProfessional">
-                        Сделать профессионалом
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended && customer.referral" v-b-modal.modal-mark-status-temporarily-suspended>
-                        Приостановить сотрудничество
-                    </b-dropdown-item-button>
+                    <template v-if="customer.referral">
+                        <b-dropdown-item-button @click="makeProfessional">
+                            Сделать профессионалом
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended" v-b-modal.modal-mark-status-temporarily-suspended>
+                            Приостановить сотрудничество
+                        </b-dropdown-item-button>
+                    </template>
                 </b-dropdown>
             </th>
         </tr>
@@ -153,12 +158,12 @@
 </template>
 
 <script>
-import Services from '../../../../../scripts/services/services.js';
-import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
-import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
-import moment from 'moment';
+    import Services from '../../../../../scripts/services/services.js';
+    import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+    import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+    import moment from 'moment';
 
-export default {
+    export default {
     name: 'infopanel',
     components: {VDeleteButton, FileInput},
     props: ['model', 'referralLevels'],
