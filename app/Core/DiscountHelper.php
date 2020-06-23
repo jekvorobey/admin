@@ -5,13 +5,13 @@ namespace App\Core;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Greensight\Marketing\Dto\Discount\BundleItemDto;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
-use Greensight\Marketing\Dto\Discount\BundleItemDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
@@ -474,9 +474,9 @@ class DiscountHelper
             'discounts'        => $data['discounts'],
             'optionDiscountTypes'    => $data['optionDiscountTypes'],
             'iConditionTypes'  => $data['conditionTypes'],
-            'deliveryMethods'  => $data['deliveryMethods'],
+            'iDeliveryMethods'  => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
-            'paymentMethods'   => $data['paymentMethods'],
+            'iPaymentMethods'   => $data['paymentMethods'],
             'roles'            => $data['roles'],
             'iDistricts'       => $data['districts'],
             'merchants'        => $data['merchants'],

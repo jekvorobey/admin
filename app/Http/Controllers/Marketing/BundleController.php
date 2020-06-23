@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
+use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -112,9 +112,9 @@ class BundleController extends Controller
                 return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
             }),
             'iConditionTypes' => $data['conditionTypes'],
-            'deliveryMethods' => $data['deliveryMethods'],
+            'iDeliveryMethods' => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
-            'paymentMethods' => $data['paymentMethods'],
+            'iPaymentMethods' => $data['paymentMethods'],
             'roles' => $data['roles'],
             'iDistricts' => $data['districts'],
             'categories' => $categoryService->categories($categoryService->newQuery()),
