@@ -452,15 +452,18 @@ class ContentClaimController extends Controller
 
         /** @var Collection|ClaimHistoryDto[] $history */
         $history = $query->claimHistory();
-
         $userIds = $history->pluck('user_id')->unique()->all();
-        $usersRoles = [];
-        foreach ($userIds as $k => $v) {
-            $usersRoles[$v] = $userService->userRoles($v);
-        }
 
-        return $history->map(function (ClaimHistoryDto $event) use ($usersRoles) {
-            $event['userRoleIds'] = $usersRoles[$event->user_id];
+//        $usersRoles = [];
+//        foreach ($userIds as $k => $v) {
+//            $usersRoles[$v] = $userService->userRoles($v);
+//    }
+        $usersQuery = (new RestQuery())->setFilter('id', $userIds);
+        $userNames = $userService->users($usersQuery)->keyBy('id');
+
+        return $history->map(function (ClaimHistoryDto $event) use ($userNames) {
+//            $event['userRoleIds'] = $usersRoles[$event->user_id];
+            $event['userName'] = $userNames->has($event->user_id) ? $userNames->get($event->user_id)->short_name : 'N/A';
             return $event;
         });
     }
