@@ -105,11 +105,9 @@ class CustomerDetailController extends Controller
         /** @var UserDto $referrer_user */
         $referrer_user = $referrer ? $users->get($referrer->user_id) : null;
 
-        $referralLevels = [];
+        $referralLevels = $referralService->getLevels();
         $commission_route = '';
         if ($referral) {
-            $referralLevels = $referralService->getLevels();
-
             $existCustomerCommission = $referralService->existCustomerCommission($customer->id);
             if ($existCustomerCommission) {
                 $commission_route = route('referral.levels', ['level_id' => $existCustomerCommission[0]]);

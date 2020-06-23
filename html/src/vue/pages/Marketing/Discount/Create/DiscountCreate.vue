@@ -5,8 +5,8 @@
             :option-discount-types="optionDiscountTypes"
             :discount-statuses="discountStatuses"
             :iConditionTypes="iConditionTypes"
-            :paymentMethods="paymentMethods"
-            :deliveryMethods="deliveryMethods"
+            :iPaymentMethods="iPaymentMethods"
+            :iDeliveryMethods="iDeliveryMethods"
             :categories="categories"
             :brands="brands"
             :roles="roles"
@@ -47,8 +47,8 @@
             optionDiscountTypes: Object,
             iConditionTypes: Object,
             discountStatuses: Object,
-            paymentMethods: Array,
-            deliveryMethods: Array,
+            iPaymentMethods: Array,
+            iDeliveryMethods: Array,
             categories: Array,
             brands: Array,
             roles: Array,

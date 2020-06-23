@@ -56,45 +56,43 @@
             </b-tabs>
         </b-card>
         <modal-portfolios :model.sync="customer.portfolios" :customer-id="customer.id"/>
+        <modal-mark-status :model.sync="customer" :status="customerStatus.created" id="modal-mark-status-created"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.problem" id="modal-mark-status-problem"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
-        <modal-mark-status :model.sync="customer" :status="customerStatus.created" id="modal-mark-status-created"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.new" id="modal-mark-status-new"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.consideration" id="modal-mark-status-consideration"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.rejected" id="modal-mark-status-rejected"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.potential_rp" id="modal-mark-status-potential_rp"/>
-        <modal-mark-status :model.sync="customer" :status="customerStatus.active" id="modal-mark-status-active"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.temporarily_suspended" id="modal-mark-status-temporarily-suspended"/>
         <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-block"/>
-        <modal-mark-status :model.sync="customer" :status="customerStatus.block" id="modal-mark-status-ptRef"/>
     </layout-main>
 </template>
 
 <script>
 
-import VInput from '../../../components/controls/VInput/VInput.vue';
+    import VInput from '../../../components/controls/VInput/VInput.vue';
 
-import Infopanel from './components/infopanel.vue';
-import ModalPortfolios from './components/modal-portfolios.vue';
-import ModalMarkStatus from './components/modal-mark-status.vue';
+    import Infopanel from './components/infopanel.vue';
+    import ModalPortfolios from './components/modal-portfolios.vue';
+    import ModalMarkStatus from './components/modal-mark-status.vue';
 
-import TabMain from './components/tab-main.vue';
-import TabPreference from './components/tab-preference.vue';
-import TabOrder from './components/tab-order.vue';
-import TabDocument from './components/tab-document.vue';
-import TabSubscriptions from "./components/tab-subscriptions.vue";
-import TabCommunication from './components/tab-communication.vue';
-import TabPromoProduct from './components/tab-promo-product.vue';
-import TabPromoPage from './components/tab-promo-page.vue';
-import TabOrderReferrer from './components/tab-order-referrer.vue';
-import TabBilling from './components/tab-billing.vue';
-import TabBonus from './components/tab-bonus.vue';
-import TabPromocodes from './components/tab-promocodes.vue';
+    import TabMain from './components/tab-main.vue';
+    import TabPreference from './components/tab-preference.vue';
+    import TabOrder from './components/tab-order.vue';
+    import TabDocument from './components/tab-document.vue';
+    import TabSubscriptions from './components/tab-subscriptions.vue';
+    import TabCommunication from './components/tab-communication.vue';
+    import TabPromoProduct from './components/tab-promo-product.vue';
+    import TabPromoPage from './components/tab-promo-page.vue';
+    import TabOrderReferrer from './components/tab-order-referrer.vue';
+    import TabBilling from './components/tab-billing.vue';
+    import TabBonus from './components/tab-bonus.vue';
+    import TabPromocodes from './components/tab-promocodes.vue';
 
-import tabsMixin from '../../../mixins/tabs.js';
-import Services from "../../../../scripts/services/services";
+    import tabsMixin from '../../../mixins/tabs.js';
+    import Services from '../../../../scripts/services/services';
 
-export default {
+    export default {
     mixins: [tabsMixin],
     props: [
         'iCustomer',
