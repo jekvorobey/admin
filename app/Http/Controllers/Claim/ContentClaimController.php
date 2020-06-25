@@ -438,12 +438,16 @@ class ContentClaimController extends Controller
         $users = $userService->users($usersQuery)->keyBy('id');
 
         $merchantIds = $claims->pluck('merchant_id')->all();
-        $merchantQuery = (new RestQuery())->setFilter('id', $merchantIds);
+        $merchantQuery = (new RestQuery())
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->setFilter('id', $merchantIds);
         $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
 
         return $claims->map(function (ContentClaimDto $claim) use ($users, $merchants) {
             $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->short_name : 'N/A';
+            $claim['userLogin'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->login : 'N/A';
             $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
+            $claim['merchantId'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->id : 'N/A';
             return $claim;
         });
     }
