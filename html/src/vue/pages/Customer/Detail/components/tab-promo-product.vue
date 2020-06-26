@@ -29,6 +29,39 @@
             </tr>
         </thead>
         <tbody>
+            <tr v-if="filter.active">
+                <td>
+                    <v-input v-model="newPromoProduct.product_id"
+                             type="number"
+                             :error="productIdError"
+                             placeholder="ID Товара"
+                             aria-required="true"/>
+                </td>
+                <td>
+                        <textarea ref="newDescription"
+                                  class="form-control"
+                                  :class="newDescriptionError"
+                                  v-model="newPromoProduct.description"
+                                  placeholder="Описание товара"
+                                  aria-required="true"
+                                  maxlength="1000"/>
+                </td>
+                <td>
+                    <div v-for="(file, i) in newPromoProduct.files" class="mb-1">
+                        <img :src="media.file(file)" style="max-width: 150px;"/>
+                        <v-delete-button btn-class="btn-danger btn-sm" @delete="$delete(newPromoProduct.files, i)"/>
+                    </div>
+
+                    <file-input @uploaded="(data) => $set(newPromoProduct.files, newPromoProduct.files.length, data.id)" class="mb-3"></file-input>
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm"
+                            :disabled="this.$v.newPromoProduct.$invalid"
+                            @click="savePromoProduct(newPromoProduct, 'create')">
+                        <fa-icon icon="plus"/>
+                    </button>
+                </td>
+            </tr>
             <tr v-for="(promoProduct, index) in $v.promoProducts.$each.$iter" v-if="filter.active === !!promoProduct.$model.active">
                 <td>
                     <div>
@@ -36,6 +69,7 @@
                             {{ promoProduct.$model.product_name }}
                         </a>
                     </div>
+                    <div v-if="promoProduct.$model.product_id">ID товара: {{ promoProduct.$model.product_id }}</div>
                     <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
                     <div v-if="promoProduct.$model.category">Категория: {{ promoProduct.$model.category.name }}</div>
                     <div v-if="promoProduct.$model.price">Цена: {{ promoProduct.$model.price }}</div>
@@ -77,59 +111,34 @@
                             v-if="!!promoProduct.$model.active"></file-input>
                 </td>
                 <td>
-                    <template v-if="!!promoProduct.$model.active">
-                        <button class="btn btn-success btn-sm"
-                                @click="savePromoProduct(promoProduct.$model, 'update')"
-                                :disabled="promoProduct.description.$invalid
+                    <div v-if="!promoProduct.$model.mass">
+                        <template v-if="!!promoProduct.$model.active">
+                            <button class="btn btn-success btn-sm"
+                                    @click="savePromoProduct(promoProduct.$model, 'update')"
+                                    :disabled="promoProduct.description.$invalid
                                 ||!(promoProduct.description.$dirty
                                 ||promoProduct.files.$dirty)">
-                            <fa-icon icon="save"/>
-                        </button>
-                        <button class="btn btn-danger btn-sm"
-                                @click="archivePromoProduct(promoProduct.$model)"
-                                :disabled="promoProduct.description.$invalid">
-                            <fa-icon icon="file-archive"/>
-                        </button>
-                    </template>
-                    <template v-if="!promoProduct.$model.active">
-                        <button class="btn btn-success btn-sm"
-                                @click="makeActive(promoProduct.$model)">
-                            <fa-icon icon="file-archive"/>
-                        </button>
-                    </template>
-                </td>
-            </tr>
-            <tr v-if="filter.active">
-                <td>
-                    <v-input v-model="newPromoProduct.product_id"
-                             type="number"
-                             :error="productIdError"
-                             placeholder="ID Товара"
-                             aria-required="true"/>
-                </td>
-                <td>
-                    <textarea ref="newDescription"
-                              class="form-control"
-                              :class="newDescriptionError"
-                              v-model="newPromoProduct.description"
-                              placeholder="Описание товара"
-                              aria-required="true"
-                              maxlength="1000"/>
-                </td>
-                <td>
-                    <div v-for="(file, i) in newPromoProduct.files" class="mb-1">
-                        <img :src="media.file(file)" style="max-width: 150px;"/>
-                        <v-delete-button btn-class="btn-danger btn-sm" @delete="$delete(newPromoProduct.files, i)"/>
+                                <fa-icon icon="save"/>
+                            </button>
+                            <button class="btn btn-danger btn-sm"
+                                    @click="archivePromoProduct(promoProduct.$model)"
+                                    :disabled="promoProduct.description.$invalid">
+                                <fa-icon icon="file-archive"/>
+                            </button>
+                        </template>
+                        <template v-if="!promoProduct.$model.active">
+                            <button class="btn btn-success btn-sm"
+                                    @click="makeActive(promoProduct.$model)">
+                                <fa-icon icon="file-archive"/>
+                            </button>
+                        </template>
                     </div>
-
-                    <file-input @uploaded="(data) => $set(newPromoProduct.files, newPromoProduct.files.length, data.id)" class="mb-3"></file-input>
-                </td>
-                <td>
-                    <button class="btn btn-success btn-sm"
-                            :disabled="this.$v.newPromoProduct.$invalid"
-                            @click="savePromoProduct(newPromoProduct, 'create')">
-                        <fa-icon icon="plus"/>
-                    </button>
+                    <a :href="getRoute('referral.promo-products.list')"
+                       v-else
+                       class="btn btn-outline-dark btn-sm">
+                        Массовый товар
+                        <fa-icon icon="angle-right"/>
+                    </a>
                 </td>
             </tr>
         </tbody>

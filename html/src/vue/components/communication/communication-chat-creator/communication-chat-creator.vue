@@ -43,14 +43,21 @@
                     <b-row class="mb-2" v-if="!usersProp && !userSendIds">
                         <b-col cols="3">
                             <label for="chat-users">Пользователи</label>
+                            <div class="form-group form-check">
+                                <input type="checkbox" v-model="user.accept" id="accept" class="form-check-input">
+                                <label class="form-check-label" for="accept">добавить всех</label>
+                            </div>
                         </b-col>
                         <b-col cols="9">
-                            <v-select2 v-model="Object.keys(users)" class="form-control form-control-sm" multiple>
+                            <v-select2 v-if="user.accept === true" v-model="Object.keys(users)" class="form-control form-control-sm" multiple>
+                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
+                            </v-select2>
+
+                            <v-select2 v-else v-model="form.user_ids" class="form-control form-control-sm" multiple>
                                 <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
                             </v-select2>
                         </b-col>
                     </b-row>
-
                     <b-row class="mb-2">
                         <b-col cols="3">
                             <label for="chat-theme">Тема</label>
@@ -127,6 +134,9 @@
 
             return {
                 users: users,
+                user: {
+                    accept: false
+                },
                 form: {
                     channel_id: null,
                     role_ids: [],
@@ -141,6 +151,9 @@
             initUsers() {
                 this.users = this.usersProp ? this.usersProp : {};
                 this.form.user_ids = this.userSendIds ? this.userSendIds : [];
+            },
+            handleSubmit() {
+                alert(JSON.stringify(this.user));
             },
             initComponent() {
                 this.form.channel_id = null;

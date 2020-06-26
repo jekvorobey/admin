@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Greensight\Message\Services\CommunicationService\CommunicationService;
 
 class Menu
 {
@@ -104,10 +105,10 @@ class Menu
                         'title' => 'Управление страницами',
                         'route' => route('landing.listPage'),
                     ],
-                    /*[
-                        'title' => 'Управление соц. сетями',
+                    [
+                        'title' => 'Управление контактами и соц. сетями',
                         'route' => route('contacts.list'),
-                    ],*/
+                    ],
 //                    [
 //                        'title' => 'Шаблоны страниц',
 //                        'route' => '#',
@@ -131,6 +132,10 @@ class Menu
                     [
                         'title' => 'Баннеры',
                         'route' => route('banner.listPage'),
+                    ],
+                    [
+                        'title' => 'Товарные шильдики',
+                        'route' => route('productBadges.list'),
                     ],
                 ]
             ],
@@ -308,7 +313,7 @@ class Menu
                 'title' => 'Коммуникации',
                 'items' => [
                     [
-                        'title' => 'Непрочитанные сообщения',
+                        'title' => 'Непрочитанные сообщения' . static::unreadCount(),
                         'route' => route('communications.chats.unread'),
                     ],
                     [
@@ -394,5 +399,15 @@ class Menu
         }
 
         return $menuItems;
+    }
+
+    /**
+     * Получить кол-во непрочитанных сообщений для отображения у пункта меню
+     * @return string
+     */
+    private static function unreadCount()
+    {
+        $communicationService = resolve(CommunicationService::class);
+        return ' (' . $communicationService->unreadCount() . ')';
     }
 }

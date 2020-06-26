@@ -200,7 +200,7 @@
         <!-- На способ доставки -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_DELIVERY_METHOD">
             <v-select v-model="values.deliveryMethods"
-                      :options="deliveryMethods"
+                      :options="iDeliveryMethods"
                       :multiple="true"
                       :error="valuesErrors.deliveryMethods"
                       @change="initDeliveryMethodsError"
@@ -210,7 +210,7 @@
         <!-- На способ оплаты -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_PAY_METHOD">
             <v-select v-model="values.paymentMethods"
-                      :options="paymentMethods"
+                      :options="iPaymentMethods"
                       :multiple="true"
                       :error="valuesErrors.paymentMethods"
                       @change="initPaymentMethodsError"
@@ -319,8 +319,8 @@
             discounts: Array,
             conditions: Array,
             iConditionTypes: Object,
-            paymentMethods: Array,
-            deliveryMethods: Array,
+            iPaymentMethods: Array,
+            iDeliveryMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,
@@ -613,10 +613,10 @@
                 return this.optionName(id, this.discounts);
             },
             deliveryMethodName(id) {
-                return this.optionName(id, this.deliveryMethods);
+                return this.optionName(id, this.iDeliveryMethods);
             },
             paymentMethodName(id) {
-                return this.optionName(id, this.paymentMethods);
+                return this.optionName(id, this.iPaymentMethods);
             },
             regionName(id) {
                 return this.optionName(id, this.regions);

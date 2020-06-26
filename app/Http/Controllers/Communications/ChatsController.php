@@ -7,12 +7,17 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
+use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Dto\CustomerDto;
+use MerchantManagement\Services\OperatorService\OperatorService;
+use MerchantManagement\Dto\OperatorDto;
 
 
 class ChatsController extends Controller
@@ -24,13 +29,15 @@ class ChatsController extends Controller
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
         $this->loadCommunicationTypes = true;
+        $this->loadUserRoles = true;
 
         $this->title = 'Непрочитанные сообщения';
         return $this->render('Communication/ChatsUnread', [
             'roles' => UserDto::rolesByFrontIds([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
-            ])
+            ]),
+            'theme' => request('theme', '')
         ]);
     }
 
@@ -74,12 +81,14 @@ class ChatsController extends Controller
             $listConstructor->setUnreadAdmin((bool)request('unread_admin'));
         }
 
-        [$chats, $users, $files] = $this->loadChats($listConstructor);
+        [$chats, $users, $files, $customers, $operators] = $this->loadChats($listConstructor);
 
         return response()->json([
             'chats' => $chats,
             'users' => $users,
             'files' => $files,
+            'customers' => $customers,
+            'operators' => $operators,
         ]);
     }
 
@@ -102,11 +111,13 @@ class ChatsController extends Controller
         $chatIds = request('chat_ids');
         $communicationService->createMessage($chatIds, $user->userId(), request('message'), request('files'));
 
-        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds($chatIds));
         return response()->json([
             'chats' => $chats,
             'users' => $users,
             'files' => $files,
+            'customers' => $customers,
+            'operators' => $operators,
         ]);
     }
 
@@ -129,11 +140,13 @@ class ChatsController extends Controller
             $communicationService->createMessage($chatIds, $user->userId(), $message, $files);
         }
 
-        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+        [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds($chatIds));
         return response()->json([
             'chats' => $chats,
             'users' => $users,
             'files' => $files,
+            'customers' => $customers,
+            'operators' => $operators,
         ]);
     }
 
@@ -148,11 +161,13 @@ class ChatsController extends Controller
             request('type_id')
         );
 
-        [$chats, $users, $files] = $this->loadChats($communicationService->chats()->setIds([$chatId]));
+        [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds([$chatId]));
         return response()->json([
             'chats' => $chats,
             'users' => $users,
             'files' => $files,
+            'customers' => $customers,
+            'operators' => $operators,
         ]);
     }
 
@@ -201,6 +216,20 @@ class ChatsController extends Controller
             $files = [];
         }
 
-        return [$chats, $users, $files];
+        /** @var CustomerService $customerService */
+        $customerService = resolve(CustomerService::class);
+        $customers = $customerService->customers(
+            (new RestQuery())->addFields(CustomerDto::entity(), 'id', 'user_id')
+            ->setFilter('user_id', $userIds)
+        )->keyBy('user_id');
+
+        /** @var OperatorService $operatorService */
+        $operatorService = resolve(OperatorService::class);
+        $operators = $operatorService->operators(
+            (new RestQuery())->addFields(OperatorDto::entity(), 'id', 'user_id', 'merchant_id')
+                ->setFilter('user_id', $userIds)
+        )->keyBy('user_id');
+
+        return [$chats, $users, $files, $customers, $operators];
     }
 }

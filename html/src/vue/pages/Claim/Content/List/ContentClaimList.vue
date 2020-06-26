@@ -93,10 +93,10 @@
                     <td><a :href="getRoute('contentClaims.detail', {id: claim.id})">{{ claim.id }}</a></td>
                     <td>{{ typeName(claim.type) }}</td>
                     <td><span class="badge" :class="statusClass(claim.status)">{{ statusName(claim.status) }}</span></td>
-                    <td>{{ claim.merchantName }}</td>
+                    <td><a :href="getRoute('merchant.detail', {id: claim.merchantId})">{{ claim.merchantName }}</a></td>
                     <td>{{ claim.product_ids.length }}</td>
                     <td>{{ unpackName(claim.unpacking) }}</td>
-                    <td>{{ claim.userName }}</td>
+                    <td class="with-small">{{ claim.userName }}<small>{{ claim.userLogin }}</small></td>
                     <td>{{ claim.created_at }}</td>
                 </tr>
             </tbody>
@@ -384,3 +384,12 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+    .with-small small{
+        display: block;
+        color: gray;
+        line-height: 1rem;
+        overflow: hidden;
+    }
+</style>

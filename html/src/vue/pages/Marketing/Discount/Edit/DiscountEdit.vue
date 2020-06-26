@@ -6,8 +6,8 @@
             :option-discount-types="optionDiscountTypes"
             :discount-statuses="discountStatuses"
             :iConditionTypes="iConditionTypes"
-            :paymentMethods="paymentMethods"
-            :deliveryMethods="deliveryMethods"
+            :iPaymentMethods="iPaymentMethods"
+            :iDeliveryMethods="iDeliveryMethods"
             :categories="categories"
             :brands="brands"
             :roles="roles"
@@ -50,8 +50,8 @@
             optionDiscountTypes: Object,
             iConditionTypes: Object,
             discountStatuses: Object,
-            paymentMethods: Array,
-            deliveryMethods: Array,
+            iPaymentMethods: Array,
+            iDeliveryMethods: Array,
             categories: Array,
             brands: Array,
             roles: Array,
@@ -114,7 +114,7 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('UpdateDiscount');
                     this.processing = false;
-                    this.setTimeout(location=this.route('discount.list'), 4000);
+                    this.setTimeout(location=this.getRedirectRoute(discount.type), 4000);
                 }, () => {
                     this.result = err;
                     this.openModal('UpdateDiscount');
@@ -132,6 +132,13 @@
                     .split(',')
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
+            },
+            getRedirectRoute(discountType) {
+                if (discountType === this.discountTypes.bundleOffer
+                    || discountType === this.discountTypes.bundleMasterclass) {
+                    return this.route('bundle.list')
+                }
+                return this.route('discount.list')
             },
         },
     };

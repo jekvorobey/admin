@@ -19,7 +19,10 @@ use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Dto\BrandDto;
+use Pim\Dto\CategoryDto;
 use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Product\ProductArchiveStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
@@ -206,9 +209,11 @@ class ContentClaimController extends Controller
         $productIds = $claim->product_ids;
         /** @var Collection|ProductDto[] $products */
         $products = $productService->newQuery()
+            ->include(BrandDto::entity(), CategoryDto::entity())
             ->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code')
+            ->addFields(BrandDto::entity(), 'id', 'name')
+            ->addFields(CategoryDto::entity(), 'id', 'name')
             ->setFilter('id', $productIds)
-            ->include('brand', 'category')
             ->products();
 
         $historyQuery = $claimService->newQuery()
@@ -297,7 +302,8 @@ class ContentClaimController extends Controller
         ]);
         $query = $offerService->newQuery()
             ->addFields(OfferDto::entity(), 'product_id')
-            ->setFilter('merchant_id', $data['id']);
+            ->setFilter('merchant_id', $data['id'])
+            ->setFilter('archive', ProductArchiveStatus::NO_ARCHIVE);
         $products = $offerService->offers($query);
         $availableIds = $products->pluck('product_id')->all();
 
@@ -432,12 +438,16 @@ class ContentClaimController extends Controller
         $users = $userService->users($usersQuery)->keyBy('id');
 
         $merchantIds = $claims->pluck('merchant_id')->all();
-        $merchantQuery = (new RestQuery())->setFilter('id', $merchantIds);
+        $merchantQuery = (new RestQuery())
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->setFilter('id', $merchantIds);
         $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
 
         return $claims->map(function (ContentClaimDto $claim) use ($users, $merchants) {
             $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->short_name : 'N/A';
+            $claim['userLogin'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->login : 'N/A';
             $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
+            $claim['merchantId'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->id : 'N/A';
             return $claim;
         });
     }
@@ -446,15 +456,18 @@ class ContentClaimController extends Controller
 
         /** @var Collection|ClaimHistoryDto[] $history */
         $history = $query->claimHistory();
-
         $userIds = $history->pluck('user_id')->unique()->all();
-        $usersRoles = [];
-        foreach ($userIds as $k => $v) {
-            $usersRoles[$v] = $userService->userRoles($v);
-        }
 
-        return $history->map(function (ClaimHistoryDto $event) use ($usersRoles) {
-            $event['userRoleIds'] = $usersRoles[$event->user_id];
+//        $usersRoles = [];
+//        foreach ($userIds as $k => $v) {
+//            $usersRoles[$v] = $userService->userRoles($v);
+//    }
+        $usersQuery = (new RestQuery())->setFilter('id', $userIds);
+        $userNames = $userService->users($usersQuery)->keyBy('id');
+
+        return $history->map(function (ClaimHistoryDto $event) use ($userNames) {
+//            $event['userRoleIds'] = $usersRoles[$event->user_id];
+            $event['userName'] = $userNames->has($event->user_id) ? $userNames->get($event->user_id)->short_name : 'N/A';
             return $event;
         });
     }

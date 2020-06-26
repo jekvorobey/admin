@@ -148,8 +148,8 @@
                 :discounts="discounts"
                 :conditions="discount.conditions"
                 :iConditionTypes="iConditionTypes"
-                :paymentMethods="paymentMethods"
-                :deliveryMethods="deliveryMethods"
+                :iPaymentMethods="iPaymentMethods"
+                :iDeliveryMethods="iDeliveryMethods"
                 :regions="discountRegions"
                 :segments="segments"
                 :roles="roles"
@@ -192,8 +192,8 @@
             optionDiscountTypes: Object,
             discountStatuses: Object,
             iConditionTypes: Object,
-            paymentMethods: Array,
-            deliveryMethods: Array,
+            iPaymentMethods: Array,
+            iDeliveryMethods: Array,
             categories: Array,
             brands: Array,
             roles: Array,
@@ -385,8 +385,8 @@
                     let cond = item.condition ? item.condition : {};
                     return  {
                         categories: ('categories' in cond) ? cond.categories : [],
-                        deliveryMethods: ('deliveryMethods' in cond) ? cond.deliveryMethods : [],
-                        paymentMethods: ('paymentMethods' in cond) ? cond.paymentMethods : [],
+                        iDeliveryMethods: ('iDeliveryMethods' in cond) ? cond.iDeliveryMethods : [],
+                        iPaymentMethods: ('iPaymentMethods' in cond) ? cond.iPaymentMethods : [],
                         regions: ('regions' in cond) ? cond.regions : [],
                         roles: (item.type === this.CONDITION_TYPE_USER) ? roles : [],
                         segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],

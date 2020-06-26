@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
@@ -18,11 +19,20 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MerchantDetailController extends Controller
 {
+    /**
+     * @param int $id
+     * @param MerchantService $merchantService
+     * @param OperatorService $operatorService
+     * @param UserService $userService
+     * @param CommunicationService $communicationService
+     * @return mixed
+     */
     public function index(
         int $id,
         MerchantService $merchantService,
         OperatorService $operatorService,
-        UserService $userService
+        UserService $userService,
+        CommunicationService $communicationService
     ) {
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
@@ -81,6 +91,11 @@ class MerchantDetailController extends Controller
             )->include('roleLinks')
                 ->setFilter('id', $userOperatorIds)
         )->keyBy('id');
+
+        // Счетчик непрочитанных сообщений от пользователя //
+        $unreadMsgCount = $communicationService->unreadCount(
+            [$operatorMain->user_id],true
+        );
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
 
@@ -144,6 +159,7 @@ class MerchantDetailController extends Controller
                 ];
             }),
             'isRequest' => $isRequest,
+            'unreadMsgCount' => $unreadMsgCount
         ]);
     }
 
