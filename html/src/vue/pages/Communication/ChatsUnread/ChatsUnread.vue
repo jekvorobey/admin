@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <communication-chat-list
-            :filter="{unread_admin: 1}"
+            :filter="{unread_admin: 1, theme: theme}"
             :roles="roles"
         />
     </layout-main>
@@ -12,6 +12,6 @@ import CommunicationChatList from '../../../components/communication/communicati
 
 export default {
     components: {CommunicationChatList},
-    props: ['roles'],
+    props: ['roles', 'theme'],
 };
 </script>

@@ -11,7 +11,8 @@
             <tbody>
             <tr v-for="event in history">
                 <td>{{ event.created_at }}</td>
-                <td>{{ userRoleName(event.userRoleIds) }}</td>
+<!--                <td>{{ userRoleName(event.userRoleIds) }}</td>-->
+                <td>{{ event.userName }}</td>
                 <td>{{ eventMessage(event) }}</td>
             </tr>
             </tbody>

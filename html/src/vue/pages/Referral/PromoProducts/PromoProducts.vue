@@ -77,12 +77,18 @@
                             {{ promoProduct.$model.product_name }}
                         </a>
                     </div>
+                    <div v-if="promoProduct.$model.product_id">ID товара: {{ promoProduct.$model.product_id }}</div>
                     <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
                     <div v-if="promoProduct.$model.category">Категория: {{ promoProduct.$model.category.name }}</div>
                     <div v-if="promoProduct.$model.price">Цена: {{ promoProduct.$model.price }}</div>
                     <div>Дата создания: {{ promoProduct.$model.created_at }}</div>
                     <div v-if="promoProduct.$model.segments">
                         <small class="text-muted"><fa-icon icon="link"/> Назначен</small>
+                        <segments-list
+                                :activities="activities"
+                                :ref_levels="ref_levels"
+                                :segments="promoProduct.$model.segments">
+                        </segments-list>
                     </div>
                     <div v-else>
                         <small class="text-muted"><fa-icon icon="unlink"/> Не назначен</small>
@@ -154,6 +160,7 @@
 
 import Services from '../../../../scripts/services/services.js';
 import ModalAttach from './components/modal-products-attach.vue';
+import SegmentsList from './components/segments-list.vue';
 import VInput from "../../../components/controls/VInput/VInput.vue";
 import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
 import FileInput from "../../../components/controls/FileInput/FileInput.vue";
@@ -164,6 +171,7 @@ import {required, integer, maxLength} from 'vuelidate/lib/validators';
 export default {
     components: {
         ModalAttach,
+        SegmentsList,
         VInput,
         FileInput,
         VDeleteButton

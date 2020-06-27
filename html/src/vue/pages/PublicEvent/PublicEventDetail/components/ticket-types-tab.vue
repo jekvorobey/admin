@@ -187,7 +187,7 @@
                 let result = [];
 
                 sprintStages.forEach(sprintStage => {
-                    result.push(sprintStage.id);а
+                    result.push(sprintStage.id);
                 });
 
                 return result;

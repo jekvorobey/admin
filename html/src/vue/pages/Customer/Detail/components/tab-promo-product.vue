@@ -69,6 +69,7 @@
                             {{ promoProduct.$model.product_name }}
                         </a>
                     </div>
+                    <div v-if="promoProduct.$model.product_id">ID товара: {{ promoProduct.$model.product_id }}</div>
                     <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
                     <div v-if="promoProduct.$model.category">Категория: {{ promoProduct.$model.category.name }}</div>
                     <div v-if="promoProduct.$model.price">Цена: {{ promoProduct.$model.price }}</div>

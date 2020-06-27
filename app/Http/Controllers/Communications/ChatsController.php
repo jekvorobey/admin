@@ -36,7 +36,8 @@ class ChatsController extends Controller
             'roles' => UserDto::rolesByFrontIds([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
-            ])
+            ]),
+            'theme' => request('theme', '')
         ]);
     }
 

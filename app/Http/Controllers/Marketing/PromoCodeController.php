@@ -20,6 +20,7 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Greensight\Marketing\Services\BonusService\BonusService;
+use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
@@ -37,17 +38,21 @@ class PromoCodeController extends Controller
      * @param UserService $userService
      * @param CustomerService $customerService
      * @param MerchantService $merchantService
+     * @param CommunicationService $communicationService
      * @return mixed
      */
     public function index(
         PromoCodeService $promoCodeService,
         UserService $userService,
         CustomerService $customerService,
-        MerchantService $merchantService
+        MerchantService $merchantService,
+        CommunicationService $communicationService
     ) {
         $this->title = 'Промокоды';
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
+
+        $promoRequestsCount = $communicationService->unreadCount([], false, 'Запрос промокода');
 
         $merchantsIds = $promoCodes->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantsIds)->values();
@@ -98,6 +103,7 @@ class PromoCodeController extends Controller
 
         return $this->render('Marketing/PromoCode/List', [
             'iPromoCodes' => $promoCodes,
+            'promoRequestsCount' => $promoRequestsCount,
             'Merchants' => $merchants,
             'statuses' => PromoCodeOutDto::allStatuses(),
             'types' => PromoCodeOutDto::allTypes(),
