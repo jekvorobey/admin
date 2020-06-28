@@ -357,6 +357,7 @@ Route::middleware('auth')->group(function () {
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
+            Route::put('badges', 'ProductDetailController@saveBadges')->name('products.saveBadges');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
 
             Route::prefix('tips')->group(function () {
