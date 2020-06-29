@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-06-29 05:20:28.
+    * Generated on 2020-06-29 17:29:40.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -113,6 +113,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -338,6 +339,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -563,6 +565,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -788,6 +791,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -1013,6 +1017,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -1238,6 +1243,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -1463,6 +1469,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,
@@ -1688,6 +1695,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
         'Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService' => \Pim\Services\PublicEventTicketTypeService\RestPublicEventTicketTypeService::class,
         'Pim\Services\PublicEventTypeService\PublicEventTypeService' => \Pim\Services\PublicEventTypeService\RestPublicEventTypeService::class,
+        'Pim\Services\ReviewService\ReviewService' => \Pim\Services\ReviewService\RestReviewService::class,
         'Pim\Services\SearchService\SearchService' => \Pim\Services\SearchService\RestSearchService::class,
         'Pim\Services\ShoppilotService\ShoppilotService' => \Pim\Services\ShoppilotService\RestShoppilotService::class,
         'auth' => \Illuminate\Auth\AuthManager::class,

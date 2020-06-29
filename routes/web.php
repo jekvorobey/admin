@@ -561,6 +561,8 @@ Route::middleware('auth')->group(function () {
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
         });
+
+        Route::get('channels', 'ChannelController@channels')->name('communications.channels.list');
     });
 
     Route::namespace('Customers')->group(function () {
@@ -761,7 +763,6 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'MediaController@delete')->name('public-event.media.delete');
         });
 
-
         Route::prefix('sprints')->group(function () {
             Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
             Route::get('page', 'PublicEventSprintController@page')->name('public-event.sprints.page');
@@ -800,9 +801,12 @@ Route::middleware('auth')->group(function () {
         Route::get('list/page', 'PublicEventListController@page')->name('public-event.list.page');
     });
 
-    Route::prefix('service-notifications')->namespace('ServiceNotification')->group(function () {
+    Route::prefix('communications/service-notifications')->namespace('ServiceNotification')->group(function () {
         Route::prefix('')->group(function () {
-            Route::get('list', 'ServiceNotificationController@list')->name('communications.service-notification.fullList');
+            Route::get('', 'ServiceNotificationController@page')->name('communications.service-notification.list');
+            Route::get('list', 'ServiceNotificationController@list')->name('communications.service-notification.page');
+            Route::get('{id}/templates', 'TemplateController@listNotification')->name('communications.service-notification.template.listNotification');
+            Route::get('{id}/templatesReload', 'TemplateController@pageNotification')->name('communications.service-notification.template.reload');
             Route::post('save', 'ServiceNotificationController@save')->name('communications.service-notification.save');
             Route::post('delete', 'ServiceNotificationController@delete')->name('communications.service-notification.delete');
             Route::post('send', 'ServiceNotificationController@send')->name('communications.service-notification.send');

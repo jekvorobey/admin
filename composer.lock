@@ -791,12 +791,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-message-lib.git",
-                "reference": "792b1cbf5928bab7ab9e5deb514f28177055ccc7"
+                "reference": "66e43d6dc39473ff59f4d80f203b08a60334d931"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=792b1cbf5928bab7ab9e5deb514f28177055ccc7",
-                "reference": "792b1cbf5928bab7ab9e5deb514f28177055ccc7",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-message-lib/repository/archive.zip?sha=66e43d6dc39473ff59f4d80f203b08a60334d931",
+                "reference": "66e43d6dc39473ff59f4d80f203b08a60334d931",
                 "shasum": ""
             },
             "require": {
@@ -831,7 +831,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2020-06-24T15:08:18+00:00"
+            "time": "2020-06-29T14:28:18+00:00"
         },
         {
             "name": "greensight/ibt-oms-lib",
@@ -888,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "7470634c2c48c8c18a96f6f168a680fbf50f0944"
+                "reference": "4c0b3783a59db493c327b9b9b40f4d9d56439270"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=7470634c2c48c8c18a96f6f168a680fbf50f0944",
-                "reference": "7470634c2c48c8c18a96f6f168a680fbf50f0944",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=4c0b3783a59db493c327b9b9b40f4d9d56439270",
+                "reference": "4c0b3783a59db493c327b9b9b40f4d9d56439270",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-06-29T02:03:02+00:00"
+            "time": "2020-06-29T14:13:23+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -965,6 +965,9 @@
                 }
             ],
             "description": "iBT store client",
+            "support": {
+                "issues": "https://gitlab.com/api/v4/projects/13268913/issues"
+            },
             "time": "2020-05-12T15:26:40+00:00"
         },
         {
@@ -5142,16 +5145,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "5796d127b0c4ff505b77455148ea9d5269d99758"
+                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/5796d127b0c4ff505b77455148ea9d5269d99758",
-                "reference": "5796d127b0c4ff505b77455148ea9d5269d99758",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
+                "reference": "969b211f9a51aa1f6c01d1d2aef56d3bd91598e5",
                 "shasum": ""
             },
             "require": {
@@ -5186,7 +5189,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2020-06-28T07:02:41+00:00"
+            "time": "2020-06-29T13:22:24+00:00"
         },
         {
             "name": "nunomaduro/collision",
