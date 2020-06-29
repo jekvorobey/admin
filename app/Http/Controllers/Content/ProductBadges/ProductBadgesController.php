@@ -20,7 +20,7 @@ class ProductBadgesController extends Controller
      */
     public function list(ContentBadgesService $badgesService)
     {
-        $badges = $badgesService->productBadges()->keyBy('id');
+        $badges = $badgesService->productBadges();
 
         $this->title = 'Справочник товарных шильдиков';
 
@@ -50,7 +50,7 @@ class ProductBadgesController extends Controller
 
         $badgesService->createProductBadge($badgeDto);
 
-        $badges = $badgesService->productBadges()->keyBy('id');
+        $badges = $badgesService->productBadges();
 
         return response()->json([
             'badges' => $badges
@@ -79,7 +79,7 @@ class ProductBadgesController extends Controller
 
         $badgesService->updateProductBadge($data['id'], $badgeDto);
 
-        $badges = $badgesService->productBadges()->keyBy('id');
+        $badges = $badgesService->productBadges();
 
         return response()->json([
             'badges' => $badges
@@ -95,8 +95,7 @@ class ProductBadgesController extends Controller
     public function reorder(ContentBadgesService $badgesService)
     {
         $data = $this->validate(request(), [
-            'items' => 'required|array',
-            'items.*' => 'required|integer'
+            'items' => 'required|json',
         ]);
 
         $badgesService->reorderProductBadges($data);

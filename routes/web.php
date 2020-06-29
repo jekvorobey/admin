@@ -348,6 +348,7 @@ Route::middleware('auth')->group(function () {
         Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
         Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
+        Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');

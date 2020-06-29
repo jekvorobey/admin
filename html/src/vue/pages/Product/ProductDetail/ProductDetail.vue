@@ -32,6 +32,7 @@
                 v-if="nav.currentTab === 'props'"
                 :product="product"
                 :propertyValues="this.properties"
+                :badges="badges"
                 :options="options"
                 @onSave="refresh"
         ></property-tab>
@@ -123,6 +124,7 @@
     props: {
         iProduct: {},
         iImages: {},
+        iBadges: {},
         iProperties: {},
         options: {}
     },
@@ -130,6 +132,7 @@
         return {
             product: this.iProduct,
             images: this.iImages,
+            badges: this.iBadges,
             properties: this.iProperties,
 
             nav: {
@@ -157,6 +160,7 @@
                 this.properties = data.properties;
                 this.options.availableProperties = data.availableProperties;
                 this.options.directoryValues = data.directoryValues;
+                this.options.availableBadges = data.availableBadges;
             }).finally(() => {
                 Services.hideLoader();
             });

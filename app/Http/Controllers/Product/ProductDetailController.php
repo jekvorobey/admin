@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
@@ -10,8 +11,11 @@ use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionSe
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
@@ -33,31 +37,42 @@ class ProductDetailController extends Controller
      * @param ProductService $productService
      * @param CategoryService $categoryService
      * @param BrandService $brandService
-     *
+     * @param ContentBadgesService $badgesService
      * @return mixed
      */
     public function index(
         $id,
         ProductService $productService,
         CategoryService $categoryService,
-        BrandService $brandService
+        BrandService $brandService,
+        ContentBadgesService $badgesService
     )
     {
-        [$product, $images, $props, $availableProps, $directoryValues] = $this->getProductData($id, $productService);
+        [
+            $product,
+            $images,
+            $badges,
+            $props,
+            $availableProps,
+            $directoryValues
+        ] = $this->getProductData($id, $productService);
         
         $approvalStatuses = collect(ProductApprovalStatus::allStatuses())->pluck('name', 'id')->all();
         $brands = $brandService->newQuery()->prepare($brandService)->brands();
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
 
         $productBonusOptionService = resolve(ProductBonusOptionService::class);
+        $availableBadges = $badgesService->productBadges()->keyBy('id');
         $maxPercentagePayment = $productBonusOptionService->get($id, ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT);
 
         return $this->render('Product/ProductDetail', [
             'iProduct' => $product,
             'iImages' => $images,
+            'iBadges' => $badges,
             'iProperties' => $props,
             'options' => [
                 'availableProperties' => $availableProps,
+                'availableBadges' => $availableBadges,
                 'directoryValues' => $directoryValues,
                 'orderStatuses' => OrderStatus::allStatuses(),
                 'approval' => $approvalStatuses,
@@ -261,11 +276,12 @@ class ProductDetailController extends Controller
         $products->first()->showCount = $currentOffer;
         $products->first()->offers = $listOffers;
         $products->first()->publicEvents = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
-        //После реализации сервиса мастер классов - тут получение приаязанных
+        //После реализации сервиса мастер классов - тут получение привязанных
         /** @var ProductDto $product */
         $product = $products->first();
         $images = $productService->images($product->id);
-        
+        $badges = $productService->badges($product->id);
+
         $offersIds = (collect($products->first()->offers->pluck('offer_id'))->toArray());
         $orders = $orderService->ordersByOffers(['offersIds' => $offersIds]);
         $products->first()->orders = $orders;
@@ -274,6 +290,7 @@ class ProductDetailController extends Controller
         return [
             $product,
             $images,
+            $badges,
             $props,
             $availableProps,
             $directoryValues
