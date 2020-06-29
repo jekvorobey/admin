@@ -348,6 +348,7 @@ Route::middleware('auth')->group(function () {
         Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
         Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
+        Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
@@ -357,7 +358,6 @@ Route::middleware('auth')->group(function () {
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
-            Route::put('badges', 'ProductDetailController@saveBadges')->name('products.saveBadges');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
 
             Route::prefix('tips')->group(function () {
