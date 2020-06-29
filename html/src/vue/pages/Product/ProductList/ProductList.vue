@@ -102,8 +102,14 @@
                 <button v-if="!massEmpty(massProductsType)"
                         @click="copyIdsToClipBoard"
                         type="button"
-                        class="btn btn-outline-secondary mr-4"
-                ><fa-icon icon="copy"></fa-icon> Копировать ID</button>
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать ID</button>
+
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="openBadgesEditModal"
+                        type="button"
+                        class="btn btn-success mr-3">
+                    <fa-icon icon="cog"></fa-icon> Назначить шильдики</button>
             </div>
         </div>
         <table class="table">
@@ -200,6 +206,10 @@
                 </div>
             </modal>
         </transition>
+
+        <product-badges-modal
+                :product-id="massAll(this.massProductsType)"
+                :available-badges="options.availableBadges"/>
     </layout-main>
 </template>
 
@@ -212,6 +222,7 @@
     import VInput from '../../../components/controls/VInput/VInput.vue';
     import Dropdown from '../../../components/dropdown/dropdown.vue';
     import Modal from '../../../components/controls/modal/modal.vue';
+    import ProductBadgesModal from '../ProductDetail/components/product-badges-modal.vue';
     import { mapActions, mapGetters } from 'vuex';
 
     import {
@@ -270,6 +281,7 @@
         ],
         components: {
             Modal,
+            ProductBadgesModal,
             FSelect,
             FInput,
             FDate,
@@ -450,6 +462,9 @@
             copyIdsToClipBoard() {
                 let text = this.massAll(this.massProductsType).join(',');
                 clipboard.writeText(text).then();
+            },
+            openBadgesEditModal() {
+                this.$bvModal.show('productBadgesEdit');
             },
         },
         created() {

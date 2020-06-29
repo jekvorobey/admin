@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\UserDto;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
@@ -22,7 +26,8 @@ class ProductListController extends Controller
         SearchService $searchService,
         CategoryService $categoryService,
         BrandService $brandService,
-        ShoppilotService $shoppilotService
+        ShoppilotService $shoppilotService,
+        ContentBadgesService $badgesService
     )
     {
         $this->title = 'Товары';
@@ -50,6 +55,7 @@ class ProductListController extends Controller
                 'productionDone' => ProductProductionStatus::DONE,
                 'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
+                'availableBadges' => $badgesService->productBadges()->keyBy('id'),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ]
@@ -131,6 +137,27 @@ class ProductListController extends Controller
         
         return response()->json();
     }
+
+    /**
+     * Назначить или обнулить шильдики у товаров
+     * @param ProductService $productService
+     * @return Application|ResponseFactory|Response
+     */
+    public function attachBadges(ProductService $productService)
+    {
+        $data = $this->validate(request(), [
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'integer',
+            'badges' => 'nullable|json',
+        ]);
+
+        $productIds = $data['product_ids'];
+        $data = isset($data['badges']) ? $data['badges'] : null;
+        $productService->updateBadges($productIds, $data);
+
+        return response('', 204);
+    }
+
     protected function makeQuery(Request $request): ProductQuery
     {
         $query = new ProductQuery();
