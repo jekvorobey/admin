@@ -22,7 +22,7 @@
                         </b-col>
                         <b-col cols="9">
                             <v-select2 v-model="form.user_ids" class="form-control form-control-sm" multiple>
-                                <option v-for="user in users" :value="user.id">{{ user.title }}</option>
+                                <option v-for="user in users" :value="user.id">{{ user.title }} - {{ getMerchantName(user.merchant_id) }}</option>
                             </v-select2>
                         </b-col>
                     </b-row>
@@ -51,11 +51,11 @@
                         <b-col cols="9">
                             <v-select2 v-if="user.accept === true" v-model="form.user_ids = Object.keys(users)"
                                     class="form-control form-control-sm" multiple>
-                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
+                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }} - {{ getMerchantName(user.merchant_id) }}</option>
                             </v-select2>
 
                             <v-select2 v-else v-model="form.user_ids" class="form-control form-control-sm" multiple>
-                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }}</option>
+                                <option v-for="user in availableUsers" :value="user.id">{{ user.title }} - {{ getMerchantName(user.merchant_id) }}</option>
                             </v-select2>
                         </b-col>
                     </b-row>
@@ -128,7 +128,7 @@
     export default {
         name: 'communication-chat-creator',
         components: {VSelect2, CommunicationChatMessage},
-        props: ['usersProp', 'userSendIds', 'roles'],
+        props: ['usersProp', 'userSendIds', 'roles', 'merchants'],
         data() {
             let users = this.usersProp ? this.usersProp : {};
             let userIds = this.userSendIds ? this.userSendIds : [];
@@ -185,6 +185,13 @@
                 }).finally(() => {
                     Services.hideLoader();
                 });
+            },
+            getMerchantName(id) {
+                let merchant_name;
+                Object.values(this.merchants).map(merchant => (
+                    merchant.id === id ? merchant_name = merchant.legal_name : null
+                ));
+                return merchant_name;
             },
         },
         computed: {

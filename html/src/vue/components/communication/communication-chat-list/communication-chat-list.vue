@@ -92,6 +92,7 @@
             <communication-chat-creator :usersProp="usersProp"
                                         :userSendIds="usersProp ? [usersProp[0].id] : null"
                                         :roles="roles"
+                                        :merchants="merchants"
             />
         </b-modal>
         <b-modal id="modal-edit" title="Редактирование чата" hide-footer>
@@ -175,6 +176,7 @@
             filter: Object,
             usersProp: Array,
             roles: Object,
+            merchants: Array,
         },
         data() {
             return {
