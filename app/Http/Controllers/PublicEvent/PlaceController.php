@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicEvent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Pim\Core\PimException;
+use Pim\Dto\PublicEvent\MediaDto;
 use Pim\Dto\PublicEvent\PlaceDto;
 use Pim\Services\PublicEventPlaceService\PublicEventPlaceService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -76,6 +77,20 @@ class PlaceController extends Controller
         }
         
         return response()->json();
+    }
+
+    public function media(Request $request, PublicEventPlaceService $publicEventPlaceService)
+    {
+        $id = $request->get('id');
+        $file_id = $request->get('file_id');
+        
+        if (!$file_id) {
+            throw new BadRequestHttpException('file_id required');
+        }
+        
+        return response()->json([
+            'media' => $publicEventPlaceService->addMedia($id, $file_id)['media'],
+        ]);
     }
     
     /**

@@ -70,7 +70,11 @@
                         <v-input v-model="$v.form.city_id.$model" disabled>ID Места</v-input>
                         <v-input v-model="$v.form.latitude.$model" disabled>Широта</v-input>
                         <v-input v-model="$v.form.longitude.$model" disabled>Долгота</v-input>
-                        <img v-if="$v.form.file_id.$model" :src="fileUrl($v.form.file_id.$model)" class="preview">
+                        <h3 class="mt-3">Изображения</h3>
+                        <div v-for="image in $v.form.media.$model" :key="image.id">
+                            <img v-if="image.value" :src="fileUrl(image.value)" class="preview">
+                            <button type="button" @click="onDeleteMedia(image)"><fa-icon icon="trash-alt"/></button>
+                        </div>
                         <file-input destination="place" @uploaded="onFileUpload">Изображение</file-input>
                     </div>
                     <div class="form-group">
@@ -99,6 +103,8 @@
         GET_TOTAL,
         NAMESPACE,
         SET_PAGE,
+        ACT_SAVE_PLACE_MEDIA,
+        ACT_DELETE_PLACE_MEDIA
     } from '../../../store/modules/places';
 
     import modalMixin from '../../../mixins/modal';
@@ -126,7 +132,7 @@
             VInput,
             FileInput,
             VDeleteButton,
-            VDadata
+            VDadata,
         },
         props: {
             iPlaces: {},
@@ -150,7 +156,7 @@
                     global: null,
                     latitude: null,
                     longitude: null,
-                    file_id: null
+                    media: []
                 },
                 massSelectionType: 'places',
             };
@@ -165,7 +171,7 @@
                 city_id: {required},
                 longitude: {required},
                 latitude: {required},
-                file_id: {required}
+                media: {}
             }
         },
         methods: {
@@ -173,12 +179,13 @@
                 ACT_LOAD_PAGE,
                 ACT_SAVE_PLACES,
                 ACT_DELETE_PLACES,
+                ACT_SAVE_PLACE_MEDIA,
+                ACT_DELETE_PLACE_MEDIA
             ]),
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
                 }));
-
                 return this[ACT_LOAD_PAGE]({page});
             },
             onStoreAddressAdd(suggestion) {
@@ -191,6 +198,18 @@
                 this.form.latitude = address.geo_lat;
                 this.form.longitude = address.geo_lon;
             },
+            onDeleteMedia(image) {
+                const index = this.$v.form.media.$model.indexOf(image);
+                Services.showLoader();
+                this[ACT_DELETE_PLACE_MEDIA]({
+                    id: image.id
+                }).then(response => {
+                        this.$v.form.media.$model.splice(index, 1);
+                    })
+                    .finally(() => {
+                        Services.hideLoader();
+                    });
+            },
             createPlace() {
                 this.$v.form.$reset();
                 this.editPlaceId = null;
@@ -202,7 +221,7 @@
                 this.form.latitude = null;
                 this.form.longitude = null;
                 this.form.global = true;
-                this.file_id = null;
+                this.form.media = [];
                 this.openModal('PlaceFormModal');
             },
 
@@ -218,7 +237,7 @@
                 this.form.latitude = place.latitude;
                 this.form.longitude = place.longitude;
                 this.form.global = place.global ? true : false;
-                this.file_id = place.file_id;
+                this.form.media = place.media;
                 this.openModal('PlaceFormModal');
             },
             onSave() {
@@ -252,7 +271,16 @@
                     });
             },
             onFileUpload(file) {
-                this.$v.form.file_id.$model = file.id;
+                Services.showLoader();
+                this[ACT_SAVE_PLACE_MEDIA]({
+                    id: this.editPlaceId,
+                    file_id: file.id
+                }).then(response => {
+                        this.$v.form.media.$model.push(response.media);
+                    })
+                    .finally(() => {
+                        Services.hideLoader();
+                    });
             },
             
         },
@@ -280,7 +308,6 @@
                     this.loadPage(page);
                 }
             },
-
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
@@ -299,11 +326,6 @@
             errorCityName() {
                 if (this.$v.form.city_name.$dirty) {
                     if (!this.$v.form.address.required) return "Обязательное поле!";
-                }
-            },
-            errorFile() {
-                if (this.$v.form.file_id.$dirty) {
-                    if (!this.$v.form.file_id.required) return "Обязательное поле!";
                 }
             },
             errorGlobal() {
