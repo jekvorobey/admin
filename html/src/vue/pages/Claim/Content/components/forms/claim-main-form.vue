@@ -36,7 +36,7 @@
                                :class="{ 'is-invalid': errorProductIdsFields() || errorInvalidProductId() }"
                                :disabled="!productIdsSelect || processing || availableIds.length < 1"
                         />
-                        <small class="form-text text-muted">ID офферов через запятую</small>
+                        <small class="form-text text-muted">ID товаров через запятую</small>
                         <span class="invalid-feedback" role="alert">
                             {{ errorInvalidProductId() }}
                         </span>
@@ -191,7 +191,7 @@
             },
             errorProductIdsFields() {
                 if (this.$v.productIdsOverall.$dirty && this.$v.productIdsOverall.$invalid) {
-                    return "Введите ID офферов в поле или выберите из выпадающего меню";
+                    return "Введите ID товаров в поле или выберите из выпадающего меню";
                 }
             },
             errorInvalidProductId() {

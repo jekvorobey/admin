@@ -13,7 +13,11 @@
             <tbody>
             <tr v-for="item in products">
                 <td>{{ item.id }}</td>
-                <td>{{ item.name }}</td>
+                <td>
+                    <a :href="getRoute('products.detail', {id: item.id})">
+                        {{ item.name }}
+                    </a>
+                </td>
                 <td>{{ item.vendor_code ? item.vendor_code : 'N/A' }}</td>
                 <td>{{ item.brand ? item.brand.name : 'N/A' }}</td>
                 <td>{{ item.category ? item.category.name : 'N/A' }}</td>
@@ -24,6 +28,7 @@
 </template>
 
 <script>
+
     export default {
         props: {
             products: Array

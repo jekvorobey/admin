@@ -14,6 +14,9 @@ export const ACT_LOAD_PAGE = 'act_load_page';
 export const ACT_SAVE_PLACES = 'act_save_places';
 export const ACT_DELETE_PLACES = 'act_delete_places';
 
+export const ACT_SAVE_PLACE_MEDIA = 'act_save_place_media';
+export const ACT_DELETE_PLACE_MEDIA = 'act_delete_place_media'
+
 const PAGE_SIZE = 10;
 
 export default {
@@ -55,6 +58,12 @@ export default {
         },
         [ACT_DELETE_PLACES]({rootGetters}, {ids}) {
             return Services.net().post(rootGetters.getRoute('public-event.places.delete'), {}, {ids});
-        }
+        },
+        [ACT_SAVE_PLACE_MEDIA]({rootGetters}, {id, file_id}) {
+            return Services.net().post(rootGetters.getRoute('public-event.places.media'), {}, {id, file_id});
+        },
+        [ACT_DELETE_PLACE_MEDIA]({rootGetters}, {id}) {
+            return Services.net().post(rootGetters.getRoute('public-event.media.delete'), {}, {id});
+        },
     }
 }

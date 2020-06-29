@@ -58,6 +58,11 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group col-lg-3 col-md-6 mt-4">
+                    <div class="input-group input-group-sm mt-2">
+                        Запросы: <a :href="getRoute('communications.chats.unread') + '?theme=Запрос промокода'">{{ this.promoRequestsCount }}</a>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <button @click="filtratePromoCodes"
@@ -172,7 +177,7 @@ import Services from '../../../../../scripts/services/services.js';
 export default {
     name: 'page-promo-code-list',
     components: {VDeleteButton, FCheckbox, FInput, FDate,},
-    props: ['iPromoCodes', 'Merchants', 'types', 'statuses', 'creators', 'owners',],
+    props: ['iPromoCodes', 'promoRequestsCount', 'Merchants', 'types', 'statuses', 'creators', 'owners',],
     data() {
         return {
             filter: {

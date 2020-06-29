@@ -245,11 +245,6 @@ class Menu
                     ],
                 ],
             ],
-//            [
-//                'title' => 'Мастер-классы',
-//                'route' => '#',
-//                'items' => []
-//            ],
             [
                 'title' => 'Маркетинг',
                 'items' => [
@@ -316,6 +311,10 @@ class Menu
                         'title' => 'Непрочитанные сообщения' . static::unreadCount(),
                         'route' => route('communications.chats.unread'),
                     ],
+                    // [
+                    //     'title' => 'Служебные нотификации',
+                    //     'route' => route('communications.service-notification'),
+                    // ],
                     [
                         'title' => 'Массовая рассылка',
                         'route' => route('communications.chats.broadcast'),

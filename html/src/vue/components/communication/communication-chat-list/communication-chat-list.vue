@@ -6,7 +6,7 @@
             </div>
             <div class="card-body">
                 <b-row class="mb-2">
-                    <f-input v-model="searchForm.theme" placeholder="Введите тему" list="themesList" class="col-3">
+                    <f-input v-model="searchForm.theme ? searchForm.theme : filter.theme" placeholder="Введите тему" list="themesList" class="col-3">
                         Тема
                     </f-input>
                     <datalist id="themesList">

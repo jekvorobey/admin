@@ -25,6 +25,24 @@
                     </tbody>
                 </table>
             </shadow-card>
+            <shadow-card title="Шильдики на товаре"
+                         :buttons="{onEdit:'pencil-alt'}"
+                         @onEdit="openBadgesEditModal">
+                <ul v-if="product_badges.length > 0">
+                    <li v-for="badge in product_badges">
+                        <h5>
+                            <span class="badge"
+                                  :class="badgeClass(options.availableBadges[badge].type)">
+                                {{ options.availableBadges[badge].text }}
+                            </span>
+                        </h5>
+                    </li>
+                </ul>
+                <button v-else @click="openBadgesEditModal"
+                        class="btn btn-outline-dark btn-block mt-3">
+                    Назначить шильдики
+                </button>
+            </shadow-card>
         </div>
         <shadow-card title="Характеристики" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productPropsEdit')" class="flex-grow-1">
             <table class="table table-striped table-bordered table-sm">
@@ -64,6 +82,11 @@
                 @onSave="$emit('onSave')"
                 modal-name="productPropsEdit">
         </product-props-modal>
+
+        <product-badges-modal
+                :product-id="[product.id]"
+                :available-badges="options.availableBadges"
+                @save="updateBadges"/>
     </div>
 </template>
 
@@ -71,6 +94,7 @@
     import ShadowCard from '../../../../components/shadow-card.vue';
     import ProductEditModal from './product-values-modal.vue';
     import ProductPropsModal from './product-props-modal.vue';
+    import ProductBadgesModal from './product-badges-modal.vue';
     import ArchiveModal from './product-archive-modal.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
@@ -80,6 +104,7 @@
             ShadowCard,
             ProductEditModal,
             ProductPropsModal,
+            ProductBadgesModal,
             ArchiveModal,
         },
         mixins: [modalMixin],
@@ -88,9 +113,39 @@
             brand: Object,
             category: Object,
             propertyValues: {},
+            badges: Array,
             options: Object
         },
+        data() {
+            return {
+                product_badges: this.sortBadges(this.badges)
+            }
+        },
         methods: {
+            updateBadges(badges) {
+                this.product_badges = this.sortBadges(badges);
+            },
+            sortBadges(badgesToSort) {
+                return Object.values(badgesToSort).sort((item1, item2) => {
+                    if (this.options.availableBadges[item1].order_num
+                        > this.options.availableBadges[item2].order_num) return 1;
+                    if (this.options.availableBadges[item1].order_num
+                        === this.options.availableBadges[item2].order_num) return 0;
+                    if (this.options.availableBadges[item1].order_num
+                        < this.options.availableBadges[item2].order_num) return -1;
+                })
+            },
+            openBadgesEditModal() {
+                this.$bvModal.show('productBadgesEdit');
+            },
+            badgeClass(type) {
+                switch (type) {
+                    case 1: return 'badge-dark';
+                    case 2: return 'badge-warning';
+                    case 3: return 'badge-secondary';
+                    default: return 'badge-light';
+                }
+            },
             values(id) {
                 return this.propertyValues[id] || [];
             },

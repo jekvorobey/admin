@@ -348,6 +348,7 @@ Route::middleware('auth')->group(function () {
         Route::put('approval', 'ProductListController@updateApprovalStatus')->name('products.massApproval');
         Route::put('production', 'ProductListController@updateProductionStatus')->name('products.massProduction');
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
+        Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
         Route::prefix('{id}')->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
@@ -751,7 +752,15 @@ Route::middleware('auth')->group(function () {
             Route::get('fullList', 'PlaceController@fullList')->name('public-event.places.fullList');
             Route::post('save', 'PlaceController@save')->name('public-event.places.save');
             Route::post('delete', 'PlaceController@delete')->name('public-event.places.delete');
+            Route::post('media', 'PlaceController@media')->name('public-event.places.media');
         });
+
+        Route::prefix('media')->group(function () {
+            Route::get('fullList', 'MediaController@fullList')->name('public-event.media.fullList');
+            Route::post('save', 'MediaController@save')->name('public-event.media.save');
+            Route::post('delete', 'MediaController@delete')->name('public-event.media.delete');
+        });
+
 
         Route::prefix('sprints')->group(function () {
             Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
@@ -789,6 +798,21 @@ Route::middleware('auth')->group(function () {
         
         Route::get('', 'PublicEventListController@list')->name('public-event.list');
         Route::get('list/page', 'PublicEventListController@page')->name('public-event.list.page');
+    });
+
+    Route::prefix('service-notifications')->namespace('ServiceNotification')->group(function () {
+        Route::prefix('')->group(function () {
+            Route::get('list', 'ServiceNotificationController@list')->name('communications.service-notification.fullList');
+            Route::post('save', 'ServiceNotificationController@save')->name('communications.service-notification.save');
+            Route::post('delete', 'ServiceNotificationController@delete')->name('communications.service-notification.delete');
+            Route::post('send', 'ServiceNotificationController@send')->name('communications.service-notification.send');
+        });
+
+        Route::prefix('templates')->group(function () {
+            Route::get('list', 'TemplateController@list')->name('communications.service-notification.template.fullList');
+            Route::post('save', 'TemplateController@save')->name('communications.service-notification.template.save');
+            Route::post('delete', 'TemplateController@delete')->name('communications.service-notification.template.delete');
+        });
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

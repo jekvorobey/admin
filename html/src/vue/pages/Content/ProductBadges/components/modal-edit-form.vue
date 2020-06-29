@@ -11,10 +11,10 @@
                 <table class="table table-sm">
                     <tbody>
                     <tr>
-                        <th>Название</th>
+                        <th>Текст шильдика</th>
                         <td>
                             <v-input v-model="badge.text"
-
+                                     :error="errText"
                                      aria-required="true"/>
                         </td>
                     </tr>
@@ -22,6 +22,7 @@
                         <th>Тип шильдика</th>
                         <td>
                             <v-select v-model="badge.type"
+                                      :error="errType"
                                       :options="availableTypes">
                             </v-select>
                         </td>
@@ -51,7 +52,6 @@
 
     import modal from '../../../../components/controls/modal/modal.vue';
     import modalMixin from '../../../../mixins/modal.js';
-    import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import VInput from "../../../../components/controls/VInput/VInput.vue";
     import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
     import {validationMixin} from 'vuelidate';
@@ -63,7 +63,6 @@
             VInput,
             VSelect,
             modal,
-            VDeleteButton,
         },
         mixins: [
             modalMixin,
@@ -71,25 +70,25 @@
         ],
         props: {
             modalName: String,
+            editingBadge: Object,
             types: Object
         },
 
         data () {
             return {
-                badge: {
+                badge_null: {
                     id: null,
-                    name: '',
-                    has_value: false,
-                    value: ''
-                },
+                    text: '',
+                    type: '',
+                }
             };
         },
-        /*validations: {
-            contact: {
-                name: {required},
+        validations: {
+            badge: {
+                text: {required},
                 type: {required, integer},
             },
-        },*/
+        },
         methods: {
             save: async function() {
                 this.$v.$touch();
@@ -107,36 +106,32 @@
             },
         },
         computed: {
+            badge: {
+                get() {
+                    return this.editingBadge || this.badge_null
+                }
+            },
             availableTypes() {
                 return Object.entries(this.types).map(type => ({
                     value: type[0],
                     text: type[1],
                 }),);
-            },/*
-            errName() {
-                if (this.$v.contact.name.$dirty) {
-                    if (!this.$v.contact.name.required) {
+            },
+            errText() {
+                if (this.$v.badge.text.$dirty) {
+                    if (!this.$v.badge.text.required) {
                         return "Обязательное поле!";
                     }
                 }
             },
             errType() {
-                if (this.$v.contact.name.$dirty) {
-                    if (!this.$v.contact.name.required) {
+                if (this.$v.badge.type.$dirty) {
+                    if (!this.$v.badge.type.required) {
                         return "Выберите тип!";
                     }
                 }
             },
         },
-        watch: {
-            'editingContact': {
-                handler() {
-                    if (this.editingContact) {
-                        this.contact = this.editingContact
-                    }
-                }
-            },
-        */},
     }
 </script>
 
