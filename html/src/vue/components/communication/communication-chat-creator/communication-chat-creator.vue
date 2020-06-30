@@ -16,6 +16,18 @@
                         </b-col>
                     </b-row>
 
+                    <b-row class="mb-2">
+                        <b-col cols="3">
+                            <label>Мерчант</label>
+                        </b-col>
+                        <b-col cols="9">
+                            <v-select2 v-model="form.merchant_id" class="form-control form-control-sm">
+                                <option value="null">Все</option>
+                                <option v-for="merchant in merchants" :value="merchant.id">{{ merchant.legal_name }}</option>
+                            </v-select2>
+                        </b-col>
+                    </b-row>
+
                     <b-row class="mb-2" v-if="usersProp && (!userSendIds || (usersProp.length !== userSendIds.length))">
                         <b-col cols="3">
                             <label for="chat-users">Пользователи</label>
@@ -145,6 +157,7 @@
                     theme: '',
                     status_id: null,
                     type_id: null,
+                    merchant_id: null,
                 },
             }
         },
@@ -211,6 +224,12 @@
             },
             availableUsers() {
                 return Object.values(this.users).filter(user => {
+                    if (Number(this.form.merchant_id)) {
+                        return user.merchant_id == this.form.merchant_id;
+                    } else {
+                        return true;
+                    }
+                }).filter(user => {
                     switch (Number(this.form.channel_id)) {
                         case this.communicationChannelTypes.internal_email:
                             return user.email;
@@ -256,6 +275,17 @@
                         Services.hideLoader();
                     });
                 }
+            },
+            'form.merchant_id': function () {
+                this.initUsers();
+                Services.showLoader();
+                Services.net().get(this.getRoute('user.byRoles'), {
+                    'role_ids': this.form.role_ids
+                }).then(data => {
+                    this.users = data.users;
+                }).finally(() => {
+                    Services.hideLoader();
+                });
             },
         },
     };
