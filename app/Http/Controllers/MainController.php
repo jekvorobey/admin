@@ -34,9 +34,8 @@ class MainController extends Controller
     public function login(RequestInitiator $user)
     {
 
-        return $user->userId() ?
-            $this->render('Index', [])
-            : $this->render('Login', []);
+        return !$user->userId() ?
+            $this->render('Login', []) : $this->home();
     }
 
     /**
