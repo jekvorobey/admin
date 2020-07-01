@@ -25,14 +25,18 @@ class MainController extends Controller
     {
         return $this->render('Index', []);
     }
-    
+
     /**
      * Вывести форму авторизации
+     * @param RequestInitiator $user
      * @return mixed
      */
-    public function login()
+    public function login(RequestInitiator $user)
     {
-        return $this->render('Login', []);
+
+        return $user->userId() ?
+            $this->render('Index', [])
+            : $this->render('Login', []);
     }
 
     /**
