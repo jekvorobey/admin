@@ -18,11 +18,12 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Dto\CustomerDto;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 
 
 class ChatsController extends Controller
 {
-    public function unread()
+    public function unread(MerchantService $merchantService)
     {
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
@@ -37,7 +38,8 @@ class ChatsController extends Controller
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
-            'theme' => request('theme', '')
+            'theme' => request('theme', ''),
+            'merchants' => $merchantService->merchants(),
         ]);
     }
 
