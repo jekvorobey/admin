@@ -637,7 +637,10 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                     Route::get('promocodes', 'TabPromocodesController@load')->name('customers.detail.promocodes');
-                    Route::get('reviews', 'TabReviewsController@load')->name('customers.detail.reviews');
+                    Route::prefix('reviews')->group(function () {
+                        Route::get('data', 'TabReviewsController@load')->name('customers.detail.reviews.data');
+                        Route::get('page', 'TabReviewsController@page')->name('customers.detail.reviews.pagination');
+                    });
                 });
 
             });

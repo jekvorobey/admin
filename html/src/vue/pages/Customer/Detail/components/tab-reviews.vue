@@ -3,7 +3,6 @@
         <table class="table table-sm mt-3">
             <thead>
             <tr>
-                <th>Пользователь</th>
                 <th>Товар</th>
                 <th>Рейтинг</th>
                 <th>Сообщение</th>
@@ -17,11 +16,6 @@
             <tbody>
             <template v-if="reviews.length > 0">
                 <tr v-for="review in reviews">
-                    <td>
-                        <a :href="getRoute('customers.detail', {id: review.user.id})">
-                            {{ review.user.full_name }}
-                        </a>
-                    </td>
                     <td>
                         <a :href="getRoute('products.detail', {id: review.product.id})">
                             {{ review.product.name }}
@@ -51,6 +45,12 @@
             </template>
             </tbody>
         </table>
+        <b-pagination
+                v-if="total > perPage"
+                v-model="currentPage"
+                :total-rows="total"
+                :per-page="perPage"
+        ></b-pagination>
     </div>
 </template>
 
@@ -63,18 +63,51 @@
         data() {
             return {
                 reviews: [],
+                currentPage: 1,
+                perPage: null,
+                total: null,
             }
         },
         created() {
             Services.showLoader();
-            Services.net().get(
-                this.getRoute('customers.detail.reviews', {id: this.id})
-            ).then(data => {
-                this.reviews = data.reviews;
+            Promise.all([
+                Services.net().get(this.getRoute('customers.detail.reviews.data', {id: this.id})),
+                this.paginationPromise()
+            ]).then(data => {
+                this.perPage = data[0].perPage;
+                this.reviews = data[1].reviews;
+                this.total = data[1].total;
             }).finally(() => {
                 Services.hideLoader();
             })
-        }
+        },
+        methods: {
+            paginationPromise() {
+                return Services.net().get(
+                    this.getRoute(
+                        'customers.detail.reviews.pagination',
+                        {id: this.id}
+                    ),
+                    {
+                        page: this.currentPage,
+                    });
+            },
+            loadPage() {
+                this.processing = true;
+                Services.showLoader();
+                this.paginationPromise().then(data => {
+                    this.reviews = data.reviews;
+                    this.total = data.total;
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+        },
+        watch: {
+            currentPage() {
+                this.loadPage();
+            }
+        },
     };
 </script>
 

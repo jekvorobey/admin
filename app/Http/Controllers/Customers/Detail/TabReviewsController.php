@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
+use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Dto\FileDto;
@@ -12,10 +13,24 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\ReviewService\ReviewService;
+use Illuminate\Http\JsonResponse;
 
-class TabReviewsController
+class TabReviewsController extends Controller
 {
-    public function load(
+    private const PER_PAGE = 10;
+
+    /**
+     * AJAX подгрузка информации для вывода списка отзывов
+     *
+     * @return JsonResponse
+     */
+    public function load() {
+        return response()->json([
+            'perPage' => self::PER_PAGE,
+        ]);
+    }
+
+    public function page(
         $customerId,
         CustomerService $customerService,
         UserService $userService,
@@ -23,6 +38,10 @@ class TabReviewsController
         ProductService $productService,
         FileService $fileService
     ) {
+        $data = $this->validate(request(), [
+            'page' => 'required|integer',
+        ]);
+
         $userId = $customerService->customers(
             (new RestQuery())
                 ->addFields(CustomerDto::entity(), 'user_id')
@@ -46,32 +65,11 @@ class TabReviewsController
             (new RestQuery())
                 ->setFilter('author_email', $userEmail)
                 ->setFilter('state', 'published')
-                ->pageNumber(1, 10)
+                ->addSort('created_at', 'desc')
+                ->pageNumber($data['page'], self::PER_PAGE)
         );
 
-        $userIds = $reviews->pluck('user_id')->all();
-        $users = $userService->users(
-            (new RestQuery())
-                ->include('profile')
-                ->addFields(UserDto::entity(), 'id')
-                ->addFields('profile', 'id', 'user_id', 'first_name', 'last_name', 'middle_name', 'phone')
-                ->setFilter('id', $userIds)
-        )
-            ->keyBy('id');
-        $customers = $customerService->customers(
-            (new RestQuery())
-                ->addFields(CustomerDto::entity(), 'id', 'user_id')
-                ->setFilter('user_id', $userIds)
-        )
-            ->keyBy('user_id')
-            ->map(function (CustomerDto $customer) use ($users) {
-                return [
-                    'id' => $customer->id,
-                    'full_name' => $users[$customer->user_id]->getTitle(),
-                ];
-            });
-
-        $productIds = $reviews->pluck('product_id')->all();
+        $productIds = $reviews->reviews->pluck('product_id')->all();
         $products = $productService->products(
             (new RestQuery())
                 ->addFields(ProductDto::entity(), 'id', 'name')
@@ -79,7 +77,7 @@ class TabReviewsController
         )
             ->keyBy('id');
 
-        $fileIds = $reviews->pluck('files')->collapse()->all();
+        $fileIds = $reviews->reviews->pluck('files')->collapse()->all();
         if ($fileIds) {
             $files = $fileService
                 ->getFiles($fileIds)
@@ -95,10 +93,9 @@ class TabReviewsController
         }
 
         return response()->json([
-            'reviews' => $reviews->map(function ($review) use ($customers, $products, $files) {
+            'reviews' => $reviews->reviews->map(function ($review) use ($products, $files) {
                 return [
                     'id' => $review['id'],
-                    'user' => $customers[$review['user_id']],
                     'product' => $products[$review['product_id']],
                     'rating' => $review['rating'],
                     'body' => $review['body'],
@@ -112,6 +109,7 @@ class TabReviewsController
                     'created_at' => $review['created_at'],
                 ];
             }),
+            'total' => $reviews->total,
         ]);
     }
 }
