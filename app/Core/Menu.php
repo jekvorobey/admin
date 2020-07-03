@@ -311,10 +311,10 @@ class Menu
                         'title' => 'Непрочитанные сообщения' . static::unreadCount(),
                         'route' => route('communications.chats.unread'),
                     ],
-                    // [
-                    //     'title' => 'Служебные нотификации',
-                    //     'route' => route('communications.service-notification'),
-                    // ],
+                    [
+                        'title' => 'Сервисные нотификации',
+                        'route' => route('communications.service-notification.list'),
+                    ],
                     [
                         'title' => 'Массовая рассылка',
                         'route' => route('communications.chats.broadcast'),

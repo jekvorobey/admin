@@ -12,8 +12,32 @@ class TemplateController extends Controller
 {
     public function list(Request $request, TemplateService $templateService)
     {
+        $page = $request->input('page') ?? 1;
+
         return response()->json([
-            'templates' => $templateService->templates($templateService->newQuery()->pageNumber($request->input('page', 1), 10))
+            'iTemplates' => $templateService->templates($templateService->newQuery()->pageNumber($page, 10))
+        ]);
+    }
+
+    public function listNotification(int $id, TemplateService $templateService)
+    {
+        return $this->render('Communication/ServiceNotification/Template', [
+            'iTemplates' => $templateService->templates(
+                $templateService->newQuery()
+                    ->setFilter('service_notification_id', '=', $id)
+            ),
+            'service_notification_id' => $id,
+        ]);
+    }
+
+    public function pageNotification(int $id, TemplateService $templateService)
+    {
+        return response()->json([
+            'templates' => $templateService->templates(
+                $templateService->newQuery()
+                    ->setFilter('service_notification_id', '=', $id)
+            ),
+            'service_notification_id' => $id,
         ]);
     }
     

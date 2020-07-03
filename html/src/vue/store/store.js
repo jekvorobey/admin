@@ -12,6 +12,7 @@ import publicEvents from './modules/public-events.js';
 import places from './modules/places.js';
 import speakers from './modules/speakers.js';
 import types from './modules/types.js';
+import serviceNotifications from './modules/service-notifications.js'
 
 
 Vue.use(Vuex);
@@ -34,6 +35,7 @@ export default new Vuex.Store({
         organizers,
         speakers,
         types,
+        serviceNotifications,
     },
     mutations: {
         loaderShow(state, loaderShow) {

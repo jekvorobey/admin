@@ -42,6 +42,7 @@
                     <th>Пользователь</th>
                     <th>Канал</th>
                     <th>ID коммуникации</th>
+                    <th>Последнее сообщение</th>
                     <th>Статус</th>
                     <th>Тип</th>
                     <th>Действия</th>
@@ -55,6 +56,9 @@
                         <td><a :href="linkUser(chat.user_id, chat.id)">{{ userShortName(chat.user_id) }}</a></td>
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.id }}</td>
+                        <td @click="openChat(chat)">
+                            {{ datePrint(chat.messages[chat.messages.length-1].created_at) }}
+                        </td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
                         <td>
@@ -70,11 +74,14 @@
                     <template v-if="showChat === chat.id">
                         <tr v-for="message in chat.messages">
                             <td>{{ userShortName(message.user_id) }}</td>
-                            <td colspan="4">{{ message.message }}</td>
+                            <td colspan="2">{{ message.message }}</td>
                             <td>
                                 <div v-for="file in message.files">
                                     <a :href="files[file].url" target="_blank">{{ files[file].name }}</a>
                                 </div>
+                            </td>
+                            <td colspan="2">
+                                {{ datetimePrint(message.created_at) }}
                             </td>
                         </tr>
                         <tr>
@@ -92,6 +99,7 @@
             <communication-chat-creator :usersProp="usersProp"
                                         :userSendIds="usersProp ? [usersProp[0].id] : null"
                                         :roles="roles"
+                                        :merchants="merchants"
             />
         </b-modal>
         <b-modal id="modal-edit" title="Редактирование чата" hide-footer>
@@ -175,6 +183,7 @@
             filter: Object,
             usersProp: Array,
             roles: Object,
+            merchants: Array,
         },
         data() {
             return {

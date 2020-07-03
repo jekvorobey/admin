@@ -165,11 +165,13 @@ class UsersController extends Controller
 
         $users = $users->map(function (UserDto $user) use ($operators) {
             $sms_status = null;
+            $merchant_id = null;
             if (isset($operators)) {
                 /** @var OperatorDto $operator */
                 foreach ($operators as $operator) {
                     if ($user->id == $operator->user_id) {
                         $sms_status = $operator->is_receive_sms;
+                        $merchant_id = $operator->merchant_id;
                     }
                 }
             }
@@ -177,7 +179,8 @@ class UsersController extends Controller
                 'id' => $user->id,
                 'title' => $user->getTitle(),
                 'email' => $user->email,
-                'receive_sms' => $sms_status
+                'receive_sms' => $sms_status,
+                'merchant_id' => $merchant_id,
             ];
         })->keyBy('id')->all();
 
