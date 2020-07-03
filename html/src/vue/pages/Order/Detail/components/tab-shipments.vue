@@ -67,7 +67,12 @@
                 </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Статус доставки у ЛО:</span>
-                    {{shipment.delivery_status_xml_id ? shipment.delivery_status_xml_id : 'N/A'}} {{shipment.delivery_status_xml_id_at}}
+                    <span v-if="shipment.delivery_status_xml_id">
+                        {{shipment.delivery_status_xml_id.name}}
+                        <fa-icon icon="question-circle" v-if="shipment.delivery_status_xml_id.description"
+                                 v-b-popover.hover="shipment.delivery_status_xml_id.description"></fa-icon>
+                    </span>
+                    {{shipment.delivery_status_xml_id_at}}
                 </div>
             </b-row>
             <b-row class="mt-2 border-top">
