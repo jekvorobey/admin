@@ -320,6 +320,10 @@ class Menu
                         'route' => route('communications.chats.broadcast'),
                     ],
                     [
+                        'title' => 'Неперсонифицированные чаты',
+                        'route' => route('communications.chats.unlinkMessengerChats'),
+                    ],
+                    [
                         'title' => 'Статусы',
                         'route' => route('communications.statuses.list'),
                     ],
