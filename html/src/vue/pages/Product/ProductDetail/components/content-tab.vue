@@ -93,7 +93,14 @@
                 <div class="d-flex flex-column justify-content-start align-items-md-stretch">
                     <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
                                  @onEdit="openModal('HowToEdit')" @onDelete="deleteHowToText">
-                        <div v-html="product.how_to"></div>
+                        <ol v-if="product.how_to">
+                            <li v-for="item in howToList">
+                                {{ item }}
+                            </li>
+                        </ol>
+                        <em v-else>
+                            (Способ применения не указан)
+                        </em>
                     </shadow-card>
                     <shadow-card title="Инструкция">
                         <template v-if="product.instruction_file_id">
@@ -362,6 +369,9 @@ export default {
                 id: 0,
                 url: Media.empty(150, 150),
             };
+        },
+        howToList() {
+            return this.product.how_to.split('|');
         },
         galleryImages() {
             return this.images.filter(image => image.type === 3);
