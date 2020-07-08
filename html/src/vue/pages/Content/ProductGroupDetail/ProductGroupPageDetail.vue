@@ -106,7 +106,7 @@
             </b-form-group>
 
             <select-filters
-                    v-show="isBasedOnFilters || isNotBasedOn"
+                    v-if="(isBasedOnFilters || isNotBasedOn) && productGroup.category_code"
                     :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
@@ -129,7 +129,7 @@
 </template>
 
 <script>
-    import { mapActions } from 'vuex';
+    import {mapActions} from 'vuex';
     import Services from '../../../../scripts/services/services';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
     import SelectFilters from './components/select-filters.vue';

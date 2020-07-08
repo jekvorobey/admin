@@ -78,8 +78,8 @@
 <script>
     import Service from '../../../../../scripts/services/services';
 
-    import { validationMixin } from 'vuelidate';
-    import { decimal, minValue } from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+    import {decimal, minValue} from 'vuelidate/lib/validators';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
 
     export default {
@@ -90,8 +90,6 @@
         mixins: [validationMixin],
         props: {
             iData: [Array],
-            deliveryServices: [Object],
-            deliveryMethods: [Object],
         },
         data() {
             return {
@@ -103,8 +101,12 @@
         mounted() {
             let districtKey = 0;
             for (let federalDistrict of this.data) {
-                for (let deliveryServiceId in this.deliveryServices) {
-                    for (let deliveryMethodId in this.deliveryMethods) {
+                for (let deliveryServiceCode in this.deliveryServices) {
+                    let deliveryServiceId = this.deliveryServices[deliveryServiceCode].id;
+
+                    for (let deliveryMethodCode in this.deliveryMethods) {
+                        let deliveryMethodId = this.deliveryMethods[deliveryMethodCode].id;
+
                         this.$v.data[districtKey]['deliveryPrices'][deliveryServiceId][deliveryMethodId]['price'].$model =
                             federalDistrict['deliveryPrices'].hasOwnProperty(deliveryServiceId) ?
                                 (federalDistrict['deliveryPrices'][deliveryServiceId].hasOwnProperty(deliveryMethodId) ?
@@ -116,8 +118,12 @@
 
                 let regionKey = 0;
                 for (let region of federalDistrict['regions']) {
-                    for (let deliveryServiceId in this.deliveryServices) {
-                        for (let deliveryMethodId in this.deliveryMethods) {
+                    for (let deliveryServiceCode in this.deliveryServices) {
+                        let deliveryServiceId = this.deliveryServices[deliveryServiceCode].id;
+
+                        for (let deliveryMethodCode in this.deliveryMethods) {
+                            let deliveryMethodId = this.deliveryMethods[deliveryMethodCode].id;
+
                             this.$v.data[districtKey]['regions'][regionKey]['deliveryPrices'][deliveryServiceId][deliveryMethodId]['price'].$model =
                                 region['deliveryPrices'].hasOwnProperty(deliveryServiceId) ?
                                     (region['deliveryPrices'][deliveryServiceId].hasOwnProperty(deliveryMethodId) ?
@@ -137,8 +143,12 @@
 
             let districtKey = 0;
             for (let federalDistrict of this.data) {
-                for (let deliveryServiceId in this.deliveryServices) {
-                    for (let deliveryMethodId in this.deliveryMethods) {
+                for (let deliveryServiceCode in this.deliveryServices) {
+                    let deliveryServiceId = this.deliveryServices[deliveryServiceCode].id;
+
+                    for (let deliveryMethodCode in this.deliveryMethods) {
+                        let deliveryMethodId = this.deliveryMethods[deliveryMethodCode].id;
+
                         if (!form.hasOwnProperty(districtKey)) {
                             form[districtKey] = {};
                         }
@@ -161,8 +171,12 @@
 
                 let regionKey = 0;
                 for (let region of federalDistrict['regions']) {
-                    for (let deliveryServiceId in this.deliveryServices) {
-                        for (let deliveryMethodId in this.deliveryMethods) {
+                    for (let deliveryServiceCode in this.deliveryServices) {
+                        let deliveryServiceId = this.deliveryServices[deliveryServiceCode].id;
+
+                        for (let deliveryMethodCode in this.deliveryMethods) {
+                            let deliveryMethodId = this.deliveryMethods[deliveryMethodCode].id;
+
                             if (!form[districtKey].hasOwnProperty('regions')) {
                                 form[districtKey]['regions'] = {};
                             }

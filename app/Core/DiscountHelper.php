@@ -3,6 +3,7 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\BundleItemDto;
@@ -450,10 +451,12 @@ class DiscountHelper
         $categoryService = resolve(CategoryService::class);
         $brandService = resolve(BrandService::class);
         $userService = resolve(UserService::class);
+        $user = resolve(RequestInitiator::class);
 
+        $userId = $user->userId();
         $params = (new DiscountInDto())
             ->id($id)
-            ->status(DiscountStatusDto::STATUS_CREATED, true)
+            ->status(DiscountStatusDto::STATUS_CREATED, true, $userId)
             ->withAll()
             ->toQuery();
 

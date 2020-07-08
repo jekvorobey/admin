@@ -559,7 +559,9 @@ Route::middleware('auth')->group(function () {
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
+            Route::put('update-chat-user', 'ChatsController@updateChatUser')->name('communications.chats.updateChatUser');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
+            Route::get('unlink-messenger-chats', 'ChatsController@unlinkMessengerChats')->name('communications.chats.unlinkMessengerChats');
         });
 
         Route::get('channels', 'ChannelController@channels')->name('communications.channels.list');
@@ -637,6 +639,10 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                     Route::get('promocodes', 'TabPromocodesController@load')->name('customers.detail.promocodes');
+                    Route::prefix('reviews')->group(function () {
+                        Route::get('data', 'TabReviewsController@load')->name('customers.detail.reviews.data');
+                        Route::get('page', 'TabReviewsController@page')->name('customers.detail.reviews.pagination');
+                    });
                 });
 
             });

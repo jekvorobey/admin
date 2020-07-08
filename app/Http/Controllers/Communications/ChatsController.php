@@ -18,11 +18,12 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Dto\CustomerDto;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 
 
 class ChatsController extends Controller
 {
-    public function unread()
+    public function unread(MerchantService $merchantService)
     {
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
@@ -37,7 +38,8 @@ class ChatsController extends Controller
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
-            'theme' => request('theme', '')
+            'theme' => request('theme', ''),
+            'merchants' => $merchantService->merchants(),
         ]);
     }
 
@@ -168,6 +170,63 @@ class ChatsController extends Controller
             'files' => $files,
             'customers' => $customers,
             'operators' => $operators,
+        ]);
+    }
+
+    /**
+     * Привязываем пользователя к чату (LiveTex)
+     *
+     * @param CommunicationService $communicationService
+     * @param RequestInitiator $user
+     */
+    public function updateChatUser(CommunicationService $communicationService)
+    {
+        $data = $this->validate(request(), [
+            'chat_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        $communicationService->updateChatUser($data['chat_id'], $data['user_id']);
+
+        $listConstructor = $communicationService->chats();
+        $listConstructor->setUserIds('null');
+        $chats = $listConstructor->load();
+
+        return response()->json([
+            'chats' => $chats,
+        ]);
+    }
+
+    /**
+     * Список чатов из мессенджеров (LiveTex), которые не привязаны к пользователям
+     *
+     * @param CommunicationService $communicationService
+     * @param RequestInitiator $user
+     */
+    public function unlinkMessengerChats(CommunicationService $communicationService, UserService $userService)
+    {
+        $listConstructor = $communicationService->chats();
+        $listConstructor->setUserIds('null');
+        $chats = $listConstructor->load();
+
+        $roles = UserDto::rolesGroupByFront();
+        $users = $userService
+            ->users(
+                (new RestQuery())
+                    ->setFilter('role', array_merge($roles[Front::FRONT_MAS], $roles[Front::FRONT_SHOWCASE]))
+            )
+                ->keyBy('id')
+                ->map(function (UserDto $user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->getTitle(),
+                    ];
+                });
+
+        $this->title = 'Неперсонифицированные чаты';
+        return $this->render('Communication/UnlinkMessengerChats', [
+            'iChats' => $chats,
+            'iUsers' => $users,
         ]);
     }
 

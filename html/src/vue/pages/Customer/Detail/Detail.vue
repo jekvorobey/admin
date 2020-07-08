@@ -44,6 +44,7 @@
                     <tab-billing v-else-if="key === 'billing'" :model.sync="customer"/>
                     <tab-bonus v-else-if="key === 'bonuses'" :model.sync="customer"/>
                     <tab-promocodes v-else-if="key === 'referralPromocodes'" :id="customer.id" :options="options"/>
+                    <tab-reviews v-else-if="key === 'reviews'" :id="customer.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -88,6 +89,7 @@
     import TabBilling from './components/tab-billing.vue';
     import TabBonus from './components/tab-bonus.vue';
     import TabPromocodes from './components/tab-promocodes.vue';
+    import TabReviews from './components/tab-reviews.vue';
 
     import tabsMixin from '../../../mixins/tabs.js';
     import Services from '../../../../scripts/services/services';
@@ -113,6 +115,7 @@
         TabPromoProduct,
         TabBonus,
         TabPromocodes,
+        TabReviews,
         ModalMarkStatus,
         ModalPortfolios,
         Infopanel,
@@ -180,7 +183,7 @@
                 tabs.educationEvents = {i: i++, title: 'Образовательные события'};
                 tabs.orderBack = {i: i++, title: 'Возвраты'};
                 tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
-                tabs.review = {i: i++, title: 'Отзывы'};
+                tabs.reviews = {i: i++, title: 'Отзывы'};
                 tabs.usedPromocodes = {i: i++, title: 'Промокоды и Скидки'};
             }
             if (this.customer.referral) {
