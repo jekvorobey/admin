@@ -20,6 +20,10 @@ export const ACT_LOAD_NOTIFICATION_TEMPLATES = 'act_load_notification_tempates';
 export const ACT_SAVE_NOTIFICATION_TEMPLATE = 'act_save_notification_template';
 export const ACT_DELETE_NOTIFICATION_TEMPLATE = 'act_delete_notification_template';
 
+export const ACT_LOAD_NOTIFICATION_ALERT = 'act_load_notification_alert';
+export const ACT_SAVE_NOTIFICATION_ALERT = 'act_save_notification_alert';
+export const ACT_DELETE_NOTIFICATION_ALERT = 'act_delete_notification_alert';
+
 const PAGE_SIZE = 10;
 
 export default {
@@ -80,6 +84,21 @@ export default {
         [ACT_DELETE_NOTIFICATION_TEMPLATE]({rootGetters, commit}, {ids}) {
             commit('loaderShow', true, {root:true});
             return Services.net().post(rootGetters.getRoute('communications.service-notification.template.delete'), {}, {ids})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_NOTIFICATION_ALERT]({rootGetters, commit}, {service_notification_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('communications.service-notification.system-alert.page', {service_notification_id}))
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_NOTIFICATION_ALERT]({rootGetters, commit}, {id, alert}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('communications.service-notification.system-alert.save'), {}, {id, alert})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_NOTIFICATION_ALERT]({rootGetters, commit}, {ids}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('communications.service-notification.system-alert.delete'), {}, {ids})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
     }
