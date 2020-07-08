@@ -103,8 +103,8 @@ class CustomerListController extends Controller
 
         if (!empty($filter['role'])) {
             $restQueryUser->setFilter('role', $filter['role']);
-        } else {
-            $restQueryUser->setFilter('role', request('isReferral') ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL);
+        } else if (isset($filter['isReferral']) && $filter['isReferral']) {
+            $restQueryUser->setFilter('role', UserDto::SHOWCASE__REFERRAL_PARTNER);
         }
 
         $users = $userService->users($restQueryUser)->keyBy('id');
