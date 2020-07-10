@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-07-08 14:28:01.
+    * Generated on 2020-07-10 15:16:42.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -109,6 +109,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -337,6 +338,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -565,6 +567,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -793,6 +796,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -1021,6 +1025,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -1249,6 +1254,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -1477,6 +1483,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,
@@ -1705,6 +1712,7 @@ namespace PHPSTORM_META {
         'Pim\Services\PublicEventService\PublicEventService' => \Pim\Services\PublicEventService\RestPublicEventService::class,
         'Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService' => \Pim\Services\PublicEventSpeakerService\RestPublicEventSpeakerService::class,
         'Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService' => \Pim\Services\PublicEventSprintDocumentService\RestPublicEventSprintDocumentService::class,
+        'Pim\Services\PublicEventSprintSellStatusService\PublicEventSprintSellStatusService' => \Pim\Services\PublicEventSprintSellStatusService\RestPublicEventSprintSellStatusService::class,
         'Pim\Services\PublicEventSprintService\PublicEventSprintService' => \Pim\Services\PublicEventSprintService\RestPublicEventSprintService::class,
         'Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService' => \Pim\Services\PublicEventSprintStageService\RestPublicEventSprintStageService::class,
         'Pim\Services\PublicEventStatusService\PublicEventStatusService' => \Pim\Services\PublicEventStatusService\RestPublicEventStatusService::class,

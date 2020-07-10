@@ -67,6 +67,9 @@ export const ACT_DELETE_SPRINT_RESULT = 'act_delete_sprint_result';
 export const ACT_SAVE_TICKET_TYPE_STAGE = 'act_save_ticket_type_stage';
 export const ACT_DELETE_TICKET_TYPE_STAGE = 'act_delete_ticket_type_stage';
 
+export const ACT_SAVE_SPRINT_STATUS = 'act_save_sprint_status';
+export const ACT_DELETE_SPRINT_STATUS = 'act_delete_sprint_status';
+
 const PAGE_SIZE = 10;
 
 export default {
@@ -299,6 +302,16 @@ export default {
         [ACT_DELETE_TICKET_TYPE_STAGE]({rootGetters, commit}, {id, stage_id}) {
             commit('loaderShow', true, {root:true});
             return Services.net().delete(rootGetters.getRoute('public-event.ticket-types.detachStage', {stage_id}), {id})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_SAVE_SPRINT_STATUS]({rootGetters, commit}, {sprint_id, status_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-sell-status.save'), {}, {sprint_id, status_id})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_DELETE_SPRINT_STATUS]({rootGetters, commit}, {sprint_id, status_id}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().post(rootGetters.getRoute('public-event.sprint-sell-status.delete'), {}, {sprint_id, status_id})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
     }

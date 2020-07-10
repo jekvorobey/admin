@@ -769,6 +769,11 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'MediaController@delete')->name('public-event.media.delete');
         });
 
+        Route::prefix('sprint-sell-status')->group(function () {
+            Route::post('save', 'PublicEventSprintSellStatusController@save')->name('public-event.sprint-sell-status.save');
+            Route::post('delete', 'PublicEventSprintSellStatusController@delete')->name('public-event.sprint-sell-status.delete');
+        });
+
         Route::prefix('sprints')->group(function () {
             Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
             Route::get('page', 'PublicEventSprintController@page')->name('public-event.sprints.page');

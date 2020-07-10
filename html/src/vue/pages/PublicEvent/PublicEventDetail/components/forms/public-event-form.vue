@@ -9,7 +9,10 @@
         <v-input v-model.lazy="$v.form.code.$model" :error="errorCode">
             Код события
         </v-input>
-        <button @click="save"  class="btn btn-dark">Сохранить</button>
+        <b-form-checkbox v-model="$v.form.gallery_top.$model">
+            Отображать галерею сверху
+        </b-form-checkbox>
+        <button @click="save" class="btn btn-dark">Сохранить</button>
     </div>
 </template>
 
@@ -41,6 +44,7 @@ export default {
                 name: this.publicEvent.name,
                 code: this.publicEvent.code,
                 type_id: this.publicEvent.type_id,
+                gallery_top: this.publicEvent.gallery_top ? true : false,
             },
         };
     },
@@ -58,6 +62,7 @@ export default {
                 }
             },
             type_id: {required},
+            gallery_top: {required},
         }
     },
     methods: {
