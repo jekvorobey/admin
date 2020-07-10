@@ -312,7 +312,7 @@ class Menu
                         'route' => route('communications.chats.unread'),
                     ],
                     [
-                        'title' => 'Сервисные нотификации',
+                        'title' => 'Сервисные уведомления',
                         'route' => route('communications.service-notification.list'),
                     ],
                     [

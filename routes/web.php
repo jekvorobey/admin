@@ -823,6 +823,12 @@ Route::middleware('auth')->group(function () {
             Route::post('save', 'TemplateController@save')->name('communications.service-notification.template.save');
             Route::post('delete', 'TemplateController@delete')->name('communications.service-notification.template.delete');
         });
+
+        Route::prefix('system-alerts')->group(function () {
+            Route::post('save', 'SystemAlertController@save')->name('communications.service-notification.system-alert.save');
+            Route::post('delete', 'SystemAlertController@delete')->name('communications.service-notification.system-alert.delete');
+            Route::get('{service_notification_id}', 'SystemAlertController@pageNotification')->name('communications.service-notification.system-alert.page');
+        });
     });
     
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {

@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createNotification">Создать системную нотификацию</button>
+            <button class="btn btn-success" @click="createNotification">Создать сервисное уведомление</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано сервисных нотификаций: {{massAll(massSelectionType).length}}</span>
                 <v-delete-button @delete="() => deleteNotifications(massAll(massSelectionType))"/>
@@ -53,7 +53,7 @@
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('NotificationFormModal')">
                 <div slot="header">
-                    Системная нотификация
+                    Сервисное уведомление
                 </div>
                 <div slot="body">
                     <div class="form-group">
