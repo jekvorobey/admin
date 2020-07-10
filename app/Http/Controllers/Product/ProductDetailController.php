@@ -11,11 +11,8 @@ use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionSe
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
@@ -25,8 +22,8 @@ use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Pim\Services\ProductService\ProductService;
 use Pim\Services\OfferService\OfferService;
+use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -283,7 +280,7 @@ class ProductDetailController extends Controller
         $badges = $productService->badges($product->id);
 
         $offersIds = (collect($products->first()->offers->pluck('offer_id'))->toArray());
-        $orders = $orderService->ordersByOffers(['offersIds' => $offersIds]);
+        $orders = $offersIds ? $orderService->ordersByOffers(['offersIds' => $offersIds]) : [];
         $products->first()->orders = $orders;
         $products->first()->offersIds = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
