@@ -216,4 +216,7 @@
     overflow: visible !important;
     z-index: 9999;
 }
+.preview {
+    width: 550px;
+}
 </style>

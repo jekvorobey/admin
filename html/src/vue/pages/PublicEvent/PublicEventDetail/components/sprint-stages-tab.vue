@@ -68,12 +68,12 @@
                         
                         <div class="form-group">
                             <label for="raider">Что взять с собой</label>
-                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
+                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" />
                         </div>
 
                         <div class="form-group">
                             <label for="result">Результат</label>
-                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" :error="errorResult" />
+                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" />
                         </div>
                         
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -158,8 +158,8 @@
                 time_from: {required},
                 time_to: {required},
                 place_id: {required},
-                raider: {required},
-                result: {required},
+                raider: {},
+                result: {},
             }
         },
         methods: {
@@ -292,16 +292,6 @@
             errorPlaceId() {
                 if (this.$v.form.place_id.$dirty) {
                     if (!this.$v.form.place_id.required) return "Обязательное поле!";
-                }
-            },
-            errorRaider() {
-                if (this.$v.form.raider.$dirty) {
-                    if (!this.$v.form.raider.required) return "Обязательное поле!";
-                }
-            },
-            errorResult() {
-                if (this.$v.form.result.$dirty) {
-                    if (!this.$v.form.result.required) return "Обязательное поле!";
                 }
             },
         },

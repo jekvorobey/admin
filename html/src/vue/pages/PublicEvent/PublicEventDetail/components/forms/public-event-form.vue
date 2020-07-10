@@ -69,7 +69,6 @@ export default {
             return new Promise((resolve) => {
                 const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
                     if (isNotPending) {
-                        unwatch();
                         resolve(!this.$v.$invalid)
                     }
                 }, {immediate: true})

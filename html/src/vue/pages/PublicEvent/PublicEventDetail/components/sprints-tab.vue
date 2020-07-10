@@ -52,7 +52,7 @@
                         <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
                         <div class="form-group">
                             <label for="description">Что взять с собой</label>
-                            <ckeditor type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
+                            <ckeditor type="classic" v-model="$v.form.raider.$model" />
                         </div>
                     </div>
                     <div class="form-group">
@@ -126,7 +126,7 @@
                 date_start: {required},
                 date_end: {required},
                 status_id: {required},
-                raider: {required},
+                raider: {},
             }
         },
         methods: {
@@ -227,11 +227,6 @@
             errorDateEnd() {
                 if (this.$v.form.date_end.$dirty) {
                     if (!this.$v.form.date_end.required) return "Обязательное поле!";
-                }
-            },
-            errorRaider() {
-                if (this.$v.form.raider.$dirty) {
-                    if (!this.$v.form.raider.required) return "Обязательное поле!";
                 }
             },
         },
