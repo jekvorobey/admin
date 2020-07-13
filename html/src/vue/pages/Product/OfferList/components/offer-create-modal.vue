@@ -404,11 +404,12 @@
                 });
             },
             countedQty() {
-                if (this.loading) return;
+                if (this.loading) return null;
 
                 let total = this.newOffer.stocks.reduce((total, stock) => {
                     return total + (parseInt(stock.qty) || 0);
                 }, 0);
+                console.log(total);
                 if (!total) {
                     this.newOffer.status = '';
                 }
