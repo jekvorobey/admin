@@ -94,16 +94,14 @@
             </modal>
         </transition>
 
-        <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen($const.descriptionModal)">
-                <div slot="header">
-                    Редактирование описание
-                </div>
-                <div slot="body">
-                    <description-form :public-event="publicEvent" @onSave="onSaveDescripton"/>
-                </div>
-            </modal>
-        </transition>
+        <modal :close="closeModal" v-if="isModalOpen($const.descriptionModal)">
+            <div slot="header">
+                Редактирование описание
+            </div>
+            <div slot="body">
+                <description-form :public-event="publicEvent" @onSave="onSaveDescripton"/>
+            </div>
+        </modal>
     </div>
 </template>
 
