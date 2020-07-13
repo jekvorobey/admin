@@ -11,6 +11,7 @@
                     <th>Начало</th>
                     <th>Конец</th>
                     <th>Статус</th>
+                    <th>Скрывать количество мест</th>
                     <th>Площадка</th>
                     <th>Что взять с собой</th>
                     <th>Статусы продажи</th>
@@ -24,6 +25,7 @@
                     <td>{{date(sprint.date_start)}}</td>
                     <td>{{date(sprint.date_end)}}</td>
                     <td>{{statusName(sprint.status_id)}}</td>
+                    <td>{{sprint.hide_ticket_count ? 'V' : 'X'}}</td>
                     <td>{{places(sprint.places)}}</td>
                     <td>{{sprint.raider}}</td>
                     <td>{{statusNames(sprint.sellStatuses)}}</td>
@@ -52,6 +54,12 @@
                             <date-picker id="date" input-class="form-control" v-model="$v.form.date_end.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateEnd"/>
                         </div>
                         <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
+                        <b-form-checkbox
+                            v-model="$v.form.hide_ticket_count.$model"
+                            :error="errorHideTicketCount"
+                        >
+                            Скрывать количество оставшихся билетов
+                        </b-form-checkbox>
                         <div class="form-group">
                             <label for="description">Что взять с собой</label>
                             <ckeditor type="classic" v-model="$v.form.raider.$model" />
@@ -130,6 +138,7 @@
                     date_start: null,
                     date_end: null,
                     status_id: null,
+                    hide_ticket_count: null,
                     raider: null,
                 },
             };
@@ -140,6 +149,7 @@
                 date_start: {required},
                 date_end: {required},
                 status_id: {required},
+                hide_ticket_count: {required},
                 raider: {},
             }
         },
@@ -220,6 +230,7 @@
                 this.form.date_start = null;
                 this.form.date_end = null;
                 this.form.status_id = null;
+                this.form.hide_ticket_count = false;
                 this.form.raider = null;
                 this.selectedSprintStatusTypes = [];
                 this.openModal('SprintFormModal');
@@ -232,6 +243,7 @@
                 this.form.date_start = sprint.date_start;
                 this.form.date_end = sprint.date_end;
                 this.form.status_id = sprint.status_id;
+                this.form.hide_ticket_count = sprint.hide_ticket_count ? true : false;
                 this.form.raider = sprint.raider;
                 this.selectedSprintStatusTypes = this.checkActiveStatus(sprint.sellStatuses);
                 this.openModal('SprintFormModal');
@@ -282,6 +294,11 @@
             errorDateEnd() {
                 if (this.$v.form.date_end.$dirty) {
                     if (!this.$v.form.date_end.required) return "Обязательное поле!";
+                }
+            },
+            errorHideTicketCount() {
+                if (this.$v.form.hide_ticket_count.$dirty) {
+                    if (!this.$v.form.hide_ticket_count.required) return "Обязательное поле!";
                 }
             },
         },

@@ -1,7 +1,7 @@
 <template>
     <div>
         <span>Спринт</span>
-        <b-form-select v-model="sprintId" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
+        <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <span>Этап</span>
         <b-form-select v-model="sprintStageId" text-field="name" value-field="id" :options="sprintStages" @change="onChangeSprintStage(sprintStageId)" />
@@ -87,11 +87,11 @@
         },
         props: {
             publicEvent: {},
+            sprintId: null,
         },
         data() {
             return {
                 sprints: [],
-                sprintId: null,
                 sprintStages: [],
                 sprintStageId: null,
                 speakers: []
@@ -105,22 +105,24 @@
                 deleteEventSpeaker: ACT_DELETE_EVENT_SPEAKER
             }),
             reload() {
-                this.loadSprints({publicEventId: this.publicEvent.id})
-                    .then(response => {
-                        this.sprints = response.sprints;
-                        if (this.sprints.length) {
-                            this.sprints.forEach(sprint => {
-                                sprint.interval = this.interval(sprint.date_start, sprint.date_end);
-                            });
-                            this.sprintId = this.sprints[0].id;
-                            this.onChangeSprint(this.sprintId);
-                        }
-                    });
+                
+                    this.loadSprints({publicEventId: this.publicEvent.id})
+                        .then(response => {
+                            this.sprints = response.sprints;
+                            if (this.sprints.length) {
+                                this.sprints.forEach(sprint => {
+                                    sprint.interval = this.interval(sprint.date_start, sprint.date_end);
+                                });
+                                const sprintId = this.sprintId != null ? this.sprintId : this.sprints[0].id;
+                                this.onChangeSprint(sprintId);
+                            }
+                        });
             },
             interval(dateStartString, dateEndString) {
                 return Helpers.onlyDate(dateStartString) + ' - ' + Helpers.onlyDate(dateEndString);
             },
             onChangeSprint(sprintId) {
+                this.sprintIdModel = sprintId;
                 this.loadSprintStages({sprintId})
                     .then(response => {
                         this.sprintStages = response.sprintStages;
@@ -157,6 +159,10 @@
             },
         },
         computed: {
+            sprintIdModel: {
+                get () { return this.sprintId },
+                set (value) { this.$emit('updateSprintId', value) },
+            },
         },
         created() {
             this.reload();

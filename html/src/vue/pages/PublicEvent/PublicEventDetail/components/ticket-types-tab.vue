@@ -1,7 +1,7 @@
 <template>
     <div>
         <span>Спринт</span>
-        <b-form-select v-model="sprintId" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
+        <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createTicketType">Добавить тип билета</button>
@@ -101,11 +101,11 @@
         },
         props: {
             publicEvent: {},
+            sprintId: null,
         },
         data() {
             return {
                 sprints: [],
-                sprintId: null,
                 ticketTypes: [],
                 editTicketTypeId: null,
                 sprintStages: [],
@@ -145,9 +145,9 @@
                             this.sprints.forEach(sprint => {
                                 sprint.interval = this.interval(sprint.date_start, sprint.date_end);
                             });
-                            this.sprintId = this.sprints[0].id;
-                            this.onChangeSprint(this.sprintId);
-                            this.loadSprintStages({sprintId: this.sprintId})
+                            const sprintId = this.sprintId != null ? this.sprintId : this.sprints[0].id;
+                            this.onChangeSprint(sprintId);
+                            this.loadSprintStages({sprintId: sprintId})
                                 .then(response => {
                                     this.sprintStages = response.sprintStages;
                                 });
@@ -193,6 +193,7 @@
                 return result;
             },
             onChangeSprint(sprintId) {
+                this.sprintIdModel = sprintId;
                 this.loadTicketTypes({sprintId: sprintId})
                     .then(response => {
                         this.ticketTypes = response.ticketTypes;
@@ -251,6 +252,10 @@
             },
         },
         computed: {
+            sprintIdModel: {
+                get () { return this.sprintId },
+                set (value) { this.$emit('updateSprintId', value) },
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
