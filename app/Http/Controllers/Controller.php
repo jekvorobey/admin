@@ -43,6 +43,7 @@ class Controller extends BaseController
     protected $loadDeliveryTypes = false;
     protected $loadDeliveryMethods = false;
     protected $loadDeliveryServices = false;
+    protected $loadOfferSaleStatuses = false;
 
     public function render($componentName, $props = [])
     {
@@ -77,6 +78,7 @@ class Controller extends BaseController
             ->loadDeliveryMethods($this->loadDeliveryMethods)
             ->loadDeliveryServices($this->loadDeliveryServices)
             ->loadPaymentMethods($this->loadPaymentMethods)
+            ->loadOfferSaleStatuses($this->loadOfferSaleStatuses)
             ->render();
     }
     
