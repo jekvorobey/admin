@@ -15,9 +15,9 @@
 
                 <v-select v-model="$v.bonus.status.$model" :options="statusNames" class="col-3" :error="errorBonusStatus">Статус</v-select>
 
-                <div class="col-3">
+                <div class="col-3" v-if="bonus.status != STATUS_DEBITED">
                     <label for="expiration_date">Срок действия</label>
-                    <b-form-input id="expiration_date" v-model="bonus.expiration_date" type="date"></b-form-input>
+                    <b-form-input id="expiration_date" v-model="bonus.expiration_date" type="date" :min="today"></b-form-input>
                 </div>
             </div>
             <div class="row">
@@ -122,6 +122,7 @@
                 STATUS_ON_HOLD: 1,
                 STATUS_ACTIVE: 2,
                 STATUS_EXPIRED: 3,
+                STATUS_DEBITED: 4,
             }
         },
         validations: {
@@ -179,6 +180,12 @@
             }
         },
         computed: {
+            today() {
+                const today = new Date()
+                const tomorrow = new Date(today)
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                return tomorrow.toISOString().split("T")[0];
+            },
             errorBonusName() {
                 if (this.$v.bonus.name.$dirty) {
                     if (!this.$v.bonus.name.required) return "Обязательное поле!";
@@ -213,6 +220,11 @@
                 }
 
                 this.$v.bonus.message.$touch();
+            },
+            'bonus.status': function (val, oldVal) {
+                if (this.bonus.status == this.STATUS_DEBITED) {
+                    this.bonus.expiration_date = null;
+                }
             }
         }
     }

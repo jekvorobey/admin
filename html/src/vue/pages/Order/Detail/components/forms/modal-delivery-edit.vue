@@ -282,7 +282,7 @@
             pointOptions() {
                 return Object.values(this.points).map(point => ({
                     value: point.id,
-                    text: point.address.address_string
+                    text: point.address.address_string + (!point.active ? ' (не активна!)' : '')
                 }));
             },
             tariffOptions() {

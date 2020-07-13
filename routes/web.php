@@ -334,11 +334,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::post('', 'OfferListController@createOffer')->name('offers.create');
+        Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->group(function () {
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
         });
+        Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
+        Route::get('validate-offer', 'OfferListController@validateOffer')->name('offers.validate');
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {

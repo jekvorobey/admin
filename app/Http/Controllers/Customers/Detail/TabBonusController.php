@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -30,13 +31,19 @@ class TabBonusController extends Controller
         $query->setFilter('front', Front::FRONT_ADMIN);
         $users = $userService->users($query);
 
+        $statuses = [
+            CustomerBonusDto::STATUS_ON_HOLD => 'На удержании',
+            CustomerBonusDto::STATUS_ACTIVE => 'Активный',
+            CustomerBonusDto::STATUS_DEBITED => 'Списание',
+        ];
+
         return response()->json([
             'bonuses' => [
                 'available' => $bonusInfo->available,
                 'on_hold' => $bonusInfo->on_hold,
                 'items' => $searchBonuses->bonuses,
             ],
-            'statusNames' => CustomerBonusDto::statusesNames(),
+            'statusNames' => $statuses,
             'userNames' => collect($users)->pluck('full_name', 'id'),
         ]);
     }
@@ -53,10 +60,14 @@ class TabBonusController extends Controller
     {
         $data = $request->validate([
             'name' => 'string|required',
-            'status' => 'integer|required',
+            'status' => ['required', Rule::in([
+                CustomerBonusDto::STATUS_ON_HOLD,
+                CustomerBonusDto::STATUS_ACTIVE,
+                CustomerBonusDto::STATUS_DEBITED,
+            ])],
             'value' => 'integer|required',
             'message' => 'string|min:1|required',
-            'expiration_date' => 'date|nullable',
+            'expiration_date' => 'date|after_or_equal:tomorrow|nullable',
         ]);
 
         $data['user_id'] = $user->userId();

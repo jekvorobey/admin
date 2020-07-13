@@ -4,10 +4,10 @@
         <tr>
             <th colspan="4">
                 Инфопанель
-                <button class="btn btn-success btn-sm" @click="save" :disabled="!showBtn">
+                <button class="btn btn-success btn-sm" @click="save">
                     Сохранить
                 </button>
-                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
+                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="true">Отмена</button>
             </th>
         </tr>
         </thead>
@@ -101,6 +101,8 @@
 </template>
 
 <script>
+    import Services from "../../../../../../scripts/services/services";
+
     export default {
         name: 'discount-detail-infopanel',
         components: {
@@ -116,13 +118,65 @@
         },
         data() {
             return {
-                showBtn: false,
                 merchantBtn: false,
             };
         },
         methods: {
             save() {
+                let discount = this.discount;
+                let data = {
+                    name: discount.name,
+                    type: discount.type,
+                    value: parseFloat(discount.value),
+                    value_type: parseInt(discount.value_type),
+                    start_date: discount.start_date,
+                    end_date: discount.end_date,
+                    conditions: discount.conditions,
+                    status: discount.status,
+                    promo_code_only: !!discount.promo_code_only,
+                };
 
+                switch (discount.type) {
+                    case this.discountTypes.offer:
+                        data.offers = this.formatIds(discount.offers);
+                        break;
+                    case this.discountTypes.bundleOffer:
+                    case this.discountTypes.bundleMasterclass:
+                        data.bundle_items = this.formatIds(discount.bundleItems);
+                        break;
+                    case this.discountTypes.brand:
+                        data.brands = discount.brands;
+                        data.except = {};
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                    case this.discountTypes.category:
+                        data.categories = discount.categories;
+                        data.except = {};
+                        data.except.brands = discount.brands ? discount.brands : [];
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                }
+
+                this.processing = true;
+                let err = 'Произошла ошибка при сохранении скидки.';
+                let success = 'Скидка успешно обновлена.';
+                Services.showLoader();
+                Services.net().put(
+                    this.getRoute('discount.update', {id: discount.id}),
+                    {},
+                    data
+                ).then(data => {
+                    this.result = (data.status === 'ok') ? success : err;
+                    this.openModal('UpdateDiscount');
+                    this.processing = false;
+                    this.setTimeout(location=this.getRedirectRoute(discount.type), 4000);
+                }, () => {
+                    this.result = err;
+                    this.openModal('UpdateDiscount');
+                }).finally(() => {
+                    this.processing = false;
+                    Services.hideLoader();
+                });
             },
             cancel() {
 
