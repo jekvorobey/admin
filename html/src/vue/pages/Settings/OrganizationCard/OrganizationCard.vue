@@ -114,6 +114,45 @@
             </div>
 
 
+            <h3 class="mb-3">Сведения о менеджере по логистике</h3>
+            <div class="row">
+                <v-input v-model="$v.form.logistics_manager_last_name.$model"
+                         :error="errorLogisticsManagerLastName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('logistics_manager_last_name')}"
+                >Фамилия</v-input>
+                <v-input v-model="$v.form.logistics_manager_first_name.$model"
+                         :error="errorLogisticsManagerFirstName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('logistics_manager_first_name')}"
+                >Имя</v-input>
+                <v-input v-model="$v.form.logistics_manager_middle_name.$model"
+                         :error="errorLogisticsManagerMiddleName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('logistics_manager_middle_name')}"
+                >Отчество</v-input>
+            </div>
+            <div class="row">
+                <v-input
+                        v-model="$v.form.logistics_manager_phone.$model"
+                        :placeholder="telPlaceholder"
+                        :error="errorLogisticsManagerPhone"
+                        v-mask="telMask"
+                        class="col-md-6 col-12"
+                        autocomplete="off"
+                        @change="() => {updateInput('logistics_manager_phone')}"
+                >Контактный телефон</v-input>
+                <v-input
+                        v-model="$v.form.logistics_manager_email.$model"
+                        :placeholder="emailPlaceholder"
+                        :error="errorLogisticsManagerEmail"
+                        class="col-md-6 col-12"
+                        autocomplete="off"
+                        @change="() => {updateInput('logistics_manager_email')}"
+                >Контактный e-mail</v-input>
+            </div>
+
+
             <h3 class="mb-3">Контактная информация</h3>
             <div class="row">
                 <v-input
@@ -124,7 +163,7 @@
                         class="col-md-6 col-12"
                         autocomplete="off"
                         @change="() => {updateInput('contact_centre_phone')}"
-                >Телефон конактного-центра</v-input>
+                >Телефон контактного-центра</v-input>
                 <v-input
                         v-model="$v.form.social_phone.$model"
                         :placeholder="telPlaceholder"
@@ -203,6 +242,12 @@ export default {
         ceo_middle_name: String,
         ceo_document_number: String,
 
+        logistics_manager_last_name: String,
+        logistics_manager_first_name: String,
+        logistics_manager_middle_name: String,
+        logistics_manager_phone: String,
+        logistics_manager_email: String,
+
         contact_centre_phone: String,
         social_phone: String,
         email_for_merchant: String,
@@ -233,6 +278,12 @@ export default {
                 ceo_first_name: this.ceo_first_name,
                 ceo_middle_name: this.ceo_middle_name,
                 ceo_document_number: this.ceo_document_number,
+
+                logistics_manager_last_name: this.logistics_manager_last_name,
+                logistics_manager_first_name: this.logistics_manager_first_name,
+                logistics_manager_middle_name: this.logistics_manager_middle_name,
+                logistics_manager_phone: this.logistics_manager_phone,
+                logistics_manager_email: this.logistics_manager_email,
 
                 contact_centre_phone: this.contact_centre_phone,
                 social_phone: this.social_phone,
@@ -294,6 +345,12 @@ export default {
             ceo_first_name: {required},
             ceo_middle_name: {required},
             ceo_document_number: {required},
+
+            logistics_manager_last_name: {required},
+            logistics_manager_first_name: {required},
+            logistics_manager_middle_name: {required},
+            logistics_manager_phone: {required},
+            logistics_manager_email: {required, email},
 
             contact_centre_phone: {required},
             social_phone: {required},
@@ -443,7 +500,32 @@ export default {
                 if (!this.$v.form.ceo_document_number.required) return "Обязательное поле!";
             }
         },
-
+        errorLogisticsManagerLastName() {
+            if (this.$v.form.logistics_manager_last_name.$dirty) {
+                if (!this.$v.form.logistics_manager_last_name.required) return "Обязательное поле!";
+            }
+        },
+        errorLogisticsManagerFirstName() {
+            if (this.$v.form.logistics_manager_first_name.$dirty) {
+                if (!this.$v.form.logistics_manager_first_name.required) return "Обязательное поле!";
+            }
+        },
+        errorLogisticsManagerMiddleName() {
+            if (this.$v.form.logistics_manager_middle_name.$dirty) {
+                if (!this.$v.form.logistics_manager_middle_name.required) return "Обязательное поле!";
+            }
+        },
+        errorLogisticsManagerPhone() {
+            if (this.$v.form.logistics_manager_phone.$dirty) {
+                if (!this.$v.form.logistics_manager_phone.required) return "Обязательное поле!";
+            }
+        },
+        errorLogisticsManagerEmail() {
+            if (this.$v.form.logistics_manager_email.$dirty) {
+                if (!this.$v.form.logistics_manager_email.required) return "Обязательное поле!";
+                if (!this.$v.form.logistics_manager_email.email) return "Введите валидный e-mail!";
+            }
+        },
         errorContactCentrePhone() {
             if (this.$v.form.contact_centre_phone.$dirty) {
                 if (!this.$v.form.contact_centre_phone.required) return "Обязательное поле!";
