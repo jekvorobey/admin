@@ -49,6 +49,7 @@ class OrderDetailController extends Controller
     public function detail(int $id)
     {
         $this->loadOrderStatuses = true;
+        $this->loadBasketTypes = true;
         $this->loadPaymentStatuses = true;
         $this->loadDeliveryStatuses = true;
         $this->loadShipmentStatuses = true;
@@ -433,11 +434,12 @@ class OrderDetailController extends Controller
                 $productsByOffers
             ) {
                 $product = $basketItemDto->product;
-                $basketItemDto['product'] = $productsByOffers->has($basketItemDto->offer_id) ?
+                $productPim = $productsByOffers->has($basketItemDto->offer_id) ?
                     $productsByOffers[$basketItemDto->offer_id]->product : [];
                 foreach ($product as $key => $value) {
-                    $basketItemDto['product'][$key] = $value;
+                    $productPim = $value;
                 }
+                $basketItemDto['product'] = $productPim;
 
                 return $basketItemDto;
             });

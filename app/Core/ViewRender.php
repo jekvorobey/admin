@@ -20,6 +20,7 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
+use Greensight\Oms\Dto\BasketDto;
 use Greensight\Oms\Dto\Delivery\CargoStatus;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
@@ -74,6 +75,7 @@ class ViewRender
     private $customerBonusStatus = [];
 
     private $orderStatuses = [];
+    private $basketTypes = [];
     private $paymentStatuses = [];
     private $paymentMethods = [];
     private $deliveryStatuses = [];
@@ -705,6 +707,23 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadBasketTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->basketTypes = [
+                'product' => BasketDto::TYPE_PRODUCT,
+                'master' => BasketDto::TYPE_MASTER,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -747,6 +766,7 @@ class ViewRender
                 'customerBonusStatus' => $this->customerBonusStatus,
 
                 'orderStatuses' => $this->orderStatuses,
+                'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
                 'paymentMethods' => $this->paymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
