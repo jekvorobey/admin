@@ -1,34 +1,28 @@
 <template>
     <div :class="classes">
-        <label for="brand-select">{{ title }}</label>
-        <div class="input-group mb-1">
-            <div class="d-flex flex-row form-control" :class="{ 'input-error': error }">
-                <div v-for="brand in selectedBrands"
-                     @click="toggleBrand(brand.id)"
-                     class="badge badge-secondary mr-2 cursor-pointer"
-                     id="brand-select"
-                >{{ brand.name }} <fa-icon icon="trash-alt"></fa-icon></div>
-            </div>
-            <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" v-b-toggle="'brand-collapse-' + _uid" @click="reverseButtonName()">{{ buttonName }}</button>
-            </div>
-        </div>
+        <label v-if="title">{{ title }}</label>
+        <v-select2 v-model="form.brands"
+                   class="form-control"
+                   :multiple="true"
+                   :selectOnClose="true"
+                   @change="selectCategories"
+                   width="100%">
+            <option v-for="brand in selectedBrands" :value="brand.value">{{ brand.text }}</option>
+        </v-select2>
+
         <div class="mb-2 error">
             {{ error }}
         </div>
-        <b-collapse :id="'brand-collapse-' + _uid" class="mt-2">
-            <b-card>
-                <div v-for="brand in brands"
-                     @click="toggleBrand(brand.id)"
-                     class="badge badge-secondary mr-2 cursor-pointer"
-                >{{ brand.name }}</div>
-            </b-card>
-        </b-collapse>
     </div>
 </template>
 
 <script>
+    import VSelect2 from '../../../components/controls/VSelect2/v-select2.vue';
+
     export default {
+        components: {
+            VSelect2
+        },
         props: {
             title: String,
             classes: String,
@@ -39,40 +33,30 @@
         data() {
             return {
                 buttonName: 'Выбрать бренд',
-                brand: [],
+                form: {
+                    brands: []
+                },
             }
         },
         methods: {
-            reverseButtonName() {
-                if (this.buttonName === 'Выбрать бренд')
-                    this.buttonName = 'Закрыть список';
-                else
-                    this.buttonName = 'Выбрать бренд';
-            },
-            toggleBrand(brandId) {
-                let brands = new Set(this.brand);
-                if (brands.has(brandId)) {
-                    brands.delete(brandId);
-                } else {
-                    brands.add(brandId);
-                }
-                this.brand = [...brands];
-
-                this.$emit('update', this.brand);
+            selectCategories() {
+                this.$emit('update', this.form.brands);
             },
         },
         computed: {
             selectedBrands() {
-                let selected = new Set(this.brand);
-                return this.brands.filter(brand => selected.has(brand.id));
+                return Object.values(this.brands).map(brand => ({
+                    value: brand.id,
+                    text: brand.name
+                }));
             },
         },
         mounted() {
-            this.brand = this.iBrands ? [...this.iBrands] : [];
+            this.form.brands = this.iBrands ? [...this.iBrands] : [];
         },
         watch: {
             iBrands(val) {
-                this.brand = this.iBrands ? [...this.iBrands] : [];
+                this.form.brands = this.iBrands ? [...this.iBrands] : [];
             }
         },
     }
