@@ -104,8 +104,6 @@
             discounts: Array,
             iDiscount: Object,
             iConditionTypes: Object,
-            deliveryMethods: Array,
-            paymentMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,

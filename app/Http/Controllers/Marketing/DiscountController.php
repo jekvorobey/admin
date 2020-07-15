@@ -144,7 +144,7 @@ class DiscountController extends Controller
             $discount = DiscountHelper::validate($request);
             $discountService->update($id, $discount);
         } catch (\Exception $ex) {
-            return response()->json(['status' => $ex->getMessage()]);
+            return response()->json(['error' => $ex->getMessage()], 400);
         }
 
         return response()->json(['status' => 'ok']);
@@ -197,6 +197,7 @@ class DiscountController extends Controller
      */
     public function detail(int $id)
     {
+        $this->loadDiscountTypes = true;
         $data = DiscountHelper::detail($id);
         $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
 

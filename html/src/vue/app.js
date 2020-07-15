@@ -15,6 +15,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import './fontawesome';
 import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
 import OrderStatus from './components/status/order-status.vue';
+import OrderType from './components/status/order-type.vue';
 import DeliveryStatus from './components/status/delivery-status.vue';
 import ShipmentStatus from './components/status/shipment-status.vue';
 import PaymentStatus from './components/status/payment-status.vue';
@@ -44,6 +45,7 @@ store.commit('title', root.dataset.title);
 store.commit('routes', JSON.parse(root.dataset.routes));
 
 Vue.component('order-status', OrderStatus);
+Vue.component('order-type', OrderType);
 Vue.component('delivery-status', DeliveryStatus);
 Vue.component('shipment-status', ShipmentStatus);
 Vue.component('payment-status', PaymentStatus);
@@ -187,6 +189,10 @@ Vue.mixin({
         /** @return {OrderStatuses} */
         orderStatuses() {
             return this.$store.state.layout.orderStatuses;
+        },
+        /** @return {BasketTypes} */
+        basketTypes() {
+            return this.$store.state.layout.basketTypes;
         },
         /** @return {PaymentStatuses} */
         paymentStatuses() {
@@ -505,8 +511,15 @@ Vue.mixin({
  @type {Object}
  @property {integer} id
  @property {string} name - название в админке
- @property {string} description - все Отправления данного Заказа были переведены в статус /// или Смысл статуса если оно не зависит от Отправлений
+ @property {string} description - все Отправления данного Заказа были переведены в статус /// или Смысл статуса если
+      оно не зависит от Отправлений
  @property {string} display_name - название для клиента на витрине
+ */
+/**
+ @typedef BasketTypes
+ @type {Object}
+ @property {integer} product
+ @property {integer} master
  */
 /**
  @typedef PaymentStatuses - статусы оплаты

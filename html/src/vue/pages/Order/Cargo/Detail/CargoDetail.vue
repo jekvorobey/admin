@@ -45,8 +45,8 @@
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
                     </p>
-                    <p class="text-secondary mt-3" v-if="isShippingProblem">
-                        Описание проблемы:<span class="float-right">{{ cargo.shipping_problem_comment }}</span>
+                    <p class="text-secondary mt-3" v-if="cargo.shipping_problem_comment">
+                        Комментарий:<span class="float-right">{{ cargo.shipping_problem_comment }}</span>
                     </p>
                 </div>
             </div>

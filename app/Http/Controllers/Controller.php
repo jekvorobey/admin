@@ -35,6 +35,7 @@ class Controller extends BaseController
     protected $loadBonusTypes = false;
     protected $loadCustomerBonusStatus = false;
     protected $loadOrderStatuses = false;
+    protected $loadBasketTypes = false;
     protected $loadPaymentStatuses = false;
     protected $loadPaymentMethods = false;
     protected $loadDeliveryStatuses = false;
@@ -70,6 +71,7 @@ class Controller extends BaseController
             ->loadBonusTypes($this->loadBonusTypes)
             ->loadCustomerBonusStatus($this->loadCustomerBonusStatus)
             ->loadOrderStatuses($this->loadOrderStatuses)
+            ->loadBasketTypes($this->loadBasketTypes)
             ->loadPaymentStatuses($this->loadPaymentStatuses)
             ->loadDeliveryStatuses($this->loadDeliveryStatuses)
             ->loadShipmentStatuses($this->loadShipmentStatuses)
