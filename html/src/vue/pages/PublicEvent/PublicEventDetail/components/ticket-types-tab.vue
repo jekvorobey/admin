@@ -4,7 +4,7 @@
         <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createTicketType">Добавить тип билета</button>
+            <button class="btn btn-success" :disabled="sprints.length == 0 || sprintStages.length == 0" @click="createTicketType">Добавить тип билета</button>
         </div>
         <table class="table">
             <thead>
