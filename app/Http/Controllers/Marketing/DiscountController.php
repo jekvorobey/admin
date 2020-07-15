@@ -200,11 +200,27 @@ class DiscountController extends Controller
         $this->loadDiscountTypes = true;
         $this->loadDeliveryMethods = true;
         $this->loadPaymentMethods = true;
+        $this->loadOrderStatuses = true;
         $data = DiscountHelper::detail($id);
         $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
 
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Detail', $data);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function discountOrdersDetail(int $id)
+    {
+        $query = new RestQuery();
+        $query->include('deliveries');
+        $query->setFilter('discount_id', $id);
+        $data['orders'] = resolve(OrderService::class)->orders($query);
+
+        return response()->json($data);
     }
 
     /**

@@ -60,6 +60,9 @@
                       :categories="categories"
                       :i-districts="iDistricts"
                     />
+                    <tab-order v-if="key === 'order'"
+                       :model.sync="discount"
+                    ></tab-order>
                     <template v-else>
                         Заглушка
                     </template>
@@ -72,13 +75,15 @@
 <script>
     import Infopanel from './components/infopanel.vue';
     import TabMain from './components/tab-main.vue';
+    import TabOrder from './components/tab-order.vue';
     import tabsMixin from '../../../../mixins/tabs.js';
 
     export default {
         name: 'page-discount-detail',
         components: {
             Infopanel,
-            TabMain
+            TabMain,
+            TabOrder,
         },
         mixins: [tabsMixin],
         props: {
@@ -184,9 +189,9 @@
                 let i = 0;
 
                 tabs.main = {i: i++, title: 'Информация'};
-                tabs.orders = {i: i++, title: 'Заказы'};
-                tabs.reports = {i: i++, title: 'Отчеты'};
-                tabs.logs = {i: i++, title: 'Логи'};
+                tabs.order = {i: i++, title: 'Заказы'};
+                tabs.report = {i: i++, title: 'Отчеты'};
+                tabs.log = {i: i++, title: 'Логи'};
 
                 return tabs;
             },
