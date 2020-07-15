@@ -58,6 +58,7 @@
                       :segments="segments"
                       :brands="brands"
                       :categories="categories"
+                      :i-districts="iDistricts"
                     />
                     <template v-else>
                         Заглушка
