@@ -251,6 +251,7 @@
                     conditions: discount.conditions,
                     status: discount.status,
                     promo_code_only: !!discount.promo_code_only,
+                    merchant_id: this.merchantBtn ? discount.merchant_id : null,
                 };
 
                 switch (discount.type) {
@@ -310,6 +311,7 @@
             },
             cancel() {
                 this.$emit('initDiscount');
+                this.merchantBtn = this.discount.merchant_id > 0;
             },
             formatIds(ids) {
                 if (typeof(ids) !== 'string') {
@@ -449,9 +451,13 @@
                     }
                 },
             },
-        },
-        mounted() {
-            this.merchantBtn = this.discount.merchant_id > 0;
+            'discount.merchant_id': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        this.merchantBtn = this.discount.merchant_id > 0;
+                    }
+                },
+            },
         },
     };
 </script>

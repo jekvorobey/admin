@@ -138,6 +138,7 @@ class DiscountHelper
             'type'            => 'numeric|required',
             'value'           => 'numeric|required',
             'value_type'      => 'numeric|required',
+            'merchant_id'     => 'numeric|nullable',
             'start_date'      => 'string|nullable',
             'end_date'        => 'string|nullable',
             'promo_code_only' => 'boolean|required',
@@ -159,7 +160,7 @@ class DiscountHelper
             : null;
 
         $discount = new DiscountDto([
-            'merchant_id'     => null,
+            'merchant_id'     => $data['merchant_id'],
             'type'            => $data['type'],
             'name'            => $data['name'],
             'value_type'      => $data['value_type'],
