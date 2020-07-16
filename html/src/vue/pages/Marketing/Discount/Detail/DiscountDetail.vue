@@ -60,7 +60,7 @@
                       :categories="categories"
                       :i-districts="iDistricts"
                     />
-                    <tab-order v-if="key === 'order'"
+                    <tab-order v-else-if="key === 'order'"
                        :model.sync="discount"
                     ></tab-order>
                     <template v-else>

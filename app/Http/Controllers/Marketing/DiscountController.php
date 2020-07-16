@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
@@ -213,12 +217,30 @@ class DiscountController extends Controller
      *
      * @return JsonResponse
      */
-    public function discountOrdersDetail(int $id)
+    public function discountOrdersDetail(int $id, Request $request)
     {
-        $query = new RestQuery();
-        $query->include('deliveries');
-        $query->setFilter('discount_id', $id);
-        $data['orders'] = resolve(OrderService::class)->orders($query);
+        // Orders
+        $data = DiscountHelper::getOrdersByDiscount($id, $request);
+
+        // Customers
+        $customerIds = $data['orders']->pluck('customer_id')->all();
+        $customers = resolve(CustomerService::class)->customers(
+            (new RestQuery())
+                ->addFields(CustomerDto::class, 'id', 'user_id')
+                ->setFilter('id', '=', $customerIds)
+        )->keyBy('id');
+
+        // Users
+        $userIds = $customers->pluck('user_id')->all();
+        $users = resolve(UserService::class)->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id', 'full_name')
+                ->setFilter('id', '=', $userIds)
+        )->keyBy('id');
+
+        $data['customers'] = $customers->map(function ($customer) use($users) {
+            return $users[$customer['user_id']]['full_name'] ?? '–';
+        });
 
         return response()->json($data);
     }
