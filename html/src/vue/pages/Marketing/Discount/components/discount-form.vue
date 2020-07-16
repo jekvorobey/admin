@@ -148,14 +148,11 @@
                 :discounts="discounts"
                 :conditions="discount.conditions"
                 :iConditionTypes="iConditionTypes"
-                :iPaymentMethods="iPaymentMethods"
-                :iDeliveryMethods="iDeliveryMethods"
                 :regions="discountRegions"
                 :segments="segments"
                 :roles="roles"
                 :brands="brands"
                 :categories="categories"
-                :discountSizeTypes="discountSizeTypes"
         ></Conditions>
 
         <div class="row">

@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
+                Route::get('/orders', 'DiscountController@discountOrdersDetail')->name('discount.orders');
                 Route::get('', 'DiscountController@detail')->name('discount.detail');
             });
 
