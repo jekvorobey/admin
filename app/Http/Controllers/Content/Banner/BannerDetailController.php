@@ -123,6 +123,7 @@ class BannerDetailController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'string|required',
+            'url' => 'string|required',
             'active' => 'boolean|required',
             'desktop_image_id' => 'integer|required',
             'tablet_image_id' => 'integer|nullable',
@@ -149,6 +150,7 @@ class BannerDetailController extends Controller
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
+            'url' => 'string|required',
             'active' => 'boolean|required',
             'desktop_image_id' => 'integer|required',
             'tablet_image_id' => 'integer|nullable',
