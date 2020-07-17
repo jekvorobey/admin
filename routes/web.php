@@ -439,6 +439,14 @@ Route::middleware('auth')->group(function () {
             Route::put('reorder', 'ProductBadgesController@reorder')->name('productBadges.reorder');
             Route::delete('remove', 'ProductBadgesController@remove')->name('productBadges.remove');
         });
+
+        Route::prefix('search-requests')->namespace('SearchRequest')->group(function () {
+            Route::get('', 'SearchRequestController@list')->name('searchRequests.list');
+            Route::post('create', 'SearchRequestController@create')->name('searchRequests.create');
+            Route::put('update', 'SearchRequestController@update')->name('searchRequests.update');
+            Route::put('reorder', 'SearchRequestController@reorder')->name('searchRequests.reorder');
+            Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
