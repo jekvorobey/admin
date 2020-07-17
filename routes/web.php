@@ -318,6 +318,7 @@ Route::middleware('auth')->group(function () {
                 });
 
                 Route::prefix('courier-call')->group(function () {
+                    Route::get('status', 'CargoDetailController@checkCourierCallStatus')->name('cargo.checkCourierCallStatus');
                     Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
                     Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
                 });

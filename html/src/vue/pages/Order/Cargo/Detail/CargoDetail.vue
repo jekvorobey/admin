@@ -20,6 +20,11 @@
                                 <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
                                     Отменить задание на забор груза
                                 </b-dropdown-item-button>
+                                <b-dropdown-item-button v-if="isRequestSend
+                                                        && cargo.delivery_service.support_courier_check === true"
+                                                        @click="checkCourierCallStatus()">
+                                    Проверить заявку на забор груза
+                                </b-dropdown-item-button>
                                 <b-dropdown-item-button v-else @click="createCourierCall()">
                                     Создать задание на забор груза
                                 </b-dropdown-item-button>
@@ -39,8 +44,9 @@
                     <p class="text-secondary mt-3">
                         Номер задания на забор груза:<span class="float-right">{{ cargo.xml_id ? cargo.xml_id : 'N/A' }}</span>
                     </p>
-                    <p class="text-danger mt-3" v-if="cargo.error_xml_id">
-                        Последняя ошибка при создании задания на забор груза:<span class="float-right">{{ cargo.error_xml_id}}</span>
+                    <p class="mt-3" v-if="cargo.error_xml_id">
+                        <b>Последняя ошибка при создании задания на забор груза:</b>
+                        <span class="text-danger float-right">{{ cargo.error_xml_id}}</span>
                     </p>
                     <p class="text-secondary mt-3">
                         Последнее изменение:<span class="float-right">{{ cargo.updated_at }}</span>
@@ -183,6 +189,21 @@
                     Services.msg("Задание на забор груза отменено");
                 } else {
                     Services.msg(errorMessage, 'danger');
+                }
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        checkCourierCallStatus() {
+            Services.showLoader();
+            Services.net().get(this.getRoute('cargo.checkCourierCallStatus', {id: this.cargo.id})).then(data => {
+                if (data.cargo) {
+                    this.cargo = data.cargo;
+                }
+                if (data.result === 'ok') {
+                    Services.msg("Получена актуальная информация о заявке на вызов курьера");
+                } else {
+                    Services.msg('Не удалось проверить заявку', 'danger');
                 }
             }).finally(data => {
                 Services.hideLoader();

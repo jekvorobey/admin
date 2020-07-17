@@ -81,7 +81,12 @@ class CargoPage extends AbstractPage
                 $cargo[$date] = (new Carbon($date))->format('H:i:s Y-m-d');
             }
         } catch (Exception $e) {}
-        
+
+        // TODO: Проверку заявки на вызов курьера поддерживает только CDEK //
+        if ($cargo['delivery_service']['id'] == DeliveryService::SERVICE_CDEK) {
+            $cargo['delivery_service']['support_courier_check'] = true;
+        }
+
         return [
             'cargo' => $cargo,
         ];
