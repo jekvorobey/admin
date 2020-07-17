@@ -564,12 +564,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "925b880a2b1561a236f016d9915ae7c4d6e762ab"
+                "reference": "d7fe263104d15a9c37c6391e60e4024f3cb1a8df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=925b880a2b1561a236f016d9915ae7c4d6e762ab",
-                "reference": "925b880a2b1561a236f016d9915ae7c4d6e762ab",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=d7fe263104d15a9c37c6391e60e4024f3cb1a8df",
+                "reference": "d7fe263104d15a9c37c6391e60e4024f3cb1a8df",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2020-07-16T20:24:00+00:00"
+            "time": "2020-07-17T09:37:26+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
