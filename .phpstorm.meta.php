@@ -5,7 +5,7 @@ namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on 2020-07-10 15:16:42.
+    * Generated on 2020-07-17 17:18:29.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
@@ -22,6 +22,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -251,6 +252,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -480,6 +482,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -709,6 +712,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -938,6 +942,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -1167,6 +1172,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -1396,6 +1402,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
@@ -1625,6 +1632,7 @@ namespace PHPSTORM_META {
         'Cms\Services\OptionService\OptionService' => \Cms\Services\OptionService\RestOptionService::class,
         'Cms\Services\ProductGroupService\ProductGroupService' => \Cms\Services\ProductGroupService\RestProductGroupService::class,
         'Cms\Services\ProductGroupTypeService\ProductGroupTypeService' => \Cms\Services\ProductGroupTypeService\RestProductGroupTypeService::class,
+        'Cms\Services\SearchRequestService\SearchRequestService' => \Cms\Services\SearchRequestService\RestSearchRequestService::class,
         'Greensight\CommonMsa\Services\AuthService\AuthService' => \Greensight\CommonMsa\Services\AuthService\RestAuthService::class,
         'Greensight\CommonMsa\Services\AuthService\UserService' => \Greensight\CommonMsa\Services\AuthService\RestUserService::class,
         'Greensight\CommonMsa\Services\CloudFileService\CloudFileService' => \Greensight\CommonMsa\Services\CloudFileService\RestCloudFileService::class,
