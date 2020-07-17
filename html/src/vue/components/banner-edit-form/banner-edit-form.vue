@@ -76,6 +76,19 @@
         </b-form-group>
 
         <b-form-group
+                label="Ссылка*"
+                label-for="banner-group-url"
+        >
+            <b-form-input
+                    id="banner-group-url"
+                    v-model="banner.url"
+                    type="text"
+                    required
+                    placeholder="Введите ссылку"
+            />
+        </b-form-group>
+
+        <b-form-group
                 label="С кнопкой?"
                 label-for="banner-group-has-button"
         >
@@ -91,19 +104,6 @@
             Кнопка
         </div>
         <div v-show="hasButton" class="border border-dark rounded p-2">
-            <b-form-group
-                    label="Ссылка*"
-                    label-for="banner-group-button-url"
-            >
-                <b-form-input
-                        id="banner-group-button-url"
-                        v-model="banner.button.url"
-                        type="text"
-                        :required="!!hasButton"
-                        placeholder="Введите ссылку"
-                />
-            </b-form-group>
-
             <b-form-group
                     label="Текст*"
                     label-for="banner-group-button-text"
@@ -196,6 +196,7 @@
                 return {
                     id: source.id ? source.id : null,
                     name: source.name ? source.name : null,
+                    url: source.url ? source.url : null,
                     active: source.active ? source.active : false,
                     type_id: source.type_id ? source.type_id : null,
                     desktop_image_id: source.desktop_image_id ? source.desktop_image_id : null,
@@ -207,7 +208,6 @@
             normalizeButton(source) {
                 return {
                     id: source.id ? source.id : null,
-                    url: source.url ? source.url : null,
                     text: source.text ? source.text : null,
                     type: source.type ? source.type : null,
                     location: source.location ? source.location : null,
@@ -255,7 +255,7 @@
                 return null;
             },
             isCreatingMode() {
-                return this.banner.id === null;
+                return this.banner.id == null;
             },
         },
         watch: {
