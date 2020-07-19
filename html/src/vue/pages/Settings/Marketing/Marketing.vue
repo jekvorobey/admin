@@ -1,6 +1,27 @@
 <template>
     <layout-main>
         <form v-on:submit.prevent.stop="update">
+            <h3 class="mb-3">Лимиты на вывод Реферальных Отчислений</h3>
+            <div class="mb-3 row">
+                <v-input v-model="$v.form.min_withdrawal_amount.$model" class="col-6"
+                         :error="errorMinWithdrawalLimit"
+                         :help="'Минимальный лимит Яндекс.Кассы - ' + this.limits.YANDEX_MIN_LIMIT + ' руб.'"
+                         type="number"
+                         step="any"
+                         :min="this.limits.YANDEX_MIN_LIMIT"
+                         @change="() => {updateInput('min_withdrawal_amount')}">
+                    Минимальная сумма вывода за один раз</v-input>
+
+                <v-input v-model="$v.form.max_withdrawal_amount.$model" class="col-6"
+                         :error="errorMaxWithdrawalLimit"
+                         :help="'Максимальный лимит Яндекс.Кассы - ' + this.limits.YANDEX_MAX_LIMIT + ' руб.'"
+                         type="number"
+                         step="any"
+                         :max="this.limits.YANDEX_MAX_LIMIT"
+                         @change="() => {updateInput('max_withdrawal_amount')}">
+                    Максимальная сумма вывода за один раз</v-input>
+            </div>
+
             <h3 class="mb-3">Бонусы</h3>
             <div class="mb-3 row">
                 <v-input v-model="$v.form.bonus_per_rubles.$model" class="col-6"
@@ -121,7 +142,11 @@
             </div>
 
             <div class="form-group mt-3">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <button type="submit"
+                        :disabled="anyDirty"
+                        class="btn btn-primary">
+                    Сохранить
+                </button>
             </div>
         </form>
     </layout-main>
@@ -139,6 +164,8 @@
         name: 'page-marketing-settings',
         components: {VInput, FMultiSelect},
         props: {
+            min_withdrawal_amount: Number,
+            max_withdrawal_amount: Number,
             bonus_per_rubles: Number,
             order_activation_bonus_delay: Number,
             max_debit_percentage_for_product: Number,
@@ -151,7 +178,13 @@
         mixins: [validationMixin],
         data() {
             return {
+                limits: {
+                    YANDEX_MIN_LIMIT: 100,
+                    YANDEX_MAX_LIMIT: 60000,
+                },
                 form: {
+                    min_withdrawal_amount: this.min_withdrawal_amount,
+                    max_withdrawal_amount: this.max_withdrawal_amount,
                     bonus_per_rubles: this.bonus_per_rubles,
                     roles_available_for_bonuses: this.roles_available_for_bonuses,
                     order_activation_bonus_delay: this.order_activation_bonus_delay,
@@ -171,6 +204,16 @@
         },
         validations: {
             form: {
+                min_withdrawal_amount: {
+                    required,
+                    minValue: minValue(100),
+                    maxValue: maxValue(60000)
+                },
+                max_withdrawal_amount: {
+                    required,
+                    minValue: minValue(100),
+                    maxValue: maxValue(60000)
+                },
                 bonus_per_rubles: {required, minValue: minValue(0)},
                 order_activation_bonus_delay: {required, integer, minValue: minValue(0)},
                 activation_bonus_name: {
@@ -235,6 +278,36 @@
                     : null;
             },
             // ===============================
+            errorMinWithdrawalLimit() {
+                if (
+                    Number(this.form.min_withdrawal_amount) > Number(this.form.max_withdrawal_amount)
+                ) {
+                    return 'Минимальный порог не может быть выше максимального'
+                }
+                if (this.$v.form.min_withdrawal_amount.$dirty) {
+                    if (!this.$v.form.min_withdrawal_amount.required)
+                        return "Обязательное поле!";
+                    if (!this.$v.form.min_withdrawal_amount.minValue)
+                        return `Минимальная выплата Яндекс.Кассы - ${this.limits.YANDEX_MIN_LIMIT} руб.`;
+                    if (!this.$v.form.min_withdrawal_amount.maxValue)
+                        return `Максимальная выплата Яндекс.Кассы - ${this.limits.YANDEX_MAX_LIMIT} руб.`;
+                }
+            },
+            errorMaxWithdrawalLimit() {
+                if (
+                    Number(this.form.min_withdrawal_amount) > Number(this.form.max_withdrawal_amount)
+                ) {
+                    return 'Максимальный порог не может быть ниже минимального'
+                }
+                if (this.$v.form.max_withdrawal_amount.$dirty) {
+                    if (!this.$v.form.max_withdrawal_amount.required)
+                        return "Обязательное поле!";
+                    if (!this.$v.form.max_withdrawal_amount.minValue)
+                        return `Минимальная выплата Яндекс.Кассы - ${this.limits.YANDEX_MIN_LIMIT} руб.`;
+                    if (!this.$v.form.max_withdrawal_amount.maxValue)
+                        return `Максимальная выплата Яндекс.Кассы - ${this.limits.YANDEX_MAX_LIMIT} руб.`;
+                }
+            },
             errorBonusPerRubles() {
                 if (this.$v.form.bonus_per_rubles.$dirty) {
                     if (!this.$v.form.bonus_per_rubles.required) return "Обязательное поле!";
@@ -289,6 +362,10 @@
                     if (!this.$v.form.bonus_expire_days_notify.integer) return "Введите целое число!";
                     if (!this.$v.form.bonus_expire_days_notify.minValue) return "Значение должно быть ≥ 0";
                 }
+            },
+            anyDirty() {
+                return this.$v.$invalid
+                || Number(this.form.min_withdrawal_amount) > Number(this.form.max_withdrawal_amount)
             },
         },
         watch: {
