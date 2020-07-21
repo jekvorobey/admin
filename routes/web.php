@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
+                Route::get('/orders', 'DiscountController@discountOrdersDetail')->name('discount.orders');
                 Route::get('', 'DiscountController@detail')->name('discount.detail');
             });
 
@@ -317,6 +318,7 @@ Route::middleware('auth')->group(function () {
                 });
 
                 Route::prefix('courier-call')->group(function () {
+                    Route::get('status', 'CargoDetailController@checkCourierCallStatus')->name('cargo.checkCourierCallStatus');
                     Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
                     Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
                 });
@@ -334,11 +336,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::post('', 'OfferListController@createOffer')->name('offers.create');
+        Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->group(function () {
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
         });
+        Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
+        Route::get('validate-offer', 'OfferListController@validateOffer')->name('offers.validate');
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {
@@ -433,6 +439,14 @@ Route::middleware('auth')->group(function () {
             Route::put('edit', 'ProductBadgesController@edit')->name('productBadges.edit');
             Route::put('reorder', 'ProductBadgesController@reorder')->name('productBadges.reorder');
             Route::delete('remove', 'ProductBadgesController@remove')->name('productBadges.remove');
+        });
+
+        Route::prefix('search-requests')->namespace('SearchRequest')->group(function () {
+            Route::get('', 'SearchRequestController@list')->name('searchRequests.list');
+            Route::post('create', 'SearchRequestController@create')->name('searchRequests.create');
+            Route::put('update', 'SearchRequestController@update')->name('searchRequests.update');
+            Route::put('reorder', 'SearchRequestController@reorder')->name('searchRequests.reorder');
+            Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
         });
     });
 
@@ -767,6 +781,11 @@ Route::middleware('auth')->group(function () {
             Route::get('fullList', 'MediaController@fullList')->name('public-event.media.fullList');
             Route::post('save', 'MediaController@save')->name('public-event.media.save');
             Route::post('delete', 'MediaController@delete')->name('public-event.media.delete');
+        });
+
+        Route::prefix('sprint-sell-status')->group(function () {
+            Route::post('save', 'PublicEventSprintSellStatusController@save')->name('public-event.sprint-sell-status.save');
+            Route::post('delete', 'PublicEventSprintSellStatusController@delete')->name('public-event.sprint-sell-status.delete');
         });
 
         Route::prefix('sprints')->group(function () {

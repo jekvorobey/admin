@@ -152,7 +152,12 @@
                         <template v-else>
                             <date-picker
                                     v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_start']"
-                                    input-class="form-control form-control-sm"
+                                    :input-class="{
+                                        'is-invalid': isPeriodInvalid(
+                                        store.pickupTimes[index][deliveryService.id]['pickup_time_start'],
+                                        store.pickupTimes[index][deliveryService.id]['pickup_time_end']
+                                        ),
+                                        'form-control form-control-sm': true}"
                                     type="time"
                                     format="HH:mm"
                                     value-type="format"
@@ -162,7 +167,12 @@
                             />
                             <date-picker
                                     v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_end']"
-                                    input-class="form-control form-control-sm"
+                                    :input-class="{
+                                        'is-invalid': isPeriodInvalid(
+                                        store.pickupTimes[index][deliveryService.id]['pickup_time_start'],
+                                        store.pickupTimes[index][deliveryService.id]['pickup_time_end']
+                                        ),
+                                        'form-control form-control-sm': true}"
                                     type="time"
                                     format="HH:mm"
                                     value-type="format"
@@ -227,7 +237,12 @@
             </tbody>
         </table>
         <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-success" @click="updateStore()">Сохранить изменения</button>
+            <button type="submit"
+                    class="btn btn-success"
+                    @click="updateStore()"
+                    :disabled="this.containErrors === true">
+                Сохранить изменения
+            </button>
         </div>
     </layout-main>
 </template>
@@ -287,7 +302,8 @@
                 step: '00:30',
                 end: '23:30'
             },
-            deliveryServices: this.iDeliveryServices
+            deliveryServices: this.iDeliveryServices,
+            containErrors: null,
         }
     },
     mounted() {
@@ -372,6 +388,21 @@
         },
         updateWorking(index) {
             this.changeStore.days[index] = this.store.storeWorking[index];
+        },
+        /**
+         * Проверка на корректно заданные промежутки времени
+         * @param start
+         * @param end
+         * @returns {boolean}
+         */
+        isPeriodInvalid(start, end) {
+            if (start > end) {
+                this.containErrors = true;
+                return true;
+            } else {
+                this.containErrors = false;
+                return false;
+            }
         },
         savePickupTime(pickupTime) {
             let day = pickupTime.day;

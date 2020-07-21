@@ -20,6 +20,7 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
+use Greensight\Oms\Dto\BasketDto;
 use Greensight\Oms\Dto\Delivery\CargoStatus;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
@@ -31,6 +32,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
+use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
@@ -73,6 +75,7 @@ class ViewRender
     private $customerBonusStatus = [];
 
     private $orderStatuses = [];
+    private $basketTypes = [];
     private $paymentStatuses = [];
     private $paymentMethods = [];
     private $deliveryStatuses = [];
@@ -81,6 +84,11 @@ class ViewRender
     private $deliveryTypes = [];
     private $deliveryMethods = [];
     private $deliveryServices = [];
+
+    private $offerAllSaleStatuses = [];
+    private $offerCreateSaleStatuses = [];
+    private $offerEditSaleStatuses = [];
+    private $offerCountdownSaleStatuses = [];
 
     public function __construct($componentName, $props)
     {
@@ -664,6 +672,58 @@ class ViewRender
         return $this;
     }
 
+    public function loadOfferSaleStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $mapOfferSaleStatuses = [
+                OfferSaleStatus::STATUS_ON_SALE => 'onSale',
+                OfferSaleStatus::STATUS_PRE_ORDER => 'preOrder',
+                OfferSaleStatus::STATUS_OUT_SALE => 'outSale',
+                OfferSaleStatus::STATUS_AVAILABLE_SALE => 'availableSale',
+                OfferSaleStatus::STATUS_NOT_AVAILABLE_SALE => 'notAvailableSale'
+            ];
+            foreach (OfferSaleStatus::allStatuses() as $id => $status) {
+                if (!isset($mapOfferSaleStatuses[$id])) {
+                    continue;
+                }
+                $this->offerAllSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
+            }
+            foreach (OfferSaleStatus::offerCreateStatuses() as $id => $status) {
+                if (!isset($mapOfferSaleStatuses[$id])) {
+                    continue;
+                }
+                $this->offerCreateSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
+            }
+            foreach (OfferSaleStatus::offerEditStatuses() as $id => $status) {
+                if (!isset($mapOfferSaleStatuses[$id])) {
+                    continue;
+                }
+                $this->offerEditSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
+            }
+
+            $this->offerCountdownSaleStatuses = OfferSaleStatus::countdownStatuses();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param bool $load
+     *
+     * @return $this
+     */
+    public function loadBasketTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->basketTypes = [
+                'product' => BasketDto::TYPE_PRODUCT,
+                'master' => BasketDto::TYPE_MASTER,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -706,6 +766,7 @@ class ViewRender
                 'customerBonusStatus' => $this->customerBonusStatus,
 
                 'orderStatuses' => $this->orderStatuses,
+                'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
                 'paymentMethods' => $this->paymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
@@ -714,6 +775,11 @@ class ViewRender
                 'deliveryTypes' => $this->deliveryTypes,
                 'deliveryMethods' => $this->deliveryMethods,
                 'deliveryServices' => $this->deliveryServices,
+
+                'offerAllSaleStatuses' => $this->offerAllSaleStatuses,
+                'offerCreateSaleStatuses' => $this->offerCreateSaleStatuses,
+                'offerEditSaleStatuses' => $this->offerEditSaleStatuses,
+                'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
             ],
             [
                 'title' => $this->title,

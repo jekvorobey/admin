@@ -15,6 +15,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import './fontawesome';
 import {capitalize, formatSize, integer, lowercase, truncate} from '../scripts/filters';
 import OrderStatus from './components/status/order-status.vue';
+import OrderType from './components/status/order-type.vue';
 import DeliveryStatus from './components/status/delivery-status.vue';
 import ShipmentStatus from './components/status/shipment-status.vue';
 import PaymentStatus from './components/status/payment-status.vue';
@@ -44,6 +45,7 @@ store.commit('title', root.dataset.title);
 store.commit('routes', JSON.parse(root.dataset.routes));
 
 Vue.component('order-status', OrderStatus);
+Vue.component('order-type', OrderType);
 Vue.component('delivery-status', DeliveryStatus);
 Vue.component('shipment-status', ShipmentStatus);
 Vue.component('payment-status', PaymentStatus);
@@ -188,6 +190,10 @@ Vue.mixin({
         orderStatuses() {
             return this.$store.state.layout.orderStatuses;
         },
+        /** @return {BasketTypes} */
+        basketTypes() {
+            return this.$store.state.layout.basketTypes;
+        },
         /** @return {PaymentStatuses} */
         paymentStatuses() {
             return this.$store.state.layout.paymentStatuses;
@@ -220,6 +226,22 @@ Vue.mixin({
         deliveryServices() {
             return this.$store.state.layout.deliveryServices;
         },
+        /** @return {OfferAllSaleStatuses} */
+        offerAllSaleStatuses() {
+            return this.$store.state.layout.offerAllSaleStatuses;
+        },
+        /** @return {OfferCreateSaleStatuses} */
+        offerCreateSaleStatuses() {
+            return this.$store.state.layout.offerCreateSaleStatuses;
+        },
+        /** @return {OfferEditSaleStatuses} */
+        offerEditSaleStatuses() {
+            return this.$store.state.layout.offerEditSaleStatuses;
+        },
+        /** @return {OfferCountdownSaleStatuses} */
+        offerCountdownSaleStatuses() {
+            return this.$store.state.layout.offerCountdownSaleStatuses;
+        }
     },
 });
 
@@ -489,8 +511,15 @@ Vue.mixin({
  @type {Object}
  @property {integer} id
  @property {string} name - название в админке
- @property {string} description - все Отправления данного Заказа были переведены в статус /// или Смысл статуса если оно не зависит от Отправлений
+ @property {string} description - все Отправления данного Заказа были переведены в статус /// или Смысл статуса если
+      оно не зависит от Отправлений
  @property {string} display_name - название для клиента на витрине
+ */
+/**
+ @typedef BasketTypes
+ @type {Object}
+ @property {integer} product
+ @property {integer} master
  */
 /**
  @typedef PaymentStatuses - статусы оплаты
@@ -621,4 +650,36 @@ Vue.mixin({
  @type {Object}
  @property {integer} id
  @property {string} name
+ */
+/**
+ @typedef OfferAllSaleStatuses - все статусы оффера
+ @type {Object}
+ @property {OfferSaleStatus} onSale - в продаже
+ @property {OfferSaleStatus} preOrder - предзаказ
+ @property {OfferSaleStatus} outSale - снято с продажи
+ @property {OfferSaleStatus} availableSale - доступен к продаже
+ @property {OfferSaleStatus} notAvailableSale - недоступен к продаже
+ */
+/**
+ @typedef OfferCreateSaleStatuses - доступные при создании оффера статусы
+ @type {Object}
+ @property {OfferSaleStatus} onSale - в продаже
+ @property {OfferSaleStatus} preOrder - предзаказ
+ */
+/**
+ @typedef OfferEditSaleStatuses - доступные при редактировании оффера статусы
+ @type {Object}
+ @property {OfferSaleStatus} preOrder - предзаказ
+ @property {OfferSaleStatus} outSale - снято с продажи
+ */
+/**
+ @typedef OfferSaleStatus - статус оффера
+ @type {Object}
+ @property {integer} id
+ @property {string} name
+ */
+/**
+ @typedef OfferCountdownSaleStatuses - статусы оффера, для которых необходимо указать дату начала продажи
+ @type {Object}
+ @property {integer} id
  */

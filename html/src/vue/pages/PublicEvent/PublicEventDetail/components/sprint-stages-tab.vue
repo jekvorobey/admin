@@ -1,10 +1,10 @@
 <template>
     <div>
         <span>Спринт</span>
-        <b-form-select v-model="sprintId" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
+        <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <button class="btn btn-success" @click="createSprintStage">Добавить этап программы</button>
+            <button class="btn btn-success" :disabled="sprints.length == 0" @click="createSprintStage">Добавить этап программы</button>
         </div>
         <table class="table">
             <thead>
@@ -68,12 +68,12 @@
                         
                         <div class="form-group">
                             <label for="raider">Что взять с собой</label>
-                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" :error="errorRaider" />
+                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" />
                         </div>
 
                         <div class="form-group">
                             <label for="result">Результат</label>
-                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" :error="errorResult" />
+                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" />
                         </div>
                         
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -129,11 +129,11 @@
         },
         props: {
             publicEvent: {},
+            sprintId: null,
         },
         data() {
             return {
                 sprints: [],
-                sprintId: null,
                 sprintStages: [],
                 editSprintStageId: null,
                 places: [],
@@ -158,8 +158,8 @@
                 time_from: {required},
                 time_to: {required},
                 place_id: {required},
-                raider: {required},
-                result: {required},
+                raider: {},
+                result: {},
             }
         },
         methods: {
@@ -175,17 +175,18 @@
                     .then(response => {
                         this.places = response.places;
                     });
-                this.loadSprints({publicEventId: this.publicEvent.id})
-                    .then(response => {
-                        this.sprints = response.sprints;
-                        if (this.sprints.length) {
-                            this.sprints.forEach(sprint => {
-                                sprint.interval = this.interval(sprint.date_start, sprint.date_end);
-                            });
-                            this.sprintId = this.sprints[0].id;
-                            this.onChangeSprint(this.sprintId);
-                        }
-                    });
+                
+                    this.loadSprints({publicEventId: this.publicEvent.id})
+                        .then(response => {
+                            this.sprints = response.sprints;
+                            if (this.sprints.length) {
+                                this.sprints.forEach(sprint => {
+                                    sprint.interval = this.interval(sprint.date_start, sprint.date_end);
+                                });
+                                const sprintId = this.sprintId != null ? this.sprintId : this.sprints[0].id;
+                                this.onChangeSprint(sprintId);
+                            }
+                        });         
             },
             interval(dateStartString, dateEndString) {
                 return Helpers.onlyDate(dateStartString) + ' - ' + Helpers.onlyDate(dateEndString);
@@ -198,6 +199,7 @@
                 return place ? place.name : 'N/A';
             },
             onChangeSprint(sprintId) {
+                this.sprintIdModel = sprintId;
                 this.loadSprintStages({sprintId: sprintId})
                     .then(response => {
                         this.sprintStages = response.sprintStages;
@@ -264,6 +266,10 @@
             },
         },
         computed: {
+            sprintIdModel: {
+                get () { return this.sprintId },
+                set (value) { this.$emit('updateSprintId', value) },
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
@@ -292,16 +298,6 @@
             errorPlaceId() {
                 if (this.$v.form.place_id.$dirty) {
                     if (!this.$v.form.place_id.required) return "Обязательное поле!";
-                }
-            },
-            errorRaider() {
-                if (this.$v.form.raider.$dirty) {
-                    if (!this.$v.form.raider.required) return "Обязательное поле!";
-                }
-            },
-            errorResult() {
-                if (this.$v.form.result.$dirty) {
-                    if (!this.$v.form.result.required) return "Обязательное поле!";
                 }
             },
         },

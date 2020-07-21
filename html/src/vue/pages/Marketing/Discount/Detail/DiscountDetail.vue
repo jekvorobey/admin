@@ -1,7 +1,7 @@
 <template>
     <layout-main back>
         <b-row class="mb-2">
-            <b-col>
+            <b-col cols="7">
                 <b-card>
                     <infopanel
                         :model.sync="discount"
@@ -9,10 +9,13 @@
                         :discount-statuses="discountStatuses"
                         :merchants="merchants"
                         :author="author"
+                        :categories="categories"
+                        :brands="brands"
+                        @initDiscount="initDiscount"
                     ></infopanel>
                 </b-card>
             </b-col>
-            <b-col>
+            <b-col cols="5">
                 <b-card>
                     <table class="table table-sm">
                         <thead>
@@ -50,14 +53,16 @@
                       :model.sync="discount"
                       :discounts="discounts"
                       :i-condition-types="iConditionTypes"
-                      :delivery-methods="deliveryMethods"
-                      :payment-methods="paymentMethods"
                       :regions="regions"
                       :roles="roles"
                       :segments="segments"
                       :brands="brands"
                       :categories="categories"
+                      :i-districts="iDistricts"
                     />
+                    <tab-order v-else-if="key === 'order'"
+                       :model.sync="discount"
+                    ></tab-order>
                     <template v-else>
                         Заглушка
                     </template>
@@ -70,13 +75,15 @@
 <script>
     import Infopanel from './components/infopanel.vue';
     import TabMain from './components/tab-main.vue';
+    import TabOrder from './components/tab-order.vue';
     import tabsMixin from '../../../../mixins/tabs.js';
 
     export default {
         name: 'page-discount-detail',
         components: {
             Infopanel,
-            TabMain
+            TabMain,
+            TabOrder,
         },
         mixins: [tabsMixin],
         props: {
@@ -87,8 +94,6 @@
             iConditionTypes: Object,
             merchants: Array,
             author: Object,
-            deliveryMethods: Array,
-            paymentMethods: Array,
             iDistricts: Array,
             brands: Array,
             categories: Array,
@@ -106,6 +111,7 @@
                     end_date: null,
                     offers: null,
                     bundles: null,
+                    bundleItems: null,
                     status: 1, // STATUS_ACTIVE
                     brands: [],
                     categories: [],
@@ -135,6 +141,7 @@
 
                 let discount = {...this.iDiscount};
                 discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
+                discount.bundleItems = Object.values(discount.bundleItems).map(item => item.item_id).join(',');
                 discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
                 discount.categories = Object.values(discount.categories).map(category => category.category_id);
 
@@ -182,9 +189,9 @@
                 let i = 0;
 
                 tabs.main = {i: i++, title: 'Информация'};
-                tabs.orders = {i: i++, title: 'Заказы'};
-                tabs.reports = {i: i++, title: 'Отчеты'};
-                tabs.logs = {i: i++, title: 'Логи'};
+                tabs.order = {i: i++, title: 'Заказы'};
+                tabs.report = {i: i++, title: 'Отчеты'};
+                tabs.log = {i: i++, title: 'Логи'};
 
                 return tabs;
             },

@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
@@ -144,7 +148,7 @@ class DiscountController extends Controller
             $discount = DiscountHelper::validate($request);
             $discountService->update($id, $discount);
         } catch (\Exception $ex) {
-            return response()->json(['status' => $ex->getMessage()]);
+            return response()->json(['error' => $ex->getMessage()], 400);
         }
 
         return response()->json(['status' => 'ok']);
@@ -197,11 +201,48 @@ class DiscountController extends Controller
      */
     public function detail(int $id)
     {
+        $this->loadDiscountTypes = true;
+        $this->loadDeliveryMethods = true;
+        $this->loadPaymentMethods = true;
+        $this->loadOrderStatuses = true;
         $data = DiscountHelper::detail($id);
         $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
 
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Detail', $data);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function discountOrdersDetail(int $id, Request $request)
+    {
+        // Orders
+        $data = DiscountHelper::getOrdersByDiscount($id, $request);
+
+        // Customers
+        $customerIds = $data['orders']->pluck('customer_id')->all();
+        $customers = resolve(CustomerService::class)->customers(
+            (new RestQuery())
+                ->addFields(CustomerDto::class, 'id', 'user_id')
+                ->setFilter('id', '=', $customerIds)
+        )->keyBy('id');
+
+        // Users
+        $userIds = $customers->pluck('user_id')->all();
+        $users = resolve(UserService::class)->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id', 'full_name')
+                ->setFilter('id', '=', $userIds)
+        )->keyBy('id');
+
+        $data['customers'] = $customers->map(function ($customer) use($users) {
+            return $users[$customer['user_id']]['full_name'] ?? '–';
+        });
+
+        return response()->json($data);
     }
 
     /**

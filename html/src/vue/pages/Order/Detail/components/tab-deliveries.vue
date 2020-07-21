@@ -96,6 +96,7 @@
                 </div>
                 <div class="col-sm-6">
                     <template v-if="delivery.point">
+                        <p class="font-weight-bold text-danger" v-if="!delivery.point.active">Точка выдачи заказа больше не активна! Необходимо сменить на другую!</p>
                         <p class="font-weight-bold">{{delivery.point.type.name}} {{delivery.point.name}}</p>
                         <p><span class="font-weight-bold">Адрес:</span> {{delivery.point.address.address_string}}</p>
                         <p><span class="font-weight-bold">Телефон:</span> {{delivery.point.phone}}</p>

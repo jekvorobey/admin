@@ -11,41 +11,39 @@
 
                 <b-dropdown text="Изменить статус" class="float-right" size="sm">
                     <template v-if="!customer.referral">
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.created " v-b-modal.modal-mark-status-created>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.created " @click="openModal('modal-mark-status-created')">
                             Создан профиль
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.new" v-b-modal.modal-mark-status-new>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.new"  @click="openModal('modal-mark-status-new')">
                             Новый
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.consideration" v-b-modal.modal-mark-status-consideration>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.consideration" @click="openModal('modal-mark-status-consideration')">
                             На рассмотрении
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.rejected" v-b-modal.modal-mark-status-rejected>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.rejected" @click="openModal('modal-mark-status-rejected')">
                             Отклонен
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.active" v-b-modal.modal-mark-status-active>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.active" @click="openModal('modal-mark-status-active')">
                             Активный
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.problem" v-b-modal.modal-mark-status-problem>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.problem" @click="openModal('modal-mark-status-problem')">
                             Пометить проблемным
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.potential_rp"
-                                v-b-modal.modal-mark-status-potential_rp>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.potential_rp" @click="openModal('modal-mark-status-potential_rp')">
                             Потенциальный реферальный партнер
                         </b-dropdown-item-button>
                         <b-dropdown-item-button v-if="customer.status == customerStatus.potential_rp" @click="makeReferral">
                             Сделать реферальным партнером
                         </b-dropdown-item-button>
                     </template>
-                    <b-dropdown-item-button v-if="customer.status !== customerStatus.block"
-                            v-b-modal.modal-mark-status-block>
+                    <b-dropdown-item-button v-if="customer.status != customerStatus.block" @click="openModal('modal-mark-status-block')">
                         Заблокировать
                     </b-dropdown-item-button>
                     <template v-if="customer.referral">
                         <b-dropdown-item-button @click="makeProfessional">
                             Сделать профессионалом
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended" v-b-modal.modal-mark-status-temporarily-suspended>
+                        <b-dropdown-item-button v-if="customer.status != customerStatus.temporarily_suspended" @click="openModal('modal-mark-status-temporarily-suspended')">
                             Приостановить сотрудничество
                         </b-dropdown-item-button>
                     </template>
@@ -276,7 +274,10 @@
             return Number(status_id) === Number(this.customerStatus.problem) ||
                 Number(status_id) === Number(this.customerStatus.temporarily_suspended) ||
                 Number(status_id) === Number(this.customerStatus.block);
-        }
+        },
+        openModal(id) {
+            this.$bvModal.show(id);
+        },
     }
 };
 </script>

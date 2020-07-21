@@ -31,25 +31,33 @@
                 :sprint-statuses="sprintStatuses"
                 @onChange="onTabChange"
         />
-        <sprint-results-tab
-                v-if="nav.currentTab === 'sprintResults'"
-                :public-event="publicEvent"
-                @onChange="onTabChange"
-        />
         <sprint-stages-tab
                 v-if="nav.currentTab === 'spritnStages'"
+                :sprint-id.sync="sprintId"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
+                @updateSprintId="updateSprintId"
+        />
+        <sprint-results-tab
+                v-if="nav.currentTab === 'sprintResults'"
+                :sprint-id.sync="sprintId"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+                @updateSprintId="updateSprintId"
         />
         <ticket-types-tab
                 v-if="nav.currentTab === 'ticketTypes'"
+                :sprint-id.sync="sprintId"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
+                @updateSprintId="updateSprintId"
         />
         <speakers-tab
                 v-if="nav.currentTab === 'speakers'"
+                :sprint-id.sync="sprintId"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
+                @updateSprintId="updateSprintId"
         />
         <professions-tab
                 v-if="nav.currentTab === 'professions'"
@@ -104,6 +112,7 @@
         this.$store.commit(`${NAMESPACE}/${SET_DETAIL}`, {publicEvent: this.iPublicEvent});
 
         return {
+            sprintId: null,
             nav: {
                 currentTab: 'main',
                 tabs: [
@@ -126,7 +135,10 @@
             reload: ACT_LOAD_PUBLIC_EVENT
         }),
         onTabChange() {
-            this.reload({id: this.publicEvent.id});
+            this.reload({id: this.publicEvent.id});        
+        },
+        updateSprintId(sprintId) {
+            this.sprintId = sprintId;
         },
         statusName(statusId) {
             return this.sprintStatuses[statusId] ? this.sprintStatuses[statusId].name : 'N/A';

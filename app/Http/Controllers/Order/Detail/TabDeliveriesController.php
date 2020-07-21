@@ -44,13 +44,14 @@ class TabDeliveriesController extends OrderDetailController
         if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
             $pointQuery = $listsService->newQuery()
                 ->setFilter('id', $delivery->point_id)
-                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable', 'city_guid');
+                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable', 'city_guid', 'active');
             /** @var PointDto $point */
             $point = $listsService->points($pointQuery)->first();
             $pointsQuery = $listsService->newQuery()
+                ->setFilter('active', true)
                 ->setFilter('city_guid', $point->city_guid)
                 ->setFilter('delivery_service', $delivery->delivery_service)
-                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable');
+                ->addFields(PointDto::entity(), 'id', 'type', 'name', 'has_payment_card', 'address', 'phone', 'timetable', 'active');
             $points = $listsService->points($pointsQuery)->keyBy('id');
             if (!$points->has($point->id)) {
                 $points->put($point->id, $point);

@@ -96,6 +96,19 @@ class CargoDetailController extends Controller
     }
 
     /**
+     * Проверить заявку на вызов курьера во внешнем сервисе на наличие ошибок
+     * @param int $id
+     * @param CargoService $cargoService
+     * @return JsonResponse
+     */
+    public function checkCourierCallStatus(int $id, CargoService $cargoService): JsonResponse
+    {
+        return $this->abstractAction($id, function () use ($id, $cargoService) {
+            $cargoService->checkCourierCallStatus($id);
+        });
+    }
+
+    /**
      * Отменить груз
      * @param  int  $id
      * @param  CargoService  $cargoService
