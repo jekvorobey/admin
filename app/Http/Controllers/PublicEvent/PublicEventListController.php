@@ -44,10 +44,24 @@ class PublicEventListController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventService $publicEventService)
-    {
+    public function page(
+        Request $request,
+        PublicEventService $publicEventService,
+        ShoppilotService $shoppilotService
+    ) {
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
+
+        $publicEventIds = $publicEvents->pluck('id')->all();
+        if ($publicEventIds) {
+            try {
+                $shoppilotPublicEventsExist = $shoppilotService->groupsExist($publicEventIds);
+                $publicEvents->transform(function ($publicEvent) use ($shoppilotPublicEventsExist) {
+                    $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
+                    return $publicEvent;
+                });
+            } catch (\Exception $e) {}
+        }
         
         return response()->json([
             'publicEvents' => $publicEvents,

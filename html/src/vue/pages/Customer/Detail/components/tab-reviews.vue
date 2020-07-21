@@ -22,7 +22,7 @@
                         <a v-if="review.object_type === 'product'" :href="getRoute('products.detail', {id: review.object.id})">
                             {{ review.object.name }}
                         </a>
-                        <a v-else :href="getRoute('publicEvents.detail', {id: review.object.id})">
+                        <a v-else :href="getRoute('public-event.detail', {event_id: review.object.id})">
                             {{ review.object.name }}
                         </a>
                     </td>

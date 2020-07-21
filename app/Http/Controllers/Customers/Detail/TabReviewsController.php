@@ -81,12 +81,24 @@ class TabReviewsController extends Controller
         )
             ->keyBy('id');
 
-        $publicEventIds = $reviews['public_event']->pluck('object_id')->all();
+        $publicEventOfferIds = $reviews['public_event']->pluck('object_id')->all();
         $publicEvents = $publicEventService
             ->query()
-            ->setFilter('id', $publicEventIds)
-            ->addFields('public_event', 'id', 'name')
+            ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer')
+            ->setFilter('offer_id', $publicEventOfferIds)
             ->get();
+
+        $publicEventOffers = [];
+        foreach ($publicEvents as $publicEvent) {
+            foreach ($publicEvent->sprints as $sprint) {
+                foreach ($sprint['ticketTypes'] as $ticketType) {
+                    $publicEventOffers[$ticketType['offer']['id']] = [
+                        'id' => $publicEvent->id,
+                        'name' => $publicEvent->name,
+                    ];
+                }
+            }
+        }
 
         $fileIds = $reviewsData->reviews->pluck('files')->collapse()->all();
         if ($fileIds) {
@@ -104,22 +116,21 @@ class TabReviewsController extends Controller
         }
 
         return response()->json([
-            'reviews' => $reviewsData->reviews->map(function ($review) use ($products, $publicEvents, $files) {
+            'reviews' => $reviewsData->reviews->map(function ($review) use ($products, $publicEventOffers, $files) {
                 switch ($review['object_type']) {
                     case 'product':
                         $object = $products[$review['object_id']];
                         break;
                     case 'public_event':
-                        $object = $publicEvents[$review['object_id']];
+                        $object = $publicEventOffers[$review['object_id']];
                         break;
                     default:
-                        $objectType = null;
                         $object = null;
                         break;
                 }
                 return [
                     'id' => $review['id'],
-                    'object_type' => $objectType,
+                    'object_type' => $review['object_type'],
                     'object' => $object,
                     'rating' => $review['rating'],
                     'body' => $review['body'],
@@ -133,7 +144,7 @@ class TabReviewsController extends Controller
                     'created_at' => $review['created_at'],
                 ];
             }),
-            'total' => $reviews->total,
+            'total' => $reviewsData->total,
         ]);
     }
 }
