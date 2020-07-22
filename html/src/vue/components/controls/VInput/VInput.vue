@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div :class="{ 'form-group': group }">
         <label :for="inputId" v-if="this.$slots.default">
             <slot />
         </label>
@@ -8,7 +8,7 @@
                 v-bind="$attrs"
                 v-on="inputListeners"
                 class="form-control"
-                :class="{ 'is-invalid': error }"
+                :class="{ 'is-invalid': error, 'form-control-sm': sm  }"
                 :id="inputId"
                 :value="value"
                 :type="type"
@@ -47,6 +47,8 @@ export default {
         value: {},
         help: { type: String, default: '' },
         type: { type: String, default: 'text' },
+        group: { type: Boolean, default: true },
+        sm: { type: Boolean, default: false },
         tag: {
             type: String,
             default: 'input',

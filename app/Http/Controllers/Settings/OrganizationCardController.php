@@ -31,6 +31,12 @@ class OrganizationCardController extends Controller
         'ceo_middle_name' => OptionDto::KEY_ORGANIZATION_CARD_CEO_MIDDLE_NAME,
         'ceo_document_number' => OptionDto::KEY_ORGANIZATION_CARD_CEO_DOCUMENT_NUMBER,
 
+        'logistics_manager_last_name' => OptionDto::KEY_ORGANIZATION_CARD_LOGISTICS_MANAGER_LAST_NAME,
+        'logistics_manager_first_name' => OptionDto::KEY_ORGANIZATION_CARD_LOGISTICS_MANAGER_FIRST_NAME,
+        'logistics_manager_middle_name' => OptionDto::KEY_ORGANIZATION_CARD_LOGISTICS_MANAGER_MIDDLE_NAME,
+        'logistics_manager_phone' => OptionDto::KEY_ORGANIZATION_CARD_LOGISTICS_MANAGER_PHONE,
+        'logistics_manager_email' => OptionDto::KEY_ORGANIZATION_CARD_LOGISTICS_MANAGER_EMAIL,
+
         'contact_centre_phone' => OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE,
         'social_phone' => OptionDto::KEY_ORGANIZATION_CARD_SOCIAL_PHONE,
         'email_for_merchant' => OptionDto::KEY_ORGANIZATION_CARD_EMAIL_FOR_MERCHANT,
@@ -82,6 +88,12 @@ class OrganizationCardController extends Controller
             'ceo_first_name' => 'string',
             'ceo_middle_name' => 'string',
             'ceo_document_number' => 'string',
+
+            'logistics_manager_last_name' => 'string',
+            'logistics_manager_first_name' => 'string',
+            'logistics_manager_middle_name' => 'string',
+            'logistics_manager_phone' => 'regex:/\+\d\(\d{3}\)\s\d{3}-\d{2}-\d{2}/',
+            'logistics_manager_email' => 'email',
 
             'contact_centre_phone' => 'regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
             'social_phone' => 'regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',

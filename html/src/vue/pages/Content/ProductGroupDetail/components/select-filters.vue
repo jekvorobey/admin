@@ -22,7 +22,7 @@
         >
             <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button block href="#" v-b-toggle="'collapse-' + filter.id" variant="info">
-                    {{ filter.name }}
+                    {{ filter.name ? filter.name : 'Шильдики' }}
                 </b-button>
             </b-card-header>
             <b-collapse :id="'collapse-' + filter.id" accordion="my-accordion" role="tabpanel">
