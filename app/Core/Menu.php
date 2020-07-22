@@ -141,6 +141,10 @@ class Menu
                         'title' => 'Поисковые запросы',
                         'route' => route('searchRequests.list'),
                     ],
+                    [
+                        'title' => 'Популярные бренды',
+                        'route' => route('popularBrands.list'),
+                    ],
                 ]
             ],
             [
