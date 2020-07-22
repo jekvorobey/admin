@@ -164,6 +164,8 @@ class DiscountHelper
             ? Carbon::createFromFormat('Y-m-d', $data['end_date'])->format('Y-m-d')
             : null;
 
+        $data['merchant_id'] = isset($data['merchant_id']) ? $data['merchant_id'] : null;
+
         $discount = new DiscountDto([
             'merchant_id'     => $data['merchant_id'],
             'type'            => $data['type'],
