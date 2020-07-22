@@ -14,6 +14,7 @@
                     <th>Куплено</th>
                     <th>Билеты</th>
                     <th>Статус</th>
+                    <th>Отгружен в Shoppilot</th>
                     <th>Действия</th>
                 </tr>
             </thead>
@@ -32,6 +33,12 @@
                         <td>{{ publicEvent.actualSprint ? publicEvent.actualSprint.totalTicketPrice + ' ₽' : '---' }} </td>
                         <td v-html="ticketsCount(publicEvent)"></td>
                         <td v-html="statusIndicator(publicEvent)"></td>
+                        <td>
+                        <span v-if="'shoppilotExist' in publicEvent" class="badge" :class="{'badge-success': publicEvent.shoppilotExist,'badge-danger':!publicEvent.shoppilotExist}">
+                            {{(publicEvent.shoppilotExist) ? 'Да' : 'Нет'}}
+                        </span>
+                            <template v-else>Информация временно недоступна</template>
+                        </td>
                         <td>
                             <button class="btn btn-warning float-right" @click="editEvent(publicEvent)">
                                 <fa-icon icon="edit"></fa-icon>

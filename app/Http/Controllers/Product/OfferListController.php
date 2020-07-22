@@ -24,6 +24,7 @@ use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Offer\OfferEntityDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
@@ -44,10 +45,10 @@ class OfferListController extends Controller
         $this->title = 'Предложения мерчантов';
         $this->loadOfferSaleStatuses = true;
 
-        $query = $this->makeQuery($request, $priceService, $stockService);
+        $query = $this->makeQuery($request);
 
         return $this->render('Product/OfferList', [
-            'iOffers' => $this->loadItems($query, $offerService, $productService, $merchantService, $priceService, $stockService),
+            'iOffers' => $this->loadItems($query, $offerService, $merchantService, $priceService, $stockService),
             'iPager' => $offerService->offersCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
@@ -66,9 +67,9 @@ class OfferListController extends Controller
         StockService $stockService
     )
     {
-        $query = $this->makeQuery($request, $priceService, $stockService);
+        $query = $this->makeQuery($request);
         $data = [
-            'offers' => $this->loadItems($query, $offerService, $productService, $merchantService, $priceService, $stockService),
+            'offers' => $this->loadItems($query, $offerService, $merchantService, $priceService, $stockService),
         ];
         if (1 == $request->get('page', 1)) {
             $data['pager'] = $offerService->offersCount($query);
@@ -319,13 +320,10 @@ class OfferListController extends Controller
         ]);
     }
 
-    protected function makeQuery(
-        Request $request,
-        PriceService $priceService,
-        StockService $stockService
-    )
+    protected function makeQuery(Request $request)
     {
         $query = (new RestQuery())
+            ->setFilter('entity_type', OfferEntityDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'created_at')
             ->addFields(ProductDto::entity(), 'id', 'name');
@@ -342,7 +340,7 @@ class OfferListController extends Controller
                     $query->setFilter('merchant_id', $value);
                     break;
                 case 'productName':
-                    $query->setFilter('product_name', $value);
+                    $query->setFilter('product_name', 'like', $value);
                     break;
                 default:
                     $query->setFilter($key, $value);
@@ -354,7 +352,6 @@ class OfferListController extends Controller
     protected function loadItems(
         RestQuery $query,
         OfferService $offerService,
-        ProductService $productService,
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService

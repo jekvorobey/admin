@@ -25,12 +25,12 @@
             BannerEditForm,
         },
         props: {
-            iBanner: {},
-            iBannerTypes: [],
-            iBannerButtonTypes: [],
-            iBannerButtonLocations: [],
-            iBannerImages: {},
-            options: {}
+            iBanner: Object,
+            iBannerTypes: Array,
+            iBannerButtonTypes: Array,
+            iBannerButtonLocations: Array,
+            iBannerImages: Object,
+            options: Object
         },
         data() {
             return {
@@ -80,7 +80,7 @@
         },
         computed: {
             isCreatingMode() {
-                return !this.banner || this.banner.id === null;
+                return !this.banner || this.banner.id == null;
             },
         },
     };

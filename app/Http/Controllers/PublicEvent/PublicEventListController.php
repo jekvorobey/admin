@@ -7,16 +7,32 @@ use Illuminate\Http\Request;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
 use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Services\PublicEventService\PublicEventService;
+use Pim\Services\ShoppilotService\ShoppilotService;
 
 class PublicEventListController extends Controller
 {
-    public function list(Request $request, PublicEventService $publicEventService)
-    {
+    public function list(
+        Request $request,
+        PublicEventService $publicEventService,
+        ShoppilotService $shoppilotService
+    ) {
         $this->loadPublicEventStatus = true;
         $this->loadPublicEventSprintStatus = true;
 
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
+
+        $publicEventIds = $publicEvents->pluck('id')->all();
+        if ($publicEventIds) {
+            try {
+                $shoppilotPublicEventsExist = $shoppilotService->groupsExist($publicEventIds);
+                $publicEvents->transform(function ($publicEvent) use ($shoppilotPublicEventsExist) {
+                    $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
+                    return $publicEvent;
+                });
+            } catch (\Exception $e) {}
+        }
+
         return $this->render('PublicEvent/PublicEventList', [
             'iPublicEvents' => $publicEvents,
             'iCurrentPage' => $page,
@@ -28,10 +44,24 @@ class PublicEventListController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventService $publicEventService)
-    {
+    public function page(
+        Request $request,
+        PublicEventService $publicEventService,
+        ShoppilotService $shoppilotService
+    ) {
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
+
+        $publicEventIds = $publicEvents->pluck('id')->all();
+        if ($publicEventIds) {
+            try {
+                $shoppilotPublicEventsExist = $shoppilotService->groupsExist($publicEventIds);
+                $publicEvents->transform(function ($publicEvent) use ($shoppilotPublicEventsExist) {
+                    $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
+                    return $publicEvent;
+                });
+            } catch (\Exception $e) {}
+        }
         
         return response()->json([
             'publicEvents' => $publicEvents,

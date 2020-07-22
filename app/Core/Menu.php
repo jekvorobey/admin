@@ -137,6 +137,10 @@ class Menu
                         'title' => 'Товарные шильдики',
                         'route' => route('productBadges.list'),
                     ],
+                    [
+                        'title' => 'Поисковые запросы',
+                        'route' => route('searchRequests.list'),
+                    ],
                 ]
             ],
             [

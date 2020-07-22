@@ -73,6 +73,7 @@
 
 <script>
     import withQuery from 'with-query';
+    import qs from 'qs';
 
     import { mapActions, mapGetters } from 'vuex';
 
@@ -158,7 +159,11 @@
                     page: page,
                 }));
 
-                return this[ACT_LOAD_PAGE]({page});
+                Services.showLoader();
+                this[ACT_LOAD_PAGE]({page})
+                    .finally(() => {
+                        Services.hideLoader();
+                });
             },
 
             createBrand() {
