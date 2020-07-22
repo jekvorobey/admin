@@ -223,7 +223,6 @@
             },
 
             editSpeaker(speaker) {
-                console.log(speaker);
                 this.$v.form.$reset();
                 this.editSpeakerId = speaker.id;
                 this.form.first_name = speaker.first_name;
