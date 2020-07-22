@@ -269,7 +269,6 @@
     },
     props: {
         iStore: [Object, null],
-        iDeliveryServices: [Object, null],
         merchants: [Array],
         pickupTimes: [Object],
     },
@@ -302,7 +301,6 @@
                 step: '00:30',
                 end: '23:30'
             },
-            deliveryServices: this.iDeliveryServices,
             containErrors: null,
         }
     },
