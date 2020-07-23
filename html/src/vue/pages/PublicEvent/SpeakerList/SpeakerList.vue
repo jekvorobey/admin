@@ -73,9 +73,9 @@
                         <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
                         <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email*</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание*</v-input>
-                        <v-input v-model="$v.form.instagram">Instagram</v-input>
-                        <v-input v-model="$v.form.facebook">Facebook</v-input>
-                        <v-input v-model="$v.form.linkedin">LinkedIn</v-input>
+                        <v-input v-model="$v.form.instagram.$model">Instagram</v-input>
+                        <v-input v-model="$v.form.facebook.$model">Facebook</v-input>
+                        <v-input v-model="$v.form.linkedin.$model">LinkedIn</v-input>
                         <b-form-checkbox v-model="$v.form.global.$model" :error="errorGlobal">Глобальный спикер*</b-form-checkbox>
                         <v-select v-model="$v.form.profession_id.$model" text-field="name" value-field="id" :options="professions">Профессия*</v-select>
                         <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
@@ -184,6 +184,9 @@
                 file_id: {required},
                 global: {required},
                 profession_id: {required},
+                instagram: {},
+                facebook: {},
+                linkedin: {},
             }
         },
         methods: {

@@ -660,12 +660,15 @@ class ViewRender
             $mapDeliveryService = [
                 DeliveryService::SERVICE_B2CPL => 'b2cpl',
                 DeliveryService::SERVICE_CDEK => 'cdek',
+                DeliveryService::SERVICE_BOXBERRY => 'boxberry',
+                DeliveryService::SERVICE_DOSTAVISTA => 'dostavista',
             ];
             foreach (DeliveryService::allServices() as $id => $service) {
-                if (!isset($mapDeliveryService[$id])) {
-                    continue;
+                if (isset($mapDeliveryService[$id])) {
+                    $this->deliveryServices[$mapDeliveryService[$id]] = $service->toArray();
+                } else {
+                    $this->deliveryServices[] = $service->toArray();
                 }
-                $this->deliveryServices[$mapDeliveryService[$id]] = $service->toArray();
             }
         }
 

@@ -448,6 +448,14 @@ Route::middleware('auth')->group(function () {
             Route::put('reorder', 'SearchRequestController@reorder')->name('searchRequests.reorder');
             Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
         });
+
+        Route::prefix('popular-brands')->namespace('PopularBrand')->group(function () {
+            Route::get('', 'PopularBrandController@list')->name('popularBrands.list');
+            Route::post('create', 'PopularBrandController@create')->name('popularBrands.create');
+            Route::put('update', 'PopularBrandController@update')->name('popularBrands.update');
+            Route::put('reorder', 'PopularBrandController@reorder')->name('popularBrands.reorder');
+            Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
