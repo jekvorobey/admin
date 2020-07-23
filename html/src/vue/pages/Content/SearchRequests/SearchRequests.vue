@@ -116,7 +116,7 @@
 <script>
     import draggable from 'vuedraggable';
     import VInput from '../../../components/controls/VInput/VInput.vue';
-    import Services from "../../../../scripts/services/services";
+    import Services from '../../../../scripts/services/services';
     import {validationMixin} from 'vuelidate';
     import {required} from 'vuelidate/lib/validators';
     import massSelectionMixin from '../../../mixins/mass-selection';
@@ -195,6 +195,7 @@
                         }
                     ).finally(() => {
                         Services.hideLoader();
+                        this.onCloseModalEdit();
                     })
                 }
                 // При создании нового запроса //
@@ -214,9 +215,9 @@
                         }
                     ).finally(() => {
                         Services.hideLoader();
+                        this.onCloseModalEdit();
                     })
                 }
-                this.onCloseModalEdit();
             },
             onShowModalDelete() {
                 this.$bvModal.show('modal-delete');
