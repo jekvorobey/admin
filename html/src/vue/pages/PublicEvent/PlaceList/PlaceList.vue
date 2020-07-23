@@ -194,7 +194,7 @@
                 const address = suggestion.data;
 
                 this.form.city_name = address.city;
-                this.form.city_id = address.fias_id;
+                this.form.city_id = address.city_fias_id;
                 this.form.latitude = address.geo_lat;
                 this.form.longitude = address.geo_lon;
             },

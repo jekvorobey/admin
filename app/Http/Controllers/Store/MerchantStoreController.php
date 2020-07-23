@@ -104,10 +104,10 @@ class MerchantStoreController extends Controller
     public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Редактирование склада мерчанта';
+        $this->loadDeliveryServices = true;
         
         return $this->render('Store/MerchantStore/Detail', [
             'iStore' => $this->getStore($id, $storeService),
-            'iDeliveryServices' => DeliveryService::allServices(),
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
             'pickupTimes' => $this->getPickupTimes(),
         ]);

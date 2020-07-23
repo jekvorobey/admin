@@ -12,6 +12,7 @@
                     </b-badge>
                 </template>
             </template>
+            <span v-if="!filters.length">Фильтры для выбранной категории не найдены</span>
         </div>
 
         <b-card no-body
@@ -21,7 +22,7 @@
         >
             <b-card-header header-tag="header" class="p-1" role="tab">
                 <b-button block href="#" v-b-toggle="'collapse-' + filter.id" variant="info">
-                    {{ filter.name }}
+                    {{ filter.name ? filter.name : 'Шильдики' }}
                 </b-button>
             </b-card-header>
             <b-collapse :id="'collapse-' + filter.id" accordion="my-accordion" role="tabpanel">
@@ -68,10 +69,12 @@
         },
         methods: {
             fetchFilters(categoryCode) {
-                Services.net().get(this.getRoute('productGroup.getFilters'), {category: categoryCode})
-                    .then((data) => {
-                        this.filters = data;
-                    });
+                Services.showLoader();
+                Services.net().get(this.getRoute('productGroup.getFilters'), {category: categoryCode}).then((data) => {
+                    this.filters = data;
+                }).finally(() => {
+                    Services.hideLoader();
+                });
             },
             isChecked(code, value) {
                 for (let selectedFilterKey in this.selectedFilters) {

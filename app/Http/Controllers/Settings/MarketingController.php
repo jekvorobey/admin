@@ -22,6 +22,8 @@ class MarketingController extends Controller
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);
         $bonusExpireDaysNotify = $customerOptionService->get(CustomerOptionDto::BONUS_EXPIRE_DAYS_NOTIFY);
         return $this->render('Settings/Marketing', [
+            'min_withdrawal_amount' => $customerOptionService->get(CustomerOptionDto::KEY_REFERRAL_MIN_WITHDRAWAL_LIMIT),
+            'max_withdrawal_amount' => $customerOptionService->get(CustomerOptionDto::KEY_REFERRAL_MAX_WITHDRAWAL_LIMIT),
             'bonus_per_rubles' => $marketingOptionService->get(MarketingOptionDto::KEY_BONUS_PER_RUBLES),
             'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, []),
             'order_activation_bonus_delay' => $marketingOptionService->get(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, 0),
@@ -39,6 +41,8 @@ class MarketingController extends Controller
     public function update()
     {
         $data = $this->validate(request(), [
+            'min_withdrawal_amount' => 'integer',
+            'max_withdrawal_amount' => 'integer',
             'bonus_per_rubles' => 'numeric|gte:0',
             'order_activation_bonus_delay' => 'integer|gte:0',
             'max_debit_percentage_for_product' => 'integer|between:0,100',
@@ -59,6 +63,12 @@ class MarketingController extends Controller
         $customerOptionService = resolve(CustomerOptionService::class);
         foreach ($data as $key => $v) {
             switch ($key) {
+                case 'min_withdrawal_amount':
+                    $customerOptionService->put(CustomerOptionDto::KEY_REFERRAL_MIN_WITHDRAWAL_LIMIT, (int) $v);
+                    break;
+                case 'max_withdrawal_amount':
+                    $customerOptionService->put(CustomerOptionDto::KEY_REFERRAL_MAX_WITHDRAWAL_LIMIT, (int) $v);
+                    break;
                 case 'bonus_per_rubles':
                     $marketingOptionService->put(MarketingOptionDto::KEY_BONUS_PER_RUBLES, (float) $v);
                     break;

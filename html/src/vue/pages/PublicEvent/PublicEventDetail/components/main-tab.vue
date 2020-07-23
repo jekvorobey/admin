@@ -15,6 +15,10 @@
                         <th>Тип:</th>
                         <td>{{ typeName }}</td>
                     </tr>
+                    <tr>
+                        <th>Галерея:</th>
+                        <td>{{ publicEvent.gallery_top ? 'Сверху' : 'Cнизу'}}</td>
+                    </tr>
                 </tbody>
             </table>
         </shadow-card>

@@ -115,12 +115,10 @@ class ProductGroupDetailController extends Controller
         Request $request,
         ProductService $productService
     ) {
-        $categoryCode = $request->get('category', '');
-        $filters = $productService->filters($categoryCode, []);
-
-        if (!$filters->count()) {
-            throw new NotFoundHttpException('FilterItem not found');
-        }
+        $appliedFilters = [
+            'category' => $request->get('category', ''),
+        ];
+        $filters = $productService->filters($appliedFilters, []);
 
         return response()->json($filters);
     }

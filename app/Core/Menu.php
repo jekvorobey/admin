@@ -137,6 +137,14 @@ class Menu
                         'title' => 'Товарные шильдики',
                         'route' => route('productBadges.list'),
                     ],
+                    [
+                        'title' => 'Поисковые запросы',
+                        'route' => route('searchRequests.list'),
+                    ],
+                    [
+                        'title' => 'Популярные бренды',
+                        'route' => route('popularBrands.list'),
+                    ],
                 ]
             ],
             [
@@ -312,12 +320,16 @@ class Menu
                         'route' => route('communications.chats.unread'),
                     ],
                     [
-                        'title' => 'Сервисные нотификации',
+                        'title' => 'Сервисные уведомления',
                         'route' => route('communications.service-notification.list'),
                     ],
                     [
                         'title' => 'Массовая рассылка',
                         'route' => route('communications.chats.broadcast'),
+                    ],
+                    [
+                        'title' => 'Неперсонифицированные чаты',
+                        'route' => route('communications.chats.unlinkMessengerChats'),
                     ],
                     [
                         'title' => 'Статусы',

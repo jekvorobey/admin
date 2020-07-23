@@ -1,6 +1,12 @@
 <template>
     <layout-main>
-        <a :href="getRoute('communications.service-notification.list')">Назад</a>
+        <span>
+            <a :href="getRoute('communications.service-notification.list')">Назад</a>
+        </span>
+        </br>
+        <span>Системные предупреждения</span>
+        <system-alert :serviceNotificationId="service_notification_id"></system-alert>
+        <span>Шаблоны</span>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createTemplate">Добавить шаблон</button>
         </div>
@@ -68,6 +74,7 @@
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Services from "../../../../../scripts/services/services";
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import SystemAlert from '../components/system-alert.vue';
 
     export default {
         mixins: [
@@ -78,7 +85,8 @@
             Modal,
             VInput,
             VDeleteButton,
-            VSelect
+            VSelect,
+            SystemAlert
         },
         props: {
             iTemplates: {},

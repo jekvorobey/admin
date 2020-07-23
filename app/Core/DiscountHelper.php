@@ -2,8 +2,12 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\BundleItemDto;
@@ -19,6 +23,7 @@ use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
+use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -138,6 +143,7 @@ class DiscountHelper
             'type'            => 'numeric|required',
             'value'           => 'numeric|required',
             'value_type'      => 'numeric|required',
+            'merchant_id'     => 'numeric|nullable',
             'start_date'      => 'string|nullable',
             'end_date'        => 'string|nullable',
             'promo_code_only' => 'boolean|required',
@@ -158,8 +164,10 @@ class DiscountHelper
             ? Carbon::createFromFormat('Y-m-d', $data['end_date'])->format('Y-m-d')
             : null;
 
+        $data['merchant_id'] = isset($data['merchant_id']) ? $data['merchant_id'] : null;
+
         $discount = new DiscountDto([
-            'merchant_id'     => null,
+            'merchant_id'     => $data['merchant_id'],
             'type'            => $data['type'],
             'name'            => $data['name'],
             'value_type'      => $data['value_type'],
@@ -487,5 +495,105 @@ class DiscountHelper
             'categories'       => $categoryService->categories($categoryService->newQuery()),
             'brands'           => $brandService->brands($brandService->newQuery()),
         ];
+    }
+
+    /**
+     * @param         $id
+     * @param Request $request
+     *
+     * @return array
+     */
+    public static function getOrdersByDiscount($id, Request $request)
+    {
+        $page = $request->get('page', 1);
+        $perPage = $request->get('perPage', 10);
+        $filter = $request->get('filter', []);
+
+        $query = new RestQuery();
+        $query->include('discounts');
+        $query->setFilter('discount_id', $id);
+        $query->pageNumber($page, $perPage);
+        $query->addSort('created_at', 'desc');
+
+        foreach ($filter as $field => $value) {
+            if (!isset($value)) {
+                continue;
+            }
+
+            switch ($field) {
+                case 'orderStatus':
+                    $query->setFilter('status', $value);
+                    break;
+                case 'orderDateFrom':
+                    $query->setFilter('created_at', '>=', ($value . ' 00:00:00'));
+                    break;
+                case 'orderDateTo':
+                    $query->setFilter('created_at', '<=', ($value . ' 23:59:59'));
+                    break;
+                case 'orderNum':
+                    $query->setFilter('number', 'like', "%{$value}%");
+                    break;
+                case 'orderCostFrom':
+                    $query->setFilter('cost', '>=', $value);
+                    break;
+                case 'orderCostTo':
+                    $query->setFilter('cost', '<=', $value);
+                    break;
+                case 'buyer':
+                    $customerIds = DiscountHelper::getCustomerIdsByFullName($value);
+                    $query->setFilter('customer_id', '=', $customerIds);
+                    break;
+                case 'orderPriceFrom':
+                    $query->setFilter('min_price_for_current_discount', $value);
+                    break;
+                case 'orderPriceTo':
+                    $query->setFilter('max_price_for_current_discount', $value);
+                    break;
+            }
+        }
+
+        $data = [];
+        $data['orders'] = resolve(OrderService::class)->orders($query)->map(function ($order) use ($id) {
+            return [
+                'id' => $order['id'],
+                'number' => $order['number'],
+                'customer_id' => $order['customer_id'],
+                'cost' => $order['cost'],
+                'price' => $order['price'],
+                'status' => $order['status'],
+                'created_at' => $order['created_at'],
+                'discount' => collect($order['discounts'])->filter(function ($discount) use ($id) {
+                    return $discount['discount_id'] === $id;
+                })->sum('change')
+            ];
+        });
+        $data['count'] = resolve(OrderService::class)->ordersCount($query);
+
+        return $data;
+    }
+
+    /**
+     * @param string $fullName
+     *
+     * @return array
+     */
+    public static function getCustomerIdsByFullName(string $fullName)
+    {
+        // Users
+        $users = resolve(UserService::class)->users(
+            (new RestQuery())
+                ->addFields(UserDto::class, 'id')
+                ->setFilter('full_name', 'like', "%{$fullName}%")
+        )->keyBy('id');
+
+        // Customers
+        $userIds = $users->keys()->toArray();
+        $customers = resolve(CustomerService::class)->customers(
+            (new RestQuery())
+                ->addFields(CustomerDto::class, 'id')
+                ->setFilter('user_id', '=', $userIds)
+        )->keyBy('id');
+
+        return $customers->keys()->toArray();
     }
 }

@@ -35,6 +35,7 @@ class Controller extends BaseController
     protected $loadBonusTypes = false;
     protected $loadCustomerBonusStatus = false;
     protected $loadOrderStatuses = false;
+    protected $loadBasketTypes = false;
     protected $loadPaymentStatuses = false;
     protected $loadPaymentMethods = false;
     protected $loadDeliveryStatuses = false;
@@ -43,6 +44,7 @@ class Controller extends BaseController
     protected $loadDeliveryTypes = false;
     protected $loadDeliveryMethods = false;
     protected $loadDeliveryServices = false;
+    protected $loadOfferSaleStatuses = false;
 
     public function render($componentName, $props = [])
     {
@@ -69,6 +71,7 @@ class Controller extends BaseController
             ->loadBonusTypes($this->loadBonusTypes)
             ->loadCustomerBonusStatus($this->loadCustomerBonusStatus)
             ->loadOrderStatuses($this->loadOrderStatuses)
+            ->loadBasketTypes($this->loadBasketTypes)
             ->loadPaymentStatuses($this->loadPaymentStatuses)
             ->loadDeliveryStatuses($this->loadDeliveryStatuses)
             ->loadShipmentStatuses($this->loadShipmentStatuses)
@@ -77,6 +80,7 @@ class Controller extends BaseController
             ->loadDeliveryMethods($this->loadDeliveryMethods)
             ->loadDeliveryServices($this->loadDeliveryServices)
             ->loadPaymentMethods($this->loadPaymentMethods)
+            ->loadOfferSaleStatuses($this->loadOfferSaleStatuses)
             ->render();
     }
     

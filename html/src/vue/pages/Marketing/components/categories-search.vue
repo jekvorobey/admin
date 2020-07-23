@@ -1,6 +1,6 @@
 <template>
     <div :class="classes">
-        <label>{{ title }}</label>
+        <label v-if="title">{{ title }}</label>
         <v-select2 v-model="form.categories"
                    class="form-control"
                    :multiple="true"

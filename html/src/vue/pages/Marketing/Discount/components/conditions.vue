@@ -200,7 +200,7 @@
         <!-- На способ доставки -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_DELIVERY_METHOD">
             <v-select v-model="values.deliveryMethods"
-                      :options="iDeliveryMethods"
+                      :options="deliveryMethodsOptions"
                       :multiple="true"
                       :error="valuesErrors.deliveryMethods"
                       @change="initDeliveryMethodsError"
@@ -210,7 +210,7 @@
         <!-- На способ оплаты -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_PAY_METHOD">
             <v-select v-model="values.paymentMethods"
-                      :options="iPaymentMethods"
+                      :options="paymentMethodsOptions"
                       :multiple="true"
                       :error="valuesErrors.paymentMethods"
                       @change="initPaymentMethodsError"
@@ -319,14 +319,11 @@
             discounts: Array,
             conditions: Array,
             iConditionTypes: Object,
-            iPaymentMethods: Array,
-            iDeliveryMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,
             segments: Array,
             roles: Array,
-            discountSizeTypes: Array,
         },
         data() {
             return {
@@ -613,10 +610,10 @@
                 return this.optionName(id, this.discounts);
             },
             deliveryMethodName(id) {
-                return this.optionName(id, this.iDeliveryMethods);
+                return this.optionName(id, this.deliveryMethodsOptions);
             },
             paymentMethodName(id) {
-                return this.optionName(id, this.iPaymentMethods);
+                return this.optionName(id, this.paymentMethodsOptions);
             },
             regionName(id) {
                 return this.optionName(id, this.regions);
@@ -705,6 +702,22 @@
             },
         },
         computed: {
+            paymentMethodsOptions() {
+                return Object.values(this.paymentMethods).map((p) => {
+                    return {'value': p.id, 'text': p.name};
+                })
+            },
+            deliveryMethodsOptions() {
+                return Object.values(this.deliveryMethods).map((p) => {
+                    return {'value': p.id, 'text': p.name};
+                })
+            },
+            discountSizeTypes() {
+                return [
+                    {text: 'Проценты', value: 1},
+                    {text: 'Рубли', value: 2}
+                ];
+            },
             valuesUserError() {
                 return (this.valuesErrors.user) ? ' ' : null;
             },
@@ -764,6 +777,9 @@
                 this.updateConditionTypes();
             },
         },
+        mounted() {
+            this.updateConditionTypes();
+        }
     }
 </script>
 

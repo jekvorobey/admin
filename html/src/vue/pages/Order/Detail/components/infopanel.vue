@@ -32,7 +32,10 @@
         </b-row>
 
         <b-row class="mb-3">
-            <div class="col-sm-6"><span class="font-weight-bold">Заказ {{ order.number }} от {{order.created_at}}</span></div>
+            <div class="col-sm-6">
+                <span class="font-weight-bold">Заказ {{ order.number }} от {{order.created_at}}</span><br>
+                <order-type :type='order.type'/>
+            </div>
             <div class="col-sm-6">
                 <span class="font-weight-bold">Статус заказа:</span>
                 <span>

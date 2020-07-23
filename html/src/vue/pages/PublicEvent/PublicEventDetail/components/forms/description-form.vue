@@ -1,6 +1,9 @@
 <template>
     <div>
-        <v-input v-model="$v.form.description.$model" tag="textarea" rows="15">Описание</v-input>
+        <div class="form-group">
+            <label for="description">Описание</label>
+            <ckeditor class="custom-width" id="description" type="classic" v-model="$v.form.description.$model" />
+        </div>
         <div class="form-group mt-3">
             <button @click="save" class="btn btn-dark" :disabled="!$v.$anyDirty">Сохранить</button>
         </div>
@@ -13,11 +16,12 @@
 
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
     import {mapActions} from "vuex";
+    import VueCkeditor from '../../../../../plugins/VueCkeditor';
 
     export default {
         mixins: [validationMixin],
         components: {
-            VInput
+            VueCkeditor
         },
         props: {
             publicEvent: {}
@@ -48,11 +52,11 @@
                     data: this.form,
                 });
                 this.$emit('onSave');
-            }
-        }
+            },
+        },
     }
 </script>
 
-<style scoped>
+<style lang="css">
 
 </style>

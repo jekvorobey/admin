@@ -159,7 +159,11 @@
                     <tr v-for="order in orders">
                         <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
                         <td v-for="column in columns" v-if="column.isShown">
-                            <template v-if="column.code === 'status'">
+                            <template v-if="column.code === 'number'">
+                                <a :href="getRoute('orders.detail', {id: order.id})">{{order.number}}</a><br>
+                                <order-type :type='order.type'/>
+                            </template>
+                            <template v-else-if="column.code === 'status'">
                                 <order-status :status='order.status'/>
                                 <template v-if="order.is_canceled">
                                     <br><span class="badge badge-danger">Отменен</span>
@@ -314,10 +318,6 @@
                     {
                         name: '№ заказа',
                         code: 'number',
-                        value: function(order) {
-                            return '<a href="' + self.getRoute('orders.detail', {id: order.id}) + '">' +
-                                order.number + '</a>';
-                        },
                         isShown: true,
                         isAlwaysShown: true,
                     },

@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
+                Route::get('/orders', 'DiscountController@discountOrdersDetail')->name('discount.orders');
                 Route::get('', 'DiscountController@detail')->name('discount.detail');
             });
 
@@ -317,6 +318,7 @@ Route::middleware('auth')->group(function () {
                 });
 
                 Route::prefix('courier-call')->group(function () {
+                    Route::get('status', 'CargoDetailController@checkCourierCallStatus')->name('cargo.checkCourierCallStatus');
                     Route::post('', 'CargoDetailController@createCourierCall')->name('cargo.createCourierCall');
                     Route::put('cancel', 'CargoDetailController@cancelCourierCall')->name('cargo.cancelCourierCall');
                 });
@@ -334,11 +336,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::post('', 'OfferListController@createOffer')->name('offers.create');
+        Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->group(function () {
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
         });
+        Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
+        Route::get('validate-offer', 'OfferListController@validateOffer')->name('offers.validate');
     });
 
     Route::prefix('products')->namespace('Product')->group(function () {
@@ -433,6 +439,22 @@ Route::middleware('auth')->group(function () {
             Route::put('edit', 'ProductBadgesController@edit')->name('productBadges.edit');
             Route::put('reorder', 'ProductBadgesController@reorder')->name('productBadges.reorder');
             Route::delete('remove', 'ProductBadgesController@remove')->name('productBadges.remove');
+        });
+
+        Route::prefix('search-requests')->namespace('SearchRequest')->group(function () {
+            Route::get('', 'SearchRequestController@list')->name('searchRequests.list');
+            Route::post('create', 'SearchRequestController@create')->name('searchRequests.create');
+            Route::put('update', 'SearchRequestController@update')->name('searchRequests.update');
+            Route::put('reorder', 'SearchRequestController@reorder')->name('searchRequests.reorder');
+            Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
+        });
+
+        Route::prefix('popular-brands')->namespace('PopularBrand')->group(function () {
+            Route::get('', 'PopularBrandController@list')->name('popularBrands.list');
+            Route::post('create', 'PopularBrandController@create')->name('popularBrands.create');
+            Route::put('update', 'PopularBrandController@update')->name('popularBrands.update');
+            Route::put('reorder', 'PopularBrandController@reorder')->name('popularBrands.reorder');
+            Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
         });
     });
 
@@ -559,7 +581,9 @@ Route::middleware('auth')->group(function () {
             Route::post('send', 'ChatsController@send')->name('communications.chats.send');
             Route::post('create', 'ChatsController@create')->name('communications.chats.create');
             Route::post('update', 'ChatsController@update')->name('communications.chats.update');
+            Route::put('update-chat-user', 'ChatsController@updateChatUser')->name('communications.chats.updateChatUser');
             Route::get('broadcast', 'ChatsController@broadcast')->name('communications.chats.broadcast');
+            Route::get('unlink-messenger-chats', 'ChatsController@unlinkMessengerChats')->name('communications.chats.unlinkMessengerChats');
         });
 
         Route::get('channels', 'ChannelController@channels')->name('communications.channels.list');
@@ -637,7 +661,10 @@ Route::middleware('auth')->group(function () {
                     });
                     Route::get('order', 'TabOrderController@load')->name('customers.detail.order');
                     Route::get('promocodes', 'TabPromocodesController@load')->name('customers.detail.promocodes');
-                    Route::get('reviews', 'TabReviewsController@load')->name('customers.detail.reviews');
+                    Route::prefix('reviews')->group(function () {
+                        Route::get('data', 'TabReviewsController@load')->name('customers.detail.reviews.data');
+                        Route::get('page', 'TabReviewsController@page')->name('customers.detail.reviews.pagination');
+                    });
                 });
 
             });
@@ -764,6 +791,11 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'MediaController@delete')->name('public-event.media.delete');
         });
 
+        Route::prefix('sprint-sell-status')->group(function () {
+            Route::post('save', 'PublicEventSprintSellStatusController@save')->name('public-event.sprint-sell-status.save');
+            Route::post('delete', 'PublicEventSprintSellStatusController@delete')->name('public-event.sprint-sell-status.delete');
+        });
+
         Route::prefix('sprints')->group(function () {
             Route::get('', 'PublicEventSprintController@list')->name('public-event.sprints.list');
             Route::get('page', 'PublicEventSprintController@page')->name('public-event.sprints.page');
@@ -817,6 +849,12 @@ Route::middleware('auth')->group(function () {
             Route::get('list', 'TemplateController@list')->name('communications.service-notification.template.fullList');
             Route::post('save', 'TemplateController@save')->name('communications.service-notification.template.save');
             Route::post('delete', 'TemplateController@delete')->name('communications.service-notification.template.delete');
+        });
+
+        Route::prefix('system-alerts')->group(function () {
+            Route::post('save', 'SystemAlertController@save')->name('communications.service-notification.system-alert.save');
+            Route::post('delete', 'SystemAlertController@delete')->name('communications.service-notification.system-alert.delete');
+            Route::get('{service_notification_id}', 'SystemAlertController@pageNotification')->name('communications.service-notification.system-alert.page');
         });
     });
     

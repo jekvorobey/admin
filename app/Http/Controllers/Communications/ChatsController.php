@@ -173,6 +173,63 @@ class ChatsController extends Controller
         ]);
     }
 
+    /**
+     * Привязываем пользователя к чату (LiveTex)
+     *
+     * @param CommunicationService $communicationService
+     * @param RequestInitiator $user
+     */
+    public function updateChatUser(CommunicationService $communicationService)
+    {
+        $data = $this->validate(request(), [
+            'chat_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        $communicationService->updateChatUser($data['chat_id'], $data['user_id']);
+
+        $listConstructor = $communicationService->chats();
+        $listConstructor->setUserIds('null');
+        $chats = $listConstructor->load();
+
+        return response()->json([
+            'chats' => $chats,
+        ]);
+    }
+
+    /**
+     * Список чатов из мессенджеров (LiveTex), которые не привязаны к пользователям
+     *
+     * @param CommunicationService $communicationService
+     * @param RequestInitiator $user
+     */
+    public function unlinkMessengerChats(CommunicationService $communicationService, UserService $userService)
+    {
+        $listConstructor = $communicationService->chats();
+        $listConstructor->setUserIds('null');
+        $chats = $listConstructor->load();
+
+        $roles = UserDto::rolesGroupByFront();
+        $users = $userService
+            ->users(
+                (new RestQuery())
+                    ->setFilter('role', array_merge($roles[Front::FRONT_MAS], $roles[Front::FRONT_SHOWCASE]))
+            )
+                ->keyBy('id')
+                ->map(function (UserDto $user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->getTitle(),
+                    ];
+                });
+
+        $this->title = 'Неперсонифицированные чаты';
+        return $this->render('Communication/UnlinkMessengerChats', [
+            'iChats' => $chats,
+            'iUsers' => $users,
+        ]);
+    }
+
     protected function loadChats(ListConstructor $constructor)
     {
         $userService = resolve(UserService::class);

@@ -55,6 +55,7 @@ class OrderListController extends Controller
     ) {
         $this->title = 'Список заказов';
         $this->loadOrderStatuses = true;
+        $this->loadBasketTypes = true;
         $this->loadPaymentStatuses = true;
         $this->loadPaymentMethods = true;
         $this->loadDeliveryTypes = true;
