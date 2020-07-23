@@ -449,6 +449,14 @@ Route::middleware('auth')->group(function () {
             Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
         });
 
+        Route::prefix('search-synonyms')->namespace('SearchSynonym')->group(function () {
+            Route::get('', 'SearchSynonymController@list')->name('searchSynonyms.list');
+            Route::get('page', 'SearchSynonymController@page')->name('searchSynonyms.page');
+            Route::post('create', 'SearchSynonymController@create')->name('searchSynonyms.create');
+            Route::put('update', 'SearchSynonymController@update')->name('searchSynonyms.update');
+            Route::delete('delete', 'SearchSynonymController@delete')->name('searchSynonyms.delete');
+        });
+
         Route::prefix('popular-brands')->namespace('PopularBrand')->group(function () {
             Route::get('', 'PopularBrandController@list')->name('popularBrands.list');
             Route::post('create', 'PopularBrandController@create')->name('popularBrands.create');

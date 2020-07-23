@@ -187,7 +187,7 @@
             </table>
         </div>
         <b-pagination
-                v-if="pager.pages !== 1"
+                v-if="pager.pages > 1"
                 v-model="currentPage"
                 :total-rows="pager.total"
                 :per-page="pager.pageSize"
