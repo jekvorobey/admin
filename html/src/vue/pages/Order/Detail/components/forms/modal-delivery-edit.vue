@@ -288,7 +288,7 @@
             tariffOptions() {
                 return Object.values(this.tariffs).map(tariff => ({
                     value: tariff.id,
-                    text: tariff.name + '(ID=' + tariff.xml_id + ')'
+                    text: tariff.name + ' (ID=' + tariff.xml_id + ')'
                 }));
             },
             telMask() {
