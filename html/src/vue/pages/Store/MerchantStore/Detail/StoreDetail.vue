@@ -152,33 +152,27 @@
                         <template v-else>
                             <date-picker
                                     v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_start']"
-                                    :input-class="{
-                                        'is-invalid': isPeriodInvalid(
-                                        store.pickupTimes[index][deliveryService.id]['pickup_time_start'],
-                                        store.pickupTimes[index][deliveryService.id]['pickup_time_end']
-                                        ),
-                                        'form-control form-control-sm': true}"
+                                    input-class="form-control form-control-sm"
                                     type="time"
                                     format="HH:mm"
                                     value-type="format"
                                     :lang="langFrom"
                                     :time-picker-options="timePickerOptions"
-                                    @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                                    @change="preparePickupTime(index, deliveryService.id)"
                             />
                             <date-picker
                                     v-model="store.pickupTimes[index][deliveryService.id]['pickup_time_end']"
-                                    :input-class="{
-                                        'is-invalid': isPeriodInvalid(
-                                        store.pickupTimes[index][deliveryService.id]['pickup_time_start'],
-                                        store.pickupTimes[index][deliveryService.id]['pickup_time_end']
-                                        ),
-                                        'form-control form-control-sm': true}"
+                                    input-class="form-control form-control-sm"
                                     type="time"
                                     format="HH:mm"
                                     value-type="format"
                                     :lang="langTo"
-                                    :time-picker-options="timePickerOptions"
-                                    @change="savePickupTime(store.pickupTimes[index][deliveryService.id])"
+                                    :time-picker-options="{
+                                        start: store.pickupTimes[index][deliveryService.id]['pickup_time_start'] || '00:30',
+                                        step: timePickerOptions.step,
+                                        end: timePickerOptions.end
+                                    }"
+                                    @change="preparePickupTime(index, deliveryService.id)"
                             />
                         </template>
                     </td>
@@ -239,8 +233,7 @@
         <div class="col-12 mt-3">
             <button type="submit"
                     class="btn btn-success"
-                    @click="updateStore()"
-                    :disabled="this.containErrors === true">
+                    @click="updateStore()">
                 Сохранить изменения
             </button>
         </div>
@@ -301,7 +294,6 @@
                 step: '00:30',
                 end: '23:30'
             },
-            containErrors: null,
         }
     },
     mounted() {
@@ -387,20 +379,17 @@
         updateWorking(index) {
             this.changeStore.days[index] = this.store.storeWorking[index];
         },
-        /**
-         * Проверка на корректно заданные промежутки времени
-         * @param start
-         * @param end
-         * @returns {boolean}
-         */
-        isPeriodInvalid(start, end) {
-            if (start > end) {
-                this.containErrors = true;
-                return true;
-            } else {
-                this.containErrors = false;
-                return false;
+        preparePickupTime(index, deliveryServiceId) {
+            if (
+                this.store.pickupTimes[index][deliveryServiceId]['pickup_time_start']
+                >=
+                this.store.pickupTimes[index][deliveryServiceId]['pickup_time_end']
+            ) {
+                this.store.pickupTimes[index][deliveryServiceId]['pickup_time_end'] = null;
+                return;
             }
+
+            this.savePickupTime(this.store.pickupTimes[index][deliveryServiceId])
         },
         savePickupTime(pickupTime) {
             let day = pickupTime.day;
