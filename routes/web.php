@@ -363,6 +363,7 @@ Route::middleware('auth')->group(function () {
             Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
+            Route::put('ingredients', 'ProductDetailController@saveIngredients')->name('products.saveIngredients');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
 
@@ -447,6 +448,14 @@ Route::middleware('auth')->group(function () {
             Route::put('update', 'SearchRequestController@update')->name('searchRequests.update');
             Route::put('reorder', 'SearchRequestController@reorder')->name('searchRequests.reorder');
             Route::delete('delete', 'SearchRequestController@delete')->name('searchRequests.delete');
+        });
+
+        Route::prefix('search-synonyms')->namespace('SearchSynonym')->group(function () {
+            Route::get('', 'SearchSynonymController@list')->name('searchSynonyms.list');
+            Route::get('page', 'SearchSynonymController@page')->name('searchSynonyms.page');
+            Route::post('create', 'SearchSynonymController@create')->name('searchSynonyms.create');
+            Route::put('update', 'SearchSynonymController@update')->name('searchSynonyms.update');
+            Route::delete('delete', 'SearchSynonymController@delete')->name('searchSynonyms.delete');
         });
 
         Route::prefix('popular-brands')->namespace('PopularBrand')->group(function () {

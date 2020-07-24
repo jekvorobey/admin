@@ -142,6 +142,10 @@ class Menu
                         'route' => route('searchRequests.list'),
                     ],
                     [
+                        'title' => 'Поисковые синонимы',
+                        'route' => route('searchSynonyms.list'),
+                    ],
+                    [
                         'title' => 'Популярные бренды',
                         'route' => route('popularBrands.list'),
                     ],

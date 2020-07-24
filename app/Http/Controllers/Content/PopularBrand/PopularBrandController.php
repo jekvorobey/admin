@@ -40,8 +40,8 @@ class PopularBrandController extends Controller
             return in_array($brand->id, $popularBrandsIds) ? 'popular' : 'other';
         });
 
-        $brandsForPopularBrands = $groupedBrands['popular']->keyBy('id');
-        $otherBrands = $groupedBrands['other'];
+        $brandsForPopularBrands = isset($groupedBrands['popular']) ? $groupedBrands['popular']->keyBy('id') : [];
+        $otherBrands = isset($groupedBrands['other']) ? $groupedBrands['other'] : [];
 
         $this->title = 'Популярные бренды';
         return $this->render('Content/PopularBrands', [

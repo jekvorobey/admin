@@ -61,18 +61,28 @@
             </table>
         </shadow-card>
 
+        <shadow-card title="Состав"
+                     :buttons="{onEdit:'pencil-alt'}"
+                     @onEdit="openModal('productIngredientsEdit')"
+                     class="flex-grow-1">
+            <p v-if="product_ingredients">
+                {{ product_ingredients }}
+            </p>
+            <em v-else>
+                (Состав не указан)
+            </em>
+        </shadow-card>
+
         <product-edit-modal
                 :source="product"
                 :options="options"
                 @onSave="$emit('onSave')"
-                modal-name="productValuesEdit">
-        </product-edit-modal>
+                modal-name="productValuesEdit"/>
 
         <archive-modal
                 :source="product"
                 @onSave="$emit('onSave')"
-                modal-name="ArchiveEdit">
-        </archive-modal>
+                modal-name="ArchiveEdit"/>
 
         <product-props-modal
                 :product-id="product.id"
@@ -80,8 +90,13 @@
                 :availableProperties="options.availableProperties"
                 :directoryValues="options.directoryValues"
                 @onSave="$emit('onSave')"
-                modal-name="productPropsEdit">
-        </product-props-modal>
+                modal-name="productPropsEdit"/>
+
+        <product-ingredients-modal
+            :product-id="product.id"
+            :ingredients="product_ingredients"
+            @onSave="$emit('onSave')"
+            modal-name="productIngredientsEdit"/>
 
         <product-badges-modal
                 :product-id="[product.id]"
@@ -94,6 +109,7 @@
     import ShadowCard from '../../../../components/shadow-card.vue';
     import ProductEditModal from './product-values-modal.vue';
     import ProductPropsModal from './product-props-modal.vue';
+    import ProductIngredientsModal from './product-ingredients-modal.vue';
     import ProductBadgesModal from './product-badges-modal.vue';
     import ArchiveModal from './product-archive-modal.vue';
 
@@ -104,6 +120,7 @@
             ShadowCard,
             ProductEditModal,
             ProductPropsModal,
+            ProductIngredientsModal,
             ProductBadgesModal,
             ArchiveModal,
         },
@@ -118,6 +135,7 @@
         },
         data() {
             return {
+                product_ingredients: this.composition(),
                 product_badges: this.sortBadges(this.badges)
             }
         },
@@ -153,6 +171,17 @@
                 let directory = this.options.directoryValues[id] || [];
                 let result = directory.filter(d => d.id === value);
                 return result.length > 0 ? result[0].name : undefined;
+            },
+            /**
+             * Состав продукта
+             * @returns {null|string}
+             */
+            composition() {
+                if (this.product.ingredients) {
+                    if (this.product.ingredients.items)
+                        return JSON.parse(this.product.ingredients.items).join(', ')
+                    else return null;
+                } else return null;
             }
         },
         computed: {
@@ -164,7 +193,7 @@
                 let category = Object.values(this.options.categories).find(category => category.id ===
                     this.product.category_id);
                 return category ? category.name : 'N/A';
-            }
+            },
         }
     }
 </script>
