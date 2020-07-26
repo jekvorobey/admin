@@ -43,7 +43,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function broadcast()
+    public function broadcast(MerchantService $merchantService)
     {
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
@@ -58,6 +58,7 @@ class ChatsController extends Controller
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
+            'merchants' => $merchantService->merchants(),
         ]);
     }
 
