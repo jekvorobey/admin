@@ -340,7 +340,8 @@ Route::middleware('auth')->group(function () {
         Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+            Route::get('', 'OfferDetailController@index')->name('offers.detail');
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
         });
         Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
