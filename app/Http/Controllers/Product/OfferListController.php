@@ -321,7 +321,7 @@ class OfferListController extends Controller
             ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'created_at')
-            ->addFields(ProductDto::entity(), 'id', 'name', 'brand_id');
+            ->addFields(ProductDto::entity(), 'id', 'name');
         $page = $request->get('page', 1);
         $query->pageNumber($page, 20);
         $filters = $request->get('filter', []);

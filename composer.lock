@@ -925,12 +925,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-store-lib.git",
-                "reference": "fd9251e799390bc4e9881b5563f0e82f311d59a0"
+                "reference": "c494596a913a47f346e125bf5410fd002388c0cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=fd9251e799390bc4e9881b5563f0e82f311d59a0",
-                "reference": "fd9251e799390bc4e9881b5563f0e82f311d59a0",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-store-lib/repository/archive.zip?sha=c494596a913a47f346e125bf5410fd002388c0cc",
+                "reference": "c494596a913a47f346e125bf5410fd002388c0cc",
                 "shasum": ""
             },
             "require": {
@@ -965,7 +965,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2020-07-13T00:51:48+00:00"
+            "time": "2020-07-27T02:22:04+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
