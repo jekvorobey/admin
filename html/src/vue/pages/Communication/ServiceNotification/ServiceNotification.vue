@@ -15,6 +15,8 @@
                     <th>Название</th>
                     <th>Тип</th>
                     <th>Каналы</th>
+                    <th>Тема</th>
+                    <th>Отправить от</th>
                     <th class="text-right">Действия</th>
                 </tr>
             </thead>
@@ -31,6 +33,8 @@
                     </td>
                     <td>{{notification.type}}</td>
                     <td>{{channels(notification.channels)}}</td>
+                    <td>{{notification.subject}}</td>
+                    <td>{{notification.sender_id}}</td>
                     <td>
                         <v-delete-button @delete="() => deleteNotifications([notification.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editNotification(notification)">
@@ -59,6 +63,8 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <v-input v-model="$v.form.type.$model" :error="errorType">Тип*</v-input>
+                        <v-input v-model="$v.form.subject.$model" :error="errorType">Тема</v-input>
+                        <v-input v-model="$v.form.sender_id.$model" :error="errorType">Отправить от лица пользователя</v-input>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -130,6 +136,8 @@
                 form: {
                     name: null,
                     type: null,
+                    subject: null,
+                    sender_id: null
                 },
                 massSelectionType: 'serviceNotifications',
             };
@@ -141,6 +149,8 @@
                     pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value),
                     required
                 },
+                subject: {},
+                sender_id: {}
             }
         },
         methods: {
@@ -162,6 +172,8 @@
                 this.editNotificationId = null;
                 this.form.name = null;
                 this.form.type = null;
+                this.form.subject = null;
+                this.form.sender_id = null;
                 this.openModal('NotificationFormModal');
             },
 
@@ -170,6 +182,8 @@
                 this.editNotificationId = notification.id;
                 this.form.name = notification.name;
                 this.form.type = notification.type;
+                this.form.subject = notification.subject;
+                this.form.sender_id = notification.sender_id;
                 this.openModal('NotificationFormModal');
             },
             onSave() {
