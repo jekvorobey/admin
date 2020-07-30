@@ -93,13 +93,20 @@ class PublicEventDetailController extends Controller
         ]);
     }
     
-    public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService)
+    public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService, RequestInitiator $requestInitiator)
     {
         /** @var Collection|OrganizerDto[] $organizers */
         $organizers = $publicEventOrganizerService->query()
             ->setFilter('owner_id', 0)
             ->addSort('name', 'asc')
             ->get();
+
+        $userOrganizers = $publicEventOrganizerService->query()
+            ->setFilter('owner_id', $requestInitiator->userId())
+            ->addSort('name', 'asc')
+            ->get();
+
+        $organizers = $organizers->merge($userOrganizers)->unique('id');
         
         return response()->json($organizers);
     }

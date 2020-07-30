@@ -24,7 +24,6 @@ use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Offer\OfferDto;
-use Pim\Dto\Offer\OfferEntityDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
@@ -36,7 +35,6 @@ class OfferListController extends Controller
     public function index(
         Request $request,
         OfferService $offerService,
-        ProductService $productService,
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
@@ -61,7 +59,6 @@ class OfferListController extends Controller
     public function page(
         Request $request,
         OfferService $offerService,
-        ProductService $productService,
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
@@ -213,9 +210,7 @@ class OfferListController extends Controller
 
     public function deleteOffers(
         Request $request,
-        OfferService $offerService,
-        PriceService $priceService,
-        StockService $stockService
+        OfferService $offerService
     )
     {
         $data = $request->validate([
@@ -292,38 +287,38 @@ class OfferListController extends Controller
             'merchant_id' => 'integer|required'
         ]);
 
+        $isOk = true;
+        $message = '';
+
         $product = $productService->newQuery()
             ->setFilter('id', $data['product_id'])
             ->products()
             ->first();
         if (!$product) {
-            return response()->json([
-                'isOk' => false,
-                'message' => 'Не найден товар с таким ID'
-            ]);
-        }
-
-        $offer = $offerService->newQuery()
-            ->setFilter('product_id', $data['product_id'])
-            ->setFilter('merchant_id', $data['merchant_id'])
-            ->offers()
-            ->first();
-        if ($offer) {
-            return response()->json([
-                'isOk' => false,
-                'message' => 'Такой оффер уже существует'
-            ]);
+            $isOk = false;
+            $message = 'Не найден товар с таким ID';
+        } else {
+            $offer = $offerService->newQuery()
+                ->setFilter('product_id', $data['product_id'])
+                ->setFilter('merchant_id', $data['merchant_id'])
+                ->offers()
+                ->first();
+            if ($offer) {
+                $isOk = false;
+                $message = 'Такой оффер уже существует';
+            }
         }
 
         return response()->json([
-            'isOk' => true
+            'isOk' => $isOk,
+            'message' => $message
         ]);
     }
 
     protected function makeQuery(Request $request)
     {
         $query = (new RestQuery())
-            ->setFilter('entity_type', OfferEntityDto::OFFER_ENTITY_PRODUCT)
+            ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'created_at')
             ->addFields(ProductDto::entity(), 'id', 'name');

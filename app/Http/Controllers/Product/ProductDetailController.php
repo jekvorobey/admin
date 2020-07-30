@@ -11,8 +11,11 @@ use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionSe
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Product\ProductApprovalStatus;
@@ -145,6 +148,22 @@ class ProductDetailController extends Controller
         $offerService->saveProperties($id, $data['props']);
         return response()->json();
     }
+
+    /**
+     * Обновить состав продукта
+     * @param int $productId
+     * @param ProductService $productService
+     * @return Application|ResponseFactory|Response
+     */
+    public function saveIngredients(int $productId, ProductService $productService)
+    {
+        $data = $this->validate(request(), [
+            'items' => 'present|nullable|json'
+        ]);
+
+        $productService->updateIngredients($productId, $data['items']);
+        return response('', 204);
+    }
     
     public function saveImage(int $id, Request $request, ProductService $productService)
     {
@@ -245,6 +264,7 @@ class ProductDetailController extends Controller
             ->setFilter('id', $id)
             ->include('properties')
             ->include('offers')
+            ->include('ingredients')
             ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();

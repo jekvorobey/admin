@@ -53,7 +53,10 @@
                     <div :ref="chat.id.toString()"></div>
                     <tr :class="chat.unread_admin ? 'table-primary' : 'table-secondary'" style="cursor: pointer;">
                         <td @click="openChat(chat)">{{ chat.theme }}</td>
-                        <td><a :href="linkUser(chat.user_id, chat.id)">{{ userShortName(chat.user_id) }}</a></td>
+                        <td>
+                            <a v-if="users[chat.user_id]" :href="linkUser(chat.user_id, chat.id)">{{ userShortName(chat.user_id) }}</a>
+                            <template v-else>N/A</template>
+                        </td>
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.id }}</td>
                         <td @click="openChat(chat)">
