@@ -387,6 +387,10 @@ class Menu
                 'title' => 'Настройки',
                 'items' => [
                     [
+                        'title' => 'Способы оплаты',
+                        'route' => route('settings.paymentMethods'),
+                    ],
+                    [
                         'title' => 'Пользователи и права',
                         'route' => route('settings.userList'),
                     ],

@@ -179,6 +179,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('settings')->namespace('Settings')->group(function () {
+        Route::prefix('payment-methods')->group(function () {
+            Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
+            Route::put('{id}/edit', 'PaymentMethodsController@edit')->name('settings.paymentMethods.edit');
+        });
         Route::prefix('users')->group(function () {
             Route::get('page', 'UsersController@page')->name('settings.userListPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
