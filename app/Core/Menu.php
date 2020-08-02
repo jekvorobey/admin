@@ -109,6 +109,10 @@ class Menu
                         'title' => 'Управление контактами и соц. сетями',
                         'route' => route('contacts.list'),
                     ],
+                    [
+                        'title' => 'Управление категориями',
+                        'route' => route('categories.list'),
+                    ],
 //                    [
 //                        'title' => 'Шаблоны страниц',
 //                        'route' => '#',

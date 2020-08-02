@@ -466,6 +466,11 @@ Route::middleware('auth')->group(function () {
             Route::put('reorder', 'PopularBrandController@reorder')->name('popularBrands.reorder');
             Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
         });
+
+        Route::prefix('categories')->namespace('Category')->group(function () {
+            Route::get('', 'CategoryListController@index')->name('categories.list');
+            Route::put('', 'CategoryListController@editCategories')->name('categories.edit');
+        });
     });
 
     Route::prefix('stores')->namespace('Store')->group(function () {
