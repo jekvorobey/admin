@@ -22,6 +22,7 @@
         </table>
         <tree-item
                 v-for="item in basicCategories"
+                :key="item.id"
                 :category="item"
                 :collection="categories"
                 :depth="0"

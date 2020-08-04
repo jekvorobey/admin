@@ -20,6 +20,7 @@ class OrderStatusListController extends Controller
      */
     public function index() {
         $this->title = 'Статусы заказа';
+        $this->loadBasketTypes = true;
         
         return $this->render('Order/Directory/OrderStatusList', [
             'iOrderStatuses' => $this->getOrderStatuses(),
