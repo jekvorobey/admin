@@ -109,6 +109,10 @@ class Menu
                         'title' => 'Управление контактами и соц. сетями',
                         'route' => route('contacts.list'),
                     ],
+                    [
+                        'title' => 'Управление категориями',
+                        'route' => route('categories.list'),
+                    ],
 //                    [
 //                        'title' => 'Шаблоны страниц',
 //                        'route' => '#',
@@ -382,6 +386,10 @@ class Menu
             [
                 'title' => 'Настройки',
                 'items' => [
+                    [
+                        'title' => 'Способы оплаты',
+                        'route' => route('settings.paymentMethods'),
+                    ],
                     [
                         'title' => 'Пользователи и права',
                         'route' => route('settings.userList'),

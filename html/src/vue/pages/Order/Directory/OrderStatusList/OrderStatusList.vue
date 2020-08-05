@@ -18,7 +18,12 @@
             </thead>
             <tbody>
                 <tr v-for="orderStatus in orderStatuses">
-                    <td v-for="column in columns" v-if="column.isShown" v-html="column.value(orderStatus)"></td>
+                    <td v-for="column in columns" v-if="column.isShown">
+                        <template v-if="column.code === 'types'">
+                            <order-type :type='type' v-for="type in orderStatus.types" :key="type"/>
+                        </template>
+                        <div v-else v-html="column.value(orderStatus)"></div>
+                    </td>
                     <td></td>
                 </tr>
                 <tr v-if="!orderStatuses.length">
@@ -71,6 +76,13 @@
                     isAlwaysShown: true,
                 },
                 {
+                    name: 'Типы заказов',
+                    description: 'Для Заказов с каким типом применим статус',
+                    code: 'types',
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
                     name: 'Название',
                     code: 'name',
                     value: function(orderStatus) {
@@ -91,7 +103,7 @@
                 },
                 {
                     name: 'Название для клиента',
-                    description: 'Что видит клиент в статусе сущности ЗАКАЗ',
+                    description: 'Что видит клиент в статусе сущности Заказ',
                     code: 'display_name',
                     value: function(orderStatus) {
                         return orderStatus.display_name;
