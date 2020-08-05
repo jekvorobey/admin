@@ -72,7 +72,12 @@
                     return;
                 }
                 let data = Object.values(this.editedItems).map((value) => {
-                    return value.item;
+                    return {
+                        'id': value.item.id,
+                        'frequent': value.item.frequent,
+                        'position': parseInt(value.item.position),
+                        'file_id': value.item.image ? value.item.image.id : null,
+                    };
                 });
 
                 Services.showLoader();

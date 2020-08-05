@@ -23,15 +23,16 @@
                 />
             </div>
             <div class="col-sm-4">
-                <div v-if="item.file_id" class="mb-2">
-                    <img :data-src="media.file(item.file_id)" class="lazyload" style="max-width: 75px;"/>
+                <div v-if="item.image" class="mb-2">
+                    <!--<img :data-src="media.file(item.image.url)" class="lazyload" style="max-width: 75px;"/>-->
+                    <img :data-src="item.image.url" class="lazyload" style="max-width: 75px;"/>
                     <v-delete-button
                             btn-class="btn-danger btn-sm"
-                            @delete="() => item.file_id = null"/>
+                            @delete="onDeleteImage"/>
                 </div>
                 <file-input
                         v-else
-                        @uploaded="(data) => item.file_id = data.id"
+                        @uploaded="onUploadImage"
                         :error="errorIconField()"
                         class="mb-3 w-50"></file-input>
             </div>
@@ -57,7 +58,6 @@
     import VDeleteButton from "../../../../components/controls/VDeleteButton/VDeleteButton.vue";
     import { validationMixin } from 'vuelidate';
     import { required, requiredIf, integer } from 'vuelidate/lib/validators';
-
     export default {
         name: "category-tree-item",
         components: {
@@ -80,7 +80,7 @@
                     id: this.category.id,
                     frequent: this.category.frequent,
                     position: this.category.position,
-                    file_id: this.category.file_id,
+                    image: this.category.image,
                 }
             }
         },
@@ -91,8 +91,7 @@
                         integer,
                         required,
                     },
-                    file_id: {
-                        integer,
+                    image: {
                         required: requiredIf(function () {
                             return this.item.frequent;
                         }),
@@ -113,9 +112,18 @@
                 }
             },
             errorIconField() {
-                if (this.$v.item.file_id.$invalid) {
+                if (this.$v.item.image.$invalid) {
                     return "Прикрепите иконку в формате svg";
                 }
+            },
+            onUploadImage(data) {
+                this.item.image = {
+                    'id': data.id,
+                    'url': data.url
+                };
+            },
+            onDeleteImage() {
+                this.item.image = null;
             },
         },
         computed: {

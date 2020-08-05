@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Content\Category;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Cms\Dto\FrequentCategoryDto;
+use Cms\Services\FrequentCategoryService\FrequentCategoryService;
 use Pim\Dto\CategoryDto;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -18,12 +22,14 @@ class CategoryListController extends Controller
      * @throws \Pim\Core\PimException
      */
     public function index(
-        CategoryService $categoryService
+        CategoryService $categoryService,
+        FrequentCategoryService $frequentCategoryService,
+        FileService $fileService
     ) {
         $this->title = 'Категории';
 
         return $this->render('Content/Category', [
-            'categories' =>  $this->loadCategories($categoryService),
+            'categories' =>  $this->loadCategories($categoryService, $frequentCategoryService, $fileService),
             'frequentMaxCount' => CategoryDto::FREQUENT_CATEGORY_MAX_COUNT,
         ]);
     }
@@ -35,7 +41,7 @@ class CategoryListController extends Controller
      */
     public function editCategories(
         Request $request,
-        CategoryService $categoryService
+        FrequentCategoryService $frequentCategoryService
     ) {
         $data = $request->validate([
             'items' => 'array|required',
@@ -52,9 +58,9 @@ class CategoryListController extends Controller
 
         $editedCategories = collect();
         foreach ($data['items'] as $item) {
-            $editedCategories->push(new CategoryDto($item));
+            $editedCategories->push(new FrequentCategoryDto($item));
         }
-        $categoryService->editCategories($editedCategories);
+        $frequentCategoryService->upsertCategories($editedCategories);
         return response('', 204);
     }
 
@@ -63,11 +69,43 @@ class CategoryListController extends Controller
      * @return Collection|CategoryDto[]
      * @throws \Pim\Core\PimException
      */
-    protected function loadCategories(CategoryService $categoryService)
+    protected function loadCategories(CategoryService $categoryService, FrequentCategoryService $frequentCategoryService, FileService $fileService)
     {
-        $query = (new RestQuery())
-            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'frequent', 'position', 'file_id', 'parent_id');
-        return $categoryService->categories($query);
+        $categories = $categoryService->categories((new RestQuery())
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id'));
+
+        $frequentCategories = $frequentCategoryService->list((new RestQuery())
+            ->addFields(FrequentCategoryDto::entity(), 'category_id', 'frequent', 'position', 'file_id')
+        )->keyBy('category_id');
+
+        $frequentCategoriesWithImages = $this->injectFiles($fileService, $frequentCategories);
+
+        return $categories->map(function (CategoryDto $category) use ($frequentCategoriesWithImages) {
+            $id = $category->id;
+            return [
+                'id' => $category->id,
+                'name' => $category->name,
+                'code' => $category->code,
+                'parent_id' => $category->parent_id,
+                'frequent' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->frequent : false,
+                'position' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->position : 0,
+                'image' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)['file'] : null,
+            ];
+        });
+    }
+
+    protected function injectFiles(FileService $fileService, Collection $frequentCategories)
+    {
+        $fileIds = $frequentCategories->pluck('file_id')->all();
+        /** @var Collection|FileDto[] $files */
+        $files = $fileService->getFiles($fileIds)->keyBy('id');
+        return $frequentCategories->map(function (FrequentCategoryDto $frequentCategory) use ($files) {
+            $frequentCategory['file'] = $files->has($frequentCategory->file_id) ? [
+                'id' => $files->get($frequentCategory->file_id)->id,
+                'url' => $files->get($frequentCategory->file_id)->absoluteUrl(),
+            ] : null;
+            return $frequentCategory;
+        });
     }
 
     /**
@@ -77,6 +115,6 @@ class CategoryListController extends Controller
      */
     protected function validateSelectedCount($items)
     {
-        return (count($items) <= CategoryDto::FREQUENT_CATEGORY_MAX_COUNT);
+        return (count($items) <= FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT);
     }
 }
