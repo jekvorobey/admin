@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Cms\Dto\FrequentCategoryDto;
 use Cms\Services\FrequentCategoryService\FrequentCategoryService;
@@ -30,14 +31,14 @@ class CategoryListController extends Controller
 
         return $this->render('Content/Category', [
             'categories' =>  $this->loadCategories($categoryService, $frequentCategoryService, $fileService),
-            'frequentMaxCount' => CategoryDto::FREQUENT_CATEGORY_MAX_COUNT,
+            'frequentMaxCount' => FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT,
         ]);
     }
 
     /**
      * @param Request $request
      * @param CategoryService $categoryService
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return Response
      */
     public function editCategories(
         Request $request,
@@ -66,7 +67,10 @@ class CategoryListController extends Controller
 
     /**
      * @param CategoryService $categoryService
+     * @param FrequentCategoryService $frequentCategoryService
+     * @param FileService $fileService
      * @return Collection|CategoryDto[]
+     * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException
      */
     protected function loadCategories(CategoryService $categoryService, FrequentCategoryService $frequentCategoryService, FileService $fileService)
