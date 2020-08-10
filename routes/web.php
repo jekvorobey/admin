@@ -382,6 +382,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('variant-groups')->namespace('VariantGroup')->group(function () {
             Route::get('', 'VariantGroupListController@index')->name('variantGroups.list');
             Route::post('', 'VariantGroupListController@create')->name('variantGroups.create');
+            Route::delete('', 'VariantGroupListController@delete')->name('variantGroups.delete');
             Route::get('page', 'VariantGroupListController@page')->name('variantGroups.pagination');
             Route::post('byOffers', 'VariantGroupListController@byOffers')->name('variantGroups.byOffers');
 
@@ -389,14 +390,16 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
 
                 Route::namespace('Detail')->group(function () {
-                    Route::prefix('properties')->group(function () {
-                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
-                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
-                    });
-
                     Route::prefix('products')->group(function () {
                         Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products');
                         Route::put('', 'TabProductsController@save')->name('variantGroups.detail.products.save');
+                        Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                    });
+
+                    Route::prefix('properties')->group(function () {
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
+                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
+                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
                     });
                 });
             });

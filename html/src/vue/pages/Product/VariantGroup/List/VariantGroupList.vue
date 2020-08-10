@@ -9,54 +9,60 @@
                 </button>
             </template>
             <div class="row">
+                <f-input v-model="filter.id" class="col-sm-12 col-md-3">
+                    ID
+                </f-input>
                 <f-multi-select v-model="filter.merchants" :options="merchantOptions" class="col-sm-12 col-md-3">
                     Мерчант
                     <template #help>Будут показаны товарные группы, созданные указанными мерчантами</template>
                 </f-multi-select>
-                <f-date v-if="!filter.use_period"
-                        v-model="filter.created_at"
-                        @change="filter.created_between = []"
-                        class="col-sm-12 col-md-3 col-xl-3">
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox"
-                               v-model="filter.use_period"
-                               class="custom-control-input"
-                               id="created_at">
-                        <label class="custom-control-label" for="created_at">Дата создания</label>
-                    </div>
-                </f-date>
-                <f-date v-else
-                        v-model="filter.created_between"
-                        @change="filter.created_at = []"
-                        class="col-sm-12 col-md-3 col-xl-3"
-                        range confirm>
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox"
-                               v-model="filter.use_period"
-                               class="custom-control-input"
-                               id="created_between">
-                        <label class="custom-control-label" for="created_between">Период дат создания</label>
-                    </div>
-                </f-date>
+                <f-input v-model="filter.offer_xml_id" type="text" class="col-sm-12 col-md-3">
+                    Код товара из ERP
+                    <template #help>Код из внешней системы, по которому импортируется товар</template>
+                </f-input>
+                <f-input v-model="filter.product_vendor_code" type="text" class="col-sm-12 col-md-3">
+                    Артикул
+                    <template #help>Артикул товара в системе iBT</template>
+                </f-input>
             </div>
             <transition name="slide">
                 <div v-if="opened">
                     <div class="additional-filter pt-3 mt-3">
                         <div class="row">
-                            <f-input v-model="filter.offer_xml_id" type="text" class="col-sm-12 col-md-3">
-                                Код товара из ERP
-                                <template #help>Код из внешней системы, по которому импортируется товар</template>
-                            </f-input>
-                            <f-input v-model="filter.product_vendor_code" type="text" class="col-sm-12 col-md-3">
-                                Артикул
-                                <template #help>Артикул товара в системе iBT</template>
-                            </f-input>
-                        </div>
-                        <div class="row">
-                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-3">
+                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-4">
                                 Бренд
                                 <template #help>Будут показаны товарные группы, в которых есть товары указанного бренда</template>
                             </f-multi-select>
+                            <f-multi-select v-model="filter.categories" :options="categoryOptions"
+                                    class="col-sm-12 col-md-4">
+                                Категория
+                                <template #help>Будут показаны товарные группы, в которых есть товары указанной категории</template>
+                            </f-multi-select>
+                            <f-date v-if="!filter.use_period"
+                                    v-model="filter.created_at"
+                                    @change="filter.created_between = []"
+                                    class="col-sm-12 col-md-4">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox"
+                                            v-model="filter.use_period"
+                                            class="custom-control-input"
+                                            id="created_at">
+                                    <label class="custom-control-label" for="created_at">Дата создания</label>
+                                </div>
+                            </f-date>
+                            <f-date v-else
+                                    v-model="filter.created_between"
+                                    @change="filter.created_at = []"
+                                    class="col-sm-12 col-md-4"
+                                    range confirm>
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox"
+                                            v-model="filter.use_period"
+                                            class="custom-control-input"
+                                            id="created_between">
+                                    <label class="custom-control-label" for="created_between">Период дат создания</label>
+                                </div>
+                            </f-date>
                         </div>
                     </div>
                 </div>
@@ -69,20 +75,19 @@
         </b-card>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div>
-                <button class="btn btn-success mt-3" v-b-modal.modal-add-variant-group>
+                <button class="btn btn-success" v-b-modal.modal-add-variant-group>
                     <fa-icon icon="plus"></fa-icon> Создать товарную группу
                 </button>
                 <modal-add-variant-group :merchant-options="merchantOptions"/>
+                <v-delete-button @delete="deleteVariantGroups(selectedVariantGroups)" btn-class="btn-danger"
+                        v-if="selectedVariantGroups.length > 0" class="ml-3"/>
             </div>
         </div>
         <div class="table-responsive">
             <table class="table table-condensed">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="checkbox" id="select-all-page-orders" v-model="isSelectAllPageOrders" @click="selectAllPageVariantGroups()">
-                            <label for="select-all-page-orders" class="mb-0">Все</label>
-                        </th>
+                        <th></th>
                         <th v-for="column in columns" v-if="column.isShown">
                             <span v-html="column.name"></span>
                             <fa-icon v-if="column.description" icon="question-circle"
@@ -98,7 +103,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="variantGroup in variantGroups">
-                        <td><input type="checkbox" value="true" class="variant-group-select" :value="variantGroup.id"></td>
+                        <td><input type="checkbox" v-model="selectedVariantGroups" class="variant-group-select"
+                                :value="variantGroup.id"></td>
                         <td v-for="column in columns" v-if="column.isShown">
                             <template v-if="column.code === 'id'">
                                 <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
@@ -114,15 +120,20 @@
                                         {{variantGroup.mainProduct.name}}
                                     </b-button>
                                     <b-collapse :id="'products-' + variantGroup.id" class="mt-2">
-                                        <p v-for="product in variantGroup.products" v-if="product.id !== variantGroup.main_product_id">
-                                            {{product.name}}
+                                        <p v-for="product in variantGroup.products"
+                                                :class="product.id === variantGroup.main_product_id ? 'font-weight-bold' : ''">
+                                            <a :href="getRoute('products.detail', {id: variantGroup.id})" target="_blank">
+                                                {{product.name}}
+                                            </a>
                                         </p>
                                     </b-collapse>
                                 </template>
                             </template>
                             <div v-else v-html="column.value(variantGroup)"></div>
                         </td>
-                        <td></td>
+                        <td>
+                            <v-delete-button @delete="deleteVariantGroups([variantGroup.id])" btn-class="btn-danger"/>
+                        </td>
                     </tr>
                     <tr v-if="!variantGroups.length">
                         <td :colspan="columns.length + 1">Торговых групп нет</td>
@@ -151,31 +162,36 @@
     import FInput from '../../../../components/filter/f-input.vue';
     import FDate from '../../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Helpers from '../../../../../scripts/helpers';
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
-    import ModalAddVariantGroup from './forms/modal-add-variant-group.vue';
+    import ModalAddVariantGroup from './components/modal-add-variant-group.vue';
 
     const cleanHiddenFilter = {
-        offer_xml_id: '',
-        product_vendor_code: '',
         brands: [],
+        categories: [],
+        created_at: [],
+        created_between: [],
     };
 
     const cleanFilter = Object.assign({
+        id: '',
         merchants: [],
-        created_at: [],
-        created_between: [],
+        offer_xml_id: '',
+        product_vendor_code: '',
     }, cleanHiddenFilter);
 
     const serverKeys = [
+        'id',
         'merchants',
-        'created_at',
-        'created_between',
         'offer_xml_id',
         'product_vendor_code',
         'brands',
+        'categories',
+        'created_at',
+        'created_between',
     ];
 
     export default {
@@ -188,6 +204,7 @@
             'iFilter',
             'iSort',
             'brands',
+            'categories',
         ],
         components: {
             ModalAddVariantGroup,
@@ -195,11 +212,12 @@
             FDate,
             FMultiSelect,
             ModalColumns,
+            VDeleteButton,
         },
         data() {
-            let self = this;
             let filter = Object.assign({}, cleanFilter, this.iFilter);
             filter.brands = filter.brands.map(value => parseInt(value));
+            filter.categories = filter.categories.map(value => parseInt(value));
 
             return {
                 opened: false,
@@ -209,7 +227,7 @@
                 sort: this.iSort,
                 appliedFilter: {},
                 pager: this.iPager,
-                isSelectAllPageOrders: false,
+                selectedVariantGroups: [],
                 columns: [
                     {
                         name: 'ID',
@@ -326,20 +344,29 @@
                 }
                 return false;
             },
-            selectAllPageVariantGroups() {
-                let checkboxes = document.getElementsByClassName('variant-group-select');
-                for (let i = 0; i < checkboxes.length; i++) {
-                    checkboxes[i].checked = this.isSelectAllPageOrders ? '' : 'checked';
-                }
-            },
+
             showChangeColumns() {
                 this.openModal('list_columns');
+            },
+            deleteVariantGroups(ids) {
+                Services.showLoader();
+                Services.net().delete(this.getRoute('variantGroups.delete'), {
+                    ids: ids,
+                }).then(() => {
+                    Services.msg("Удаление прошло успешно");
+                    location.reload();
+                }).finally(() => {
+                    Services.hideLoader();
+                });
             },
         },
         computed: {
             ...mapGetters(['getRoute']),
             brandOptions() {
                 return this.brands.map(brand => ({value: brand.id, text: brand.name}));
+            },
+            categoryOptions() {
+                return this.categories.map(category => ({value: category.id, text: category.name}));
             },
             merchantOptions() {
                 return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));

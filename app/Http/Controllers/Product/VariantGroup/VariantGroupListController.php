@@ -7,12 +7,14 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Pim\Dto\BrandDto;
 use Pim\Dto\Product\VariantGroupDto;
 use Pim\Services\BrandService\BrandService;
+use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\VariantGroupService\VariantGroupService;
 
 /**
@@ -21,31 +23,44 @@ use Pim\Services\VariantGroupService\VariantGroupService;
  */
 class VariantGroupListController extends Controller
 {
+    /** @var VariantGroupService */
+    protected $variantGroupService;
+    /** @var BrandService  */
+    protected $brandService;
+    /** @var CategoryService */
+    protected $categoryService;
+
+    /**
+     * VariantGroupListController constructor.
+     */
+    public function __construct()
+    {
+        $this->variantGroupService = resolve(VariantGroupService::class);
+        $this->brandService = resolve(BrandService::class);
+        $this->categoryService = resolve(CategoryService::class);
+    }
+
     /**
      * @param  Request  $request
-     * @param  VariantGroupService  $variantGroupService
-     * @param  BrandService  $brandService
      * @return mixed
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Pim\Core\PimException
      */
-    public function index(
-        Request $request,
-        VariantGroupService $variantGroupService,
-        BrandService $brandService
-    ) {
+    public function index(Request $request)
+    {
         $this->title = 'Список товарных групп';
 
-        $restQuery = $this->makeRestQuery($variantGroupService, true);
-        $pager = $variantGroupService->variantGroupsCount($restQuery);
-        $variantGroups = $this->loadVariantGroups($variantGroupService, $restQuery);
+        $restQuery = $this->makeRestQuery(true);
+        $pager = $this->variantGroupService->variantGroupsCount($restQuery);
+        $variantGroups = $this->loadVariantGroups($restQuery);
 
         return $this->render('Product/VariantGroup/List', [
             'iVariantGroups' => $variantGroups,
             'iCurrentPage' => $this->getPage(),
             'iPager' => $pager,
             'merchants' => $this->getMerchants(),
-            'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
+            'brands' => $this->brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
+            'categories' => $this->categoryService->categories($this->categoryService->newQuery())->values()->toArray(),
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
         ]);
@@ -53,11 +68,10 @@ class VariantGroupListController extends Controller
 
     /**
      * @param  Request  $request
-     * @param  VariantGroupService  $variantGroupService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function create(Request $request, VariantGroupService $variantGroupService): JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $data = $this->validate($request, [
             'name' => ['nullable', 'string'],
@@ -67,7 +81,7 @@ class VariantGroupListController extends Controller
         $variantGroupDto = new VariantGroupDto();
         $variantGroupDto->name = $data['name'] ?? null;
         $variantGroupDto->merchant_id = $data['merchant_id'] ?? null;
-        $id = $variantGroupService->createVariantGroup($variantGroupDto);
+        $id = $this->variantGroupService->createVariantGroup($variantGroupDto);
 
         return response()->json([
             'id' => $id,
@@ -75,13 +89,28 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  VariantGroupService  $variantGroupService
+     * @param  Request  $request
+     * @return Response
+     */
+    public function delete(Request $request): Response
+    {
+        $data = $this->validate($request, [
+            'ids' => ['array', 'required'],
+            'ids.*' => ['integer'],
+        ]);
+
+        $this->variantGroupService->deleteVariantGroups($data['ids']);
+
+        return response('', 204);
+    }
+
+    /**
      * @param  Request  $request
      * @return mixed
      */
-    /*public function byOffers(VariantGroupService $variantGroupService, Request $request)
+    /*public function byOffers(Request $request)
     {
-        return $variantGroupService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
+        return $this->variantGroupService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }*/
 
     /**
@@ -93,19 +122,18 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  VariantGroupService  $variantGroupService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function page(VariantGroupService $variantGroupService): JsonResponse
+    public function page(): JsonResponse
     {
-        $restQuery = $this->makeRestQuery($variantGroupService);
-        $orders = $this->loadVariantGroups($variantGroupService, $restQuery);
+        $restQuery = $this->makeRestQuery();
+        $orders = $this->loadVariantGroups($restQuery);
         $result = [
             'variantGroups' => $orders,
         ];
         if ($this->getPage() == 1) {
-            $result['pager'] = $variantGroupService->variantGroupsCount($restQuery);
+            $result['pager'] = $this->variantGroupService->variantGroupsCount($restQuery);
         }
 
         return response()->json($result);
@@ -121,24 +149,30 @@ class VariantGroupListController extends Controller
         return Validator::validate(
             request('filter') ?? [],
             [
-                'created_at' => 'string',
-                'created_between' => 'array|sometimes',
-                'created_between.*' => 'string',
+                'id' => 'integer|sometimes',
                 'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
+                'created_at' => 'string|sometimes',
+                'created_between' => 'array|sometimes',
+                'created_between.*' => 'string',
+                'offer_xml_id' => 'string|sometimes',
+                'product_vendor_code' => 'string|sometimes',
+                'brands' => 'array|sometimes',
+                'brands.*' => 'integer',
+                'categories' => 'array|sometimes',
+                'categories.*' => 'integer',
             ]
         );
     }
 
     /**
-     * @param  VariantGroupService  $variantGroupService
      * @param  DataQuery  $restQuery
      * @return Collection|VariantGroupDto[]
      * @throws \Pim\Core\PimException
      */
-    protected function loadVariantGroups(VariantGroupService $variantGroupService, DataQuery $restQuery): Collection
+    protected function loadVariantGroups(DataQuery $restQuery): Collection
     {
-        $variantGroups = $variantGroupService->variantGroups($restQuery);
+        $variantGroups = $this->variantGroupService->variantGroups($restQuery);
         $merchants = $this->getMerchants($variantGroups->pluck('merchant_id')->all());
 
         $variantGroups = $variantGroups->map(function (VariantGroupDto $variantGroupDto) use ($merchants) {
@@ -156,14 +190,13 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  VariantGroupService  $variantGroupService
      * @param  bool  $withDefaultFilter
      * @return DataQuery
      * @throws \Exception
      */
-    protected function makeRestQuery(VariantGroupService $variantGroupService, bool $withDefaultFilter = false): DataQuery
+    protected function makeRestQuery(bool $withDefaultFilter = false): DataQuery
     {
-        $restQuery = $variantGroupService->newQuery()->include('properties', 'products', 'mainProduct');
+        $restQuery = $this->variantGroupService->newQuery()->include('properties', 'products', 'mainProduct');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20);
