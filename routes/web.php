@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('content')->group(function () {
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
+            Route::get('xy', 'ContentClaimController@xyeta')->name('contentClaims.xy');
             Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');
@@ -387,6 +388,12 @@ Route::middleware('auth')->group(function () {
         Route::post('delete', 'BrandController@delete')->name('brand.delete');
     });
 
+    Route::prefix('categories')->namespace('Product')->group(function () {
+        Route::get('', 'CategoryController@index')->name('categories.list');
+        Route::post('', 'CategoryController@create')->name('categories.create');
+        Route::put('', 'CategoryController@update')->name('categories.update');
+    });
+
     Route::prefix('content')->namespace('Content')->group(function () {
         Route::prefix('product-group')->namespace('ProductGroup')->group(function () {
             Route::get('/', 'ProductGroupListController@indexPage')->name('productGroup.listPage');
@@ -472,8 +479,8 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('categories')->namespace('Category')->group(function () {
-            Route::get('', 'CategoryListController@index')->name('categories.list');
-            Route::put('', 'CategoryListController@editCategories')->name('categories.edit');
+            Route::get('', 'FrequentCategoryController@index')->name('frequentCategories.list');
+            Route::put('', 'FrequentCategoryController@editCategories')->name('frequentCategories.edit');
         });
     });
 

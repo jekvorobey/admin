@@ -1,22 +1,23 @@
 <template>
     <layout-main>
         <div class="mt-5 mb-4">
-            <span class="ml-1">Выбрано категорий: {{ countSelected }}</span>
-            <button class="btn-success btn float-right" @click="save()" :disabled="saveBtnDisabled">Сохранить</button>
+<!--            <span class="ml-1">Выбрано категорий: {{ countSelected }}</span>-->
+<!--            <button class="btn-success btn float-right" @click="save()" :disabled="saveBtnDisabled">Сохранить</button>-->
+            <button class="btn-success btn" @click="save()" :disabled="saveBtnDisabled">Создать категорию</button>
         </div>
         <table class="table mb-0">
             <thead>
             <tr class="d-flex">
-                <th class="col-sm-4 col-lg-5">Название категории</th>
-                <th class="col-sm-2 col-lg-1">
-                    Быстрая категория
-                    <fa-icon icon="question-circle" v-b-popover.hover="frequentTooltip"></fa-icon>
+                <th class="col-sm-6">Название категории</th>
+                <th class="col-sm-4">
+                    Код
+<!--                    <fa-icon icon="question-circle" v-b-popover.hover="frequentTooltip"></fa-icon>-->
                 </th>
-                <th class="col-sm-2">
-                    Порядок отображения
-                    <fa-icon icon="question-circle" v-b-popover.hover="positionTooltip"></fa-icon>
+                <th class="col-sm-1">
+                    Активна
+<!--                    <fa-icon icon="question-circle" v-b-popover.hover="positionTooltip"></fa-icon>-->
                 </th>
-                <th class="col-sm-4">Иконка категории</th>
+                <th class="col-sm-1">Действия</th>
             </tr>
             </thead>
         </table>
@@ -26,7 +27,6 @@
                 :category="item"
                 :collection="categories"
                 :depth="0"
-                :selectable="selectable"
                 @onEdit="editTreeItem"
         ></tree-item>
     </layout-main>
@@ -42,19 +42,12 @@
             TreeItem
         },
         props: {
-            categories: Array,
-            frequentMaxCount: Number,
+            categories: Array
         },
-        data() {
-            return {
-                checkboxes: this.categories.filter((value) => {
-                    return value.frequent;
-                }).map((value) => {
-                    return value.id;
-                }),
-                editedItems: {},
-            }
-        },
+        // data() {
+        //     return {
+        //     }
+        // },
         methods: {
             editTreeItem(value) {
                 let {item, invalid} = value;
@@ -81,7 +74,7 @@
                 });
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('categories.edit'), {}, {
+                Services.net().put(this.getRoute('frequentCategories.edit'), {}, {
                     'items': data,
                     'selected': this.checkboxes,
                 }, {}, true).then((data) => {
@@ -97,29 +90,29 @@
         computed: {
             basicCategories() {
                 return this.categories.filter(function (category) {
-                   return (!category.parent_id);
+                    return (!category.parent_id);
                 });
             },
-            frequentTooltip() {
-                return 'Выбранные категории будут отображаться на главной странице (не более ' + this.frequentMaxCount + ' категорий)';
-            },
-            positionTooltip() {
-                return 'В порядке возрастания значения'
-            },
-            countSelected() {
-                return this.checkboxes.length;
-            },
-            selectable() {
-                return this.countSelected < this.frequentMaxCount;
-            },
-            anyInvalid() {
-                return Object.values(this.editedItems).some((value) => {
-                    return value.invalid;
-                });
-            },
-            saveBtnDisabled() {
-                return (Object.keys(this.editedItems).length < 1 || this.anyInvalid);
-            },
+            // frequentTooltip() {
+            //     return 'Выбранные категории будут отображаться на главной странице (не более ' + this.frequentMaxCount + ' категорий)';
+            // },
+            // positionTooltip() {
+            //     return 'В порядке возрастания значения'
+            // },
+            // countSelected() {
+            //     return this.checkboxes.length;
+            // },
+            // selectable() {
+            //     return this.countSelected < this.frequentMaxCount;
+            // },
+            // anyInvalid() {
+            //     return Object.values(this.editedItems).some((value) => {
+            //         return value.invalid;
+            //     });
+            // },
+            // saveBtnDisabled() {
+            //     return (Object.keys(this.editedItems).length < 1 || this.anyInvalid);
+            // },
         }
     };
 </script>

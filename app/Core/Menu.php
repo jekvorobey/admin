@@ -27,6 +27,10 @@ class Menu
                                 'title' => 'Бренды',
                                 'route' => route('brand.list'),
                             ],
+                            [
+                                'title' => 'Категории',
+                                'route' => route('categories.list'),
+                            ],
                         ]
                     ],
 //                    [
@@ -111,7 +115,7 @@ class Menu
                     ],
                     [
                         'title' => 'Управление категориями',
-                        'route' => route('categories.list'),
+                        'route' => route('frequentCategories.list'),
                     ],
 //                    [
 //                        'title' => 'Шаблоны страниц',

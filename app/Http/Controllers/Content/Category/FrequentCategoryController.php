@@ -15,11 +15,14 @@ use Pim\Dto\CategoryDto;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CategoryListController extends Controller
+class FrequentCategoryController extends Controller
 {
     /**
      * @param CategoryService $categoryService
+     * @param FrequentCategoryService $frequentCategoryService
+     * @param FileService $fileService
      * @return mixed
+     * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException
      */
     public function index(
@@ -27,7 +30,7 @@ class CategoryListController extends Controller
         FrequentCategoryService $frequentCategoryService,
         FileService $fileService
     ) {
-        $this->title = 'Категории';
+        $this->title = 'Управление категориями';
 
         return $this->render('Content/Category', [
             'categories' =>  $this->loadCategories($categoryService, $frequentCategoryService, $fileService),
@@ -37,8 +40,8 @@ class CategoryListController extends Controller
 
     /**
      * @param Request $request
-     * @param CategoryService $categoryService
-     * @return Response
+     * @param FrequentCategoryService $frequentCategoryService
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function editCategories(
         Request $request,
