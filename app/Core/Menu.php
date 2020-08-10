@@ -21,6 +21,10 @@ class Menu
                         'route' => route('offers.list'),
                     ],
                     [
+                        'title' => 'Товарные группы',
+                        'route' => route('variantGroups.list'),
+                    ],
+                    [
                         'title' => 'Справочники',
                         'items' => [
                             [
