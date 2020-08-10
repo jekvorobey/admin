@@ -362,7 +362,7 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
             Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
@@ -377,6 +377,29 @@ Route::middleware('auth')->group(function () {
                 Route::post('', 'ProductDetailController@addTip')->name('product.addTip');
                 Route::post('{tipId}/update', 'ProductDetailController@editTip')->name('product.editTip');
                 Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
+            });
+        });
+
+        Route::prefix('variant-groups')->namespace('VariantGroup')->group(function () {
+            Route::get('', 'VariantGroupListController@index')->name('variantGroups.list');
+            Route::post('', 'VariantGroupListController@create')->name('variantGroups.create');
+            Route::get('page', 'VariantGroupListController@page')->name('variantGroups.pagination');
+            Route::post('byOffers', 'VariantGroupListController@byOffers')->name('variantGroups.byOffers');
+
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('properties')->group(function () {
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
+                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
+                    });
+
+                    Route::prefix('products')->group(function () {
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products');
+                        Route::put('', 'TabProductsController@save')->name('variantGroups.detail.products.save');
+                    });
+                });
             });
         });
     });
