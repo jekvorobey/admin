@@ -24,7 +24,6 @@
             </div>
             <div class="col-sm-4">
                 <div v-if="item.image" class="mb-2">
-                    <!--<img :data-src="media.file(item.image.url)" class="lazyload" style="max-width: 75px;"/>-->
                     <img :data-src="item.image.url" class="lazyload" style="max-width: 75px;"/>
                     <v-delete-button
                             btn-class="btn-danger btn-sm"
@@ -37,7 +36,7 @@
                         class="mb-3 w-50"></file-input>
             </div>
         </div>
-        <category-tree-item v-show="opened"
+        <frequent-category-tree-item v-show="opened"
                             v-for="(child, index) in children"
                             :key="child.id"
                             :category="child"
@@ -45,7 +44,7 @@
                             :depth="depth + 1"
                             :selectable="selectable"
                             @onEdit="emit">
-        </category-tree-item>
+        </frequent-category-tree-item>
     </div>
 
 
@@ -59,7 +58,7 @@
     import { validationMixin } from 'vuelidate';
     import { required, requiredIf, integer } from 'vuelidate/lib/validators';
     export default {
-        name: "category-tree-item",
+        name: "frequent-category-tree-item",
         components: {
             VInput,
             FileInput,
