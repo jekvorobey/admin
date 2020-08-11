@@ -152,6 +152,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('content')->group(function () {
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
+            Route::get('xy', 'ContentClaimController@xyeta')->name('contentClaims.xy');
             Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');
@@ -361,7 +362,7 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
             Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
@@ -378,6 +379,32 @@ Route::middleware('auth')->group(function () {
                 Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
             });
         });
+
+        Route::prefix('variant-groups')->namespace('VariantGroup')->group(function () {
+            Route::get('', 'VariantGroupListController@index')->name('variantGroups.list');
+            Route::post('', 'VariantGroupListController@create')->name('variantGroups.create');
+            Route::delete('', 'VariantGroupListController@delete')->name('variantGroups.delete');
+            Route::get('page', 'VariantGroupListController@page')->name('variantGroups.pagination');
+            Route::post('byOffers', 'VariantGroupListController@byOffers')->name('variantGroups.byOffers');
+
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('products')->group(function () {
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products');
+                        Route::put('', 'TabProductsController@save')->name('variantGroups.detail.products.save');
+                        Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                    });
+
+                    Route::prefix('properties')->group(function () {
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
+                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
+                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                    });
+                });
+            });
+        });
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {
@@ -385,6 +412,12 @@ Route::middleware('auth')->group(function () {
         Route::get('page', 'BrandController@page')->name('brand.listPage');
         Route::post('save', 'BrandController@save')->name('brand.save');
         Route::post('delete', 'BrandController@delete')->name('brand.delete');
+    });
+
+    Route::prefix('categories')->namespace('Product')->group(function () {
+        Route::get('', 'CategoryController@index')->name('categories.list');
+        Route::post('', 'CategoryController@create')->name('categories.create');
+        Route::put('', 'CategoryController@update')->name('categories.update');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
@@ -472,8 +505,8 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('categories')->namespace('Category')->group(function () {
-            Route::get('', 'CategoryListController@index')->name('categories.list');
-            Route::put('', 'CategoryListController@editCategories')->name('categories.edit');
+            Route::get('', 'FrequentCategoryController@index')->name('frequentCategories.list');
+            Route::put('', 'FrequentCategoryController@editCategories')->name('frequentCategories.edit');
         });
     });
 

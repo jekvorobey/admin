@@ -35,7 +35,7 @@
 <script>
 
     import Services from '../../../../scripts/services/services';
-    import TreeItem from './components/category-tree-item.vue';
+    import TreeItem from './components/frequent-category-tree-item.vue';
 
     export default {
         components: {
@@ -72,11 +72,16 @@
                     return;
                 }
                 let data = Object.values(this.editedItems).map((value) => {
-                    return value.item;
+                    return {
+                        'id': value.item.id,
+                        'frequent': value.item.frequent,
+                        'position': parseInt(value.item.position),
+                        'file_id': value.item.image ? value.item.image.id : null,
+                    };
                 });
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('categories.edit'), {}, {
+                Services.net().put(this.getRoute('frequentCategories.edit'), {}, {
                     'items': data,
                     'selected': this.checkboxes,
                 }, {}, true).then((data) => {
