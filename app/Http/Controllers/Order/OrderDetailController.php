@@ -119,7 +119,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * todo Разбить метод на несколько мелких методов
      * @param  int  $id
      * @return OrderDto
      * @throws \Exception

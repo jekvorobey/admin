@@ -10,5 +10,8 @@ use App\Http\Controllers\Controller;
  */
 class TabProductsController extends Controller
 {
+    public function setMain(int $variantGroupId, int $productId): void
+    {
 
+    }
 }

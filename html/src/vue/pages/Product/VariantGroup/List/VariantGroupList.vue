@@ -352,9 +352,9 @@
                 Services.showLoader();
                 Services.net().delete(this.getRoute('variantGroups.delete'), {
                     ids: ids,
-                }).then(() => {
+                }).then((data) => {
                     Services.msg("Удаление прошло успешно");
-                    location.reload();
+                    this.loadPage();
                 }).finally(() => {
                     Services.hideLoader();
                 });

@@ -15,10 +15,10 @@
                     <b-th></b-th>
                     <b-th>ID</b-th>
                     <b-th>Фото</b-th>
-                    <b-th class="with-small">Название <small>Артикул</small></b-th>
+                    <b-th class="with-small">Название<br><small>Артикул</small></b-th>
                     <b-th>Дата создания</b-th>
-                    <b-th class="with-small">Категория <small>Бренд</small></b-th>
-                    <b-th class="with-small">Количество <small>Вес 1 шт</small><small>ДxШxВ 1 шт</small></b-th>
+                    <b-th class="with-small">Категория<br><small>Бренд</small></b-th>
+                    <b-th class="with-small">Количество<br><small>Вес 1 шт</small><br><small>ДxШxВ 1 шт</small></b-th>
                     <b-th>Цена</b-th>
                     <b-th>Статус товара</b-th>
                     <b-th></b-th>
@@ -35,17 +35,17 @@
                         <b-td class="with-small">
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
                                 {{ product.name }}
-                            </a>
+                            </a><br>
                             <small>{{ product.vendor_code }}</small>
                         </b-td>
                         <b-td>{{ product.created_at }}</b-td>
                         <b-td class="with-small">
-                            {{ product.category ? product.category.name : ''}}
+                            {{ product.category ? product.category.name : ''}}<br>
                             <small>{{ product.brand ? product.brand.name : ''}}</small>
                         </b-td>
                         <b-td class="with-small">
-                            {{ product.qty | integer }} шт
-                            <small> {{product.weight}} г</small>
+                            {{ product.qty | integer }} шт<br>
+                            <small> {{product.weight}} г</small><br>
                             <small> {{product.length}} x {{product.width}} x {{product.height}} мм</small>
                         </b-td>
                         <b-td>{{ preparePrice(product.price) }} руб</b-td>

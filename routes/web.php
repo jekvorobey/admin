@@ -392,9 +392,11 @@ Route::middleware('auth')->group(function () {
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
-                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products');
-                        Route::put('', 'TabProductsController@save')->name('variantGroups.detail.products.save');
-                        Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                        Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::put('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
+                            Route::put('set-main', 'TabProductsController@setMain')->name('variantGroups.detail.products.setMain');
+                            Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                        });
                     });
 
                     Route::prefix('properties')->group(function () {
