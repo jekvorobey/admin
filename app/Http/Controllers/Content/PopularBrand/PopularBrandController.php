@@ -11,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
 
@@ -20,6 +21,7 @@ class PopularBrandController extends Controller
      * Список всех популярных брендов
      * @param PopularBrandService $popularBrandService
      * @return mixed
+     * @throws CmsException|PimException
      */
     public function list(
         PopularBrandService $popularBrandService,
@@ -60,7 +62,7 @@ class PopularBrandController extends Controller
     }
 
     /**
-     * Добавить новый продуктовый ярлык
+     * Добавить новый популярный бренд
      * @param PopularBrandService $popularBrandService
      * @return JsonResponse
      * @throws CmsException
@@ -81,11 +83,10 @@ class PopularBrandController extends Controller
         return response()->json([
             'popular_brand' => $createdPopularBrand->toArray(),
         ], 201);
-
     }
 
     /**
-     * Редактировать продуктовый ярлык
+     * Редактировать популярный бренд
      * @param PopularBrandService $popularBrandService
      * @return Response|JsonResponse
      * @throws CmsException
@@ -106,13 +107,13 @@ class PopularBrandController extends Controller
         $popularBrandService->update($popularBrand);
 
         return response('', 204);
-
     }
 
     /**
-     * Удалить продуктовый ярлык
+     * Удалить популярный бренд
      * @param PopularBrandService $popularBrandService
      * @return Application|ResponseFactory|Response
+     * @throws CmsException
      */
     public function delete(PopularBrandService $popularBrandService)
     {
@@ -127,7 +128,7 @@ class PopularBrandController extends Controller
     }
 
     /**
-     * Изменить порядок продуктовых ярлыков
+     * Изменить порядок популярных брендов
      * @param PopularBrandService $popularBrandService
      * @return Response
      */
