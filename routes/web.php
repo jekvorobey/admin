@@ -12,6 +12,10 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
+    Route::prefix('search')->group(function() {
+        Route::get('products', 'SearchController@products')->name('search.products');
+    });
+
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::prefix('list')->group(function () {
             Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
@@ -393,16 +397,17 @@ Route::middleware('auth')->group(function () {
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
                         Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
-                            Route::put('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
+                            Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
                             Route::put('set-main', 'TabProductsController@setMain')->name('variantGroups.detail.products.setMain');
                             Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
                         });
                     });
 
                     Route::prefix('properties')->group(function () {
-                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
-                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
-                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                            Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        });
                     });
                 });
             });

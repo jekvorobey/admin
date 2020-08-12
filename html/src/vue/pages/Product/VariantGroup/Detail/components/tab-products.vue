@@ -2,6 +2,7 @@
     <div>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div>
+                <products-search :model="newProductId"></products-search>
                 <button class="btn btn-success" v-b-modal.modal-add-variant-group>
                     <fa-icon icon="plus"></fa-icon> Добавить товар
                 </button>
@@ -60,16 +61,19 @@
 <script>
     import Services from '../../../../../../scripts/services/services';
     import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+    import ProductsSearch from '../../../../../components/search/products-search.vue';
 
     export default {
         props: {
             model: {},
         },
         components: {
+            ProductsSearch,
             VDeleteButton,
         },
         data() {
             return {
+                newProductId: 0,
                 selectedProducts: [],
             }
         },
@@ -81,7 +85,7 @@
                 Services.showLoader();
                 Services.net().delete(this.getRoute('variantGroups.detail.products.delete'), {
                     ids: ids,
-                }).then(() => {
+                }).then((data) => {
                     this.variantGroup = data.variantGroup;
                     Services.msg("Удаление прошло успешно");
                 }).finally(() => {
