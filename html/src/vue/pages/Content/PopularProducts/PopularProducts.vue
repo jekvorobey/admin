@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <table class="table table-striped">
+        <table v-if="popularProducts.length > 0" class="table table-striped">
             <thead>
             <tr>
                 <td></td>
@@ -58,6 +58,7 @@
                     </tr>
                 </draggable>
         </table>
+        <div v-else>Популярные товары отсутствуют</div>
 
         <b-modal id="modal-create" title="Создание популярного товара" hide-footer>
             <div class="card">

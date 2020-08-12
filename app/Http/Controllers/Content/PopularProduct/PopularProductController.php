@@ -33,23 +33,27 @@ class PopularProductController extends Controller
                 ->addSort('weight')
         );
 
-        $productIds = $popularProducts->pluck('product_id')->all();
-        $products = $productService->products(
-            (new RestQuery())
-                ->addFields(ProductDto::entity(), 'id', 'name')
-                ->setFilter('id', $productIds)
-        )->keyBy('id');
+        if ($popularProducts->isNotEmpty()) {
+            $productIds = $popularProducts->pluck('product_id')->all();
+            $products = $productService->products(
+                (new RestQuery())
+                    ->addFields(ProductDto::entity(), 'id', 'name')
+                    ->setFilter('id', $productIds)
+            )->keyBy('id');
 
-        $this->title = 'Популярные товары';
-        return $this->render('Content/PopularProducts', [
-            'iPopularProducts' => $popularProducts->map(function (PopularProductDto $popularProduct) use ($products) {
+            $popularProducts = $popularProducts->map(function (PopularProductDto $popularProduct) use ($products) {
                 return [
                     'id' => $popularProduct->id,
                     'product_id' => $popularProduct->product_id,
                     'name' => $products[$popularProduct->product_id]->name,
                     'weight' => $popularProduct->weight,
                 ];
-            }),
+            });
+        }
+
+        $this->title = 'Популярные товары';
+        return $this->render('Content/PopularProducts', [
+            'iPopularProducts' => $popularProducts,
         ]);
     }
 
