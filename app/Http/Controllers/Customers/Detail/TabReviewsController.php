@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Http\JsonResponse;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PublicEventService\PublicEventService;
 use Pim\Services\ReviewService\ReviewService;
-use Illuminate\Http\JsonResponse;
 
 class TabReviewsController extends Controller
 {
@@ -108,7 +108,7 @@ class TabReviewsController extends Controller
                 ->map(function (FileDto $file) {
                     return [
                         'name' => $file->original_name,
-                        'url' => $file->absoluteUrl(),
+                        'url' => $file->url,
                     ];
                 });
         } else {
