@@ -99,7 +99,7 @@ class ProductGroupListController extends Controller
         return $productGroups->map(function(ProductGroupDto $productGroup) use ($photos) {
             /** @var FileDto $photo */
             $photo = $photos->get($productGroup['preview_photo_id']);
-            $productGroup['photo'] = $photo ? $photo->url : null;
+            $productGroup['photo'] = $photo ? $photo->absoluteUrl() : null;
             return $productGroup;
         });
     }
