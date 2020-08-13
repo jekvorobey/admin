@@ -161,6 +161,10 @@ class Menu
                         'title' => 'Популярные бренды',
                         'route' => route('popularBrands.list'),
                     ],
+                    [
+                        'title' => 'Популярные товары',
+                        'route' => route('popularProducts.list'),
+                    ],
                 ]
             ],
             [

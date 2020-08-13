@@ -511,6 +511,13 @@ Route::middleware('auth')->group(function () {
             Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
         });
 
+        Route::prefix('popular-products')->namespace('PopularProduct')->group(function () {
+            Route::get('', 'PopularProductController@list')->name('popularProducts.list');
+            Route::post('create', 'PopularProductController@create')->name('popularProducts.create');
+            Route::put('reorder', 'PopularProductController@reorder')->name('popularProducts.reorder');
+            Route::delete('delete', 'PopularProductController@delete')->name('popularProducts.delete');
+        });
+
         Route::prefix('categories')->namespace('Category')->group(function () {
             Route::get('', 'FrequentCategoryController@index')->name('frequentCategories.list');
             Route::put('', 'FrequentCategoryController@editCategories')->name('frequentCategories.edit');
