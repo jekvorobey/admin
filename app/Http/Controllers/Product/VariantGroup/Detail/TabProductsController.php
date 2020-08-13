@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Product\VariantGroup\Detail;
 
 use App\Http\Controllers\Product\VariantGroup\VariantGroupDetailController;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Pim\Dto\Product\VariantGroupDto;
 
 /**
@@ -14,13 +15,17 @@ class TabProductsController extends VariantGroupDetailController
 {
     /**
      * @param  int  $variantGroupId
-     * @param  int  $productId
+     * @param  Request  $request
      * @return JsonResponse
      * @throws \Exception
      */
-    public function add(int $variantGroupId, int $productId): JsonResponse
+    public function add(int $variantGroupId, Request $request): JsonResponse
     {
-        $this->variantGroupService->addProduct($variantGroupId, $productId);
+        $data = $this->validate($request, [
+            'productIds' => ['array', 'required'],
+            'productIds.*' => ['integer'],
+        ]);
+        $this->variantGroupService->addProducts($variantGroupId, $data['productIds']);
 
         return response()->json([
             'variantGroup' => $this->getVariantGroup($variantGroupId),

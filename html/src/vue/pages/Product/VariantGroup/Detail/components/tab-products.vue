@@ -1,15 +1,17 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
-            <div>
-                <products-search :model="newProductId"></products-search>
+        <b-row class="d-flex justify-content-between mt-3 mb-3">
+            <b-col class="col-md-3">
+                <products-search :model.sync="newProducts"></products-search>
+            </b-col>
+            <b-col>
                 <button class="btn btn-success" v-b-modal.modal-add-variant-group>
                     <fa-icon icon="plus"></fa-icon> Добавить товар
                 </button>
                 <v-delete-button @delete="deleteProducts(selectedProducts)" btn-class="btn-danger"
                         v-if="selectedProducts.length > 0" class="ml-3"/>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
         <b-table-simple hover small caption-top responsive>
             <b-thead>
                 <b-tr>
@@ -73,7 +75,7 @@
         },
         data() {
             return {
-                newProductId: 0,
+                newProducts: {},
                 selectedProducts: [],
             }
         },

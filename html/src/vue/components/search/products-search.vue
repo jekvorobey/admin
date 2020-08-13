@@ -1,61 +1,123 @@
 <template>
-    <v-select2 v-model="productId"
-            class="form-control"
-            :multiple="false"
-            :selectOnClose="true"
-            @input="input"
-            @change="change"
-            width="100%">
-        <option v-for="product in selectedProducts" :value="product.id">
-            {{ product.vendor_code }} {{ product.name }}
-        </option>
-    </v-select2>
+    <div class="autocomplete">
+        <v-input
+                type="text"
+                v-model="query"
+                @focus="onFocus"
+                @input="onChange"
+        ></v-input>
+        <ul
+                v-show="isOpen && query"
+                class="autocomplete-results"
+        >
+            <li
+                    v-for="(product, i) in products"
+                    :key="i"
+                    @click="setResult(product)"
+                    class="autocomplete-result with-small"
+            >
+                <small>{{ product.vendorCode }}</small> {{ product.name }}
+            </li>
+            <li v-if="!products.length" class="autocomplete-result">Ничего не найдено</li>
+        </ul>
+        <a :href="getRoute('products.detail', {id: product.id})" target="_blank" v-for="product in foundedProducts">
+            {{ product.vendorCode }} {{ product.name }}
+        </a>
+    </div>
 </template>
 
 <script>
-    import VSelect2 from '../controls/VSelect2/v-select2.vue';
     import Services from '../../../scripts/services/services';
+    import VInput from '../controls/VInput/VInput.vue';
 
     export default {
         name: 'products-search',
-        components: {VSelect2},
+        components: {VInput},
         props: {
             model: {},
         },
         data() {
             return {
+                query: '',
                 products: [],
+                isOpen: false,
             }
         },
         methods: {
-            search(query) {
-                Services.showLoader();
+            setResult(product) {
+                this.foundedProducts[product.id] = product;
+                this.isOpen = false;
+            },
+            onFocus() {
+                if (this.products.length) {
+                    this.isOpen = true;
+                }
+            },
+            onChange() {
+                // Let's warn the parent that a change was made
+                this.$emit('input', this.query);
+                if (this.query.length < 3) {
+                    return;
+                }
+
+                setTimeout(() => {
+                    this.search();
+                    this.isOpen = true;
+                }, 1500);
+            },
+            search() {
                 Services.net().get(this.getRoute('search.products'), {
-                    query: query,
+                    query: this.query,
                 }).then((data) => {
                     this.products = data.products;
-                }).finally(() => {
-                    Services.hideLoader();
                 });
-            },
-            input(data) {
-                console.log('input', data);
-            },
-            change(data) {
-                console.log('change', data);
             },
         },
         computed: {
-            productId: {
+            foundedProducts: {
                 get() {return this.model},
                 set(value) {this.$emit('update:model', value)},
             },
-            selectedProducts() {
-                return Object.values(this.products).map(product => ({
-                    value: product.id,
-                    text: [product.vendor_code, product.name].join(' '),
-                }));
-            },
+        },
+        watch: {
+            query(value) {
+                if (!value) {
+                    this.products = [];
+                }
+            }
         }
     };
 </script>
+
+<style>
+    .autocomplete {
+        position: relative;
+    }
+
+    .autocomplete-results {
+        padding: 0;
+        margin-top: -1rem;
+        border: 1px solid #eeeeee;
+        min-height: 1px;
+        max-height: 240px;
+        overflow: auto;
+        position: absolute;
+        z-index: 9999;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+    }
+
+    .autocomplete-result {
+        border-bottom: 1px solid #d4d4d4;
+        list-style: none;
+        text-align: left;
+        padding: 4px 2px;
+        cursor: pointer;
+    }
+
+    .autocomplete-result:hover {
+        background-color: #337ab7;
+        color: white;
+    }
+</style>
