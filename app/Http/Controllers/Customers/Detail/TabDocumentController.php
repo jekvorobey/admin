@@ -153,7 +153,7 @@ class TabDocumentController extends Controller
         /** @var FileDto $file */
         $file = $fileService->getFiles([$document->file_id])->keyBy('id')->get($document->file_id);
         // Проверка на отсутствие прикрепленного к акту файла //
-        !$file ? $attachment = null : $attachment = $file->url;
+        !$file ? $attachment = null : $attachment = $file->absoluteUrl();
 
         $arrayData = [
             "u_first_name" => $user->first_name,

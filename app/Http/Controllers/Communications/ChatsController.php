@@ -269,7 +269,7 @@ class ChatsController extends Controller
                 ->map(function (FileDto $file) {
                     return [
                         'name' => $file->original_name,
-                        'url' => $file->originalUrl(),
+                        'url' => $file->absoluteUrl(),
                     ];
                 });
         } else {

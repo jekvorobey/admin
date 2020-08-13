@@ -54,7 +54,7 @@ class TabMainController extends Controller
 
                 return [
                     'id' => $certificate->id,
-                    'url' => $file->url,
+                    'url' => $file->absoluteUrl(),
                     'name' => $file->original_name,
                 ];
             })->filter(),

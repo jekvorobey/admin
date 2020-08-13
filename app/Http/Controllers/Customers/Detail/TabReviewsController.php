@@ -108,7 +108,7 @@ class TabReviewsController extends Controller
                 ->map(function (FileDto $file) {
                     return [
                         'name' => $file->original_name,
-                        'url' => $file->url,
+                        'url' => $file->absoluteUrl(),
                     ];
                 });
         } else {
