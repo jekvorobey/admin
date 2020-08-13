@@ -1,7 +1,7 @@
 <template>
     <div class="pt-3">
         <div class="row">
-            <div v-if="children.length > 1" @click="toggle" class="col-sm-6">
+            <div v-if="children.length > 0" @click="toggle" class="col-sm-6">
                 <span :style="indent">
                     {{ category.name }}
                     <fa-icon :icon="opened ? 'angle-up' : 'angle-down'"></fa-icon>
@@ -12,54 +12,38 @@
                     {{ category.name }}
                 </span>
             </div>
-<!--            <div class="col-sm-4 d-flex justify-content-center">-->
             <div class="col-sm-4">
-<!--                <input type="checkbox" class="mt-1" :disabled="checkboxDisabled" v-model="item.frequent">-->
                 {{ category.code }}
             </div>
-            <div class="col-sm-1 d-flex justify-content-start">
-<!--                <v-input v-model="item.position"-->
-<!--                         type="number"-->
-<!--                         class="w-50 mr-2 mb-2"-->
-<!--                         :error="errorPositionField()"-->
-<!--                />-->
-                Да
-            </div>
+            <!--<div class="col-sm-1 d-flex justify-content-start">-->
             <div class="col-sm-1">
-                <button class="btn btn-warning float-right" @click="editBrand(brand)">
+                <!--{{ category.active ? 'Да' : 'Нет' }}-->
+                <span class="badge" :class="getBadgeClass(category.active)">
+                    {{ category.active ? 'Да' : 'Нет' }}
+                </span>
+            </div>
+            <div class="col-sm-1 mb-2 d-flex justify-items-center">
+                <button class="btn btn-warning float-right" @click="editCategory">
                     <fa-icon icon="edit"></fa-icon>
                 </button>
             </div>
         </div>
-        <frequent-category-tree-item v-show="opened"
-                                     v-for="(child, index) in children"
-                                     :key="child.id"
-                                     :category="child"
-                                     :collection="collection"
-                                     :depth="depth + 1"
-                                     :selectable="selectable"
-                                     @onEdit="emit">
-        </frequent-category-tree-item>
+        <category-tree-item v-show="opened"
+                            v-for="(child, index) in children"
+                            :key="child.id"
+                            :category="child"
+                            :collection="collection"
+                            :depth="depth + 1"
+                            @onEdit="emit">
+        </category-tree-item>
     </div>
 
 
 </template>
 
 <script>
-    import Services from "../../../../../scripts/services/services";
-    import VInput from '../../../../components/controls/VInput/VInput.vue';
-    import FileInput from "../../../../components/controls/FileInput/FileInput.vue";
-    import VDeleteButton from "../../../../components/controls/VDeleteButton/VDeleteButton.vue";
-    import { validationMixin } from 'vuelidate';
-    import { required, requiredIf, integer } from 'vuelidate/lib/validators';
     export default {
-        name: "frequent-category-tree-item",
-        components: {
-            VInput,
-            FileInput,
-            VDeleteButton,
-        },
-        mixins: [validationMixin],
+        name: "category-tree-item",
         props: {
             category: Object,
             collection: Array,
@@ -100,25 +84,13 @@
             emit(value) {
                 this.$emit('onEdit', value);
             },
-            errorPositionField() {
-                if (this.$v.item.position.$invalid) {
-                    return "Укажите любое значение";
-                }
+            editCategory() {
+                this.emit(this.category);
             },
-            errorIconField() {
-                if (this.$v.item.image.$invalid) {
-                    return "Прикрепите иконку в формате svg";
-                }
-            },
-            onUploadImage(data) {
-                this.item.image = {
-                    'id': data.id,
-                    'url': data.url
-                };
-            },
-            onDeleteImage() {
-                this.item.image = null;
-            },
+            getBadgeClass(active) {
+                if (active) return 'badge-success';
+                return 'badge-danger';
+            }
         },
         computed: {
             indent() {

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\Request;
 use Pim\Dto\CategoryDto;
 use Pim\Services\CategoryService\CategoryService;
 
@@ -20,30 +20,49 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function create(Request $request, CategoryService $categoryService)
+    {
+        $data = $request->validate([
+            'name' => 'string',
+            'parent_id' => 'integer|nullable',
+            'active' => 'boolean'
+        ]);
+
+        $id = $categoryService->createCategory(new CategoryDto($data));
+        return response()->json($id);
+    }
+
+    public function update(Request $request, CategoryService $categoryService)
+    {
+        $data = $request->validate([
+            'id' => 'integer|required',
+            'name' => 'string',
+            'parent_id' => 'integer|nullable',
+            'active' => 'boolean'
+        ]);
+
+        $categoryService->updateCategory($data['id'], new CategoryDto($data));
+    }
+
+    /**
+     * @param CategoryService $categoryService
+     * @return Collection|CategoryDto[]
+     * @throws \Pim\Core\PimException
+     */
     protected function loadCategories(CategoryService $categoryService)
     {
         $categories = $categoryService->categories((new RestQuery())
-            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id'));
-
-//        $frequentCategories = $frequentCategoryService->list((new RestQuery())
-//            ->addFields(FrequentCategoryDto::entity(), 'category_id', 'frequent', 'position', 'file_id')
-//        )->keyBy('category_id');
-//
-//        $frequentCategoriesWithImages = $this->injectFiles($fileService, $frequentCategories);
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'));
 
         return $categories->map(function (CategoryDto $category) {
-            $id = $category->id;
             return [
                 'id' => $category->id,
                 'name' => $category->name,
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
-//                'frequent' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->frequent : false,
-//                'position' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->position : 0,
-//                'image' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)['file'] : null,
+                'active' => $category->active,
             ];
         });
     }
-
 
 }
