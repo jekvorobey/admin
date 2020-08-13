@@ -39,6 +39,7 @@ import {
     faQuestionCircle,
     faRubleSign,
     faSave,
+    faSearch,
     faStop,
     faTimes,
     faTrashAlt,
@@ -82,3 +83,4 @@ library.add(faUnlink);
 library.add(faExclamation);
 library.add(faFileInvoice);
 library.add(faBarcode);
+library.add(faSearch);

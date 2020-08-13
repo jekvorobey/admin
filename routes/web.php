@@ -366,6 +366,16 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
+        Route::prefix('properties')->group(function () {
+            Route::get('', 'PropertiesController@list')->name('products.properties.list');
+            Route::get('create', 'PropertiesController@create')->name('products.properties.create');
+            Route::put('update', 'PropertiesController@update')->name('products.properties.update');
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'PropertiesController@detail')->name('products.properties.detail');
+                Route::delete('', 'PropertiesController@delete')->name('products.properties.delete');
+            });
+        });
+
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');

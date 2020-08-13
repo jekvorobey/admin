@@ -35,6 +35,10 @@ class Menu
                                 'title' => 'Категории',
                                 'route' => route('categories.list'),
                             ],
+                            [
+                                'title' => 'Товарные атрибуты',
+                                'route' => route('products.properties.list'),
+                            ],
                         ]
                     ],
 //                    [
