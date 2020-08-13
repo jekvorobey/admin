@@ -211,12 +211,6 @@ class ProductGroupDetailController extends Controller
     {
         return $fileService
             ->getFiles($ids)
-            ->transform(function ($file) {
-                /** @var FileDto $file */
-                $file['url'] = $file->absoluteUrl();
-
-                return $file;
-            })
             ->keyBy('id');
     }
 }

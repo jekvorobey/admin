@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Customers\Detail;
 
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Greensight\CommonMsa\Dto\FileDto;
-use Greensight\CommonMsa\Services\FileService\FileService;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerDocumentDto;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Message\Dto\Mail\SendReferralDocumentMailDto;
 use Greensight\Message\Services\MailService;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -55,7 +55,7 @@ class TabDocumentController extends Controller
                     'date' => $document->updated_at,
                     'amount_reward' => $document->amount_reward,
                     'statusId' => $document->status,
-                    'url' => $file->absoluteUrl(),
+                    'url' => $file->url,
                     'name' => $file->original_name,
                 ];
             })->filter(),
@@ -114,7 +114,7 @@ class TabDocumentController extends Controller
                     $document->updated_at,
                     $document->amount_reward,
                     $document->statusName($document->status),
-                    $file->absoluteUrl(),
+                    $file->url,
                 ], null));
 
         }
@@ -153,7 +153,7 @@ class TabDocumentController extends Controller
         /** @var FileDto $file */
         $file = $fileService->getFiles([$document->file_id])->keyBy('id')->get($document->file_id);
         // Проверка на отсутствие прикрепленного к акту файла //
-        !$file ? $attachment = null : $attachment = $file->absoluteUrl();
+        !$file ? $attachment = null : $attachment = $file->url;
 
         $arrayData = [
             "u_first_name" => $user->first_name,

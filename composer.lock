@@ -601,12 +601,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "56e1c318207a8ad668928b0f5b6af3e501084e7c"
+                "reference": "605aba04824835e527f1459806aad93bb66251d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=56e1c318207a8ad668928b0f5b6af3e501084e7c",
-                "reference": "56e1c318207a8ad668928b0f5b6af3e501084e7c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=605aba04824835e527f1459806aad93bb66251d0",
+                "reference": "605aba04824835e527f1459806aad93bb66251d0",
                 "shasum": ""
             },
             "require": {
@@ -650,7 +650,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2020-08-12T12:05:37+00:00"
+            "time": "2020-08-13T07:54:04+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
