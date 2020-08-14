@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="category-edit-modal" hide-footer ref="modal" size="lg" @hidden="resetFields()">
+    <b-modal id="category-edit-modal" hide-footer ref="modal" size="xl" @hidden="resetFields()">
         <div slot="modal-title">
             <strong v-if="mode === 'create'">Создать новую категорию</strong>
             <strong v-else-if="mode === 'edit'">Редактировать категорию</strong>
@@ -7,10 +7,10 @@
         <div class="card">
             <div class="card-body">
                 <b-row class="mb-2">
-                    <b-col cols="4">
+                    <b-col cols="3">
                         <label for="category-name">Название категории</label>
                     </b-col>
-                    <b-col cols="8">
+                    <b-col cols="9">
                         <v-input id="category-name"
                                v-model="$v.categoryToEdit.name.$model"
                                class="mb-2"
@@ -32,10 +32,10 @@
                     <!--</b-col>-->
                 <!--</b-row>-->
                 <b-row class="mb-2">
-                    <b-col cols="4">
+                    <b-col cols="3">
                         <label for="category-parent">Родительская категория</label>
                     </b-col>
-                    <b-col cols="8">
+                    <b-col cols="9">
                         <v-select
                                 id="category-parent"
                                 v-model="categoryToEdit.parent_id"
@@ -44,13 +44,46 @@
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
-                    <b-col cols="4">
+                    <b-col cols="3">
                         <label for="category-active">Активна</label>
                     </b-col>
-                    <b-col cols="8">
+                    <b-col cols="9">
                         <input id="category-active"
                                type="checkbox"
                                v-model="categoryToEdit.active" :disabled="canSetActive"/>
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="3">
+                        <label for="category-props">Доп. свойства</label>
+                        <button @click="addField()"
+                                class="btn btn-outline-info float-right h-25 ml-3">
+                            <fa-icon icon="plus"></fa-icon>
+                        </button>
+                    </b-col>
+                    <b-col cols="9">
+                        <table v-if="category.props.length > 0" class="table-bordered">
+                            <thead>
+                            <tr class="d-flex">
+                                <th class="col-sm-3">Название</th>
+                                <th class="col-sm-3">Отображаемое название</th>
+                                <th class="col-sm-2">Тип</th>
+                                <th class="col-sm-2">Множественность</th>
+                                <!--<th class="col-sm-1">Цвет</th>-->
+                                <th class="col-sm-2">Показывать в фильтре</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="prop in category.props" class="d-flex">
+                                <td class="col-sm-3">{{ prop.name }}</td>
+                                <td class="col-sm-3">{{ prop.display_name }}</td>
+                                <td class="col-sm-2">{{ propertyTypes[prop.type] }}</td>
+                                <td class="col-sm-2">{{ prop.is_multiple ? 'Да' : 'Нет' }}</td>
+                                <td class="col-sm-2">{{ prop.is_filterable ? 'Да' : 'Нет'}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <span v-else id="category-props">Нет</span>
                     </b-col>
                 </b-row>
             </div>
@@ -84,12 +117,7 @@
         active: false,
     };
 
-    const defaultOptions = [
-        {
-            value: null,
-            text: 'Нет'
-        }
-    ];
+    const defaultOptions = [{ value: null, text: 'Нет' }];
 
     const categoryCodeValidator = helpers.regex('code', /^[a-z\d_]*$/);
 
@@ -108,6 +136,8 @@
             return {
                 mode: 'create',
                 categoryToEdit: newCategoryTemplate,
+                addedProperties: [],
+                deletedProperties: [],
             }
         },
         validations() {
@@ -125,19 +155,10 @@
         },
         methods: {
             save() {
-
-                // console.log(this.$v);
-                // console.log(this.availableParents);
-                // console.log(this.collection);
-                // console.log(this.category);
-                // console.log(this.categoryToEdit);
-
-
                 this.$v.$touch();
                 if (this.$v.$invalid) {
                     return;
                 }
-                // console.log(this.categoryToEdit);
 
                 let data = {
                     'name': this.categoryToEdit.name,
@@ -229,49 +250,6 @@
             codeTooltip() {
                 return 'Оставьте поле пустым, если хотите, чтобы код был сгенерирован автоматически';
             },
-            // availableStores() {
-            //     let chosen = (this.newOffer.stocks || []).map((value) => {
-            //         return value.store_id;
-            //     });
-            //     return Object.values(this.stocks).filter((value) => {
-            //         return !chosen.includes(value.id);
-            //     }).map((value) => {
-            //         return {value: parseInt(value.id), text: value.name};
-            //     });
-            // },
-            // countedQty() {
-            //     if (this.loading) return null;
-            //
-            //     let total = this.newOffer.stocks.reduce((total, stock) => {
-            //         return total + (parseInt(stock.qty) || 0);
-            //     }, 0);
-            //     if (!total) {
-            //         this.newOffer.status = '';
-            //     }
-            //     return total;
-            // },
-            // modalStatuses() {
-            //     let saleStatuses;
-            //     switch (this.mode) {
-            //         case 'create':
-            //             saleStatuses = this.offerCreateSaleStatuses;
-            //             break;
-            //         case 'edit':
-            //             saleStatuses = this.offerEditSaleStatuses;
-            //             break;
-            //     }
-            //     return Object.values(saleStatuses).map((val) => {
-            //         return {value: parseInt(val.id), text: val.name};
-            //     });
-            // },
-            // displayDateSelect() {
-            //     this.$v.sale_at.$reset();
-            //     return this.newOffer.status
-            //         && this.offerCountdownSaleStatuses.includes(this.newOffer.status);
-            // },
-            // stocksTooltip() {
-            //     return 'Добавьте нужный склад и введите количество имеющегося на нём товара'
-            // }
         },
         watch: {
             'category': {

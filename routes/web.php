@@ -156,7 +156,6 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('content')->group(function () {
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
-            Route::get('xy', 'ContentClaimController@xyeta')->name('contentClaims.xy');
             Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');

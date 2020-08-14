@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\PropertyDto;
 use Pim\Services\CategoryService\CategoryService;
 
 class CategoryController extends Controller
@@ -14,6 +15,7 @@ class CategoryController extends Controller
         CategoryService $categoryService
     ) {
         $this->title = 'Категории';
+        $this->loadPropertyTypes = true;
 
         return $this->render('Product/CategoryList', [
             'categories' =>  $this->loadCategories($categoryService),
@@ -25,10 +27,19 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'string',
             'parent_id' => 'integer|nullable',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'props' => 'array',
         ]);
 
-        $id = $categoryService->createCategory(new CategoryDto($data));
+        $categoryData = [
+            'name' => $data['name'],
+            'parent_id' => $data['parent_id'],
+            'active' => $data['active']
+        ];
+        $id = $categoryService->createCategory(new CategoryDto($categoryData));
+
+        $this->setProperties($id, $data['props'], $categoryService);
+
         return response()->json($id);
     }
 
@@ -38,10 +49,16 @@ class CategoryController extends Controller
             'id' => 'integer|required',
             'name' => 'string',
             'parent_id' => 'integer|nullable',
-            'active' => 'boolean'
+            'active' => 'boolean',
+            'prop' => 'array',
         ]);
 
         $categoryService->updateCategory($data['id'], new CategoryDto($data));
+    }
+
+    protected function setProperties(int $id, Array $props, CategoryService $categoryService)
+    {
+
     }
 
     /**
@@ -52,7 +69,10 @@ class CategoryController extends Controller
     protected function loadCategories(CategoryService $categoryService)
     {
         $categories = $categoryService->categories((new RestQuery())
+            ->include('properties')
             ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'));
+
+//        dd($categories);
 
         return $categories->map(function (CategoryDto $category) {
             return [
@@ -61,6 +81,7 @@ class CategoryController extends Controller
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
                 'active' => $category->active,
+                'props' => $category->properties->all(),
             ];
         });
     }
