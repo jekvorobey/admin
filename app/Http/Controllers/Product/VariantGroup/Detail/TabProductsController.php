@@ -34,15 +34,17 @@ class TabProductsController extends VariantGroupDetailController
 
     /**
      * @param  int  $variantGroupId
-     * @param  int  $productId
+     * @param  Request  $request
      * @return JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws \Exception
      */
-    public function setMain(int $variantGroupId, int $productId): JsonResponse
+    public function delete(int $variantGroupId, Request $request): JsonResponse
     {
-        $variantGroupDto = new VariantGroupDto();
-        $variantGroupDto->main_product_id = $productId;
-        $this->variantGroupService->updateVariantGroup($variantGroupId, $variantGroupDto);
+        $data = $this->validate($request, [
+            'productIds' => ['array', 'required'],
+            'productIds.*' => ['integer'],
+        ]);
+        $this->variantGroupService->deleteProduct($variantGroupId, $data['productIds']);
 
         return response()->json([
             'variantGroup' => $this->getVariantGroup($variantGroupId),
@@ -53,11 +55,13 @@ class TabProductsController extends VariantGroupDetailController
      * @param  int  $variantGroupId
      * @param  int  $productId
      * @return JsonResponse
-     * @throws \Exception
+     * @throws \Pim\Core\PimException
      */
-    public function delete(int $variantGroupId, int $productId): JsonResponse
+    public function setMain(int $variantGroupId, int $productId): JsonResponse
     {
-        $this->variantGroupService->deleteProduct($variantGroupId, $productId);
+        $variantGroupDto = new VariantGroupDto();
+        $variantGroupDto->main_product_id = $productId;
+        $this->variantGroupService->updateVariantGroup($variantGroupId, $variantGroupDto);
 
         return response()->json([
             'variantGroup' => $this->getVariantGroup($variantGroupId),

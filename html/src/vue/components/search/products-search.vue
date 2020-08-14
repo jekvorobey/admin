@@ -20,9 +20,12 @@
             </li>
             <li v-if="!products.length" class="autocomplete-result">Ничего не найдено</li>
         </ul>
-        <a :href="getRoute('products.detail', {id: product.id})" target="_blank" v-for="product in foundedProducts">
-            {{ product.vendorCode }} {{ product.name }}
-        </a>
+        <p v-for="product in foundedProducts">
+            <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
+                {{ product.vendorCode }} {{ product.name }}
+            </a>
+            <button type="button" @click="deleteProduct(product.id)" class="btn"><fa-icon icon="trash-alt"/></button>
+        </p>
     </div>
 </template>
 
@@ -60,18 +63,19 @@
                     return;
                 }
 
-                setTimeout(() => {
-                    this.search();
-                    this.isOpen = true;
-                }, 1500);
+                this.search();
             },
             search() {
                 Services.net().get(this.getRoute('search.products'), {
                     query: this.query,
                 }).then((data) => {
+                    this.isOpen = true;
                     this.products = data.products;
                 });
             },
+            deleteProduct(id) {
+                this.$delete(this.foundedProducts, id);
+            }
         },
         computed: {
             foundedProducts: {

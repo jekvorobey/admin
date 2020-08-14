@@ -33,6 +33,7 @@ class SearchController extends Controller
         $productSuggestQuery->query = $data['query'];
         $productSuggestQuery->limit = 1;
         $productSuggestQuery->withProducts = true;
+        $productSuggestQuery->showInactive = true;
         $productSuggestQuery->productsLimit = $data['limit'] ?? 10;
         $productSuggestQuery->role = UserDto::SHOWCASE__GUEST;
         $productSuggestQuery->segment = 1;
