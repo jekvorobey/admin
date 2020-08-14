@@ -154,8 +154,8 @@ class ProductListController extends Controller
         ]);
 
         $productIds = $data['product_ids'];
-        $data = isset($data['badges']) ? $data['badges'] : null;
-        $productService->updateBadges($productIds, $data);
+        $badges = $data['badges'] ?? null;
+        $productService->updateBadges($productIds, $badges);
 
         return response('', 204);
     }

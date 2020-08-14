@@ -9,7 +9,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Validation\Rule;
 
 class ProductBadgesController extends Controller
 {
@@ -25,8 +24,7 @@ class ProductBadgesController extends Controller
         $this->title = 'Справочник товарных шильдиков';
 
         return $this->render('Content/ProductBadges', [
-            'iBadges' => $badges,
-            'iBadgesTypes' => ProductBadgeDto::badgeTypes()
+            'iBadges' => $badges
         ]);
     }
 
@@ -38,15 +36,11 @@ class ProductBadgesController extends Controller
     public function add(ContentBadgesService $badgesService)
     {
         $data = $this->validate(request(), [
-            'text' => 'required|string',
-            'type' => ['required', 'integer', Rule::in([
-                ProductBadgeDto::TYPE_LABEL,
-                ProductBadgeDto::TYPE_DISCOUNT,
-                ProductBadgeDto::TYPE_OTHER
-            ])],
+            'text' => 'required|string'
         ]);
 
-        $badgeDto = $this->fulfillDto($data);
+        $badgeDto = new ProductBadgeDto();
+        $badgeDto->text = $data['text'];
 
         $badgesService->createProductBadge($badgeDto);
 
@@ -68,14 +62,10 @@ class ProductBadgesController extends Controller
         $data = $this->validate(request(), [
             'id' => 'required|integer',
             'text' => 'required|string',
-            'type' => ['required', 'integer', Rule::in([
-                ProductBadgeDto::TYPE_LABEL,
-                ProductBadgeDto::TYPE_DISCOUNT,
-                ProductBadgeDto::TYPE_OTHER
-            ])],
         ]);
 
-        $badgeDto = $this->fulfillDto($data);
+        $badgeDto = new ProductBadgeDto();
+        $badgeDto->text = $data['text'];
 
         $badgesService->updateProductBadge($data['id'], $badgeDto);
 
@@ -117,19 +107,5 @@ class ProductBadgesController extends Controller
         $badgesService->deleteProductBadge($data['id']);
 
         return response('', 204);
-    }
-
-    /**
-     * Вспомогательная функция, заполняющая Dto полями из Request
-     * @param array $data
-     * @return ProductBadgeDto
-     */
-    protected function fulfillDto(array $data)
-    {
-        $contactDto = new ProductBadgeDto();
-        $contactDto->text = $data['text'];
-        $contactDto->type = $data['type'];
-
-        return $contactDto;
     }
 }
