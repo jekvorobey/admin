@@ -9,6 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Pim\Services\ProductService\ProductService;
 
 class ProductBadgesController extends Controller
 {
@@ -94,16 +95,22 @@ class ProductBadgesController extends Controller
     }
 
     /**
-     * Удалить продуктовый ярлык
+     * Удалить продуктовый ярлык и его связи с товарами
      * @param ContentBadgesService $badgesService
+     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
-    public function remove(ContentBadgesService $badgesService)
-    {
+    public function remove(
+        ContentBadgesService $badgesService,
+        ProductService $productService
+    ) {
         $data = $this->validate(request(), [
             'id' => 'required|integer',
         ]);
 
+        // Сперва ярлык убирается со всех товаров //
+        $productService->forgetBadge($data['id']);
+        // Затем безопасно удаляется из Справочника ярлыков //
         $badgesService->deleteProductBadge($data['id']);
 
         return response('', 204);
