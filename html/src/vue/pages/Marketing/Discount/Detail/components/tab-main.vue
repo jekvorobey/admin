@@ -4,6 +4,8 @@
         :discounts="discounts"
         :conditions="discount.conditions"
         :iConditionTypes="iConditionTypes"
+        :iDeliveryMethods="iDeliveryMethods"
+        :iPaymentMethods="iPaymentMethods"
         :regions="discountRegions"
         :segments="segments"
         :roles="roles"
@@ -25,6 +27,8 @@
             model: Object,
             discounts: Array,
             iConditionTypes: Object,
+            iDeliveryMethods: Array,
+            iPaymentMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,

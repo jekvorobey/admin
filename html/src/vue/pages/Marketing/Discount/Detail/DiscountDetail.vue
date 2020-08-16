@@ -50,15 +50,17 @@
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'"
-                      :model.sync="discount"
-                      :discounts="discounts"
-                      :i-condition-types="iConditionTypes"
-                      :regions="regions"
-                      :roles="roles"
-                      :segments="segments"
-                      :brands="brands"
-                      :categories="categories"
-                      :i-districts="iDistricts"
+                              :model.sync="discount"
+                              :discounts="discounts"
+                              :i-condition-types="iConditionTypes"
+                              :iDeliveryMethods="iDeliveryMethods"
+                              :iPaymentMethods="iPaymentMethods"
+                              :regions="regions"
+                              :roles="roles"
+                              :segments="segments"
+                              :brands="brands"
+                              :categories="categories"
+                              :i-districts="iDistricts"
                     />
                     <tab-order v-else-if="key === 'order'"
                        :model.sync="discount"
@@ -92,6 +94,8 @@
             optionDiscountTypes: Object,
             discountStatuses: Object,
             iConditionTypes: Object,
+            iDeliveryMethods: Array,
+            iPaymentMethods: Array,
             merchants: Array,
             author: Object,
             iDistricts: Array,
