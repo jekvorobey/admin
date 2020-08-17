@@ -4,13 +4,10 @@ namespace App\Http\Controllers\Product\VariantGroup;
 
 
 use App\Http\Controllers\Controller;
-use Greensight\Marketing\Dto\Price\PriceOutDto;
-use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
-use Pim\Dto\Product\ProductApprovalStatus;
+use MerchantManagement\Dto\MerchantDto;
 use Pim\Dto\Product\VariantGroupDto;
 use Pim\Services\VariantGroupService\VariantGroupService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -46,7 +43,7 @@ class VariantGroupDetailController extends Controller
     public function detail(int $id)
     {
         $variantGroup = $this->getVariantGroup($id);
-        $this->title = 'Товарная группа "' . $variantGroup->name ? : 'Без названия' . '"';
+        $this->title = 'Товарная группа "' . ($variantGroup->name ? : 'Без названия') . '"';
 
         return $this->render('Product/VariantGroup/Detail', [
             'iVariantGroup' => $variantGroup,
@@ -61,56 +58,38 @@ class VariantGroupDetailController extends Controller
     protected function getVariantGroup(int $id): VariantGroupDto
     {
         $restQuery = $this->variantGroupService
-            ->newQuery()
-            ->include('products.category', 'products.currentOffer', 'products.mainImage', 'products.brand', 'properties', 'mainProduct');
+        ->newQuery()
+        ->addFields(
+            VariantGroupDto::entity(),
+            'id',
+            'name',
+            'main_product_id',
+            'merchant_id',
+            'products_count',
+            'properties_count',
+            'created_at',
+            'updated_at'
+        );
         $variantGroupDto = $this->variantGroupService->variantGroup($id, $restQuery);
         if (!$variantGroupDto) {
             throw new NotFoundHttpException();
         }
 
         $this->addVariantGroupCommonInfo($variantGroupDto);
-        $this->addVariantGroupProductInfo($variantGroupDto);
 
         return $variantGroupDto;
     }
 
     /**
      * @param  VariantGroupDto  $variantGroupDto
+     * @throws \Exception
      */
     protected function addVariantGroupCommonInfo(VariantGroupDto $variantGroupDto): void
     {
         $variantGroupDto->created_at = dateTime2str(new Carbon($variantGroupDto->created_at));
         $variantGroupDto->updated_at = dateTime2str(new Carbon($variantGroupDto->updated_at));
-    }
-
-    /**
-     * @param  VariantGroupDto  $variantGroupDto
-     */
-    protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
-    {
-        if ($variantGroupDto->products->isNotEmpty()) {
-            $offerIds = [];
-            foreach ($variantGroupDto->products as $productDto) {
-                $productDto->approval_status = ProductApprovalStatus::statusById($productDto->approval_status);
-                $offerIds[] = $productDto->currentOffer ? $productDto->currentOffer->id : null;
-            }
-            $offerIds = array_filter($offerIds);
-
-            if ($offerIds) {
-                $stocks = $this->stockService->qtyByOffers($offerIds);
-                $pricesIn = new PricesInDto();
-                foreach ($offerIds as $offerId) {
-                    $pricesIn->addOffer($offerId);
-                }
-                /** @var Collection|PriceOutDto[] $priceOutDtos */
-                $priceOutDtos = $this->priceService->prices($pricesIn)->keyBy('offer_id');
-
-                foreach ($variantGroupDto->products as $productDto) {
-                    $offerId = $productDto->currentOffer->id;
-                    $productDto['qty'] = $stocks[$offerId] ?? 0;
-                    $productDto['price'] = $priceOutDtos->has($offerId) ? $priceOutDtos[$offerId]->price : 0;
-                }
-            }
-        }
+        /** @var MerchantDto $merchant */
+        $merchant = $variantGroupDto->merchant_id ? $this->getMerchants([$variantGroupDto->merchant_id])->first() : null;
+        $variantGroupDto['merchant'] = $merchant;
     }
 }
