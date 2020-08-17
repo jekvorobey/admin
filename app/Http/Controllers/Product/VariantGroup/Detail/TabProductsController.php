@@ -3,9 +3,14 @@
 namespace App\Http\Controllers\Product\VariantGroup\Detail;
 
 use App\Http\Controllers\Product\VariantGroup\VariantGroupDetailController;
+use Greensight\Marketing\Dto\Price\PriceOutDto;
+use Greensight\Marketing\Dto\Price\PricesInDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\VariantGroupDto;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class TabProductsController
@@ -13,6 +18,76 @@ use Pim\Dto\Product\VariantGroupDto;
  */
 class TabProductsController extends VariantGroupDetailController
 {
+    /**
+     * @param  int  $variantGroupId
+     * @return JsonResponse
+     * @throws \Pim\Core\PimException
+     */
+    public function load(int $variantGroupId): JsonResponse
+    {
+        $restQuery = $this->variantGroupService
+            ->newQuery()
+            ->include(
+                'products.category',
+                'products.currentOffer',
+                'products.mainImage',
+                'products.brand',
+                'products.properties.property',
+                'products.properties.propertyDirectoryValue',
+                'properties'
+            );
+        $variantGroupDto = $this->variantGroupService->variantGroup($variantGroupId, $restQuery);
+        if (!$variantGroupDto) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->addVariantGroupProductInfo($variantGroupDto);
+
+        return response()->json([
+            'products' => $variantGroupDto->products
+        ]);
+    }
+
+    /**
+     * @param  VariantGroupDto  $variantGroupDto
+     */
+    protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
+    {
+        $gluedPropertiesIds = $variantGroupDto->properties->pluck('id');
+        if ($variantGroupDto->products->isNotEmpty()) {
+            $offerIds = [];
+            foreach ($variantGroupDto->products as $productDto) {
+                $productDto->approval_status = ProductApprovalStatus::statusById($productDto->approval_status);
+                $offerIds[] = $productDto->currentOffer ? $productDto->currentOffer->id : null;
+
+                $productGluedProperties = [];
+                foreach ($productDto->properties as $productPropertyValueDto) {
+                    if ($gluedPropertiesIds->contains($productPropertyValueDto->property_id)) {
+                        $productGluedProperties[] = $productPropertyValueDto;
+                    }
+                }
+                $productDto['gluedProperties'] = $productGluedProperties;
+            }
+            $offerIds = array_filter($offerIds);
+
+            if ($offerIds) {
+                $stocks = $this->stockService->qtyByOffers($offerIds);
+                $pricesIn = new PricesInDto();
+                foreach ($offerIds as $offerId) {
+                    $pricesIn->addOffer($offerId);
+                }
+                /** @var Collection|PriceOutDto[] $priceOutDtos */
+                $priceOutDtos = $this->priceService->prices($pricesIn)->keyBy('offer_id');
+
+                foreach ($variantGroupDto->products as $productDto) {
+                    $offerId = $productDto->currentOffer->id;
+                    $productDto['qty'] = $stocks[$offerId] ?? 0;
+                    $productDto['price'] = $priceOutDtos->has($offerId) ? $priceOutDtos[$offerId]->price : 0;
+                }
+            }
+        }
+    }
+
     /**
      * @param  int  $variantGroupId
      * @param  Request  $request
@@ -27,9 +102,7 @@ class TabProductsController extends VariantGroupDetailController
         ]);
         $this->variantGroupService->addProducts($variantGroupId, $data['productIds']);
 
-        return response()->json([
-            'variantGroup' => $this->getVariantGroup($variantGroupId),
-        ]);
+        return $this->load($variantGroupId);
     }
 
     /**
@@ -44,11 +117,9 @@ class TabProductsController extends VariantGroupDetailController
             'productIds' => ['array', 'required'],
             'productIds.*' => ['integer'],
         ]);
-        $this->variantGroupService->deleteProduct($variantGroupId, $data['productIds']);
+        $this->variantGroupService->deleteProducts($variantGroupId, $data['productIds']);
 
-        return response()->json([
-            'variantGroup' => $this->getVariantGroup($variantGroupId),
-        ]);
+        return $this->load($variantGroupId);
     }
 
     /**
@@ -63,8 +134,6 @@ class TabProductsController extends VariantGroupDetailController
         $variantGroupDto->main_product_id = $productId;
         $this->variantGroupService->updateVariantGroup($variantGroupId, $variantGroupDto);
 
-        return response()->json([
-            'variantGroup' => $this->getVariantGroup($variantGroupId),
-        ]);
+        return $this->load($variantGroupId);
     }
 }

@@ -31,6 +31,7 @@ import {
     faFileInvoice,
     faInfo,
     faLink,
+    faListUl,
     faPencilAlt,
     faPercent,
     faPercentage,
@@ -84,3 +85,4 @@ library.add(faExclamation);
 library.add(faFileInvoice);
 library.add(faBarcode);
 library.add(faSearch);
+library.add(faListUl);

@@ -30,7 +30,7 @@ class PopularProductController extends Controller
     ) {
         $popularProducts = $popularProductService->popularProducts(
             (new RestQuery())
-                ->addSort('weight')
+                ->addSort('weight', 'desc')
         );
 
         if ($popularProducts->isNotEmpty()) {

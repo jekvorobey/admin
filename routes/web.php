@@ -405,6 +405,7 @@ Route::middleware('auth')->group(function () {
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products.load');
                         Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
                         Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
                         Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
@@ -413,9 +414,10 @@ Route::middleware('auth')->group(function () {
                     });
 
                     Route::prefix('properties')->group(function () {
-                        Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties.load');
+                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
                         Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
-                            Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                            Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
                         });
                     });
                 });

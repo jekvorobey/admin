@@ -7,7 +7,6 @@
             <b-col>
                 <button
                         class="btn btn-success"
-                        v-b-modal.modal-add-variant-group
                         @click="addProducts"
                 >
                     <fa-icon icon="plus"></fa-icon> Добавить товар
@@ -23,10 +22,10 @@
             <b-thead>
                 <b-tr>
                     <b-th></b-th>
-                    <b-th>ID</b-th>
+                    <b-th>ID<br><small>Дата создания</small></b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название<br><small>Артикул</small></b-th>
-                    <b-th>Дата создания</b-th>
+                    <b-th class="with-small">Характеристика<br><small>Значение</small></b-th>
                     <b-th class="with-small">Категория<br><small>Бренд</small></b-th>
                     <b-th class="with-small">Количество<br><small>Вес 1 шт</small><br><small>ДxШxВ 1 шт</small></b-th>
                     <b-th>Цена</b-th>
@@ -35,12 +34,15 @@
                 </b-tr>
             </b-thead>
             <b-tbody>
-                <template v-if="variantGroup.products.length > 0">
-                    <tr v-for="product in variantGroup.products">
+                <template v-if="products.length > 0">
+                    <tr v-for="product in products">
                         <b-td>
                             <input type="checkbox" value="true" :value="product.id" v-model="selectedProductIds">
                         </b-td>
-                        <b-td>{{ product.id }}</b-td>
+                        <b-td>
+                            {{ product.id }}<br>
+                            <small>{{ product.created_at }}</small>
+                        </b-td>
                         <b-td><img :src="productPhoto(product)" class="preview" :alt="product.name" v-if="product.mainImage"></b-td>
                         <b-td class="with-small">
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
@@ -48,7 +50,14 @@
                             </a><br>
                             <small>{{ product.vendor_code }}</small>
                         </b-td>
-                        <b-td>{{ product.created_at }}</b-td>
+                        <b-td>
+                            <p v-for="property in product.gluedProperties">
+                                {{property.property.name}} (ID: {{property.property_id}})<br>
+                                <small>
+                                    {{property.propertyDirectoryValue.name}} (ID: {{property.propertyDirectoryValue.id}})
+                                </small>
+                            </p>
+                        </b-td>
                         <b-td class="with-small">
                             {{ product.category ? product.category.name : ''}}<br>
                             <small>{{ product.brand ? product.brand.name : ''}}</small>
@@ -82,6 +91,7 @@
         },
         data() {
             return {
+                products: [],
                 newProducts: {},
                 selectedProductIds: [],
             }
@@ -101,7 +111,7 @@
                 Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {
                     productIds: newProductIds,
                 }).then((data) => {
-                    this.variantGroup = data.variantGroup;
+                    this.products = data.products;
                     this.newProducts = {};
                     Services.msg("Добавление товара(ов) прошло успешно");
                 }, () => {
@@ -115,7 +125,7 @@
                 Services.net().delete(this.getRoute('variantGroups.detail.products.delete', {id: this.variantGroup.id}), {
                     productIds: productIds,
                 }).then((data) => {
-                    this.variantGroup = data.variantGroup;
+                    this.products = data.products;
                     Services.msg("Удаление товара(ов) прошло успешно");
                 }, () => {
                     Services.msg("Ошибка при удалении товара(ов)", "danger");
@@ -130,5 +140,13 @@
                 set(value) {this.$emit('update:model', value)},
             },
         },
+        created() {
+            Services.showLoader();
+            Services.net().get(this.getRoute('variantGroups.detail.products.load', {id: this.model.id})).then(data => {
+                this.products = data.products;
+            }).finally(() => {
+                Services.hideLoader();
+            });
+        }
     }
 </script>

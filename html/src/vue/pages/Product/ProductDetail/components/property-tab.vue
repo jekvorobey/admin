@@ -31,8 +31,7 @@
                 <ul v-if="product_badges.length > 0">
                     <li v-for="badge in product_badges">
                         <h5>
-                            <span class="badge"
-                                  :class="badgeClass(options.availableBadges[badge].type)">
+                            <span class="badge badge-dark">
                                 {{ options.availableBadges[badge].text }}
                             </span>
                         </h5>
@@ -155,14 +154,6 @@
             },
             openBadgesEditModal() {
                 this.$bvModal.show('productBadgesEdit');
-            },
-            badgeClass(type) {
-                switch (type) {
-                    case 1: return 'badge-dark';
-                    case 2: return 'badge-warning';
-                    case 3: return 'badge-secondary';
-                    default: return 'badge-light';
-                }
             },
             values(id) {
                 return this.propertyValues[id] || [];

@@ -33,16 +33,13 @@
             </div>
         <hr/>
             <div class="row mb-3">
-                <div class="col-1 pr-0">
+                <div class="col-2 pr-0">
                     <h5>№ П/п</h5>
                 </div>
-                <div class="col-4">
+                <div class="col-5">
                     <h5>Текст шильдика</h5>
                 </div>
-                <div class="col-3">
-                    <h5>Тип шильдика</h5>
-                </div>
-                <div class="col-4" style="text-align: center">
+                <div class="col-5" style="text-align: center">
                     <h5>Действия</h5>
                 </div>
             </div>
@@ -51,23 +48,17 @@
                        v-bind="dragOptions"
                        style="cursor: move">
             <div class="row mb-2" v-for="(badge, index) in badges">
-                <div class="col-1" style="text-align: center">
+                <div class="col-2">
                     <h5>{{ index+1 }}.</h5>
                 </div>
-                <div class="col-4">
+                <div class="col-5">
                     <h5>
                         <span class="badge badge-dark">
                             {{ badge.text }}
                         </span>
                     </h5>
                 </div>
-                <div class="col-3">
-                    <span class="badge"
-                          :class="typeClass(badge.type)">
-                        {{ badge_types[badge.type] || 'Другое' }}
-                    </span>
-                </div>
-                <div class="col-4">
+                <div class="col-5">
                     <div class="row">
                         <div class="col-6 pr-0" style="text-align: right">
                             <button @click="openBadgesEditModal(index)"
@@ -87,7 +78,6 @@
             </draggable>
 
         <modal-edit-form
-                :types="badge_types"
                 :editing-badge="badgeToEdit"
                 @saved="saveBadge"
                 modal-name="EditBadgeModal"/>
@@ -110,7 +100,6 @@
         mixins: [modalMixin],
         props: {
             iBadges: Array,
-            iBadgesTypes: Object,
             dragOptions: {
                 animation: 200,
                 sort: true,
@@ -119,7 +108,6 @@
         data() {
             return {
                 badges: this.iBadges,
-                badge_types: this.iBadgesTypes,
                 badgeToEdit: {},
                 itemsOrder: [],
                 isReordering: false
@@ -197,14 +185,6 @@
                     {} : Object.assign(this.badgeToEdit, this.badges[index]);
                 await this.$nextTick();
                 this.openModal('EditBadgeModal')
-            },
-            typeClass(typeId) {
-                switch (typeId) {
-                    case 1: return 'badge-warning';
-                    case 2: return 'badge-success';
-                    case 3: return 'badge-secondary';
-                    default: return 'badge-light';
-                }
             },
         },
         watch: {
