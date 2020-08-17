@@ -1,14 +1,24 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
-            <div>
-                <button class="btn btn-success" v-b-modal.modal-add-variant-group>
+        <b-row class="d-flex justify-content-between mt-3 mb-3">
+            <b-col class="col-md-3">
+                <products-search :model.sync="newProducts"></products-search>
+            </b-col>
+            <b-col>
+                <button
+                        class="btn btn-success"
+                        v-b-modal.modal-add-variant-group
+                        @click="addProducts"
+                >
                     <fa-icon icon="plus"></fa-icon> Добавить товар
                 </button>
-                <v-delete-button @delete="deleteProducts(selectedProducts)" btn-class="btn-danger"
-                        v-if="selectedProducts.length > 0" class="ml-3"/>
-            </div>
-        </div>
+                <v-delete-button
+                        @delete="deleteProducts(selectedProductIds)"
+                        btn-class="btn-danger"
+                        v-if="selectedProductIds.length > 0" class="ml-3"
+                />
+            </b-col>
+        </b-row>
         <b-table-simple hover small caption-top responsive>
             <b-thead>
                 <b-tr>
@@ -28,7 +38,7 @@
                 <template v-if="variantGroup.products.length > 0">
                     <tr v-for="product in variantGroup.products">
                         <b-td>
-                            <input type="checkbox" value="true" :value="product.id" v-model="selectedProducts">
+                            <input type="checkbox" value="true" :value="product.id" v-model="selectedProductIds">
                         </b-td>
                         <b-td>{{ product.id }}</b-td>
                         <b-td><img :src="productPhoto(product)" class="preview" :alt="product.name" v-if="product.mainImage"></b-td>
@@ -60,30 +70,55 @@
 <script>
     import Services from '../../../../../../scripts/services/services';
     import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+    import ProductsSearch from '../../../../../components/search/products-search.vue';
 
     export default {
         props: {
             model: {},
         },
         components: {
+            ProductsSearch,
             VDeleteButton,
         },
         data() {
             return {
-                selectedProducts: [],
+                newProducts: {},
+                selectedProductIds: [],
             }
         },
         methods: {
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
             },
-            deleteProducts(ids) {
+            addProducts() {
+                let newProductIds = Object.keys(this.newProducts);
+                if (!newProductIds.length) {
+                    Services.msg("Выберите товары", "danger");
+                    return;
+                }
+
                 Services.showLoader();
-                Services.net().delete(this.getRoute('variantGroups.detail.products.delete'), {
-                    ids: ids,
-                }).then(() => {
+                Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {
+                    productIds: newProductIds,
+                }).then((data) => {
                     this.variantGroup = data.variantGroup;
-                    Services.msg("Удаление прошло успешно");
+                    this.newProducts = {};
+                    Services.msg("Добавление товара(ов) прошло успешно");
+                }, () => {
+                    Services.msg("Ошибка при добавлении товара(ов) - возможно товар(ы) не имеет(ют) указанных характеристик для склейки", "danger");
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+            deleteProducts(productIds) {
+                Services.showLoader();
+                Services.net().delete(this.getRoute('variantGroups.detail.products.delete', {id: this.variantGroup.id}), {
+                    productIds: productIds,
+                }).then((data) => {
+                    this.variantGroup = data.variantGroup;
+                    Services.msg("Удаление товара(ов) прошло успешно");
+                }, () => {
+                    Services.msg("Ошибка при удалении товара(ов)", "danger");
                 }).finally(() => {
                     Services.hideLoader();
                 });
@@ -94,6 +129,6 @@
                 get() {return this.model},
                 set(value) {this.$emit('update:model', value)},
             },
-        }
+        },
     }
 </script>

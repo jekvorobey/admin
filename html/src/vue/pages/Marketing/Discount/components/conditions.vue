@@ -200,7 +200,7 @@
         <!-- На способ доставки -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_DELIVERY_METHOD">
             <v-select v-model="values.deliveryMethods"
-                      :options="deliveryMethodsOptions"
+                      :options="iDeliveryMethods"
                       :multiple="true"
                       :error="valuesErrors.deliveryMethods"
                       @change="initDeliveryMethodsError"
@@ -210,7 +210,7 @@
         <!-- На способ оплаты -->
         <div class="col-4" v-if="conditionType === CONDITION_TYPE_PAY_METHOD">
             <v-select v-model="values.paymentMethods"
-                      :options="paymentMethodsOptions"
+                      :options="iPaymentMethods"
                       :multiple="true"
                       :error="valuesErrors.paymentMethods"
                       @change="initPaymentMethodsError"
@@ -319,6 +319,8 @@
             discounts: Array,
             conditions: Array,
             iConditionTypes: Object,
+            iPaymentMethods: Array,
+            iDeliveryMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,
@@ -610,10 +612,10 @@
                 return this.optionName(id, this.discounts);
             },
             deliveryMethodName(id) {
-                return this.optionName(id, this.deliveryMethodsOptions);
+                return this.optionName(id, this.iDeliveryMethods);
             },
             paymentMethodName(id) {
-                return this.optionName(id, this.paymentMethodsOptions);
+                return this.optionName(id, this.iPaymentMethods);
             },
             regionName(id) {
                 return this.optionName(id, this.regions);
@@ -702,16 +704,6 @@
             },
         },
         computed: {
-            paymentMethodsOptions() {
-                return Object.values(this.paymentMethods).map((p) => {
-                    return {'value': p.id, 'text': p.name};
-                })
-            },
-            deliveryMethodsOptions() {
-                return Object.values(this.deliveryMethods).map((p) => {
-                    return {'value': p.id, 'text': p.name};
-                })
-            },
             discountSizeTypes() {
                 return [
                     {text: 'Проценты', value: 1},

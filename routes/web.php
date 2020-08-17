@@ -12,6 +12,10 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
+    Route::prefix('search')->group(function() {
+        Route::get('products', 'SearchController@products')->name('search.products');
+    });
+
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::prefix('list')->group(function () {
             Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
@@ -152,7 +156,6 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('content')->group(function () {
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
-            Route::get('xy', 'ContentClaimController@xyeta')->name('contentClaims.xy');
             Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');
@@ -362,6 +365,16 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
+        Route::prefix('properties')->group(function () {
+            Route::get('', 'PropertiesController@list')->name('products.properties.list');
+            Route::get('create', 'PropertiesController@create')->name('products.properties.create');
+            Route::put('update', 'PropertiesController@update')->name('products.properties.update');
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'PropertiesController@detail')->name('products.properties.detail');
+                Route::delete('', 'PropertiesController@delete')->name('products.properties.delete');
+            });
+        });
+
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
@@ -392,17 +405,18 @@ Route::middleware('auth')->group(function () {
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
+                        Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
+                        Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
                         Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
-                            Route::put('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
                             Route::put('set-main', 'TabProductsController@setMain')->name('variantGroups.detail.products.setMain');
-                            Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
                         });
                     });
 
                     Route::prefix('properties')->group(function () {
-                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
-                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
-                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                        Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        });
                     });
                 });
             });

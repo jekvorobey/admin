@@ -564,12 +564,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cms-lib.git",
-                "reference": "aa5e54940794e45715b363c02cc12f52722fac20"
+                "reference": "09a756aec457c953bbd19bd2d356f6a3e9c8c2d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=aa5e54940794e45715b363c02cc12f52722fac20",
-                "reference": "aa5e54940794e45715b363c02cc12f52722fac20",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cms-lib/repository/archive.zip?sha=09a756aec457c953bbd19bd2d356f6a3e9c8c2d8",
+                "reference": "09a756aec457c953bbd19bd2d356f6a3e9c8c2d8",
                 "shasum": ""
             },
             "require": {
@@ -593,10 +593,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/16499696/issues"
-            },
-            "time": "2020-08-12T15:25:16+00:00"
+            "time": "2020-08-14T19:05:20+00:00"
         },
         {
             "name": "greensight/ibt-common-lib",
@@ -604,12 +601,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-common-ms-code.git",
-                "reference": "56e1c318207a8ad668928b0f5b6af3e501084e7c"
+                "reference": "17cb89944b0faa7a4dc2b6c7f53625960e9a4f9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=56e1c318207a8ad668928b0f5b6af3e501084e7c",
-                "reference": "56e1c318207a8ad668928b0f5b6af3e501084e7c",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-common-ms-code/repository/archive.zip?sha=17cb89944b0faa7a4dc2b6c7f53625960e9a4f9e",
+                "reference": "17cb89944b0faa7a4dc2b6c7f53625960e9a4f9e",
                 "shasum": ""
             },
             "require": {
@@ -653,10 +650,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/12723731/issues"
-            },
-            "time": "2020-08-12T12:05:37+00:00"
+            "time": "2020-08-13T09:07:11+00:00"
         },
         {
             "name": "greensight/ibt-logistics-lib",
@@ -845,12 +839,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-oms-lib.git",
-                "reference": "43593860687a0917e54daedd1901162a2ea91f7a"
+                "reference": "48f1292963c94561a22efde66baaae21a8b03328"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=43593860687a0917e54daedd1901162a2ea91f7a",
-                "reference": "43593860687a0917e54daedd1901162a2ea91f7a",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-oms-lib/repository/archive.zip?sha=48f1292963c94561a22efde66baaae21a8b03328",
+                "reference": "48f1292963c94561a22efde66baaae21a8b03328",
                 "shasum": ""
             },
             "require": {
@@ -886,10 +880,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/13570525/issues"
-            },
-            "time": "2020-08-12T09:09:15+00:00"
+            "time": "2020-08-13T15:04:15+00:00"
         },
         {
             "name": "greensight/ibt-pim-lib",
@@ -897,12 +888,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "ebefa7f03b38538403deb4c8464bcbd69d061339"
+                "reference": "a087039e9031ce821f03d2005322184045e0d333"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=ebefa7f03b38538403deb4c8464bcbd69d061339",
-                "reference": "ebefa7f03b38538403deb4c8464bcbd69d061339",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=a087039e9031ce821f03d2005322184045e0d333",
+                "reference": "a087039e9031ce821f03d2005322184045e0d333",
                 "shasum": ""
             },
             "require": {
@@ -926,10 +917,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/12911877/issues"
-            },
-            "time": "2020-08-11T15:17:14+00:00"
+            "time": "2020-08-14T20:01:05+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
@@ -1551,12 +1539,6 @@
                 "s3",
                 "sftp",
                 "storage"
-            ],
-            "funding": [
-                {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
-                }
             ],
             "time": "2020-08-12T14:23:41+00:00"
         },
@@ -6032,6 +6014,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -6686,16 +6669,16 @@
         },
         {
             "name": "seld/jsonlint",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/jsonlint.git",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1"
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
-                "reference": "ff2aa5420bfbc296cf6a0bc785fa5b35736de7c1",
+                "url": "https://api.github.com/repos/Seldaek/jsonlint/zipball/3d5eb71705adfa34bd34b993400622932b2f62fd",
+                "reference": "3d5eb71705adfa34bd34b993400622932b2f62fd",
                 "shasum": ""
             },
             "require": {
@@ -6731,7 +6714,7 @@
                 "parser",
                 "validator"
             ],
-            "time": "2020-04-30T19:05:18+00:00"
+            "time": "2020-08-13T09:07:59+00:00"
         },
         {
             "name": "seld/phar-utils",
@@ -6937,6 +6920,5 @@
         "php": "^7.1.3",
         "ext-json": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }
