@@ -4,8 +4,8 @@
         <tr>
             <th colspan="2">
                 Основная информация
-                <button @click="saveMerchant" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
-                <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+                <button @click="saveMerchant" class="btn btn-success" :disabled="!$v.form.$anyDirty">Сохранить</button>
+                <button @click="cancel" class="btn btn-outline-danger" :disabled="!$v.form.$anyDirty">Отмена</button>
             </th>
         </tr>
         </thead>
@@ -19,83 +19,83 @@
             <td>{{ datetimePrint(merchant.created_at) }}</td>
         </tr>
         <tr>
-            <th>Адреса складов отгрузки</th>
-            <td><textarea v-model="form.storage_address" class="form-control"/></td>
+            <th>Адреса складов отгрузки*</th>
+            <td><v-input tag="textarea" v-model="$v.form.storage_address.$model" :error="errorStorageAddress"/></td>
         </tr>
         <tr>
-            <th>Бренды и товарные категории</th>
-            <td><textarea v-model="form.sale_info" class="form-control"/></td>
+            <th>Бренды и товарные категории*</th>
+            <td><v-input tag="textarea" v-model="$v.form.sale_info.$model" :error="errorSaleInfo"/></td>
         </tr>
         <tr>
             <th>Ставка НДС, тип налогообложения</th>
-            <td><textarea v-model="form.vat_info" class="form-control"/></td>
+            <td><v-input tag="textarea" v-model="$v.form.vat_info.$model"/></td>
         </tr>
         <tr>
             <th>Коммерческие условия</th>
-            <td><textarea v-model="form.commercial_info" class="form-control"/></td>
+            <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
         </tr>
 
         <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
         <tr>
-            <th>Юридический адрес</th>
-            <td><input v-model="form.legal_address" class="form-control form-control-sm"/></td>
+            <th>Юридический адрес*</th>
+            <td><v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress"/></td>
         </tr>
         <tr>
-            <th>Фактический адрес</th>
-            <td><input v-model="form.fact_address" class="form-control form-control-sm"/></td>
+            <th>Фактический адрес*</th>
+            <td><v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress"/></td>
         </tr>
         <tr>
-            <th>ИНН</th>
-            <td><input v-model="form.inn" class="form-control form-control-sm"/></td>
+            <th>ИНН*</th>
+            <td><v-input v-model="$v.form.inn.$model" :error="errorInn"/></td>
         </tr>
         <tr>
-            <th>КПП</th>
-            <td><input v-model="form.kpp" class="form-control form-control-sm"/></td>
+            <th>КПП*</th>
+            <td><v-input v-model="$v.form.kpp.$model" :error="errorKpp"/></td>
         </tr>
 
         <tr class="table-secondary"><th colspan="2">ФИО генерального</th></tr>
         <tr>
             <th>Фамилия</th>
-            <td><input v-model="form.ceo_last_name" class="form-control form-control-sm"/></td>
+            <td><v-input v-model="$v.form.ceo_last_name.$model"/></td>
         </tr>
         <tr>
             <th>Имя</th>
-            <td><input v-model="form.ceo_first_name" class="form-control form-control-sm"/></td>
+            <td><v-input v-model="$v.form.ceo_first_name.$model"/></td>
         </tr>
         <tr>
             <th>Отчество</th>
-            <td><input v-model="form.ceo_middle_name" class="form-control form-control-sm"/></td>
+            <td><v-input v-model="$v.form.ceo_middle_name.$model"/></td>
         </tr>
 
         <tr class="table-secondary"><th colspan="2">Банковские реквизиты</th></tr>
         <tr>
-            <th>Номер банковского счета</th>
-            <td><input v-model="form.payment_account" class="form-control form-control-sm"/></td>
+            <th>Номер банковского счета*</th>
+            <td><v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount"/></td>
         </tr>
         <tr>
-            <th>Банк</th>
-            <td><input v-model="form.bank" class="form-control form-control-sm"/></td>
+            <th>Банк*</th>
+            <td><v-input v-model="$v.form.bank.$model" :error="errorBank"/></td>
         </tr>
         <tr>
-            <th>Номер корреспондентского счета банка</th>
-            <td><input v-model="form.correspondent_account" class="form-control form-control-sm"/></td>
+            <th>Номер корреспондентского счета банка*</th>
+            <td><v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount"/></td>
         </tr>
         <tr>
-            <th>Юридический адрес банка</th>
-            <td><input v-model="form.bank_address" class="form-control form-control-sm"/></td>
+            <th>Юридический адрес банка*</th>
+            <td><v-input v-model="$v.form.bank_address.$model" :error="errorBankAddress"/></td>
         </tr>
         <tr>
-            <th>Бик банка</th>
-            <td><input v-model="form.bank_bik" class="form-control form-control-sm"/></td>
+            <th>БИК банка*</th>
+            <td><v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik"/></td>
         </tr>
         <tr class="table-secondary"><th colspan="2">Документы</th></tr>
         <tr>
             <th>Номер Договора</th>
-            <td><input v-model="form.contract_number" class="form-control form-control-sm"/></td>
+            <td><v-input v-model="$v.form.contract_number.$model"/></td>
         </tr>
         <tr>
             <th>Дата договора</th>
-            <td><date-picker v-model="form.contract_at" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
+            <td><date-picker v-model="$v.form.contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
         </tr>
         <tr>
             <th>Документы</th>
@@ -121,17 +121,24 @@
 </template>
 
 <script>
-import Services from '../../../../../scripts/services/services.js';
-import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
-import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
-import DatePicker from 'vue2-datepicker';
-import 'vue2-datepicker/index.css';
-import 'vue2-datepicker/locale/ru.js';
+    import Services from '../../../../../scripts/services/services.js';
+    import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+    import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
 
-export default {
+    import {required, requiredIf} from 'vuelidate/lib/validators';
+    import {validationMixin} from 'vuelidate';
+
+    export default {
     name: 'tab-main',
-    components: {FileInput, VDeleteButton, DatePicker},
+    components: {VInput, FileInput, VDeleteButton, DatePicker},
     props: ['model'],
+    mixins: [
+        validationMixin,
+    ],
     data() {
         return {
             form: {
@@ -159,8 +166,39 @@ export default {
             documents: [],
         }
     },
+    validations() {
+        const notRequired = {required: requiredIf(() => {return false;})};
+
+        return {
+            form: {
+                legal_address: {required},
+                inn: {required},
+                kpp: {required},
+                fact_address: {required},
+                ceo_last_name: {notRequired},
+                ceo_first_name: {notRequired},
+                ceo_middle_name: {notRequired},
+                payment_account: {required},
+                correspondent_account: {required},
+                bank: {required},
+                bank_address: {required},
+                bank_bik: {required},
+                storage_address: {required},
+                sale_info: {required},
+                vat_info: {notRequired},
+                commercial_info: {notRequired},
+                contract_number: {notRequired},
+                contract_at: {notRequired},
+            },
+        };
+    },
     methods: {
         saveMerchant() {
+            this.$v.$touch();
+            if (this.$v.$invalid) {
+                return;
+            }
+
             Services.showLoader();
             Services.net().post(this.getRoute('merchant.detail.edit', {id: this.merchant.id}), {
                 merchant: this.form
@@ -244,26 +282,83 @@ export default {
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
         },
-        showBtn() {
-            return (this.merchant.legal_address || '') !== (this.form.legal_address || '') ||
-                (this.merchant.inn || '') !== (this.form.inn || '') ||
-                (this.merchant.kpp || '') !== (this.form.kpp || '') ||
-                (this.merchant.fact_address || '') !== (this.form.fact_address || '') ||
-                (this.merchant.ceo_last_name || '') !== (this.form.ceo_last_name || '') ||
-                (this.merchant.ceo_first_name || '') !== (this.form.ceo_first_name || '') ||
-                (this.merchant.ceo_middle_name || '') !== (this.form.ceo_middle_name || '') ||
-                (this.merchant.payment_account || '') !== (this.form.payment_account || '') ||
-                (this.merchant.correspondent_account || '') !== (this.form.correspondent_account || '') ||
-                (this.merchant.bank || '') !== (this.form.bank || '') ||
-                (this.merchant.bank_address || '') !== (this.form.bank_address || '') ||
-                (this.merchant.bank_bik || '') !== (this.form.bank_bik || '') ||
-                (this.merchant.storage_address || '') !== (this.form.storage_address || '') ||
-                (this.merchant.sale_info || '') !== (this.form.sale_info || '') ||
-                (this.merchant.vat_info || '') !== (this.form.vat_info || '') ||
-                (this.merchant.commercial_info || '') !== (this.form.commercial_info || '') ||
-                (this.merchant.contract_number || '') !== (this.form.contract_number || '') ||
-                (this.merchant.contract_at || '') !== (this.form.contract_at || '');
-        }
+        errorStorageAddress() {
+            if (this.$v.form.storage_address.$dirty) {
+                if (!this.$v.form.storage_address.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorSaleInfo() {
+            if (this.$v.form.sale_info.$dirty) {
+                if (!this.$v.form.sale_info.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorLegalAddress() {
+            if (this.$v.form.legal_address.$dirty) {
+                if (!this.$v.form.legal_address.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorFactAddress() {
+            if (this.$v.form.fact_address.$dirty) {
+                if (!this.$v.form.fact_address.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorInn() {
+            if (this.$v.form.inn.$dirty) {
+                if (!this.$v.form.inn.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorKpp() {
+            if (this.$v.form.kpp.$dirty) {
+                if (!this.$v.form.kpp.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorPaymentAccount() {
+            if (this.$v.form.payment_account.$dirty) {
+                if (!this.$v.form.payment_account.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorBank() {
+            if (this.$v.form.bank.$dirty) {
+                if (!this.$v.form.bank.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorCorrespondentAccount() {
+            if (this.$v.form.correspondent_account.$dirty) {
+                if (!this.$v.form.correspondent_account.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorBankAddress() {
+            if (this.$v.form.bank_address.$dirty) {
+                if (!this.$v.form.bank_address.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorBankBik() {
+            if (this.$v.form.bank_bik.$dirty) {
+                if (!this.$v.form.bank_bik.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
     },
     created() {
         Services.showLoader();
