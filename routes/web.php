@@ -251,6 +251,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
+                        Route::put('change-status', 'TabShipmentsController@changeShipmentStatus')->name('orders.detail.shipments.changeShipmentStatus');
                         Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
