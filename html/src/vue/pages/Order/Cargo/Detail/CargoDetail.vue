@@ -64,7 +64,7 @@
                     </h2>
                     <p class="text-secondary" v-if="cargo.discount">
                         Скидка:  <span class="float-right text-danger measure">руб. </span>
-                        <span class="float-right text-danger">-{{cargo.discount}}</span>
+                        <span class="float-right text-danger">-{{preparePrice(cargo.discount)}}</span>
                     </p>
                     <p class="text-secondary mt-3">
                         Сумма без скидки: <span class="float-right text-danger measure">руб.</span>
