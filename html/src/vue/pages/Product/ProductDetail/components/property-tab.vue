@@ -29,7 +29,7 @@
                          :buttons="{onEdit:'pencil-alt'}"
                          @onEdit="openBadgesEditModal">
                 <ul v-if="product_badges.length > 0">
-                    <li v-for="badge in product_badges">
+                    <li v-for="badge in product_badges" v-if="options.availableBadges[badge]">
                         <h5>
                             <span class="badge badge-dark">
                                 {{ options.availableBadges[badge].text }}
@@ -144,12 +144,16 @@
             },
             sortBadges(badgesToSort) {
                 return Object.values(badgesToSort).sort((item1, item2) => {
-                    if (this.options.availableBadges[item1].order_num
-                        > this.options.availableBadges[item2].order_num) return 1;
-                    if (this.options.availableBadges[item1].order_num
-                        === this.options.availableBadges[item2].order_num) return 0;
-                    if (this.options.availableBadges[item1].order_num
-                        < this.options.availableBadges[item2].order_num) return -1;
+                    if (this.options.availableBadges[item1]) {
+                        if (this.options.availableBadges[item1].order_num
+                            > this.options.availableBadges[item2].order_num) return 1;
+                        if (this.options.availableBadges[item1].order_num
+                            === this.options.availableBadges[item2].order_num) return 0;
+                        if (this.options.availableBadges[item1].order_num
+                            < this.options.availableBadges[item2].order_num) return -1;
+                    }
+
+                    return 0;
                 })
             },
             openBadgesEditModal() {
