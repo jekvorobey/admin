@@ -1,12 +1,22 @@
 <template>
     <b-card>
-        <b-row v-if="!shipment.is_problem && isAssemblingStatus && !isAssembled" class="mb-3">
+        <b-row class="mb-3">
             <b-col>
                 <div class="float-right">
-                    <button class="btn btn-primary" @click="addShipmentPackage(shipment)">
-                        + Добавить коробку
+                    <button class="btn btn-primary" v-if="isAwaitingConfirmationStatus && !isCancel && !isProblem"
+                            @click="changeShipmentStatus(shipmentStatuses.assembling.id)">
+                        Все товары в наличии
                     </button>
-                    <modal-add-shipment-package :model-shipment.sync="selectedShipment" :model-order.sync="order" v-if="Object.values(selectedShipment).length > 0"/>
+                    <button class="btn btn-primary" v-if="isAssemblingStatus && !isCancel && !isProblem"
+                            @click="changeShipmentStatus(shipmentStatuses.assembled.id)">
+                        Собрано
+                    </button>
+                    <template v-if="!isProblem && isAssemblingStatus && !isAssembled">
+                        <button class="btn btn-primary" @click="addShipmentPackage(shipment)">
+                            + Добавить коробку
+                        </button>
+                        <modal-add-shipment-package :model-shipment.sync="selectedShipment" :model-order.sync="order" v-if="Object.values(selectedShipment).length > 0"/>
+                    </template>
                 </div>
             </b-col>
         </b-row>
@@ -158,9 +168,9 @@
 
 <script>
     import Services from '../../../../../../scripts/services/services.js';
-    import ModalAddShipmentPackage from "./modal-add-shipment-package.vue";
-    import ModalAddShipmentPackageItems from "./modal-add-shipment-package-items.vue";
-    import ModalEditShipmentPackageItem from "./modal-edit-shipment-package-item.vue";
+    import ModalAddShipmentPackage from './modal-add-shipment-package.vue';
+    import ModalAddShipmentPackageItems from './modal-add-shipment-package-items.vue';
+    import ModalEditShipmentPackageItem from './modal-edit-shipment-package-item.vue';
 
     export default {
         name: "shipment-items",
@@ -216,6 +226,23 @@
             addShipmentPackage(shipment) {
                 this.selectedShipment = shipment;
                 this.$bvModal.show('modal-add-shipment-package');
+            },
+            changeShipmentStatus(statusId) {
+                Services.showLoader();
+                Services.net().put(
+                    this.getRoute(
+                        'orders.detail.shipments.changeShipmentStatus',
+                        {id: this.order.id, shipmentId: this.shipment.id},
+                    ),
+                    {},
+                    {'status': statusId},
+                ).then((data) => {
+                    this.order = data.order;
+
+                    Services.msg('Изменения сохранены');
+                }).finally(() => {
+                    Services.hideLoader();
+                });
             },
             deleteShipmentPackage(shipmentPackageId) {
                 Services.showLoader();
@@ -300,6 +327,15 @@
                 }
 
                 return selectedBasketItems;
+            },
+            isCancel() {
+                return this.shipment.is_canceled;
+            },
+            isProblem() {
+                return this.shipment.is_problem;
+            },
+            isAwaitingConfirmationStatus() {
+                return this.isStatus(this.shipmentStatuses.awaitingConfirmation.id);
             },
             isAssemblingStatus() {
                 return this.isStatus(this.shipmentStatuses.assembling.id);

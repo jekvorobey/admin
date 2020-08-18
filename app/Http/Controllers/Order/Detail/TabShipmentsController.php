@@ -13,7 +13,6 @@ use Greensight\Oms\Dto\Delivery\ShipmentPackageDto;
 use Greensight\Oms\Dto\Delivery\ShipmentPackageItemDto;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\Document\DocumentDto;
-use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Services\PackageService\PackageService;
@@ -32,12 +31,11 @@ class TabShipmentsController extends OrderDetailController
      * Обновить отправление
      * @param int $orderId
      * @param int $shipmentId
-     * @param  OrderService  $orderService
      * @param  ShipmentService  $shipmentService
      * @return JsonResponse
      * @throws \Exception
      */
-    public function save(int $orderId, int $shipmentId, OrderService $orderService, ShipmentService $shipmentService): JsonResponse
+    public function save(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
     {
         $data = $this->validate(request(), [
             'delivery_service_zero_mile' => Rule::in(array_keys(DeliveryService::allServices())),
@@ -50,6 +48,29 @@ class TabShipmentsController extends OrderDetailController
         $shipmentDto->delivery_service_zero_mile = isset($data['delivery_service_zero_mile']) ? $data['delivery_service_zero_mile'] : null;
         $shipmentDto->psd = $data['psd'];
         $shipmentDto->fsd = isset($data['fsd']) ? $data['fsd'] : null;
+        $shipmentDto->status = $data['status'];
+        $shipmentService->updateShipment($shipmentId, $shipmentDto);
+
+        return response()->json([
+            'order' => $this->getOrder($orderId),
+        ]);
+    }
+
+    /**
+     * Изменить статус отправления
+     * @param int $orderId
+     * @param int $shipmentId
+     * @param  ShipmentService  $shipmentService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function changeShipmentStatus(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
+    {
+        $data = $this->validate(request(), [
+            'status' => ['required', Rule::in(array_keys(ShipmentStatus::allStatuses()))],
+        ]);
+
+        $shipmentDto = new ShipmentDto();
         $shipmentDto->status = $data['status'];
         $shipmentService->updateShipment($shipmentId, $shipmentDto);
 
