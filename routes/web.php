@@ -403,6 +403,7 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+                Route::put('', 'VariantGroupDetailController@save')->name('variantGroups.detail.save');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {

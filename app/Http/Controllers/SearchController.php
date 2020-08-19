@@ -25,7 +25,10 @@ class SearchController extends Controller
         $data = $this->validate($request, [
             'query' => ['required', 'string'],
             'limit' => ['nullable', 'integer'],
+            'exceptedIds' => ['nullable', 'array'],
+            'exceptedIds.*' => ['required', 'integer'],
         ]);
+        $exceptedIds = $data['exceptedIds'] ?? [];
 
         /** @var SearchService $searchService */
         $searchService = resolve(SearchService::class);
@@ -45,7 +48,9 @@ class SearchController extends Controller
         $productSuggestResult = $searchService->suggest($productSuggestQuery);
 
         return response()->json([
-            'products' => $productSuggestResult->products
+            'products' => array_values(array_filter($productSuggestResult->products, function ($product) use ($exceptedIds) {
+                return !in_array($product['id'], $exceptedIds);
+            })),
         ]);
     }
 }

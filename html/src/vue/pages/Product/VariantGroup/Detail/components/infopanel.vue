@@ -25,17 +25,22 @@
             </b-col>
             <b-col>
                 <span class="font-weight-bold">Мерчант:</span>
-                <span>{{model.merchant ? model.merchant.name : 'N/A'}}</span>
+                <span>
+                    <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant">
+                        {{variantGroup.merchant.legal_name}}
+                    </a>
+                    <template v-else>N/A</template>
+                </span>
             </b-col>
         </b-row>
         <b-row>
             <b-col>
                 <span class="font-weight-bold">Дата создания:</span>
-                <span>{{model.created_at}}</span>
+                <span>{{variantGroup.created_at}}</span>
             </b-col>
             <b-col>
                 <span class="font-weight-bold">Дата изменения:</span>
-                <span>{{model.updated_at}}</span>
+                <span>{{variantGroup.updated_at}}</span>
             </b-col>
         </b-row>
     </b-card>
@@ -87,7 +92,10 @@
                 }
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('variantGroups.detail.properties.save', {id: this.variantGroup.id}), {}, this.form).then(() => {
+                Services.net().put(this.getRoute('variantGroups.detail.save', {id: this.variantGroup.id}), {}, this.form).then(() => {
+                    if (this.variantGroup.name !== this.form.name) {
+                        location.reload();
+                    }
                     this.variantGroup.name = this.form.name;
 
                     Services.msg("Изменения сохранены");
@@ -103,7 +111,7 @@
 
                 Services.showLoader();
                 Services.net().delete(this.getRoute('variantGroups.delete'), {
-                    ids: [this.model.id],
+                    ids: [this.variantGroup.id],
                 }).then(() => {
                     Services.msg("Удаление прошло успешно");
                     window.location.href = self.getRoute('variantGroups.list');

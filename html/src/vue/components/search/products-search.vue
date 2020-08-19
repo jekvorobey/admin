@@ -4,6 +4,8 @@
                 type="text"
                 v-model="query"
                 @focus="onFocus"
+                @focusin="onFocus"
+                @focusout="onFocusOut"
                 @input="onChange"
         ></v-input>
         <ul
@@ -12,6 +14,7 @@
         >
             <li
                     v-for="(product, i) in products"
+                    v-if="exceptedIds.indexOf(product.id) === -1"
                     :key="i"
                     @click="setResult(product)"
                     class="autocomplete-result with-small"
@@ -38,6 +41,10 @@
         components: {VInput},
         props: {
             model: {},
+            exceptedIds: {
+                type: Array,
+                default: [],
+            }
         },
         data() {
             return {
@@ -56,6 +63,11 @@
                     this.isOpen = true;
                 }
             },
+            onFocusOut() {
+                setTimeout(() => {
+                    this.isOpen = false;
+                }, 100)
+            },
             onChange() {
                 // Let's warn the parent that a change was made
                 this.$emit('input', this.query);
@@ -68,6 +80,7 @@
             search() {
                 Services.net().get(this.getRoute('search.products'), {
                     query: this.query,
+                    exceptedIds: this.exceptedIds,
                 }).then((data) => {
                     this.isOpen = true;
                     this.products = data.products;

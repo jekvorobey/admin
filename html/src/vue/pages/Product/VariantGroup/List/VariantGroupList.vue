@@ -88,7 +88,7 @@
                 <thead>
                     <tr>
                         <th></th>
-                        <th v-for="column in columns" v-if="column.isShown">
+                        <th v-for="column in columns" v-if="column.isShown" class="with-small">
                             <span v-html="column.name"></span>
                             <fa-icon v-if="column.description" icon="question-circle"
                                      v-b-popover.hover="column.description"></fa-icon>
@@ -111,13 +111,27 @@
                                     {{variantGroup.id}}
                                 </a>
                             </template>
+                            <template v-else-if="column.code === 'name'">
+                                <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
+                                    {{variantGroup.name}}
+                                </a>
+                                <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
+                            </template>
+                            <template v-else-if="column.code === 'merchant'">
+                                <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant">
+                                    {{variantGroup.merchant.legal_name}}
+                                </a>
+                                <template v-else>N/A</template>
+                            </template>
                             <template v-else-if="column.code === 'properties'">
                                 <p v-for="property in variantGroup.properties">{{property.name}}</p>
+                                <template v-if="!variantGroup.properties.length">Нет характеристик</template>
                             </template>
                             <template v-else-if="column.code === 'products'">
-                                <template v-if="variantGroup.mainProduct">
+                                <template v-if="variantGroup.products.length > 0">
                                     <b-button v-b-toggle="'products-' + variantGroup.id" variant="primary">
-                                        {{variantGroup.mainProduct.name}}
+                                        {{variantGroup.mainProduct ?
+                                        variantGroup.mainProduct.name : 'Нет основного товара'}}
                                     </b-button>
                                     <b-collapse :id="'products-' + variantGroup.id" class="mt-2">
                                         <p v-for="product in variantGroup.products"
@@ -127,6 +141,9 @@
                                             </a>
                                         </p>
                                     </b-collapse>
+                                </template>
+                                <template v-else>
+                                    Нет товаров
                                 </template>
                             </template>
                             <div v-else v-html="column.value(variantGroup)"></div>
@@ -236,22 +253,16 @@
                         isAlwaysShown: true,
                     },
                     {
-                        name: 'Название',
+                        name: 'Название<br><small>Кол-во характеристик / Кол-во товаров</small>',
                         code: 'name',
                         isShown: true,
                         isAlwaysShown: true,
-                        value: function(variantGroup) {
-                            return variantGroup.name;
-                        },
                     },
                     {
                         name: 'Мерчант',
-                        code: 'name',
+                        code: 'merchant',
                         isShown: true,
                         isAlwaysShown: false,
-                        value: function(variantGroup) {
-                            return variantGroup.merchant ? variantGroup.merchant.display_name : '';
-                        },
                     },
                     {
                         name: 'Характеристики',

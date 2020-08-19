@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Product\VariantGroup;
 use App\Http\Controllers\Controller;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use Pim\Dto\Product\VariantGroupDto;
@@ -91,5 +93,23 @@ class VariantGroupDetailController extends Controller
         /** @var MerchantDto $merchant */
         $merchant = $variantGroupDto->merchant_id ? $this->getMerchants([$variantGroupDto->merchant_id])->first() : null;
         $variantGroupDto['merchant'] = $merchant;
+    }
+
+    /**
+     * @param  int  $variantGroupId
+     * @param  Request  $request
+     * @return Response
+     * @throws \Pim\Core\PimException
+     */
+    public function save(int $variantGroupId, Request $request): Response
+    {
+        $data = $this->validate($request, [
+            'name' => ['nullable', 'string'],
+        ]);
+        $variantGroupDto = new VariantGroupDto();
+        $variantGroupDto->name = $data['name'] ?? null;
+        $this->variantGroupService->updateVariantGroup($variantGroupId, $variantGroupDto);
+
+        return response('', 204);
     }
 }

@@ -29,6 +29,7 @@ import {
     faFileDownload,
     faFileExcel,
     faFileInvoice,
+    faFlag,
     faInfo,
     faLink,
     faListUl,
@@ -86,3 +87,4 @@ library.add(faFileInvoice);
 library.add(faBarcode);
 library.add(faSearch);
 library.add(faListUl);
+library.add(faFlag);

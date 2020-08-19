@@ -7,6 +7,7 @@ use Greensight\Marketing\Dto\Price\PriceOutDto;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\VariantGroupDto;
@@ -21,12 +22,20 @@ class TabProductsController extends VariantGroupDetailController
     /**
      * @param  int  $variantGroupId
      * @return JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws \Pim\Core\PimException|\Exception
      */
     public function load(int $variantGroupId): JsonResponse
     {
         $restQuery = $this->variantGroupService
             ->newQuery()
+            ->addFields(
+                VariantGroupDto::entity(),
+                'id',
+                'name',
+                'main_product_id',
+                'products_count',
+                'updated_at'
+            )
             ->include(
                 'products.category',
                 'products.currentOffer',
@@ -41,9 +50,17 @@ class TabProductsController extends VariantGroupDetailController
             throw new NotFoundHttpException();
         }
 
+        $this->addVariantGroupCommonInfo($variantGroupDto);
         $this->addVariantGroupProductInfo($variantGroupDto);
 
         return response()->json([
+            'variantGroup' => [
+                'id' => $variantGroupDto->id,
+                'name' => $variantGroupDto->name,
+                'main_product_id' => $variantGroupDto->main_product_id,
+                'updated_at' => $variantGroupDto->updated_at,
+                'products_count' => $variantGroupDto->products_count,
+            ],
             'products' => $variantGroupDto->products
         ]);
     }
@@ -57,6 +74,7 @@ class TabProductsController extends VariantGroupDetailController
         if ($variantGroupDto->products->isNotEmpty()) {
             $offerIds = [];
             foreach ($variantGroupDto->products as $productDto) {
+                $productDto->created_at = dateTime2str(new Carbon($productDto->created_at));
                 $productDto->approval_status = ProductApprovalStatus::statusById($productDto->approval_status);
                 $offerIds[] = $productDto->currentOffer ? $productDto->currentOffer->id : null;
 

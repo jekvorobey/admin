@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Product\VariantGroup\Detail;
 use App\Http\Controllers\Product\VariantGroup\VariantGroupDetailController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
@@ -41,42 +41,67 @@ class TabPropertiesController extends VariantGroupDetailController
     public function load(int $variantGroupId): JsonResponse
     {
         $propertiesQuery = $this->productService->newQuery()
-            ->setFilter('type', PropertyDto::TYPE_DIRECTORY)
             ->addFields(PropertyDto::entity(), 'id', 'name');
         $properties = $this->productService->getProperties($propertiesQuery);
 
         $variantGroupQuery = $this->variantGroupService
             ->newQuery()
-            ->include('products.properties', 'properties');
+            ->include('products.properties.property', 'properties');
         $variantGroupDto = $this->variantGroupService->variantGroup($variantGroupId, $variantGroupQuery);
+        $gluedPropertyIds = $variantGroupDto->properties->pluck('id')->all();
         $propertyDirectoryValueIds = [];
+        $gluedPropertyValues = [];
         foreach ($variantGroupDto->products as $productDto) {
             foreach ($productDto->properties as $productPropertyValueDto) {
-                if (!in_array($productPropertyValueDto->value, $propertyDirectoryValueIds)) {
+                if (!in_array($productPropertyValueDto->property_id, $gluedPropertyIds)) {
+                    continue;
+                }
+                if (!in_array($productPropertyValueDto->value, $propertyDirectoryValueIds) &&
+                    $productPropertyValueDto->property->type == PropertyDto::TYPE_DIRECTORY) {
                     $propertyDirectoryValueIds[] = $productPropertyValueDto->value;
+                }
+
+                if (!isset($gluedPropertyValues[$productPropertyValueDto->property_id]) ||
+                    !in_array($productPropertyValueDto->value, $gluedPropertyValues[$productPropertyValueDto->property_id])) {
+                    $gluedPropertyValues[$productPropertyValueDto->property_id][] = $productPropertyValueDto->value;
                 }
             }
         }
-        $propertyDirectoryValuesQuery = $this->propertyDirectoryValueService->newQuery()
-            ->setFilter('id', $propertyDirectoryValueIds);
-        /** @var Collection|Collection[] $propertyDirectoryValues */
-        $propertyDirectoryValues = $this->propertyDirectoryValueService
-            ->values($propertyDirectoryValuesQuery)
-            ->groupBy('property_id');
+        $propertyDirectoryValues = collect();
+        if ($propertyDirectoryValueIds) {
+            $propertyDirectoryValuesQuery = $this->propertyDirectoryValueService->newQuery()
+                ->setFilter('id', $propertyDirectoryValueIds);
+            /** @var Collection|Collection[] $propertyDirectoryValues */
+            $propertyDirectoryValues = $this->propertyDirectoryValueService
+                ->values($propertyDirectoryValuesQuery)
+                ->keyBy('id');
+        }
 
         return response()->json([
             'allProperties' => $properties,
-            'usedProperties' => $variantGroupDto->properties->map(function (PropertyDto $propertyDto) use ($propertyDirectoryValues) {
+            'usedProperties' => $variantGroupDto->properties->map(function (PropertyDto $propertyDto) use ($gluedPropertyValues, $propertyDirectoryValues) {
+                $usedValues = isset($gluedPropertyValues[$propertyDto->id]) ?
+                    array_values(Arr::sort(array_map(function ($value) use ($propertyDto, $propertyDirectoryValues) {
+                        return $propertyDto->type == PropertyDto::TYPE_DIRECTORY && $propertyDirectoryValues->has($value) ?
+                            [
+                                'property_directory_value_id' => $propertyDirectoryValues[$value]->id,
+                                'name' => $propertyDirectoryValues[$value]->name,
+                                'color' => $propertyDto->is_color ? $propertyDirectoryValues[$value]->code : '',
+                            ] :
+                            [
+                                'property_directory_value_id' => null,
+                                'name' => $value,
+                                'color' => '',
+                            ];
+                    }, $gluedPropertyValues[$propertyDto->id]), function ($value) {
+                        return is_int($value['name']) ? (int)$value['name'] : $value['name'];
+                    })) : [];
+
                 return [
                     'id' => $propertyDto->id,
                     'name' => $propertyDto->name,
-                    'usedValues' => $propertyDirectoryValues->has($propertyDto->id) ?
-                        $propertyDirectoryValues[$propertyDto->id]->map(function (PropertyDirectoryValueDto $propertyDirectoryValueDto) {
-                            return [
-                                'id' => $propertyDirectoryValueDto->id,
-                                'name' => $propertyDirectoryValueDto->name,
-                            ];
-                        }) : []
+                    'isColor' => (bool)array_filter(array_column($usedValues, 'color')),
+                    'usedValues' => $usedValues,
                 ];
             })
         ]);
@@ -92,9 +117,7 @@ class TabPropertiesController extends VariantGroupDetailController
     {
         $this->variantGroupService->addProperty($variantGroupId, $propertyId);
 
-        return response()->json([
-            'variantGroup' => $this->getVariantGroup($variantGroupId),
-        ]);
+        return $this->load($variantGroupId);
     }
 
     /**
@@ -111,8 +134,6 @@ class TabPropertiesController extends VariantGroupDetailController
         ]);
         $this->variantGroupService->deleteProperties($variantGroupId, $data['propertyIds']);
 
-        return response()->json([
-            'variantGroup' => $this->getVariantGroup($variantGroupId),
-        ]);
+        return $this->load($variantGroupId);
     }
 }
