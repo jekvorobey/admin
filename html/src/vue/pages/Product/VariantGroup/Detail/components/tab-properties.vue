@@ -68,6 +68,9 @@
         },
         methods: {
             setData(data) {
+                this.variantGroup.id = data.variantGroup.id;
+                this.variantGroup.updated_at = data.variantGroup.updated_at;
+                this.variantGroup.properties_count = data.variantGroup.properties_count;
                 this.allProperties = data.allProperties;
                 this.usedProperties = data.usedProperties;
             },
@@ -93,7 +96,7 @@
             deleteProperties(propertyIds) {
                 Services.showLoader();
                 Services.net().delete(this.getRoute('variantGroups.detail.properties.delete', {id: this.variantGroup.id}), {
-                    productIds: propertyIds,
+                    propertyIds: propertyIds,
                 }).then((data) => {
                     this.setData(data);
                     Services.msg("Удаление характеристики(к) прошло успешно");

@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Pim\Dto\Product\VariantGroupDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
@@ -46,6 +47,12 @@ class TabPropertiesController extends VariantGroupDetailController
 
         $variantGroupQuery = $this->variantGroupService
             ->newQuery()
+            ->addFields(
+                VariantGroupDto::entity(),
+                'id',
+                'properties_count',
+                'updated_at'
+            )
             ->include('products.properties.property', 'properties');
         $variantGroupDto = $this->variantGroupService->variantGroup($variantGroupId, $variantGroupQuery);
         $gluedPropertyIds = $variantGroupDto->properties->pluck('id')->all();
@@ -78,6 +85,11 @@ class TabPropertiesController extends VariantGroupDetailController
         }
 
         return response()->json([
+            'variantGroup' => [
+                'id' => $variantGroupDto->id,
+                'updated_at' => $variantGroupDto->updated_at,
+                'properties_count' => $variantGroupDto->properties_count,
+            ],
             'allProperties' => $properties,
             'usedProperties' => $variantGroupDto->properties->map(function (PropertyDto $propertyDto) use ($gluedPropertyValues, $propertyDirectoryValues) {
                 $usedValues = isset($gluedPropertyValues[$propertyDto->id]) ?

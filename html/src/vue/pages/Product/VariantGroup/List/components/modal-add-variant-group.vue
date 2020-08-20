@@ -7,14 +7,18 @@
             <b-form>
                 <b-form-row>
                     <b-col>
-                        <v-input v-model="$v.form.name.$model">
+                        <v-input v-model="$v.form.name.$model" help="Не обязательно для заполнения">
                             Название
                         </v-input>
                     </b-col>
                 </b-form-row>
                 <b-form-row>
                     <b-col>
-                        <v-select v-model="$v.form.merchant_id.$model" :options="merchantOptions">
+                        <v-select
+                                v-model="$v.form.merchant_id.$model"
+                                :options="merchantOptions"
+                                help="Не обязательно для заполнения"
+                        >
                             Мерчант
                         </v-select>
                     </b-col>

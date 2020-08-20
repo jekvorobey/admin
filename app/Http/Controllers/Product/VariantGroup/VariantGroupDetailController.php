@@ -88,8 +88,8 @@ class VariantGroupDetailController extends Controller
      */
     protected function addVariantGroupCommonInfo(VariantGroupDto $variantGroupDto): void
     {
-        $variantGroupDto->created_at = dateTime2str(new Carbon($variantGroupDto->created_at));
-        $variantGroupDto->updated_at = dateTime2str(new Carbon($variantGroupDto->updated_at));
+        $variantGroupDto->created_at = date_time2str(new Carbon($variantGroupDto->created_at));
+        $variantGroupDto->updated_at = date_time2str(new Carbon($variantGroupDto->updated_at));
         /** @var MerchantDto $merchant */
         $merchant = $variantGroupDto->merchant_id ? $this->getMerchants([$variantGroupDto->merchant_id])->first() : null;
         $variantGroupDto['merchant'] = $merchant;

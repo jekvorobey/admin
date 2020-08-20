@@ -12,7 +12,7 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-products v-if="key === 'main'" :model.sync="variantGroup"/>
+                    <tab-products v-if="key === 'main'" :model.sync="variantGroup" @changeTab="changeTab"/>
                     <tab-properties v-else-if="key === 'properties'" :model.sync="variantGroup"/>
                     <template v-else>
                         Заглушка
@@ -50,6 +50,11 @@
             return {
                 variantGroup: this.iVariantGroup,
             };
+        },
+        methods: {
+            changeTab(tab) {
+                this.tabIndex = this.tabs[tab].i;
+            }
         },
         computed: {
             tabs() {

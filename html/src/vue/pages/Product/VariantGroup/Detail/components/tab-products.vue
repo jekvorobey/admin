@@ -1,25 +1,31 @@
 <template>
     <div>
         <b-row class="d-flex justify-content-between mt-3 mb-3">
-            <b-col class="col-md-3">
-                <products-search
-                        :model.sync="newProducts"
-                        :excepted-ids="exceptedIds"
-                ></products-search>
-            </b-col>
-            <b-col>
-                <button
-                        class="btn btn-success"
-                        @click="addProducts"
-                >
-                    <fa-icon icon="plus"></fa-icon> Добавить товар
-                </button>
-                <v-delete-button
-                        @delete="deleteProducts(selectedProductIds)"
-                        btn-class="btn-danger"
-                        v-if="selectedProductIds.length > 0" class="ml-3"
-                />
-            </b-col>
+            <template v-if="variantGroup.properties_count > 0">
+                <b-col class="col-md-3">
+                    <products-search
+                            :model.sync="newProducts"
+                            :excepted-ids="exceptedIds"
+                    ></products-search>
+                </b-col>
+                <b-col>
+                    <button
+                            class="btn btn-success"
+                            @click="addProducts"
+                    >
+                        <fa-icon icon="plus"></fa-icon> Добавить товар
+                    </button>
+                    <v-delete-button
+                            @delete="deleteProducts(selectedProductIds)"
+                            btn-class="btn-danger"
+                            v-if="selectedProductIds.length > 0" class="ml-3"
+                    />
+                </b-col>
+            </template>
+            <template v-else>
+                <b-col>Сначала добавьте <span class="btn-link cursor-pointer" @click="go2PropertiesTab">характеристики</span> для
+                    склейки товаров</b-col>
+            </template>
         </b-row>
         <b-table-simple hover small caption-top responsive v-if="products.length > 0">
             <b-thead>
@@ -118,6 +124,14 @@
         methods: {
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
+            },
+            go2PropertiesTab() {
+                let tab = 'properties';
+                Services.route().push({
+                    tab: tab,
+                    allTab: this.showAllTabs ? 1 : 0,
+                }, location.pathname);
+                this.$emit('changeTab', tab);
             },
             setData(data) {
                 if (this.variantGroup.main_product_id !== data.variantGroup.main_product_id) {

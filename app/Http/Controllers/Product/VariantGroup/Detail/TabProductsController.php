@@ -67,6 +67,7 @@ class TabProductsController extends VariantGroupDetailController
 
     /**
      * @param  VariantGroupDto  $variantGroupDto
+     * @throws \Exception
      */
     protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
     {
@@ -74,7 +75,7 @@ class TabProductsController extends VariantGroupDetailController
         if ($variantGroupDto->products->isNotEmpty()) {
             $offerIds = [];
             foreach ($variantGroupDto->products as $productDto) {
-                $productDto->created_at = dateTime2str(new Carbon($productDto->created_at));
+                $productDto->created_at = date_time2str(new Carbon($productDto->created_at));
                 $productDto->approval_status = ProductApprovalStatus::statusById($productDto->approval_status);
                 $offerIds[] = $productDto->currentOffer ? $productDto->currentOffer->id : null;
 
