@@ -74,7 +74,7 @@ class VariantGroupDetailController extends Controller
         );
         $variantGroupDto = $this->variantGroupService->variantGroup($id, $restQuery);
         if (!$variantGroupDto) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('VariantGroup not found');
         }
 
         $this->addVariantGroupCommonInfo($variantGroupDto);
