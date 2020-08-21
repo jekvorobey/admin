@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05c1b9e66ca9ab765c12813535fbac1f",
+    "content-hash": "0b148a5824d641a0a5f9972b9dd93392",
     "packages": [
         {
             "name": "box/spout",
@@ -509,6 +509,54 @@
                 "php"
             ],
             "time": "2020-03-25T18:49:23+00:00"
+        },
+        {
+            "name": "greensight/ibt-catalog-import-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.com:greensight/ibt-catalog-import-lib.git",
+                "reference": "1da281054e2b89a737659871ef4d60b82697dc59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-catalog-import-lib/repository/archive.zip?sha=1da281054e2b89a737659871ef4d60b82697dc59",
+                "reference": "1da281054e2b89a737659871ef4d60b82697dc59",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "greensight/ibt-common-lib": "dev-master",
+                "php": "^7.1.3"
+            },
+            "require-dev": {
+                "laravel/framework": "^5.8",
+                "phpunit/phpunit": "^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Greensight\\CatalogImport\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Greensight\\CatalogImport\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "authors": [
+                {
+                    "name": "Evgeny Bereza",
+                    "email": "bereza@greensight.ru"
+                }
+            ],
+            "description": "iBT catalog import client",
+            "time": "2020-02-20T14:06:43+00:00"
         },
         {
             "name": "greensight/ibt-cm-lib",
@@ -6014,7 +6062,6 @@
             "keywords": [
                 "tokenizer"
             ],
-            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
@@ -6903,6 +6950,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "greensight/ibt-catalog-import-lib": 20,
         "greensight/ibt-cm-lib": 20,
         "greensight/ibt-cms-lib": 20,
         "greensight/ibt-common-lib": 20,
