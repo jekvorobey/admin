@@ -173,6 +173,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         \Greensight\CommonMsa\CommonLibServiceProvider::class,
+        \Greensight\CatalogImport\CatalogImportLibServiceProvider::class,
         \Pim\PimLibServiceProvider::class,
         \Cms\CmsLibServiceProvider::class,
         \Greensight\Message\MessageLibServiceProvider::class,

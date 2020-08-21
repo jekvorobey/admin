@@ -421,6 +421,11 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
+
+        Route::prefix('import-export')->namespace('ImportExport')->group(function () {
+            Route::get('export-by-product-ids', 'ProductsExportController@exportByProductIds')->name('products.exportByProductIds');
+            Route::get('export-by-filters', 'ProductsExportController@exportByFilters')->name('products.exportByFilters');
+        });
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {

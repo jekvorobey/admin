@@ -96,6 +96,21 @@
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div class="action-bar d-flex justify-content-start">
                 <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                <b-button-group class="mr-4">
+                    <b-button variant="success"
+                              v-if="massEmpty(massProductsType)"
+                              @click="exportProductsByFilters"
+                    >Экспорт отфильтрованных</b-button>
+                    <b-dropdown right
+                                split
+                                variant="success"
+                                text="Экспорт отфильтрованных"
+                                v-if="!massEmpty(massProductsType)"
+                                @click="exportProductsByFilters"
+                    >
+                        <b-dropdown-item @click="exportProductsById(massAll(massProductsType))">Экспорт выбранных</b-dropdown-item>
+                    </b-dropdown>
+                </b-button-group>
                 <dropdown v-if="!massEmpty(massProductsType)" :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
                     Сменить статус
                 </dropdown>
@@ -115,7 +130,11 @@
         <table class="table">
             <thead>
                 <tr>
-                    <td></td>
+                    <th>
+                        <input type="checkbox"
+                               :checked="checkAll"
+                               @change="e => massCheckboxAllOnPage(e)"/>
+                    </th>
                     <th>ID</th>
                     <th></th>
                     <th class="with-small">Название <small>Артикул</small></th>
@@ -216,6 +235,7 @@
 <script>
     import withQuery from 'with-query';
 
+    import { BButtonGroup, BButton, BDropdown, BDropdownItem, BDropdownDivider } from 'bootstrap-vue';
     import FSelect from '../../../components/filter/f-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
     import FDate from '../../../components/filter/f-date.vue';
@@ -246,6 +266,7 @@
     import { required } from 'vuelidate/lib/validators';
     import Helpers from '../../../../scripts/helpers';
     import * as clipboard from "clipboard-polyfill";
+    import Services from "../../../../scripts/services/services";
 
     const TYPE_ARCHIVE = 'archive';
     const TYPE_PRODUCTION = 'production';
@@ -280,6 +301,11 @@
             validationMixin
         ],
         components: {
+            BButtonGroup,
+            BButton,
+            BDropdown,
+            BDropdownItem,
+            BDropdownDivider,
             Modal,
             ProductBadgesModal,
             FSelect,
@@ -466,6 +492,65 @@
             openBadgesEditModal() {
                 this.$bvModal.show('productBadgesEdit');
             },
+            exportProductsById(productIds) {
+                Services.showLoader();
+                Services.net().get(
+                    this.route('products.exportByProductIds'),
+                    {'product_ids': productIds}
+                ).then(data => {
+                        let link = document.createElement("a");
+                        link.href = data.path;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        link = null;
+
+                        Services.msg("Товары экспортированы");
+                    },
+                    () => {
+                        Services.msg("Ошибка экспорта товаров", 'danger');
+                    }
+                ).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+            exportProductsByFilters() {
+                Services.showLoader();
+                Services.net().get(
+                    this.route('products.exportByFilters'),
+                    {'filters': this.filter}
+                ).then(data => {
+                        let link = document.createElement("a");
+                        link.href = data.path;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        link = null;
+
+                        Services.msg("Товары экспортированы");
+                    },
+                    () => {
+                        Services.msg("Ошибка экспорта товаров", 'danger');
+                    }
+                ).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+            massCheckboxAllOnPage(e) {
+                if (e.target.checked) {
+                    this.products.forEach(product => {
+                        if (!this.massAll(this.massProductsType).includes(product.id)) {
+                            this.massCheckbox(e, this.massProductsType, product.id);
+                        }
+                    });
+                } else {
+                    this.products.forEach(product => {
+                        if (this.massAll(this.massProductsType).includes(product.id)) {
+                            this.massCheckbox(e, this.massProductsType, product.id);
+                        }
+                    });
+                }
+            },
         },
         created() {
             window.onpopstate = () => {
@@ -527,7 +612,21 @@
                     {value: true, text: 'Да'},
                     {value: false, text: 'Нет'},
                 ];
-            }
+            },
+            checkAll() {
+                let BreakException = {};
+
+                try {
+                    this.products.forEach(product => {
+                        if (!this.massAll(this.massProductsType).includes(product.id))
+                            throw BreakException;
+                    });
+                } catch (e) {
+                    if (e !== BreakException) throw e;
+                    return false;
+                }
+                return true;
+            },
         }
     };
 </script>
