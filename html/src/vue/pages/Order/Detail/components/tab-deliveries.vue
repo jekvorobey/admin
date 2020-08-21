@@ -175,7 +175,9 @@
                 Services.event().$emit('showTab', tab);
             },
             canSaveDeliveryOrder(delivery) {
-                return (delivery.status.id === this.deliveryStatuses.assembling.id || delivery.status.id === this.deliveryStatuses.assembled.id) && !delivery.is_canceled;
+                return ((delivery.status && delivery.status.id === this.deliveryStatuses.assembling.id) ||
+                    (delivery.status && delivery.status.id === this.deliveryStatuses.assembled.id) &&
+                    !delivery.is_canceled);
             },
             saveDeliveryOrder(delivery) {
                 let errorMessage = 'Ошибка при создании/обновлении заказа на доставку у ЛО';
@@ -195,7 +197,7 @@
                 });
             },
             canCancelDeliveryOrder(delivery) {
-                return delivery.status.id < this.deliveryStatuses.onPointIn.id && delivery.xml_id;
+                return delivery.status && delivery.status.id < this.deliveryStatuses.onPointIn.id && delivery.xml_id;
             },
             cancelDeliveryOrder(delivery) {
                 let errorMessage = 'Ошибка при отмене заказа на доставку у ЛО';
@@ -215,7 +217,7 @@
                 });
             },
             canCancelDelivery(delivery) {
-               return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
+               return delivery.status && delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
             },
             cancelDelivery(delivery) {
                 let errorMessage = 'Ошибка при отмене доставки';
@@ -235,7 +237,7 @@
                 });
             },
             canEditDelivery(delivery) {
-                return delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled;
+                return delivery.status && delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled;
             },
             editDelivery(delivery) {
                 this.selectedDelivery = delivery;

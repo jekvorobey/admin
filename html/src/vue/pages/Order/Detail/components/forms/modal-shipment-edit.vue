@@ -63,7 +63,7 @@
         data() {
             return {
                 form: {
-                    status: this.modelShipment.status.id,
+                    status: this.modelShipment.status ? this.modelShipment.status.id : 0,
                     delivery_service_zero_mile: this.modelShipment.tariff_id,
                     psd: this.modelShipment.psd_original,
                     fsd: this.modelShipment.fsd_original,
