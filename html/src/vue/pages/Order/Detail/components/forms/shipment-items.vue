@@ -207,7 +207,7 @@
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
             },
             isStatus(statusId) {
-                return this.shipment.status.id === statusId;
+                return this.shipment.status && this.shipment.status.id === statusId;
             },
             addShipmentPackageItems(shipmentPackage) {
                 this.selectedShipmentPackage = shipmentPackage;
