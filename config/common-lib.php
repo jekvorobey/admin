@@ -16,4 +16,6 @@ return [
      * Если указать другое значние, то необходимо самостоятельно зарегистрировать TokenHolder.
      */
     'tokenHolderDriver' => 'store',
+
+    'showcaseHost' => env('SHOWCASE_HOST', 'https://ibt.ru'),
 ];
