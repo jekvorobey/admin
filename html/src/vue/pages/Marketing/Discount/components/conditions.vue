@@ -627,7 +627,7 @@
                 return this.optionName(id, this.segments);
             },
             brandName(id) {
-                let brand = this.brands.find(brand => brand.id === id);
+                let brand = this.brands.find(brand => brand.id === Number(id));
                 return brand ? brand.name : 'N/A';
             },
             categoryName(id) {

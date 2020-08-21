@@ -254,6 +254,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
+                        Route::put('change-status', 'TabShipmentsController@changeShipmentStatus')->name('orders.detail.shipments.changeShipmentStatus');
                         Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
@@ -402,9 +403,11 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+                Route::put('', 'VariantGroupDetailController@save')->name('variantGroups.detail.save');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products.load');
                         Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
                         Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
                         Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
@@ -413,9 +416,10 @@ Route::middleware('auth')->group(function () {
                     });
 
                     Route::prefix('properties')->group(function () {
-                        Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties.load');
+                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
                         Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
-                            Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                            Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
                         });
                     });
                 });

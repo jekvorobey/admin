@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="category-edit-modal" hide-footer ref="modal" size="xl" @hidden="resetFields()">
+    <b-modal id="category-edit-modal" hide-footer ref="modal" size="lg" @hidden="resetFields()">
         <div slot="modal-title">
             <strong v-if="mode === 'create'">Создать новую категорию</strong>
             <strong v-else-if="mode === 'edit'">Редактировать категорию</strong>
@@ -18,19 +18,6 @@
                         />
                     </b-col>
                 </b-row>
-                <!--<b-row class="mb-2">-->
-                    <!--<b-col cols="4">-->
-                        <!--<label for="category-code">Символьный код</label>-->
-                        <!--<fa-icon icon="question-circle" v-b-popover.hover="codeTooltip"></fa-icon>-->
-                    <!--</b-col>-->
-                    <!--<b-col cols="8">-->
-                        <!--<v-input id="category-code"-->
-                               <!--v-model="$v.categoryToEdit.code.$model"-->
-                               <!--class="mb-2"-->
-                               <!--:error="errorCodeField()"-->
-                        <!--/>-->
-                    <!--</b-col>-->
-                <!--</b-row>-->
                 <b-row class="mb-2">
                     <b-col cols="3">
                         <label for="category-parent">Родительская категория</label>
@@ -38,9 +25,13 @@
                     <b-col cols="9">
                         <v-select
                                 id="category-parent"
-                                v-model="categoryToEdit.parent_id"
+                                v-model="parentId"
                                 :options="availableParents"
                         ></v-select>
+                        <span v-if="warningParentField(parentId)" style="font-size: 85%">
+                            <fa-icon icon="exclamation-triangle" class="text-warning"></fa-icon>
+                            К выбранной родительской категории уже прикреплены товары, при создании дочерней категории все существующие товары перейдут в неё
+                        </span>
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
@@ -51,39 +42,6 @@
                         <input id="category-active"
                                type="checkbox"
                                v-model="categoryToEdit.active" :disabled="canSetActive"/>
-                    </b-col>
-                </b-row>
-                <b-row class="mb-2">
-                    <b-col cols="3">
-                        <label for="category-props">Доп. свойства</label>
-                        <button @click="addField()"
-                                class="btn btn-outline-info float-right h-25 ml-3">
-                            <fa-icon icon="plus"></fa-icon>
-                        </button>
-                    </b-col>
-                    <b-col cols="9">
-                        <table v-if="category.props.length > 0" class="table-bordered">
-                            <thead>
-                            <tr class="d-flex">
-                                <th class="col-sm-3">Название</th>
-                                <th class="col-sm-3">Отображаемое название</th>
-                                <th class="col-sm-2">Тип</th>
-                                <th class="col-sm-2">Множественность</th>
-                                <!--<th class="col-sm-1">Цвет</th>-->
-                                <th class="col-sm-2">Показывать в фильтре</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="prop in category.props" class="d-flex">
-                                <td class="col-sm-3">{{ prop.name }}</td>
-                                <td class="col-sm-3">{{ prop.display_name }}</td>
-                                <td class="col-sm-2">{{ propertyTypes[prop.type] }}</td>
-                                <td class="col-sm-2">{{ prop.is_multiple ? 'Да' : 'Нет' }}</td>
-                                <td class="col-sm-2">{{ prop.is_filterable ? 'Да' : 'Нет'}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <span v-else id="category-props">Нет</span>
                     </b-col>
                 </b-row>
             </div>
@@ -112,8 +70,6 @@
 
     const newCategoryTemplate = {
         name: null,
-        code: null,
-        parent_id: null,
         active: false,
     };
 
@@ -136,8 +92,8 @@
             return {
                 mode: 'create',
                 categoryToEdit: newCategoryTemplate,
-                addedProperties: [],
-                deletedProperties: [],
+                parentId: null,
+                categories: this.collection,
             }
         },
         validations() {
@@ -162,22 +118,22 @@
 
                 let data = {
                     'name': this.categoryToEdit.name,
-                    // 'code': this.categoryToEdit.code ? this.categoryToEdit.code : null,
-                    'parent_id': this.categoryToEdit.parent_id,
-                    'active': this.categoryToEdit.active
-                }
+                    'active': this.categoryToEdit.active,
+                    'parent_id': this.parentId,
+                };
 
                 console.log(data);
 
                 Services.showLoader();
                 let savePromise;
                 if (this.mode === 'create') {
-                    savePromise = this.createCategory(this.categoryToEdit);
+                    savePromise = this.createCategory(data);
                 } else if (this.mode === 'edit') {
-                    savePromise = this.editCategory(this.categoryToEdit);
+                    data['id'] = this.category.id;
+                    savePromise = this.editCategory(data);
                 }
 
-                savePromise.then((data) => {
+                savePromise.then(() => {
                     Services.msg("Категория сохранена!");
                     this.$bvModal.hide('category-edit-modal');
                     setTimeout(window.location.reload.bind(window.location), 1000);
@@ -187,17 +143,16 @@
                     Services.hideLoader();
                 });
             },
-            createCategory(category) {
-                return Services.net().post(this.getRoute('categories.create'), {}, category, {}, true);
+            createCategory(data) {
+                return Services.net().post(this.getRoute('categories.create'), {}, data, {}, true);
             },
-            editCategory(category) {
-                return Services.net().put(this.getRoute('categories.update'), {}, category, {}, true);
+            editCategory(data) {
+                return Services.net().put(this.getRoute('categories.update'), {}, data, {}, true);
             },
             closeModal() {
                 this.$bvModal.hide('category-edit-modal');
             },
             resetFields() {
-                console.log('resetted');
                 // this.categoryToEdit = newCategoryTemplate;
                 this.$v.$reset();
 
@@ -214,23 +169,32 @@
                     return "Код может состоять только из символов нижнего регистра, цифр и нижнего подчеркивания";
                 }
             },
+            warningParentField() {
+                let parent = this.categories.find((item) => item.id === this.parentId);
+                if (!parent) {
+                    return false;
+                }
+                // В случае, если потенциальная родительская категория является листом и имеет товары
+                if (parent && parent.productsCount > 0 && this.getDescendant(parent).length === 0) {
+                    return true;
+                }
+            },
             getDescendant(category) {
                 let descendants = [];
                 if (!category) return descendants;
 
-                this.collection.forEach((item) => {
+                this.categories.forEach((item) => {
                     if (category.id === item.parent_id) {
                         descendants.push(item.id);
                         descendants = descendants.concat(this.getDescendant(item));
                     }
                 });
-
                 return descendants;
             },
         },
         computed: {
             availableParents() {
-                let options = this.collection.filter((item) => {
+                let options = this.categories.filter((item) => {
                     return item.active;
                 });
                 if (this.category) {
@@ -254,9 +218,9 @@
         watch: {
             'category': {
                 handler(value) {
-                    console.log('watchh');
                     this.mode = value ? 'edit' : 'create';
                     this.categoryToEdit = value ? value : newCategoryTemplate;
+                    this.parentId = value ? value.parent_id : null;
                 }
             },
         }

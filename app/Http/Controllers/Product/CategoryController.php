@@ -15,7 +15,6 @@ class CategoryController extends Controller
         CategoryService $categoryService
     ) {
         $this->title = 'Категории';
-        $this->loadPropertyTypes = true;
 
         return $this->render('Product/CategoryList', [
             'categories' =>  $this->loadCategories($categoryService),
@@ -28,18 +27,9 @@ class CategoryController extends Controller
             'name' => 'string',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
-            'props' => 'array',
         ]);
 
-        $categoryData = [
-            'name' => $data['name'],
-            'parent_id' => $data['parent_id'],
-            'active' => $data['active']
-        ];
-        $id = $categoryService->createCategory(new CategoryDto($categoryData));
-
-        $this->setProperties($id, $data['props'], $categoryService);
-
+        $id = $categoryService->createCategory(new CategoryDto($data));
         return response()->json($id);
     }
 
@@ -50,15 +40,9 @@ class CategoryController extends Controller
             'name' => 'string',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
-            'prop' => 'array',
         ]);
 
         $categoryService->updateCategory($data['id'], new CategoryDto($data));
-    }
-
-    protected function setProperties(int $id, Array $props, CategoryService $categoryService)
-    {
-
     }
 
     /**
@@ -69,10 +53,8 @@ class CategoryController extends Controller
     protected function loadCategories(CategoryService $categoryService)
     {
         $categories = $categoryService->categories((new RestQuery())
-            ->include('properties')
+            ->include(CategoryService::PRODUCTS_COUNT)
             ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'));
-
-//        dd($categories);
 
         return $categories->map(function (CategoryDto $category) {
             return [
@@ -81,7 +63,7 @@ class CategoryController extends Controller
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
                 'active' => $category->active,
-                'props' => $category->properties->all(),
+                'productsCount' => $category->productsCount,
             ];
         });
     }

@@ -263,20 +263,20 @@ class OrderListController extends Controller
             $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
                 return $payment->paymentMethod()->name;
             })->unique()->join(', ');
-            $data['created_at'] = dateTime2str(new Carbon($order->created_at));
-            $data['updated_at'] = dateTime2str(new Carbon($order->updated_at));
-            $data['status_at'] = dateTime2str(new Carbon($order->status_at));
+            $data['created_at'] = date_time2str(new Carbon($order->created_at));
+            $data['updated_at'] = date_time2str(new Carbon($order->updated_at));
+            $data['status_at'] = date_time2str(new Carbon($order->status_at));
             $data['delivery_dates'] = $delivery_dates->unique()->join(', ');
             $data['delivery_cities'] = $cities->unique()->join(', ');
             $data['product_price'] = $order->price - $order->delivery_price;
             $data['shipments_qty'] = $order->deliveries->sum(function (DeliveryDto $delivery) {
                 return $delivery->shipments->count();
             });
-            $data['psd_last'] = $psdLast ? dateTime2str($psdLast) : '';
-            $data['pdd_last'] = $pddLast ? dateTime2str($pddLast) : '';
+            $data['psd_last'] = $psdLast ? date_time2str($psdLast) : '';
+            $data['pdd_last'] = $pddLast ? date_time2str($pddLast) : '';
             $data['latestHistory'] = $order->latestHistory ? $order->latestHistory->toArray() : null;
             if ($order->latestHistory) {
-                $data['latestHistory']['updated_at'] = dateTime2str(new Carbon($order->latestHistory->updated_at));
+                $data['latestHistory']['updated_at'] = date_time2str(new Carbon($order->latestHistory->updated_at));
                 $data['latestHistory']['user'] = $users->has($order->latestHistory->user_id) ?
                     $users[$order->latestHistory->user_id] : null;
             }
