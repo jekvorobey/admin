@@ -60,7 +60,11 @@
                         <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.id }}</td>
                         <td @click="openChat(chat)">
-                            {{ datePrint(chat.messages[chat.messages.length-1].created_at) }}
+                            {{
+                            chat.messages[chat.messages.length-1] ?
+                                datePrint(chat.messages[chat.messages.length-1].created_at) :
+                                'Нет сообщений'
+                            }}
                         </td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
