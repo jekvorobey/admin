@@ -36,7 +36,6 @@
 
 <script>
 
-    import Services from '../../../../scripts/services/services';
     import TreeItem from './components/category-tree-item.vue';
     import CategoryEditModal from './components/category-edit-modal.vue';
 
@@ -60,38 +59,7 @@
             },
             editCategory(value) {
                 this.categoryToEdit = value;
-                console.log('emitted');
-                console.log(this.categoryToEdit);
                 this.$bvModal.show('category-edit-modal');
-            },
-            openEditModal() {
-                this.$bvModal.show('category-edit-modal');
-            },
-            save() {
-                if (this.anyInvalid) {
-                    return;
-                }
-                let data = Object.values(this.editedItems).map((value) => {
-                    return {
-                        'id': value.item.id,
-                        'frequent': value.item.frequent,
-                        'position': parseInt(value.item.position),
-                        'file_id': value.item.image ? value.item.image.id : null,
-                    };
-                });
-
-                Services.showLoader();
-                Services.net().put(this.getRoute('frequentCategories.edit'), {}, {
-                    'items': data,
-                    'selected': this.checkboxes,
-                }, {}, true).then((data) => {
-                    Services.msg("Данные сохранены!");
-                    this.editedItems = {};
-                }, () => {
-                    Services.msg("Не удалось сохранить данные", 'danger');
-                }).finally(() => {
-                    Services.hideLoader();
-                });
             },
         },
         computed: {

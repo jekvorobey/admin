@@ -7,10 +7,10 @@
         <div class="card">
             <div class="card-body">
                 <b-row class="mb-2">
-                    <b-col cols="3">
+                    <b-col cols="4">
                         <label for="category-name">Название категории</label>
                     </b-col>
-                    <b-col cols="9">
+                    <b-col cols="8">
                         <v-input id="category-name"
                                v-model="$v.categoryToEdit.name.$model"
                                class="mb-2"
@@ -19,35 +19,58 @@
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
-                    <b-col cols="3">
+                    <b-col cols="4">
+                        <label for="category-code">
+                            Символьный код
+                            <fa-icon v-if="mode === 'create'" icon="question-circle" v-b-popover.hover="codeTooltip"></fa-icon>
+                        </label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="category-code"
+                                 v-model="$v.categoryToEdit.code.$model"
+                                 class="mb-2"
+                                 :error="errorCodeField()"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
                         <label for="category-parent">Родительская категория</label>
                     </b-col>
-                    <b-col cols="9">
+                    <b-col cols="8">
                         <v-select
                                 id="category-parent"
                                 v-model="parentId"
                                 :options="availableParents"
                         ></v-select>
-                        <span v-if="warningParentField(parentId)" style="font-size: 85%">
+                        <div class="warning" v-if="warningProductsMove" style="font-size: 85%">
                             <fa-icon icon="exclamation-triangle" class="text-warning"></fa-icon>
                             К выбранной родительской категории уже прикреплены товары, при создании дочерней категории все существующие товары перейдут в неё
-                        </span>
+                        </div>
+                        <div class="warning" v-if="warningPropsRemove.length > 0" style="font-size: 85%">
+                            <fa-icon icon="exclamation-triangle" class="text-warning"></fa-icon>
+                            При изменении родительской категории у товаров текущей и дочерних категорий будут удалены следующие свойства:
+                            <ul>
+                                <li v-for="prop in warningPropsRemove">{{ prop.name }}</li>
+                            </ul>
+                        </div>
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
-                    <b-col cols="3">
+                    <b-col cols="4">
                         <label for="category-active">Активна</label>
                     </b-col>
-                    <b-col cols="9">
+                    <b-col cols="8">
                         <input id="category-active"
                                type="checkbox"
-                               v-model="categoryToEdit.active" :disabled="canSetActive"/>
+                               v-model="categoryToEdit.active" :disabled="parentDisabled"/>
                     </b-col>
                 </b-row>
             </div>
         </div>
         <div class="mt-3">
             <button class="btn btn-success"
+                    :disabled="$v.categoryToEdit.$invalid"
                     @click="save">
                 Сохранить
             </button>
@@ -66,15 +89,14 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VDate from '../../../../components/controls/VDate/VDate.vue';
     import { validationMixin } from 'vuelidate';
-    import { required, alphaNum, helpers } from 'vuelidate/lib/validators';
+    import { required, requiredIf, helpers } from 'vuelidate/lib/validators';
 
     const newCategoryTemplate = {
         name: null,
+        code: null,
         active: false,
     };
-
     const defaultOptions = [{ value: null, text: 'Нет' }];
-
     const categoryCodeValidator = helpers.regex('code', /^[a-z\d_]*$/);
 
     export default {
@@ -101,10 +123,12 @@
                 categoryToEdit: {
                     name: {
                         required,
-                        // alphaNum,
                     },
                     code: {
                         categoryCodeValidator,
+                        required: requiredIf(function () {
+                            return this.mode === 'edit';
+                        }),
                     },
                 },
             }
@@ -118,12 +142,10 @@
 
                 let data = {
                     'name': this.categoryToEdit.name,
+                    'code': this.categoryToEdit.code,
                     'active': this.categoryToEdit.active,
                     'parent_id': this.parentId,
                 };
-
-                console.log(data);
-
                 Services.showLoader();
                 let savePromise;
                 if (this.mode === 'create') {
@@ -153,9 +175,10 @@
                 this.$bvModal.hide('category-edit-modal');
             },
             resetFields() {
-                // this.categoryToEdit = newCategoryTemplate;
+                let data = this.category ? this.category : newCategoryTemplate;
+                this.categoryToEdit = Object.assign({}, data);
+                this.parentId = this.category ? this.category.parent_id : null;
                 this.$v.$reset();
-
             },
             errorNameField() {
                 if (this.$v.categoryToEdit.name.$dirty
@@ -164,52 +187,70 @@
                 }
             },
             errorCodeField() {
-                if (this.$v.categoryToEdit.code.$dirty
-                    && this.$v.categoryToEdit.code.$invalid) {
-                    return "Код может состоять только из символов нижнего регистра, цифр и нижнего подчеркивания";
-                }
-            },
-            warningParentField() {
-                let parent = this.categories.find((item) => item.id === this.parentId);
-                if (!parent) {
-                    return false;
-                }
-                // В случае, если потенциальная родительская категория является листом и имеет товары
-                if (parent && parent.productsCount > 0 && this.getDescendant(parent).length === 0) {
-                    return true;
-                }
-            },
-            getDescendant(category) {
-                let descendants = [];
-                if (!category) return descendants;
-
-                this.categories.forEach((item) => {
-                    if (category.id === item.parent_id) {
-                        descendants.push(item.id);
-                        descendants = descendants.concat(this.getDescendant(item));
+                if (this.$v.categoryToEdit.code.$dirty) {
+                    if (!this.$v.categoryToEdit.code.categoryCodeValidator) {
+                        return "Код может состоять только из символов нижнего регистра, цифр и нижнего подчеркивания";
                     }
+                    if (!this.$v.categoryToEdit.code.required) {
+                        return "Введите код";
+                    }
+                }
+            },
+            getAllProps(category) {
+                if (!category) {
+                    return [];
+                }
+                let props = category.properties;
+                category.ancestors.forEach((id) => {
+                    let ancestor = this.categories.find((item) => item.id === id);
+                    props = props.concat(ancestor.properties);
                 });
-                return descendants;
+                return props;
             },
         },
         computed: {
             availableParents() {
-                let options = this.categories.filter((item) => {
-                    return item.active;
-                });
+                let options = this.categories;
                 if (this.category) {
-                    let descendants = this.getDescendant(this.category);
                     options = options.filter((item) => {
-                        return !descendants.includes(item.id) && this.category.id !== item.id;
+                        return !this.category.descendants.includes(item.id) && this.category.id !== item.id;
                     })
                 }
-
                 return defaultOptions.concat(options.map((item) => {
                     return {
                         value: item.id,
                         text: item.name,
                     }
                 }));
+            },
+            warningProductsMove() {
+                let parent = this.categories.find((item) => item.id === this.parentId);
+                if (!parent) {
+                    return false;
+                }
+                // В случае, если потенциальная родительская категория является листом и имеет товары
+                if (parent && parent.productsCount > 0 && parent.descendants.length === 0) {
+                    return true;
+                }
+            },
+            warningPropsRemove() {
+                let oldParent = this.categories.find((item) => item.id === this.categoryToEdit.parent_id);
+                let newParent = this.categories.find((item) => item.id === this.parentId);
+                let oldProps = this.getAllProps(oldParent);
+                let newProps = this.getAllProps(newParent);
+                let newPropsIds = newProps.map((prop) => prop.id);
+
+                return oldProps.filter((prop) => !newPropsIds.includes(prop.id));
+            },
+            parentDisabled() {
+                if (this.parentId) {
+                    let parent = this.categories.find((item) => item.id === this.parentId);
+                    if (!parent.active) {
+                        this.categoryToEdit.active = false;
+                        return true;
+                    }
+                }
+                return false;
             },
             codeTooltip() {
                 return 'Оставьте поле пустым, если хотите, чтобы код был сгенерирован автоматически';
@@ -219,8 +260,9 @@
             'category': {
                 handler(value) {
                     this.mode = value ? 'edit' : 'create';
-                    this.categoryToEdit = value ? value : newCategoryTemplate;
-                    this.parentId = value ? value.parent_id : null;
+                    let data = value ? value : newCategoryTemplate;
+                    this.categoryToEdit = Object.assign({}, data);
+                    this.parentId = value ? value.parent_id : null; //
                 }
             },
         }
@@ -230,5 +272,8 @@
 <style scoped>
     .prop-name {
         width: 25%;
+    }
+    .warning {
+        margin-bottom: 0.5rem;
     }
 </style>

@@ -79,7 +79,8 @@ class FrequentCategoryController extends Controller
     protected function loadCategories(CategoryService $categoryService, FrequentCategoryService $frequentCategoryService, FileService $fileService)
     {
         $categories = $categoryService->categories((new RestQuery())
-            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id'));
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active')
+            ->include(CategoryService::PRODUCTS_COUNT));
 
         $frequentCategories = $frequentCategoryService->list((new RestQuery())
             ->addFields(FrequentCategoryDto::entity(), 'category_id', 'frequent', 'position', 'file_id')
@@ -94,6 +95,8 @@ class FrequentCategoryController extends Controller
                 'name' => $category->name,
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
+                'active' => $category->active,
+                'productsCount' => $category->productsCount,
                 'frequent' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->frequent : false,
                 'position' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->position : 0,
                 'image' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)['file'] : null,

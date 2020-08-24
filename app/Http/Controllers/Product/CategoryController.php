@@ -25,6 +25,7 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => 'string',
+            'code' => 'string|nullable',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
         ]);
@@ -37,7 +38,8 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'id' => 'integer|required',
-            'name' => 'string',
+            'name' => 'string|required',
+            'code' => 'string|required',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
         ]);
@@ -53,8 +55,9 @@ class CategoryController extends Controller
     protected function loadCategories(CategoryService $categoryService)
     {
         $categories = $categoryService->categories((new RestQuery())
-            ->include(CategoryService::PRODUCTS_COUNT)
-            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'));
+            ->include('descendants', 'ancestors', 'products', 'properties')
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active')
+            ->addFields('products', 'id', 'category_id'));
 
         return $categories->map(function (CategoryDto $category) {
             return [
@@ -63,9 +66,16 @@ class CategoryController extends Controller
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
                 'active' => $category->active,
-                'productsCount' => $category->productsCount,
+                'productsCount' => $category->products->count(),
+                'descendants' => $category->descendants()->pluck('id')->all(),
+                'ancestors' => $category->ancestors()->pluck('id')->all(),
+                'properties' => $category->properties->map(function (PropertyDto $prop) {
+                    return [
+                        'id' => $prop->id,
+                        'name' => $prop->name,
+                    ];
+                })->all(),
             ];
         });
     }
-
 }

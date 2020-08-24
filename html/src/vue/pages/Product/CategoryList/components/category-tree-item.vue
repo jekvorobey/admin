@@ -15,9 +15,7 @@
             <div class="col-sm-4">
                 {{ category.code }}
             </div>
-            <!--<div class="col-sm-1 d-flex justify-content-start">-->
             <div class="col-sm-1">
-                <!--{{ category.active ? 'Да' : 'Нет' }}-->
                 <span class="badge" :class="getBadgeClass(category.active)">
                     {{ category.active ? 'Да' : 'Нет' }}
                 </span>
@@ -48,33 +46,10 @@
             category: Object,
             collection: Array,
             depth: Number,
-            selectable: Boolean
         },
         data() {
             return {
                 opened: false,
-                frequent: false,
-                item: {
-                    id: this.category.id,
-                    frequent: this.category.frequent,
-                    position: this.category.position,
-                    image: this.category.image,
-                }
-            }
-        },
-        validations() {
-            return {
-                item: {
-                    position: {
-                        integer,
-                        required,
-                    },
-                    image: {
-                        required: requiredIf(function () {
-                            return this.item.frequent;
-                        }),
-                    },
-                },
             }
         },
         methods: {
@@ -103,21 +78,7 @@
                     return category.parent_id === this.category.id;
                 });
             },
-            checkboxDisabled() {
-                return !this.item.frequent && !this.selectable;
-            },
         },
-        watch: {
-            'item': {
-                handler(value) {
-                    this.emit({
-                        'item': value,
-                        'invalid': this.$v.item.$invalid,
-                    });
-                },
-                deep: true
-            }
-        }
     }
 </script>
 
