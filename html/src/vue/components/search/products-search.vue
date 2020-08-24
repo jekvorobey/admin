@@ -14,7 +14,7 @@
         >
             <li
                     v-for="(product, i) in products"
-                    v-if="exceptedIds.indexOf(product.id) === -1"
+                    v-if="exceptedIds.indexOf(parseInt(product.id)) === -1"
                     :key="i"
                     @click="setResult(product)"
                     class="autocomplete-result with-small"
