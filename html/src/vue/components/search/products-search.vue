@@ -79,7 +79,7 @@
             },
             search() {
                 Services.net().get(this.getRoute('search.products'), {
-                    query: this.query,
+                    query: encodeURI(this.query).replace('#', ''),
                     exceptedIds: this.exceptedIds,
                 }).then((data) => {
                     this.isOpen = true;
