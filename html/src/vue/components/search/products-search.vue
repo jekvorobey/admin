@@ -44,6 +44,10 @@
             exceptedIds: {
                 type: Array,
                 default: [],
+            },
+            merchantId: {
+                type: Number,
+                default: 0,
             }
         },
         data() {
@@ -81,6 +85,7 @@
                 Services.net().get(this.getRoute('search.products'), {
                     query: encodeURI(this.query).replace('#', ''),
                     exceptedIds: this.exceptedIds,
+                    merchantId: this.merchantId,
                 }).then((data) => {
                     this.isOpen = true;
                     this.products = data.products;

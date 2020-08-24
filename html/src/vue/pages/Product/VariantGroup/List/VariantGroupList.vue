@@ -136,7 +136,7 @@
                                     <b-collapse :id="'products-' + variantGroup.id" class="mt-2">
                                         <p v-for="product in variantGroup.products"
                                                 :class="product.id === variantGroup.main_product_id ? 'font-weight-bold' : ''">
-                                            <a :href="getRoute('products.detail', {id: variantGroup.id})" target="_blank">
+                                            <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
                                                 {{product.name}}
                                             </a>
                                         </p>

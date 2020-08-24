@@ -25,9 +25,11 @@ class SearchController extends Controller
         $data = $this->validate($request, [
             'query' => ['required', 'string'],
             'limit' => ['nullable', 'integer'],
+            'merchantId' => ['nullable', 'integer'],
             'exceptedIds' => ['nullable', 'array'],
             'exceptedIds.*' => ['required', 'integer'],
         ]);
+        $merchantId = $data['merchantId'] ?? null;
         $exceptedIds = $data['exceptedIds'] ?? [];
 
         /** @var SearchService $searchService */
@@ -40,6 +42,9 @@ class SearchController extends Controller
         $productSuggestQuery->productsLimit = $data['limit'] ?? 10;
         $productSuggestQuery->role = UserDto::SHOWCASE__GUEST;
         $productSuggestQuery->segment = 1;
+        if ($merchantId) {
+            $productSuggestQuery->merchantId = $merchantId;
+        }
         $productSuggestQuery->fields = [
             ProductQuery::PRODUCT_ID,
             ProductQuery::NAME,

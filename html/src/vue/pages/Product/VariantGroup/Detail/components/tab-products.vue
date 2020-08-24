@@ -6,6 +6,7 @@
                     <products-search
                             :model.sync="newProducts"
                             :excepted-ids="exceptedIds"
+                            :merchant-id="parseInt(variantGroup.merchant_id)"
                     ></products-search>
                 </b-col>
                 <b-col>
