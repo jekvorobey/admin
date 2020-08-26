@@ -35,6 +35,10 @@ class Menu
                                 'title' => 'Категории',
                                 'route' => route('categories.list'),
                             ],
+                            [
+                                'title' => 'Товарные атрибуты',
+                                'route' => route('products.properties.list'),
+                            ],
                         ]
                     ],
 //                    [
@@ -160,6 +164,10 @@ class Menu
                     [
                         'title' => 'Популярные бренды',
                         'route' => route('popularBrands.list'),
+                    ],
+                    [
+                        'title' => 'Популярные товары',
+                        'route' => route('popularProducts.list'),
                     ],
                 ]
             ],

@@ -41,8 +41,23 @@
                     <p class="text-secondary mt-3">
                         Служба доставки:<span class="float-right">{{ cargo.delivery_service.name }}</span>
                     </p>
+                    <p  v-if="cargo.delivery_service.support_courier_check === true"
+                        class="text-secondary mt-3">
+                        UUID Заявки:
+                        <span class="float-right">
+                            {{ cargo.xml_id ? cargo.xml_id : 'N/A' }}
+                        </span>
+                    </p>
                     <p class="text-secondary mt-3">
-                        Номер задания на забор груза:<span class="float-right">{{ cargo.xml_id ? cargo.xml_id : 'N/A' }}</span>
+                        Номер задания на забор груза:
+                        <span class="float-right">
+                            <template v-if="cargo.delivery_service.support_courier_check === true">
+                                {{ cargo.cdek_intake_number ? cargo.cdek_intake_number : 'N/A' }}
+                            </template>
+                            <template v-else>
+                                {{ cargo.xml_id ? cargo.xml_id : 'N/A' }}
+                            </template>
+                        </span>
                     </p>
                     <p class="mt-3" v-if="cargo.error_xml_id">
                         <b>Последняя ошибка при создании задания на забор груза:</b>

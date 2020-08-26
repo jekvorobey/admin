@@ -39,7 +39,9 @@ class ProductGroupDetailController extends Controller
             'iProductGroupTypes' => $productGroupTypes,
             'iProductGroupImages' => $productGroupImages,
             'iCategories' => $categories,
-            'options' => [],
+            'options' => [
+                'typesBasedOnCategory' => ProductGroupTypeDto::TYPES_BASED_ON_CATEGORY,
+            ],
         ]);
     }
 
@@ -57,7 +59,9 @@ class ProductGroupDetailController extends Controller
             'iProductGroupTypes' => $productGroupTypes,
             'iProductGroupImages' => [],
             'iCategories' => $categories,
-            'options' => [],
+            'options' => [
+                'typesBasedOnCategory' => ProductGroupTypeDto::TYPES_BASED_ON_CATEGORY,
+            ],
         ]);
     }
 

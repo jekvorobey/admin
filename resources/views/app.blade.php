@@ -12,7 +12,7 @@
 
     <title>{{ $title }}</title>
 
-{{--    <link rel="shortcut icon" href="/assets/images/favicon.ico" />--}}
+    <link rel="shortcut icon" href="/favicon.ico" />
     @foreach($assets['css'] as $css)
         <link href="{{ frontend()->path($css) }}" rel="stylesheet"/>
     @endforeach

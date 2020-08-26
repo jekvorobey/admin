@@ -12,6 +12,10 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
+    Route::prefix('search')->group(function() {
+        Route::get('products', 'SearchController@products')->name('search.products');
+    });
+
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::prefix('list')->group(function () {
             Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
@@ -152,7 +156,6 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('content')->group(function () {
             Route::get('', 'ContentClaimController@index')->name('contentClaims.list');
-            Route::get('xy', 'ContentClaimController@xyeta')->name('contentClaims.xy');
             Route::get('create', 'ContentClaimController@create')->name('contentClaims.create');
             Route::get('page', 'ContentClaimController@page')->name('contentClaims.pagination');
             Route::post('createClaim', 'ContentClaimController@saveClaim')->name('contentClaims.createClaim');
@@ -363,6 +366,16 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
+        Route::prefix('properties')->group(function () {
+            Route::get('', 'PropertiesController@list')->name('products.properties.list');
+            Route::get('create', 'PropertiesController@create')->name('products.properties.create');
+            Route::put('update', 'PropertiesController@update')->name('products.properties.update');
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'PropertiesController@detail')->name('products.properties.detail');
+                Route::delete('', 'PropertiesController@delete')->name('products.properties.delete');
+            });
+        });
+
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
@@ -390,21 +403,32 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+                Route::put('', 'VariantGroupDetailController@save')->name('variantGroups.detail.save');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('products')->group(function () {
-                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products');
-                        Route::put('', 'TabProductsController@save')->name('variantGroups.detail.products.save');
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products.load');
+                        Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
                         Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                        Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::put('set-main', 'TabProductsController@setMain')->name('variantGroups.detail.products.setMain');
+                        });
                     });
 
                     Route::prefix('properties')->group(function () {
-                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties');
-                        Route::put('', 'TabPropertiesController@save')->name('variantGroups.detail.properties.save');
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties.load');
                         Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                        });
                     });
                 });
             });
+        });
+
+        Route::prefix('import-export')->namespace('ImportExport')->group(function () {
+            Route::get('export-by-product-ids', 'ProductsExportController@exportByProductIds')->name('products.exportByProductIds');
+            Route::get('export-by-filters', 'ProductsExportController@exportByFilters')->name('products.exportByFilters');
         });
     });
     
@@ -503,6 +527,13 @@ Route::middleware('auth')->group(function () {
             Route::put('update', 'PopularBrandController@update')->name('popularBrands.update');
             Route::put('reorder', 'PopularBrandController@reorder')->name('popularBrands.reorder');
             Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
+        });
+
+        Route::prefix('popular-products')->namespace('PopularProduct')->group(function () {
+            Route::get('', 'PopularProductController@list')->name('popularProducts.list');
+            Route::post('create', 'PopularProductController@create')->name('popularProducts.create');
+            Route::put('reorder', 'PopularProductController@reorder')->name('popularProducts.reorder');
+            Route::delete('delete', 'PopularProductController@delete')->name('popularProducts.delete');
         });
 
         Route::prefix('categories')->namespace('Category')->group(function () {

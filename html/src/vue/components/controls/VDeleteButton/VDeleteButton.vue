@@ -1,6 +1,8 @@
 <template>
     <span style="display: inline-block; vertical-align: middle;">
-        <button :id="btn_id()" type="button" @click="onClick" class="btn" :class="btnClass"><fa-icon icon="trash-alt"/></button>
+        <button :id="btn_id()" type="button" @click="onClick" class="btn" :class="btnClass" title="Удалить">
+            <fa-icon icon="trash-alt"/>
+        </button>
         <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">
             <template slot="title">
                 <b-button @click="onClose" class="close ml-3" aria-label="Close">

@@ -12,8 +12,8 @@
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-products v-if="key === 'products'" :model.sync="variantGroup"/>
-                    <!--<tab-properties v-else-if="key === 'properties'" :model.sync="variantGroup"/>-->
+                    <tab-products v-if="key === 'main'" :model.sync="variantGroup" @changeTab="changeTab"/>
+                    <tab-properties v-else-if="key === 'properties'" :model.sync="variantGroup"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -32,7 +32,7 @@
     import Infopanel from './components/infopanel.vue';
     import Kpi from './components/kpi.vue';
     import TabProducts from './components/tab-products.vue';
-    //import TabProperties from './components/tab-properties.vue';
+    import TabProperties from './components/tab-properties.vue';
     import tabsMixin from '../../../../mixins/tabs';
 
     export default {
@@ -41,7 +41,7 @@
             Infopanel,
             Kpi,
             TabProducts,
-            //TabProperties,
+            TabProperties,
         },
         props: {
             iVariantGroup: {},
@@ -51,12 +51,17 @@
                 variantGroup: this.iVariantGroup,
             };
         },
+        methods: {
+            changeTab(tab) {
+                this.tabIndex = this.tabs[tab].i;
+            }
+        },
         computed: {
             tabs() {
                 let tabs = {};
                 let i = 0;
 
-                tabs.products = {i: i++, title: 'Товары'};
+                tabs.main = {i: i++, title: 'Товары'};
                 tabs.properties = {i: i++, title: 'Характеристики'};
 
                 return tabs;

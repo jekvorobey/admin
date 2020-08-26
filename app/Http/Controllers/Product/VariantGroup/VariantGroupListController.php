@@ -176,14 +176,13 @@ class VariantGroupListController extends Controller
         $merchants = $this->getMerchants($variantGroups->pluck('merchant_id')->all());
 
         $variantGroups = $variantGroups->map(function (VariantGroupDto $variantGroupDto) use ($merchants) {
-            $data = $variantGroupDto->toArray();
-
-            $data['merchant'] = $variantGroupDto->merchant_id && $merchants->has($variantGroupDto->merchant_id)
+            $variantGroupDto->name = $variantGroupDto->name ? : 'Нет названия';
+            $variantGroupDto['merchant'] = $variantGroupDto->merchant_id && $merchants->has($variantGroupDto->merchant_id)
                 ? $merchants[$variantGroupDto->merchant_id] : null;
-            $data['created_at'] = dateTime2str(new Carbon($variantGroupDto->created_at));
-            $data['updated_at'] = dateTime2str(new Carbon($variantGroupDto->updated_at));
+            $variantGroupDto->created_at = date_time2str(new Carbon($variantGroupDto->created_at));
+            $variantGroupDto->updated_at = date_time2str(new Carbon($variantGroupDto->updated_at));
 
-            return $data;
+            return $variantGroupDto;
         });
 
         return $variantGroups;
@@ -196,7 +195,19 @@ class VariantGroupListController extends Controller
      */
     protected function makeRestQuery(bool $withDefaultFilter = false): DataQuery
     {
-        $restQuery = $this->variantGroupService->newQuery()->include('properties', 'products', 'mainProduct');
+        $restQuery = $this->variantGroupService->newQuery()
+            ->addFields(
+                VariantGroupDto::entity(),
+                'id',
+                'name',
+                'main_product_id',
+                'merchant_id',
+                'products_count',
+                'properties_count',
+                'created_at',
+                'updated_at'
+            )
+            ->include('properties', 'products', 'mainProduct');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20);

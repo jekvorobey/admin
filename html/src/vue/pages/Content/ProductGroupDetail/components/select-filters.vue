@@ -12,7 +12,7 @@
                     </b-badge>
                 </template>
             </template>
-            <span v-if="!filters.length">Фильтры для выбранной категории не найдены</span>
+            <span v-if="selectedCategory && !filters.length">Фильтры для выбранной категории не найдены</span>
         </div>
 
         <b-card no-body

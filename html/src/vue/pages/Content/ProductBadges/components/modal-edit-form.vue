@@ -18,15 +18,6 @@
                                      aria-required="true"/>
                         </td>
                     </tr>
-                    <tr>
-                        <th>Тип шильдика</th>
-                        <td>
-                            <v-select v-model="badge.type"
-                                      :error="errType"
-                                      :options="availableTypes">
-                            </v-select>
-                        </td>
-                    </tr>
                     </tbody>
                     <tfoot>
                     <tr align="right">
@@ -55,7 +46,7 @@
     import VInput from "../../../../components/controls/VInput/VInput.vue";
     import VSelect from "../../../../components/controls/VSelect/VSelect.vue";
     import {validationMixin} from 'vuelidate';
-    import {required, integer} from 'vuelidate/lib/validators';
+    import {required} from 'vuelidate/lib/validators';
 
     export default {
         name: "modal-edit-form",
@@ -71,7 +62,6 @@
         props: {
             modalName: String,
             editingBadge: Object,
-            types: Object
         },
 
         data () {
@@ -79,14 +69,12 @@
                 badge_null: {
                     id: null,
                     text: '',
-                    type: '',
                 }
             };
         },
         validations: {
             badge: {
                 text: {required},
-                type: {required, integer},
             },
         },
         methods: {
@@ -111,23 +99,10 @@
                     return this.editingBadge || this.badge_null
                 }
             },
-            availableTypes() {
-                return Object.entries(this.types).map(type => ({
-                    value: type[0],
-                    text: type[1],
-                }),);
-            },
             errText() {
                 if (this.$v.badge.text.$dirty) {
                     if (!this.$v.badge.text.required) {
                         return "Обязательное поле!";
-                    }
-                }
-            },
-            errType() {
-                if (this.$v.badge.type.$dirty) {
-                    if (!this.$v.badge.type.required) {
-                        return "Выберите тип!";
                     }
                 }
             },

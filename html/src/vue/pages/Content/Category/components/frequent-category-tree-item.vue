@@ -6,11 +6,19 @@
                     {{ category.name }}
                     <fa-icon :icon="opened ? 'angle-up' : 'angle-down'"></fa-icon>
                 </span>
+                <div v-if="errorFrequentSelect" class="mt-1 text-danger" style="font-size: 85%">
+                    <fa-icon icon="exclamation-triangle"></fa-icon>
+                    {{ errorFrequentSelect }}
+                </div>
             </div>
             <div v-else class="col-sm-5">
                 <span :style="indent">
                     {{ category.name }}
                 </span>
+                <div v-if="errorFrequentSelect" class="mt-1 text-danger" style="font-size: 85%">
+                    <fa-icon icon="exclamation-triangle"></fa-icon>
+                    {{ errorFrequentSelect }}
+                </div>
             </div>
             <div class="col-sm-1 d-flex justify-content-center">
                 <input type="checkbox" class="mt-1" :disabled="checkboxDisabled" v-model="item.frequent">
@@ -139,13 +147,24 @@
             checkboxDisabled() {
                 return !this.item.frequent && !this.selectable;
             },
+            errorFrequentSelect() {
+                if (this.item.frequent) {
+                    if (!this.category.active) {
+                        return "Выбранная категория неактивна";
+                    }
+                    if (this.category.productsCount < 1) {
+                        return "У выбранной категории нет товаров на витрине";
+                    }
+                    return false;
+                }
+            },
         },
         watch: {
             'item': {
                 handler(value) {
                     this.emit({
                         'item': value,
-                        'invalid': this.$v.item.$invalid,
+                        'invalid': this.$v.item.$invalid || this.errorFrequentSelect,
                     });
                 },
                 deep: true
