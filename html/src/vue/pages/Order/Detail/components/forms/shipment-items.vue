@@ -48,7 +48,7 @@
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
                     <tr v-for="(basketItem, key) in shipment.nonPackedBasketItems">
-                        <b-td v-if="canEdit">
+                        <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds" v-if="!shipment.is_problem && isAssemblingStatus && hasShipmentPackages">
                         </b-td>
