@@ -16,18 +16,23 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
+use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
+use Pim\Services\SearchService\SearchService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductDetailController extends Controller
@@ -75,6 +80,7 @@ class ProductDetailController extends Controller
                 'availableBadges' => $availableBadges,
                 'directoryValues' => $directoryValues,
                 'orderStatuses' => OrderStatus::allStatuses(),
+                'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
                 'approval' => $approvalStatuses,
                 'brands' => $brands,
                 'categories' => $categories,
@@ -269,40 +275,54 @@ class ProductDetailController extends Controller
         if (!$products->count()) {
             throw new NotFoundHttpException();
         }
+        /** @var ProductDto $product */
+        $product = $products->first();
         $stockService = resolve(StockService::class);
         $priceService = resolve(PriceService::class);
         $orderService = resolve(OrderService::class);
-        $listOffers = collect($products->first()->offers)
-            ->map(function ($item) use ($priceService, $stockService) {
-                $item['offer_id'] = $item['id'];
-                unset($item['id']);
-                $item['qty'] = $stockService->qtyByOffer($item['offer_id']);
-                $priceIn = new PriceInDto($item['offer_id']);
+        $merchantIds = $product->offers->pluck('merchant_id');
+        $merchants = $this->getMerchants($merchantIds->unique()->all());
+        $product->offers = $product->offers->map(function (OfferDto $item) use ($priceService, $stockService, $merchants) {
+                $item['qty'] = $stockService->qtyByOffer($item->id);
+                $priceIn = new PriceInDto($item->id);
                 $priceDto = $priceService->price($priceIn);
                 $item['price'] = $priceDto ? $priceDto->price : 0;
+                $item['saleStatus'] = OfferSaleStatus::statusById($item['sale_status']);
+                $item['merchant'] = $merchants->has($item->merchant_id) ? $merchants[$item->merchant_id] : null;
+                $item->created_at = date_time2str(new Carbon($item->created_at));
+
                 return $item;
             });
-        $currentOffer = $listOffers
-            ->whereIn('sale_status', [1, 2])
-            ->sortByDesc('qty')
-            ->first();
+
+        $query = new ProductQuery();
+        $query->fields([
+            ProductQuery::OFFER_ID,
+            ProductQuery::QTY,
+        ]);
+        $query->id = $id;
+        $query->active = true;
+        /** @var SearchService $searchService */
+        $searchService = resolve(SearchService::class);
+        $elasticProduct = current($searchService->products($query)->products);
+        $currentOffer = [];
+        if ($elasticProduct) {
+            $currentOffer = clone $product->offers->where('id', $elasticProduct['offerId'])->first();
+            $currentOffer['qty'] = $elasticProduct['qty'];
+        }
         if (!$currentOffer) {
             $currentOffer['qty'] = 0;
             $currentOffer['price'] = 0;
         }
-        $products->first()->showCount = $currentOffer;
-        $products->first()->offers = $listOffers;
-        $products->first()->publicEvents = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
+        $product['currentOffer'] = $currentOffer;
+        $product['publicEvents'] = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
         //После реализации сервиса мастер классов - тут получение привязанных
-        /** @var ProductDto $product */
-        $product = $products->first();
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);
 
-        $offersIds = (collect($products->first()->offers->pluck('offer_id'))->toArray());
+        $offersIds = (collect($product->offers->pluck('id'))->toArray());
         $orders = $offersIds ? $orderService->ordersByOffers(['offersIds' => $offersIds]) : [];
-        $products->first()->orders = $orders;
-        $products->first()->offersIds = $offersIds;
+        $product['orders'] = $orders;
+        $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
         return [
             $product,
