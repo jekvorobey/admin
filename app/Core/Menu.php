@@ -87,6 +87,10 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list')
                     ],
+                    /** @link https://redmine.greensight.ru/issues/57841 [
+                        'title' => 'Отправления',
+                        'route' => route('shipment.list')
+                    ],*/
                     [
                         'title' => 'Справочники',
                         'items' => [

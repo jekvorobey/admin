@@ -334,6 +334,11 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::prefix('shipments')->namespace('Shipment')->group(function () {
+            Route::get('', 'ShipmentListController@index')->name('shipment.list');
+            Route::get('page', 'ShipmentListController@page')->name('shipment.pagination');
+        });
+
         Route::prefix('directories')->namespace('Directory')->group(function () {
             Route::prefix('order-statuses')->group(function () {
                 Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
