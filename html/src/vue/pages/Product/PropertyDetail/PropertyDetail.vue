@@ -64,7 +64,9 @@
                         Тип атрибута
                     </v-select>
                 </div>
+
                 <div class="col-6">
+                    <p class="mb-2">Особенности атрибута</p>
                     <div class="custom-control custom-checkbox">
                         <input v-model="productProperty.is_filterable"
                                type="checkbox"
@@ -84,16 +86,6 @@
                             Атрибут хранит несколько значений
                         </label>
                     </div>
-
-                    <div class="custom-control custom-checkbox">
-                        <input v-model="productProperty.is_color"
-                               type="checkbox"
-                               class="custom-control-input"
-                               id="isColor">
-                        <label class="custom-control-label" for="isColor">
-                            Атрибут хранит цвет
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -106,19 +98,7 @@
                                                :model.sync="productProperty.categories"/>
                 </div>
 
-                <div class="col-6">
-                    <h4 class="text-muted mb-4">Атрибут может принимать значения:</h4>
-
-                    <em class="text-muted">
-                        Будет готово в рамках задачи по созданию справочника значений для товарных атрибутов
-                    </em>
-                    <v-input class="mt-4" placeholder="Значение-заглушка 1" disabled/>
-                    <v-input placeholder="Значение-заглушка 2" disabled/>
-                    <v-input placeholder="Значение-заглушка 3" disabled/>
-                    <button class="btn btn-dark float-right" disabled>
-                        <fa-icon icon="plus"/> Добавить значение
-                    </button>
-                </div>
+                <ValuesEditFrame/>
             </div>
         </div>
 
@@ -131,8 +111,9 @@
 <script>
 import VInput from "../../../components/controls/VInput/VInput.vue";
 import VSelect from "../../../components/controls/VSelect/VSelect.vue";
-import ModalCategoriesCheckbox from "../../Customer/Detail/components/modal-categories-checkbox.vue"
-import DeletionAlert from "./components/deletion-alert-modal.vue"
+import ModalCategoriesCheckbox from "../../Customer/Detail/components/modal-categories-checkbox.vue";
+import DeletionAlert from "./components/deletion-alert-modal.vue";
+import ValuesEditFrame from "./components/attribute-values-edit.vue";
 import NestedSets from "../../../../scripts/nestedSets.js";
 import Services from "../../../../scripts/services/services.js";
 
@@ -140,7 +121,13 @@ import {validationMixin} from 'vuelidate';
 import {required} from 'vuelidate/lib/validators';
 
 export default {
-    components: {VSelect, VInput, ModalCategoriesCheckbox, DeletionAlert},
+    components: {
+        VSelect,
+        VInput,
+        ModalCategoriesCheckbox,
+        DeletionAlert,
+        ValuesEditFrame
+    },
     mixins: [validationMixin],
     props: ['iProperty', 'iCategories', 'property_types'],
     data() {
