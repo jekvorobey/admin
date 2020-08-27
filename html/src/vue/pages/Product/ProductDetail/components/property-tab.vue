@@ -100,6 +100,7 @@
         <product-badges-modal
                 :product-id="[product.id]"
                 :available-badges="options.availableBadges"
+                :attached-badges="product_badges"
                 @save="updateBadges"/>
     </div>
 </template>

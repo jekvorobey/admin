@@ -29,7 +29,8 @@
         name: "product-badges-modal",
         props: [
             'productId',
-            'availableBadges'
+            'availableBadges',
+            'attachedBadges'
         ],
         data() {
             return {
@@ -39,7 +40,7 @@
         },
         methods: {
             initiateModal() {
-                this.productBadges = [];
+                this.productBadges = this.attachedBadges ? this.attachedBadges : [];
             },
             saveBadges() {
                 Services.showLoader();
