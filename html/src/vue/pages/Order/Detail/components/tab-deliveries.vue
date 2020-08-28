@@ -92,7 +92,13 @@
             <b-row>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Желаемая покупателем дата доставки:</span>
-                    {{delivery.delivery_at}}
+                    {{delivery.delivery_at}}<br>
+                    <span class="font-weight-bold">Желаемое покупателем время доставки:</span>
+                    <template v-if="delivery.delivery_time_start && delivery.delivery_time_end">
+                        с {{delivery.delivery_time_start}} по {{delivery.delivery_time_end}}
+                        <template v-if="delivery.delivery_time_code">(code={{delivery.delivery_time_code}})</template>
+                    </template>
+                    <template v-else>не указано</template>
                 </div>
                 <div class="col-sm-6">
                     <template v-if="delivery.point">
