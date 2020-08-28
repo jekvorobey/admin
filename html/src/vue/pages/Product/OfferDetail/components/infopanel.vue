@@ -64,7 +64,8 @@
             OfferStatusEditModal,
         },
         props: {
-            offer: {}
+            offer: Object,
+            stocks: Array,
         },
         data() {
             return {
@@ -99,7 +100,7 @@
                 }
             },
             countedQty() {
-                return this.offerModel.stocks.reduce((total, stock) => {
+                return this.stocks.reduce((total, stock) => {
                     return total + stock.qty;
                 }, 0);
             },
