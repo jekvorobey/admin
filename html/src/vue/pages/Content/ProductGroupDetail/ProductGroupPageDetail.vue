@@ -106,7 +106,7 @@
             </b-form-group>
 
             <select-filters
-                    v-if="(isBasedOnFilters || isNotBasedOn) && (productGroup.category_code || !needsCategory)"
+                    v-if="(isBasedOnFilters || isNotBasedOn) && (productGroup.category_code || !basedOnCategory)"
                     :i-selected-filters="selectedFilters"
                     :i-selected-category="productGroup.category_code"
                     @update="(data) => selectedFilters = data"
@@ -279,7 +279,7 @@
             isNotBasedOn() {
                 return !this.isBasedOnProducts && !this.isBasedOnFilters;
             },
-            needsCategory() {
+            basedOnCategory() {
                 if (!this.productGroup.type_id) return true;
 
                 let basedOnCategoryTypeIds = this.productGroupTypes.filter((type) => {

@@ -461,6 +461,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'ProductGroupDetailController@create')->name('productGroup.create');
             Route::delete('/{id}', 'ProductGroupDetailController@delete')->where(['id' => '[0-9]+'])->name('productGroup.delete');
             Route::get('/filter', 'ProductGroupDetailController@getFilters')->name('productGroup.getFilters');
+            Route::get('/filter-by-category', 'ProductGroupDetailController@getFiltersByCategory')->name('productGroup.getFiltersByCategory');
             Route::get('/product', 'ProductGroupDetailController@getProducts')->name('productGroup.getProducts');
         });
 

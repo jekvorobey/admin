@@ -9,12 +9,15 @@ use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
 use Cms\Services\ProductGroupTypeService\ProductGroupTypeService;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
+use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
+use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -116,6 +119,21 @@ class ProductGroupDetailController extends Controller
     }
 
     public function getFilters(
+        BrandService $brandService,
+        ProductService $productService
+    ) {
+        $brandsFilter = $brandService->filters();
+        $appliedFilters = [
+            'brand' => $brandsFilter->pluck('code')
+        ];
+        $excludedFilters = ['brand'];
+        $filters = $productService->filters($appliedFilters, $excludedFilters)->all();
+
+        $result = array_merge($brandsFilter->all(), $filters);
+        return response()->json($result);
+    }
+
+    public function getFiltersByCategory(
         Request $request,
         ProductService $productService
     ) {
