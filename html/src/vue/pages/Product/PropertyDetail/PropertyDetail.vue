@@ -19,22 +19,58 @@
                                             class="btn btn-danger btn-lg mr-2">
                                         <fa-icon icon="trash-alt"/> Удалить атрибут
                                     </button>
-                                    <button type="button"
+                                    <button v-if="allErrors.length === 0"
+                                            type="button"
                                             @click="save"
                                             class="btn btn-success btn-lg"
                                             :disabled="$v.$invalid">
                                         <fa-icon icon="check"/> Сохранить изменения
                                     </button>
+                                    <template v-else>
+                                        <span id="disabled-save-button"
+                                              class="d-inline-block"
+                                              tabindex="0">
+                                            <b-button variant="success btn-lg"
+                                                      style="pointer-events: none;"
+                                                      disabled>
+                                                <fa-icon icon="check"/> Сохранить изменения
+                                            </b-button>
+                                        </span>
+                                        <b-tooltip target="disabled-save-button">
+                                            <template v-for="error in allErrors">
+                                                {{ error }}<br>
+                                            </template>
+                                        </b-tooltip>
+                                    </template>
                                 </div>
                             </div>
                         </template>
 
-                        <button v-else type="button"
-                                @click="save"
-                                class="btn btn-success btn-lg btn-block"
-                                :disabled="$v.$invalid">
-                            <fa-icon icon="check"/> Создать товарный атрибут
-                        </button>
+                        <template v-else>
+                            <template v-if="allErrors.length > 0">
+                                <span id="disabled-create-button"
+                                      class="d-inline-block btn-block"
+                                      tabindex="0">
+                                    <b-button variant="success btn-lg btn-block"
+                                              style="pointer-events: none;"
+                                              disabled>
+                                        <fa-icon icon="check"/> Создать товарный атрибут
+                                    </b-button>
+                                </span>
+                                <b-tooltip target="disabled-create-button">
+                                    <template v-for="error in allErrors">
+                                        {{ error }}<br>
+                                    </template>
+                                </b-tooltip>
+                            </template>
+
+                            <button v-else type="button"
+                                    @click="save"
+                                    class="btn btn-success btn-lg btn-block"
+                                    :disabled="$v.$invalid">
+                                <fa-icon icon="check"/> Создать товарный атрибут
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -98,7 +134,8 @@
                                                :model.sync="productProperty.categories"/>
                 </div>
 
-                <ValuesEditFrame/>
+                <ValuesEditFrame :attribute-type="productProperty.type"
+                                 :available-values="productProperty.values"/>
             </div>
         </div>
 
@@ -140,7 +177,11 @@ export default {
                 is_filterable: false,
                 is_multiple: false,
                 is_color: false,
-                categories: []
+                categories: [],
+                values: {
+                    old: [],
+                    new: ['', '']
+                }
             },
         }
     },
@@ -162,9 +203,12 @@ export default {
                 this.productProperty.is_multiple = this.iProperty.is_multiple;
                 this.productProperty.is_color = this.iProperty.is_color;
 
-                this.iProperty.categoryPropertyLinks.forEach(item => {
-                    this.productProperty.categories.push(item.category_id)
-                })
+                this.iProperty.categoryPropertyLinks.forEach(link => {
+                    this.productProperty.categories.push(link.category_id)
+                });
+                this.iProperty.values.forEach(value => {
+                    this.productProperty.values.old.push(value)
+                });
             }
         },
         save() {
@@ -182,7 +226,9 @@ export default {
                 is_filterable: Number(this.productProperty.is_filterable),
                 is_multiple: Number(this.productProperty.is_multiple),
                 is_color: Number(this.productProperty.is_color),
-                categories: JSON.stringify(this.productProperty.categories)
+                categories: JSON.stringify(this.productProperty.categories),
+                old_values: JSON.stringify(this.productProperty.values.old),
+                new_values: JSON.stringify(this.productProperty.values.new),
             }
             ).then(() => {
                 Services.msg('Информация о товарном атрибуте успешно сохранена')
@@ -210,6 +256,47 @@ export default {
                 text: type[1]
             }));
         },
+        /// ОШИБКИ ///
+        valuesErrors() {
+            let errors = [];
+            if (this.productProperty.type === 'directory') {
+                if (this.productProperty.values.old.length === 0) {
+                    if (
+                        this.productProperty.values.new[0].length === 0
+                        || this.productProperty.values.new[1].length === 0
+                    ) {
+                        errors.push('• Укажите не менее 2 возможных значений\n\n');
+                    }
+                }
+                if (this.productProperty.values.old.length === 1) {
+                    if (this.productProperty.values.new[0].length === 0) {
+                        errors.push('• Добавьте хотя бы 1 новое значение\n\n');
+                    }
+                }
+                this.productProperty.values.old.forEach(item => {
+                    if (item.name.length === 0) {
+                        errors.push('• Введите значение на замену для старого значения\n\n');
+                    }
+                })
+            }
+            return errors;
+        },
+        formErrors() {
+            let errors = [];
+            if (!this.productProperty.name) {
+                errors.push('• Введите название для административного раздела\n\n');
+            }
+            if (!this.productProperty.display_name) {
+                errors.push('• Введите название для публичной части сайта\n\n');
+            }
+            if (!this.productProperty.type) {
+                errors.push('• Укажите тип атрибута\n\n');
+            }
+            return errors;
+        },
+        allErrors() {
+            return this.formErrors.concat(this.valuesErrors)
+        }
     },
     created() {
         this.prepareForEdit();

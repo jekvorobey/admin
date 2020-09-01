@@ -29,7 +29,7 @@
                     <h5>{{ character }}</h5>
                     <ul class="list-unstyled">
                         <li v-for="prop in properties"
-                            v-if="prop.name[0] === character">
+                            v-if="prop.name[0].toUpperCase() === character">
                             <small>-
                                 <a :href="getRoute('products.properties.detail', {id: prop.code})"
                                    class="text-dark">
@@ -58,8 +58,8 @@ export default {
         initiateHeaders() {
             this.headers = [];
             this.properties.forEach(item => {
-                if (!this.headers.includes(item.name[0])) {
-                    this.headers.push(item.name[0]);
+                if (!this.headers.includes(item.name[0].toUpperCase())) {
+                    this.headers.push(item.name[0].toUpperCase());
                 }
             });
 
