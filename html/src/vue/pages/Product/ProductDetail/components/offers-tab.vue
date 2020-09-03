@@ -40,10 +40,11 @@
                     <th>Суммарный остаток <fa-icon icon="question-circle" v-b-popover.hover="tooltipQty"></fa-icon></th>
                     <th>Статус</th>
                     <th>Ручная сортировка</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(offer, index) in offers" v-on:click="editOffer(index)"
+                <tr v-for="(offer, index) in offers"
                         :class="offer.id === currentOffer.id ? 'table-primary' : ''"
                         :title="offer.id === currentOffer.id ? 'Оффер на витрине' : ''">
                     <td>
@@ -61,6 +62,11 @@
                     <td>{{ offer.qty }} шт.</td>
                     <td>{{ offer.saleStatus.name }}</td>
                     <td>{{ offer.manual_sort }}</td>
+                    <td>
+                      <button class="btn btn-light btn-sm" @click="editOffer(index)">
+                        <fa-icon icon="pencil-alt"></fa-icon>
+                      </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -74,12 +80,12 @@
 </template>
 
 <script>
-    import FInput from '../../../../components/filter/f-input.vue';
-    import Modal from '../../../../components/controls/modal/modal.vue';
-    import modalMixin from '../../../../mixins/modal';
-    import offerEditModal from './offer-edit-modal.vue';
+import FInput from '../../../../components/filter/f-input.vue';
+import Modal from '../../../../components/controls/modal/modal.vue';
+import modalMixin from '../../../../mixins/modal';
+import offerEditModal from './offer-edit-modal.vue';
 
-    export default {
+export default {
         components:{
             FInput,
             offerEditModal,
@@ -100,7 +106,7 @@
         },
         props: {
             offers: Array,
-            currentOffer: Array,
+            currentOffer: {},
             options: {},
         },
         methods: {
