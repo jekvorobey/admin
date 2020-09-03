@@ -173,7 +173,7 @@ export default {
              * @returns {null|string}
              */
             composition() {
-              return this.product.ingredients ? this.product.ingredients.items.join(', ') : null;
+              return this.product.ingredients && this.product.ingredients.items ? this.product.ingredients.items.join(', ') : null;
             }
         },
         computed: {
