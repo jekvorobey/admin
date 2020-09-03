@@ -159,11 +159,6 @@ class ProductListController extends Controller
         $badges = $data['badges'] ?? null;
         $productService->updateBadges($productIds, $badges);
 
-        # Переиндексировать товары
-        foreach ($productIds as $productId) {
-            $searchService->markForIndex(IndexType::PRODUCT, $productId);
-        }
-
         return response('', 204);
     }
 
