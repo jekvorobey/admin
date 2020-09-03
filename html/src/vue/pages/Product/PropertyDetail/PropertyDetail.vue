@@ -146,13 +146,13 @@
 </template>
 
 <script>
-import VInput from "../../../components/controls/VInput/VInput.vue";
-import VSelect from "../../../components/controls/VSelect/VSelect.vue";
-import ModalCategoriesCheckbox from "../../Customer/Detail/components/modal-categories-checkbox.vue";
-import DeletionAlert from "./components/deletion-alert-modal.vue";
-import ValuesEditFrame from "./components/attribute-values-edit.vue";
-import NestedSets from "../../../../scripts/nestedSets.js";
-import Services from "../../../../scripts/services/services.js";
+import VInput from '../../../components/controls/VInput/VInput.vue';
+import VSelect from '../../../components/controls/VSelect/VSelect.vue';
+import ModalCategoriesCheckbox from '../../Customer/Detail/components/modal-categories-checkbox.vue';
+import DeletionAlert from './components/deletion-alert-modal.vue';
+import ValuesEditFrame from './components/attribute-values-edit.vue';
+import NestedSets from '../../../../scripts/nestedSets.js';
+import Services from '../../../../scripts/services/services.js';
 
 import {validationMixin} from 'vuelidate';
 import {required} from 'vuelidate/lib/validators';
@@ -218,7 +218,7 @@ export default {
             }
 
             Services.showLoader();
-            Services.net().put(this.getRoute('products.properties.update', {}), {
+            Services.net().put(this.getRoute('products.properties.update', {}), {}, {
                 id: this.productProperty.id,
                 name: this.productProperty.name,
                 display_name: this.productProperty.display_name,
@@ -232,10 +232,7 @@ export default {
             }
             ).then(() => {
                 Services.msg('Информация о товарном атрибуте успешно сохранена')
-                setTimeout(() => {
-                    window.location = this.getRoute(
-                        'products.properties.list', {}
-                    )}, 1500);
+              window.location.reload();
             }, () => {
                 Services.msg('Возникла ошибка при сохранении','danger')
             }).finally(() => {
