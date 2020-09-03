@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
+use Pim\Dto\Search\IndexType;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -143,9 +144,10 @@ class ProductListController extends Controller
     /**
      * Назначить или обнулить шильдики у товаров
      * @param ProductService $productService
+     * @param SearchService $searchService
      * @return Application|ResponseFactory|Response
      */
-    public function attachBadges(ProductService $productService)
+    public function attachBadges(ProductService $productService, SearchService $searchService)
     {
         $data = $this->validate(request(), [
             'product_ids' => 'required|array',
@@ -156,6 +158,11 @@ class ProductListController extends Controller
         $productIds = $data['product_ids'];
         $badges = $data['badges'] ?? null;
         $productService->updateBadges($productIds, $badges);
+
+        # Переиндексировать товары
+        foreach ($productIds as $productId) {
+            $searchService->markForIndex(IndexType::PRODUCT, $productId);
+        }
 
         return response('', 204);
     }

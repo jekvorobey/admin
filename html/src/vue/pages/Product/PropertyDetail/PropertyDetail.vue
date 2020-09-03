@@ -19,22 +19,58 @@
                                             class="btn btn-danger btn-lg mr-2">
                                         <fa-icon icon="trash-alt"/> Удалить атрибут
                                     </button>
-                                    <button type="button"
+                                    <button v-if="allErrors.length === 0"
+                                            type="button"
                                             @click="save"
                                             class="btn btn-success btn-lg"
                                             :disabled="$v.$invalid">
                                         <fa-icon icon="check"/> Сохранить изменения
                                     </button>
+                                    <template v-else>
+                                        <span id="disabled-save-button"
+                                              class="d-inline-block"
+                                              tabindex="0">
+                                            <b-button variant="success btn-lg"
+                                                      style="pointer-events: none;"
+                                                      disabled>
+                                                <fa-icon icon="check"/> Сохранить изменения
+                                            </b-button>
+                                        </span>
+                                        <b-tooltip target="disabled-save-button">
+                                            <template v-for="error in allErrors">
+                                                {{ error }}<br>
+                                            </template>
+                                        </b-tooltip>
+                                    </template>
                                 </div>
                             </div>
                         </template>
 
-                        <button v-else type="button"
-                                @click="save"
-                                class="btn btn-success btn-lg btn-block"
-                                :disabled="$v.$invalid">
-                            <fa-icon icon="check"/> Создать товарный атрибут
-                        </button>
+                        <template v-else>
+                            <template v-if="allErrors.length > 0">
+                                <span id="disabled-create-button"
+                                      class="d-inline-block btn-block"
+                                      tabindex="0">
+                                    <b-button variant="success btn-lg btn-block"
+                                              style="pointer-events: none;"
+                                              disabled>
+                                        <fa-icon icon="check"/> Создать товарный атрибут
+                                    </b-button>
+                                </span>
+                                <b-tooltip target="disabled-create-button">
+                                    <template v-for="error in allErrors">
+                                        {{ error }}<br>
+                                    </template>
+                                </b-tooltip>
+                            </template>
+
+                            <button v-else type="button"
+                                    @click="save"
+                                    class="btn btn-success btn-lg btn-block"
+                                    :disabled="$v.$invalid">
+                                <fa-icon icon="check"/> Создать товарный атрибут
+                            </button>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -64,7 +100,9 @@
                         Тип атрибута
                     </v-select>
                 </div>
+
                 <div class="col-6">
+                    <p class="mb-2">Особенности атрибута</p>
                     <div class="custom-control custom-checkbox">
                         <input v-model="productProperty.is_filterable"
                                type="checkbox"
@@ -84,16 +122,6 @@
                             Атрибут хранит несколько значений
                         </label>
                     </div>
-
-                    <div class="custom-control custom-checkbox">
-                        <input v-model="productProperty.is_color"
-                               type="checkbox"
-                               class="custom-control-input"
-                               id="isColor">
-                        <label class="custom-control-label" for="isColor">
-                            Атрибут хранит цвет
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -106,19 +134,8 @@
                                                :model.sync="productProperty.categories"/>
                 </div>
 
-                <div class="col-6">
-                    <h4 class="text-muted mb-4">Атрибут может принимать значения:</h4>
-
-                    <em class="text-muted">
-                        Будет готово в рамках задачи по созданию справочника значений для товарных атрибутов
-                    </em>
-                    <v-input class="mt-4" placeholder="Значение-заглушка 1" disabled/>
-                    <v-input placeholder="Значение-заглушка 2" disabled/>
-                    <v-input placeholder="Значение-заглушка 3" disabled/>
-                    <button class="btn btn-dark float-right" disabled>
-                        <fa-icon icon="plus"/> Добавить значение
-                    </button>
-                </div>
+                <ValuesEditFrame :attribute-type="productProperty.type"
+                                 :available-values="productProperty.values"/>
             </div>
         </div>
 
@@ -131,8 +148,9 @@
 <script>
 import VInput from "../../../components/controls/VInput/VInput.vue";
 import VSelect from "../../../components/controls/VSelect/VSelect.vue";
-import ModalCategoriesCheckbox from "../../Customer/Detail/components/modal-categories-checkbox.vue"
-import DeletionAlert from "./components/deletion-alert-modal.vue"
+import ModalCategoriesCheckbox from "../../Customer/Detail/components/modal-categories-checkbox.vue";
+import DeletionAlert from "./components/deletion-alert-modal.vue";
+import ValuesEditFrame from "./components/attribute-values-edit.vue";
 import NestedSets from "../../../../scripts/nestedSets.js";
 import Services from "../../../../scripts/services/services.js";
 
@@ -140,7 +158,13 @@ import {validationMixin} from 'vuelidate';
 import {required} from 'vuelidate/lib/validators';
 
 export default {
-    components: {VSelect, VInput, ModalCategoriesCheckbox, DeletionAlert},
+    components: {
+        VSelect,
+        VInput,
+        ModalCategoriesCheckbox,
+        DeletionAlert,
+        ValuesEditFrame
+    },
     mixins: [validationMixin],
     props: ['iProperty', 'iCategories', 'property_types'],
     data() {
@@ -153,7 +177,11 @@ export default {
                 is_filterable: false,
                 is_multiple: false,
                 is_color: false,
-                categories: []
+                categories: [],
+                values: {
+                    old: [],
+                    new: ['', '']
+                }
             },
         }
     },
@@ -175,9 +203,12 @@ export default {
                 this.productProperty.is_multiple = this.iProperty.is_multiple;
                 this.productProperty.is_color = this.iProperty.is_color;
 
-                this.iProperty.categoryPropertyLinks.forEach(item => {
-                    this.productProperty.categories.push(item.category_id)
-                })
+                this.iProperty.categoryPropertyLinks.forEach(link => {
+                    this.productProperty.categories.push(link.category_id)
+                });
+                this.iProperty.values.forEach(value => {
+                    this.productProperty.values.old.push(value)
+                });
             }
         },
         save() {
@@ -195,7 +226,9 @@ export default {
                 is_filterable: Number(this.productProperty.is_filterable),
                 is_multiple: Number(this.productProperty.is_multiple),
                 is_color: Number(this.productProperty.is_color),
-                categories: JSON.stringify(this.productProperty.categories)
+                categories: JSON.stringify(this.productProperty.categories),
+                old_values: JSON.stringify(this.productProperty.values.old),
+                new_values: JSON.stringify(this.productProperty.values.new),
             }
             ).then(() => {
                 Services.msg('Информация о товарном атрибуте успешно сохранена')
@@ -223,6 +256,47 @@ export default {
                 text: type[1]
             }));
         },
+        /// ОШИБКИ ///
+        valuesErrors() {
+            let errors = [];
+            if (this.productProperty.type === 'directory') {
+                if (this.productProperty.values.old.length === 0) {
+                    if (
+                        this.productProperty.values.new[0].length === 0
+                        || this.productProperty.values.new[1].length === 0
+                    ) {
+                        errors.push('• Укажите не менее 2 возможных значений\n\n');
+                    }
+                }
+                if (this.productProperty.values.old.length === 1) {
+                    if (this.productProperty.values.new[0].length === 0) {
+                        errors.push('• Добавьте хотя бы 1 новое значение\n\n');
+                    }
+                }
+                this.productProperty.values.old.forEach(item => {
+                    if (item.name.length === 0) {
+                        errors.push('• Введите значение на замену для старого значения\n\n');
+                    }
+                })
+            }
+            return errors;
+        },
+        formErrors() {
+            let errors = [];
+            if (!this.productProperty.name) {
+                errors.push('• Введите название для административного раздела\n\n');
+            }
+            if (!this.productProperty.display_name) {
+                errors.push('• Введите название для публичной части сайта\n\n');
+            }
+            if (!this.productProperty.type) {
+                errors.push('• Укажите тип атрибута\n\n');
+            }
+            return errors;
+        },
+        allErrors() {
+            return this.formErrors.concat(this.valuesErrors)
+        }
     },
     created() {
         this.prepareForEdit();

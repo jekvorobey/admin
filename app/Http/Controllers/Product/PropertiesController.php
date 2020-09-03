@@ -10,9 +10,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PropertiesController extends Controller
@@ -46,12 +49,7 @@ class PropertiesController extends Controller
      */
     public function detail(string $propCode)
     {
-        /** @var PropertyDto $productProperty */
         $productProperty = $this->getPropData($propCode);
-
-        if (!$productProperty) {
-            throw new NotFoundHttpException();
-        }
 
         $this->title = "Редактирование товарного атрибута";
         return $this->render('Product/PropertyDetail', [
@@ -92,7 +90,9 @@ class PropertiesController extends Controller
             'is_filterable' => 'required|boolean',
             'is_multiple' => 'required|boolean',
             'is_color' => 'required|boolean',
-            'categories' => 'present|json'
+            'categories' => 'present|json',
+            'old_values' => 'nullable|json',
+            'new_values' => 'nullable|json',
         ]);
 
         $propertyDto = $this->fulfillDto($data);
@@ -118,11 +118,14 @@ class PropertiesController extends Controller
      * Вспомогательный метод, подгружающий детальную информацию о товарном атрибуте
      * @param string $code
      * @return mixed
+     * @throws PimException
      */
     protected function getPropData(string $code)
     {
         $productService = resolve(ProductService::class);
-        $restQuery = $productService->newQuery()
+        $valuesService = resolve(PropertyDirectoryValueService::class);
+
+        $propQuery = $productService->newQuery()
             ->include('categoryPropertyLinks')
             ->addFields(PropertyDto::entity(),
                 'id',
@@ -136,7 +139,25 @@ class PropertiesController extends Controller
                 'updated_at'
             )->setFilter('code', $code);
 
-        return $productService->getProperties($restQuery)->first();
+        /** @var PropertyDto $property */
+        $property = $productService->getProperties($propQuery)->first();
+        if (!$property) {
+            throw new NotFoundHttpException();
+        }
+
+        # Если у товарного атрибута жестко установленные значения - они подгружаются
+        $property->offsetSet('values', []);
+        if ($property->type === PropertyDto::TYPE_DIRECTORY) {
+            $valuesQuery = $valuesService
+                ->newQuery()
+                ->setFilter('property_id', $property->id)
+                ->addFields(PropertyDirectoryValueDto::entity(), 'id', 'name', 'property_id');
+
+            $values = $valuesService->values($valuesQuery);
+            $property->offsetSet('values', $values);
+        }
+
+        return $property;
     }
 
     /**
@@ -176,6 +197,11 @@ class PropertiesController extends Controller
         $dto->is_multiple = $data['is_multiple'];
         $dto->is_color = $data['is_color'];
         $dto->categoryPropertyLinks = $data['categories'] ?? json_encode([]);
+
+        if ($dto->type === PropertyDto::TYPE_DIRECTORY) {
+            $dto->old_values = $data['old_values'] ?? json_encode([]);
+            $dto->new_values = $data['new_values'] ?? json_encode([]);
+        }
 
         return $dto;
     }

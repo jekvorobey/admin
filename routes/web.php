@@ -334,6 +334,11 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::prefix('shipments')->namespace('Shipment')->group(function () {
+            Route::get('', 'ShipmentListController@index')->name('shipment.list');
+            Route::get('page', 'ShipmentListController@page')->name('shipment.pagination');
+        });
+
         Route::prefix('directories')->namespace('Directory')->group(function () {
             Route::prefix('order-statuses')->group(function () {
                 Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
@@ -346,12 +351,13 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
         Route::post('', 'OfferListController@createOffer')->name('offers.create');
-        Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OfferDetailController@index')->name('offers.detail');
+            Route::get('stocks', 'OfferDetailController@loadStocks')->name('offers.stocks');
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
+            Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         });
         Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
         Route::get('validate-offer', 'OfferListController@validateOffer')->name('offers.validate');
@@ -455,6 +461,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'ProductGroupDetailController@create')->name('productGroup.create');
             Route::delete('/{id}', 'ProductGroupDetailController@delete')->where(['id' => '[0-9]+'])->name('productGroup.delete');
             Route::get('/filter', 'ProductGroupDetailController@getFilters')->name('productGroup.getFilters');
+            Route::get('/filter-by-category', 'ProductGroupDetailController@getFiltersByCategory')->name('productGroup.getFiltersByCategory');
             Route::get('/product', 'ProductGroupDetailController@getProducts')->name('productGroup.getProducts');
         });
 

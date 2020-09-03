@@ -36,12 +36,12 @@ class ProductBadgesController extends Controller
      */
     public function add(ContentBadgesService $badgesService)
     {
-        $data = $this->validate(request(), [
+        $this->validate(request(), [
             'text' => 'required|string'
         ]);
 
         $badgeDto = new ProductBadgeDto();
-        $badgeDto->text = $data['text'];
+        $badgeDto->text = urlencode($_REQUEST['text']);
 
         $badgesService->createProductBadge($badgeDto);
 
@@ -66,7 +66,7 @@ class ProductBadgesController extends Controller
         ]);
 
         $badgeDto = new ProductBadgeDto();
-        $badgeDto->text = $data['text'];
+        $badgeDto->text = urlencode($_REQUEST['text']);
 
         $badgesService->updateProductBadge($data['id'], $badgeDto);
 

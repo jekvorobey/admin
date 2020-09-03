@@ -126,13 +126,13 @@ class OfferListController extends Controller
     }
 
     public function editOffer(
+        int $id,
         Request $request,
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
     ) {
         $data = $request->validate([
-            'offer_id' => 'integer|required',
             'product_id' => 'integer|required',
             'price' => 'sometimes|numeric|required',
             'sale_status' => [
@@ -156,11 +156,11 @@ class OfferListController extends Controller
             if ($dateChanged) {
                 $offerDto['sale_at'] = $data['sale_at'];
             }
-            $offerService->updateOffer($data['offer_id'], $offerDto);
+            $offerService->updateOffer($id, $offerDto);
         }
 
         if (array_key_exists('price', $data)) {
-            $priceService->setPrice($data['offer_id'], $data['price']);
+            $priceService->setPrice($id, $data['price']);
         }
 
         if (!empty($data['stocks'])) {
@@ -169,7 +169,7 @@ class OfferListController extends Controller
                 $stockDto = new StockDto([
                     'store_id' => $stock['store_id'],
                     'product_id' => $data['product_id'],
-                    'offer_id' => $data['offer_id'],
+                    'offer_id' => $id,
                     'qty' => (double) $stock['qty']
                 ]);
                 $stocks->push($stockDto);

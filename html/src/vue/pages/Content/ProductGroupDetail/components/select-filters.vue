@@ -69,11 +69,15 @@
         },
         methods: {
             fetchFilters(categoryCode) {
+                let filterPromise = categoryCode
+                    ? Services.net().get(this.getRoute('productGroup.getFiltersByCategory'), {category: categoryCode})
+                    : Services.net().get(this.getRoute('productGroup.getFilters'));
+
                 Services.showLoader();
-                Services.net().get(this.getRoute('productGroup.getFilters'), {category: categoryCode}).then((data) => {
-                    this.filters = data;
+                filterPromise.then((data) => {
+                  this.filters = data;
                 }).finally(() => {
-                    Services.hideLoader();
+                  Services.hideLoader();
                 });
             },
             isChecked(code, value) {

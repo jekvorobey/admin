@@ -100,21 +100,22 @@
         <product-badges-modal
                 :product-id="[product.id]"
                 :available-badges="options.availableBadges"
+                :attached-badges="product_badges"
                 @save="updateBadges"/>
     </div>
 </template>
 
 <script>
-    import ShadowCard from '../../../../components/shadow-card.vue';
-    import ProductEditModal from './product-values-modal.vue';
-    import ProductPropsModal from './product-props-modal.vue';
-    import ProductIngredientsModal from './product-ingredients-modal.vue';
-    import ProductBadgesModal from './product-badges-modal.vue';
-    import ArchiveModal from './product-archive-modal.vue';
+import ShadowCard from '../../../../components/shadow-card.vue';
+import ProductEditModal from './product-values-modal.vue';
+import ProductPropsModal from './product-props-modal.vue';
+import ProductIngredientsModal from './product-ingredients-modal.vue';
+import ProductBadgesModal from './product-badges-modal.vue';
+import ArchiveModal from './product-archive-modal.vue';
 
-    import modalMixin from '../../../../mixins/modal.js';
+import modalMixin from '../../../../mixins/modal.js';
 
-    export default {
+export default {
         components: {
             ShadowCard,
             ProductEditModal,
@@ -172,11 +173,7 @@
              * @returns {null|string}
              */
             composition() {
-                if (this.product.ingredients) {
-                    if (this.product.ingredients.items)
-                        return JSON.parse(this.product.ingredients.items).join(', ')
-                    else return null;
-                } else return null;
+              return this.product.ingredients ? this.product.ingredients.items.join(', ') : null;
             }
         },
         computed: {

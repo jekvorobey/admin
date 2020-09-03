@@ -20,13 +20,13 @@
 </template>
 
 <script>
-    import modal from '../../../../components/controls/modal/modal.vue';
-    import VInput from '../../../../components/controls/VInput/VInput.vue';
-    import modalMixin from '../../../../mixins/modal.js';
-    import Services from "../../../../../scripts/services/services";
-    import FSelect from "../../../../components/filter/f-select.vue";
+import modal from '../../../../components/controls/modal/modal.vue';
+import VInput from '../../../../components/controls/VInput/VInput.vue';
+import modalMixin from '../../../../mixins/modal.js';
+import Services from '../../../../../scripts/services/services';
+import FSelect from '../../../../components/filter/f-select.vue';
 
-    export default {
+export default {
         components: {
             FSelect,
             modal,
@@ -44,18 +44,15 @@
                 this.closeModal();
                 Services.showLoader();
                 let data = {"props": {"status": this.offer.sale_status, "manual_sort" : this.offer.manual_sort}};
-                Services.net().post(this.getRoute('offers.saveOfferProps', {id: this.offer.offer_id}), {}, data).catch(() => {
+                Services.net().post(this.getRoute('offers.saveOfferProps', {id: this.offer.id}), {}, data).catch(() => {
                 }).then(()=> {
-                    Services.hideLoader();
+                    Services.msg('Изменения сохранены');
                     this.$emit('onSave');
+                }).finally(() => {
+                  Services.hideLoader();
                 });
             },
         },
     }
 </script>
 
-<style>
-    .ck-editor__editable_inline {
-        min-height: 300px;
-    }
-</style>
