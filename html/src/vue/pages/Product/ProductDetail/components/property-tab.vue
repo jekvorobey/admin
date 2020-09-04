@@ -18,10 +18,6 @@
                             <th>Бренд:</th>
                             <td>{{ brandName }}</td>
                         </tr>
-                        <tr>
-                            <th>Новинка:</th>
-                            <td>{{ product.is_new ? 'Да' : 'Нет' }}</td>
-                        </tr>
                     </tbody>
                 </table>
             </shadow-card>
