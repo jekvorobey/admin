@@ -6,7 +6,7 @@
                     <products-search
                             :model.sync="newProducts"
                             :excepted-ids="exceptedIds"
-                            :merchant-id="parseInt(variantGroup.merchant_id)"
+                            :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
                     ></products-search>
                 </b-col>
                 <b-col>
@@ -103,11 +103,11 @@
     </div>
 </template>
 <script>
-    import Services from '../../../../../../scripts/services/services';
-    import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
-    import ProductsSearch from '../../../../../components/search/products-search.vue';
+import Services from '../../../../../../scripts/services/services';
+import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+import ProductsSearch from '../../../../../components/search/products-search.vue';
 
-    export default {
+export default {
         props: {
             model: {},
         },
@@ -153,14 +153,14 @@
                 }
 
                 Services.showLoader();
-                Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {
+                Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {}, {
                     productIds: newProductIds,
                 }).then((data) => {
                     this.setData(data);
                     this.newProducts = {};
                     Services.msg("Добавление товара(ов) прошло успешно");
                 }, () => {
-                    Services.msg("Ошибка при добавлении товара(ов) - возможно товар(ы) не имеет(ют) указанных характеристик для склейки", "danger");
+                    Services.msg("Ошибка при добавлении товара(ов) - возможно товар(ы) не имеет(ют) указанных характеристик для склейки, или есть дубли товаров по характеристикам для склейки", "danger");
                 }).finally(() => {
                     Services.hideLoader();
                 });
