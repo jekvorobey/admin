@@ -17,6 +17,7 @@ use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountInDto;
 use Greensight\Marketing\Dto\Discount\DiscountOfferDto;
+use Greensight\Marketing\Dto\Discount\DiscountPublicEventDto;
 use Greensight\Marketing\Dto\Discount\DiscountSegmentDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
@@ -152,6 +153,7 @@ class DiscountHelper
             'bundle_items'    => 'array',
             'brands'          => 'array',
             'categories'      => 'array',
+            'public_events'   => 'array',
             'except'          => 'array',
             'conditions'      => 'array',
         ]);
@@ -195,21 +197,20 @@ class DiscountHelper
     }
 
     /**
-     * Возваращает необходимые связи для скидки
-     *
+     * Возвращает необходимые связи для скидки
      * @param array $data
-     *
      * @return array
      */
     public static function getDiscountRelations(array $data)
     {
         $relations = [
-            DiscountDto::DISCOUNT_OFFER_RELATION     => [],
-            DiscountDto::DISCOUNT_BRAND_RELATION     => [],
-            DiscountDto::DISCOUNT_CATEGORY_RELATION  => [],
-            DiscountDto::DISCOUNT_SEGMENT_RELATION   => [],
+            DiscountDto::DISCOUNT_OFFER_RELATION => [],
+            DiscountDto::DISCOUNT_BRAND_RELATION => [],
+            DiscountDto::DISCOUNT_CATEGORY_RELATION => [],
+            DiscountDto::DISCOUNT_SEGMENT_RELATION => [],
             DiscountDto::DISCOUNT_USER_ROLE_RELATION => [],
             DiscountDto::DISCOUNT_BUNDLE_RELATION => [],
+            DiscountDto::DISCOUNT_PUBLIC_EVENT_RELATION => [],
         ];
 
         switch ($data['type']) {
@@ -225,6 +226,12 @@ class DiscountHelper
                 foreach ($data['bundle_items'] as $bundleItem) {
                     $relations[DiscountDto::DISCOUNT_BUNDLE_RELATION][] = (new BundleItemDto())
                         ->setItem($bundleItem);
+                }
+                break;
+            case DiscountTypeDto::TYPE_MASTERCLASS:
+                foreach ($data['public_events'] as $tickedTypeId) {
+                    $relations[DiscountDto::DISCOUNT_PUBLIC_EVENT_RELATION][] = (new DiscountPublicEventDto())
+                        ->setTicketTypeId($tickedTypeId);
                 }
                 break;
             case DiscountTypeDto::TYPE_BRAND:
@@ -271,7 +278,7 @@ class DiscountHelper
         }
 
         /**
-         * Условия, которые выделени в отдельные DTO для оптимизации расчета скидки в каталоге
+         * Условия, которые выделены в отдельные DTO для оптимизации расчета скидки в каталоге
          */
         foreach ($data['conditions'] as $condition) {
             if ($condition['type'] !== DiscountConditionDto::USER) {

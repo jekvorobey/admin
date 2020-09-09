@@ -100,6 +100,8 @@
                         data.except.brands = discount.brands ? discount.brands : [];
                         data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
                         break;
+                    case this.discountTypes.masterclass:
+                        data.public_events = discount.publicEvents ? this.formatIds(discount.publicEvents) : [];
                 }
 
                 this.processing = true;
@@ -114,7 +116,7 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('UpdateDiscount');
                     this.processing = false;
-                    this.setTimeout(location=this.getRedirectRoute(discount.type), 4000);
+                    window.location=this.getRedirectRoute(discount.type);
                 }, () => {
                     this.result = err;
                     this.openModal('UpdateDiscount');

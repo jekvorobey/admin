@@ -425,12 +425,14 @@ Vue.mixin({
  @property {integer} bundleMasterclass
  @property {integer} brand
  @property {integer} category
+ @property {integer} masterclass
  @property {integer} delivery
  @property {integer} cartTotal
  @property {integer} anyOffer
  @property {integer} anyBundle
  @property {integer} anyBrand
  @property {integer} anyCategory
+ @property {integer} anyMasterclass
  */
 /**
  @typedef PublicEventStatus
