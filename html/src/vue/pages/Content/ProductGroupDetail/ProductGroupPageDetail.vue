@@ -86,35 +86,51 @@
                 </b-form-select>
             </b-form-group>
 
-            <b-form-group
-                    v-show="isBasedOnFilters || isNotBasedOn"
-                    label="Категория"
-                    label-for="group-categories"
-            >
-                <b-form-select
-                        v-model="productGroup.category_code"
-                        id="group-category"
-                >
-                    <b-form-select-option
+            <div v-show="isBasedOnFilters || isNotBasedOn">
+              <div class="mt-1 mb-1">
+                <span>Категория</span>
+                <button @click="addCategory(10)"
+                        class="btn btn-outline-info h-100 ml-3"
+                        :disabled="categories.length < 2"
+                        type="button">
+                  <fa-icon icon="plus"></fa-icon>
+                </button>
+              </div>
+              <div v-for="(categoryField, index) in categoryFields" class="mt-1 d-flex">
+                  <div class="col-11 pl-0">
+                      <b-form-select
+                          v-model="categoryFields[index]"
+                          id="group-category"
+                      >
+                        <b-form-select-option
                             :value="category.code"
                             v-for="category in categories"
-                            :key="category.code"
-                    >
-                        {{ category.name }}
-                    </b-form-select-option>
-                </b-form-select>
-            </b-form-group>
+                        >
+                          {{ category.name }}
+                        </b-form-select-option>
+                      </b-form-select>
+                  </div>
+                  <div>
+                      <button @click="removeCategory(index)"
+                              class="btn btn-outline-secondary float-right h-100"
+                              type="button">
+                        <fa-icon icon="trash-alt"></fa-icon>
+                      </button>
+                  </div>
+              </div>
+            </div>
 
             <select-filters
-                    v-if="(isBasedOnFilters || isNotBasedOn) && (productGroup.category_code || !basedOnCategory)"
+                    v-if="(isBasedOnFilters || isNotBasedOn) && (selectedCategories.length > 0 || !basedOnCategory)"
                     :i-selected-filters="selectedFilters"
-                    :i-selected-category="productGroup.category_code"
+                    :i-selected-filter-sources="selectedFilterSources"
+                    :i-product-group-types="productGroupTypes"
                     @update="(data) => selectedFilters = data"
             >
             </select-filters>
 
             <select-products
-                    v-show="isBasedOnProducts || isNotBasedOn"
+                    v-show="isBasedOnProducts || (isNotBasedOn && !isBasedOnCategories) "
                     :i-selected-product-ids="pluckSelectedProductIds()"
                     @add="onAddToSelectedProducts"
                     @delete="onDeleteFromSelectedProducts"
@@ -143,7 +159,7 @@
             SelectFilters,
             SelectProducts,
             FileInput,
-            BannerModal
+            BannerModal,
         },
         props: {
             iProductGroup: {},
@@ -161,6 +177,7 @@
                 selectedFilters: this.iProductGroup.filters || [],
                 selectedProductIds: [],
                 selectedProducts: this.iProductGroup.products || [],
+                categoryFields: this.setSelectedCategories(this.iProductGroup),
             };
         },
 
@@ -181,6 +198,9 @@
                     category_code:  source.category_code ? source.category_code : null,
                 };
             },
+            setSelectedCategories(source) {
+                return (source.category_code && source.category_code.length > 0) ? source.category_code : [''];
+            },
             submit() {
                 if (this.isCreatingMode) {
                     this.create();
@@ -193,6 +213,7 @@
                 let model = this.productGroup;
                 model.filters = this.selectedFilters;
                 model.products = this.selectedProducts;
+                model.category_code = model.products.length ? null : this.selectedCategories;
 
                 Services.net()
                     .put(this.getRoute('productGroup.update', {id: this.productGroup.id,}), {}, model)
@@ -208,6 +229,7 @@
                 let model = this.productGroup;
                 model.filters = this.selectedFilters;
                 model.products = this.selectedProducts;
+                model.category_code = model.products.length ? null : this.selectedCategories;
 
                 Services.net()
                     .post(this.getRoute('productGroup.create'), {}, model)
@@ -253,7 +275,13 @@
                 }
 
                 return ids;
-            }
+            },
+            addCategory() {
+                this.categoryFields.push('');
+            },
+            removeCategory(index) {
+                this.categoryFields.splice(index, 1);
+            },
         },
         computed: {
             previewPhoto() {
@@ -276,6 +304,9 @@
             isBasedOnFilters() {
                 return this.selectedFilters.length != 0;
             },
+            isBasedOnCategories() {
+                return this.selectedCategories.length != 0;
+            },
             isNotBasedOn() {
                 return !this.isBasedOnProducts && !this.isBasedOnFilters;
             },
@@ -286,7 +317,19 @@
                     return this.options.typesBasedOnCategory.includes(type.code);
                 }).map((type) => type.id);
                 return basedOnCategoryTypeIds.includes(this.productGroup.type_id);
-            }
+            },
+            availableCategories() {
+                return this.categories.filter(category => !this.categoryFields.includes(category.code));
+            },
+            selectedCategories() {
+                return this.categoryFields.filter(category => !!category);
+            },
+            selectedFilterSources() {
+                let additionalFilterSources = this.basedOnCategory
+                    ? []
+                    : this.productGroupTypes.find(type => type.id === this.productGroup.type_id).code;
+                return this.selectedCategories.concat(additionalFilterSources);
+            },
         },
     };
 </script>
