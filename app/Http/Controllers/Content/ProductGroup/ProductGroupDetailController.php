@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content\ProductGroup;
 use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\ProductGroupDto;
+use Cms\Dto\ProductGroupFilterDto;
 use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
 use Cms\Services\ProductGroupTypeService\ProductGroupTypeService;
@@ -77,11 +78,21 @@ class ProductGroupDetailController extends Controller
             'is_shown' => 'boolean|required',
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
-            'category_code' => 'string|nullable',
+            'category_code' => 'array|nullable',
+            'category_code.*' => 'string|required',
             'banner_id' => 'integer|nullable',
             'filters' => 'array',
             'products' => 'array',
         ]);
+
+        if (isset($validatedData['category_code'])) {
+            foreach ($validatedData['category_code'] as $categoryCode) {
+                $validatedData['filters'][] = [
+                    'code' => ProductGroupFilterDto::CATEGORY_FILTER,
+                    'value' => $categoryCode
+                ];
+            }
+        }
 
         $productGroupService->createProductGroup(new ProductGroupDto($validatedData));
 
@@ -98,13 +109,22 @@ class ProductGroupDetailController extends Controller
             'is_shown' => 'boolean',
             'type_id' => 'integer|required',
             'preview_photo_id' => 'integer|required',
-            'category_code' => 'string|nullable',
+            'category_code' => 'array|nullable',
+            'category_code.*' => 'string|required',
             'banner_id' => 'integer|nullable',
             'filters' => 'array',
             'products' => 'array',
         ]);
 
         $validatedData['id'] = $id;
+        if (isset($validatedData['category_code'])) {
+            foreach ($validatedData['category_code'] as $categoryCode) {
+                $validatedData['filters'][] = [
+                    'code' => ProductGroupFilterDto::CATEGORY_FILTER,
+                    'value' => $categoryCode
+                ];
+            }
+        }
 
         $productGroupService->updateProductGroup($validatedData['id'], new ProductGroupDto($validatedData));
 
@@ -221,7 +241,19 @@ class ProductGroupDetailController extends Controller
             throw new NotFoundHttpException('ProductGroup not found');
         }
 
-        return $productGroups->first();
+        $productGroup = $productGroups->first();
+        $categoryFilters = [];
+        $otherFilters = [];
+        foreach ($productGroup->filters as $index => $filter) {
+            if ($filter['code'] === ProductGroupFilterDto::CATEGORY_FILTER) {
+                $categoryFilters[] = $filter['value'];
+            } else {
+                $otherFilters[] = $filter;
+            }
+        }
+        $productGroup->category_code = $categoryFilters;
+        $productGroup->filters = $otherFilters;
+        return $productGroup;
     }
 
     /**
