@@ -110,7 +110,12 @@
                 badges: this.iBadges,
                 badgeToEdit: {},
                 itemsOrder: [],
-                isReordering: false
+                isReordering: false,
+
+                replacements: {
+                    '\\+': '{plus}',
+                    '=': '{equal}'
+                }
             };
         },
         methods: {
@@ -119,6 +124,11 @@
              * @param badge
              */
             saveBadge(badge) {
+                Object.entries(this.replacements).forEach(item => {
+                    let searchValue = new RegExp(item[0], 'g')
+                    badge.text = badge.text.replace(searchValue, item[1])
+                });
+
                 // При обновлении старого шильдика //
                 if (badge.id) {
                     Services.showLoader();

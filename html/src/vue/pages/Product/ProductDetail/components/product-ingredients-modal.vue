@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         prepareItems() {
-            return this.items.length > 0 ?
+            return this.items && this.items.length > 0 ?
                 JSON.stringify(this.items.split(', '))
                 : null;
         },

@@ -330,12 +330,14 @@ class ViewRender
                 'bundleMasterclass' => DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
                 'brand' => DiscountTypeDto::TYPE_BRAND,
                 'category' => DiscountTypeDto::TYPE_CATEGORY,
+                'masterclass' => DiscountTypeDto::TYPE_MASTERCLASS,
                 'delivery' => DiscountTypeDto::TYPE_DELIVERY,
                 'cartTotal' => DiscountTypeDto::TYPE_CART_TOTAL,
                 'anyOffer' => DiscountTypeDto::TYPE_ANY_OFFER,
                 'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
                 'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
                 'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
+                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS
             ];
         }
         return $this;

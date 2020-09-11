@@ -13,6 +13,11 @@ use Pim\Services\ProductService\ProductService;
 
 class ProductBadgesController extends Controller
 {
+    private $replacements = [
+        '{plus}' => '+',
+        '{equal}' => '='
+    ];
+
     /**
      * Список всех товарных ярлыков
      * @param ContentBadgesService $badgesService
@@ -36,12 +41,16 @@ class ProductBadgesController extends Controller
      */
     public function add(ContentBadgesService $badgesService)
     {
-        $this->validate(request(), [
+        $data = $this->validate(request(), [
             'text' => 'required|string'
         ]);
 
+        foreach ($this->replacements as $code => $symbol) {
+            $data['text'] = str_replace($code, $symbol, $data['text']);
+        }
+
         $badgeDto = new ProductBadgeDto();
-        $badgeDto->text = urlencode($_REQUEST['text']);
+        $badgeDto->text = $data['text'];
 
         $badgesService->createProductBadge($badgeDto);
 
@@ -64,9 +73,13 @@ class ProductBadgesController extends Controller
             'id' => 'required|integer',
             'text' => 'required|string',
         ]);
+        
+        foreach ($this->replacements as $code => $symbol) {
+            $data['text'] = str_replace($code, $symbol, $data['text']);
+        }
 
         $badgeDto = new ProductBadgeDto();
-        $badgeDto->text = urlencode($_REQUEST['text']);
+        $badgeDto->text = $data['text'];
 
         $badgesService->updateProductBadge($data['id'], $badgeDto);
 
@@ -108,9 +121,9 @@ class ProductBadgesController extends Controller
             'id' => 'required|integer',
         ]);
 
-        // Сперва ярлык убирается со всех товаров //
+        # Сперва ярлык убирается со всех товаров
         $productService->forgetBadge($data['id']);
-        // Затем безопасно удаляется из Справочника ярлыков //
+        # Затем безопасно удаляется из Справочника ярлыков
         $badgesService->deleteProductBadge($data['id']);
 
         return response('', 204);
