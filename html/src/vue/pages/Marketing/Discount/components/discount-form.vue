@@ -151,7 +151,7 @@
             <v-select v-model="discount.status" :options="discountStatuses" class="col-3">Статус</v-select>
         </div>
 
-        <div class="row" v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass">
+        <div class="row" v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
             <div class="col-12">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="promo_code_only" v-model="discount.promo_code_only">
@@ -163,7 +163,7 @@
         </div>
 
         <Conditions
-                v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass"
+                v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass && (discountTypes.offer in optionDiscountTypes)"
                 :discount="discount"
                 :discounts="discounts"
                 :conditions="discount.conditions"
