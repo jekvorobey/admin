@@ -89,7 +89,7 @@
             <div v-show="isBasedOnFilters || isNotBasedOn">
               <div class="mt-1 mb-1">
                 <span>Категория</span>
-                <button @click="addCategory(10)"
+                <button @click="addCategory()"
                         class="btn btn-outline-info h-100 ml-3"
                         :disabled="categories.length < 2"
                         type="button">
