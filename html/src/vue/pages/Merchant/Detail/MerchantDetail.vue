@@ -21,9 +21,9 @@
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
-                    <tab-main v-else-if="key === 'main'" :model.sync="merchant"/>
+                    <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
-                    <tab-commission v-else-if="key === 'commission'" :id="merchant.id"/>
+                    <tab-commission v-else-if="key === 'commission'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
                     <tab-product v-else-if="key === 'product'" :id="merchant.id"/>
@@ -63,7 +63,9 @@ export default {
         'isRequest',
         'ratings',
         'managers',
-        'unreadMsgCount'
+        'unreadMsgCount',
+        'brandList',
+        'categoryList',
     ],
     components: {
         TabBilling,

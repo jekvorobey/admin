@@ -24,7 +24,69 @@
         </tr>
         <tr>
             <th>Бренды и товарные категории*</th>
-            <td><v-input tag="textarea" v-model="$v.form.sale_info.$model" :error="errorSaleInfo"/></td>
+            <td>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Бренды:</span>
+                    </div>
+                    <select v-model="selectedBrand"
+                            class="form-control form-control-sm"
+                            :class="{ 'is-invalid': errorSaleInfoBrands }">
+                        <option
+                            v-for="option in brandOptions"
+                            :value="option.value">
+                          {{ option.text }}
+                        </option>
+                    </select>
+                    <button v-if="!form.sale_info_brands.includes(selectedBrand)"
+                            class="btn btn-sm btn-outline-success"
+                            @click="addItem($v.form.sale_info_brands, selectedBrand)">
+                        <fa-icon icon="plus"/>
+                    </button>
+                    <button v-else
+                            class="btn btn-sm btn-outline-secondary"
+                            @click="removeItem($v.form.sale_info_brands, selectedBrand)">
+                        <fa-icon icon="trash-alt"/>
+                    </button>
+                    <span class="invalid-feedback" role="alert">
+                        {{ errorSaleInfoBrands }}
+                    </span>
+                </div>
+                <div class="mt-2 mb-4">
+                    <b>Выбранные бренды: </b><span>{{ form.sale_info_brands.length > 0 ? selectedBrands : 'Нет' }}</span>
+                </div>
+
+                <div class="input-group input-group-sm">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Категории:</span>
+                    </div>
+                    <select v-model="selectedCategory"
+                            class="form-control form-control-sm"
+                            :class="{ 'is-invalid': errorSaleInfoCategories }">
+                        <option
+                            v-for="option in categoryOptions"
+                            :value="option.value">
+                          {{ option.text }}
+                        </option>
+                    </select>
+                    <button v-if="!form.sale_info_categories.includes(selectedCategory)"
+                            class="btn btn-sm btn-outline-success"
+                            @click="addItem($v.form.sale_info_categories, selectedCategory)">
+                        <fa-icon icon="plus"/>
+                    </button>
+                    <button v-else
+                            class="btn btn-sm btn-outline-secondary"
+                            @click="removeItem($v.form.sale_info_categories, selectedCategory)">
+                        <fa-icon icon="trash-alt"/>
+                    </button>
+                    <span class="invalid-feedback" role="alert">
+                        {{ errorSaleInfoCategories }}
+                    </span>
+                </div>
+                <div class="mt-2 mb-3">
+                    <b>Выбранные категории: </b><span>{{ form.sale_info_categories.length > 0 ? selectedCategories : 'Нет' }}</span>
+                </div>
+            </td>
         </tr>
         <tr>
             <th>Ставка НДС, тип налогообложения</th>
@@ -129,13 +191,13 @@
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
 
-    import {required, requiredIf} from 'vuelidate/lib/validators';
+    import {required, requiredIf, minLength} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
 
     export default {
     name: 'tab-main',
     components: {VInput, FileInput, VDeleteButton, DatePicker},
-    props: ['model'],
+    props: ['model', 'categoryList', 'brandList'],
     mixins: [
         validationMixin,
     ],
@@ -155,7 +217,8 @@
                 bank_address: this.model.bank_address,
                 bank_bik: this.model.bank_bik,
                 storage_address: this.model.storage_address,
-                sale_info: this.model.sale_info,
+                sale_info_brands: this.model.sale_info_brands.map(brand => parseInt(brand)),
+                sale_info_categories: this.model.sale_info_categories.map(category => parseInt(category)),
                 vat_info: this.model.vat_info,
                 commercial_info: this.model.commercial_info,
                 contract_number: this.model.contract_number,
@@ -164,6 +227,8 @@
                 file: null,
             },
             documents: [],
+            selectedBrand: null,
+            selectedCategory: null,
         }
     },
     validations() {
@@ -184,7 +249,8 @@
                 bank_address: {required},
                 bank_bik: {required},
                 storage_address: {required},
-                sale_info: {required},
+                sale_info_brands: {required, minLength: minLength(1)},
+                sale_info_categories: {required, minLength: minLength(1)},
                 vat_info: {notRequired},
                 commercial_info: {notRequired},
                 contract_number: {notRequired},
@@ -216,7 +282,8 @@
                 this.merchant.bank_address = this.form.bank_address;
                 this.merchant.bank_bik = this.form.bank_bik;
                 this.merchant.storage_address = this.form.storage_address;
-                this.merchant.sale_info = this.form.sale_info;
+                this.merchant.sale_info_brands = this.form.sale_info_brands.map(brand => parseInt(brand));
+                this.merchant.sale_info_categories = this.form.sale_info_categories.map(category => parseInt(category));
                 this.merchant.vat_info = this.form.vat_info;
                 this.merchant.commercial_info = this.form.commercial_info;
                 this.merchant.contract_number = this.form.contract_number;
@@ -240,7 +307,8 @@
             this.form.bank_address = this.merchant.bank_address;
             this.form.bank_bik = this.merchant.bank_bik;
             this.form.storage_address = this.merchant.storage_address;
-            this.form.sale_info = this.merchant.sale_info;
+            this.form.sale_info_brands = this.merchant.sale_info_brands.map(brand => parseInt(brand));
+            this.form.sale_info_categories = this.merchant.sale_info_categories.map(category => parseInt(category));
             this.form.vat_info = this.merchant.vat_info;
             this.form.commercial_info = this.merchant.commercial_info;
             this.form.contract_number = this.merchant.contract_number;
@@ -276,6 +344,17 @@
                 Services.hideLoader();
             })
         },
+        addItem(array, item) {
+            array.$model.push(item);
+            array.$touch();
+        },
+        removeItem(array, item) {
+            let index = array.$model.indexOf(item);
+            if (index !== -1){
+                array.$model.splice(index, 1);
+            }
+            array.$touch();
+        },
     },
     computed: {
         merchant: {
@@ -289,10 +368,17 @@
                 }
             }
         },
-        errorSaleInfo() {
-            if (this.$v.form.sale_info.$dirty) {
-                if (!this.$v.form.sale_info.required) {
-                    return "Обязательное поле";
+        errorSaleInfoBrands() {
+            if (this.$v.form.sale_info_brands.$dirty) {
+                if (this.$v.form.sale_info_brands.$invalid) {
+                    return "Выберите бренды";
+                }
+            }
+        },
+        errorSaleInfoCategories() {
+            if (this.$v.form.sale_info_categories.$dirty) {
+                if (this.$v.form.sale_info_categories.$invalid) {
+                    return "Выберите категории";
                 }
             }
         },
@@ -358,6 +444,22 @@
                     return "Обязательное поле";
                 }
             }
+        },
+        brandOptions() {
+            return Object.values(this.brandList).map(brand => {
+              return { value: brand.id, text: brand.name }
+            })
+        },
+        categoryOptions() {
+            return Object.values(this.categoryList).map(category => {
+              return { value: category.id, text: category.name }
+            })
+        },
+        selectedBrands() {
+            return this.form.sale_info_brands.map(brand => this.brandList[brand].name).join(', ');
+        },
+        selectedCategories() {
+          return this.form.sale_info_categories.map(category => this.categoryList[category].name).join(', ');
         },
     },
     created() {
