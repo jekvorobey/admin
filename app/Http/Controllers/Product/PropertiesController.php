@@ -15,7 +15,6 @@ use Pim\Dto\PropertyDto;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PropertiesController extends Controller
@@ -115,7 +114,7 @@ class PropertiesController extends Controller
     }
 
     /**
-     * Вспомогательный метод, подгружающий детальную информацию о товарном атрибуте
+     * Подгрузить детальную информацию о товарном атрибуте
      * @param string $code
      * @return mixed
      * @throws PimException
@@ -151,7 +150,12 @@ class PropertiesController extends Controller
             $valuesQuery = $valuesService
                 ->newQuery()
                 ->setFilter('property_id', $property->id)
-                ->addFields(PropertyDirectoryValueDto::entity(), 'id', 'name', 'property_id');
+                ->addFields(PropertyDirectoryValueDto::entity(),
+                    'id',
+                    'name',
+                    'code',
+                    'property_id'
+                );
 
             $values = $valuesService->values($valuesQuery);
             $property->offsetSet('values', $values);
@@ -161,7 +165,7 @@ class PropertiesController extends Controller
     }
 
     /**
-     * Вспомогательный метод, подгружающий информацию о продуктовых категориях
+     * Подгрузить информацию о продуктовых категориях
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
@@ -181,7 +185,7 @@ class PropertiesController extends Controller
     }
 
     /**
-     * Вспомогательный метод, заполняющий DTO полями из request
+     * Заполнить DTO
      * @param array $data
      * @return PropertyDto
      */
