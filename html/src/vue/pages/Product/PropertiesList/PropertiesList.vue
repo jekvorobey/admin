@@ -3,14 +3,14 @@
         <div class="card mt-3">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-8">
+                    <div class="col-lg-8 col-sm-6">
                         <input v-model="search_phrase"
                                @input="search(search_phrase)"
                                class="form-control form-control-lg"
                                type="text"
                                placeholder="Поиск атрибута...">
                     </div>
-                    <div class="col-4 ml-auto">
+                    <div class="col-lg-4 col-sm-6 ml-auto">
                         <a :href="getRoute('products.properties.create')"
                            class="btn btn-lg btn-dark float-right mr-4">
                             <fa-icon icon="plus"/> Создать атрибут
@@ -25,7 +25,7 @@
                 <p v-if="properties.length === 0" class="mx-auto lead text-muted">
                     <fa-icon icon="search"/> Поиск не принёс результатов
                 </p>
-                <div v-else v-for="character in headers" class="col-3">
+                <div v-else v-for="character in headers" class="col-lg-3 col-sm-6">
                     <h5>{{ character }}</h5>
                     <ul class="list-unstyled">
                         <li v-for="prop in properties"

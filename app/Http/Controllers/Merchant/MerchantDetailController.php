@@ -15,6 +15,8 @@ use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Dto\RatingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Services\BrandService\BrandService;
+use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MerchantDetailController extends Controller
@@ -25,14 +27,19 @@ class MerchantDetailController extends Controller
      * @param OperatorService $operatorService
      * @param UserService $userService
      * @param CommunicationService $communicationService
+     * @param BrandService $brandService
+     * @param CategoryService $categoryService
      * @return mixed
+     * @throws \Pim\Core\PimException
      */
     public function index(
         int $id,
         MerchantService $merchantService,
         OperatorService $operatorService,
         UserService $userService,
-        CommunicationService $communicationService
+        CommunicationService $communicationService,
+        BrandService $brandService,
+        CategoryService $categoryService
     ) {
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
@@ -101,6 +108,10 @@ class MerchantDetailController extends Controller
 
         $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
+        $brandList = $brandService->brands(new RestQuery())->keyBy('id');
+
+        $categoryList = $categoryService->categories(new RestQuery())->keyBy('id');
+
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
                 'id' => $merchant->id,
@@ -124,7 +135,8 @@ class MerchantDetailController extends Controller
                 'bank_address' => $merchant->bank_address,
                 'bank_bik' => $merchant->bank_bik,
                 'storage_address' => $merchant->storage_address,
-                'sale_info' => $merchant->sale_info,
+                'sale_info_brands' => json_decode($merchant->sale_info, true)['brands'] ?? [],
+                'sale_info_categories' => json_decode($merchant->sale_info, true)['categories'] ?? [],
                 'vat_info' => $merchant->vat_info,
                 'commercial_info' => $merchant->commercial_info,
                 'contract_number' => $merchant->contract_number,
@@ -159,7 +171,9 @@ class MerchantDetailController extends Controller
                 ];
             }),
             'isRequest' => $isRequest,
-            'unreadMsgCount' => $unreadMsgCount
+            'unreadMsgCount' => $unreadMsgCount,
+            'brandList' => $brandList,
+            'categoryList' => $categoryList,
         ]);
     }
 
@@ -188,13 +202,24 @@ class MerchantDetailController extends Controller
             'merchant.bank_bik' => 'nullable|string|size:9',
 
             'merchant.storage_address' => 'nullable|string',
-            'merchant.sale_info' => 'nullable|string',
+            'merchant.sale_info_brands' => 'array|required',
+            'merchant.sale_info_brands.*' => 'integer',
+            'merchant.sale_info_categories' => 'array|required',
+            'merchant.sale_info_categories.*' => 'integer',
             'merchant.vat_info' => 'nullable|string',
             'merchant.commercial_info' => 'nullable|string',
 
             'merchant.contract_number' => 'nullable|string',
             'merchant.contract_at' => 'nullable|date_format:Y-m-d',
         ]);
+
+        $sale_info = [
+            'brands' => $data['merchant']['sale_info_brands'],
+            'categories' => $data['merchant']['sale_info_categories']
+        ];
+        $data['merchant']['sale_info'] = json_encode($sale_info);
+        unset($data['merchant']['sale_info_brands']);
+        unset($data['merchant']['sale_info_categories']);
 
         $editedMerchant = new MerchantDto($data['merchant']);
         $editedMerchant->id = $id;

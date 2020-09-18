@@ -1,7 +1,7 @@
 <template>
     <table class="table table-sm">
     <tbody>
-        <tr>
+        <tr v-if="merchantCommission">
             <td>Комиссия мерчанта</td>
             <td colspan="3">
                 <div class="input-group input-group-sm">
@@ -18,8 +18,8 @@
         </tr>
         <tr>
             <th>Тип</th>
-            <th>Комиссия</th>
-            <th>Бренд/Категория/Товар</th>
+            <th style="width: 10%">Комиссия</th>
+            <th style="width: 35%">Бренд/Категория/Товар</th>
             <th>Даты активности</th>
             <th></th>
         </tr>
@@ -54,7 +54,7 @@
         </tr>
         <tr>
             <td>
-                <select v-model="newCommission.type" class="form-control form-control-sm">
+                <select v-model="newCommission.type" class="form-control form-control-sm" @change="newCommission.related_id = null">
                     <option :value="null">Выберите тип</option>
                     <option :value="merchantCommissionTypes.brand">{{ typeName(merchantCommissionTypes.brand) }}</option>
                     <option :value="merchantCommissionTypes.category">{{ typeName(merchantCommissionTypes.category) }}</option>
@@ -74,7 +74,18 @@
                     <div class="input-group-prepend" v-if="newCommission.type">
                         <span class="input-group-text">{{ relatedNameByType(newCommission.type) }}:</span>
                     </div>
-                    <input class="form-control" v-model="newCommission.related_id">
+                    <input v-if="!newCommission.type || newCommission.type === merchantCommissionTypes.sku"
+                           v-model="newCommission.related_id"
+                           class="form-control form-control-sm">
+                    <select v-else
+                            v-model="newCommission.related_id"
+                            class="form-control form-control-sm">
+                        <option
+                            v-for="option in relatedOptionsByType(newCommission.type)"
+                            :value="option.value">
+                          {{ option.text }}
+                        </option>
+                    </select>
                 </div>
             </td>
             <td>
@@ -102,7 +113,7 @@ import VDeleteButton from '../../../../components/controls/VDeleteButton/VDelete
 
 export default {
     name: 'tab-commission',
-    props: ['id'],
+    props: ['id', 'brandList', 'categoryList'],
     components: {VDeleteButton, DatePicker},
     data() {
         return {
@@ -195,6 +206,18 @@ export default {
                     return this.categories[related_id] || related_id;
                 case this.merchantCommissionTypes.sku:
                     return this.products[related_id] || related_id;
+            }
+        },
+        relatedOptionsByType(type) {
+            switch (type) {
+                case this.merchantCommissionTypes.brand:
+                    return Object.values(this.brandList).map(brand => {
+                        return { value: brand.id, text: brand.name }
+                    });
+                case this.merchantCommissionTypes.category:
+                  return Object.values(this.categoryList).map(category => {
+                    return { value: category.id, text: category.name }
+                  });
             }
         },
     },
