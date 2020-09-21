@@ -535,6 +535,7 @@ Vue.mixin({
  @property {PaymentStatus} timeout - просрочено
  @property {PaymentStatus} hold - средства захолдированы
  @property {PaymentStatus} error - ошибка
+ @property {PaymentStatus} waiting - ожидает оплаты
  */
 /**
  @typedef PaymentStatus - статус оплаты

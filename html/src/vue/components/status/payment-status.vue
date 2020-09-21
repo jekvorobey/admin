@@ -14,6 +14,7 @@ export default {
                 case this.paymentStatuses.timeout.id: return 'badge-danger';
                 case this.paymentStatuses.hold.id: return 'badge-primary';
                 case this.paymentStatuses.error.id: return 'badge-info';
+                case this.paymentStatuses.waiting.id: return 'badge-light';
                 default: return 'badge-dark';
             }
         },
