@@ -5,7 +5,8 @@
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
             <b-col>
-                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || this.order.status.id < orderStatuses.done.id) && !isCancel">
+                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || (this.order.status &&
+                this.order.status.id < orderStatuses.done.id)) && !isCancel">
                     <b-dropdown-item-button>
                         Пометить, как проблемный
                     </b-dropdown-item-button>
@@ -24,7 +25,8 @@
                     <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus" @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="this.order.status.id < 9 && !isCancel" @click="cancelOrder()">
+                    <b-dropdown-item-button v-if="this.order.status && this.order.status.id < 9 && !isCancel"
+                            @click="cancelOrder()">
                         Отменить заказ
                     </b-dropdown-item-button>
                 </b-dropdown>
@@ -193,7 +195,7 @@
             });
         },
         isStatus(statusId) {
-            return this.order.status.id === statusId;
+            return this.order.status && this.order.status.id === statusId;
         },
     },
     computed: {

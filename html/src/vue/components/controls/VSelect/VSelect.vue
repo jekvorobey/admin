@@ -10,6 +10,7 @@
                        :class="{ 'is-invalid': error }"
                        :aria-describedby="`${inputId}-alert`"
         ></b-form-select>
+        <small :id="`${inputId}-help`" class="form-text text-muted" v-if="help">{{ help }}</small>
         <span :id="`${inputId}-alert`" class="invalid-feedback" role="alert">
             <slot name="error" :error="error">
                 {{ error }}
@@ -24,6 +25,9 @@
     export default {
         name: "VSelect",
         mixins: [inputMixin],
+        props: {
+            help: { type: String, default: '' },
+        },
         data() {
             return {
                 inputId: `v-input-id-${this._uid}`,

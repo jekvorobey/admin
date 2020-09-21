@@ -336,7 +336,6 @@
                     return offer;
                 }
 
-                offer['offer_id'] = this.offer.id;
                 if (price !== parseFloat(this.oldOffer.price)) offer['price'] = price;
                 if (status && (status !== this.oldOffer.status)) offer['sale_status'] = status;
                 if (saleAt) offer['sale_at'] = saleAt;
@@ -381,7 +380,7 @@
             },
             editOffer(offer) {
                 Services.showLoader();
-                Services.net().put(this.getRoute('offers.edit'), {}, offer, {}, true).then((data) => {
+                Services.net().put(this.getRoute('offers.edit', {id: this.offer.id}), {}, offer, {}, true).then((data) => {
                     Services.msg("Оффер отредактирован!");
                     this.$bvModal.hide('offer-create-modal');
                     setTimeout(window.location.reload.bind(window.location), 1000);

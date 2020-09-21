@@ -1,9 +1,11 @@
 <template>
-    <Conditions
+    <Conditions v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass"
         :discount="discount"
         :discounts="discounts"
         :conditions="discount.conditions"
         :iConditionTypes="iConditionTypes"
+        :iDeliveryMethods="iDeliveryMethods"
+        :iPaymentMethods="iPaymentMethods"
         :regions="discountRegions"
         :segments="segments"
         :roles="roles"
@@ -25,6 +27,8 @@
             model: Object,
             discounts: Array,
             iConditionTypes: Object,
+            iDeliveryMethods: Array,
+            iPaymentMethods: Array,
             regions: Array,
             brands: Array,
             categories: Array,

@@ -152,9 +152,9 @@
     </div>
 </template>
 <script>
-    import ModalShipmentEdit from "./forms/modal-shipment-edit.vue";
-    import ShipmentItems from "./forms/shipment-items.vue";
-    import Services from "../../../../../scripts/services/services";
+    import ModalShipmentEdit from './forms/modal-shipment-edit.vue';
+    import ShipmentItems from './forms/shipment-items.vue';
+    import Services from '../../../../../scripts/services/services';
 
     export default {
         props: {
@@ -186,7 +186,7 @@
                 window.open(this.getRoute('documentTemplates.' + type));
             },
             isAssembledStatus(shipment) {
-                return shipment.status.id === this.shipmentStatuses.assembled.id;
+                return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id;
             },
             getBarcodesTitle(shipment) {
                 return this.canGetBarcodes(shipment) ? '' :
@@ -202,7 +202,7 @@
                 return shipment.is_problem && !shipment.is_canceled;
             },
             canCancelShipment(shipment) {
-                return shipment.status.id < this.shipmentStatuses.done.id && !shipment.is_canceled
+                return shipment.status && shipment.status.id < this.shipmentStatuses.done.id && !shipment.is_canceled
             },
             markAsNonProblem(shipment) {
                 let errorMessage = 'Ошибка при изменении отправления';
@@ -239,7 +239,7 @@
                 });
             },
             canEditShipment(shipment) {
-                return shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
+                return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
             },
             editShipment(shipment) {
                 this.selectedShipment = shipment;
@@ -248,10 +248,10 @@
             documents(shipment) {
                 let documents = [{value: 'assemblingCard', text: 'Карточка сборки'}];
 
-                if (shipment.status.id >= this.shipmentStatuses.assembling.id) {
+                if (shipment.status && shipment.status.id >= this.shipmentStatuses.assembling.id) {
                     documents.push({value: 'inventory', text: 'Опись'});
                 }
-                if (shipment.status.id >= this.shipmentStatuses.assembled.id) {
+                if (shipment.status && shipment.status.id >= this.shipmentStatuses.assembled.id) {
                     documents.push({value: 'acceptanceAct', text: 'Акт приема-передачи'});
                 }
 

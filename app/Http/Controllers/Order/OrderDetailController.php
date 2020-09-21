@@ -119,7 +119,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * todo Разбить метод на несколько мелких методов
      * @param  int  $id
      * @return OrderDto
      * @throws \Exception
@@ -299,9 +298,9 @@ class OrderDetailController extends Controller
             }
 
             $delivery->status = $delivery->status();
-            $delivery->status_at = $delivery->status_at ? dateTime2str(new Carbon($delivery->status_at)) : '';
+            $delivery->status_at = $delivery->status_at ? date_time2str(new Carbon($delivery->status_at)) : '';
             $delivery->status_xml_id = $delivery->statusXmlId();
-            $delivery->status_xml_id_at = $delivery->status_xml_id_at ? dateTime2str(new Carbon($delivery->status_xml_id_at)) : '';
+            $delivery->status_xml_id_at = $delivery->status_xml_id_at ? date_time2str(new Carbon($delivery->status_xml_id_at)) : '';
             $delivery->delivery_method = $delivery->deliveryMethod();
             $delivery->delivery_service = $delivery->deliveryService();
             $delivery->payment_status = $delivery->paymentStatus();
@@ -324,7 +323,7 @@ class OrderDetailController extends Controller
                 $shipment['cargo'] = $shipment->cargo;
                 $shipment->payment_status = $shipment->paymentStatus();
                 $shipment['psd_original'] = $shipment->psd ? str_replace(' ', 'T', $shipment->psd->format('Y-m-d H:i')) : '';
-                $shipment->psd = dateTime2str($shipment->psd);
+                $shipment->psd = date_time2str($shipment->psd);
                 $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems()->keyBy('id');
@@ -371,12 +370,12 @@ class OrderDetailController extends Controller
     {
         $order->confirmation_type = $order->confirmationType();
         $order->status = $order->status();
-        $order->status_at = dateTime2str(new Carbon($order->status_at));
+        $order->status_at = date_time2str(new Carbon($order->status_at));
         if ($order->is_problem_at) {
-            $order->is_problem_at = dateTime2str(new Carbon($order->is_problem_at));
+            $order->is_problem_at = date_time2str(new Carbon($order->is_problem_at));
         }
         if ($order->is_canceled_at) {
-            $order->is_canceled_at = dateTime2str(new Carbon($order->is_canceled_at));
+            $order->is_canceled_at = date_time2str(new Carbon($order->is_canceled_at));
         }
 
         $order->delivery_type = $order->deliveryType();
@@ -387,8 +386,8 @@ class OrderDetailController extends Controller
             return $delivery->delivery_method;
         })->unique();
 
-        $order->created_at = dateTime2str(new Carbon($order->created_at));
-        $order->updated_at = dateTime2str(new Carbon($order->updated_at));
+        $order->created_at = date_time2str(new Carbon($order->created_at));
+        $order->updated_at = date_time2str(new Carbon($order->updated_at));
 
         $order['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
             return $payment->paymentMethod()->name;
@@ -401,7 +400,7 @@ class OrderDetailController extends Controller
         $order['to_pay'] = $order->isPayed() ? 0 : $order->price;
         $order->payment_status = $order->paymentStatus();
         if ($order->payment_status_at) {
-            $order->payment_status_at = dateTime2str(new Carbon($order->payment_status_at));
+            $order->payment_status_at = date_time2str(new Carbon($order->payment_status_at));
         }
 
         $order['weight'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
@@ -489,7 +488,7 @@ class OrderDetailController extends Controller
                 if (mb_strtolower($historyDto->entity_type) == OrderDto::entity() && isset($data['status'])) {
                     $kpis->put($data['status'], [
                         'status' => OrderStatus::statusById($data['status']),
-                        'status_at' => dateTime2str(new Carbon($data['status_at'])),
+                        'status_at' => date_time2str(new Carbon($data['status_at'])),
                     ]);
                 }
             }

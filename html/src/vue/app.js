@@ -241,7 +241,11 @@ Vue.mixin({
         /** @return {OfferCountdownSaleStatuses} */
         offerCountdownSaleStatuses() {
             return this.$store.state.layout.offerCountdownSaleStatuses;
-        }
+        },
+        /** @return {propertyTypes} */
+        propertyTypes() {
+            return this.$store.state.layout.propertyTypes;
+        },
     },
 });
 
@@ -421,12 +425,14 @@ Vue.mixin({
  @property {integer} bundleMasterclass
  @property {integer} brand
  @property {integer} category
+ @property {integer} masterclass
  @property {integer} delivery
  @property {integer} cartTotal
  @property {integer} anyOffer
  @property {integer} anyBundle
  @property {integer} anyBrand
  @property {integer} anyCategory
+ @property {integer} anyMasterclass
  */
 /**
  @typedef PublicEventStatus
@@ -682,4 +688,13 @@ Vue.mixin({
  @typedef OfferCountdownSaleStatuses - статусы оффера, для которых необходимо указать дату начала продажи
  @type {Object}
  @property {integer} id
+ */
+/**
+ * @typedef PropertyTypes - типы свойств категорий
+ * @type {Object}
+ * @property {string} string
+ * @property {string} integer
+ * @property {string} double
+ * @property {string} datetime
+ * @property {string} directory
  */

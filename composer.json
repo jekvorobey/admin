@@ -47,6 +47,10 @@
     {
       "type": "vcs",
       "url": "https://gitlab.com/greensight/ibt-logistics-lib"
+    },
+    {
+      "type": "vcs",
+      "url": "https://gitlab.com/greensight/ibt-catalog-import-lib"
     }
   ],
   "require": {
@@ -54,6 +58,7 @@
     "ext-json": "*",
     "box/spout": "^3.1",
     "fideloper/proxy": "^4.0",
+    "greensight/ibt-catalog-import-lib": "dev-master",
     "greensight/ibt-cm-lib": "dev-master",
     "greensight/ibt-cms-lib": "dev-master",
     "greensight/ibt-common-lib": "dev-master",

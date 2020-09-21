@@ -11,8 +11,7 @@
             <tbody>
             <tr v-for="event in history">
                 <td>{{ event.created_at }}</td>
-<!--                <td>{{ userRoleName(event.userRoleIds) }}</td>-->
-                <td>{{ event.userName }}</td>
+                <td class="with-small">{{ event.userName }}<small>{{ userRoleName(event.userRoleId) }}</small></td>
                 <td>{{ eventMessage(event) }}</td>
             </tr>
             </tbody>
@@ -28,11 +27,8 @@
             roleNames: {}
         },
         methods: {
-            userRoleName(userRoleIds) {
-                if (userRoleIds.length < 1) {
-                    return 'N/A';
-                }
-                return this.roleNames[userRoleIds[0]['id']];
+            userRoleName(userRoleId) {
+                return this.roleNames[userRoleId] ? this.roleNames[userRoleId] : 'N/A';
             },
             eventMessage(event) {
                 let eventTypeMeta = this.historyMeta[event.type];
@@ -59,3 +55,12 @@
         }
     }
 </script>
+
+<style scoped>
+    .with-small small{
+        display: block;
+        color: gray;
+        line-height: 1rem;
+        overflow: hidden;
+    }
+</style>

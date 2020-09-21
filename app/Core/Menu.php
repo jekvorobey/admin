@@ -21,11 +21,23 @@ class Menu
                         'route' => route('offers.list'),
                     ],
                     [
+                        'title' => 'Товарные группы',
+                        'route' => route('variantGroups.list'),
+                    ],
+                    [
                         'title' => 'Справочники',
                         'items' => [
                             [
                                 'title' => 'Бренды',
                                 'route' => route('brand.list'),
+                            ],
+                            [
+                                'title' => 'Категории',
+                                'route' => route('categories.list'),
+                            ],
+                            [
+                                'title' => 'Товарные атрибуты',
+                                'route' => route('products.properties.list'),
                             ],
                         ]
                     ],
@@ -75,6 +87,10 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list')
                     ],
+                    /** @link https://redmine.greensight.ru/issues/57841 [
+                        'title' => 'Отправления',
+                        'route' => route('shipment.list')
+                    ],*/
                     [
                         'title' => 'Справочники',
                         'items' => [
@@ -108,6 +124,10 @@ class Menu
                     [
                         'title' => 'Управление контактами и соц. сетями',
                         'route' => route('contacts.list'),
+                    ],
+                    [
+                        'title' => 'Управление категориями',
+                        'route' => route('frequentCategories.list'),
                     ],
 //                    [
 //                        'title' => 'Шаблоны страниц',
@@ -148,6 +168,10 @@ class Menu
                     [
                         'title' => 'Популярные бренды',
                         'route' => route('popularBrands.list'),
+                    ],
+                    [
+                        'title' => 'Популярные товары',
+                        'route' => route('popularProducts.list'),
                     ],
                 ]
             ],
@@ -382,6 +406,10 @@ class Menu
             [
                 'title' => 'Настройки',
                 'items' => [
+                    [
+                        'title' => 'Способы оплаты',
+                        'route' => route('settings.paymentMethods'),
+                    ],
                     [
                         'title' => 'Пользователи и права',
                         'route' => route('settings.userList'),

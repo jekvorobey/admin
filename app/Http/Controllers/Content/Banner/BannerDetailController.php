@@ -12,8 +12,8 @@ use Cms\Services\BannerService\BannerService;
 use Cms\Services\BannerTypeService\BannerTypeService;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class BannerDetailController extends Controller
 {

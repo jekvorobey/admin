@@ -36,16 +36,35 @@
             </div>
 
             <div v-if="discount.type === discountTypes.bundleMasterclass" class="col-9">
+                <!-- Бандлы из мастер-классов -->
                 <v-input v-model="discount.bundleItems"
                          :help="'ID мастер-классов через запятую'"
                          :error="discountErrors.bundleMasterClasses"
-                         @change="initErrorBundleMasterClasses"
-                >Мастер-классы</v-input>
+                         @change="initErrorBundleMasterClasses">
+                    Мастер-классы
+                </v-input>
                 <div v-if="iDiscount">
                     <template v-for="bundleItem in iDiscount.bundleItems">
 <!--                        <a :href="getRoute('master-class.edit', {id: masters[bundleItem.item_id].product_id})">-->
-                            {{ bundleItem.item_id }}: Название мастеркласса
+                            {{ bundleItem.item_id }}: Название мастер-класса
 <!--                        </a><br>-->
+                    </template>
+                </div>
+            </div>
+
+            <div v-if="discount.type === discountTypes.masterclass" class="col-9">
+                <!-- Скидка на мастер-классы -->
+                <v-input v-model="discount.publicEvents"
+                         :help="'ID типов билетов через запятую'"
+                         :error="discountErrors.publicEvents"
+                         @change="initErrorPublicEvents">
+                    Типы билетов
+                </v-input>
+                <div v-if="iDiscount">
+                    <template v-for="bundleItem in iDiscount.bundleItems">
+                        <!--                        <a :href="getRoute('master-class.edit', {id: masters[bundleItem.item_id].product_id})">-->
+                        {{ bundleItem.item_id }}: Название мастер-класса
+                        <!--                        </a><br>-->
                     </template>
                 </div>
             </div>
@@ -132,7 +151,7 @@
             <v-select v-model="discount.status" :options="discountStatuses" class="col-3">Статус</v-select>
         </div>
 
-        <div class="row">
+        <div class="row" v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
             <div class="col-12">
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="promo_code_only" v-model="discount.promo_code_only">
@@ -144,10 +163,13 @@
         </div>
 
         <Conditions
+                v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass && (discountTypes.offer in optionDiscountTypes)"
                 :discount="discount"
                 :discounts="discounts"
                 :conditions="discount.conditions"
                 :iConditionTypes="iConditionTypes"
+                :iPaymentMethods="iPaymentMethods"
+                :iDeliveryMethods="iDeliveryMethods"
                 :regions="discountRegions"
                 :segments="segments"
                 :roles="roles"
@@ -214,6 +236,7 @@
                     status: 1, // STATUS_ACTIVE
                     brands: [],
                     categories: [],
+                    publicEvents: null,
                     conditions: [],
                 },
 
@@ -225,6 +248,7 @@
                     bundleMasterClasses: null,
                     brands: null,
                     categories: null,
+                    publicEvents: null,
                     value_type: null,
                     value: null,
                     end_date: null,
@@ -272,6 +296,15 @@
                                 bool = false;
                             } else if (!(!!this.discount.bundleItems && this.formatIds(this.discount.bundleItems).length > 0)) {
                                 this.discountErrors.bundleMasterClasses = "Введите значения ID мастер-классов через запятую!";
+                                bool = false;
+                            }
+                            break;
+                        case this.discountTypes.masterclass:
+                            if (!(this.discount.publicEvents)) {
+                                this.discountErrors.publicEvents = "Введите ID типов билетов для мастер-классов!";
+                                bool = false;
+                            } else if (!(!!this.discount.publicEvents && this.formatIds(this.discount.publicEvents).length > 0)) {
+                                this.discountErrors.publicEvents = "Введите ID типов билетов через запятую!";
                                 bool = false;
                             }
                             break;
@@ -363,6 +396,7 @@
                 this.discount.offers = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
+                this.discount.publicEvents = null;
                 this.initErrorType();
             },
             initDiscount() {
@@ -375,6 +409,7 @@
                 discount.bundleItems = Object.values(discount.bundleItems).map(bundleItem => bundleItem.item_id).join(',');
                 discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
                 discount.categories = Object.values(discount.categories).map(category => category.category_id);
+                discount.publicEvents = Object.values(discount.publicEvents).map(masterclass => masterclass.ticket_type_id).join(',');
 
                 let roles = discount.roles.map(role => role.role_id);
                 let segments = discount.segments.map(segment => segment.segment_id);
@@ -382,8 +417,8 @@
                     let cond = item.condition ? item.condition : {};
                     return  {
                         categories: ('categories' in cond) ? cond.categories : [],
-                        iDeliveryMethods: ('iDeliveryMethods' in cond) ? cond.iDeliveryMethods : [],
-                        iPaymentMethods: ('iPaymentMethods' in cond) ? cond.iPaymentMethods : [],
+                        deliveryMethods: ('deliveryMethods' in cond) ? cond.deliveryMethods : [],
+                        paymentMethods: ('paymentMethods' in cond) ? cond.paymentMethods : [],
                         regions: ('regions' in cond) ? cond.regions : [],
                         roles: (item.type === this.CONDITION_TYPE_USER) ? roles : [],
                         segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],
@@ -438,6 +473,9 @@
             },
             initErrorCategories() {
                 this.discountErrors.categories = null;
+            },
+            initErrorPublicEvents() {
+                this.discountErrors.publicEvents = null;
             },
             initErrorValueType() {
                 this.discountErrors.value_type = null;
@@ -498,6 +536,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.bundleItems = format + separator;
+                    }
+                },
+            },
+            'discount.publicEvents': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.publicEvents).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.publicEvents = format + separator;
                     }
                 },
             },

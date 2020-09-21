@@ -78,6 +78,18 @@ class TabNewsletterController extends Controller
                 array_keys(CustomerNewsletterDto::periods()))]
         ]);
 
+        if (isset($data['topics'])) {
+            $data['topics'] = array_map(function ($item) {
+                return (int)$item;
+            }, $data['topics']);
+        }
+
+        if (isset($data['channels'])) {
+            $data['channels'] = array_map(function ($item) {
+                return (int)$item;
+            }, $data['channels']);
+        }
+
         $customerNewsletterService->editNewsletterInfo($customerId, $data);
 
         return response('', 204);

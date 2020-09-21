@@ -42,3 +42,10 @@ body {
 .cursor-pointer:hover {
     color: black;
 }
+
+.with-small small {
+    display: block;
+    color: gray;
+    line-height: 1rem;
+    overflow: hidden;
+}

@@ -115,7 +115,7 @@
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
     import VDate from '../../../../../components/controls/VDate/VDate.vue';
-    import VDadata from "../../../../../components/controls/VDaData/VDaData.vue";
+    import VDadata from '../../../../../components/controls/VDaData/VDaData.vue';
 
     import {email, required, requiredIf} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
@@ -147,7 +147,7 @@
                 selectedPointId: this.modelDelivery.point_id,
 
                 form: {
-                    status: this.modelDelivery.status.id,
+                    status: this.modelDelivery.status ? this.modelDelivery.status.id : 0,
                     tariff_id: this.modelDelivery.tariff_id,
                     pdd: this.modelDelivery.pdd_original,
                     receiver_name: this.modelDelivery.receiver_name,

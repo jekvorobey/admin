@@ -4,21 +4,21 @@ namespace App\Http\Controllers\Communications;
 
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
-use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Customer\Dto\CustomerDto;
-use MerchantManagement\Services\OperatorService\OperatorService;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use MerchantManagement\Services\OperatorService\OperatorService;
 
 
 class ChatsController extends Controller

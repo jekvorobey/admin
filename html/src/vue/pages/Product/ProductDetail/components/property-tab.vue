@@ -18,10 +18,6 @@
                             <th>Бренд:</th>
                             <td>{{ brandName }}</td>
                         </tr>
-                        <tr>
-                            <th>Новинка:</th>
-                            <td>{{ product.is_new ? 'Да' : 'Нет' }}</td>
-                        </tr>
                     </tbody>
                 </table>
             </shadow-card>
@@ -29,10 +25,9 @@
                          :buttons="{onEdit:'pencil-alt'}"
                          @onEdit="openBadgesEditModal">
                 <ul v-if="product_badges.length > 0">
-                    <li v-for="badge in product_badges">
+                    <li v-for="badge in product_badges" v-if="options.availableBadges[badge]">
                         <h5>
-                            <span class="badge"
-                                  :class="badgeClass(options.availableBadges[badge].type)">
+                            <span class="badge badge-dark">
                                 {{ options.availableBadges[badge].text }}
                             </span>
                         </h5>
@@ -101,21 +96,22 @@
         <product-badges-modal
                 :product-id="[product.id]"
                 :available-badges="options.availableBadges"
+                :attached-badges="product_badges"
                 @save="updateBadges"/>
     </div>
 </template>
 
 <script>
-    import ShadowCard from '../../../../components/shadow-card.vue';
-    import ProductEditModal from './product-values-modal.vue';
-    import ProductPropsModal from './product-props-modal.vue';
-    import ProductIngredientsModal from './product-ingredients-modal.vue';
-    import ProductBadgesModal from './product-badges-modal.vue';
-    import ArchiveModal from './product-archive-modal.vue';
+import ShadowCard from '../../../../components/shadow-card.vue';
+import ProductEditModal from './product-values-modal.vue';
+import ProductPropsModal from './product-props-modal.vue';
+import ProductIngredientsModal from './product-ingredients-modal.vue';
+import ProductBadgesModal from './product-badges-modal.vue';
+import ArchiveModal from './product-archive-modal.vue';
 
-    import modalMixin from '../../../../mixins/modal.js';
+import modalMixin from '../../../../mixins/modal.js';
 
-    export default {
+export default {
         components: {
             ShadowCard,
             ProductEditModal,
@@ -145,24 +141,20 @@
             },
             sortBadges(badgesToSort) {
                 return Object.values(badgesToSort).sort((item1, item2) => {
-                    if (this.options.availableBadges[item1].order_num
-                        > this.options.availableBadges[item2].order_num) return 1;
-                    if (this.options.availableBadges[item1].order_num
-                        === this.options.availableBadges[item2].order_num) return 0;
-                    if (this.options.availableBadges[item1].order_num
-                        < this.options.availableBadges[item2].order_num) return -1;
+                    if (this.options.availableBadges[item1]) {
+                        if (this.options.availableBadges[item1].order_num
+                            > this.options.availableBadges[item2].order_num) return 1;
+                        if (this.options.availableBadges[item1].order_num
+                            === this.options.availableBadges[item2].order_num) return 0;
+                        if (this.options.availableBadges[item1].order_num
+                            < this.options.availableBadges[item2].order_num) return -1;
+                    }
+
+                    return 0;
                 })
             },
             openBadgesEditModal() {
                 this.$bvModal.show('productBadgesEdit');
-            },
-            badgeClass(type) {
-                switch (type) {
-                    case 1: return 'badge-dark';
-                    case 2: return 'badge-warning';
-                    case 3: return 'badge-secondary';
-                    default: return 'badge-light';
-                }
             },
             values(id) {
                 return this.propertyValues[id] || [];
@@ -177,11 +169,7 @@
              * @returns {null|string}
              */
             composition() {
-                if (this.product.ingredients) {
-                    if (this.product.ingredients.items)
-                        return JSON.parse(this.product.ingredients.items).join(', ')
-                    else return null;
-                } else return null;
+              return this.product.ingredients && this.product.ingredients.items ? this.product.ingredients.items.join(', ') : null;
             }
         },
         computed: {

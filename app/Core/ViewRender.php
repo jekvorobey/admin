@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\Offer\OfferSaleStatus;
+use Pim\Dto\PropertyDto;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
@@ -89,6 +90,8 @@ class ViewRender
     private $offerCreateSaleStatuses = [];
     private $offerEditSaleStatuses = [];
     private $offerCountdownSaleStatuses = [];
+
+    private $propertyTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -327,12 +330,14 @@ class ViewRender
                 'bundleMasterclass' => DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
                 'brand' => DiscountTypeDto::TYPE_BRAND,
                 'category' => DiscountTypeDto::TYPE_CATEGORY,
+                'masterclass' => DiscountTypeDto::TYPE_MASTERCLASS,
                 'delivery' => DiscountTypeDto::TYPE_DELIVERY,
                 'cartTotal' => DiscountTypeDto::TYPE_CART_TOTAL,
                 'anyOffer' => DiscountTypeDto::TYPE_ANY_OFFER,
                 'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
                 'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
                 'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
+                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS
             ];
         }
         return $this;
@@ -727,6 +732,15 @@ class ViewRender
         return $this;
     }
 
+    public function loadPropertyTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->propertyTypes = PropertyDto::getTypes();
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -783,6 +797,8 @@ class ViewRender
                 'offerCreateSaleStatuses' => $this->offerCreateSaleStatuses,
                 'offerEditSaleStatuses' => $this->offerEditSaleStatuses,
                 'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
+
+                'propertyTypes' => $this->propertyTypes,
             ],
             [
                 'title' => $this->title,

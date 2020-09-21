@@ -241,7 +241,7 @@
     import Services from '../../../../../scripts/services/services.js';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
-    import VDadata from "../../../../components/controls/VDaData/VDaData.vue";
+    import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
 
     import {email, required, requiredIf} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
@@ -401,7 +401,8 @@
                 set(value) {this.$emit('update:model', value)},
             },
             canEdit() {
-                return this.order.status.id < this.orderStatuses.transferredToDelivery.id && !this.order.is_canceled;
+                return this.order.status && this.order.status.id < this.orderStatuses.transferredToDelivery.id &&
+                !this.order.is_canceled;
             },
             pointOptions() {
                 return Object.values(this.points).map(point => ({

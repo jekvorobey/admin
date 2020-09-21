@@ -12,6 +12,10 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
+    Route::prefix('search')->group(function() {
+        Route::get('products', 'SearchController@products')->name('search.products');
+    });
+
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
         Route::prefix('list')->group(function () {
             Route::get('registration', 'MerchantListController@registration')->name('merchant.registrationList');
@@ -179,6 +183,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('settings')->namespace('Settings')->group(function () {
+        Route::prefix('payment-methods')->group(function () {
+            Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
+            Route::put('{id}/edit', 'PaymentMethodsController@edit')->name('settings.paymentMethods.edit');
+        });
         Route::prefix('users')->group(function () {
             Route::get('page', 'UsersController@page')->name('settings.userListPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
@@ -246,6 +254,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::put('', 'TabShipmentsController@save')->name('orders.detail.shipments.save');
+                        Route::put('change-status', 'TabShipmentsController@changeShipmentStatus')->name('orders.detail.shipments.changeShipmentStatus');
                         Route::put('mark-as-non-problem', 'TabShipmentsController@markAsNonProblemShipment')->name('orders.detail.shipments.markAsNonProblem');
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
@@ -325,6 +334,11 @@ Route::middleware('auth')->group(function () {
             });
         });
 
+        Route::prefix('shipments')->namespace('Shipment')->group(function () {
+            Route::get('', 'ShipmentListController@index')->name('shipment.list');
+            Route::get('page', 'ShipmentListController@page')->name('shipment.pagination');
+        });
+
         Route::prefix('directories')->namespace('Directory')->group(function () {
             Route::prefix('order-statuses')->group(function () {
                 Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
@@ -337,12 +351,13 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
         Route::post('', 'OfferListController@createOffer')->name('offers.create');
-        Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OfferDetailController@index')->name('offers.detail');
+            Route::get('stocks', 'OfferDetailController@loadStocks')->name('offers.stocks');
             Route::post('props', 'ProductDetailController@saveOfferProps')->name('offers.saveOfferProps');
+            Route::put('', 'OfferListController@editOffer')->name('offers.edit');
         });
         Route::get('store-qty-info', 'OfferListController@loadStoreAndQty')->name('offers.storeAndQty');
         Route::get('validate-offer', 'OfferListController@validateOffer')->name('offers.validate');
@@ -357,7 +372,17 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', 'ProductListController@updateArchiveStatus')->name('products.massArchive');
         Route::put('badges', 'ProductListController@attachBadges')->name('products.attachBadges');
 
-        Route::prefix('{id}')->group(function () {
+        Route::prefix('properties')->group(function () {
+            Route::get('', 'PropertiesController@list')->name('products.properties.list');
+            Route::get('create', 'PropertiesController@create')->name('products.properties.create');
+            Route::put('update', 'PropertiesController@update')->name('products.properties.update');
+            Route::prefix('{id}')->group(function () {
+                Route::get('', 'PropertiesController@detail')->name('products.properties.detail');
+                Route::delete('', 'PropertiesController@delete')->name('products.properties.delete');
+            });
+        });
+
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('detailData', 'ProductDetailController@detailData')->name('products.detailData');
             Route::get('', 'ProductDetailController@index')->name('products.detail');
             Route::post('', 'ProductDetailController@saveProduct')->name('products.saveProduct');
@@ -374,6 +399,43 @@ Route::middleware('auth')->group(function () {
                 Route::post('{tipId}/delete', 'ProductDetailController@deleteTip')->name('product.deleteTip');
             });
         });
+
+        Route::prefix('variant-groups')->namespace('VariantGroup')->group(function () {
+            Route::get('', 'VariantGroupListController@index')->name('variantGroups.list');
+            Route::post('', 'VariantGroupListController@create')->name('variantGroups.create');
+            Route::delete('', 'VariantGroupListController@delete')->name('variantGroups.delete');
+            Route::get('page', 'VariantGroupListController@page')->name('variantGroups.pagination');
+            Route::post('byOffers', 'VariantGroupListController@byOffers')->name('variantGroups.byOffers');
+
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'VariantGroupDetailController@detail')->name('variantGroups.detail');
+                Route::put('', 'VariantGroupDetailController@save')->name('variantGroups.detail.save');
+
+                Route::namespace('Detail')->group(function () {
+                    Route::prefix('products')->group(function () {
+                        Route::get('', 'TabProductsController@load')->name('variantGroups.detail.products.load');
+                        Route::post('', 'TabProductsController@add')->name('variantGroups.detail.products.add');
+                        Route::delete('', 'TabProductsController@delete')->name('variantGroups.detail.products.delete');
+                        Route::prefix('{productId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::put('set-main', 'TabProductsController@setMain')->name('variantGroups.detail.products.setMain');
+                        });
+                    });
+
+                    Route::prefix('properties')->group(function () {
+                        Route::get('', 'TabPropertiesController@load')->name('variantGroups.detail.properties.load');
+                        Route::delete('', 'TabPropertiesController@delete')->name('variantGroups.detail.properties.delete');
+                        Route::prefix('{propertyId}')->where(['id' => '[0-9]+'])->group(function () {
+                            Route::post('', 'TabPropertiesController@add')->name('variantGroups.detail.properties.add');
+                        });
+                    });
+                });
+            });
+        });
+
+        Route::prefix('import-export')->namespace('ImportExport')->group(function () {
+            Route::get('export-by-product-ids', 'ProductsExportController@exportByProductIds')->name('products.exportByProductIds');
+            Route::get('export-by-filters', 'ProductsExportController@exportByFilters')->name('products.exportByFilters');
+        });
     });
     
     Route::prefix('brands')->namespace('Product')->group(function () {
@@ -381,6 +443,12 @@ Route::middleware('auth')->group(function () {
         Route::get('page', 'BrandController@page')->name('brand.listPage');
         Route::post('save', 'BrandController@save')->name('brand.save');
         Route::post('delete', 'BrandController@delete')->name('brand.delete');
+    });
+
+    Route::prefix('categories')->namespace('Product')->group(function () {
+        Route::get('', 'CategoryController@index')->name('categories.list');
+        Route::post('', 'CategoryController@create')->name('categories.create');
+        Route::put('', 'CategoryController@update')->name('categories.update');
     });
 
     Route::prefix('content')->namespace('Content')->group(function () {
@@ -393,6 +461,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'ProductGroupDetailController@create')->name('productGroup.create');
             Route::delete('/{id}', 'ProductGroupDetailController@delete')->where(['id' => '[0-9]+'])->name('productGroup.delete');
             Route::get('/filter', 'ProductGroupDetailController@getFilters')->name('productGroup.getFilters');
+            Route::get('/filter-by-category', 'ProductGroupDetailController@getFiltersByCategory')->name('productGroup.getFiltersByCategory');
             Route::get('/product', 'ProductGroupDetailController@getProducts')->name('productGroup.getProducts');
         });
 
@@ -465,6 +534,18 @@ Route::middleware('auth')->group(function () {
             Route::put('update', 'PopularBrandController@update')->name('popularBrands.update');
             Route::put('reorder', 'PopularBrandController@reorder')->name('popularBrands.reorder');
             Route::delete('delete', 'PopularBrandController@delete')->name('popularBrands.delete');
+        });
+
+        Route::prefix('popular-products')->namespace('PopularProduct')->group(function () {
+            Route::get('', 'PopularProductController@list')->name('popularProducts.list');
+            Route::post('create', 'PopularProductController@create')->name('popularProducts.create');
+            Route::put('reorder', 'PopularProductController@reorder')->name('popularProducts.reorder');
+            Route::delete('delete', 'PopularProductController@delete')->name('popularProducts.delete');
+        });
+
+        Route::prefix('categories')->namespace('Category')->group(function () {
+            Route::get('', 'FrequentCategoryController@index')->name('frequentCategories.list');
+            Route::put('', 'FrequentCategoryController@editCategories')->name('frequentCategories.edit');
         });
     });
 

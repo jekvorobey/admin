@@ -37,20 +37,36 @@
                     <th>Дата создания</th>
                     <th>Мерчант</th>
                     <th>Цена</th>
-                    <th>Остаток</th>
+                    <th>Суммарный остаток <fa-icon icon="question-circle" v-b-popover.hover="tooltipQty"></fa-icon></th>
                     <th>Статус</th>
                     <th>Ручная сортировка</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(offer, index) in filteredOffers" v-on:click="editeOffer(index)">
-                    <td>{{ offer.offer_id }}</td>
+                <tr v-for="(offer, index) in offers"
+                        :class="offer.id === currentOffer.id ? 'table-primary' : ''"
+                        :title="offer.id === currentOffer.id ? 'Оффер на витрине' : ''">
+                    <td>
+                        <a :href="getRoute('offers.detail', {id: offer.id})" target="_blank">
+                            {{ offer.id }}
+                        </a>
+                    </td>
                     <td>{{ offer.created_at }}</td>
-                    <td>{{ offer.merchant_id }}</td>
-                    <td>{{ offer.price }}</td>
-                    <td>{{ offer.qty }}</td>
-                    <td>{{ offer.sale_status }}</td>
+                    <td>
+                        <a :href="getRoute('merchant.detail', {id: offer.merchant.id})" target="_blank">
+                            {{ offer.merchant.legal_name }}
+                        </a>
+                    </td>
+                    <td>{{ offer.price }} руб.</td>
+                    <td>{{ offer.qty }} шт.</td>
+                    <td>{{ offer.saleStatus.name }}</td>
                     <td>{{ offer.manual_sort }}</td>
+                    <td>
+                      <button class="btn btn-light btn-sm" @click="editOffer(index)">
+                        <fa-icon icon="pencil-alt"></fa-icon>
+                      </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -64,12 +80,12 @@
 </template>
 
 <script>
-    import FInput from "../../../../components/filter/f-input.vue";
-    import Modal from '../../../../components/controls/modal/modal.vue';
-    import modalMixin from '../../../../mixins/modal';
-    import offerEditModal from './offer-edit-modal.vue';
+import FInput from '../../../../components/filter/f-input.vue';
+import Modal from '../../../../components/controls/modal/modal.vue';
+import modalMixin from '../../../../mixins/modal';
+import offerEditModal from './offer-edit-modal.vue';
 
-    export default {
+export default {
         components:{
             FInput,
             offerEditModal,
@@ -86,49 +102,29 @@
                 qtyTo: '',
                 status: '',
                 offerModal: null,
-                saleOptions:[
-                        {value: 1, text: 'В продаже'},
-                        {value: 2, text: 'Предзаказ'},
-                        {value: 3, text: 'Снято с продажи'},
-                        {value: 4, text: 'Доступен к продаже'},
-                        {value: 5, text: 'Недоступен к продаже'},
-                    ],
             }
         },
         props: {
             offers: Array,
+            currentOffer: {},
+            options: {},
         },
         methods: {
-            headOffer: function () {
-                return this.offers.find(offer => offer.sale_status === 1)
-            },
-            sortedOffers: function () {
-                let items = this.offers
-                    .sort((a,b) => {
-                        return a.manual_sort - b.manual_sort;
-                    })
-                    .filter(offer => offer.sale_status !== 1);
-                items.unshift(this.headOffer());
-                return items;
-            },
-            editeOffer: function (id) {
-                this.offerModal = this.filteredOffers[id];
+            editOffer: function (id) {
+                this.offerModal = this.offers[id];
                 this.openModal('offerEdit');
             },
         },
-        mounted() {
-        },
         computed: {
-            filteredOffers() {
-                return this.sortedOffers()
-                    .filter(offer => offer.offer_id.toString().includes(this.offerId))
-                    .filter(offer => offer.merchant_id.toString().includes(this.merchantId))
-                    .filter(offer => offer.sale_status.toString().includes(this.status))
-                    .filter(offer => offer.price >= this.priceFrom)
-                    .filter(offer => this.priceTo > 0 ? (offer.price <= this.priceTo) : true)
-                    .filter(offer => offer.qty >= this.qtyFrom)
-                    .filter(offer => this.qtyTo > 0 ? (offer.qty <= this.qtyTo) : true)
+            saleOptions() {
+                return Object.values(this.options.offerSaleStatuses).map(status => ({
+                    value: status.id,
+                    text: status.name
+                }));
             },
+            tooltipQty() {
+                return 'Остаток оффера по всем складам мерчанта. На витрине выводятся остатки только с одного склада, где их больше всего';
+            }
         }
     }
 </script>

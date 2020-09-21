@@ -47,11 +47,6 @@
                         В составе есть элемент питания
                     </v-select>
                 </div>
-                <div class="row">
-                    <v-select v-model="$v.form.is_new.$model" :options="booleanOptions" class="col-md-12 col-sm-12">
-                        Новинка
-                    </v-select>
-                </div>
                 <button @click="save" class="btn btn-dark" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -72,7 +67,7 @@
 
     import modalMixin from '../../../../mixins/modal.js';
 
-    const formFields = ['has_battery', 'explosive', 'is_new', 'name', 'brand_id', 'category_id', 'approval_status',
+    const formFields = ['has_battery', 'explosive', 'name', 'brand_id', 'category_id', 'approval_status',
         'vendor_code', 'width', 'height', 'length', 'weight'];
     export default {
         components: {
@@ -104,7 +99,6 @@
                 weight: {required, integer},
                 has_battery: {},
                 explosive: {},
-                is_new: {},
             }
         },
         methods: {
