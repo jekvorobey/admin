@@ -855,6 +855,13 @@ Route::middleware('auth')->group(function () {
             Route::post('send', 'ServiceNotificationController@send')->name('communications.service-notification.send');
         });
 
+        Route::prefix('variables')->group(function () {
+            Route::get('', 'VariableController@page')->name('communications.variable.list');
+            Route::get('list', 'VariableController@list')->name('communications.variable.page');
+            Route::post('save', 'VariableController@save')->name('communications.variable.save');
+            Route::post('delete', 'VariableController@delete')->name('communications.variable.delete');
+        });
+
         Route::prefix('templates')->group(function () {
             Route::get('list', 'TemplateController@list')->name('communications.service-notification.template.fullList');
             Route::post('save', 'TemplateController@save')->name('communications.service-notification.template.save');
