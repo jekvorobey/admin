@@ -474,6 +474,7 @@ class ViewRender
                 PaymentStatus::TIMEOUT => 'timeout',
                 PaymentStatus::HOLD => 'hold',
                 PaymentStatus::ERROR => 'error',
+                PaymentStatus::WAITING => 'waiting',
             ];
             foreach (PaymentStatus::allStatuses() as $id => $status) {
                 if (!isset($mapPaymentStatuses[$id])) {
