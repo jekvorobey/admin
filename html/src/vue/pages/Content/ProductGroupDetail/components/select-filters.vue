@@ -2,11 +2,23 @@
     <div class="mt-3" role="tablist">
         Фильтры<br>
         <div class="mb-2">
+            <template v-for="filter in phantomicFilters">
+                <b-badge pill
+                         variant="secondary"
+                         class="mr-1"
+                         style="cursor: pointer"
+                         @click="removeOldFilter(filter.id)"
+                >
+                  {{ filter.name }}
+                  <fa-icon icon="trash-alt"></fa-icon>
+                </b-badge>
+            </template>
             <template v-for="filter in genericFilters">
                 <template v-for="filterValue in filter.values">
                     <b-badge v-if="isChecked(filter.code, filterValue.code)"
                              pill
                              variant="info"
+                             class="mr-1"
                     >
                         {{ filterValue.name }}
                     </b-badge>
@@ -59,6 +71,7 @@
         props: {
             iSelectedFilterSources: Array,
             iSelectedFilters: Array,
+            iOldSelectedFilters: Array,
             iProductGroupTypes: Array,
         },
         data() {
@@ -66,6 +79,7 @@
                 productGroupTypes: this.iProductGroupTypes,
                 selectedFilterSources: this.iSelectedFilterSources,
                 selectedFilters: this.filterNormalization(this.iSelectedFilters),
+                oldSelectedFilters: this.iOldSelectedFilters,
                 filters: {},
                 genericFilters: [],
             };
@@ -138,7 +152,23 @@
                         value: filter.value,
                     };
                 });
-            }
+            },
+            removeOldFilter(id) {
+                this.oldSelectedFilters = this.oldSelectedFilters.filter(filter => {
+                    return filter.id !== id;
+                });
+            },
+        },
+        computed: {
+            phantomicFilters() {
+                let genericFilters = this.groupByCode(this.genericFilters);
+                return this.oldSelectedFilters.filter(item => {
+                    if (Object.keys(genericFilters).includes(item.code)) {
+                        return !Object.keys(this.groupByCode(genericFilters[item.code][0].values)).includes(item.value);
+                    }
+                    return false;
+                });
+            },
         },
         watch: {
             iSelectedFilterSources(val) {
@@ -156,18 +186,38 @@
                 this.selectedFilterSources = val;
             },
             selectedFilters(val) {
-                this.$emit('update', val);
+                let oldFilters = this.phantomicFilters.map(filter => {
+                    return {
+                        'code': filter.code,
+                        'value': filter.value,
+                    }
+                });
+                let allFilters = val.concat(oldFilters);
+                this.$emit('update', allFilters);
             },
             genericFilters(val) {
                 let groupedGenericFilters = this.groupByCode(val);
-                let filteredFilters = this.selectedFilters.filter(filter => {
+                this.selectedFilters = this.selectedFilters.filter(filter => {
                     if (Object.keys(groupedGenericFilters).includes(filter.code)) {
                         let groupedFilterValues = this.groupByCode(groupedGenericFilters[filter.code][0].values);
                         return Object.keys(groupedFilterValues).includes(filter.value);
                     }
                     return false;
                 });
-                this.selectedFilters = filteredFilters;
+
+                this.oldSelectedFilters = this.oldSelectedFilters.filter(filter => {
+                    return Object.keys(groupedGenericFilters).includes(filter.code);
+                });
+            },
+            phantomicFilters(val) {
+                let oldFilters = val.map(filter => {
+                    return {
+                      'code': filter.code,
+                      'value': filter.value,
+                    }
+                });
+                let allFilters = oldFilters.concat(this.selectedFilters);
+                this.$emit('update', allFilters);
             }
         },
         mounted: function () {

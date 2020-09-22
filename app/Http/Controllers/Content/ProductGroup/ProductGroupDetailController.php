@@ -21,6 +21,7 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
+use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,9 +32,11 @@ class ProductGroupDetailController extends Controller
         ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
         CategoryService $categoryService,
-        FileService $fileService
+        FileService $fileService,
+        PropertyDirectoryValueService $propertyDirectoryValueService,
+        BrandService $brandService
     ) {
-        $productGroup = $this->getProductGroup($id, $productGroupService);
+        $productGroup = $this->getProductGroup($id, $productGroupService, $propertyDirectoryValueService, $brandService);
         $productGroupImages = $this->getProductGroupImages([$productGroup['preview_photo_id']], $fileService);
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
@@ -219,15 +222,26 @@ class ProductGroupDetailController extends Controller
      */
     protected function getCategories(CategoryService $categoryService)
     {
-        return $categoryService->categories($categoryService->newQuery());
+        return $categoryService->categories($categoryService->newQuery()
+            ->include('ancestors')
+            ->addSort('_lft', 'asc')
+        );
     }
 
     /**
      * @param int $id
      * @param ProductGroupService $productGroupService
-     * @return ProductGroupDto
+     * @param PropertyDirectoryValueService $propertyDirectoryValueService
+     * @param BrandService $brandService
+     * @return mixed
+     * @throws PimException
      */
-    protected function getProductGroup(int $id, ProductGroupService $productGroupService)
+    protected function getProductGroup(
+        int $id,
+        ProductGroupService $productGroupService,
+        PropertyDirectoryValueService $propertyDirectoryValueService,
+        BrandService $brandService
+    )
     {
         $productGroups = $productGroupService
             ->newQuery()
@@ -243,16 +257,35 @@ class ProductGroupDetailController extends Controller
 
         $productGroup = $productGroups->first();
         $categoryFilters = [];
+        $brandFilters = [];
         $otherFilters = [];
         foreach ($productGroup->filters as $index => $filter) {
-            if ($filter['code'] === ProductGroupFilterDto::CATEGORY_FILTER) {
-                $categoryFilters[] = $filter['value'];
-            } else {
-                $otherFilters[] = $filter;
+            switch ($filter['code']) {
+                case ProductGroupFilterDto::CATEGORY_FILTER:
+                    $categoryFilters[] = $filter['value'];
+                    break;
+                case ProductGroupFilterDto::BRAND_FILTER:
+                    $brandFilters[] = $filter;
+                    break;
+                default:
+                    $otherFilters[] = $filter;
             }
         }
         $productGroup->category_code = $categoryFilters;
-        $productGroup->filters = $otherFilters;
+
+        $filterValues = collect($otherFilters)->pluck('value')->all();
+        $directoryValues = $propertyDirectoryValueService->values((new RestQuery())
+            ->setFilter('code', 'in', $filterValues)
+        )->keyBy('code');
+        $this->injectNames($otherFilters, $directoryValues);
+
+        $brandCodes = collect($brandFilters)->pluck('value')->all();
+        $brands = $brandService->brands((new RestQuery())
+            ->setFilter('code', 'in', $brandCodes)
+        )->keyBy('code');
+        $this->injectNames($brandFilters, $brands);
+
+        $productGroup->filters = array_merge($brandFilters, $otherFilters);
         return $productGroup;
     }
 
@@ -272,5 +305,20 @@ class ProductGroupDetailController extends Controller
                 return $file;
             })
             ->keyBy('id');
+    }
+
+    /**
+     * Дополнить объекты фильтров их названиями
+     * @param array $target
+     * @param Collection $source
+     */
+    protected function injectNames(array &$target, Collection $source)
+    {
+        $target = array_map(function ($item) use ($source) {
+            $item['name'] = $source->has($item['value'])
+                ? $source->get($item['value'])->name
+                : null;
+            return $item;
+        }, $target);
     }
 }

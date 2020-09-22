@@ -106,7 +106,7 @@
                             :value="category.code"
                             v-for="category in categories"
                         >
-                          {{ category.name }}
+                          {{ getFullCategoryName(category) }}
                         </b-form-select-option>
                       </b-form-select>
                   </div>
@@ -122,6 +122,7 @@
 
             <select-filters
                     v-if="(isBasedOnFilters || isNotBasedOn) && (selectedCategories.length > 0 || !basedOnCategory)"
+                    :i-old-selected-filters="oldSelectedFilters"
                     :i-selected-filters="selectedFilters"
                     :i-selected-filter-sources="selectedFilterSources"
                     :i-product-group-types="productGroupTypes"
@@ -175,6 +176,7 @@
                 productGroupImages: this.iProductGroupImages,
                 categories: this.iCategories,
                 selectedFilters: this.iProductGroup.filters || [],
+                oldSelectedFilters: this.iProductGroup.filters || [],
                 selectedProductIds: [],
                 selectedProducts: this.iProductGroup.products || [],
                 categoryFields: this.setSelectedCategories(this.iProductGroup),
@@ -281,6 +283,14 @@
             },
             removeCategory(index) {
                 this.categoryFields.splice(index, 1);
+            },
+            getFullCategoryName(category) {
+                let branchCategoryNames = [];
+                category.ancestors.forEach(function (ancestor) {
+                    branchCategoryNames.push(ancestor.name);
+                });
+                branchCategoryNames.push(category.name);
+                return branchCategoryNames.join(' » ');
             },
         },
         computed: {
