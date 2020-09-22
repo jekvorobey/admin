@@ -277,26 +277,15 @@ class ProductGroupDetailController extends Controller
         $directoryValues = $propertyDirectoryValueService->values((new RestQuery())
             ->setFilter('code', 'in', $filterValues)
         )->keyBy('code');
-        $otherFilters = array_map(function ($filter) use ($directoryValues) {
-            $filter['name'] = $directoryValues->has($filter['value'])
-                ? $directoryValues->get($filter['value'])->name
-                : null;
-            return $filter;
-        }, $otherFilters);
+        $this->injectNames($otherFilters, $directoryValues);
 
         $brandCodes = collect($brandFilters)->pluck('value')->all();
         $brands = $brandService->brands((new RestQuery())
             ->setFilter('code', 'in', $brandCodes)
         )->keyBy('code');
-        $brandFilters = array_map(function ($filter) use ($brands) {
-            $filter['name'] = $brands->has($filter['value'])
-                ? $brands->get($filter['value'])->name
-                : null;
-            return $filter;
-        }, $brandFilters);
+        $this->injectNames($brandFilters, $brands);
 
         $productGroup->filters = array_merge($brandFilters, $otherFilters);
-
         return $productGroup;
     }
 
@@ -316,5 +305,20 @@ class ProductGroupDetailController extends Controller
                 return $file;
             })
             ->keyBy('id');
+    }
+
+    /**
+     * Дополнить объекты фильтров их названиями
+     * @param array $target
+     * @param Collection $source
+     */
+    protected function injectNames(array &$target, Collection $source)
+    {
+        $target = array_map(function ($item) use ($source) {
+            $item['name'] = $source->has($item['value'])
+                ? $source->get($item['value'])->name
+                : null;
+            return $item;
+        }, $target);
     }
 }
