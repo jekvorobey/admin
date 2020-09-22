@@ -54,7 +54,7 @@
                                    :checked="massHas({type: massPopularProductType, id: popularProduct.id})"
                                    @change="e => massCheckbox(e, massPopularProductType, popularProduct.id)"/>
                         </td>
-                        <td><a :href='getRoute("product.detail", {id: popularProduct.id})'>
+                        <td><a :href="getRoute('products.detail', {id: popularProduct.id})">
                             {{ popularProduct.name }}
                         </a></td>
                     </tr>
