@@ -67,33 +67,53 @@ class PopularProductController extends Controller
     public function create(PopularProductService $popularProductService, ProductService $productService)
     {
         $data = $this->validate(request(), [
-            'product_id' => 'required|integer',
+            'product_id' => [
+                'required',
+                'regex:/^\d+(,\d+)*$/'
+            ],
         ]);
 
+        $data['product_id'] = explode(',', $data['product_id']);
+
         /** @var ProductDto $product */
-        $product = $productService->products(
+        $products = $productService->products(
             (new RestQuery())
                 ->addFields(ProductDto::entity(), 'id', 'name')
                 ->setFilter('id', $data['product_id'])
-        )->first();
+        );
 
-        if (!$product) {
-            throw new NotFoundHttpException("Товара с id={$data['product_id']} не существует");
+        if ($products->isEmpty()) {
+            throw new NotFoundHttpException("Товаров с id={$data['product_id']} не существует");
         }
 
-        $popularProduct = new PopularProductDto();
-        $popularProduct->product_id = $data['product_id'];
+        $response = [];
 
-        $createdPopularProduct = $popularProductService->create($popularProduct);
+        foreach ($products as $product) {
+            $popularProduct = new PopularProductDto();
+            $popularProduct->product_id = $product->id;
 
-        return response()->json([
-            'popular_product' => [
-                'id' => $createdPopularProduct->id,
-                'product_id' => $createdPopularProduct->product_id,
-                'name' => $product->name,
-                'weight' => $createdPopularProduct->weight,
-            ],
-        ], 201);
+            try {
+                $createdPopularProduct = $popularProductService->create($popularProduct);
+                $response[] = [
+                    'isAdded' => true,
+                    'popular_product' => [
+                        'id' => $createdPopularProduct->id,
+                        'product_id' => $createdPopularProduct->product_id,
+                        'name' => $product->name,
+                        'weight' => $createdPopularProduct->weight,
+                    ],
+                ];
+            } catch (CmsException $e) {
+                $response[] = [
+                    'isAdded' => false,
+                    'popular_product' => [
+                        'id' => $product->id,
+                    ]
+                ];
+            }
+        }
+
+        return response()->json($response, 201);
     }
 
     /**
