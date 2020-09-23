@@ -194,7 +194,7 @@
                                 this.keyCreateDelete = true;
                                 Services.msg("Новый популярный продукт добавлен");
                             } else {
-                                Services.msg(`Популярный продукт с id=${product.popular_product.id} не был добавлен`, 'danger');
+                                Services.msg(product.message, 'danger');
                             }
                         }
                     },

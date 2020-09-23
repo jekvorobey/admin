@@ -62,7 +62,6 @@ class PopularProductController extends Controller
      * @param PopularProductService $popularProductService
      * @param ProductService $productService
      * @return JsonResponse
-     * @throws CmsException|PimException
      */
     public function create(PopularProductService $popularProductService, ProductService $productService)
     {
@@ -82,11 +81,28 @@ class PopularProductController extends Controller
                 ->setFilter('id', $data['product_id'])
         );
 
-        if ($products->isEmpty()) {
-            throw new NotFoundHttpException("Товаров с id={$data['product_id']} не существует");
-        }
-
         $response = [];
+
+        // Несуществующие товары. Т.к. PIM отправляет инфу только он валидных ID,
+        // приходится считать невалидные
+        $missingProducts = array_udiff($data['product_id'], $products->toArray(),
+            function($first, $second) {
+                if (is_numeric($first)) $f = $first;
+                else $f = $first['id'];
+                if (is_numeric($second)) $s = $second;
+                else $s = $second['id'];
+                return $f - $s;
+            }
+        );
+        foreach ($missingProducts as $prod) {
+            $response[] = [
+                'isAdded' => false,
+                'popular_product' => [
+                    'product_id' => $prod,
+                ],
+                'message' => "Товар с id={$prod} не существует",
+            ];
+        }
 
         foreach ($products as $product) {
             $popularProduct = new PopularProductDto();
@@ -107,8 +123,9 @@ class PopularProductController extends Controller
                 $response[] = [
                     'isAdded' => false,
                     'popular_product' => [
-                        'id' => $product->id,
-                    ]
+                        'product_id' => $product->id,
+                    ],
+                    'message' => "Товар с id={$product->id} не был добавлен",
                 ];
             }
         }
