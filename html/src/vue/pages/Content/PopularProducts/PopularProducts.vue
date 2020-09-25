@@ -54,7 +54,9 @@
                                    :checked="massHas({type: massPopularProductType, id: popularProduct.id})"
                                    @change="e => massCheckbox(e, massPopularProductType, popularProduct.id)"/>
                         </td>
-                        <td>{{ popularProduct.name }}</td>
+                        <td><a :href="getRoute('products.detail', {id: popularProduct.product_id})">
+                            {{ popularProduct.name }}
+                        </a></td>
                     </tr>
                 </draggable>
         </table>
@@ -276,7 +278,7 @@
                 handler() {
                     if (!this.keyCreateDelete) {
                         this.itemsOrder = Object.values(this.popularProducts)
-                            .map((item, index) => ({
+                            .reverse().map((item, index) => ({
                                     id: item.id,
                                     weight: index + 1,
                                 })

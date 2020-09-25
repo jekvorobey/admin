@@ -238,7 +238,7 @@ class MerchantListController extends Controller
     {
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
-            'inn' => 'required|string|size:10',
+            'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],
             'kpp' => 'required|string|size:9',
             'legal_address' => 'required|string',
             'fact_address' => 'required|string',

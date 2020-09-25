@@ -186,7 +186,7 @@ class MerchantDetailController extends Controller
             'merchant.rating_id' => 'nullable|integer',
             'merchant.manager_id' => 'nullable|integer',
 
-            'merchant.inn' => 'nullable|string|size:10',
+            'merchant.inn' => ['nullable', 'regex:/^\d{10}(\d{2})?$/'],
             'merchant.kpp' => 'nullable|string|size:9',
             'merchant.fact_address' => 'nullable|string',
             'merchant.legal_address' => 'nullable|string',
