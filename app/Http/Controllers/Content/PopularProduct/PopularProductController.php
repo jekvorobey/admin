@@ -87,10 +87,16 @@ class PopularProductController extends Controller
         // приходится считать невалидные
         $missingProducts = array_udiff($data['product_id'], $products->toArray(),
             function($first, $second) {
-                if (is_numeric($first)) $f = $first;
-                else $f = $first['id'];
-                if (is_numeric($second)) $s = $second;
-                else $s = $second['id'];
+                if (is_numeric($first)) {
+                    $f = $first;
+                } else {
+                    $f = $first['id'];
+                }
+                if (is_numeric($second)) {
+                    $s = $second;
+                } else {
+                    $s = $second['id'];
+                }
                 return $f - $s;
             }
         );
