@@ -285,7 +285,7 @@
                 handler() {
                     if (!this.keyCreateDelete) {
                         this.itemsOrder = Object.values(this.popularProducts)
-                            .map((item, index) => ({
+                            .reverse().map((item, index) => ({
                                     id: item.id,
                                     weight: index + 1,
                                 })
