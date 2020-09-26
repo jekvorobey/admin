@@ -498,22 +498,30 @@
             copyOfferIdsToClipBoard() {
                 let selectedProducts = this.massAll(this.massProductsType)
                     .map(x => this.iProducts.find(prod => prod.id === x));
-                let offerIds = [];
-                console.log(selectedProducts);
+                let checkedProductsCount = selectedProducts.length;
+                let offersIds = [];
+
+                Services.showLoader();
                 for (let index in selectedProducts) {
                     let prod = selectedProducts[index];
-                    console.log('Sending');
                     Services.net().get(
                         this.getRoute('products.detailData', {id: prod.id}),
                         {}
                     ).then(
                         data => {
-                            console.log(data);
+                            offersIds.push(data['product']['offersIds']);
                         },
                         () => {
-                            console.log('Error');
+                            Services.msg('Не удалось загрузить все офферы');
                         }
-                    );
+                    ).finally(() => {
+                        checkedProductsCount--;
+                        if (!checkedProductsCount) {
+                            Services.hideLoader();
+                            let text = offersIds.join(',');
+                            clipboard.writeText(text).then();
+                        }
+                    });
                 }
             },
             copyProductIdsToClipBoard() {
