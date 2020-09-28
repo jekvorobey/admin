@@ -217,9 +217,12 @@
                     })
                 }
                 return defaultOptions.concat(options.map((item) => {
+                    let ancestors = item.ancestors;
+                    ancestors = ancestors.map(x => options.find(y => y.id === x).name);
+                    ancestors.push(item.name);
                     return {
                         value: item.id,
-                        text: item.name,
+                        text: ancestors.join(' >> '),
                     }
                 }));
             },
