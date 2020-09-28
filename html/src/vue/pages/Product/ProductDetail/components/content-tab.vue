@@ -5,12 +5,6 @@
             <div class="col">
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <div class="shadow mt-3 mr-3">
-                        <img :src="mainImage.url" class="big-image">
-                        Основная фотография
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(1, mainImage.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(1, mainImage.id)"></fa-icon>
-                    </div>
-                    <div class="shadow mt-3 mr-3">
                         <img :src="catalogImage.url" class="big-image">
                         Фотография для каталога
                         <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, catalogImage.id)"></fa-icon>
@@ -342,13 +336,6 @@ export default {
         },
     },
     computed: {
-        mainImage() {
-            let mainImages = this.images.filter(image => image.type === 1);
-            return mainImages.length > 0 ? mainImages[0] : {
-                id: 0,
-                url: Media.empty(150, 150),
-            };
-        },
         catalogImage() {
             let catalogImages = this.images.filter(image => image.type === 2);
             return catalogImages.length > 0 ? catalogImages[0] : {
