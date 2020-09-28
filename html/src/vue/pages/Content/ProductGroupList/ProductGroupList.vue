@@ -10,6 +10,14 @@
                 >
                     Тип
                 </f-select>
+                <f-input v-model="filter.name" class="col-lg-3 col-md-6 col-sm-12">Название</f-input>
+                <f-select
+                        v-model="filter.active"
+                        :options="activeOptions"
+                        class="col-lg-3 col-md-6 col-sm-12"
+                >
+                    Видимость
+                </f-select>
             </div>
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
@@ -179,6 +187,18 @@
         computed: {
             typeOptions() {
                 return this.options.types.map(type => ({value: type.id, text: type.name}));
+            },
+            activeOptions() {
+                return [
+                    {
+                        value: 0,
+                        text: 'Деактивирована',
+                    },
+                    {
+                        value: 1,
+                        text: 'Активна',
+                    },
+                ];
             },
         }
     };

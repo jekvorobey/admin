@@ -54,7 +54,9 @@
                                    :checked="massHas({type: massPopularProductType, id: popularProduct.id})"
                                    @change="e => massCheckbox(e, massPopularProductType, popularProduct.id)"/>
                         </td>
-                        <td>{{ popularProduct.name }}</td>
+                        <td><a :href="getRoute('products.detail', {id: popularProduct.product_id})">
+                            {{ popularProduct.name }}
+                        </a></td>
                     </tr>
                 </draggable>
         </table>
@@ -65,7 +67,7 @@
                 <div class="card-body">
                     <b-row class="mb-2">
                         <b-col cols="3">
-                            <label for="popular-product">Товар</label>
+                            <label for="popular-product">ID товара (-ов)</label>
                         </b-col>
                         <b-col cols="9">
                             <v-input id="popular-product"
@@ -180,14 +182,21 @@
                     this.newPopularProduct
                 ).then(
                     data => {
-                        this.popularProducts.push({
-                            id: data.popular_product.id,
-                            product_id: data.popular_product.product_id,
-                            name: data.popular_product.name,
-                            weight: data.popular_product.weight,
-                        });
-                        this.keyCreateDelete = true;
-                        Services.msg("Новый популярный товар добавлен");
+                        for (let index in data) {
+                            let product = data[index];
+                            if (product.isAdded) {
+                                this.popularProducts.push({
+                                    id: product.popular_product.id,
+                                    product_id: product.popular_product.product_id,
+                                    name: product.popular_product.name,
+                                    weight: product.popular_product.weight,
+                                });
+                                this.keyCreateDelete = true;
+                                Services.msg("Новый популярный продукт добавлен");
+                            } else {
+                                Services.msg(product.message, 'danger');
+                            }
+                        }
                     },
                     () => {
                         Services.msg("Не удалось добавить новый популярный товар",'danger');
@@ -276,7 +285,7 @@
                 handler() {
                     if (!this.keyCreateDelete) {
                         this.itemsOrder = Object.values(this.popularProducts)
-                            .map((item, index) => ({
+                            .reverse().map((item, index) => ({
                                     id: item.id,
                                     weight: index + 1,
                                 })

@@ -4,8 +4,8 @@
             <a :href="getRoute('communications.service-notification.list')">Назад</a>
         </span>
         </br>
-        <span>Системные предупреждения</span>
-        <system-alert :serviceNotificationId="service_notification_id"></system-alert>
+        <!-- <span>Системные предупреждения</span>
+        <system-alert :serviceNotificationId="service_notification_id"></system-alert> -->
         <span>Шаблоны</span>
         <div class="d-flex justify-content-between mt-3 mb-3">
             <button class="btn btn-success" @click="createTemplate">Добавить шаблон</button>

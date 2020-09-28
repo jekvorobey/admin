@@ -76,6 +76,14 @@ class ProductGroupListController extends Controller
             $query->setFilter('type_id', $filter['type']);
         }
 
+        if (isset($filter['name'])) {
+            $query->setFilter('name', $filter['name']);
+        }
+
+        if (isset($filter['active'])) {
+            $query->setFilter('active', $filter['active']);
+        }
+
         return $query->addSort('id', 'desc');
     }
 
