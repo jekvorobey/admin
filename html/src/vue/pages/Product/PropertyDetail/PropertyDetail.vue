@@ -1,14 +1,6 @@
 <template>
-    <layout-main>
+    <layout-main back="true">
         <div class="container mt-4">
-            <div class="row">
-                <button type="button"
-                        @click="pageBack"
-                        class="btn btn-dark btn-lg">
-                    << Назад
-                </button>
-
-            </div>
 
             <div class="row mt-4">
                 <div class="card col-12">
@@ -280,9 +272,6 @@ export default {
             if (this.productProperty.type !== 'directory') {
                 this.productProperty.is_color = false;
             }
-        },
-        pageBack() {
-            history.back();
         },
     },
     computed: {
