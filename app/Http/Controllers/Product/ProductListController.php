@@ -170,6 +170,7 @@ class ProductListController extends Controller
         $query->segment = 1;// todo
         $query->role = UserDto::SHOWCASE__GUEST;
         $query->fields([
+            ProductQuery::OFFER_ID,
             ProductQuery::PRODUCT_ID,
             ProductQuery::DATE_ADD,
             ProductQuery::CATALOG_IMAGE_ID,

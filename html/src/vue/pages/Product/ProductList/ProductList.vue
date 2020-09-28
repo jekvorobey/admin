@@ -496,33 +496,9 @@
                 });
             },
             copyOfferIdsToClipBoard() {
-                let selectedProducts = this.massAll(this.massProductsType)
-                    .map(x => this.iProducts.find(prod => prod.id === x));
-                let checkedProductsCount = selectedProducts.length;
-                let offersIds = [];
-
-                Services.showLoader();
-                for (let index in selectedProducts) {
-                    let prod = selectedProducts[index];
-                    Services.net().get(
-                        this.getRoute('products.detailData', {id: prod.id}),
-                        {}
-                    ).then(
-                        data => {
-                            offersIds.push(data['product']['offersIds']);
-                        },
-                        () => {
-                            Services.msg('Не удалось загрузить все офферы');
-                        }
-                    ).finally(() => {
-                        checkedProductsCount--;
-                        if (!checkedProductsCount) {
-                            Services.hideLoader();
-                            let text = offersIds.join(',');
-                            clipboard.writeText(text).then();
-                        }
-                    });
-                }
+                let text = this.massAll(this.massProductsType)
+                    .map(x => this.iProducts.find(prod => prod.id === x).offerId).join(',');
+                clipboard.writeText(text).then();
             },
             copyProductIdsToClipBoard() {
                 let text = this.massAll(this.massProductsType).join(',');
