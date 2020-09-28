@@ -62,38 +62,81 @@ class PopularProductController extends Controller
      * @param PopularProductService $popularProductService
      * @param ProductService $productService
      * @return JsonResponse
-     * @throws CmsException|PimException
      */
     public function create(PopularProductService $popularProductService, ProductService $productService)
     {
         $data = $this->validate(request(), [
-            'product_id' => 'required|integer',
+            'product_id' => [
+                'required',
+                'regex:/^\d+(,\d+)*$/'
+            ],
         ]);
 
+        $data['product_id'] = explode(',', $data['product_id']);
+
         /** @var ProductDto $product */
-        $product = $productService->products(
+        $products = $productService->products(
             (new RestQuery())
                 ->addFields(ProductDto::entity(), 'id', 'name')
                 ->setFilter('id', $data['product_id'])
-        )->first();
+        );
 
-        if (!$product) {
-            throw new NotFoundHttpException("Товара с id={$data['product_id']} не существует");
+        $response = [];
+
+        // Несуществующие товары. Т.к. PIM отправляет инфу только он валидных ID,
+        // приходится считать невалидные
+        $missingProducts = array_udiff($data['product_id'], $products->toArray(),
+            function($first, $second) {
+                if (is_numeric($first)) {
+                    $f = $first;
+                } else {
+                    $f = $first['id'];
+                }
+                if (is_numeric($second)) {
+                    $s = $second;
+                } else {
+                    $s = $second['id'];
+                }
+                return $f - $s;
+            }
+        );
+        foreach ($missingProducts as $prod) {
+            $response[] = [
+                'isAdded' => false,
+                'popular_product' => [
+                    'product_id' => $prod,
+                ],
+                'message' => "Товар с id={$prod} не существует",
+            ];
         }
 
-        $popularProduct = new PopularProductDto();
-        $popularProduct->product_id = $data['product_id'];
+        foreach ($products as $product) {
+            $popularProduct = new PopularProductDto();
+            $popularProduct->product_id = $product->id;
 
-        $createdPopularProduct = $popularProductService->create($popularProduct);
+            try {
+                $createdPopularProduct = $popularProductService->create($popularProduct);
+                $response[] = [
+                    'isAdded' => true,
+                    'popular_product' => [
+                        'id' => $createdPopularProduct->id,
+                        'product_id' => $createdPopularProduct->product_id,
+                        'name' => $product->name,
+                        'weight' => $createdPopularProduct->weight,
+                    ],
+                ];
+            } catch (CmsException $e) {
+                $response[] = [
+                    'isAdded' => false,
+                    'popular_product' => [
+                        'product_id' => $product->id,
+                    ],
+                    'message' => "Товар с id={$product->id} не был добавлен",
+                ];
+            }
+        }
 
-        return response()->json([
-            'popular_product' => [
-                'id' => $createdPopularProduct->id,
-                'product_id' => $createdPopularProduct->product_id,
-                'name' => $product->name,
-                'weight' => $createdPopularProduct->weight,
-            ],
-        ], 201);
+        return response()->json($response, 201);
     }
 
     /**
