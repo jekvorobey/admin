@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ use Pim\Dto\Search\IndexType;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
 use Pim\Services\ShoppilotService\ShoppilotService;
@@ -28,7 +30,8 @@ class ProductListController extends Controller
         CategoryService $categoryService,
         BrandService $brandService,
         ShoppilotService $shoppilotService,
-        ContentBadgesService $badgesService
+        ContentBadgesService $badgesService,
+        OfferService $offerService
     )
     {
         $this->title = 'Товары';
@@ -43,6 +46,19 @@ class ProductListController extends Controller
                 return $product;
             }, $productSearchResult->products);
         }
+
+        $offers = $offerService->offers(
+            (new RestQuery())
+                ->setFilter('product_id', $productIds)
+        );
+        $offers = $offers->mapToGroups(function ($item) {
+            return [$item->product_id => $item->id];
+        });
+
+        $productSearchResult->products = array_map(function ($product) use ($offers) {
+            $product['offerId'] = $offers[$product['id']];
+            return $product;
+        }, $productSearchResult->products);
 
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,

@@ -115,10 +115,20 @@
                     Сменить статус
                 </dropdown>
                 <button v-if="!massEmpty(massProductsType)"
-                        @click="copyIdsToClipBoard"
+                        @click="copyOfferIdsToClipBoard"
                         type="button"
                         class="btn btn-outline-secondary mr-3">
-                    <fa-icon icon="copy"></fa-icon> Копировать ID</button>
+                    <fa-icon icon="copy"></fa-icon> Копировать ID офферов</button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyProductIdsToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать ID товаров</button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyArticlesToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
 
                 <button v-if="!massEmpty(massProductsType)"
                         @click="openBadgesEditModal"
@@ -485,8 +495,18 @@
                     });
                 });
             },
-            copyIdsToClipBoard() {
+            copyOfferIdsToClipBoard() {
+                let text = this.massAll(this.massProductsType)
+                    .map(x => this.iProducts.find(prod => prod.id === x).offerId).join(',');
+                clipboard.writeText(text).then();
+            },
+            copyProductIdsToClipBoard() {
                 let text = this.massAll(this.massProductsType).join(',');
+                clipboard.writeText(text).then();
+            },
+            copyArticlesToClipBoard() {
+                let text = this.massAll(this.massProductsType)
+                    .map(x => this.iProducts.find(prod => prod.id === x).vendorCode).join(',');
                 clipboard.writeText(text).then();
             },
             openBadgesEditModal() {
