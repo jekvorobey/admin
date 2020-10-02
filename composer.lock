@@ -757,12 +757,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-marketing-lib.git",
-                "reference": "f8937e85a4413f3791eb674615d5061ab51d28ad"
+                "reference": "4c421670c1021576504aed295af0ac5a35900960"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=f8937e85a4413f3791eb674615d5061ab51d28ad",
-                "reference": "f8937e85a4413f3791eb674615d5061ab51d28ad",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-marketing-lib/repository/archive.zip?sha=4c421670c1021576504aed295af0ac5a35900960",
+                "reference": "4c421670c1021576504aed295af0ac5a35900960",
                 "shasum": ""
             },
             "require": {
@@ -797,7 +797,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2020-09-09T11:21:09+00:00"
+            "time": "2020-10-01T08:12:52+00:00"
         },
         {
             "name": "greensight/ibt-merchant-management-lib",
@@ -942,12 +942,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-pim-lib.git",
-                "reference": "926fcdb0c843e95a3a88c2caf8e8e551608c1428"
+                "reference": "9d7dea494e89204b45c272046e837b3b3d648a7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=926fcdb0c843e95a3a88c2caf8e8e551608c1428",
-                "reference": "926fcdb0c843e95a3a88c2caf8e8e551608c1428",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-pim-lib/repository/archive.zip?sha=9d7dea494e89204b45c272046e837b3b3d648a7a",
+                "reference": "9d7dea494e89204b45c272046e837b3b3d648a7a",
                 "shasum": ""
             },
             "require": {
@@ -971,7 +971,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2020-09-30T14:31:52+00:00"
+            "time": "2020-10-02T08:45:43+00:00"
         },
         {
             "name": "greensight/ibt-store-lib",
