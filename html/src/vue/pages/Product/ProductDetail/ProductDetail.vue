@@ -195,7 +195,7 @@
             return this.$store.state.title;
         },
         mainImage() {
-            let mainImages = this.images.filter(image => image.type === 1);
+            let mainImages = this.images.filter(image => image.type === 2);
             return mainImages.length > 0 ? mainImages[0] : {
                 id: 0,
                 url: '//placehold.it/150x150?text=No+image'
