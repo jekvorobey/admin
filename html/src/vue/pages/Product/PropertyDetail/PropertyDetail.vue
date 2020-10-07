@@ -1,7 +1,8 @@
 <template>
-    <layout-main>
+    <layout-main back="true">
         <div class="container mt-4">
-            <div class="row">
+
+            <div class="row mt-4">
                 <div class="card col-12">
                     <div class="card-body">
                         <template v-if="iProperty">
