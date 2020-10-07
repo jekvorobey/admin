@@ -120,11 +120,11 @@
                                 Комментарий менеджера
                             </f-input>
                         </div>
-<!--                        <div class="row">-->
-<!--                            <f-multi-select v-model="filter.type" :options="orderTypeOptions" class="col-sm-12 col-md-2">-->
-<!--                                Тип заказа-->
-<!--                            </f-multi-select>-->
-<!--                        </div>-->
+                        <div class="row">
+                            <f-multi-select v-model="filter.type" :options="typeOptions" class="col-sm-12 col-md-2">
+                                Тип заказа
+                            </f-multi-select>
+                        </div>
                     </div>
                 </div>
             </transition>
@@ -611,7 +611,7 @@
             booleanOptions() {
                 return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
             },
-            orderTypeOptions() {
+            typeOptions() {
                 return Object.values(this.orderTypes).map(type => ({value: type.id, text: type.name}))
             },
             editedShowColumns() {

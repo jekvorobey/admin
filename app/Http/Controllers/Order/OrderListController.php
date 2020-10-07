@@ -73,7 +73,7 @@ class OrderListController extends Controller
             'iPager' => $pager,
             'merchants' => $this->getMerchants(),
             'confirmationTypes' => OrderConfirmationType::allTypes(),
-//            'orderTypes' => OrderType::allTypes(),
+            'orderTypes' => OrderType::allTypes(),
             'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
             'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
             'iFilter' => $this->getFilter(true),
@@ -153,7 +153,7 @@ class OrderListController extends Controller
                 'is_require_check' => 'boolean|sometimes',
                 'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
                 'manager_comment' => 'string|sometimes',
-//                'type.*' => Rule::in(array_keys(OrderType::allTypes())),
+                'type.*' => Rule::in(array_keys(OrderType::allTypes())),
             ]
         );
     }
@@ -256,7 +256,6 @@ class OrderListController extends Controller
 
             $data['status'] = $order->status()->toArray();
             $data['confirmation_type'] = $order->confirmationType()->toArray();
-//            $data['type'] = $order->orderType()->toArray();
             $data['payment_status'] = $order->paymentStatus()->toArray();
             $data['delivery_methods'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return $delivery->deliveryMethod()->name;
