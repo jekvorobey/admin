@@ -202,9 +202,9 @@ class MerchantDetailController extends Controller
             'merchant.bank_bik' => 'nullable|string|size:9',
 
             'merchant.storage_address' => 'nullable|string',
-            'merchant.sale_info_brands' => 'array|required',
+            'merchant.sale_info_brands' => 'array|nullable',
             'merchant.sale_info_brands.*' => 'integer',
-            'merchant.sale_info_categories' => 'array|required',
+            'merchant.sale_info_categories' => 'array|nullable',
             'merchant.sale_info_categories.*' => 'integer',
             'merchant.vat_info' => 'nullable|string',
             'merchant.commercial_info' => 'nullable|string',
