@@ -213,13 +213,15 @@ class MerchantDetailController extends Controller
             'merchant.contract_at' => 'nullable|date_format:Y-m-d',
         ]);
 
-        $sale_info = [
-            'brands' => $data['merchant']['sale_info_brands'],
-            'categories' => $data['merchant']['sale_info_categories']
-        ];
-        $data['merchant']['sale_info'] = json_encode($sale_info);
-        unset($data['merchant']['sale_info_brands']);
-        unset($data['merchant']['sale_info_categories']);
+        if (isset($data['merchant']['sale_info_brands']) && isset($data['merchant']['sale_info_categories'])) {
+            $sale_info = [
+                'brands' => $data['merchant']['sale_info_brands'],
+                'categories' => $data['merchant']['sale_info_categories']
+            ];
+            $data['merchant']['sale_info'] = json_encode($sale_info);
+            unset($data['merchant']['sale_info_brands']);
+            unset($data['merchant']['sale_info_categories']);
+        }
 
         $editedMerchant = new MerchantDto($data['merchant']);
         $editedMerchant->id = $id;
