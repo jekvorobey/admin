@@ -133,7 +133,7 @@
             </div>
         </div>
         <hr>
-        <h3 @click="log">Мастер-классы</h3>
+        <h3>Мастер-классы</h3>
         <table class="table table-sm">
             <tbody>
                 <tr>
@@ -240,9 +240,6 @@ export default {
         };
     },
     methods: {
-        log() {
-            console.log(this.publicEvents)
-        },
         startUploadImage(type, replaceFileId) {
             this.currentType = type;
             this.replaceFileId = replaceFileId;
