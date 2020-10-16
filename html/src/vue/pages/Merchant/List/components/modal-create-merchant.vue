@@ -163,7 +163,7 @@
                 inn: {
                     required,
                     minLength: minLength(10),
-                    maxLength: maxLength(10),
+                    maxLength: maxLength(12),
                 },
                 kpp: {
                     required,
@@ -269,7 +269,7 @@
                 if (this.$v.form.inn.$dirty) {
                     if (!this.$v.form.inn.required) return "Обязательное поле!";
                     if (!this.$v.form.inn.minLength) return "Должно быть 10 символов!";
-                    if (!this.$v.form.inn.maxLength) return "Должно быть 10 символов!";
+                    if (!this.$v.form.inn.maxLength) return "Должно быть не более 12 символов!";
                 }
             },
             errorKpp() {
