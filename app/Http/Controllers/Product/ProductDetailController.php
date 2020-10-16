@@ -129,6 +129,14 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
+    /**
+     * Удаление/добавление мастер-классов продукта
+     * @param int $id
+     * @param Request $request
+     * @param ProductService $productService
+     * @return JsonResponse
+     * @throws \Pim\Core\PimException
+     */
     public function savePublicEvents(
         int $id,
         Request $request,
