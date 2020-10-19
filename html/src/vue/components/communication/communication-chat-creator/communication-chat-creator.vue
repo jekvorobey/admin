@@ -16,7 +16,7 @@
                         </b-col>
                     </b-row>
 
-                    <b-row class="mb-2">
+                    <b-row class="mb-2" v-if="merchants">
                         <b-col cols="3">
                             <label>Мерчант</label>
                         </b-col>
