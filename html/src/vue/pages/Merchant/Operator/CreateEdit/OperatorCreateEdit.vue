@@ -245,7 +245,19 @@
                             this.route('merchant.operator.update'),
                             {id: this.operatorProp.id},
                             operatorEdit
-                        ).then(() => {
+                        ).then((data) => {
+                            for (let [key, value] of Object.entries(data)) {
+                                if (key === 'roles') {
+                                    if (value['add']) {
+                                        this.operatorProp[key] = this.operatorProp[key].concat(value['add']);
+                                    }
+                                    if (value['delete']) {
+                                        this.operatorProp[key] = this.operatorProp[key].filter( (role) => !value['delete'].includes(role));
+                                    }
+                                } else {
+                                    this.operatorProp[key] = value;
+                                }
+                            }
                             Services.msg('Данные о менеджере успешно обновлены.');
                         }, () => {
                             Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
