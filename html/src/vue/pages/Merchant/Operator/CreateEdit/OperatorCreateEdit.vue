@@ -245,8 +245,8 @@
                             this.route('merchant.operator.update'),
                             {id: this.operatorProp.id},
                             operatorEdit
-                        ).then((data) => {
-                            for (let [key, value] of Object.entries(data)) {
+                        ).then(() => {
+                            for (let [key, value] of Object.entries(operatorEdit)) {
                                 if (key === 'roles') {
                                     if (value['add']) {
                                         this.operatorProp[key] = this.operatorProp[key].concat(value['add']);

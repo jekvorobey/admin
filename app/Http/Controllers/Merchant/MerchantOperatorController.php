@@ -174,7 +174,7 @@ class MerchantOperatorController extends Controller
         $operatorData['id'] = $operatorId;
         $operatorService->update($operatorData['id'], new OperatorDto($operatorData));
 
-        return response()->json($request->all());
+        return response('', 204);
     }
 
     public function delete(Request $request, OperatorService $operatorService, UserService $userService)
