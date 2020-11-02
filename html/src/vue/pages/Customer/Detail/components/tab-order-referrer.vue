@@ -21,7 +21,7 @@
                 <td>{{ order.order_number }}</td>
                 <td>{{ order.name }}</td>
                 <td>{{ order.qty | integer}}</td>
-                <td>{{ roundValue(order.price_commission) }}</td>
+                <td>{{ cutValue(order.price_commission) }}</td>
                 <td>{{ order.order_date }}</td>
                 <td>{{ order.source_name }}</td>
                 <td>{{ order.customer_id }}</td>
@@ -49,8 +49,9 @@ export default {
         }
     },
     methods: {
-        roundValue(value) {
-            return Helpers.roundValue(value)
+        cutValue(value) {
+            let cut = parseFloat(value).toFixed(2);
+            return cut.toString().replace('.', ',');
         },
         deleteOrderHistory(order_id) {
             Services.showLoader();
