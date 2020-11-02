@@ -97,8 +97,9 @@
 
         <b-modal id="modal-broadcast-create" title="Создание чата" hide-footer>
             <communication-chat-creator v-if="this.selectedOperators.length"
-                                        :usersProp="selectedOperators.map(operator => {return {'id': operator.id, 'email': operator.email}})"
+                                        :usersProp="selectedOperators.map(operator => {return {'id': operator.id, 'email': operator.email, 'merchant_id': operator.merchant_id}})"
                                         :userSendIds="selectedOperators.map(operator => operator.id)"
+                                        :merchants="selectedMerchants.map(operator => {return {'id': operator.id, 'legal_name': operator.legal_name}})"
             />
             <span v-else>Операторы отсутствуют</span>
         </b-modal>
@@ -261,7 +262,9 @@ export default {
             let operators = [];
             if (this.selectedMerchants.length) {
                 this.selectedMerchants.forEach(function (merchant) {
-                    operators.push(...Object.values(merchant.users));
+                    let merchant_operators = Object.values(merchant.users);
+                    merchant_operators.forEach(op => op.merchant_id = merchant.id);
+                    operators.push(...merchant_operators);
                 });
             }
             return operators;
