@@ -128,30 +128,7 @@ class ProductDetailController extends Controller
         
         return response()->json();
     }
-
-    /**
-     * Удаление/добавление мастер-классов продукта
-     * @param int $id
-     * @param Request $request
-     * @param ProductService $productService
-     * @return JsonResponse
-     * @throws \Pim\Core\PimException
-     */
-    public function savePublicEvents(
-        int $id,
-        Request $request,
-        ProductService $productService
-    )
-    {
-        $data = $this->validate($request, [
-            'public_event_ids' => 'required|array'
-        ]);
-
-        $productService->savePublicEvents($id, $data['public_event_ids']);
-
-        return response()->json();
-    }
-
+    
     public function saveProps(
         int $id,
         Request $request,
@@ -294,7 +271,6 @@ class ProductDetailController extends Controller
             ->include('properties')
             ->include('offers')
             ->include('ingredients')
-            ->include('publicEvents')
             ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
@@ -317,7 +293,6 @@ class ProductDetailController extends Controller
 
                 return $item;
             });
-        $publicEvents = $product->publicEvents;
 
         $query = new ProductQuery();
         $query->fields([
@@ -339,8 +314,8 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $product['currentOffer'] = $currentOffer;
-        $product['publicEvents'] = $publicEvents;
-
+        $product['publicEvents'] = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
+        //После реализации сервиса мастер классов - тут получение привязанных
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);
 

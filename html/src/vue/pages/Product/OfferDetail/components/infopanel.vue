@@ -21,6 +21,10 @@
                 <td colspan="2">{{ offerModel.id }}</td>
             </tr>
             <tr>
+                <th>Мерчант</th>
+                <td colspan="2">{{ offer.merchantName }}</td>
+            </tr>
+            <tr>
                 <th>Название товара</th>
                 <td colspan="2">{{ offerModel.name }}</td>
             </tr>
