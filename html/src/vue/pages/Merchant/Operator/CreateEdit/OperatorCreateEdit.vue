@@ -246,6 +246,18 @@
                             {id: this.operatorProp.id},
                             operatorEdit
                         ).then(() => {
+                            for (let [key, value] of Object.entries(operatorEdit)) {
+                                if (key === 'roles') {
+                                    if (value['add']) {
+                                        this.operatorProp[key] = this.operatorProp[key].concat(value['add']);
+                                    }
+                                    if (value['delete']) {
+                                        this.operatorProp[key] = this.operatorProp[key].filter( (role) => !value['delete'].includes(role));
+                                    }
+                                } else {
+                                    this.operatorProp[key] = value;
+                                }
+                            }
                             Services.msg('Данные о менеджере успешно обновлены.');
                         }, () => {
                             Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
