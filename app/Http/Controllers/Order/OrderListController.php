@@ -17,6 +17,7 @@ use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\Order\OrderConfirmationType;
+use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentDto;
@@ -72,6 +73,7 @@ class OrderListController extends Controller
             'iPager' => $pager,
             'merchants' => $this->getMerchants(),
             'confirmationTypes' => OrderConfirmationType::allTypes(),
+            'orderTypes' => OrderType::allTypes(),
             'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
             'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
             'iFilter' => $this->getFilter(true),
@@ -151,6 +153,7 @@ class OrderListController extends Controller
                 'is_require_check' => 'boolean|sometimes',
                 'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
                 'manager_comment' => 'string|sometimes',
+                'type.*' => Rule::in(array_keys(OrderType::allTypes())),
             ]
         );
     }

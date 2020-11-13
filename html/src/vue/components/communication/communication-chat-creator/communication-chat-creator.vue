@@ -16,7 +16,7 @@
                         </b-col>
                     </b-row>
 
-                    <b-row class="mb-2">
+                    <b-row class="mb-2" v-if="merchants">
                         <b-col cols="3">
                             <label>Мерчант</label>
                         </b-col>
@@ -278,14 +278,24 @@
             },
             'form.merchant_id': function () {
                 this.initUsers();
-                Services.showLoader();
-                Services.net().get(this.getRoute('user.byRoles'), {
-                    'role_ids': this.form.role_ids
-                }).then(data => {
-                    this.users = data.users;
-                }).finally(() => {
-                    Services.hideLoader();
-                });
+
+                if (this.form.role_ids.length > 0) {
+                    Services.showLoader();
+                    Services.net().get(this.getRoute('user.byRoles'), {
+                        'role_ids': this.form.role_ids
+                    }).then(data => {
+                        this.users = data.users;
+                    }).finally(() => {
+                        Services.hideLoader();
+                    });
+                }
+
+                // Такое же условие, как и в шаблоне, только с отрицанием
+                else if (!(this.usersProp && (!this.userSendIds || (this.usersProp.length !== this.userSendIds.length)))) {
+                    this.form.user_ids = this.availableUsers.map(function (u) {
+                        return u.id;
+                    });
+                }
             },
         },
     };

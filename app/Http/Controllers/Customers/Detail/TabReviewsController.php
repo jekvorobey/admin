@@ -73,31 +73,38 @@ class TabReviewsController extends Controller
 
         $reviews = $reviewsData->reviews->groupBy('object_type');
 
-        $productIds = $reviews['product']->pluck('object_id')->all();
-        $products = $productService->products(
-            (new RestQuery())
-                ->addFields(ProductDto::entity(), 'id', 'name')
-                ->setFilter('id', $productIds)
-        )
-            ->keyBy('id');
+        if (isset($reviews['product'])) {
+            $productIds = $reviews['product']->pluck('object_id')->all();
+            $products = $productService->products(
+                (new RestQuery())
+                    ->addFields(ProductDto::entity(), 'id', 'name')
+                    ->setFilter('id', $productIds)
+            )
+                ->keyBy('id');
+        } else {
+            $products = [];
+        }
 
-        $publicEventOfferIds = $reviews['public_event']->pluck('object_id')->all();
-        $publicEvents = $publicEventService
-            ->query()
-            ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer')
-            ->setFilter('offer_id', $publicEventOfferIds)
-            ->get();
+        if (isset($reviews['masterclass'])) {
+            $publicEventOfferIds = $reviews['masterclass']->pluck('object_id')->all();
+            $publicEvents = $publicEventService
+                ->query()
+                ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer')
+                ->setFilter('offer_id', $publicEventOfferIds)
+                ->get();
 
-        $publicEventOffers = [];
-        foreach ($publicEvents as $publicEvent) {
-            foreach ($publicEvent->sprints as $sprint) {
-                foreach ($sprint['ticketTypes'] as $ticketType) {
-                    $publicEventOffers[$ticketType['offer']['id']] = [
-                        'id' => $publicEvent->id,
-                        'name' => $publicEvent->name,
-                    ];
+            foreach ($publicEvents as $publicEvent) {
+                foreach ($publicEvent->sprints as $sprint) {
+                    foreach ($sprint['ticketTypes'] as $ticketType) {
+                        $publicEventOffers[$ticketType['offer']['id']] = [
+                            'id' => $publicEvent->id,
+                            'name' => $publicEvent->name,
+                        ];
+                    }
                 }
             }
+        } else {
+            $publicEventOffers = [];
         }
 
         $fileIds = $reviewsData->reviews->pluck('files')->collapse()->all();
@@ -115,35 +122,46 @@ class TabReviewsController extends Controller
             $files = [];
         }
 
-        return response()->json([
-            'reviews' => $reviewsData->reviews->map(function ($review) use ($products, $publicEventOffers, $files) {
-                switch ($review['object_type']) {
-                    case 'product':
+        $finalReviews = [];
+        foreach ($reviewsData->reviews as $review) {
+            switch ($review['object_type']) {
+                case 'product':
+                    if (isset($products[$review['object_id']])) {
                         $object = $products[$review['object_id']];
-                        break;
-                    case 'public_event':
+                    } else {
+                        continue 2;
+                    }
+                    break;
+                case 'masterclass':
+                    if (isset($publicEventOffers[$review['object_id']])) {
                         $object = $publicEventOffers[$review['object_id']];
-                        break;
-                    default:
-                        $object = null;
-                        break;
-                }
-                return [
-                    'id' => $review['id'],
-                    'object_type' => $review['object_type'],
-                    'object' => $object,
-                    'rating' => $review['rating'],
-                    'body' => $review['body'],
-                    'pros' => $review['pros'],
-                    'cons' => $review['cons'],
-                    'files' => collect($review['files'])->map(function ($fileId) use ($files) {
-                        return $files[$fileId];
-                    }),
-                    'likes' => $review['likes'],
-                    'dislikes' => $review['dislikes'],
-                    'created_at' => $review['created_at'],
-                ];
-            }),
+                    } else {
+                        continue 2;
+                    }
+                    break;
+                default:
+                    $object = null;
+                    break;
+            }
+            $finalReviews[] = [
+                'id' => $review['id'],
+                'object_type' => $review['object_type'],
+                'object' => $object ?? [],
+                'rating' => $review['rating'],
+                'body' => $review['body'],
+                'pros' => $review['pros'],
+                'cons' => $review['cons'],
+                'files' => collect($review['files'])->map(function ($fileId) use ($files) {
+                    return $files[$fileId];
+                }),
+                'likes' => $review['likes'],
+                'dislikes' => $review['dislikes'],
+                'created_at' => $review['created_at'],
+            ];
+        }
+
+        return response()->json([
+            'reviews' => $finalReviews,
             'total' => $reviewsData->total,
         ]);
     }

@@ -37,6 +37,9 @@
                             Сделать реферальным партнером
                         </b-dropdown-item-button>
                     </template>
+                    <b-dropdown-item-button v-if="customer.status == customerStatus.block || customer.status == customerStatus.temporarily_suspended" @click="openModal('modal-mark-status-active')">
+                        Активировать
+                    </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="customer.status != customerStatus.block" @click="openModal('modal-mark-status-block')">
                         Заблокировать
                     </b-dropdown-item-button>

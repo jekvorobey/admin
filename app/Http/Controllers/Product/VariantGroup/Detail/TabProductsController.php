@@ -99,7 +99,7 @@ class TabProductsController extends VariantGroupDetailController
                 $priceOutDtos = $this->priceService->prices($pricesIn)->keyBy('offer_id');
 
                 foreach ($variantGroupDto->products as $productDto) {
-                    $offerId = $productDto->currentOffer->id;
+                    $offerId = $productDto->currentOffer ? $productDto->currentOffer->id : null;
                     $productDto['qty'] = $stocks[$offerId] ?? 0;
                     $productDto['price'] = $priceOutDtos->has($offerId) ? $priceOutDtos[$offerId]->price : 0;
                 }

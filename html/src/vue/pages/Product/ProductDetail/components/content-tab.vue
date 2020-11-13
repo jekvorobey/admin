@@ -5,12 +5,6 @@
             <div class="col">
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <div class="shadow mt-3 mr-3">
-                        <img :src="mainImage.url" class="big-image">
-                        Основная фотография
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(1, mainImage.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(1, mainImage.id)"></fa-icon>
-                    </div>
-                    <div class="shadow mt-3 mr-3">
                         <img :src="catalogImage.url" class="big-image">
                         Фотография для каталога
                         <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, catalogImage.id)"></fa-icon>
@@ -145,12 +139,12 @@
                 <tr>
                     <th>
                         Добавить
-                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
+                        <button @click="openModal('PublicEventsList')" class="btn btn-success btn-sm"><fa-icon icon="plus"/></button>
                     </th>
                     <td>
-                        <div v-for="(event, index) in product.publicEvents">
-                            {{ event.description }}
-                            <span>
+                        <div v-for="(event, index) in publicEvents">
+                            {{ event.name }}
+                            <span @click="onTogglePublicEvent(event.id.toString())">
                                 <fa-icon icon="times"/>
                             </span>
                         </div>
@@ -165,6 +159,9 @@
         <file-upload-modal
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
+        <public-events-list-modal
+                @accept="onTogglePublicEvent"
+                modal-name="PublicEventsList"/>
         <description-edit-modal
                 :source="currentProduct"
                 text_field="description"
@@ -210,6 +207,7 @@ import modalMixin from '../../../../mixins/modal';
 import Modal from '../../../../components/controls/modal/modal.vue';
 import ShadowCard from '../../../../components/shadow-card.vue';
 import FileUploadModal from './file-upload-modal.vue';
+import PublicEventsListModal from './public-events-list-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
 import TipForm from './tip-form.vue';
@@ -222,6 +220,7 @@ export default {
         Modal,
         ShadowCard,
         FileUploadModal,
+        PublicEventsListModal,
         DescriptionEditModal,
         VideoEditModal,
         TipForm
@@ -230,6 +229,7 @@ export default {
     props: {
         images: {},
         product: {},
+        publicEvents: {},
     },
     data() {
         return {
@@ -274,6 +274,13 @@ export default {
             let route = this.getRoute('products.saveProduct', {id: this.product.id});
             Services.net().post(route, {}, {instruction_file_id: file.id})
                 .then(()=> {
+                    this.$emit('onSave');
+                });
+        },
+        onTogglePublicEvent(publicEvents) {
+            let route = this.getRoute('products.savePublicEvents', {id: this.product.id});
+            Services.net().post(route, {}, {public_event_ids: publicEvents.split(',')})
+                .then(() => {
                     this.$emit('onSave');
                 });
         },
@@ -342,13 +349,6 @@ export default {
         },
     },
     computed: {
-        mainImage() {
-            let mainImages = this.images.filter(image => image.type === 1);
-            return mainImages.length > 0 ? mainImages[0] : {
-                id: 0,
-                url: Media.empty(150, 150),
-            };
-        },
         catalogImage() {
             let catalogImages = this.images.filter(image => image.type === 2);
             return catalogImages.length > 0 ? catalogImages[0] : {

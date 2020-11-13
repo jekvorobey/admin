@@ -120,6 +120,11 @@
                                 Комментарий менеджера
                             </f-input>
                         </div>
+                        <div class="row">
+                            <f-multi-select v-model="filter.type" :options="typeOptions" class="col-sm-12 col-md-2">
+                                Тип заказа
+                            </f-multi-select>
+                        </div>
                     </div>
                 </div>
             </transition>
@@ -235,6 +240,7 @@
         is_require_check: 0,
         confirmation_type: [],
         manager_comment: '',
+        type: [],
     };
 
     const cleanFilter = Object.assign({
@@ -270,6 +276,7 @@
         'is_require_check',
         'confirmation_type',
         'manager_comment',
+        'type',
     ];
 
     export default {
@@ -284,6 +291,7 @@
             'iSort',
             'brands',
             'stores',
+            'orderTypes',
         ],
         components: {
             FInput,
@@ -304,6 +312,7 @@
             filter.brands = filter.brands.map(value => parseInt(value));
             filter.merchants = filter.merchants.map(value => parseInt(value));
             filter.confirmation_type = filter.confirmation_type.map(value => parseInt(value));
+            filter.type = filter.type.map(value => parseInt(value));
             filter.stores = filter.stores.map(value => parseInt(value));
             return {
                 opened: false,
@@ -601,6 +610,9 @@
             },
             booleanOptions() {
                 return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
+            },
+            typeOptions() {
+                return Object.values(this.orderTypes).map(type => ({value: type.id, text: type.name}))
             },
             editedShowColumns() {
                 return this.columns.filter(function(column) {

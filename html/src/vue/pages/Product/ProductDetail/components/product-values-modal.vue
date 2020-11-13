@@ -113,16 +113,62 @@
                         this.$emit('onSave');
                         this.closeModal();
                     });
-            }
+            },
+            categoryFullName(id) {
+                if (!(id in this.categoriesObject)) {
+                    return null;
+                }
+
+                let names = [];
+                let currentCategory = this.categoriesObject[id];
+                if (currentCategory.is_leaf) {
+                    names.push(currentCategory.name);
+                } else {
+                    return;
+                }
+
+                while (true) {
+                    let category = this.categoriesObject[currentCategory.id];
+                    if (category.parent_id && category.parent_id in this.categoriesObject) {
+                        let parentCategory = this.categoriesObject[category.parent_id];
+                        if (parentCategory.depth >= currentCategory.depth) {
+                            break;
+                        }
+
+                        names.push(parentCategory.name);
+                        currentCategory = parentCategory;
+                        continue;
+                    }
+
+                    break;
+                }
+
+                return names.reverse().join(' » ');
+            },
         },
         computed: {
             brandOptions() {
                 let brandList = Object.values(this.options.brands);
                 return brandList.map(brand => ({value: brand.id, text: brand.name}));
             },
+            categoriesObject() {
+                return Object.fromEntries(Object.values(this.options.categories).map(category => [category.id, category]))
+            },
             categoryOptions() {
                 let categoryList = Object.values(this.options.categories);
-                return categoryList.map(category => ({value: category.id, text: category.name}));
+                let resultCategoryList = [];
+
+                categoryList.forEach(category => {
+                    let categoryText = this.categoryFullName(category.id);
+                    if (categoryText) {
+                        resultCategoryList.push({
+                            value: category.id,
+                            text: categoryText
+                        })
+                    }
+                });
+
+                return resultCategoryList;
             },
             approvalStatusOptions() {
                 return Object.entries(this.options.approval).map(status => ({value: status[0], text: status[1]}));
