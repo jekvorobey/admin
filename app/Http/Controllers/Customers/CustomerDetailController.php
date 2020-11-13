@@ -302,4 +302,13 @@ class CustomerDetailController extends Controller
 
         return response('', 204);
     }
+
+    public function dial(int $id, CustomerService $customerService)
+    {
+        $customerService->dial($id);
+
+        return response()->json([
+            'status' => 'ok'
+        ]);
+    }
 }

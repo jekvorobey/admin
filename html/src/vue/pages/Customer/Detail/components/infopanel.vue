@@ -9,6 +9,7 @@
                 </button>
                 <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
 
+                <button @click="makeDial" class="btn btn-info btn-sm">Позвонить</button>
                 <b-dropdown text="Изменить статус" class="float-right" size="sm">
                     <template v-if="!customer.referral">
                         <b-dropdown-item-button v-if="customer.status != customerStatus.created " @click="openModal('modal-mark-status-created')">
@@ -233,6 +234,15 @@
             }).finally(data => {
                 Services.hideLoader();
             })
+        },
+        makeDial() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('customers.detail.dial', {id: this.customer.id}))
+                .then(data => {
+                    Services.msg("Запрос на звонок отправлен");
+                }).finally(data => {
+                    Services.hideLoader();
+                })
         },
         makeReferral() {
             Services.showLoader();
