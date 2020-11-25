@@ -79,6 +79,7 @@ class UsersController extends Controller
             'login' => 'required',
             'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
             'password' => 'required_without:id',
+            'infinity_sip_extension' => 'nullable|string'
         ]);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());

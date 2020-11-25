@@ -11,6 +11,9 @@
                 <v-select v-model="$v.form.front.$model" :options="frontOptions" :error="errorFront">
                     Система
                 </v-select>
+                <v-input v-model="$v.form.infinity_sip_extension.$model">
+                    Infinity SIP Extension
+                </v-input>
                 <div class="row">
                     <v-input v-model="$v.form.password.$model" class="col" :error="errorPassword" type="password" autocomplete="new-password">
                         Пароль
@@ -53,7 +56,8 @@
                     login: '',
                     front: '',
                     password: '',
-                    repeat: ''
+                    repeat: '',
+                    infinity_sip_extension: ''
                 }
             };
         },
@@ -64,6 +68,7 @@
                     front: {required},
                     password: {},
                     repeat: {},
+                    infinity_sip_extension: {},
                 }
             };
             if (!this.source) {
@@ -89,8 +94,11 @@
                 if (this.form.password) {
                     formData.password = this.form.password;
                 }
+                if (this.form.infinity_sip_extension) {
+                    formData.infinity_sip_extension = this.form.infinity_sip_extension;
+                }
                 Services.net().post(this.getRoute('settings.createUser'), {}, formData).then(() => {
-                    this.$emit('onSave', {login: this.form.login, front: this.form.front});
+                    this.$emit('onSave', {login: this.form.login, front: this.form.front, infinity_sip_extension: this.form.infinity_sip_extension});
                 });
             },
         },
@@ -126,6 +134,7 @@
                 if (newValue === 'userAdd' && this.source) {
                     this.form.login = this.source.login;
                     this.form.front = this.source.front;
+                    this.form.infinity_sip_extension = this.source.infinity_sip_extension;
                 }
             }
         }

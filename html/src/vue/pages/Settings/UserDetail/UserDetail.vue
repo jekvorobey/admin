@@ -76,7 +76,8 @@
                     login: 'Логин',
                     front: 'Система',
                     email_verified: 'E-mail подтверждён',
-                    created_at: 'Дата регистрации'
+                    created_at: 'Дата регистрации',
+                    infinity_sip_extension: 'Infinity SIP Extension'
                 },
                 newRole: ''
             };
@@ -119,7 +120,8 @@
                     login: this.user.login,
                     front: this.frontName(this.user.front),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
-                    created_at: this.user.created_at,
+                    infinity_sip_extension: this.user.infinity_sip_extension,
+                    created_at: this.user.created_at
                 };
             },
             roleOptions() {

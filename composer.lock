@@ -304,16 +304,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.23",
+            "version": "2.1.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "5fa792ad1853ae2bc60528dd3e5cbf4542d3c1df"
+                "reference": "ca90a3291eee1538cd48ff25163240695bd95448"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/5fa792ad1853ae2bc60528dd3e5cbf4542d3c1df",
-                "reference": "5fa792ad1853ae2bc60528dd3e5cbf4542d3c1df",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ca90a3291eee1538cd48ff25163240695bd95448",
+                "reference": "ca90a3291eee1538cd48ff25163240695bd95448",
                 "shasum": ""
             },
             "require": {
@@ -358,7 +358,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2020-10-31T20:37:35+00:00"
+            "time": "2020-11-14T15:56:27+00:00"
         },
         {
             "name": "erusev/parsedown",
@@ -564,12 +564,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:greensight/ibt-cm-lib.git",
-                "reference": "96a9fc94eabe78dd113ef317c5fc5dc82cbc117b"
+                "reference": "ca01e33b0aaa1e8cdef6d8b4a9bf9dd8eab49a24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=96a9fc94eabe78dd113ef317c5fc5dc82cbc117b",
-                "reference": "96a9fc94eabe78dd113ef317c5fc5dc82cbc117b",
+                "url": "https://gitlab.com/api/v4/projects/greensight%2Fibt-cm-lib/repository/archive.zip?sha=ca01e33b0aaa1e8cdef6d8b4a9bf9dd8eab49a24",
+                "reference": "ca01e33b0aaa1e8cdef6d8b4a9bf9dd8eab49a24",
                 "shasum": ""
             },
             "require": {
@@ -604,7 +604,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2020-11-13T15:25:13+00:00"
+            "time": "2020-11-25T13:50:02+00:00"
         },
         {
             "name": "greensight/ibt-cms-lib",
@@ -1678,16 +1678,16 @@
         },
         {
             "name": "mikehaertl/php-tmpfile",
-            "version": "1.1.6",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikehaertl/php-tmpfile.git",
-                "reference": "20a1879033d6b044cfba5dfcf55cbb418249d0ec"
+                "reference": "f162f70b472c3c1bad2b66c5a7922000a8065638"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/20a1879033d6b044cfba5dfcf55cbb418249d0ec",
-                "reference": "20a1879033d6b044cfba5dfcf55cbb418249d0ec",
+                "url": "https://api.github.com/repos/mikehaertl/php-tmpfile/zipball/f162f70b472c3c1bad2b66c5a7922000a8065638",
+                "reference": "f162f70b472c3c1bad2b66c5a7922000a8065638",
                 "shasum": ""
             },
             "require-dev": {
@@ -1713,7 +1713,7 @@
             "keywords": [
                 "files"
             ],
-            "time": "2020-08-30T09:54:54+00:00"
+            "time": "2020-11-20T16:10:10+00:00"
         },
         {
             "name": "mikehaertl/phpwkhtmltopdf",
@@ -4490,16 +4490,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.0.6",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "d5789bd8e2d852a6b98fe944ca2ff82e921eb43d"
+                "reference": "cbee637510037f293e641857b2a6223d0ea8008d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/d5789bd8e2d852a6b98fe944ca2ff82e921eb43d",
-                "reference": "d5789bd8e2d852a6b98fe944ca2ff82e921eb43d",
+                "url": "https://api.github.com/repos/composer/composer/zipball/cbee637510037f293e641857b2a6223d0ea8008d",
+                "reference": "cbee637510037f293e641857b2a6223d0ea8008d",
                 "shasum": ""
             },
             "require": {
@@ -4564,7 +4564,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2020-11-07T10:21:17+00:00"
+            "time": "2020-11-13T16:31:06+00:00"
         },
         {
             "name": "composer/semver",
@@ -4816,16 +4816,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.12.0",
+            "version": "2.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "c6d37b4c42aaa3c3ee175f05eca68056f4185646"
+                "reference": "adce7a954a1c2f14f85e94aed90c8489af204086"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/c6d37b4c42aaa3c3ee175f05eca68056f4185646",
-                "reference": "c6d37b4c42aaa3c3ee175f05eca68056f4185646",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/adce7a954a1c2f14f85e94aed90c8489af204086",
+                "reference": "adce7a954a1c2f14f85e94aed90c8489af204086",
                 "shasum": ""
             },
             "require": {
@@ -4905,7 +4905,7 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "time": "2020-10-22T17:26:24+00:00"
+            "time": "2020-11-14T20:26:58+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -5143,6 +5143,7 @@
                 "faker",
                 "fixtures"
             ],
+            "abandoned": true,
             "time": "2019-12-12T13:22:17+00:00"
         },
         {
@@ -5994,6 +5995,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
