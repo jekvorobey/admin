@@ -31,8 +31,44 @@
           />
         </td>
         <td>
-          <button class="btn btn-success btn-sm" :disabled="!isPeriod(billing.period)">Сделать внеочередной биллинг
+          <button
+            class="btn btn-success btn-sm"
+            :disabled="!isPeriod(billing.period)"
+            @click="createReport">Сделать внеочередной биллинг
           </button>
+        </td>
+      </tr>
+    </table>
+
+    <hr>
+    <h4 class="mt-4">Отчеты комиссионера</h4>
+    <table class="table mt-2">
+      <tr>
+        <td>Период</td>
+        <td>Статус</td>
+        <td>Документ</td>
+        <td>Изменен</td>
+        <td>Действия</td>
+      </tr>
+      <tr v-for="report in billingReports">
+        <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
+        <td>
+          <b-badge :variant="getBadge(report.status)">
+            {{ getStatus(report.status) }}
+          </b-badge>
+        </td>
+        <td>
+          <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
+          {id:getMerchantId, reportId:report.id})">Скачать</a>
+        </td>
+        <td>{{ report.updated_at }}</td>
+        <td>
+          <b-button class="btn btn-success btn-sm" @click="updateStatus(report.id)">
+            Подтвердить <fa-icon icon="check"/>
+          </b-button>
+          <b-button class="btn btn-danger btn-sm" @click="removeItem(report.id)">
+            Удалить <fa-icon icon="trash-alt"/>
+          </b-button>
         </td>
       </tr>
     </table>
@@ -101,7 +137,6 @@
               </f-input>
             </div>
 
-
             <div class="row">
               <f-input v-model="filter.discount_from" type="number" class="col-3">
                 Скидка
@@ -123,15 +158,16 @@
         <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
       </div>
     </div>
-
-    <table class="table mt-3">
+    <div class="table-responsive">
+      <table class="table table-condensed">
       <thead>
       <tr>
-        <th>id Оффера</th>
-        <th>Дата продажи</th>
+        <th>Продажа</th>
         <th>Название</th>
         <th>Цена, р</th>
-        <th>Скидка, %</th>
+        <th>Кол-во</th>
+        <th>Скидка, р</th>
+        <th>Бонусы</th>
         <th>Цена на витрине, р</th>
         <th>Комиссия Оператора, %</th>
         <th>Вознаграждение Оператора, руб</th>
@@ -140,22 +176,27 @@
       </thead>
       <tbody>
       <tr v-for="offer in billingList">
-        <td>{{ offer.offer_id }}</td>
         <td><a :href="$store.getters.getRoute('orders.detail', {id:offer.order_id})">{{ offer.status_at }}</a></td>
         <td><a :href="$store.getters.getRoute('offers.detail', {id:offer.offer_id})">{{ offer.name }}</a></td>
-        <td>{{ offer.price }}</td>
-        <td>{{ 0 }}</td>
+        <td>{{ offer.cost }}</td>
+        <td>{{ offer.qty }}</td>
+        <td v-if="offer.discounts.hasOwnProperty('marketplace') || offer.discounts.hasOwnProperty('merchant')">
+           {{ offer.discounts.hasOwnProperty('marketplace') && offer.discounts.marketplace.sum > 0 ? 'М-с:' + offer.discounts.marketplace.sum : '' }}
+           {{ offer.discounts.hasOwnProperty('merchant') && offer.discounts.merchant.sum > 0 ? 'М-т:' + offer.discounts.merchant.sum : ''  }}
+        </td>
+        <td v-else>0</td>
+        <td>{{ offer.bonuses.hasOwnProperty('bonus_discount') ? offer.bonuses.bonus_discount : 0 }}</td>
         <td>{{ offer.price }}</td>
         <td>{{ offer.percent }}</td>
-        <td>{{ parseInt((offer.price - offer.commission).toFixed()) }}</td>
         <td>{{ parseInt(offer.commission.toFixed()) }}</td>
+        <td>{{ parseInt((offer.price - offer.commission).toFixed()) }}</td>
       </tr>
       <tr v-if="!billingList.length">
         <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
       </tr>
       </tbody>
     </table>
-
+    </div>
     <b-pagination v-if="pager.last_page > 1"
                   v-model="currentPage"
                   :total-rows="pager.total"
@@ -176,9 +217,10 @@ import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import Services from "../../../../../scripts/services/services";
+import {mapActions} from "vuex";
 
 const cleanHiddenFilter = {
-  sale_status: [],
+  name: null,
   percent_from: null,
   percent_to: null,
   order_id: null,
@@ -192,34 +234,35 @@ const cleanHiddenFilter = {
 };
 
 const cleanFilter = Object.assign({
-  sale_status: [],
+  offer_id: null,
+  name: null,
   percent_from: null,
   percent_to: null,
   order_id: null,
   price_from: null,
   price_to: null,
-  commission_from: null,
-  commission_to: null,
   discount_from: null,
   discount_to: null,
+  commission_from: null,
+  commission_to: null,
   status_at: [],
 
 }, cleanHiddenFilter);
 
 const serverKeys = [
+  'name',
   'offer_id',
-  'order_id',
   'percent_from',
   'percent_to',
-  'name',
+  'order_id',
   'sale_status',
   'price_from',
   'price_to',
   'discount_from',
   'discount_to',
-  'status_at',
   'commission_from',
-  'commission_to'
+  'commission_to',
+  'status_at'
 ];
 
 export default {
@@ -238,7 +281,6 @@ export default {
     return {
       opened: false,
       filter: {},
-      offerSaleStatuses: {},
       appliedFilter: {},
       currentPage: 1,
       pager: {},
@@ -248,10 +290,80 @@ export default {
       billing: {
         period: null,
       },
-      billingList: {}
+      billingList: {},
+      billingReports: {},
+      statuses: [
+        {text:'новый', badge:'light'},
+        {text:'просмотрен', badge:'warning'},
+        {text:'подтвержден', badge:'success'},
+        {text:'отклонен', badge:'danger'},
+      ],
+      newReportDates: {
+        dateFrom:null,
+        dateTo:null,
+      },
     }
   },
   methods: {
+    ...mapActions({
+      showMessageBox: 'modal/showMessageBox',
+    }),
+    getMerchantId() {
+      return this.model.id;
+    },
+    getStatus(id) {
+      return this.statuses[id].text;
+    },
+    getBadge(id) {
+      return this.statuses[id].badge;
+    },
+    removeItem(id) {
+      Services.showLoader();
+      Services.net()
+        .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
+        .then((data) => {
+          this.loadReports();
+
+        })
+        .catch(() => {
+          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+        }).finally(() => {
+          Services.hideLoader();
+          this.showMessageBox({title: 'Отчет удалён'});
+        });
+    },
+    updateStatus(id) {
+      Services.showLoader();
+      Services.net()
+        .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: 2})
+        .then((data) => {
+          this.loadReports();
+        })
+        .catch(() => {
+          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+        }).finally(() => {
+          Services.hideLoader();
+          this.showMessageBox({title: 'Статус Обновлен'});
+        });
+    },
+    createReport() {
+      if (!this.newReportDates) { return false; }
+      Services.showLoader();
+      Services.net()
+        .post(this.getRoute('merchant.detail.billingReport.create', {id: this.model.id,}), {},
+            { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
+        .then((data) => {
+          this.loadReports();
+          this.newReportDates = {dateFrom: null, dateTo: null};
+          this.billing.period = null;
+        })
+        .catch(() => {
+          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+        }).finally(() => {
+          Services.hideLoader();
+          this.showMessageBox({title: 'Отчет создан'});
+        });
+    },
     paginationPromise() {
       return Services.net().get(
         this.getRoute('merchant.detail.billingList', {id: this.model.id}),
@@ -269,6 +381,15 @@ export default {
           this.setPager(data);
         }
       }).finally(() => {
+        Services.hideLoader();
+      });
+    },
+    loadReports() {
+      Services.showLoader();
+      Services.net().get(this.getRoute('merchant.detail.billingReport', {id: this.model.id}))
+          .then(data => {
+            this.billingReports = data.billing_reports;
+          }).finally(() => {
         Services.hideLoader();
       });
     },
@@ -318,6 +439,10 @@ export default {
       if (!period || period.length !== 2) {
         return false;
       }
+      this.newReportDates = {
+        dateFrom: period[0],
+        dateTo: period[1],
+      }
 
       return period[0] && period[1];
     },
@@ -342,11 +467,14 @@ export default {
       this.setPager(data);
     });
 
-    Services.net().get(this.getRoute('merchant.detail.billing', {id: this.model.id})).then(data => {
+    Services.net().get(this.getRoute('merchant.detail.billing', {id: this.model.id}))
+    .then(data => {
       this.form.billing_cycle = data.billing_cycle;
-    }).finally(() => {
-      Services.hideLoader();
     })
+    .finally(() => {
+      Services.hideLoader();
+    });
+    this.loadReports();
   },
   watch: {
     currentPage() {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Merchant\Detail;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
@@ -13,6 +14,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use MerchantManagement\Dto\MerchantSettingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use phpDocumentor\Reflection\Types\False_;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TabBillingController extends Controller
 {
@@ -20,7 +23,7 @@ class TabBillingController extends Controller
      * @param int             $merchantId
      * @param MerchantService $merchantService
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function load(int $merchantId, MerchantService $merchantService)
     {
@@ -44,6 +47,99 @@ class TabBillingController extends Controller
         ]);
         $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
         return response('', 204);
+    }
+
+    /**
+     * Получить биллинговые отчеты
+     * @param Request $request
+     * @param int $merchantId
+     * @param MerchantService $merchantService
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function billingReports(Request $request, int $merchantId, MerchantService $merchantService)
+    {
+        $restQuery = $this->makeRestQuery($request, $merchantId);
+        $billingReports = $merchantService->merchantBillingReports($restQuery, $merchantId);
+        return response()->json([
+            'billing_reports' => $billingReports,
+        ]);
+    }
+
+    /**
+     * Удалить биллинговый отчет
+     * @param int $merchantId
+     * @param int $reportId
+     * @param MerchantService $merchantService
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
+    public function deleteBillingReport(int $merchantId, int $reportId, MerchantService $merchantService)
+    {
+        $merchantService->deleteBillingReport($merchantId, $reportId);
+        return response('', 204);
+    }
+
+    /**
+     * Обновить статус у биллингового отчета
+     * @param int $merchantId
+     * @param int $reportId
+     * @param Request $request
+     * @param MerchantService $merchantService
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
+    public function billingReportStatusUpdate(int $merchantId, int $reportId, Request $request, MerchantService $merchantService)
+    {
+        $status = $request->status;
+
+        $merchantService->billingReportStatusUpdate($merchantId, $reportId, $status);
+        return response('', 204);
+    }
+
+    /**
+     * Создать биллинговый отчет
+     * @param int $merchantId
+     * @param Request $request
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
+    public function billingReportCreate(int $merchantId, Request $request)
+    {
+        $dates = [
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to
+        ];
+
+        /** @var MerchantService $merchantService */
+        $merchantService = resolve(MerchantService::class);
+
+        $merchantService->billingReportCreate($merchantId, $dates);
+        return response('', 204);
+    }
+
+    /**
+     * Создать биллинговый отчет
+     * @param int $merchantId
+     * @param int $reportId
+     * @param FileService $fileService
+     * @param MerchantService $merchantService
+     * @return StreamedResponse
+     */
+    public function billingReportDownload(int $merchantId, int $reportId, FileService $fileService, MerchantService $merchantService)
+    {
+        $report = $merchantService->getBillingReport($merchantId, $reportId);
+
+        if (!$report || !isset($report['file'])) return null;
+        $reportFileId = $report['file'];
+
+        $reportDto = $fileService->getFiles([$reportFileId])->first();
+        if (!$reportDto) return null;
+
+        if ($report['status'] == 0 ) {
+            $merchantService->billingReportStatusUpdate($merchantId, $reportId, 1);
+        }
+
+        return response()->streamDownload(function () use ($reportDto) {
+            echo file_get_contents($reportDto->absolute_url);
+        }, $reportDto->original_name);
     }
 
      /**
@@ -145,11 +241,14 @@ class TabBillingController extends Controller
     {
         return Validator::make(request('filter') ?? [],
             [
-                'offer_id' => 'integer|someone',
+                'commission_from' => 'integer|someone',
+                'commission_to' => 'integer|someone',
+                'discount_from' => 'integer|someone',
+                'discount_to' => 'integer|someone',
+                'price_from' => 'integer|someone',
+                'price_to' => 'integer|someone',
                 'name' => 'string|someone',
-                'address_string' => 'string|someone',
-                'contact_name' => 'string|someone',
-                'contact_phone' => 'string|someone',
+                'status_at' => 'string|someone',
             ]
         )->attributes();
     }
