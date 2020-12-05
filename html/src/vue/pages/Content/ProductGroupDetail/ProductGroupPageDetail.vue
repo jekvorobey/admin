@@ -100,12 +100,11 @@
                   <div class="col-11 pl-0">
                       <b-form-select
                           v-model="categoryFields[index]"
-                          id="group-category"
-                      >
+                          id="group-category">
                         <b-form-select-option
                             :value="category.code"
                             v-for="category in categories"
-                        >
+                            v-bind:key="category.id">
                           {{ getFullCategoryName(category) }}
                         </b-form-select-option>
                       </b-form-select>

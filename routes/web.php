@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
                 });
                 Route::prefix('billingList')->group(function () {
                     Route::get('', 'TabBillingController@billingList')->name('merchant.detail.billingList');
+                    Route::post('add-correction', 'TabBillingController@addCorrection')->name('merchant.detail.billingList.addCorrection');
                 });
             });
         });

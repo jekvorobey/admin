@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -55,7 +56,7 @@ class TabBillingController extends Controller
      * @param int $merchantId
      * @param MerchantService $merchantService
      * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
     public function billingReports(Request $request, int $merchantId, MerchantService $merchantService)
     {
@@ -142,14 +143,35 @@ class TabBillingController extends Controller
         }, $reportDto->original_name);
     }
 
+    /**
+     * AJAX добавление корректировки биллинга
+     *
+     * @param int $merchantId
+     * @param Request $request
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
+    public function addCorrection(int $merchantId, Request $request)
+    {
+        $data = $this->validate(request(),[
+            'correction_sum' => 'integer',
+            'document_id' => 'integer',
+            'date' => 'date',
+        ]);
+
+        $merchantService = resolve(MerchantService::class);
+        $merchantService->addCorrection($merchantId, $data);
+
+        return response('', 204);
+    }
+
      /**
      * AJAX пагинация списка операций биллинга
      *
      * @param int $merchantId
      * @param Request $request
      * @param  MerchantService $merchantService
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     public function billingList(int $merchantId, Request $request, MerchantService $merchantService): JsonResponse
     {
@@ -182,7 +204,7 @@ class TabBillingController extends Controller
      * @param Request $request
      * @param int $merchantId
      * @return DataQuery
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery( Request $request, int $merchantId ): DataQuery
     {

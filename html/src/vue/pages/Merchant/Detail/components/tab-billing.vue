@@ -158,6 +158,13 @@
         <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
       </div>
     </div>
+    <div class="row mb-3">
+      <div class="col-12 mt-3">
+        <b-button class="btn btn-primary btn-sm" @click="openCorrectionModal()">
+          Скорректировать биллинг <fa-icon icon="edit"/>
+        </b-button>
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table table-condensed">
       <thead>
@@ -175,21 +182,31 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="offer in billingList">
-        <td><a :href="$store.getters.getRoute('orders.detail', {id:offer.order_id})">{{ offer.status_at }}</a></td>
-        <td><a :href="$store.getters.getRoute('offers.detail', {id:offer.offer_id})">{{ offer.name }}</a></td>
-        <td>{{ offer.cost }}</td>
-        <td>{{ offer.qty }}</td>
-        <td v-if="offer.discounts.hasOwnProperty('marketplace') || offer.discounts.hasOwnProperty('merchant')">
-           {{ offer.discounts.hasOwnProperty('marketplace') && offer.discounts.marketplace.sum > 0 ? 'М-с:' + offer.discounts.marketplace.sum : '' }}
-           {{ offer.discounts.hasOwnProperty('merchant') && offer.discounts.merchant.sum > 0 ? 'М-т:' + offer.discounts.merchant.sum : ''  }}
+      <tr v-for="billingOperation in billingList">
+        <td v-if="billingOperation.order_id">
+          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.status_at }}</a>
+        </td>
+        <td v-else>
+          {{ billingOperation.status_at }}
+        </td>
+        <td v-if="billingOperation.offer_id">
+          <a :href="$store.getters.getRoute('offers.detail', {id:billingOperation.offer_id})">{{ billingOperation.name }}</a>
+        </td>
+        <td v-else>
+          <a v-if="billingOperation.document_id" :href="fileUrl(billingOperation.document_id)">Корректировка</a>
+        </td>
+        <td>{{ billingOperation.cost }}</td>
+        <td>{{ billingOperation.qty }}</td>
+        <td v-if="billingOperation.discounts.hasOwnProperty('marketplace') || billingOperation.discounts.hasOwnProperty('merchant')">
+           {{ billingOperation.discounts.hasOwnProperty('marketplace') && billingOperation.discounts.marketplace.sum > 0 ? 'М-с:' + billingOperation.discounts.marketplace.sum : '' }}
+           {{ billingOperation.discounts.hasOwnProperty('merchant') && billingOperation.discounts.merchant.sum > 0 ? 'М-т:' + billingOperation.discounts.merchant.sum : ''  }}
         </td>
         <td v-else>0</td>
-        <td>{{ offer.bonuses.hasOwnProperty('bonus_discount') ? offer.bonuses.bonus_discount : 0 }}</td>
-        <td>{{ offer.price }}</td>
-        <td>{{ offer.percent }}</td>
-        <td>{{ parseInt(offer.commission.toFixed()) }}</td>
-        <td>{{ parseInt((offer.price - offer.commission).toFixed()) }}</td>
+        <td>{{ billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
+        <td>{{ billingOperation.price }}</td>
+        <td>{{ billingOperation.percent }}</td>
+        <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
+        <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
       </tr>
       <tr v-if="!billingList.length">
         <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
@@ -204,20 +221,48 @@
                   :hide-goto-end-buttons="pager.last_page < 10"
                   class="float-right"
     ></b-pagination>
+
+    <transition name="modal">
+      <modal :close="closeModal" v-if="isModalOpen('BillingCorrectionModal')">
+        <div slot="header">
+          Корректировка биллинг-операции
+        </div>
+        <div slot="body">
+          <div class="form-group">
+            <f-date v-model="$v.correctionForm.billingDate.$model" :error="errorDate">Дата</f-date>
+            <v-input v-model="$v.correctionForm.correctionSum.$model" :error="errorSum">Выплата мерчанту (может быть отрицательной)</v-input>
+            <a v-if="correctionForm.file_id" :href="fileUrl(correctionForm.file_id)">{{ correctionForm.file_name }}</a>
+            <file-input destination="billing-correction-document" :error="errorFile" @uploaded="onFileUpload">Прикрепить документ</file-input>
+          </div>
+          <div class="form-group">
+            <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+            <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+          </div>
+        </div>
+      </modal>
+    </transition>
   </div>
 </template>
 
 <script>
+import modalMixin from '../../../../mixins/modal';
+import mediaMixin from '../../../../mixins/media';
+import massSelectionMixin from '../../../../mixins/mass-selection';
+import {validationMixin} from 'vuelidate';
+import {required} from 'vuelidate/lib/validators';
+import Modal from '../../../../components/controls/modal/modal.vue';
+
 import FInput from '../../../../components/filter/f-input.vue';
 import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 import FDate from '../../../../components/filter/f-date.vue';
 import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import VInput from "../../../../components/controls/VInput/VInput.vue";
+import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import Services from "../../../../../scripts/services/services";
-import {mapActions} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 const cleanHiddenFilter = {
   name: null,
@@ -268,16 +313,23 @@ const serverKeys = [
 export default {
   name: 'tab-billing',
   props: ['model'],
+  mixins: [
+    modalMixin,
+    mediaMixin,
+    massSelectionMixin,
+    validationMixin,
+  ],
   components: {
     FInput,
     FMultiSelect,
     FDate,
     VInput,
+    FileInput,
     VSelect,
-    DatePicker
+    DatePicker,
+    Modal
   },
   data() {
-    //let filter = Object.assign({}, cleanFilter);
     return {
       opened: false,
       filter: {},
@@ -302,12 +354,50 @@ export default {
         dateFrom:null,
         dateTo:null,
       },
+      billingOperation: {},
+      correctionForm: {
+        billingDate: null,
+        correctionSum: null,
+        file_id: null
+      },
+    }
+  },
+  validations: {
+    correctionForm: {
+      billingDate: {required},
+      correctionSum: {
+        pattern: (value) => /^[0-9\-]*$/.test(value)
+      },
+      file_id: {required}
     }
   },
   methods: {
     ...mapActions({
       showMessageBox: 'modal/showMessageBox',
     }),
+    onFileUpload(file) {
+      this.$v.correctionForm.file_id.$model = file.id;
+      this.correctionForm.file_name = file.name;
+    },
+    onSave() {
+      this.$v.$touch();
+      if (this.$v.$invalid) {
+        return;
+      }
+      Services.showLoader();
+      this.saveBillingCorrection();
+    },
+    onCancel() {
+      this.correctionForm = {
+        billingDate: null,
+        correctionSum: null,
+        file_id: null
+      };
+      this.closeModal();
+    },
+    openCorrectionModal() {
+      this.openModal('BillingCorrectionModal');
+    },
     getMerchantId() {
       return this.model.id;
     },
@@ -317,13 +407,32 @@ export default {
     getBadge(id) {
       return this.statuses[id].badge;
     },
+    saveBillingCorrection() {
+      Services.hideLoader();
+      Services.net()
+          .post(this.getRoute('merchant.detail.billingList.addCorrection', {id: this.model.id}), {},
+              {
+                date: this.correctionForm.billingDate,
+                correction_sum: this.correctionForm.correctionSum,
+                document_id: this.correctionForm.file_id,
+              })
+          .then(() => {
+            this.loadReports();
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+
+        this.showMessageBox({title: 'Биллинг скорректирован'});
+      });
+    },
     removeItem(id) {
       Services.showLoader();
       Services.net()
         .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
-        .then((data) => {
+        .then(() => {
           this.loadReports();
-
         })
         .catch(() => {
           this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
@@ -336,7 +445,7 @@ export default {
       Services.showLoader();
       Services.net()
         .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: 2})
-        .then((data) => {
+        .then(() => {
           this.loadReports();
         })
         .catch(() => {
@@ -352,7 +461,7 @@ export default {
       Services.net()
         .post(this.getRoute('merchant.detail.billingReport.create', {id: this.model.id,}), {},
             { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
-        .then((data) => {
+        .then(() => {
           this.loadReports();
           this.newReportDates = {dateFrom: null, dateTo: null};
           this.billing.period = null;
@@ -443,7 +552,6 @@ export default {
         dateFrom: period[0],
         dateTo: period[1],
       }
-
       return period[0] && period[1];
     },
     setPager(data) {
@@ -476,6 +584,23 @@ export default {
     });
     this.loadReports();
   },
+  computed: {
+    errorDate() {
+      if (this.$v.correctionForm.billingDate.$dirty) {
+        if (!this.$v.correctionForm.billingDate.required) return "Обязательное поле";
+      }
+    },
+    errorFile() {
+      if (this.$v.correctionForm.file_id.$dirty) {
+        if (!this.$v.correctionForm.file_id.required) return "Обязательное поле";
+      }
+    },
+    errorSum() {
+      if (this.$v.correctionForm.correctionSum.$dirty) {
+        if (!this.$v.correctionForm.correctionSum.pattern) return "Допустимы только цифры и знак минус";
+      }
+    },
+  },
   watch: {
     currentPage() {
       this.loadPage();
@@ -483,3 +608,9 @@ export default {
   }
 };
 </script>
+<style lang="css">
+.mx-datepicker-popup {
+  overflow: visible !important;
+  z-index: 9999;
+}
+</style>
