@@ -6,6 +6,8 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 
 class Menu
 {
+    private static $activeUrl;
+
     private static function menu()
     {
         return [
@@ -87,7 +89,7 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list')
                     ],
-                    /** @link https://redmine.greensight.ru/issues/57841 [
+                    /* @link https://redmine.greensight.ru/issues/57841 [
                         'title' => 'Отправления',
                         'route' => route('shipment.list')
                     ],*/
@@ -304,6 +306,10 @@ class Menu
                         'title' => 'Бонусы',
                         'route' => route('bonus.list'),
                     ],
+                    [
+                        'title' => 'Подарочные сертификаты',
+                        'route' => route('certificate.index'),
+                    ],
                 ],
             ],
 //            [
@@ -427,20 +433,41 @@ class Menu
         ];
     }
 
+    public static function setActiveUrl($url)
+    {
+        self::$activeUrl = $url;
+    }
+
+    private static function detectActive(&$items, $activeUrl): bool
+    {
+        foreach ($items as &$item) {
+            if (isset($item['route']) && $activeUrl == $item['route']) {
+                $item['active'] = true;
+                return true;
+            }
+            if (isset($item['items']) && self::detectActive($item['items'], $activeUrl)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function getMenuItems()
     {
         $menuItems = static::menu();
 
-        foreach ($menuItems as &$group) {
-            //todo Добавить проверку прав для группы
-            foreach ($group['items'] as &$item) {
-                //todo Добавить проверку прав для пункта меню
-                if (isset($item['route']) && url()->full() == $item['route']) {
-                    $item['active'] = true;
-                }
-            }
-        }
+        self::detectActive($menuItems, self::$activeUrl ?? url()->current());
 
+//        foreach ($menuItems as &$group) {
+//            //todo Добавить проверку прав для группы
+//            foreach ($group['items'] as &$item) {
+//
+//                //todo Добавить проверку прав для пункта меню
+//                if (isset($item['route']) && url()->current() == $item['route']) {
+//                    $item['active'] = true;
+//                }
+//            }
+//        }
         return $menuItems;
     }
 

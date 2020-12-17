@@ -133,6 +133,44 @@ Route::middleware('auth')->group(function () {
             Route::delete('delete', 'PromoCodeController@delete')->name('promo-code.delete');
         });
 
+
+        // Роут для подарочных сертификатов
+        Route::prefix('certificate')->group(function () {
+
+            Route::get('', 'CertificateController@index')->name('certificate.index');
+            Route::get('tabs/{tab}', 'CertificateController@getTab')->name('certificate.tab');
+            Route::put('content', 'CertificateController@storeContent')->name('certificate.content_save');
+
+            Route::prefix('designs')->group(function () {
+                Route::get('', 'CertificateDesignController@index')->name('certificate.designs');
+                Route::get('create', 'CertificateDesignController@createPage')->name('certificate.designs_add');
+                Route::post('', 'CertificateDesignController@create')->name('certificate.designs_save');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('', 'CertificateDesignController@editPage')->name('certificate.designs_edit');
+                    Route::delete('', 'CertificateDesignController@delete')->name('certificate.designs_delete');
+                    Route::put('', 'CertificateDesignController@update')->name('certificate.designs_update');
+                });
+            });
+
+            Route::prefix('nominals')->group(function () {
+                Route::get('', 'CertificateNominalController@index')->name('certificate.nominals');
+                Route::get('create', 'CertificateNominalController@createPage')->name('certificate.nominals_add');
+                Route::post('', 'CertificateNominalController@create')->name('certificate.nominals_save');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('', 'CertificateNominalController@editPage')->name('certificate.nominals_edit');
+                    Route::delete('', 'CertificateNominalController@delete')->name('certificate.nominals_delete');
+                    Route::put('', 'CertificateNominalController@update')->name('certificate.nominals_update');
+                });
+            });
+
+            Route::prefix('reports')->group(function () {
+                Route::post('', 'CertificateReportController@create')->name('certificate.report_create');
+                Route::get('{id}', 'CertificateReportController@download')->name('certificate.report_download');
+            });
+        });
+
         Route::prefix('bonus')->group(function () {
             Route::get('', 'BonusController@index')->name('bonus.list');
             Route::post('', 'BonusController@create')->name('bonus.save');
@@ -438,7 +476,7 @@ Route::middleware('auth')->group(function () {
             Route::get('export-by-filters', 'ProductsExportController@exportByFilters')->name('products.exportByFilters');
         });
     });
-    
+
     Route::prefix('brands')->namespace('Product')->group(function () {
         Route::get('', 'BrandController@list')->name('brand.list');
         Route::get('page', 'BrandController@page')->name('brand.listPage');
@@ -718,7 +756,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabNewsletterController@load')->name('customers.detail.newsletter');
                         Route::put('edit', 'TabNewsletterController@edit')->name('customers.detail.newsletter.edit');
                     });
-                    
+
                     Route::prefix('promo-product')->group(function () {
                         Route::get('', 'TabPromoProductController@load')->name('customers.detail.promoProduct');
                         Route::put('', 'TabPromoProductController@save')->name('customers.detail.promoProduct.save');
@@ -803,7 +841,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('public-events')->namespace('PublicEvent')->group(function () {
         Route::get('is-code-unique', 'PublicEventDetailController@isCodeUnique')->name('public-event.isCodeUnique');
         Route::post('save', 'PublicEventDetailController@save')->name('public-event.save');
-        
+
         Route::prefix('organizers')->group(function () {
             Route::get('', 'OrganizerController@list')->name('public-event.organizers.list');
             Route::get('page', 'OrganizerController@page')->name('public-event.organizers.page');
@@ -917,12 +955,12 @@ Route::middleware('auth')->group(function () {
                 Route::post('delete', 'PublicEventDetailController@deleteSprint')->name('public-event.deleteSprint');
             });
 
-            
+
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');
         });
-        
-        
+
+
         Route::get('', 'PublicEventListController@list')->name('public-event.list');
         Route::get('list/page', 'PublicEventListController@page')->name('public-event.list.page');
     });
@@ -957,7 +995,7 @@ Route::middleware('auth')->group(function () {
             Route::get('{service_notification_id}', 'SystemAlertController@pageNotification')->name('communications.service-notification.system-alert.page');
         });
     });
-    
+
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {
         Route::get('available', 'PublicEventDetailController@availableOrganizers')->name('public-event.availableOrganizers');
     });
