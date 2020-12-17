@@ -52,6 +52,11 @@ Route::middleware('auth')->group(function () {
                     Route::post('save', 'TabCommissionController@saveCommission')->name('merchant.detail.commission.save');
                     Route::post('remove', 'TabCommissionController@removeCommission')->name('merchant.detail.commission.remove');
                 });
+                Route::prefix('vat')->group(function () {
+                    Route::get('', 'TabVatController@load')->name('merchant.detail.vat');
+                    Route::post('save', 'TabVatController@saveVat')->name('merchant.detail.vat.save');
+                    Route::post('remove', 'TabVatController@removeVat')->name('merchant.detail.vat.remove');
+                });
                 Route::prefix('marketing')->group(function () {
                     Route::prefix('discounts')->group(function () {
                         Route::get('data', 'TabMarketingController@loadDiscountsData')->name('merchant.detail.marketing.discounts.data');

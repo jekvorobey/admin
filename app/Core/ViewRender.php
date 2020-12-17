@@ -31,6 +31,7 @@ use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
+use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\PropertyDto;
@@ -61,6 +62,7 @@ class ViewRender
 
     private $merchantStatuses = [];
     private $merchantCommissionTypes = [];
+    private $merchantVatTypes = [];
 
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
@@ -236,6 +238,21 @@ class ViewRender
                 'brand' => CommissionDto::TYPE_BRAND,
                 'category' => CommissionDto::TYPE_CATEGORY,
                 'sku' => CommissionDto::TYPE_SKU,
+            ];
+        }
+
+        return $this;
+    }
+
+    public function loadMerchantVatTypes($load = false): self
+    {
+        if ($load) {
+            $this->merchantVatTypes = [
+                'global' => VatDto::TYPE_GLOBAL,
+                'merchant' => VatDto::TYPE_MERCHANT,
+                'brand' => VatDto::TYPE_BRAND,
+                'category' => VatDto::TYPE_CATEGORY,
+                'sku' => VatDto::TYPE_SKU,
             ];
         }
 
@@ -768,6 +785,7 @@ class ViewRender
 
                 'merchantStatuses' => $this->merchantStatuses,
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
+                'merchantVatTypes' => $this->merchantVatTypes,
 
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,

@@ -134,12 +134,9 @@ class TabBillingController extends Controller
         $reportDto = $fileService->getFiles([$reportFileId])->first();
         if (!$reportDto) return null;
 
-        if ($report['status'] == 0 ) {
-            $merchantService->billingReportStatusUpdate($merchantId, $reportId, 1);
-        }
-
-        return response()->streamDownload(function () use ($reportDto) {
-            echo file_get_contents($reportDto->absolute_url);
+        $domain = env('SHOWCASE_HOST');
+        return response()->streamDownload(function () use ($reportDto, $domain) {
+            echo file_get_contents($domain.$reportDto->url);
         }, $reportDto->original_name);
     }
 

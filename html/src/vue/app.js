@@ -142,6 +142,10 @@ Vue.mixin({
         merchantCommissionTypes() {
             return this.$store.state.layout.merchantCommissionTypes;
         },
+        /** @return {MerchantVatTypes} */
+        merchantVatTypes() {
+            return this.$store.state.layout.merchantVatTypes;
+        },
         /** @return {PublicEventType[]} */
         publicEventTypes() {
             return this.$store.state.layout.publicEventTypes;
@@ -389,6 +393,15 @@ Vue.mixin({
  @type {Object}
  @property {string} global
  @property {string} rating
+ @property {string} merchant
+ @property {string} brand
+ @property {string} category
+ @property {string} sku
+ */
+/**
+ @typedef MerchantVatTypes
+ @type {Object}
+ @property {string} global
  @property {string} merchant
  @property {string} brand
  @property {string} category

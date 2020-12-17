@@ -197,12 +197,13 @@
         </td>
         <td>{{ billingOperation.cost }}</td>
         <td>{{ billingOperation.qty }}</td>
-        <td v-if="billingOperation.discounts.hasOwnProperty('marketplace') || billingOperation.discounts.hasOwnProperty('merchant')">
+
+        <td v-if="(billingOperation.discounts && billingOperation.discounts.hasOwnProperty('marketplace')) || (billingOperation.discounts && billingOperation.discounts.hasOwnProperty('merchant'))">
            {{ billingOperation.discounts.hasOwnProperty('marketplace') && billingOperation.discounts.marketplace.sum > 0 ? 'М-с:' + billingOperation.discounts.marketplace.sum : '' }}
            {{ billingOperation.discounts.hasOwnProperty('merchant') && billingOperation.discounts.merchant.sum > 0 ? 'М-т:' + billingOperation.discounts.merchant.sum : ''  }}
         </td>
         <td v-else>0</td>
-        <td>{{ billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
+        <td>{{ billingOperation.bonuses && billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
         <td>{{ billingOperation.price }}</td>
         <td>{{ billingOperation.percent }}</td>
         <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
@@ -417,7 +418,8 @@ export default {
                 document_id: this.correctionForm.file_id,
               })
           .then(() => {
-            this.loadReports();
+            this.loadPage();
+
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
