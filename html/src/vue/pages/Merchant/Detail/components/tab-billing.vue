@@ -63,7 +63,10 @@
         </td>
         <td>{{ report.updated_at }}</td>
         <td>
-          <b-button class="btn btn-success btn-sm" @click="updateStatus(report.id)">
+          <b-button v-if="report.status === 0" class="btn btn-warning btn-sm" @click="updateStatus(report.id, 4)">
+            Отправить <fa-icon icon="check"/>
+          </b-button>
+          <b-button v-else-if="report.status !== 2 && report.status !== 0" class="btn btn-success btn-sm" @click="updateStatus(report.id, 2)">
             Подтвердить <fa-icon icon="check"/>
           </b-button>
           <b-button class="btn btn-danger btn-sm" @click="removeItem(report.id)">
@@ -171,6 +174,7 @@
       <tr>
         <th>Продажа</th>
         <th>Название</th>
+        <th>Статус</th>
         <th>Цена, р</th>
         <th>Кол-во</th>
         <th>Скидка, р</th>
@@ -193,7 +197,11 @@
           <a :href="$store.getters.getRoute('offers.detail', {id:billingOperation.offer_id})">{{ billingOperation.name }}</a>
         </td>
         <td v-else>
-          <a v-if="billingOperation.document_id" :href="fileUrl(billingOperation.document_id)">Корректировка</a>
+          <a v-if="billingOperation.document_id" :href="fileUrl(billingOperation.document_id)">{{ availableTypes[billingOperation.correction_type].text }}</a>
+        </td>
+        <td>
+          <b-badge v-if="billingOperation.shipment_status === 2" variant="danger">Отменен</b-badge>
+          <b-badge v-if="billingOperation.shipment_status === 1" variant="success">Доставлен</b-badge>
         </td>
         <td>{{ billingOperation.cost }}</td>
         <td>{{ billingOperation.qty }}</td>
@@ -232,6 +240,12 @@
           <div class="form-group">
             <f-date v-model="$v.correctionForm.billingDate.$model" :error="errorDate">Дата</f-date>
             <v-input v-model="$v.correctionForm.correctionSum.$model" :error="errorSum">Выплата мерчанту (может быть отрицательной)</v-input>
+            <v-select v-model="correctionForm.correctionType"
+                      label="label"
+                      :options="availableTypes"
+                      help="Обязательное поле">
+              Тип корректировки
+            </v-select>
             <a v-if="correctionForm.file_id" :href="fileUrl(correctionForm.file_id)">{{ correctionForm.file_name }}</a>
             <file-input destination="billing-correction-document" :error="errorFile" @uploaded="onFileUpload">Прикрепить документ</file-input>
           </div>
@@ -346,10 +360,11 @@ export default {
       billingList: {},
       billingReports: {},
       statuses: [
-        {text:'новый', badge:'light'},
-        {text:'просмотрен', badge:'warning'},
+        {text:'модерация', badge:'light'},
+        {text:'просмотрен', badge:'primary'},
         {text:'подтвержден', badge:'success'},
         {text:'отклонен', badge:'danger'},
+        {text:'отправлен', badge:'warning'},
       ],
       newReportDates: {
         dateFrom:null,
@@ -359,6 +374,7 @@ export default {
       correctionForm: {
         billingDate: null,
         correctionSum: null,
+        correctionType: null,
         file_id: null
       },
     }
@@ -415,6 +431,7 @@ export default {
               {
                 date: this.correctionForm.billingDate,
                 correction_sum: this.correctionForm.correctionSum,
+                correction_type: this.correctionForm.correctionType,
                 document_id: this.correctionForm.file_id,
               })
           .then(() => {
@@ -443,10 +460,10 @@ export default {
           this.showMessageBox({title: 'Отчет удалён'});
         });
     },
-    updateStatus(id) {
+    updateStatus(id, status) {
       Services.showLoader();
       Services.net()
-        .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: 2})
+        .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: status})
         .then(() => {
           this.loadReports();
         })
@@ -587,6 +604,12 @@ export default {
     this.loadReports();
   },
   computed: {
+    availableTypes() {
+      return [
+          {text: 'Корректировка по обоснованным Комитентом причинам', value: 0},
+          {text: 'Корректировка по обоснованным Комиссионером причинам (включая сумму компенсации дополнительных расходов Комиссионера)', value: 1},
+      ];
+    },
     errorDate() {
       if (this.$v.correctionForm.billingDate.$dirty) {
         if (!this.$v.correctionForm.billingDate.required) return "Обязательное поле";

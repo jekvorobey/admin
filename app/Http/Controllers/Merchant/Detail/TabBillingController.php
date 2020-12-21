@@ -151,6 +151,7 @@ class TabBillingController extends Controller
     {
         $data = $this->validate(request(),[
             'correction_sum' => 'integer',
+            'correction_type' => 'integer',
             'document_id' => 'integer',
             'date' => 'date',
         ]);
