@@ -5,7 +5,7 @@
     <td>{{ card.pin }}</td>
     <td>{{ card.price.toLocaleString() }}</td>
     <td>{{ card.balance.toLocaleString() }}</td>
-    <td>{{ card.paid_at | datetime}}</td>
+    <td>{{ order.paid_at | datetime}}</td>
     <td>{{ order.notified_at | datetime }}</td>
     <td>{{ card.activated_at | datetime }}</td>
     <td><span class="badge" :class="status.badge">{{ status.title }}</span></td>

@@ -9,7 +9,9 @@
         </td>
         <td>{{ eventText }}</td>
         <td>
-          <div v-if="item.user">{{ item.user.short_name }} [{{ item.user_id }}]</div>
+            <a v-if="item.user" :href="getRoute('settings.userDetail', { id: item.user_id })">
+                {{ item.user.short_name }}
+            </a>
           <div v-else>{{ item.user_id }}</div>
         </td>
         <td>{{ item.created_at | datetime }}</td>
