@@ -2,7 +2,7 @@
     <table class="table table-sm">
     <tbody>
         <tr v-if="merchantVat">
-            <td>Налоги мерчанта</td>
+            <td>Основная ставка НДС</td>
             <td colspan="3">
                 <div class="input-group input-group-sm">
                     <input class="form-control form-control-sm" v-model="merchantVat.value">

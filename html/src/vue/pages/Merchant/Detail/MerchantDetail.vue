@@ -127,7 +127,7 @@ export default {
             tabs.main = {i: i++, title: 'Информация'};
             tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
-            tabs.taxes = {i: i++, title: 'Налоги'};
+            tabs.taxes = {i: i++, title: 'Ставка НДС'};
             tabs.operator = {i: i++, title: 'Команда мерчанта'};
             tabs.product = {i: i++, title: 'Товары'};
             tabs.order = {i: i++, title: 'Заказы'};

@@ -117,14 +117,14 @@ class TabBillingController extends Controller
     }
 
     /**
-     * Создать биллинговый отчет
+     * Скачать биллинговый отчет
      * @param int $merchantId
      * @param int $reportId
      * @param FileService $fileService
      * @param MerchantService $merchantService
      * @return StreamedResponse
      */
-    public function billingReportDownload(int $merchantId, int $reportId, FileService $fileService, MerchantService $merchantService)
+    public function billingReportDownload(int $merchantId, int $reportId, FileService $fileService, MerchantService $merchantService): ?StreamedResponse
     {
         $report = $merchantService->getBillingReport($merchantId, $reportId);
 
@@ -135,6 +135,22 @@ class TabBillingController extends Controller
         if (!$reportDto) return null;
 
         $domain = env('SHOWCASE_HOST');
+        return response()->streamDownload(function () use ($reportDto, $domain) {
+            echo file_get_contents($domain.$reportDto->url);
+        }, $reportDto->original_name);
+    }
+
+    /**
+     * Скачать документ о корректировке
+     * @param int $fileId
+     * @param FileService $fileService
+     * @return StreamedResponse
+     */
+    public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
+    {
+        $reportDto = $fileService->getFiles([$fileId])->first();
+        $domain = env('SHOWCASE_HOST');
+
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain.$reportDto->url);
         }, $reportDto->original_name);
@@ -152,7 +168,6 @@ class TabBillingController extends Controller
         $data = $this->validate(request(),[
             'correction_sum' => 'integer',
             'correction_type' => 'integer',
-            'document_id' => 'integer',
             'date' => 'date',
         ]);
 
@@ -209,7 +224,8 @@ class TabBillingController extends Controller
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())
             ->pageNumber($page, 15)
-            ->setFilter('merchant_id', $merchantId);
+            ->setFilter('merchant_id', $merchantId)
+            ->addSort('id', 'desc');
 
         $filter = $this->getFilter();
         if ($filter) {

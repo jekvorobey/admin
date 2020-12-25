@@ -188,20 +188,26 @@
       <tbody>
       <tr v-for="billingOperation in billingList">
         <td v-if="billingOperation.order_id">
-          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.status_at }}</a>
+          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.created_at }}</a>
         </td>
         <td v-else>
-          {{ billingOperation.status_at }}
+          {{ billingOperation.created_at }}
         </td>
         <td v-if="billingOperation.offer_id">
           <a :href="$store.getters.getRoute('offers.detail', {id:billingOperation.offer_id})">{{ billingOperation.name }}</a>
         </td>
         <td v-else>
-          <a v-if="billingOperation.document_id" :href="fileUrl(billingOperation.document_id)">{{ availableTypes[billingOperation.correction_type].text }}</a>
+          <a v-if="billingOperation.document_id"
+             :href="$store.getters.getRoute('merchant.detail.download-correction-document',
+          {id:getMerchantId, fileId:billingOperation.document_id})">
+            {{ availableTypes[billingOperation.correction_type].text }}
+          </a>
+          <p v-else >{{ availableTypes[billingOperation.correction_type].text }}</p>
         </td>
         <td>
           <b-badge v-if="billingOperation.shipment_status === 2" variant="danger">Отменен</b-badge>
           <b-badge v-if="billingOperation.shipment_status === 1" variant="success">Доставлен</b-badge>
+          <b-badge v-if="billingOperation.shipment_status === 3" variant="warning">Возврат</b-badge>
         </td>
         <td>{{ billingOperation.cost }}</td>
         <td>{{ billingOperation.qty }}</td>
@@ -246,8 +252,12 @@
                       help="Обязательное поле">
               Тип корректировки
             </v-select>
-            <a v-if="correctionForm.file_id" :href="fileUrl(correctionForm.file_id)">{{ correctionForm.file_name }}</a>
-            <file-input destination="billing-correction-document" :error="errorFile" @uploaded="onFileUpload">Прикрепить документ</file-input>
+            <a v-if="correctionForm.file_id"
+               :href="$store.getters.getRoute('merchant.detail.download-correction-document',
+            {id:getMerchantId, fileId:correctionForm.file_id})">
+              {{ correctionForm.file_name }}
+            </a>
+            <file-input destination="billing-correction-document" @uploaded="onFileUpload">Прикрепить документ</file-input>
           </div>
           <div class="form-group">
             <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -384,8 +394,7 @@ export default {
       billingDate: {required},
       correctionSum: {
         pattern: (value) => /^[0-9\-]*$/.test(value)
-      },
-      file_id: {required}
+      }
     }
   },
   methods: {
@@ -393,7 +402,7 @@ export default {
       showMessageBox: 'modal/showMessageBox',
     }),
     onFileUpload(file) {
-      this.$v.correctionForm.file_id.$model = file.id;
+      this.correctionForm.file_id = file.id;
       this.correctionForm.file_name = file.name;
     },
     onSave() {
@@ -613,11 +622,6 @@ export default {
     errorDate() {
       if (this.$v.correctionForm.billingDate.$dirty) {
         if (!this.$v.correctionForm.billingDate.required) return "Обязательное поле";
-      }
-    },
-    errorFile() {
-      if (this.$v.correctionForm.file_id.$dirty) {
-        if (!this.$v.correctionForm.file_id.required) return "Обязательное поле";
       }
     },
     errorSum() {
