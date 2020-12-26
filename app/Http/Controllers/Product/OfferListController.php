@@ -369,7 +369,7 @@ class OfferListController extends Controller
         $stocks = collect($stockService->qtyByOffers($offerIds));
 
         $pricesIn = (new PricesInDto())->setOffers($offerIds);
-        $prices = $priceService->prices($pricesIn)->keyBy('offer_id');;
+        $prices = $priceService->prices($pricesIn)->keyBy('offer_id');
 
         $items = $offers->map(function (OfferDto $offer) use ($merchants, $prices, $stocks) {
             return [

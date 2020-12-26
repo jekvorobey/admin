@@ -23,6 +23,7 @@ class Controller extends BaseController
     protected $loadCommunicationTypes = false;
     protected $loadMerchantStatuses = false;
     protected $loadMerchantCommissionTypes = false;
+    protected $loadMerchantVatTypes = false;
     protected $loadPublicEventTypes = false;
     protected $loadPublicEventMediaTypes = false;
     protected $loadPublicEventMediaCollections = false;
@@ -60,6 +61,7 @@ class Controller extends BaseController
             ->loadCommunicationTypes($this->loadCommunicationTypes)
             ->loadMerchantStatuses($this->loadMerchantStatuses)
             ->loadMerchantCommissionTypes($this->loadMerchantCommissionTypes)
+            ->loadMerchantVatTypes($this->loadMerchantVatTypes)
             ->loadPublicEventTypes($this->loadPublicEventTypes)
             ->loadPublicEventMediaTypes($this->loadPublicEventMediaTypes)
             ->loadPublicEventMediaCollections($this->loadPublicEventMediaCollections)

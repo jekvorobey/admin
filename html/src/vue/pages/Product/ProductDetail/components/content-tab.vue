@@ -139,12 +139,12 @@
                 <tr>
                     <th>
                         Добавить
-                        <button @click="openModal('PublicEventsList')" class="btn btn-success btn-sm"><fa-icon icon="plus"/></button>
+                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
                     </th>
                     <td>
-                        <div v-for="(event, index) in publicEvents">
-                            {{ event.name }}
-                            <span @click="onTogglePublicEvent(event.id.toString())">
+                        <div v-for="(event, index) in product.publicEvents">
+                            {{ event.description }}
+                            <span>
                                 <fa-icon icon="times"/>
                             </span>
                         </div>
@@ -159,9 +159,6 @@
         <file-upload-modal
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
-        <public-events-list-modal
-                @accept="onTogglePublicEvent"
-                modal-name="PublicEventsList"/>
         <description-edit-modal
                 :source="currentProduct"
                 text_field="description"
@@ -207,7 +204,6 @@ import modalMixin from '../../../../mixins/modal';
 import Modal from '../../../../components/controls/modal/modal.vue';
 import ShadowCard from '../../../../components/shadow-card.vue';
 import FileUploadModal from './file-upload-modal.vue';
-import PublicEventsListModal from './public-events-list-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
 import TipForm from './tip-form.vue';
@@ -220,7 +216,6 @@ export default {
         Modal,
         ShadowCard,
         FileUploadModal,
-        PublicEventsListModal,
         DescriptionEditModal,
         VideoEditModal,
         TipForm
@@ -229,7 +224,6 @@ export default {
     props: {
         images: {},
         product: {},
-        publicEvents: {},
     },
     data() {
         return {
@@ -274,13 +268,6 @@ export default {
             let route = this.getRoute('products.saveProduct', {id: this.product.id});
             Services.net().post(route, {}, {instruction_file_id: file.id})
                 .then(()=> {
-                    this.$emit('onSave');
-                });
-        },
-        onTogglePublicEvent(publicEvents) {
-            let route = this.getRoute('products.savePublicEvents', {id: this.product.id});
-            Services.net().post(route, {}, {public_event_ids: publicEvents.split(',')})
-                .then(() => {
                     this.$emit('onSave');
                 });
         },

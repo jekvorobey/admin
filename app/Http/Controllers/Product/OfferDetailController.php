@@ -11,6 +11,8 @@ use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StockService\StockService;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\Request;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
@@ -21,11 +23,12 @@ class OfferDetailController extends Controller
         int $id,
         OfferService $offerService,
         PriceService $priceService,
-        StockService $stockService
+        StockService $stockService,
+        MerchantService $merchantService
     )
     {
         $this->loadOfferSaleStatuses = true;
-        $offerInfo = $this->loadOfferInfo($id, $offerService, $priceService, $stockService);
+        $offerInfo = $this->loadOfferInfo($id, $offerService, $priceService, $stockService, $merchantService);
 
         return $this->render('Product/OfferDetail', [
             'offer' => $offerInfo,
@@ -85,7 +88,8 @@ class OfferDetailController extends Controller
         int $id,
         OfferService $offerService,
         PriceService $priceService,
-        StockService $stockService
+        StockService $stockService,
+        MerchantService $merchantService
     )
     {
         $offer = $offerService->newQuery()
@@ -94,6 +98,12 @@ class OfferDetailController extends Controller
             ->addFields(OfferDto::entity(), 'id', 'merchant_id', 'sale_status', 'sale_at', 'created_at')
             ->addFields(ProductDto::entity(), 'id', 'name')
             ->offers()
+            ->first();
+
+        $merchant = $merchantService->newQuery()
+            ->setFilter('id', $offer->merchant_id)
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->merchants()
             ->first();
 
         $price = $priceService->price(new PriceInDto($id));
@@ -111,6 +121,7 @@ class OfferDetailController extends Controller
             'id' => $offer->id,
             'product_id' => $offer->product->id,
             'merchant_id' => $offer->merchant_id,
+            'merchantName' => $merchant ? $merchant->legal_name  : 'N/A',
             'name' => $offer->product ? $offer->product->name : 'N/A',
             'status' => $offer->sale_status,
             'sale_at' => $offer->sale_at,

@@ -24,6 +24,7 @@
                     <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
+                    <tab-taxes v-else-if="key === 'taxes'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-operator v-else-if="key === 'operator'" :id="merchant.id"/>
                     <tab-order v-else-if="key === 'order'" :id="merchant.id"/>
                     <tab-product v-else-if="key === 'product'" :id="merchant.id"/>
@@ -53,6 +54,7 @@ import TabOrder from './components/tab-order.vue';
 import TabCommunication from './components/tab-communication.vue';
 import TabMarketing from './components/tab-marketing.vue';
 import TabBilling from "./components/tab-billing.vue";
+import TabTaxes from "./components/tab-taxes.vue";
 import Services from "../../../../scripts/services/services";
 
 export default {
@@ -79,6 +81,7 @@ export default {
         TabOrder,
         TabCommunication,
         TabMarketing,
+        TabTaxes
     },
     data() {
         return {
@@ -124,6 +127,7 @@ export default {
             tabs.main = {i: i++, title: 'Информация'};
             tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
+            tabs.taxes = {i: i++, title: 'Ставка НДС'};
             tabs.operator = {i: i++, title: 'Команда мерчанта'};
             tabs.product = {i: i++, title: 'Товары'};
             tabs.order = {i: i++, title: 'Заказы'};

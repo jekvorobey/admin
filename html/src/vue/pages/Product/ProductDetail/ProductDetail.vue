@@ -46,7 +46,6 @@
                 v-if="nav.currentTab === 'content'"
                 :images="images"
                 :product="product"
-                :publicEvents="product.publicEvents"
                 @onSave="refresh"
             ></content-tab>
         <categories-tab

@@ -89,10 +89,6 @@
             </td>
         </tr>
         <tr>
-            <th>Ставка НДС, тип налогообложения</th>
-            <td><v-input tag="textarea" v-model="$v.form.vat_info.$model"/></td>
-        </tr>
-        <tr>
             <th>Коммерческие условия</th>
             <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
         </tr>
@@ -219,7 +215,6 @@
                 storage_address: this.model.storage_address,
                 sale_info_brands: this.model.sale_info_brands.map(brand => parseInt(brand)),
                 sale_info_categories: this.model.sale_info_categories.map(category => parseInt(category)),
-                vat_info: this.model.vat_info,
                 commercial_info: this.model.commercial_info,
                 contract_number: this.model.contract_number,
                 contract_at: this.model.contract_at ? this.model.contract_at : '',
@@ -251,7 +246,6 @@
                 storage_address: {required},
                 sale_info_brands: {required, minLength: minLength(1)},
                 sale_info_categories: {required, minLength: minLength(1)},
-                vat_info: {notRequired},
                 commercial_info: {notRequired},
                 contract_number: {notRequired},
                 contract_at: {notRequired},
@@ -284,7 +278,6 @@
                 this.merchant.storage_address = this.form.storage_address;
                 this.merchant.sale_info_brands = this.form.sale_info_brands.map(brand => parseInt(brand));
                 this.merchant.sale_info_categories = this.form.sale_info_categories.map(category => parseInt(category));
-                this.merchant.vat_info = this.form.vat_info;
                 this.merchant.commercial_info = this.form.commercial_info;
                 this.merchant.contract_number = this.form.contract_number;
                 this.merchant.contract_at = this.form.contract_at;
@@ -309,7 +302,6 @@
             this.form.storage_address = this.merchant.storage_address;
             this.form.sale_info_brands = this.merchant.sale_info_brands.map(brand => parseInt(brand));
             this.form.sale_info_categories = this.merchant.sale_info_categories.map(category => parseInt(category));
-            this.form.vat_info = this.merchant.vat_info;
             this.form.commercial_info = this.merchant.commercial_info;
             this.form.contract_number = this.merchant.contract_number;
             this.form.contract_at = this.merchant.contract_at;
