@@ -3,12 +3,11 @@
     <tbody>
         <tr v-if="merchantVat">
             <td>Основная ставка НДС</td>
-            <td colspan="3">
+            <td colspan="1">
                 <div class="input-group input-group-sm">
-                    <input class="form-control form-control-sm" v-model="merchantVat.value">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
-                    </div>
+                  <v-select v-model="merchantVat.value" label="label"
+                            :options="availableVats">
+                  </v-select>
                 </div>
             </td>
             <td>
@@ -26,10 +25,9 @@
             <td>{{ typeName(vat.type) }}</td>
             <td>
                 <div class="input-group input-group-sm">
-                    <input class="form-control" v-model="vat.value">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
-                    </div>
+                  <v-select v-model="vat.value" label="label"
+                            :options="availableVats">
+                  </v-select>
                 </div>
             </td>
             <td>
@@ -53,10 +51,9 @@
             </td>
             <td>
                 <div class="input-group input-group-sm">
-                    <input class="form-control" v-model="newVat.value">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">%</span>
-                    </div>
+                  <v-select v-model="newVat.value" label="label"
+                            :options="availableVats">
+                  </v-select>
                 </div>
             </td>
             <td>
@@ -88,6 +85,7 @@
 <script>
 import Services from '../../../../../scripts/services/services.js';
 import DatePicker from 'vue2-datepicker';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
@@ -95,7 +93,7 @@ import VDeleteButton from '../../../../components/controls/VDeleteButton/VDelete
 export default {
     name: 'tab-taxes',
     props: ['id', 'brandList', 'categoryList'],
-    components: {VDeleteButton, DatePicker},
+    components: {VDeleteButton, DatePicker, VSelect},
     data() {
         return {
             vats: [],
@@ -109,6 +107,16 @@ export default {
             categories: {},
             products: {},
         }
+    },
+    computed: {
+      availableVats() {
+        return [
+          {text: 'Без НДС', value: null},
+          {text: '0', value: 0},
+          {text: '10', value: 10},
+          {text: '20', value: 20},
+        ];
+      },
     },
     methods: {
         saveVat(vat) {
