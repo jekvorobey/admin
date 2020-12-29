@@ -7,20 +7,41 @@
             </a>
             <span v-else>{{ entity.title }}</span>
         </td>
-        <td>{{ eventText }}</td>
+        <td><a href="#" @click.prevent="showDetails">{{ eventText }}</a></td>
         <td>
             <a v-if="item.user" :href="getRoute('settings.userDetail', { id: item.user_id })">
                 {{ item.user.short_name }}
             </a>
           <div v-else>{{ item.user_id }}</div>
         </td>
-        <td>{{ item.created_at | datetime }}</td>
+        <td>{{ item.created_at | datetime }}
+          <ModalWindow v-if="showModal" type="wide" :close="closeDetails">
+            <div slot="header">Лог запись № {{ item.id}}</div>
+            <div slot="body">
+              <table style="width: 100%">
+                <tr>
+                  <th style="width: 30%">Ключ</th>
+                  <th style="width: 35%">Старое значение</th>
+                  <th style="width: 35%">Новое значение значение</th>
+                </tr>
+                <tr v-for="change in changes" :key="change.key">
+                  <td>{{ change.key }}</td>
+                  <td>{{ change.old }}</td>
+                  <td>{{ change.new }}</td>
+                </tr>
+              </table>
+            </div>
+
+          </ModalWindow>
+        </td>
     </tr>
 </template>
 
 <script>
+import ModalWindow from '../../../../components/controls/modal/modal.vue'
 export default {
     props: ['item'],
+    components: {ModalWindow},
     filters: {
         datetime(value) {
             if (value) {
@@ -32,7 +53,36 @@ export default {
             return value;
         },
     },
+    data () {
+      return {
+        showModal: false
+      }
+    },
     computed: {
+        changes() {
+          const oldValues = (this.item.data && this.item.data.old) ? this.item.data.old : {}
+          const newValues = (this.item.data && this.item.data.new) ? this.item.data.new : {}
+
+          let changes = {}
+          for (let key in oldValues) {
+            changes[key] = {
+              key: key,
+              old: oldValues[key],
+              new: newValues[key] || ''
+            }
+          }
+          for (let key in newValues) {
+            if (changes.hasOwnProperty(key))
+              continue;
+            changes[key] = {
+              key: key,
+              old: '',
+              new: newValues[key]
+            }
+          }
+
+          return changes
+        },
         entity() {
             const id = this.item.entity_id;
             const type = this.item.entity_type;
@@ -57,7 +107,6 @@ export default {
                     }
                 case 'App\\Models\\Certificate\\Order':
                     const e = (this.item && this.item.entity) ? this.item.entity : {}
-                    console.log(this.item)
                     const orderId = e.order_number || id;
                     return {
                         id,
@@ -81,5 +130,13 @@ export default {
             }
         }
     },
+    methods: {
+      showDetails() {
+        this.showModal = true
+      },
+      closeDetails() {
+        this.showModal = false
+      }
+    }
 }
 </script>
