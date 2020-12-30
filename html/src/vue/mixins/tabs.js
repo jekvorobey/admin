@@ -5,6 +5,7 @@ export default {
         return {
             tabIndex: 0,
             showAllTabs: false,
+            defaultTabName: 'main'
         };
     },
     watch: {
@@ -28,7 +29,7 @@ export default {
             return {};
         },
         currentTabName() {
-            let tabName = 'main';
+            let tabName = this.defaultTabName;
             for (let key in this.tabs) {
                 if (!this.tabs.hasOwnProperty(key)) {
                     continue;
@@ -46,7 +47,7 @@ export default {
             this.tabIndex = this.tabs[tab].i;
         });
 
-        let currentTab = Services.route().get('tab', 'main');
+        let currentTab = Services.route().get('tab', this.defaultTabName);
         this.showAllTabs = !!Number(Services.route().get('allTab', 0));
         this.tabIndex = this.tabs[currentTab].i;
     },
