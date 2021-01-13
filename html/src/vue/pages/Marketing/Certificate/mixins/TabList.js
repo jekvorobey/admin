@@ -24,6 +24,7 @@ export default {
                 page: page || this.currentPage,
                 filter: this.getFilter()
             }
+            this.currentPage = params.page
             return Services.net().get(this.getRoute('certificate.tab', {tab: this.tabName}), params).then(response => {
                 this.$emit('data', response[this.tabName])
                 Services.hideLoader();
@@ -38,13 +39,18 @@ export default {
         pagination() {
             return (this.records && this.records.hasOwnProperty('pagination')) ? this.records.pagination : {};
         },
+        pager() {
+            return (this.records && this.records.hasOwnProperty('pager')) ? this.records.pager : {};
+        },
         recordsAmount() {
-            return this.pagination.total || 0
+            return this.pager.total || this.pagination.total || 0
         }
     },
     mounted() {
         if (this.records === null) {
             this.loadPage();
+        } else {
+            this.currentPage = this.records.page || 1
         }
     }
 }

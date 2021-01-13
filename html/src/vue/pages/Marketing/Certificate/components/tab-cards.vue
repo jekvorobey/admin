@@ -99,15 +99,15 @@
       </tbody>
     </table>
 
-    <b-pagination
-        v-if="pagination.last_page > 1"
-        v-model="currentPage"
-        :total-rows="pagination.total"
-        :per-page="pagination.per_page"
-        @change="loadPage"
-        :hide-goto-end-buttons="pagination.last_page < 10"
-        class="float-right"
-    ></b-pagination>
+      <b-pagination
+          v-if="pager.pages > 1"
+          v-model="currentPage"
+          :total-rows="pager.total"
+          :per-page="pager.pageSize"
+          @change="loadPage"
+          :hide-goto-end-buttons="pager.pages < 10"
+          class="float-right"
+      ></b-pagination>
   </div>
 </template>
 

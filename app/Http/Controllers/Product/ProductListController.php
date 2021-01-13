@@ -56,7 +56,7 @@ class ProductListController extends Controller
         });
 
         $productSearchResult->products = array_map(function ($product) use ($offers) {
-            $product['offerId'] = $offers[$product['id']];
+            $product['offerId'] = $offers[$product['id']] ?? null;
             return $product;
         }, $productSearchResult->products);
 
@@ -78,7 +78,7 @@ class ProductListController extends Controller
             ]
         ]);
     }
-    
+
     public function page(
         Request $request,
         SearchService $searchService,
@@ -104,7 +104,7 @@ class ProductListController extends Controller
         ];
         return response()->json($data);
     }
-    
+
     public function updateApprovalStatus(Request $request, ProductService $productService)
     {
         $ids = $request->get('productIds');
@@ -123,12 +123,12 @@ class ProductListController extends Controller
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
         }
-        
+
         $productService->changeApprovalStatus($ids, $status, $comment);
-        
+
         return response()->json();
     }
-    
+
     public function updateProductionStatus(Request $request, ProductService $productService)
     {
         $ids = $request->get('productIds');
@@ -137,12 +137,12 @@ class ProductListController extends Controller
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
         }
-        
+
         $productService->changeProductionStatus($ids, $status, $comment);
-        
+
         return response()->json();
     }
-    
+
     public function updateArchiveStatus(Request $request, ProductService $productService)
     {
         $ids = $request->get('productIds');
@@ -151,9 +151,9 @@ class ProductListController extends Controller
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
         }
-        
+
         $productService->changeArchiveStatus($ids, $status, $comment);
-        
+
         return response()->json();
     }
 
@@ -201,7 +201,7 @@ class ProductListController extends Controller
             ProductQuery::APPROVAL_STATUS,
             ProductQuery::INDEX_MARK,
         ]);
-        
+
         $filter = $request->get('filter', []);
         $query->name = data_get($filter, 'name');
         $query->id = data_get($filter, 'id');

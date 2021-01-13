@@ -2,6 +2,8 @@
 
 return [
 
+    'force_https' => env('FORCE_HTTPS', false),
+
     'showcase_host' => env('SHOWCASE_HOST'),
 
     /*

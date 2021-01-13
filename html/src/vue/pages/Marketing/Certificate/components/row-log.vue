@@ -1,142 +1,99 @@
 <template>
     <tr>
-        <td>{{ item.id }}</td>
+        <td>{{ item.transaction_id }}</td>
         <td>
-            <a v-if="entity.link" :href="entity.link">
-                {{ entity.title }}
-            </a>
-            <span v-else>{{ entity.title }}</span>
+            <a v-if="order" :href="getRoute('orders.detail', {id: order.id})">{{ order.number }}</a>
+            <span v-else>-</span>
         </td>
-        <td><a href="#" @click.prevent="showDetails">{{ eventText }}</a></td>
-        <td>
-            <a v-if="item.user" :href="getRoute('settings.userDetail', { id: item.user_id })">
-                {{ item.user.short_name }}
-            </a>
-          <div v-else>{{ item.user_id }}</div>
-        </td>
-        <td>{{ item.created_at | datetime }}
-          <ModalWindow v-if="showModal" type="wide" :close="closeDetails">
-            <div slot="header">Лог запись № {{ item.id}}</div>
-            <div slot="body">
-              <table style="width: 100%">
-                <tr>
-                  <th style="width: 30%">Ключ</th>
-                  <th style="width: 35%">Старое значение</th>
-                  <th style="width: 35%">Новое значение значение</th>
-                </tr>
-                <tr v-for="change in changes" :key="change.key">
-                  <td>{{ change.key }}</td>
-                  <td>{{ change.old }}</td>
-                  <td>{{ change.new }}</td>
-                </tr>
-              </table>
-            </div>
+        <td>{{ item.certificate_id }}</td>
+        <td>{{ typeText }}</td>
+        <td :style="balanceDiff.style">{{ balanceDiff.amount }}</td>
+        <td><card-status :status="item.prev_status"/></td>
+        <td><card-status :status="item.new_status"/></td>
 
-          </ModalWindow>
+        <td>
+            <a v-if="recipient" :href="recipient.link">{{ recipient.name }}</a>
+            <span v-else>-</span>
         </td>
+        <td>
+            <a v-if="creator" :href="creator.link">{{ creator.name }}</a>
+            <span v-else>-</span>
+        </td>
+        <td>{{ item.created_at | datetime }}</td>
     </tr>
 </template>
 
 <script>
-import ModalWindow from '../../../../components/controls/modal/modal.vue'
+import CardStatus from "./card-status.vue";
+import DatetimeFilter from "../mixins/DatetimeFilter.js";
+
 export default {
     props: ['item'],
-    components: {ModalWindow},
-    filters: {
-        datetime(value) {
-            if (value) {
-                const parts = value.split(' ');
-                if (parts.length === 2) {
-                    return parts[0].split('-').reverse().join('.') + ' ' + parts[1];
-                }
-            }
-            return value;
-        },
-    },
-    data () {
-      return {
-        showModal: false
-      }
-    },
-    computed: {
-        changes() {
-          const oldValues = (this.item.data && this.item.data.old) ? this.item.data.old : {}
-          const newValues = (this.item.data && this.item.data.new) ? this.item.data.new : {}
-
-          let changes = {}
-          for (let key in oldValues) {
-            changes[key] = {
-              key: key,
-              old: oldValues[key],
-              new: newValues[key] || ''
-            }
-          }
-          for (let key in newValues) {
-            if (changes.hasOwnProperty(key))
-              continue;
-            changes[key] = {
-              key: key,
-              old: '',
-              new: newValues[key]
-            }
-          }
-
-          return changes
-        },
-        entity() {
-            const id = this.item.entity_id;
-            const type = this.item.entity_type;
-            switch (type) {
-                case 'App\\Models\\Certificate\\Nominal':
-                    return {
-                        id,
-                        title: `Номинал #${id}`,
-                        link: this.getRoute('certificate.nominals_edit', {id})
-                    }
-                case 'App\\Models\\Certificate\\Design':
-                    return {
-                        id,
-                        title: `Дизайн #${id}`,
-                        link: this.getRoute('certificate.designs_edit', {id})
-                    }
-                case 'App\\Models\\Certificate\\Card':
-                    return {
-                        id,
-                        title: `ПС #${id}`,
-                        link: null
-                    }
-                case 'App\\Models\\Certificate\\Order':
-                    const e = (this.item && this.item.entity) ? this.item.entity : {}
-                    const orderId = e.order_number || id;
-                    return {
-                        id,
-                        title: `Заказ №${orderId}`,
-                        link: (e.order_id) ? this.getRoute('orders.detail', { id: e.order_id }) : null,
-                    }
-                default:
-                    return {
-                        id,
-                        title: `${type} #${id}`,
-                        link: null
-                    }
-            }
-        },
-
-        eventText() {
-            switch (this.item.event) {
-                case 'created': return "Создание"
-                case 'deleted': return "Удаление"
-                default: return "Изменение"
-            }
+    components: {CardStatus},
+    mixins: [DatetimeFilter],
+    data() {
+        return {
+            showModal: false
         }
     },
+    computed: {
+        transaction() {
+            return this.item.transaction || {}
+        },
+        certificate() {
+            return this.item.certificate || {}
+        },
+        order() {
+            const tr = this.transaction
+            return (tr.order_id)
+                ? {'id': tr.order_id, 'number': tr.order_number || tr.order_id}
+                : null
+        },
+        typeText() {
+            switch (this.transaction.type) {
+                case 1: return 'Активация';
+                case 2: return 'Ручное изменение';
+                case 3: return 'Оплата покупки';
+                case 4: return 'Возврат средств';
+                case 5: return 'Изменение статуса';
+                default: return 'N/A';
+            }
+        },
+        balanceDiff() {
+            if (this.item.amount > 0) {
+                return {'style': 'color: green', 'amount': '+' + this.item.amount}
+            } else if (this.item.amount < 0) {
+                return {'style': 'color: red', 'amount': '' + this.item.amount}
+            } else {
+                return {'style': '', 'amount': '-'}
+            }
+        },
+        creator() {
+            const user = this.transaction.user
+            return (!this.transaction.user_id)
+                ? null
+                : {
+                    'link': this.getRoute('settings.userDetail', {id: this.transaction.user_id}),
+                    'name': user ? user.short_name : this.transaction.user_id
+                }
+        },
+        recipient() {
+            const recipient = this.certificate.recipient
+            return (!this.certificate.recipient_id)
+                ? null
+                : {
+                    'link': this.getRoute('customers.detail', {id: this.certificate.recipient_id}),
+                    'name': recipient ? recipient.short_name : this.certificate.recipient_id
+                }
+        },
+    },
     methods: {
-      showDetails() {
-        this.showModal = true
-      },
-      closeDetails() {
-        this.showModal = false
-      }
+        showDetails() {
+            this.showModal = true
+        },
+        closeDetails() {
+            this.showModal = false
+        }
     }
 }
 </script>

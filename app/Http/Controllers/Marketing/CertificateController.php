@@ -3,33 +3,46 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Greensight\Marketing\Dto\Certificate\CardSearchQuery;
-use Greensight\Marketing\Dto\Certificate\DesignSearchQuery;
-use Greensight\Marketing\Dto\Certificate\NominalSearchQuery;
-use Greensight\Marketing\Dto\Certificate\ReportSearchQuery;
-use Greensight\Marketing\Dto\History\HistorySearchQuery;
-use Greensight\Marketing\Dto\Option\OptionDto;
-use Greensight\Marketing\Services\Certificate\DesignService;
-use Greensight\Marketing\Services\Certificate\NominalService;
-use Greensight\Marketing\Services\Certificate\ReportService;
-use Greensight\Marketing\Services\Certificate\CardService;
-use Greensight\Marketing\Services\HistoryService\HistoryService;
-use Greensight\Marketing\Services\OptionService\OptionService;
 use Illuminate\Http\Request;
+use Pim\Services\CertificateService\CertificateService;
 
 class CertificateController extends Controller
 {
-    public function index(Request $request, ReportService $reportService)
+    const PER_PAGE = 15;
+
+    private function service(): CertificateService
     {
+        return resolve(CertificateService::class);
+    }
+
+    public function index(Request $request)
+    {
+//        $query = $this->service()->transactionItemQuery()
+//            ->withUser()
+//            ->type(1,2)
+//
+////            ->id(1, 2)
+////            ->withNominal()
+////            ->withDesign(true)
+////            ->withCustomer()
+////            ->withCertificates(true)
+//        ;
+//
+//        dump($query->transactions());
+//        dump($query->transactionsCount());
+//
+//        dd('end');
+
+
         $this->title = 'Подарочные сертификаты';
         $tab = $request->get('tab', 'nominals');
 
         return $this->render('Marketing/Certificate/Main', $this->getTab($tab, $request) + [
-            'kpis' => $reportService->kpi()
+            'kpis' => $this->service()->kpi()
         ]);
     }
 
-    public function getTab(string $tab, Request $request)
+    public function getTab(string $tab, Request $request): array
     {
         switch ($tab)
         {
@@ -39,53 +52,59 @@ class CertificateController extends Controller
             case 'content': return $this->getTabContent($request);
             case 'reports': return $this->getTabReports($request);
             case 'logs': return $this->getTabLogs($request);
+            default: return [];
         }
     }
 
     private function getTabNominals(Request $request): array
     {
-        return [
-            'nominals' => (new NominalSearchQuery())
-                ->include('designs')
-                ->addSort('price', 'asc')
-                ->pagination($request->get('page'), $request->get('per_page'))
-                ->prepare(resolve(NominalService::class), 'nominals')
-                ->get()
-        ];
+        $page = (int) $request->get('page', 1);
+        $query = $this->service()->nominalQuery()->withDesigns()->pageNumber($page, self::PER_PAGE);
 
+        return [
+            'nominals' => [
+                'page' => $page,
+                'pager' => $query->nominalsCount(),
+                'items' => $query->nominals(),
+            ]
+        ];
     }
 
     private function getTabDesigns(Request $request): array
     {
+        $page = (int) $request->get('page', 1);
+        $query = $this->service()->designQuery()->withFile()->pageNumber($page, self::PER_PAGE);
+
         return [
-            'designs' => (new DesignSearchQuery())
-                ->addSort('id')
-                ->pagination($request->get('page'), $request->get('per_page'))
-                ->prepare(resolve(DesignService::class), 'designs')
-                ->get()
+            'designs' => [
+                'page' => $page,
+                'pager' => $query->designsCount(),
+                'items' => $query->designs(),
+            ]
         ];
     }
 
     private function getTabContent(Request $request): array
     {
-        $optionService = resolve(OptionService::class);
         return [
-            'content' => $optionService->get(OptionDto::GIFT_CERTIFICATE_CONTENT) ?? []
+            'content' => $this->service()->options()
         ];
     }
 
     private function getTabReports(Request $request): array
     {
-        $filter = (array) $request->get('filter', []);
+        $page = (int) $request->get('page', 1);
+        $query = $this->service()->reportQuery()
+            ->withCreator()
+            ->addSort('id', 'desc')
+            ->pageNumber($page, self::PER_PAGE);
 
         return [
-            'reports' => (new ReportSearchQuery())
-                ->addSort('created_at', 'desc')
-                ->pagination($request->get('page'), $request->get('per_page'))
-                ->createdAt($filter['date'] ?? null)
-                ->creatorId($filter['creator_id'] ?? null)
-                ->prepare(resolve(ReportService::class), 'reports')
-                ->get()
+            'reports' => [
+                'page' => $page,
+                'pager' => $query->reportsCount(),
+                'items' => $query->reports(),
+            ]
         ];
     }
 
@@ -93,45 +112,46 @@ class CertificateController extends Controller
     {
         $filter = (array) $request->get('filter', []);
 
+        $page = (int) $request->get('page', 1);
+        $query = $this->service()->transactionItemQuery()
+            ->withTransaction(true)
+            ->withCertificate(true)
+            ->createdAt($filter['date_from'] ?? null, $filter['date_to'] ?? null)
+            ->certificateId(preg_split('/[^\d]+/', $filter['certificate_id'] ?? ''))
+            ->transactionId(preg_split('/[^\d]+/', $filter['transaction_id'] ?? ''))
+            ->addSort('id', 'desc')
+            ->pageNumber($page, self::PER_PAGE);
+
         return [
-            'logs' => (new HistorySearchQuery())
-                ->tag('gift_card')
-                ->include('entity', 'user.short_name')
-                ->addSort('id', 'desc')
-                ->pagination($request->get('page'), $request->get('per_page'))
-                ->id($filter['id'] ?? null)
-                ->createdAt($filter['date'] ?? null)
-                ->entityType($filter['entity_type'] ?? null)
-                ->entityId($filter['entity_id'] ?? null)
-                ->userId($filter['user_id'] ?? null)
-                ->prepare(resolve(HistoryService::class), 'history')
-                ->get()
+            'logs' => [
+                'page' => $page,
+                'pager' => $query->transactionItemsCount(),
+                'items' => $query->transactionItems(),
+            ]
         ];
     }
 
     private function getTabCards(Request $request): array
     {
-        $filter = (array) $request->get('filter', []);
+        $page = (int) $request->get('page', 1);
+        $query = $this->service()->certificateQuery()
+            ->withRequestCustomer()
+            ->withRecipient()
+            ->addSort('id', 'desc')
+            ->pageNumber($page, self::PER_PAGE);
 
         return [
-            'cards' => (new CardSearchQuery())
-                ->processed()
-                ->include('order', 'customer.full_name', 'recipient.full_name')
-                ->addSort('id', 'desc')
-                ->pagination($request->get('page'), $request->get('per_page'))
-                ->id($filter['id'] ?? null)
-                ->createdAt($filter['date'] ?? null)
-                ->pin($filter['pin'] ?? null)
-                ->recipientId($filter['recipient_id'] ?? null)
-                ->customerId($filter['customer_id'] ?? null)
-                ->prepare(resolve(CardService::class), 'cards')
-                ->get()
+            'cards' => [
+                'page' => $page,
+                'pager' => $query->certificatesCount(),
+                'items' => $query->certificates(),
+            ]
         ];
     }
 
-    public function storeContent(Request $request, OptionService $optionService)
+    public function storeContent(Request $request)
     {
-        $optionService->put(OptionDto::GIFT_CERTIFICATE_CONTENT, $request->json()->all());
+        $this->service()->updateOptions($request->all());
 
         return response('', 204);
     }
