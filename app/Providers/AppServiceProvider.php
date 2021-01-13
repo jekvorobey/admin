@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (config('app.force_https')) {
+            $this->app['request']->server->set('HTTPS', true);
+        }
         Factory::macro('component', function ($name, $props = [], $layoutData = [], $viewData = []) {
             /** @var TokenStore $store */
             $store = resolve(TokenStore::class);
