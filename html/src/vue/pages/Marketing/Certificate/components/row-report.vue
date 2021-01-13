@@ -5,7 +5,9 @@
         <td>
           <a :href="downloadLink">Скачать отчет</a>
         </td>
-        <td>{{ item.creator_id }}</td>
+        <td>
+            <a :href="creatorLink" target="_blank">{{creatorName}}</a>
+        </td>
     </tr>
 </template>
 
@@ -31,6 +33,12 @@ export default {
     computed: {
       downloadLink() {
         return this.getRoute('certificate.report_download', {id: this.item.id})
+      },
+      creatorLink() {
+        return this.getRoute('settings.userDetail', {id: this.item.creator_id})
+      },
+      creatorName() {
+          return (this.item.creator && this.item.creator.short_name) ? this.item.creator.short_name : this.item.creator_id
       }
     }
 }

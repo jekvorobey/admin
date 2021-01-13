@@ -13,6 +13,23 @@
                        required
                        min="100"
                        placeholder="Введите номинал в рублях">
+                <div class="mini_text">Номинал должен быть целым числом не менее 100 рублей</div>
+            </div>
+
+            <div class="form-group required">
+                <label class="control-label" for="nominal_name">
+                    Имя сертификата
+                </label>
+
+                <input type="text"
+                       class="form-control"
+                       id="nominal_name"
+                       v-model="name"
+                       min="100"
+                       placeholder="Опционально">
+                <div class="mini_text">Отображается в публичной части, если не указать,
+                    то имя создается автоматически по формату CERT-{НОМИНАЛ},
+                    где {НОМИНАЛ} - цена сертификата в рублях</div>
             </div>
 
             <div class="form-group required">
@@ -21,10 +38,11 @@
                 <input type="number"
                        class="form-control"
                        id="nominal_amount"
-                       v-model="amount"
+                       v-model="qty"
                        required
                        min="0"
                        placeholder="Введите количество">
+                <div class="mini_text">Это кол-во уменьшается при каждой покупке сертификата. При достижении 0 - номинал становится не активным.</div>
             </div>
 
             <div class="form-group required">
@@ -38,21 +56,9 @@
                        min="0"
                        placeholder="Введите срок в днях">
 
-                <div class="mini_text">0 - безлимитный</div>
-            </div>
-
-            <div class="form-group required">
-                <label class="control-label" for="nominal_validity">Период действия*</label>
-
-                <input type="number"
-                       class="form-control"
-                       id="nominal_validity"
-                       v-model="validity"
-                       required
-                       min="0"
-                       placeholder="Введите срок в днях">
-
-                <div class="mini_text">0 - безлимитный</div>
+                <div class="mini_text">
+                    Кол-во дней отведенных на активацию сертификата. При выставлении 0 - номинал становится не активным.
+                </div>
             </div>
 
             <div class="form-group required">
@@ -60,7 +66,7 @@
 
                 <ul class="designs_list">
 
-                    <li v-for="design in all_designs" :key="'nd-' + design.id">
+                    <li v-for="design in all_designs" :key="'nd-' + design.id" :class="'design_active_' + design.is_active">
                         <label :for="'design_item_' + design.id">
                             <input
                                 type="checkbox"
@@ -72,15 +78,21 @@
                         </label>
                     </li>
                 </ul>
+                <div class="mini_text">
+                    Хотя бы один дизайн должен быть отмечен, что бы номинал отображался в публичной части.
+                </div>
             </div>
             <div class="form-group required">
                 <label class="control-label" for="nominal_status">Активность</label><br>
 
                 <div>
                     <input type="checkbox"
-                           :checked="!!status"
-                           @change="status=!status"
+                           :checked="!!is_active"
+                           @change="is_active=!is_active"
                            id="nominal_status">
+                </div>
+                <div class="mini_text">
+                    Активность автоматически уберется если остаток = 0, либо срок активации = 0, либо не указаны доступные дизайны
                 </div>
             </div>
 
@@ -92,8 +104,6 @@
 </template>
 
 <script>
-import Services from '../../../../../scripts/services/services';
-
 export default {
     name: 'nominal-edit-form',
     props: {
@@ -109,10 +119,10 @@ export default {
     data() {
         return {
             price: '',
-            status: '',
+            name: '',
+            is_active: '',
             activation_period: '',
-            validity: '',
-            amount: '',
+            qty: '',
             designs: []
         };
     },
@@ -121,10 +131,10 @@ export default {
             const nominal = this.nominal || {}
 
             this.price = nominal.hasOwnProperty('price') ? nominal.price : '';
-            this.status = nominal.status || 0;
+            this.name = nominal.name || '';
+            this.is_active = nominal.is_active || 0;
             this.activation_period = nominal.hasOwnProperty('activation_period') ? nominal.activation_period : '';
-            this.validity = nominal.hasOwnProperty('validity') ? nominal.validity : '';
-            this.amount = nominal.hasOwnProperty('amount') ? nominal.amount : '';
+            this.qty = nominal.hasOwnProperty('qty') ? nominal.qty : '';
             (nominal.designs || []).forEach(design => {
                 this.designs.push((design && design.hasOwnProperty('id')) ? design.id : design)
             })
@@ -138,10 +148,10 @@ export default {
         onSubmit() {
             this.$emit('save', {
                 price: this.price,
-                status: this.status ? 1 : 0,
+                name: this.name,
+                is_active: this.is_active ? 1 : 0,
                 activation_period: this.activation_period,
-                validity: this.validity,
-                amount: this.amount,
+                qty: this.qty,
                 designs: this.designs
             })
         },
@@ -162,4 +172,11 @@ export default {
     font-size: 14px;
     color: #929292;
 }
+.nominal-edit-form .design_active_0 {
+     color: #999;
+ }
+.nominal-edit-form .design_active_1 {
+    /*color: red;*/
+}
+
 </style>

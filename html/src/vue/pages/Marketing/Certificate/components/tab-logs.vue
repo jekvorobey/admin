@@ -8,25 +8,19 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <f-date class="col-2" confirm v-model="filter.date">
-              Дата изменения
+            <f-date class="col-2" confirm v-model="filter.date_from">
+              Дата от
+            </f-date>
+            <f-date class="col-2" confirm v-model="filter.date_to">
+              Дата до
             </f-date>
 
-            <f-multi-select class="col-4" v-model="filter.entity_type" :options="[
-                        {value: 'App\\Models\\Certificate\\Design', text: 'дизайн'},
-                        {value: 'App\\Models\\Certificate\\Nominal', text: 'номинал'},
-                        {value: 'App\\Models\\Certificate\\Order', text: 'заказ ПС'},
-                        {value: 'App\\Models\\Certificate\\Card', text: 'ПС'},
-                    ]">
-              Сущность
-            </f-multi-select>
-
-            <f-input class="col-2" v-model="filter.entity_id">
-              ID сущности
+            <f-input class="col-2" v-model="filter.certificate_id" placeholder="через пробелы">
+              ID сертификата
             </f-input>
 
-            <f-input class="col-2" v-model="filter.user_id">
-              ID пользователя
+            <f-input class="col-2" v-model="filter.transaction_id" placeholder="через пробелы">
+              ID транзакции
             </f-input>
           </div>
 
@@ -47,9 +41,14 @@
     <table class="table table-condensed">
       <thead>
       <tr>
-        <th>ID лога</th>
-        <th>Сущность</th>
+        <th>ID транзакции</th>
+        <th>№ заказа</th>
+        <th>ID ПС</th>
         <th>Действие</th>
+        <th>Изменение баланса</th>
+        <th>Статус до</th>
+        <th>Статус после</th>
+        <th>Владелец ПС</th>
         <th>Пользователь</th>
         <th>Дата и время</th>
       </tr>
@@ -72,15 +71,15 @@
       </tbody>
     </table>
 
-    <b-pagination
-        v-if="pagination.last_page > 1"
-        v-model="currentPage"
-        :total-rows="pagination.total"
-        :per-page="pagination.per_page"
-        @change="loadPage"
-        :hide-goto-end-buttons="pagination.last_page < 10"
-        class="float-right"
-    ></b-pagination>
+      <b-pagination
+          v-if="pager.pages > 1"
+          v-model="currentPage"
+          :total-rows="pager.total"
+          :per-page="pager.pageSize"
+          @change="loadPage"
+          :hide-goto-end-buttons="pager.pages < 10"
+          class="float-right"
+      ></b-pagination>
   </div>
 </template>
 
@@ -106,19 +105,19 @@ export default {
     return {
       tabName: 'logs',
       filter: {
-        date: '',
-        entity_type: [],
-        user_id: '',
-        entity_id: '',
+        date_from: '',
+        date_to: '',
+        certificate_id: '',
+        transaction_id: '',
       }
     };
   },
   methods: {
     clearFilter() {
-      this.filter.date = '';
-      this.filter.entity_type = [];
-      this.filter.user_id = '';
-      this.filter.entity_id = '';
+      this.filter.date_from = '';
+      this.filter.date_to = '';
+      this.filter.certificate_id = '';
+      this.filter.transaction_id = '';
       this.loadPage(1);
     },
   },

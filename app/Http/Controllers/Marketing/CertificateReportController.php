@@ -3,36 +3,31 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
-use Greensight\Marketing\Dto\Certificate\Report;
-use Greensight\Marketing\Dto\Certificate\ReportSearchQuery;
-use Greensight\Marketing\Services\Certificate\ReportService;
 use Illuminate\Http\JsonResponse;
+use Pim\Dto\Certificate\CertificateReportDto;
+use Pim\Services\CertificateService\CertificateService;
 
 class CertificateReportController extends Controller
 {
-    public function create(ReportService $reportService): JsonResponse
+    private function service(): CertificateService
     {
-        return response()->json($reportService->create());
+        return resolve(CertificateService::class);
+    }
+
+    public function create(): JsonResponse
+    {
+        $id = $this->service()->createReport();
+        return response()->json(['status' => 'ok', 'id' => $id]);
     }
 
     public function download($id)
     {
-        /** @var Report $report */
-        $report = (new ReportSearchQuery())
-            ->id($id)
-            ->prepare(resolve(ReportService::class), 'reports')
-            ->get()->items->first();
+        /** @var CertificateReportDto $report */
+        $report = $this->service()->reportQuery()->id($id)->reports()->first();
 
         if (!$report)
             abort(404, 'Отчет не найден');
 
-        $filename = $report->getFileName();
-
-        header('Content-Encoding: UTF-8');
-        header('Content-type: text/csv; charset=UTF-8');
-        header("Content-Disposition: attachment; filename={$filename}");
-
-        echo $report->getCsvContent();
-        exit(0);
+        $report->sendToBrowser();
     }
 }

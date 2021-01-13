@@ -45,6 +45,7 @@ export default {
           .then(() => {
             Services.hideLoader();
             Services.msg("Изменения сохранены")
+            this.$emit('data', this.form)
           })
     }
   },

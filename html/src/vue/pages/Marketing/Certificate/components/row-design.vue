@@ -3,13 +3,12 @@
     <td>{{ item.id }}</td>
     <td>{{ item.name }}</td>
     <td>
-
-      <a :href="item.preview" target="_blank" class="gift-cards-design-list-preview shadow-sm"
-         :style="{ backgroundImage: 'url(' + item.preview + ')'}">
+      <a :href="previewLink" target="_blank" class="gift-cards-design-list-preview shadow-sm"
+         :style="previewStyle">
       </a>
     </td>
-    <td>{{ !!item.status ? 'Активен' : 'Не активен' }}</td>
-    <td>{{ item.created_at }}</td>
+    <td>{{ !!item.is_active ? 'Активен' : 'Не активен' }}</td>
+    <td>{{ item.created_at | datetime }}</td>
     <td>
       <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
         <fa-icon icon="pencil-alt" class="float-right media-btn"></fa-icon>
@@ -23,13 +22,20 @@
 <script>
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import Services from "../../../../../scripts/services/services.js";
-
+import DatetimeFilter from "../mixins/DatetimeFilter.js";
 export default {
   props: ['item'],
   components: {VDeleteButton},
+  mixins: [DatetimeFilter],
   computed: {
     editLink() {
       return this.getRoute('certificate.designs_edit', {id: this.item.id})
+    },
+    previewLink() {
+        return (this.item && this.item.file) ? this.item.file.url : null
+    },
+    previewStyle() {
+        return (this.previewLink) ? { backgroundImage: 'url(' + this.previewLink + ')' } : ''
     }
   },
   methods: {

@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
-use Greensight\Marketing\Builder\Certificate\DesignBuilder;
-use Greensight\Marketing\Dto\Certificate\DesignSearchQuery;
-use Greensight\Marketing\Services\Certificate\DesignService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Pim\Dto\Certificate\CertificateDesignDto;
+use Pim\Services\CertificateService\CertificateService;
 
 class CertificateDesignController extends Controller
 {
@@ -16,9 +16,15 @@ class CertificateDesignController extends Controller
         Menu::setActiveUrl(route('certificate.index'));
     }
 
+    private function service(): CertificateService
+    {
+        return resolve(CertificateService::class);
+    }
+
     public function index(Request $request)
     {
         $this->title = 'Справочник дизайнов';
+        $this->setActiveMenu();
 
         $c = resolve(CertificateController::class);
 
@@ -28,11 +34,11 @@ class CertificateDesignController extends Controller
     public function createPage()
     {
         $this->title = 'Создание дизайна сертификатов';
-
         $this->setActiveMenu();
+
         return $this->render('Marketing/Certificate/Designs/Add', [
             'design' => [
-                'status' => 1
+                'is_active' => 1
             ]
         ]);
     }
@@ -43,31 +49,26 @@ class CertificateDesignController extends Controller
         $this->setActiveMenu();
 
         return $this->render('Marketing/Certificate/Designs/Edit', [
-            'design' => (new DesignSearchQuery())
-                ->id($id)
-                ->prepare(resolve(DesignService::class), 'designs')
-                ->get()->items->first() ?? [],
+            'design' => $this->service()->designQuery()->withFile()->id($id)->designs()->first()
         ]);
     }
 
-    public function delete($id, DesignService $designService)
+    public function delete($id)
     {
-        $designService->delete($id);
+        $this->service()->deleteDesign($id);
         return response('', 204);
     }
 
-    public function create(Request $request, DesignService $designService)
+    public function create(Request $request): JsonResponse
     {
-        $builder = new DesignBuilder($request->all());
-        $item = $designService->create($builder);
+        $id = $this->service()->createDesign(new CertificateDesignDto($request->all()));
 
-        return response()->json(['status' => 'ok', 'id' => $item['id'] ?? null]);
+        return response()->json(['status' => 'ok', 'id' => $id]);
     }
 
-    public function update($id, Request $request, DesignService $designService)
+    public function update($id, Request $request): JsonResponse
     {
-        $builder = new DesignBuilder($request->all());
-        $designService->update($id, $builder);
+        $this->service()->updateDesign($id, new CertificateDesignDto($request->all()));
 
         return response()->json(['status' => 'ok']);
     }

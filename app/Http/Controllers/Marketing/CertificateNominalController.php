@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Greensight\Marketing\Builder\Certificate\NominalBuilder;
-use Greensight\Marketing\Dto\Certificate\DesignSearchQuery;
-use Greensight\Marketing\Dto\Certificate\NominalSearchQuery;
-use Greensight\Marketing\Services\Certificate\DesignService;
-use Greensight\Marketing\Services\Certificate\NominalService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Pim\Dto\Certificate\CertificateNominalDto;
+use Pim\Services\CertificateService\CertificateService;
 
 class CertificateNominalController extends Controller
 {
@@ -19,9 +18,15 @@ class CertificateNominalController extends Controller
         Menu::setActiveUrl(route('certificate.index'));
     }
 
+    private function service(): CertificateService
+    {
+        return resolve(CertificateService::class);
+    }
+
     public function index(Request $request)
     {
         $this->title = 'Конструктор сертификатов (номиналы)';
+        $this->setActiveMenu();
 
         $c = resolve(CertificateController::class);
 
@@ -35,7 +40,7 @@ class CertificateNominalController extends Controller
 
         return $this->render('Marketing/Certificate/Nominals/Add', [
             'nominal' => [
-                'status' => 1
+                'is_active' => 1
             ],
             'all_designs' => $this->designDictionary()
         ]);
@@ -45,48 +50,35 @@ class CertificateNominalController extends Controller
     {
         $this->title = 'Редактирование номинала';
         $this->setActiveMenu();
-
         return $this->render('Marketing/Certificate/Nominals/Edit', [
-            'nominal' => (new NominalSearchQuery())
-                    ->id($id)
-                    ->include('designs')
-                    ->prepare(resolve(NominalService::class), 'nominals')
-                    ->get()->items->first() ?? [],
+            'nominal' => $this->service()->nominalQuery()->withDesigns()->id($id)->nominals()->first() ?? [],
             'all_designs' => $this->designDictionary()
         ]);
     }
 
-    private function designDictionary()
+    private function designDictionary(): Collection
     {
-        return (new DesignSearchQuery())
-            ->addSort('id')
-            ->pagination(1, 300)
-            ->prepare(resolve(DesignService::class), 'designs')
-            ->get()->items;
+        return $this->service()->designQuery()->designs();
     }
 
-    public function delete($id, NominalService $nominalService)
+    public function delete($id)
     {
-        $nominalService->delete($id);
+        $this->service()->deleteNominal($id);
         return response('', 204);
     }
 
-    public function create(Request $request, NominalService $nominalService, RequestInitiator $requestInitiator)
+    public function create(Request $request, RequestInitiator $requestInitiator): JsonResponse
     {
-        $data = $request->all();
-        $data['creator_id'] = $requestInitiator->userId();
+        $data = $request->all() + ['creator_id' => $requestInitiator->userId()];
 
-        $builder = new NominalBuilder($data);
-        $item = $nominalService->create($builder);
+        $id = $this->service()->createNominal(new CertificateNominalDto($data));
 
-        return response()->json(['status' => 'ok', 'id' => $item['id'] ?? null]);
+        return response()->json(['status' => 'ok', 'id' => $id]);
     }
 
-    public function update($id, Request $request, NominalService $nominalService)
+    public function update($id, Request $request): JsonResponse
     {
-        $builder = new NominalBuilder($request->all());
-        $nominalService->update($id, $builder);
-
+        $this->service()->updateNominal($id, new CertificateNominalDto($request->all()));
         return response()->json(['status' => 'ok']);
     }
 }

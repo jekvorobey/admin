@@ -2,15 +2,15 @@
   <tr>
     <td>{{ item.id }}</td>
     <td>{{ item.price }}</td>
-    <td>{{ item.status ? 'Активный' : 'Не активный' }}</td>
+    <td>{{ item.is_active ? 'Активный' : 'Не активный' }}</td>
     <td>{{ item.activation_period }}</td>
     <td>
       <span v-for="(design, index) in item.designs" :key="'nd' + design.id">
         <span v-if="index > 0">, </span>
-        <a :href="designLink(design.id)">{{ design.name }}</a>
+        <a :href="designLink(design.id)" :class="'certificate_nominal_design_active_' + design.is_active">{{ design.name }}</a>
       </span>
     </td>
-    <td>{{ item.amount }}</td>
+    <td>{{ item.qty }}</td>
 
     <td style="white-space: nowrap">
       <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
@@ -49,3 +49,11 @@ export default {
   }
 }
 </script>
+<style scoped>
+.certificate_nominal_design_active_0 {
+    color: #999;
+}
+.certificate_nominal_design_active_1 {
+    /*color: red;*/
+}
+</style>
