@@ -17,6 +17,7 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MerchantDetailController extends Controller
@@ -29,6 +30,7 @@ class MerchantDetailController extends Controller
      * @param CommunicationService $communicationService
      * @param BrandService $brandService
      * @param CategoryService $categoryService
+     * @param OfferService $offerService
      * @return mixed
      * @throws \Pim\Core\PimException
      */
@@ -39,7 +41,8 @@ class MerchantDetailController extends Controller
         UserService $userService,
         CommunicationService $communicationService,
         BrandService $brandService,
-        CategoryService $categoryService
+        CategoryService $categoryService,
+        OfferService $offerService
     ) {
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
@@ -105,13 +108,24 @@ class MerchantDetailController extends Controller
             [$operatorMain->user_id],true
         );
 
+        $restQuery = (new RestQuery())
+            ->include('product')
+            ->setFilter('merchant_id', $id);
+
+        $brandIds = $offerService->offers($restQuery)
+            ->pluck('product.brand_id', 'product.brand_id')->toArray();
+        $categoryIds = $offerService->offers($restQuery)
+            ->pluck('product.category_id', 'product.category_id')->toArray();
+
         $ratings = $merchantService->ratings()->sortByDesc('name');
+        $managers = $userService->users((new RestQuery())
+            ->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
-        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
+        $brandList = $brandIds ? $brandService->brands((new RestQuery())
+            ->setFilter('id', $brandIds))->keyBy('id') : [];
 
-        $brandList = $brandService->brands(new RestQuery())->keyBy('id');
-
-        $categoryList = $categoryService->categories(new RestQuery())->keyBy('id');
+        $categoryList = $categoryIds ? $categoryService->categories((new RestQuery())
+            ->setFilter('id', $categoryIds))->keyBy('id') : [];
 
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
