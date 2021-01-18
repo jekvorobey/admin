@@ -15,6 +15,8 @@ use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Dto\RatingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Dto\CategoryDto;
+use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
@@ -122,10 +124,30 @@ class MerchantDetailController extends Controller
             ->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
         $brandList = $brandIds ? $brandService->brands((new RestQuery())
-            ->setFilter('id', $brandIds))->keyBy('id') : [];
+            ->setFilter('id', $brandIds)->addSort('name')
+        )->toArray() : [];
 
-        $categoryList = $categoryIds ? $categoryService->categories((new RestQuery())
-            ->setFilter('id', $categoryIds))->keyBy('id') : [];
+        $categories = $categoryIds ? $categoryService->categories((new RestQuery())
+            ->include('ancestors')
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'))->toArray() : [];
+
+        $allCategoryList = [];
+        foreach($categories as $category) {
+            $categoryNameArr = [];
+            if (count($category['ancestors']) > 0) {
+                foreach ($category['ancestors'] as $ancestor) {
+                    $categoryNameArr[] = $ancestor['name'];
+                }
+                $categoryName = implode('→', $categoryNameArr).'→'.$category['name'];
+            } else {
+                $categoryName = $category['name'];
+            }
+            $allCategoryList[$category['id']] = [
+                'id' => $category['id'],
+                'name' => $categoryName,
+            ];
+        }
+        $categoryList = array_intersect_key($allCategoryList, $categoryIds);
 
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
