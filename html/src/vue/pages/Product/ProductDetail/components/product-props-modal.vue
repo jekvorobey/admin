@@ -64,7 +64,7 @@
 
 <script>
     import { validationMixin } from 'vuelidate';
-    import { integer } from 'vuelidate/lib/validators';
+    import { integer, decimal } from 'vuelidate/lib/validators';
 
     import Services from '../../../../../scripts/services/services';
 
