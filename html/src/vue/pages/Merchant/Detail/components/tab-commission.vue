@@ -107,14 +107,16 @@
 <script>
 import Services from '../../../../../scripts/services/services.js';
 import DatePicker from 'vue2-datepicker';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 
+const defaultOptions = [{ value: null, text: 'Нет' }];
 export default {
     name: 'tab-commission',
     props: ['id', 'brandList', 'categoryList'],
-    components: {VDeleteButton, DatePicker},
+    components: {VDeleteButton, DatePicker, VSelect},
     data() {
         return {
             commissions: [],
@@ -222,6 +224,7 @@ export default {
         },
     },
     created() {
+      console.log(this.brandList);
         Services.showLoader();
         Services.net().get(this.getRoute('merchant.detail.commission', {id: this.id})).then(data => {
             this.commissions = data.commissions;

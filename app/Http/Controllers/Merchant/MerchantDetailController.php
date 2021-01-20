@@ -15,8 +15,11 @@ use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Dto\RatingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Dto\CategoryDto;
+use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MerchantDetailController extends Controller
@@ -29,6 +32,7 @@ class MerchantDetailController extends Controller
      * @param CommunicationService $communicationService
      * @param BrandService $brandService
      * @param CategoryService $categoryService
+     * @param OfferService $offerService
      * @return mixed
      * @throws \Pim\Core\PimException
      */
@@ -39,7 +43,8 @@ class MerchantDetailController extends Controller
         UserService $userService,
         CommunicationService $communicationService,
         BrandService $brandService,
-        CategoryService $categoryService
+        CategoryService $categoryService,
+        OfferService $offerService
     ) {
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
@@ -105,13 +110,44 @@ class MerchantDetailController extends Controller
             [$operatorMain->user_id],true
         );
 
+        $restQuery = (new RestQuery())
+            ->include('product')
+            ->setFilter('merchant_id', $id);
+
+        $brandIds = $offerService->offers($restQuery)
+            ->pluck('product.brand_id', 'product.brand_id')->toArray();
+        $categoryIds = $offerService->offers($restQuery)
+            ->pluck('product.category_id', 'product.category_id')->toArray();
+
         $ratings = $merchantService->ratings()->sortByDesc('name');
+        $managers = $userService->users((new RestQuery())
+            ->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
-        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
+        $brandList = $brandIds ? $brandService->brands((new RestQuery())
+            ->setFilter('id', $brandIds)->addSort('name')
+        )->toArray() : [];
 
-        $brandList = $brandService->brands(new RestQuery())->keyBy('id');
+        $categories = $categoryIds ? $categoryService->categories((new RestQuery())
+            ->include('ancestors')
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'))->toArray() : [];
 
-        $categoryList = $categoryService->categories(new RestQuery())->keyBy('id');
+        $allCategoryList = [];
+        foreach($categories as $category) {
+            $categoryNameArr = [];
+            if (count($category['ancestors']) > 0) {
+                foreach ($category['ancestors'] as $ancestor) {
+                    $categoryNameArr[] = $ancestor['name'];
+                }
+                $categoryName = implode('→', $categoryNameArr).'→'.$category['name'];
+            } else {
+                $categoryName = $category['name'];
+            }
+            $allCategoryList[$category['id']] = [
+                'id' => $category['id'],
+                'name' => $categoryName,
+            ];
+        }
+        $categoryList = array_intersect_key($allCategoryList, $categoryIds);
 
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
