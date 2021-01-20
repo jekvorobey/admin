@@ -19,76 +19,6 @@
             <td>{{ datetimePrint(merchant.created_at) }}</td>
         </tr>
         <tr>
-            <th>Адреса складов отгрузки*</th>
-            <td><v-input tag="textarea" v-model="$v.form.storage_address.$model" :error="errorStorageAddress"/></td>
-        </tr>
-        <tr>
-            <th>Бренды и товарные категории*</th>
-            <td>
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Бренды:</span>
-                    </div>
-                    <select v-model="selectedBrand"
-                            class="form-control form-control-sm"
-                            :class="{ 'is-invalid': errorSaleInfoBrands }">
-                        <option
-                            v-for="option in brandOptions"
-                            :value="option.value">
-                          {{ option.text }}
-                        </option>
-                    </select>
-                    <button v-if="!form.sale_info_brands.includes(selectedBrand)"
-                            class="btn btn-sm btn-outline-success"
-                            @click="addItem($v.form.sale_info_brands, selectedBrand)">
-                        <fa-icon icon="plus"/>
-                    </button>
-                    <button v-else
-                            class="btn btn-sm btn-outline-secondary"
-                            @click="removeItem($v.form.sale_info_brands, selectedBrand)">
-                        <fa-icon icon="trash-alt"/>
-                    </button>
-                    <span class="invalid-feedback" role="alert">
-                        {{ errorSaleInfoBrands }}
-                    </span>
-                </div>
-                <div class="mt-2 mb-4">
-                    <b>Выбранные бренды: </b><span>{{ form.sale_info_brands.length > 0 ? selectedBrands : 'Нет' }}</span>
-                </div>
-
-                <div class="input-group input-group-sm">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Категории:</span>
-                    </div>
-                    <select v-model="selectedCategory"
-                            class="form-control form-control-sm"
-                            :class="{ 'is-invalid': errorSaleInfoCategories }">
-                        <option
-                            v-for="option in categoryOptions"
-                            :value="option.value">
-                          {{ option.text }}
-                        </option>
-                    </select>
-                    <button v-if="!form.sale_info_categories.includes(selectedCategory)"
-                            class="btn btn-sm btn-outline-success"
-                            @click="addItem($v.form.sale_info_categories, selectedCategory)">
-                        <fa-icon icon="plus"/>
-                    </button>
-                    <button v-else
-                            class="btn btn-sm btn-outline-secondary"
-                            @click="removeItem($v.form.sale_info_categories, selectedCategory)">
-                        <fa-icon icon="trash-alt"/>
-                    </button>
-                    <span class="invalid-feedback" role="alert">
-                        {{ errorSaleInfoCategories }}
-                    </span>
-                </div>
-                <div class="mt-2 mb-3">
-                    <b>Выбранные категории: </b><span>{{ form.sale_info_categories.length > 0 ? selectedCategories : 'Нет' }}</span>
-                </div>
-            </td>
-        </tr>
-        <tr>
             <th>Коммерческие условия</th>
             <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
         </tr>
@@ -107,8 +37,8 @@
             <td><v-input v-model="$v.form.inn.$model" :error="errorInn"/></td>
         </tr>
         <tr>
-            <th>КПП*</th>
-            <td><v-input v-model="$v.form.kpp.$model" :error="errorKpp"/></td>
+            <th>КПП</th>
+            <td><v-input v-model="$v.form.kpp.$model"/></td>
         </tr>
 
         <tr class="table-secondary"><th colspan="2">ФИО генерального</th></tr>
@@ -212,9 +142,6 @@
                 bank: this.model.bank,
                 bank_address: this.model.bank_address,
                 bank_bik: this.model.bank_bik,
-                storage_address: this.model.storage_address,
-                sale_info_brands: this.model.sale_info_brands.map(brand => parseInt(brand)),
-                sale_info_categories: this.model.sale_info_categories.map(category => parseInt(category)),
                 commercial_info: this.model.commercial_info,
                 contract_number: this.model.contract_number,
                 contract_at: this.model.contract_at ? this.model.contract_at : '',
@@ -233,7 +160,7 @@
             form: {
                 legal_address: {required},
                 inn: {required},
-                kpp: {required},
+                kpp: {notRequired},
                 fact_address: {required},
                 ceo_last_name: {notRequired},
                 ceo_first_name: {notRequired},
@@ -243,9 +170,6 @@
                 bank: {required},
                 bank_address: {required},
                 bank_bik: {required},
-                storage_address: {required},
-                sale_info_brands: {required, minLength: minLength(1)},
-                sale_info_categories: {required, minLength: minLength(1)},
                 commercial_info: {notRequired},
                 contract_number: {notRequired},
                 contract_at: {notRequired},
@@ -275,9 +199,6 @@
                 this.merchant.bank = this.form.bank;
                 this.merchant.bank_address = this.form.bank_address;
                 this.merchant.bank_bik = this.form.bank_bik;
-                this.merchant.storage_address = this.form.storage_address;
-                this.merchant.sale_info_brands = this.form.sale_info_brands.map(brand => parseInt(brand));
-                this.merchant.sale_info_categories = this.form.sale_info_categories.map(category => parseInt(category));
                 this.merchant.commercial_info = this.form.commercial_info;
                 this.merchant.contract_number = this.form.contract_number;
                 this.merchant.contract_at = this.form.contract_at;
@@ -299,9 +220,6 @@
             this.form.bank = this.merchant.bank;
             this.form.bank_address = this.merchant.bank_address;
             this.form.bank_bik = this.merchant.bank_bik;
-            this.form.storage_address = this.merchant.storage_address;
-            this.form.sale_info_brands = this.merchant.sale_info_brands.map(brand => parseInt(brand));
-            this.form.sale_info_categories = this.merchant.sale_info_categories.map(category => parseInt(category));
             this.form.commercial_info = this.merchant.commercial_info;
             this.form.contract_number = this.merchant.contract_number;
             this.form.contract_at = this.merchant.contract_at;
@@ -353,27 +271,6 @@
             get() {return this.model},
             set(value) {this.$emit('update:model', value)},
         },
-        errorStorageAddress() {
-            if (this.$v.form.storage_address.$dirty) {
-                if (!this.$v.form.storage_address.required) {
-                    return "Обязательное поле";
-                }
-            }
-        },
-        errorSaleInfoBrands() {
-            if (this.$v.form.sale_info_brands.$dirty) {
-                if (this.$v.form.sale_info_brands.$invalid) {
-                    return "Выберите бренды";
-                }
-            }
-        },
-        errorSaleInfoCategories() {
-            if (this.$v.form.sale_info_categories.$dirty) {
-                if (this.$v.form.sale_info_categories.$invalid) {
-                    return "Выберите категории";
-                }
-            }
-        },
         errorLegalAddress() {
             if (this.$v.form.legal_address.$dirty) {
                 if (!this.$v.form.legal_address.required) {
@@ -391,13 +288,6 @@
         errorInn() {
             if (this.$v.form.inn.$dirty) {
                 if (!this.$v.form.inn.required) {
-                    return "Обязательное поле";
-                }
-            }
-        },
-        errorKpp() {
-            if (this.$v.form.kpp.$dirty) {
-                if (!this.$v.form.kpp.required) {
                     return "Обязательное поле";
                 }
             }
@@ -437,22 +327,6 @@
                 }
             }
         },
-        brandOptions() {
-            return Object.values(this.brandList).map(brand => {
-              return { value: brand.id, text: brand.name }
-            })
-        },
-        categoryOptions() {
-            return Object.values(this.categoryList).map(category => {
-              return { value: category.id, text: category.name }
-            })
-        },
-        selectedBrands() {
-            return this.form.sale_info_brands.map(brand => this.brandList[brand].name).join(', ');
-        },
-        selectedCategories() {
-          return this.form.sale_info_categories.map(category => this.categoryList[category].name).join(', ');
-        },
     },
     created() {
         Services.showLoader();
@@ -464,7 +338,3 @@
     }
 };
 </script>
-
-<style scoped>
-
-</style>
