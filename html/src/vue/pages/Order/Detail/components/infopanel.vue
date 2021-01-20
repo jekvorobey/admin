@@ -5,6 +5,7 @@
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
             <b-col>
+                <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || (this.order.status &&
                 this.order.status.id < orderStatuses.done.id)) && !isCancel">
                     <b-dropdown-item-button>
@@ -196,6 +197,15 @@
         },
         isStatus(statusId) {
             return this.order.status && this.order.status.id === statusId;
+        },
+        makeDial() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('customers.detail.dial', {id: this.order.customer.id}))
+                .then(data => {
+                    Services.msg("Запрос на звонок отправлен");
+                }).finally(data => {
+                    Services.hideLoader();
+                })
         },
     },
     computed: {
