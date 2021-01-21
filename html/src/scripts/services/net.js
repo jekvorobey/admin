@@ -87,6 +87,9 @@ export default class NetService {
                 console.log(error.response.status);
                 console.log(error.response.headers);
                 errorMsg = error.response.data.message;
+                if (!errorMsg && error.response.status === 413) {
+                    errorMsg = "Слишком большой файл";
+                }
             } else if (error.request) {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
