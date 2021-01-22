@@ -1,7 +1,7 @@
 <template>
   <div>
     <br>
-    <div v-if="false" class="card">
+    <div v-if="showFilter" class="card">
       <div class="card-header">
         Фильтр
       </div>
@@ -135,6 +135,11 @@ export default {
     RowCard,
   },
   mixins: [modalMixin, TabList],
+  props: {
+    externalFilter: {
+        type: Object
+    }
+  },
   data() {
     return {
       tabName: 'cards'
@@ -149,6 +154,14 @@ export default {
     booleanOptions() {
       return [{value: 0, text: 'Не активен'}, {value: 1, text: 'Активен'}];
     },
+    showFilter() {
+        return (this.externalFilter) ? false : false;
+    }
   },
+  created() {
+      if (this.externalFilter) {
+          this.filter = this.externalFilter
+      }
+  }
 }
 </script>

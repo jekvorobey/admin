@@ -140,6 +140,18 @@ class CertificateController extends Controller
             ->addSort('id', 'desc')
             ->pageNumber($page, self::PER_PAGE);
 
+        $filter = (array) $request->get('filter');
+
+        foreach ($filter as $key => $val)
+        {
+            switch ($key)
+            {
+                case 'customer_or_recipient_id': $query->customerOrRecipientId($val); break;
+                case 'customer_id': $query->customerId($val); break;
+                case 'recipient_id': $query->recipientId($val); break;
+            }
+        }
+
         return [
             'cards' => [
                 'page' => $page,

@@ -45,6 +45,7 @@
                     <tab-bonus v-else-if="key === 'bonuses'" :model.sync="customer"/>
                     <tab-promocodes v-else-if="key === 'referralPromocodes'" :id="customer.id" :options="options"/>
                     <tab-reviews v-else-if="key === 'reviews'" :id="customer.id"/>
+                    <tab-certificates v-else-if="key === 'certificates'" :id="customer.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -90,6 +91,7 @@
     import TabBonus from './components/tab-bonus.vue';
     import TabPromocodes from './components/tab-promocodes.vue';
     import TabReviews from './components/tab-reviews.vue';
+    import TabCertificates from './components/tab-certificates.vue';
 
     import tabsMixin from '../../../mixins/tabs.js';
     import Services from '../../../../scripts/services/services';
@@ -120,6 +122,7 @@
         ModalPortfolios,
         Infopanel,
         TabDocument,
+        TabCertificates,
         VInput
     },
     data() {
@@ -192,7 +195,7 @@
             if (this.showAllTabs) {
                 tabs.bonuses = {i: i++, title: 'Бонусы'};
                 tabs.gifts = {i: i++, title: 'Подарки'};
-                tabs.sertificates = {i: i++, title: 'Сертификаты'};
+                tabs.certificates = {i: i++, title: 'Сертификаты'};
                 tabs.logSegment = {i: i++, title: 'Сегмент'};
                 tabs.log = {i: i++, title: 'Логи'};
             }
