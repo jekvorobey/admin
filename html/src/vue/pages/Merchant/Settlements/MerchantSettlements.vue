@@ -1,0 +1,289 @@
+<template>
+  <layout-main>
+    <h4>Выплаты</h4>
+    <table class="table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Дата создания</th>
+        <th>Документ</th>
+        <th>Действия</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="registry in payRegisters">
+
+        <td>{{ registry.id }}</td>
+        <td>{{ registry.created_at }}</td>
+        <td>
+          <a target="_blank" :href="$store.getters.getRoute('merchant.settlements.downloadPayRegistry',
+          {registryFileId:registry.file})">Скачать</a>
+        </td>
+        <td>
+          <b-button class="btn btn-danger btn-sm" @click="removeRegistry(registry.id)">
+            Удалить <fa-icon icon="trash-alt"/>
+          </b-button>
+        </td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+    <hr>
+    <h4 class="mt-4">Отчеты комиссионера</h4>
+    <div class="mt-3 mb-3 shadow p-3">
+      <div class="row">
+        <f-date v-model="filter.created_at" class="col-lg-3 col-md-6" range>
+          Период
+        </f-date>
+        <f-multi-select v-model="filter.status" :options="statusOptions" class="col-lg-3 col-md-6">
+          Статус
+        </f-multi-select>
+        <f-multi-select v-model="filter.merchant_id" :options="merchantOptions" class="col-lg-3 col-md-6">
+          Мерчант
+        </f-multi-select>
+      </div>
+      <button @click="loadPage" class="btn btn-dark">Применить</button>
+      <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
+    </div>
+    <div class="mb-3">
+      Всего: {{ pager.total }}. <span v-if="selectedReportsIds.length">Выбрано: {{selectedReportsIds.length}}</span>
+    </div>
+
+    <div class="btn-toolbar mb-3">
+      <div class="input-group">
+        <div class="input-group-append">
+          <button class="btn btn-outline-success" type="button" :disabled="!selectedReportsIds.length" @click="changeStatus">
+            <fa-icon icon="save"/> Отметить оплаченными
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+      <tr>
+        <th></th>
+        <th>ID</th>
+        <th>Период</th>
+        <th>Дата подтверждения</th>
+        <th>Название организации</th>
+        <th>Сумма</th>
+        <th>Документ</th>
+        <th>Статус</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="report in billingReports">
+        <td>
+          <label>
+            <input type="checkbox"
+                   :checked="reportSelected(report.id)"
+                   @change="e => selectReport(e, report)">
+          </label>
+        </td>
+        <td>{{ report.id }}</td>
+        <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
+        <td>{{ report.updated_at }}</td>
+        <td><a :href="$store.getters.getRoute('merchant.detail', {id: report.merchant_id})">{{ report.merchant.legal_name }}</a></td>
+        <td>{{ report.sum }}</td>
+        <td>
+          <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
+          {id:report.merchant_id, reportId:report.id})">Скачать</a>
+        </td>
+        <td>
+          <span class="badge" :class="statusClass(report.status)">{{ statusName(report.status) }}</span>
+        </td>
+        <td></td>
+      </tr>
+      </tbody>
+    </table>
+    <div>
+      <b-pagination
+          v-if="pager.pages !== 1"
+          v-model="currentPage"
+          :total-rows="pager.total"
+          :per-page="pager.pageSize"
+          :hide-goto-end-buttons="pager.pages < 10"
+          class="mt-3 float-right"
+      ></b-pagination>
+    </div>
+  </layout-main>
+</template>
+
+<script>
+
+import Services from '../../../../scripts/services/services';
+import withQuery from 'with-query';
+
+import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+import FInput from '../../../components/filter/f-input.vue';
+import FDate from '../../../components/filter/f-date.vue';
+
+const cleanFilter = {
+  id: '',
+  merchant_id: [],
+  status: [],
+  created_at: []
+};
+
+export default {
+  name: 'page-index',
+  components: {FDate, FMultiSelect, FInput},
+  props: [
+    'iBillingReports',
+    'iPager',
+    'iFilter',
+    'iCurrentPage',
+
+    'merchants',
+
+    'iPayRegisters',
+    'iPayRegistersPager',
+    'iPayRegistersCurrentPage'
+  ],
+  data() {
+    let filter = Object.assign({}, cleanFilter, this.iFilter);
+    filter.merchant_id = filter.merchant_id.map(value => parseInt(value));
+    filter.status = filter.status.map(status => parseInt(status));
+
+    return {
+      billingReports: this.iBillingReports,
+      pager: this.iPager,
+      currentPage: this.iCurrentPage || 1,
+
+      filter: filter,
+      selectedReports: [],
+      selectedReportsIds: [],
+      statuses: [],
+
+      payRegisters : this.iPayRegisters,
+      payRegistersPager : this.iPayRegistersPager,
+      payRegistersCurrentPage : this.iPayRegistersCurrentPage,
+
+    };
+  },
+  methods: {
+    pushRoute() {
+      history.pushState(null, null, location.origin + location.pathname + withQuery('', {
+        page: this.currentPage,
+        filter: this.filter,
+      }));
+    },
+    loadPage() {
+      Services.showLoader();
+
+      Services.net().get(this.route('merchant.settlements.page'), {
+        page: this.currentPage,
+        filter: this.filter,
+      }).then(data => {
+        this.billingReports = data.items;
+        if (data.pager) {
+          this.pager = data.pager
+        }
+        this.selectedReportsIds = [];
+        this.selectedReports = [];
+        this.pushRoute(this.currentPage);
+      }).finally(() => {
+        Services.hideLoader();
+      });
+
+      Services.net().get(this.route('merchant.settlements.payRegistry.page'), {
+        payRegistersPage: this.payRegistersPage,
+      }).then(data => {
+        this.payRegisters = data.items;
+        if (data.payRegistersPager) {
+          this.payRegistersPager = data.payRegistersPager
+        }
+        this.pushRoute(this.payRegistersCurrentPage);
+      }).finally(() => {
+        Services.hideLoader();
+      });
+
+    },
+    removeRegistry(registryId) {
+      Services.showLoader();
+      Services.net()
+          .delete(this.getRoute('merchant.settlements.deletePayRegistry', {payRegistryId: registryId}))
+          .catch(() => {
+        Services.hideLoader();
+      }).then(data => {
+        this.loadPage();
+      });
+    },
+    changeStatus() {
+      Services.showLoader();
+      Services.net().post(this.route('merchant.settlements.createPayRegistry'), {
+        ids: this.selectedReportsIds,
+      }).catch(() => {
+        Services.hideLoader();
+      }).then(data => {
+        this.loadPage();
+      });
+    },
+    clearFilter() {
+      this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
+      this.loadPage();
+    },
+    statusName(id) {
+      let status = this.statuses[id];
+      return status ? status.name : 'N/A';
+    },
+    statusClass(id) {
+      switch (id) {
+        case 0:
+          return 'badge-light';
+        case 1:
+          return 'badge-info';
+        case 2:
+          return 'badge-outline-success';
+        case 3:
+          return 'badge-danger';
+        case 4:
+          return 'badge-warning';
+        case 5:
+          return 'badge-success';
+
+      }
+    },
+    reportSelected(id) {
+      return this.selectedReportsIds.indexOf(id) !== -1;
+    },
+    selectReport(e, merchant) {
+      if (e.target.checked) {
+        this.selectedReportsIds.push(merchant.id);
+        this.selectedReports.push(merchant);
+      } else {
+        let index = this.selectedReportsIds.indexOf(merchant.id);
+        if (index !== -1) {
+          this.selectedReportsIds.splice(index, 1);
+          this.selectedReports.splice(index, 1);
+        }
+      }
+    },
+  },
+  watch: {
+    currentPage() {
+      this.loadPage();
+    }
+  },
+  computed: {
+    statusOptions() {
+      return Object.values(this.statuses).map(status => ({value: status.id, text: status.name}));
+    },
+    merchantOptions() {
+      return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+    },
+  },
+  created() {
+    this.statuses = [
+      {id:0, name: "модерация"},
+      {id:1, name: "просмотрен"},
+      {id:2, name: "подтвержден"},
+      {id:3, name: "отклонен"},
+      {id:4, name: "отправлен"},
+      {id:5, name: "оплачен"},
+    ];
+  }
+};
+</script>

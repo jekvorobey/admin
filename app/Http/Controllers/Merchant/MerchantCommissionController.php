@@ -15,7 +15,7 @@ class MerchantCommissionController extends Controller
 {
     public function index()
     {
-        $this->title = 'Взаиморасчёты';
+        $this->title = 'Комиссия';
 
         return $this->render('Merchant/Commission', [
             'iForm' => $this->getForm(),

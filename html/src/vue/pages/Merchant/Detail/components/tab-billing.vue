@@ -46,6 +46,7 @@
       <tr>
         <td>Период</td>
         <td>Статус</td>
+        <td>К выплате</td>
         <td>Документ</td>
         <td>Изменен</td>
         <td>Действия</td>
@@ -57,6 +58,7 @@
             {{ getStatus(report.status) }}
           </b-badge>
         </td>
+        <td>{{ report.sum }}</td>
         <td>
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
           {id:getMerchantId, reportId:report.id})">Скачать</a>
@@ -375,6 +377,7 @@ export default {
         {text:'подтвержден', badge:'success'},
         {text:'отклонен', badge:'danger'},
         {text:'отправлен', badge:'warning'},
+        {text:'оплачен', badge:'success'},
       ],
       newReportDates: {
         dateFrom:null,

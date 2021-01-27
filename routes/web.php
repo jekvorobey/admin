@@ -100,6 +100,18 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'MerchantCommissionController@save')->name('merchant.commission.save');
         });
 
+        Route::prefix('settlements')->group(function () {
+            Route::get('', 'MerchantSettlementsController@index')->name('merchant.settlements');
+            Route::get('page', 'MerchantSettlementsController@page')->name('merchant.settlements.page');
+
+            Route::get('pay-registry', 'MerchantSettlementsController@getPayRegistry')->name('merchant.settlements.payRegistry');
+            Route::get('pay-registry/page', 'MerchantSettlementsController@getPayRegistryPage')->name('merchant.settlements.payRegistry.page');
+
+            Route::get('pay-registry/download/{registryFileId}', 'MerchantSettlementsController@downloadPayRegistry')->name('merchant.settlements.downloadPayRegistry');
+            Route::post('pay', 'MerchantSettlementsController@createPayRegistry')->name('merchant.settlements.createPayRegistry');
+            Route::delete('pay-registry/{payRegistryId}', 'MerchantSettlementsController@deletePayRegistry')->name('merchant.settlements.deletePayRegistry');
+        });
+
         Route::prefix('operator')->group(function () {
             Route::prefix('{id}')->group(function () {
                 Route::get('', 'MerchantOperatorController@indexEdit')->name('merchant.operator.indexEdit');
