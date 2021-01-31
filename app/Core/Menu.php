@@ -278,8 +278,12 @@ class Menu
                         'route' => route('merchant.activeList'),
                     ],
                     [
-                        'title' => 'Взаиморасчёты',
+                        'title' => 'Комиссия',
                         'route' => route('merchant.commission'),
+                    ],
+                    [
+                        'title' => 'Взаиморасчёты',
+                        'route' => route('merchant.settlements'),
                     ],
                 ],
             ],

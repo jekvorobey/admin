@@ -82,7 +82,6 @@ class TabBillingController extends Controller
 
     /**
      * Обновить статус у биллингового отчета
-     * @param int $merchantId
      * @param int $reportId
      * @param Request $request
      * @param MerchantService $merchantService
@@ -92,7 +91,7 @@ class TabBillingController extends Controller
     {
         $status = $request->status;
 
-        $merchantService->billingReportStatusUpdate($merchantId, $reportId, $status);
+        $merchantService->billingReportStatusUpdate($reportId, $status);
         return response('', 204);
     }
 
