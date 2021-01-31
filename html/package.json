@@ -129,6 +129,7 @@
         "@fortawesome/fontawesome-svg-core": "^1.2.22",
         "@fortawesome/free-solid-svg-icons": "^5.10.2",
         "@fortawesome/vue-fontawesome": "^0.1.6",
+        "@trevoreyre/autocomplete-vue": "^2.2.0",
         "axios": "^0.19.0",
         "body-scroll-lock": "^2.6.1",
         "bootstrap": "^4.3.1",
