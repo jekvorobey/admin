@@ -22,6 +22,7 @@ use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Validation\Rule;
+use Pim\Services\CertificateService\CertificateService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -114,6 +115,7 @@ class CustomerDetailController extends Controller
             }
         }
 
+        $availableCertificateAmount = resolve(CertificateService::class)->spendPossibility($customer->id)->amount;
 
         return $this->render('Customer/Detail', [
             'iCustomer' => [
@@ -168,6 +170,7 @@ class CustomerDetailController extends Controller
             'order' => [
                 'count' => $orders->count(),
                 'price' => Helpers::getPriceFormat($orders->sum('price')),
+                'availableCertificateAmount' => $availableCertificateAmount
             ],
             'referralLevels' => $referralLevels,
             'options' => [
