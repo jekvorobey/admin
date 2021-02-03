@@ -180,6 +180,18 @@ Route::middleware('auth')->group(function () {
                 });
             });
 
+            Route::prefix('card')->group(function () {
+                // Route::get('', 'CertificateCardController@index')->name('certificate.card');
+                // Route::get('create', 'CertificateCardController@createPage')->name('certificate.card_add');
+                // Route::post('', 'CertificateCardController@create')->name('certificate.card_save');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('', 'CertificateCardController@editPage')->name('certificate.card_edit');
+                    // Route::delete('', 'CertificateCardController@delete')->name('certificate.card_delete');
+                    // Route::put('', 'CertificateCardController@update')->name('certificate.card_update');
+                });
+            });
+
             Route::prefix('reports')->group(function () {
                 Route::post('', 'CertificateReportController@create')->name('certificate.report_create');
                 Route::get('{id}', 'CertificateReportController@download')->name('certificate.report_download');

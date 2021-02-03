@@ -79,22 +79,23 @@
         <th>Статус</th>
         <th>Покупатель</th>
         <th>Получатель</th>
+        <th>Консоль</th>
       </tr>
       </thead>
 
       <tbody v-if="items.length">
-      <row-card v-for="item in items" :card="item" :key="'card' + item.id"/>
+        <row-card v-for="item in items" :card="item" :key="'card' + item.id"/>
       </tbody>
 
       <tbody v-else-if="loading">
       <tr>
-        <td colspan="5">Загрузка данных ...</td>
+        <td colspan="12">Загрузка данных ...</td>
       </tr>
       </tbody>
 
       <tbody v-else>
       <tr>
-        <td colspan="5">Пока нет купленных сертификатов</td>
+        <td colspan="12">Пока нет купленных сертификатов</td>
       </tr>
       </tbody>
     </table>
