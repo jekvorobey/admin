@@ -15,6 +15,14 @@
             <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
                v-for="orderPayTransaction in orderPayTransactions">
                 {{ orderPayTransaction.order_number }}
+            <a :href="redoLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+                <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации ПС'"></fa-icon>
+            </a>
+            <a :href="sendLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+                <fa-icon icon="paper-plane" class="float-right media-btn" v-b-popover.hover="'Отправить сертификат Получателю'"></fa-icon>
+            </a>
+            <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+                <fa-icon icon="pencil-alt" class="float-right media-btn" v-b-popover.hover="'Редактировать'"></fa-icon>
             </a>
         </td>
     </tr>
@@ -53,6 +61,15 @@ export default {
                     url: this.getRoute('customers.detail', {id: this.card.recipient_id})
                 }
                 : null
+        },
+        redoLink() {
+            return 'javascript:void(0)'
+        },
+        sendLink() {
+            return 'javascript:void(0)'
+        },
+        editLink() {
+            return this.getRoute('certificate.card_edit', {id: this.card.id})
         }
     }
 }
