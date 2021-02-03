@@ -28,7 +28,7 @@ class CertificateCardController extends Controller
     {
         $this->title = 'Редактирование ПС';
         $this->setActiveMenu();
-        return $this->render('Marketing/Certificate/Card/Edit', [
+        return $this->render('Marketing/Certificate/Main/Edit', [
             'card' => $this->service()->certificateQuery()->id($id)->certificates()->first() ?? [],
         ]);
     }

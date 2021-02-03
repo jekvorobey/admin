@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import EditForm from '../components/edit-form-card.vue';
-import Services from "../../../../../scripts/services/services.js";
+import EditForm from '../../components/edit-form-card.vue';
+import Services from "../../../../../../scripts/services/services.js";
 export default {
   components: {EditForm},
   props: ['card'],
@@ -25,7 +25,7 @@ export default {
   },
   computed: {
     backUrl() {
-      return this.getRoute('certificate.index') + '?tab=card&allTab=0'
+      return this.getRoute('certificate.index') + '?tab=cards&allTab=0'
     }
   }
 }
