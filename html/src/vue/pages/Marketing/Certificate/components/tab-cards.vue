@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="scroll-x">
     <br>
     <div v-if="showFilter" class="card">
       <div class="card-header">
@@ -79,6 +79,7 @@
         <th>Статус</th>
         <th>Покупатель</th>
         <th>Получатель</th>
+        <th>Оплаченные заказы</th>
       </tr>
       </thead>
 
@@ -165,3 +166,8 @@ export default {
   }
 }
 </script>
+<style>
+  .scroll-x {
+    overflow-x: auto;
+  }
+</style>

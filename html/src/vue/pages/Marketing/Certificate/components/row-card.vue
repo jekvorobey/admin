@@ -11,6 +11,12 @@
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
+        <td>
+            <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
+               v-for="orderPayTransaction in orderPayTransactions">
+                {{ orderPayTransaction.order_number }}
+            </a>
+        </td>
     </tr>
 </template>
 
@@ -25,6 +31,9 @@ export default {
     computed: {
         request() {
             return this.card.request || {}
+        },
+        orderPayTransactions() {
+            return this.card.orderPayTransactions || {}
         },
         customer() {
             const request = this.request

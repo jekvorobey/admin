@@ -137,6 +137,7 @@ class CertificateController extends Controller
         $query = $this->service()->certificateQuery()
             ->withRequestCustomer()
             ->withRecipient()
+            ->withOrderPayTransactions()
             ->addSort('id', 'desc')
             ->pageNumber($page, self::PER_PAGE);
 
