@@ -8,7 +8,7 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Pim\Dto\Certificate\CertificateNominalDto;
+use Pim\Dto\Certificate\CertificateRequestDto;
 use Pim\Services\CertificateService\CertificateService;
 
 class CertificateCardController extends Controller
@@ -29,8 +29,14 @@ class CertificateCardController extends Controller
         $this->title = 'Редактирование ПС';
         $this->setActiveMenu();
         return $this->render('Marketing/Certificate/Main/Edit', [
-            'card' => $this->service()->certificateQuery()->id($id)->certificates()->first() ?? [],
+            'card' => $this->service()->requestQuery()->id($id)->requests()->first() ?? [],
         ]);
+    }
+
+    public function update($id, Request $request): JsonResponse
+    {
+        $this->service()->updateRequest($id, new CertificateRequestDto($request->all()));
+        return response()->json(['status' => 'ok']);
     }
 
 }
