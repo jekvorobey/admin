@@ -23,6 +23,10 @@
                             <th>Сумма заказов накопительным итогом</th>
                             <td>{{ order.price }}</td>
                         </tr>
+                        <tr>
+                            <th>Счет ПС</th>
+                            <td>{{ order.availableCertificateAmount }}</td>
+                        </tr>
                         </tbody>
                     </table>
                 </b-card>
