@@ -46,7 +46,7 @@ class OrderDetailController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function detail(int $id)
+    public function detail(int $id, ShipmentService $shipmentService)
     {
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
@@ -56,11 +56,36 @@ class OrderDetailController extends Controller
         $this->loadDeliveryServices = true;
 
         $order = $this->getOrder($id);
+        $number=$order->number;
+        if ($order->delivery_type->id==1) {
+            $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
+                ->setFilter('number', 'like', $number.'%');
+            $restQuery->addFields(
+                ShipmentDto::entity(),
+                'id',
+                'status',
+                'number',
+                'created_at'
+            );
+            $shipments = $shipmentService->shipments($restQuery);
+            $countShipments=$shipments->count();
+
+            $countItems=0;
+            foreach($shipments as $item)
+            {
+                if ($item->status==6) {$countItems++;}
+            }
+
+            if ($countShipments==$countItems) {$barCodes=true;} else {$barCodes=false;}
+        }
+        else {$barCodes=true;}
+
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
             'kpis' => $order ? $this->getKpis($order) : [],
+            'barсodes' => $barCodes,
         ]);
     }
 

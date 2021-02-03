@@ -19,7 +19,7 @@
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="isAssembledStatus(shipment)">
+                            <b-dropdown-item-button v-if="isAssembledConsolidatedStatus(shipment)">
                                 <a :href="canGetBarcodes(shipment) ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : '#'"
                                    :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
                                    :title="getBarcodesTitle(shipment)">
@@ -187,6 +187,9 @@
             },
             isAssembledStatus(shipment) {
                 return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id;
+            },
+            isAssembledConsolidatedStatus(shipment, barcodes) {
+                return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id && barcodes==true;
             },
             getBarcodesTitle(shipment) {
                 return this.canGetBarcodes(shipment) ? '' :

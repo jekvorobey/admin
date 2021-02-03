@@ -15,11 +15,11 @@
                     <tab-main v-if="key === 'main'" :model.sync="order"/>
                     <tab-composition v-else-if="key === 'composition'" :model.sync="order"/>
                     <tab-deliveries v-else-if="key === 'deliveries'" :model.sync="order"/>
-                    <tab-shipments v-else-if="key === 'shipments'" :model.sync="order"/>
+                    <tab-shipments v-else-if="key === 'shipments'" :model.sync="order, barcodes"/>
                     <tab-customer-order-history v-else-if="key === 'customer_order_history'" :model.sync="order.customer_history"/>
                     <tab-logs v-else-if="key === 'logs'" :model.sync="order.history"/>
                     <template v-else>
-                        Заглушка
+                      Заглушка
                     </template>
                 </b-tab>
                 <template v-slot:tabs-end>
@@ -58,10 +58,12 @@
         props: {
             iOrder: {},
             kpis: {},
+            barcodes: {},
         },
         data() {
             return {
                 order: this.iOrder,
+                barcodes: this.barcodes,
             };
         },
 
