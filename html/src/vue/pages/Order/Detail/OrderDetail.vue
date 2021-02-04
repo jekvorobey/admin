@@ -58,12 +58,11 @@
         props: {
             iOrder: {},
             kpis: {},
-            barcodes: {},
         },
         data() {
             return {
                 order: this.iOrder,
-                barcodes: this.barcodes,
+                barcodes: this.iOrder.barcodes,
             };
         },
 
