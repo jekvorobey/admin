@@ -163,7 +163,7 @@ export default {
       })
     },
     getResultValue(result) {
-      return result.name
+      return result.name + ' (id:'+result.id+')'
     },
     handleSubmit(result) {
       this.newCommission.related_id = result.id;

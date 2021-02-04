@@ -46,7 +46,7 @@
       <tr>
         <td>Период</td>
         <td>Статус</td>
-        <td>К выплате</td>
+        <td>К выплате, р</td>
         <td>Документ</td>
         <td>Изменен</td>
         <td>Действия</td>
@@ -58,7 +58,7 @@
             {{ getStatus(report.status) }}
           </b-badge>
         </td>
-        <td>{{ report.sum }}</td>
+        <td>{{ report.sum.toLocaleString() }}</td>
         <td>
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
           {id:getMerchantId, reportId:report.id})">Скачать</a>

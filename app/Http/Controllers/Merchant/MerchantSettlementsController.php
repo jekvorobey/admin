@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
@@ -157,14 +158,14 @@ class MerchantSettlementsController extends Controller
     /**
      * Создать реестр выплат
      * @param Request $request
+     * @param RequestInitiator $user
      * @return Response
      */
-    public function createPayRegistry(Request $request): Response
+    public function createPayRegistry(Request $request, RequestInitiator $user): Response
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
-
-        $merchantService->createPayRegistry($request->ids);
+        $merchantService->createPayRegistry($request->ids, $user->userId());
         return response('', 204);
     }
 
