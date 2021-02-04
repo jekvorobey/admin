@@ -96,7 +96,7 @@ class OrderDetailController extends Controller
 
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 
-        $order['barcodes'] = false;
+        $order['barcodes'] = $barCodes;
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
