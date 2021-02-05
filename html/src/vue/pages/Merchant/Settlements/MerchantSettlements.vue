@@ -52,8 +52,8 @@
     <div class="btn-toolbar mb-3">
       <div class="input-group">
         <div class="input-group-append">
-          <button class="btn btn-outline-success" type="button" :disabled="!selectedReportsIds.length" @click="changeStatus">
-            <fa-icon icon="save"/> Отметить оплаченными
+          <button class="btn btn-outline-success" type="button" :disabled="!selectedReportsIds.length" @click="toPay">
+            <fa-icon icon="save"/> К оплате
           </button>
         </div>
       </div>
@@ -62,7 +62,10 @@
     <table class="table">
       <thead>
       <tr>
-        <th></th>
+        <th>
+          <input type="checkbox" id="select-all-page-reports" v-model="isSelectAllPageReports" @click="selectAllPageReports()">
+          <label for="select-all-page-reports" class="mb-0">Все</label>
+        </th>
         <th>ID</th>
         <th>Период</th>
         <th>Дата подтверждения</th>
@@ -78,6 +81,7 @@
         <td>
           <label>
             <input type="checkbox"
+                   class="report-select"
                    :checked="reportSelected(report.id)"
                    @change="e => selectReport(e, report)">
           </label>
@@ -86,7 +90,7 @@
         <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
         <td>{{ report.updated_at }}</td>
         <td><a :href="$store.getters.getRoute('merchant.detail', {id: report.merchant_id})">{{ report.merchant.legal_name }}</a></td>
-        <td>{{ report.sum }}</td>
+        <td>{{ report.sum.toLocaleString() }}</td>
         <td>
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
           {id:report.merchant_id, reportId:report.id})">Скачать</a>
@@ -161,9 +165,31 @@ export default {
       payRegistersPager : this.iPayRegistersPager,
       payRegistersCurrentPage : this.iPayRegistersCurrentPage,
 
+      isSelectAllPageReports: false,
+
     };
   },
   methods: {
+    selectAllPageReports() {
+      let checkboxes = document.getElementsByClassName('report-select');
+      for (let i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = this.isSelectAllPageReports ? '' : 'checked';
+
+      }
+      if (this.selectedReportsIds.length < this.billingReports.length) {
+        this.selectedReports = [];
+        this.selectedReportsIds = [];
+        for (let r = 0; r < this.billingReports.length; r++) {
+          this.selectedReportsIds.push(this.billingReports[r].id);
+          this.selectedReports.push(this.billingReports[r]);
+        }
+        this.isSelectAllPageReports = true;
+      } else {
+        this.selectedReports = [];
+        this.selectedReportsIds = [];
+        this.isSelectAllPageReports = false;
+      }
+    },
     pushRoute() {
       history.pushState(null, null, location.origin + location.pathname + withQuery('', {
         page: this.currentPage,
@@ -211,7 +237,7 @@ export default {
         this.loadPage();
       });
     },
-    changeStatus() {
+    toPay() {
       Services.showLoader();
       Services.net().post(this.route('merchant.settlements.createPayRegistry'), {
         ids: this.selectedReportsIds,
@@ -258,6 +284,7 @@ export default {
         if (index !== -1) {
           this.selectedReportsIds.splice(index, 1);
           this.selectedReports.splice(index, 1);
+          this.isSelectAllPageReports = false;
         }
       }
     },
