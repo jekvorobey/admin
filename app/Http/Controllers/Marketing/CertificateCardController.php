@@ -39,4 +39,10 @@ class CertificateCardController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    public function updateActivationPeriod($id, Request $request): JsonResponse
+    {
+        $this->service()->updateRequest($id, new CertificateRequestDto(['activation_period' => (int)$request->get('days')]));
+        return response()->json(['status' => 'ok']);
+    }
+
 }
