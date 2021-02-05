@@ -41,6 +41,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class OrderDetailController extends Controller
 {
+    // Готово к отгрузке id в базе
+    private const READY_TO_SHIP = 6;
+    private const CANCELED = 4;
+
     /**
      * @param  int  $id
      * @return mixed
@@ -57,7 +61,7 @@ class OrderDetailController extends Controller
 
         $order = $this->getOrder($id);
         $number=$order->number;
-        if ($order->delivery_type->id==1) {
+        if ($order->delivery_type->id == 1) {
             $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
                 ->setFilter('number', 'like', $number.'%');
             $restQuery->addFields(
@@ -68,24 +72,35 @@ class OrderDetailController extends Controller
                 'created_at'
             );
             $shipments = $shipmentService->shipments($restQuery);
-            $countShipments=$shipments->count();
+            $countShipments = $shipments->count();
 
-            $countItems=0;
+            $readyToShipItemsCount = 0;
+            $notCanceledShipmentItemsCount = 0;
+
             foreach($shipments as $item)
             {
-                if ($item->status==6) {$countItems++;}
+                if ($item->status == self::READY_TO_SHIP) {
+                    $readyToShipItemsCount += 1;
+                }
+
+                if ($item->status != self::CANCELED || $item->status == self::READY_TO_SHIP) {
+                    $notCanceledShipmentItemsCount += 1;
+                }
             }
 
-            if ($countShipments==$countItems) {$barCodes=true;} else {$barCodes=false;}
+            $barCodes = $readyToShipItemsCount == $notCanceledShipmentItemsCount;
         }
-        else {$barCodes=true;}
+        else {
+            $barCodes = true;
+        }
 
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
+
+        $order['barcodes'] = $barCodes;
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
             'kpis' => $order ? $this->getKpis($order) : [],
-            'barсodes' => $barCodes,
         ]);
     }
 

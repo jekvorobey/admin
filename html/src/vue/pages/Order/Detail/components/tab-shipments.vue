@@ -19,9 +19,10 @@
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="isAssembledConsolidatedStatus(shipment)">
-                                <a :href="canGetBarcodes(shipment) ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : '#'"
-                                   :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
+                            <b-dropdown-item-button :disabled="barcodes ? '' : 'disabled'">
+                                <a :href="barcodes ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : ''"
+
+                                   :class="barcodes ? 'text-dark' : 'text-danger'"
                                    :title="getBarcodesTitle(shipment)">
                                     <fa-icon icon="barcode"></fa-icon> Получить штрихкоды
                                 </a>
@@ -159,6 +160,7 @@
     export default {
         props: {
             model: {},
+          barcodes: ''
         },
         components: {
             ModalShipmentEdit,
@@ -188,8 +190,8 @@
             isAssembledStatus(shipment) {
                 return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id;
             },
-            isAssembledConsolidatedStatus(shipment, barcodes) {
-                return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id && barcodes==true;
+            isAssembledConsolidatedStatus(shipment) {
+                return shipment.status && shipment.status.id === this.shipmentStatuses.assembled.id;
             },
             getBarcodesTitle(shipment) {
                 return this.canGetBarcodes(shipment) ? '' :
@@ -260,6 +262,9 @@
 
                 return documents;
             },
+          preventEvent(event) {
+              event.preventDefault();
+          },
         },
         computed: {
             order: {
