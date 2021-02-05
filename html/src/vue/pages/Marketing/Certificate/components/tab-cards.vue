@@ -55,7 +55,6 @@
             <f-input class="col-2">
               ID Покупателя
             </f-input>
-
           </div>
         </form>
       </div>
@@ -80,6 +79,9 @@
         <th>Покупатель</th>
         <th>Получатель</th>
         <th>Оплаченные заказы</th>
+        <th>Сообщение</th>
+        <th>Email</th>
+        <th>Телефон</th>
         <th>Консоль</th>
       </tr>
       </thead>

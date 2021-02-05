@@ -11,6 +11,9 @@
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
+        <td>{{request.comment}}</td>
+        <td>{{request.to_email}}</td>
+        <td>{{request.to_phone}}</td>
         <td>
             <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
                v-for="orderPayTransaction in orderPayTransactions">
