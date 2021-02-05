@@ -168,6 +168,7 @@ Route::middleware('auth')->group(function () {
             Route::get('tabs/{tab}', 'CertificateController@getTab')->name('certificate.tab');
             Route::put('content', 'CertificateController@storeContent')->name('certificate.content_save');
 
+
             Route::prefix('designs')->group(function () {
                 Route::get('', 'CertificateDesignController@index')->name('certificate.designs');
                 Route::get('create', 'CertificateDesignController@createPage')->name('certificate.designs_add');
@@ -189,6 +190,14 @@ Route::middleware('auth')->group(function () {
                     Route::get('', 'CertificateNominalController@editPage')->name('certificate.nominals_edit');
                     Route::delete('', 'CertificateNominalController@delete')->name('certificate.nominals_delete');
                     Route::put('', 'CertificateNominalController@update')->name('certificate.nominals_update');
+                });
+            });
+
+            Route::prefix('card')->group(function () {
+                Route::prefix('{id}')->group(function () {
+                    Route::get('', 'CertificateCardController@editPage')->name('certificate.card_edit');
+                    Route::put('', 'CertificateCardController@update')->name('certificate.card_update');
+                    Route::post('activation-period', 'CertificateCardController@updateActivationPeriod')->name('certificate.update_activation_period');
                 });
             });
 

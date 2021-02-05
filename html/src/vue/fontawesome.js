@@ -48,6 +48,8 @@ import {
     faTruck,
     faTruckLoading,
     faUnlink,
+    faRedoAlt,
+    faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faTrashAlt, faTimes);
@@ -88,3 +90,5 @@ library.add(faBarcode);
 library.add(faSearch);
 library.add(faListUl);
 library.add(faFlag);
+library.add(faRedoAlt);
+library.add(faPaperPlane);
