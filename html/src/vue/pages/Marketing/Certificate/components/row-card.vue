@@ -11,14 +11,16 @@
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
-        <td>{{request.comment}}</td>
-        <td>{{request.to_email}}</td>
-        <td>{{request.to_phone}}</td>
         <td>
             <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
                v-for="orderPayTransaction in orderPayTransactions">
                 {{ orderPayTransaction.order_number }}
             </a>
+        </td>
+        <td>{{request.comment}}</td>
+        <td>{{request.to_email}}</td>
+        <td>{{request.to_phone}}</td>
+        <td>
             <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 300 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
