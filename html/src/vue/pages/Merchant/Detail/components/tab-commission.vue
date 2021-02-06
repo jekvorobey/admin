@@ -154,7 +154,7 @@ export default {
         if (input.length < 3) {
           return resolve([])
         }
-        Services.net().get(this.getRoute('search.products', {query: input}), {query: input}, {
+        Services.net().get(this.getRoute('search.products', {query: input}), {query: input, merchantId: this.id}, {
           query: input,
           merchantId: this.id
         }).then(data => {
