@@ -177,9 +177,6 @@
                 ],
             }
         },
-      beforeMount() {
-        console.log(this.barcodes);
-      },
         methods: {
             productPhoto(product) {
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
@@ -265,9 +262,6 @@
 
                 return documents;
             },
-          preventEvent(event) {
-              event.preventDefault();
-          },
         },
         computed: {
             order: {
