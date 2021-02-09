@@ -19,7 +19,7 @@
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button :disabled="barcodes ? '' : 'disabled'">
+                            <b-dropdown-item-button :disabled="!barcodes">
                                 <a :href="barcodes ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : ''"
 
                                    :class="barcodes ? 'text-dark' : 'text-danger'"
@@ -262,9 +262,6 @@
 
                 return documents;
             },
-          preventEvent(event) {
-              event.preventDefault();
-          },
         },
         computed: {
             order: {
