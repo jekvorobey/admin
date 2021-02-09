@@ -21,7 +21,7 @@
         <td>{{request.to_email}}</td>
         <td>{{request.to_phone}}</td>
         <td>
-            <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 300 || card.status == 301">
+            <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
             <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">
@@ -97,11 +97,10 @@ export default {
         updateActivationPeriod() {
             this.onClose()
             Services.showLoader();
-            this.request.activation_period += parseInt(this.activatePeriod)
             let form = {
-                days: this.request.activation_period
+                days: this.activatePeriod
             }
-            const id = this.card.request_id
+            const id = this.card.id
             Services.net().post(this.getRoute('certificate.update_activation_period', {id}), {}, form)
                 .then(() => {
                     Services.hideLoader();
