@@ -6,7 +6,11 @@
             <span v-else>-</span>
         </td>
         <td>{{ item.certificate_id }}</td>
-        <td>{{ typeText }}</td>
+        <td>
+            <a href="#" v-if="changes" @click.prevent="showDetails">{{ typeText }}</a>
+            <span v-else>{{ typeText }}</span>
+        </td>
+
         <td :style="balanceDiff.style">{{ balanceDiff.amount }}</td>
         <td><card-status :status="item.prev_status"/></td>
         <td><card-status :status="item.new_status"/></td>
@@ -19,17 +23,37 @@
             <a v-if="creator" :href="creator.link">{{ creator.name }}</a>
             <span v-else>-</span>
         </td>
-        <td>{{ item.created_at | datetime }}</td>
+        <td>{{ item.created_at | datetime }}
+            <ModalWindow v-if="showModal" type="wide" :close="closeDetails">
+                <div slot="header">Лог запись № {{ item.id}}</div>
+                <div slot="body">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="width: 30%">Ключ</th>
+                            <th style="width: 35%">Старое значение</th>
+                            <th style="width: 35%">Новое значение</th>
+                        </tr>
+                        <tr v-for="(change, key) in changes" :key="key">
+                            <td>{{ key }}</td>
+                            <td>{{ change.old }}</td>
+                            <td>{{ change.new }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </ModalWindow>
+        </td>
     </tr>
 </template>
 
 <script>
 import CardStatus from "./card-status.vue";
 import DatetimeFilter from "../mixins/DatetimeFilter.js";
+import ModalWindow from '../../../../components/controls/modal/modal.vue'
 
 export default {
     props: ['item'],
-    components: {CardStatus},
+    components: {CardStatus, ModalWindow},
     mixins: [DatetimeFilter],
     data() {
         return {
@@ -49,6 +73,9 @@ export default {
                 ? {'id': tr.order_id, 'number': tr.order_number || tr.order_id}
                 : null
         },
+        changes() {
+            return this.item.changes;
+        },
         typeText() {
             switch (this.transaction.type) {
                 case 1: return 'Активация';
@@ -56,6 +83,9 @@ export default {
                 case 3: return 'Оплата покупки';
                 case 4: return 'Возврат средств';
                 case 5: return 'Изменение статуса';
+                case 6: return 'Изменение текстов';
+                case 7: return 'Продление активации';
+                case 8: return 'Отправка уведомления';
                 default: return 'N/A';
             }
         },
