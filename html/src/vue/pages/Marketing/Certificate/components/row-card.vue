@@ -83,7 +83,7 @@ export default {
             return 'javascript:void(0)'
         },
         editLink() {
-            return this.getRoute('certificate.card_edit', {id: this.card.id})
+            return this.getRoute('certificate.card_edit', {id: this.request.id})
         }
     },
     data() {
