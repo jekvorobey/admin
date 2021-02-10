@@ -6,7 +6,7 @@
         <td>{{ card.price.toLocaleString() }}</td>
         <td>{{ card.balance.toLocaleString() }}</td>
         <td>{{ card.created_at | datetime }}</td>
-        <td>{{ request.notified_at | datetime }}</td>
+        <td>{{ card.notified_at | datetime }}</td>
         <td>{{ card.activated_at | datetime }}</td>
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
@@ -33,9 +33,18 @@
                     <button @click="updateActivationPeriod" class="btn btn-sm btn-success">Продлить</button>
                 </div>
             </b-popover>
-            <a :href="sendLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+
+            <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" :id="'btn-notify-' + card.id">
                 <fa-icon icon="paper-plane" class="float-right media-btn" v-b-popover.hover="'Отправить сертификат Получателю'"></fa-icon>
             </a>
+            <b-popover :show.sync="notificationPopoverShow" placement="auto" ref="popover" :target="'btn-notify-' + card.id">
+                <template slot="title">Отправить уведомление</template>
+                <div>
+                    <button @click="notificationPopoverShow = false" class="btn btn-sm btn-secondary">Отмена</button>
+                    <button @click="sendNotification" class="btn btn-sm btn-success">Отправить</button>
+                </div>
+            </b-popover>
+
             <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
                 <fa-icon icon="pencil-alt" class="float-right media-btn" v-b-popover.hover="'Редактировать'"></fa-icon>
             </a>
@@ -90,6 +99,7 @@ export default {
         return {
             activatePeriod: null,
             popoverShow: false,
+            notificationPopoverShow: false,
             input_count: 0
         };
     },
@@ -105,6 +115,17 @@ export default {
                 .then(() => {
                     Services.hideLoader();
                     Services.msg("Изменения сохранены")
+                    this.$emit('update')
+                })
+        },
+        sendNotification() {
+            this.notificationPopoverShow = false
+            Services.showLoader();
+            const id = this.card.id
+            Services.net().post(this.getRoute('certificate.send_notification', {id}), {})
+                .then(() => {
+                    Services.hideLoader();
+                    Services.msg("Уведомление отправлено")
                     this.$emit('update')
                 })
         },

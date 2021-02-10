@@ -87,7 +87,7 @@
       </thead>
 
       <tbody v-if="items.length">
-        <row-card v-for="item in items" :card="item" :key="'card' + item.id"/>
+        <row-card v-for="item in items" :card="item" :key="'card' + item.id" @update="loadPage"/>
       </tbody>
 
       <tbody v-else-if="loading">

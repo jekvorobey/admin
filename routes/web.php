@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
                     Route::get('', 'CertificateCardController@editPage')->name('certificate.card_edit');
                     Route::put('', 'CertificateCardController@update')->name('certificate.card_update');
                     Route::post('update/expired', 'CertificateCardController@updateExpireAt')->name('certificate.update_activation_period');
+                    Route::post('notify', 'CertificateCardController@sendNotification')->name('certificate.send_notification');
                 });
             });
 
