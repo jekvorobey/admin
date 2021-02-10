@@ -61,7 +61,7 @@ class OrderDetailController extends Controller
 
         $order = $this->getOrder($id);
         $number=$order->number;
-        if ($order->delivery_type->id == 1) {
+        if ($order->delivery_type->id == 1 || $order->delivery_type->id == 2) {
             $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
                 ->setFilter('number', 'like', $number.'%');
             $restQuery->addFields(
@@ -72,7 +72,6 @@ class OrderDetailController extends Controller
                 'created_at'
             );
             $shipments = $shipmentService->shipments($restQuery);
-            $countShipments = $shipments->count();
 
             $readyToShipItemsCount = 0;
             $notCanceledShipmentItemsCount = 0;
