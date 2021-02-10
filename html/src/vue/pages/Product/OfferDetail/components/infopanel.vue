@@ -37,6 +37,10 @@
                 <td colspan="2">{{ preparePrice(offerModel.price) }} руб.</td>
             </tr>
             <tr>
+              <th>Базовая цена</th>
+              <td colspan="2">{{ preparePrice(offerModel.cost) }} руб.</td>
+            </tr>
+            <tr>
                 <th>Текущий остаток</th>
                 <td colspan="2">{{ countedQty }} шт.</td>
             </tr>
