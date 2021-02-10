@@ -182,7 +182,6 @@
                 return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
             },
             downloadDocument(shipment, type) {
-              console.log(this.getRoute('orders.detail.shipments.documents.' + type, {id: this.order.id, shipmentId: shipment.id}));
                 window.open(this.getRoute('orders.detail.shipments.documents.' + type, {id: this.order.id, shipmentId: shipment.id}));
             },
             downloadDocumentTemplate(type) {
