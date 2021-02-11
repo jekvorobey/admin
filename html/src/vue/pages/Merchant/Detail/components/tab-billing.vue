@@ -183,6 +183,7 @@
         <th>Бонусы</th>
         <th>Цена на витрине, р</th>
         <th>Комиссия Оператора, %</th>
+        <th>Акционная Комиссия Оператора, %</th>
         <th>Вознаграждение Оператора, руб</th>
         <th>Выплата Мерчанту, руб</th>
       </tr>
@@ -221,8 +222,9 @@
         <td v-else>0</td>
         <td>{{ billingOperation.bonuses && billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
         <td>{{ billingOperation.price }}</td>
-        <td>{{ billingOperation.percent }}</td>
-        <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
+        <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
+        <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
+        <td>{{ billingOperation.action_commission ? parseInt(billingOperation.action_commission.toFixed()) :  parseInt(billingOperation.commission.toFixed()) }}</td>
         <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
       </tr>
       <tr v-if="!billingList.length">
