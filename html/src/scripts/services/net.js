@@ -90,6 +90,9 @@ export default class NetService {
                 if (!errorMsg && error.response.status === 413) {
                     errorMsg = "Слишком большой файл";
                 }
+                if (!errorMsg && error.response.status === 424) {
+                    errorMsg = "Нельзя удалить товарную группу, пока в ней содержатся товары";
+                }
             } else if (error.request) {
                 // The request was made but no response was received
                 // `error.request` is an instance of XMLHttpRequest in the browser and an instance of

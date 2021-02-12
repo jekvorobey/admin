@@ -99,7 +99,14 @@ class VariantGroupListController extends Controller
             'ids.*' => ['integer'],
         ]);
 
-        $this->variantGroupService->deleteVariantGroups($data['ids']);
+        try {
+            $this->variantGroupService->deleteVariantGroups($data['ids']);
+        } catch (\Exception $exception) {
+            if (strpos($exception->getMessage(), 'Cannot delete or update a parent row') !== false) {
+                return response('', 424);
+            }
+            throw $exception;
+        }
 
         return response('', 204);
     }

@@ -155,7 +155,7 @@ export default {
                 Services.showLoader();
                 Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {}, {
                     productIds: newProductIds,
-                }).then((data) => {
+                }, {}, true).then((data) => {
                     this.setData(data);
                     this.newProducts = {};
                     Services.msg("Добавление товара(ов) прошло успешно");
