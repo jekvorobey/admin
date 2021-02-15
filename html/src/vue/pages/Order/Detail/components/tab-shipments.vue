@@ -19,10 +19,10 @@
                             <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)" @click="markAsNonProblem(shipment)">
                                 Пометить как непроблемное
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button :disabled="!barcodes">
+                            <b-dropdown-item-button :disabled="!canGetBarcodes(shipment)">
                                 <a :href="barcodes ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : ''"
 
-                                   :class="barcodes ? 'text-dark' : 'text-danger'"
+                                   :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
                                    :title="getBarcodesTitle(shipment)">
                                     <fa-icon icon="barcode"></fa-icon> Получить штрихкоды
                                 </a>
@@ -198,7 +198,7 @@
                     'Получить штрихкоды Вы сможете когда будет создано задание на доставку у логистического оператора';
             },
             canGetBarcodes(shipment) {
-                return shipment.delivery_xml_id;
+                return shipment.delivery_xml_id && this.barcodes;
             },
             canGetCdekReceipt(shipment) {
                 return shipment.delivery_xml_id && shipment.delivery_service.id === this.deliveryServices.cdek.id;
