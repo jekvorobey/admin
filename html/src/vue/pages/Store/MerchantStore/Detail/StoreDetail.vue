@@ -43,6 +43,13 @@
                 >Домофон</v-input>
             </div>
             <div class="row">
+                <v-dadata
+                        :value="store.cdek_address.address_string"
+                        @onSelect="onStoreCDEKAddressAdd"
+                        class="col-lg-6 col-12"
+                >Ближайший адрес склада СДЭК</v-dadata>
+            </div>
+            <div class="row">
                 <v-input
                         type="textarea"
                         v-model="store.address.comment"
@@ -375,6 +382,25 @@
             this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
             this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
             this.store.address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
+        },
+        onStoreCDEKAddressAdd(suggestion) {
+            let address = suggestion.data;
+
+            this.store.cdek_address.address_string = suggestion.unrestricted_value;
+            this.store.cdek_address.country_code = address.country_iso_code;
+            this.store.cdek_address.post_index = address.postal_code;
+            this.store.cdek_address.region = address.region_with_type;
+            this.store.cdek_address.region_guid = address.region_fias_id;
+            this.store.cdek_address.area = address.area_with_type;
+            this.store.cdek_address.area_guid = address.area_fias_id;
+            this.store.cdek_address.city = address.settlement_with_type ? address.settlement_with_type :
+                address.city_with_type;
+            this.store.cdek_address.city_guid = address.settlement_with_type ? address.settlement_fias_id :
+                address.city_fias_id;
+            this.store.cdek_address.street = address.street_with_type;
+            this.store.cdek_address.house = address.house ? [address.house_type, address.house].join(' ') : '';
+            this.store.cdek_address.block = address.block ? [address.block_type, address.block].join(' ') : '';
+            this.store.cdek_address.flat = address.flat ? [address.flat_type, address.flat].join(' ') : '';
         },
         updateWorking(index) {
             this.changeStore.days[index] = this.store.storeWorking[index];
