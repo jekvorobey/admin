@@ -92,6 +92,7 @@ class PropertiesController extends Controller
             'categories' => 'present|json',
             'old_values' => 'nullable|json',
             'new_values' => 'nullable|json',
+            'measurement_unit' => 'nullable|string',
         ]);
 
         $propertyDto = $this->fulfillDto($data);
@@ -201,6 +202,7 @@ class PropertiesController extends Controller
         $dto->is_multiple = $data['is_multiple'];
         $dto->is_color = $data['is_color'];
         $dto->categoryPropertyLinks = $data['categories'] ?? json_encode([]);
+        $dto->measurement_unit = $data['measurement_unit'];
 
         if ($dto->type === PropertyDto::TYPE_DIRECTORY) {
             $dto->old_values = $data['old_values'] ?? json_encode([]);
