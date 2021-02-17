@@ -40,7 +40,6 @@ class MerchantStoreController extends Controller
         $restQuery->pageNumber($page, 20);
         
         $stores = $this->loadStores($restQuery, $storeService);
-        
         $pager = $storeService->storesCount($restQuery);
         
         return $this->render('Store/MerchantStore/List', [
@@ -81,6 +80,7 @@ class MerchantStoreController extends Controller
             'merchant_id' => 'integer|someone',
             'name' => 'string|someone',
             'address.city' => 'string|someone',
+            'cdek_address.city' => 'string|someone',
         ])->attributes();
     }
     
@@ -90,7 +90,7 @@ class MerchantStoreController extends Controller
     public function createPage(MerchantService $merchantService)
     {
         $this->title = 'Добавление склада мерчанта';
-        
+
         return $this->render('Store/MerchantStore/Create', [
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
@@ -105,7 +105,7 @@ class MerchantStoreController extends Controller
     {
         $this->title = 'Редактирование склада мерчанта';
         $this->loadDeliveryServices = true;
-        
+
         return $this->render('Store/MerchantStore/Detail', [
             'iStore' => $this->getStore($id, $storeService),
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
@@ -124,8 +124,11 @@ class MerchantStoreController extends Controller
         $restQuery->setFilter('id', $storeId)
             ->include('storePickupTime', 'storeWorking', 'storeContact');
         $stores = $this->loadStores($restQuery, $storeService);
-        
-        return $stores->first();
+        $store = $stores->first();
+        if (!$store['cdek_address']) {
+            $store['cdek_address'] = ['address_string'=>''];
+        }
+        return $store;
     }
     
     /**
@@ -145,26 +148,13 @@ class MerchantStoreController extends Controller
      */
     public function create(Request $request, StoreService $storeService): JsonResponse
     {
-        $validatedData = $request->validate([
+        $addressValidate = $this->_getAddressValidate();
+        $validate = array_merge([
             'merchant_id' => 'integer|required',
             'name' => 'string|required',
             'xml_id' => 'string|nullable',
-            'address.address_string' => 'string|required',
-            'address.country_code' => 'string|required',
-            'address.post_index' => 'string|required',
-            'address.region' => 'string|required',
-            'address.region_guid' => 'string|required',
-            'address.city' => 'string|required',
-            'address.city_guid' => 'string|required',
-            'address.street' => 'string|nullable',
-            'address.house' => 'string|nullable',
-            'address.block' => 'string|nullable',
-            'address.flat' => 'string|nullable',
-            'address.porch' => 'string|nullable',
-            'address.intercom' => 'string|nullable',
-            'address.floor' => 'string|nullable',
-            'address.comment' => 'string|nullable',
-        ]);
+        ], $addressValidate);
+        $validatedData = $request->validate($validate);
         
         $storeId = $storeService->createStore(new StoreDto($validatedData));
         
@@ -179,12 +169,24 @@ class MerchantStoreController extends Controller
      */
     public function update(int $id, Request $request, StoreService $storeService): JsonResponse
     {
-        $validatedData = $request->validate([
+        $addressValidate = $this->_getAddressValidate();
+        $validate = array_merge([
             'id' => 'integer|required',
             'merchant_id' => 'integer|required',
             'xml_id' => 'string|nullable',
             'active' => 'boolean',
             'name' => 'string|required',
+        ], $addressValidate);
+        $validatedData = $request->validate($validate);
+        
+        $validatedData['id'] = $id;
+        $storeService->updateStore($validatedData['id'], new StoreDto($validatedData));
+        return response()->json([]);
+    }
+
+    private function _getAddressValidate(): array
+    {
+        return [
             'address.address_string' => 'string|required',
             'address.country_code' => 'string|required',
             'address.post_index' => 'string|required',
@@ -200,15 +202,22 @@ class MerchantStoreController extends Controller
             'address.intercom' => 'string|nullable',
             'address.floor' => 'string|nullable',
             'address.comment' => 'string|nullable',
-        ]);
-        
-        $validatedData['id'] = $id;
-        
-        $storeService->updateStore($validatedData['id'], new StoreDto($validatedData));
-        
-        return response()->json([]);
+
+            'cdek_address.address_string' => 'string|nullable',
+            'cdek_address.country_code' => 'string|required_with:cdek_address.address_string',
+            'cdek_address.post_index' => 'string|nullable',
+            'cdek_address.region' => 'string|required_with:cdek_address.address_string',
+            'cdek_address.region_guid' => 'string|required_with:cdek_address.address_string',
+            'cdek_address.city' => 'string|required_with:cdek_address.address_string',
+            'cdek_address.city_guid' => 'string|required_with:cdek_address.address_string',
+            'cdek_address.street' => 'string|nullable',
+            'cdek_address.house' => 'string|nullable',
+            'cdek_address.block' => 'string|nullable',
+            'cdek_address.flat' => 'string|nullable',
+            'cdek_address.porch' => 'string|nullable',
+        ];
     }
-    
+
     /**
      * @param int $id
      * @param StoreService $storeService
@@ -365,13 +374,13 @@ class MerchantStoreController extends Controller
     protected function loadStores(RestQuery $restQuery, StoreService $storeService): Collection
     {
         $filter = $this->getFilter();
-    
         foreach ($filter as $key => $value) {
             if ($value) {
                 switch ($key) {
                     case 'name':
                         $restQuery->setFilter($key, 'like', "%{$value}%");
                         break;
+                    case 'cdek_address':
                     case 'address':
                         foreach ($value as $key1 => $value1) {
                             $field = $key . '->' . $key1;
@@ -393,7 +402,7 @@ class MerchantStoreController extends Controller
         }
         
         $stores = $storeService->stores($restQuery);
-        
+
         $merchantIds = $stores->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantIds);
         
