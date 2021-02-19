@@ -136,7 +136,8 @@ class PropertiesController extends Controller
                 'is_filterable',
                 'is_multiple',
                 'is_color',
-                'updated_at'
+                'updated_at',
+				'measurement_unit'
             )->setFilter('code', $code);
 
         /** @var PropertyDto $property */
