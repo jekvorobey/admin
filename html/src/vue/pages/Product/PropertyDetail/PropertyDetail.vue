@@ -100,7 +100,6 @@
                         Тип атрибута
                     </v-select>
                 </div>
-
                 <div class="col-6">
                     <div class="custom-control custom-checkbox">
                         <input v-model="productProperty.is_color"
@@ -137,6 +136,14 @@
                             Атрибут хранит несколько значений
                         </label>
                     </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4" v-if="productProperty.type === 'integer' || productProperty.type === 'double'">
+                <div class="col-6">
+                    <v-input v-model="productProperty.measurement_unit">
+                        Единица измерения
+                    </v-input>
                 </div>
             </div>
 
@@ -195,6 +202,7 @@ export default {
                 is_multiple: false,
                 is_color: false,
                 categories: [],
+                measurement_unit: '',
                 values: {
                     old: [],
                     new: [
@@ -222,6 +230,7 @@ export default {
                 this.productProperty.is_filterable = this.iProperty.is_filterable;
                 this.productProperty.is_multiple = this.iProperty.is_multiple;
                 this.productProperty.is_color = this.iProperty.is_color;
+                this.productProperty.measurement_unit = this.iProperty.measurement_unit;
 
                 this.iProperty.categoryPropertyLinks.forEach(link => {
                     this.productProperty.categories.push(link.category_id)
@@ -245,6 +254,7 @@ export default {
                 categories: JSON.stringify(this.productProperty.categories),
                 old_values: JSON.stringify(this.productProperty.values.old),
                 new_values: JSON.stringify(this.productProperty.values.new),
+                measurement_unit: this.productProperty.measurement_unit,
             }
             ).then(() => {
                 Services.msg('Информация о товарном атрибуте успешно сохранена')
