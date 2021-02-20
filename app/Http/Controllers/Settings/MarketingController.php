@@ -16,7 +16,7 @@ class MarketingController extends Controller
 {
     public function index()
     {
-        $this->title = 'Маркетинговые инструменты iBT.Studio';
+        $this->title = 'Маркетинговые инструменты iBT.ru';
         $marketingOptionService = resolve(MarketingOptionService::class);
         $customerOptionService = resolve(CustomerOptionService::class);
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);
@@ -28,6 +28,7 @@ class MarketingController extends Controller
             'roles_available_for_bonuses' => $marketingOptionService->get(MarketingOptionDto::KEY_ROLES_AVAILABLE_FOR_BONUSES, []),
             'order_activation_bonus_delay' => $marketingOptionService->get(MarketingOptionDto::KEY_ORDER_ACTIVATION_BONUS_DELAY, 0),
             'max_debit_percentage_for_product' => $marketingOptionService->get(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_PRODUCT, 0),
+            'max_debit_percentage_for_discount_product' => $marketingOptionService->get(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_DISCOUNT_PRODUCT, 0),
             'max_debit_percentage_for_order' => $marketingOptionService->get(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_ORDER, 0),
             'activation_bonus_name' => $activationBonus['name'] ?? null,
             'activation_bonus_value' => $activationBonus['value'] ?? null,
@@ -46,6 +47,7 @@ class MarketingController extends Controller
             'bonus_per_rubles' => 'numeric|gte:0',
             'order_activation_bonus_delay' => 'integer|gte:0',
             'max_debit_percentage_for_product' => 'integer|between:0,100',
+            'max_debit_percentage_for_discount_product' => 'integer|between:0,100',
             'max_debit_percentage_for_order' => 'integer|between:0,100',
             'roles_available_for_bonuses'  => 'array',
             'roles_available_for_bonuses.*'  => [
@@ -80,6 +82,9 @@ class MarketingController extends Controller
                     break;
                 case 'max_debit_percentage_for_product':
                     $marketingOptionService->put(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_PRODUCT, (int) $v);
+                    break;
+                case 'max_debit_percentage_for_discount_product':
+                    $marketingOptionService->put(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_DISCOUNT_PRODUCT, (int) $v);
                     break;
                 case 'max_debit_percentage_for_order':
                     $marketingOptionService->put(MarketingOptionDto::KEY_MAX_DEBIT_PERCENTAGE_FOR_ORDER, (int) $v);
