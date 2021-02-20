@@ -59,6 +59,15 @@
                          max="100"
                          @change="() => {updateInput('max_debit_percentage_for_product')}"
                 >Максимальный процент от единицы товара, который можно оплатить бонусами</v-input>
+
+                <v-input v-model="$v.form.max_debit_percentage_for_discount_product.$model" class="col-6"
+                         :error="errorMaxDebitPercentageForDiscountProduct"
+                         type="number"
+                         min="0"
+                         max="100"
+                         @change="() => {updateInput('max_debit_percentage_for_discount_product')}"
+                >Максимальный процент от заказа со скидкой, который можно оплатить бонусами</v-input>
+
             </div>
 
             <div class="mb-3 row">
@@ -169,6 +178,7 @@
             bonus_per_rubles: Number,
             order_activation_bonus_delay: Number,
             max_debit_percentage_for_product: Number,
+            max_debit_percentage_for_discount_product: Number,
             max_debit_percentage_for_order: Number,
             roles_available_for_bonuses: Array,
             activation_bonus: [Object, null],
@@ -189,6 +199,7 @@
                     roles_available_for_bonuses: this.roles_available_for_bonuses,
                     order_activation_bonus_delay: this.order_activation_bonus_delay,
                     max_debit_percentage_for_product: this.max_debit_percentage_for_product,
+                    max_debit_percentage_for_discount_product: this.max_debit_percentage_for_discount_product,
                     max_debit_percentage_for_order: this.max_debit_percentage_for_order,
                     bonus_expire_days_notify: this.bonus_expire_days_notify,
 
@@ -235,6 +246,7 @@
                     integer
                 },
                 max_debit_percentage_for_product: {required, minValue: minValue(0), maxValue: maxValue(100), integer},
+                max_debit_percentage_for_discount_product: {required, minValue: minValue(0), maxValue: maxValue(100), integer},
                 max_debit_percentage_for_order: {required, minValue: minValue(0), maxValue: maxValue(100), integer},
             }
         },
@@ -346,6 +358,14 @@
                     if (!this.$v.form.max_debit_percentage_for_product.integer) return "Введите целое число!";
                     if (!this.$v.form.max_debit_percentage_for_product.minValue) return "Значение должно быть ≥ 0";
                     if (!this.$v.form.max_debit_percentage_for_product.maxValue) return "Значение должно быть ≤ 100";
+                }
+            },
+            errorMaxDebitPercentageForDiscountProduct() {
+                if (this.$v.form.max_debit_percentage_for_discount_product.$dirty) {
+                    if (!this.$v.form.max_debit_percentage_for_discount_product.required) return "Обязательное поле!";
+                    if (!this.$v.form.max_debit_percentage_for_discount_product.integer) return "Введите целое число!";
+                    if (!this.$v.form.max_debit_percentage_for_discount_product.minValue) return "Значение должно быть ≥ 0";
+                    if (!this.$v.form.max_debit_percentage_for_discount_product.maxValue) return "Значение должно быть ≤ 100";
                 }
             },
             errorMaxDebitPercentageForOrder() {
