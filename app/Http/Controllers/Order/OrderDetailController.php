@@ -43,7 +43,7 @@ class OrderDetailController extends Controller
 {
     // Готово к отгрузке id в базе
     private const READY_TO_SHIP = 6;
-    private const CANCELED = 4;
+    private const ON_COMPLECT = 4;
 
     /**
      * @param  int  $id
@@ -61,37 +61,9 @@ class OrderDetailController extends Controller
 
         $order = $this->getOrder($id);
         $number=$order->number;
-        if ($order->delivery_type->id == 1 || $order->delivery_type->id == 2) {
-            $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
-                ->setFilter('number', 'like', $number.'%');
-            $restQuery->addFields(
-                ShipmentDto::entity(),
-                'id',
-                'status',
-                'number',
-                'created_at'
-            );
-            $shipments = $shipmentService->shipments($restQuery);
+        $partsNumber = explode('-', $number);
 
-            $readyToShipItemsCount = 0;
-            $notCanceledShipmentItemsCount = 0;
-
-            foreach($shipments as $item)
-            {
-                if ($item->status == self::READY_TO_SHIP) {
-                    $readyToShipItemsCount += 1;
-                }
-
-                if ($item->status != self::CANCELED || $item->status == self::READY_TO_SHIP) {
-                    $notCanceledShipmentItemsCount += 1;
-                }
-            }
-
-            $barCodes = $readyToShipItemsCount == $notCanceledShipmentItemsCount;
-        }
-        else {
-            $barCodes = true;
-        }
+        $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
 
         $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
 
@@ -101,6 +73,42 @@ class OrderDetailController extends Controller
             'iOrder' => $order,
             'kpis' => $order ? $this->getKpis($order) : [],
         ]);
+    }
+
+    /**
+     * Проверить отправления на сборку
+     * @param array $partsNumber
+     * @param ShipmentService $shipmentService
+     * @return bool
+     */
+    private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
+    {
+        $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
+            ->setFilter('number', 'like', $partsNumber[0].'%');
+        $restQuery->addFields(
+            ShipmentDto::entity(),
+            'id',
+            'status',
+            'number',
+            'created_at'
+        );
+        $shipments = $shipmentService->shipments($restQuery);
+
+        $readyToShipItemsCount = 0;
+        $notCanceledShipmentItemsCount = 0;
+
+        foreach($shipments as $item)
+        {
+            if ($item->status == self::READY_TO_SHIP) {
+                $readyToShipItemsCount += 1;
+            }
+
+            if ($item->status != self::ON_COMPLECT || $item->status == self::READY_TO_SHIP) {
+                $notCanceledShipmentItemsCount += 1;
+            }
+        }
+
+        return $readyToShipItemsCount == $notCanceledShipmentItemsCount;
     }
 
     /**
