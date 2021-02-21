@@ -126,6 +126,7 @@ class OfferDetailController extends Controller
             'status' => $offer->sale_status,
             'sale_at' => $offer->sale_at,
             'price' => $price ? $price->price : 0,
+            'cost' => $price ? $price->cost : 0,
             'created_at' => $offer->created_at,
             'stocks' => $stocks->map(function ($stock) {
                 return [
