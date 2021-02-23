@@ -360,9 +360,12 @@
             }
         },
         pickupTimeOptions(deliveryService) {
-            return this.pickupTimes.hasOwnProperty(deliveryService) ? Object.values(this.pickupTimes[deliveryService]).map(
-                pickupTime => ({value: pickupTime.id, text: pickupTime.name})
-            ) : [];
+            return this.pickupTimes.hasOwnProperty(deliveryService) ? Object.values(this.pickupTimes[deliveryService])
+                .reduce((acc, pickupTime, i) => {
+                    if (i === 0) acc.push({value: null, text: ''});
+                    acc.push({value: pickupTime.id, text: pickupTime.name});
+                    return acc;
+                }, []) : [];
         },
         onStoreAddressAdd(suggestion) {
             let address = suggestion.data;

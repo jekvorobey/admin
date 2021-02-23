@@ -9,7 +9,7 @@
                 <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
                     <div class="container-fluid px-3 pb-5">
                         <div v-if="back" class="mt-3">
-                            <span @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
+                            <span class="button-back" @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
                         </div>
                         <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
                         <slot></slot>
@@ -109,6 +109,12 @@
     .no-padding {
         padding: 0 !important;
         margin: 0 !important;
+    }
+    .button-back {
+        cursor: pointer;
+    }
+    .button-back:hover {
+        opacity: 80%;
     }
 
     /* ============= Loader ===================== */
