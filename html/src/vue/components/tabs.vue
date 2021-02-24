@@ -14,3 +14,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .nav-link {
+        cursor: pointer;
+    }
+</style>

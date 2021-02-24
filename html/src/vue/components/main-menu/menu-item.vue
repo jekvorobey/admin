@@ -87,6 +87,7 @@
     .menu-item {
         border-bottom: 1px solid #DFDFDF;
         min-height: 48px;
+        cursor: pointer;
     }
     .menu-item:first-of-type {
         border-top: 1px solid #DFDFDF;
@@ -100,6 +101,9 @@
     .heading {
         font-weight: bold;
         color: #343A40;
+    }
+    .heading:hover {
+        opacity: 80%;
     }
     .shevron {
         position: relative;
