@@ -14,6 +14,7 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Dto\CustomerPassportDto;
 use Greensight\Customer\Dto\CustomerPortfolioDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
@@ -84,6 +85,8 @@ class CustomerDetailController extends Controller
 
         $portfolios = $customerService->portfolios($customer->id);
 
+        $passport = $customerService->passport($customer->id);
+
         $socials = $userService->socials($customer->user_id);
 
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
@@ -145,6 +148,7 @@ class CustomerDetailController extends Controller
                 'bonus' => Helpers::getPriceFormat($customer->bonus, 0),
                 'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
                 'created_at' => $user->created_at,
+                'passport' => $passport,
                 'portfolios' => $portfolios->map(function (CustomerPortfolioDto $portfolio) {
                     return [
                         'link' => $portfolio->link,
@@ -219,6 +223,7 @@ class CustomerDetailController extends Controller
         $customer = request('customer');
         $user = request('user');
         $activities = request('activities');
+        $passport  = request('passport');
 
         // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
         if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
@@ -268,6 +273,9 @@ class CustomerDetailController extends Controller
         }
         if ($activities) {
             $customerService->putActivities($id, $activities);
+        }
+        if ($passport) {
+            $customerService->savePassport($id, new CustomerPassportDto($passport));
         }
         return response('', 204);
     }
