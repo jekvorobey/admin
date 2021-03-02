@@ -223,7 +223,7 @@ class CustomerDetailController extends Controller
         $customer = request('customer');
         $user = request('user');
         $activities = request('activities');
-        $passport  = request('passport');
+        $passport = request('customer.passport');
 
         // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
         if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
