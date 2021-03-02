@@ -190,13 +190,13 @@
                 </td>
             </tr>
             <tr>
-                <th>Дата рождения</th>
+                <th>Серия паспорта гражданина РФ</th>
                 <td>
-                    <input type="date" class="form-control form-control-sm" v-model="form.pdr_birthDate"/>
+                    <input class="form-control form-control-sm" v-model="form.pdr_docSerial"/>
                 </td>
             </tr>
             <tr>
-                <th>Серия и номер паспорта гражданина РФ (без пробелов)</th>
+                <th>Номер паспорта гражданина РФ</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.pdr_docNumber"/>
                 </td>
@@ -205,12 +205,6 @@
                 <th>Дата выдачи паспорта</th>
                 <td>
                     <input  type="date" class="form-control form-control-sm" v-model="form.pdr_docIssueDate"/>
-                </td>
-            </tr>
-            <tr>
-                <th>Адрес</th>
-                <td>
-                    <input class="form-control form-control-sm" v-model="form.pdr_address"/>
                 </td>
             </tr>
         </template>
@@ -252,13 +246,12 @@ export default {
                 legal_info_bank: this.model.legal_info_bank,
                 legal_info_bank_correspondent_account: this.model.legal_info_bank_correspondent_account,
                 referral_code: this.model.referral_code,
-                pdr_lastName: this.model.pdr_lastName,
-                pdr_firstName: this.model.pdr_firstName,
-                pdr_middleName: this.model.pdr_lastName,
-                pdr_birthDate: this.model.pdr_birthDate,
-                pdr_docNumber: this.model.pdr_docNumber,
-                pdr_docIssueDate: this.model.pdr_docIssueDate,
-                pdr_address: this.model.pdr_address,
+                pdr_lastName: this.model.passport.surname,
+                pdr_firstName: this.model.passport.name,
+                pdr_middleName: this.model.passport.patronymic,
+                pdr_docNumber: this.model.passport.no,
+                pdr_docSerial: this.model.passport.serial,
+                pdr_docIssueDate: this.model.passport.issue_date,
             }
         }
     },
@@ -286,13 +279,12 @@ export default {
                 (this.customer.legal_info_bik || '') !== (this.form.legal_info_bik || '') ||
                 (this.customer.legal_info_bank || '') !== (this.form.legal_info_bank || '') ||
                 (this.customer.legal_info_bank_correspondent_account || '') !== (this.form.legal_info_bank_correspondent_account || '') ||
-                (this.customer.pdr_lastName || '') !== (this.form.pdr_lastName || '') ||
-                (this.customer.pdr_firstName || '') !== (this.form.pdr_firstName || '') ||
-                (this.customer.pdr_middleName || '') !== (this.form.pdr_middleName || '') ||
-                (this.customer.pdr_birthDate || '') !== (this.form.pdr_birthDate || '') ||
-                (this.customer.pdr_docNumber || '') !== (this.form.pdr_docNumber || '') ||
-                (this.customer.pdr_docIssueDate || '') !== (this.form.pdr_docIssueDate || '') ||
-                (this.customer.pdr_address || '') !== (this.form.pdr_address || '') ||
+                (this.customer.passport.surname || '') !== (this.form.pdr_lastName || '') ||
+                (this.customer.passport.name || '') !== (this.form.pdr_firstName || '') ||
+                (this.customer.passport.patronymic || '') !== (this.form.pdr_middleName || '') ||
+                (this.customer.passport.no || '') !== (this.form.pdr_docNumber || '') ||
+                (this.customer.passport.serial || '') !== (this.form.pdr_docSerial || '') ||
+                (this.customer.passport.issue_date || '') !== (this.form.pdr_docIssueDate || '') ||
                 (this.customer.referral_code || '') !== (this.form.referral_code || '') ||
                 JSON.stringify(this.savedActivities) !== JSON.stringify(this.form.activities) ||
                 (this.customer.birthday || '') !== (this.form.birthday || '');
@@ -316,13 +308,14 @@ export default {
                     legal_info_bank: this.form.legal_info_bank,
                     legal_info_bank_correspondent_account: this.form.legal_info_bank_correspondent_account,
                     referral_code: this.form.referral_code,
-                    pdr_lastName: this.form.pdr_lastName,
-                    pdr_firstName: this.form.pdr_firstName,
-                    pdr_middleName: this.form.pdr_lastName,
-                    pdr_birthDate: this.form.pdr_birthDate,
-                    pdr_docNumber: this.form.pdr_docNumber,
-                    pdr_docIssueDate: this.form.pdr_docIssueDate,
-                    pdr_address: this.form.pdr_address,
+                    passport: {
+                        surname: this.form.pdr_lastName,
+                        name: this.form.pdr_firstName,
+                        patronymic: this.form.pdr_middleName,
+                        no: this.form.pdr_docNumber,
+                        serial: this.form.pdr_docSerial,
+                        issue_date: this.form.pdr_docIssueDate
+                    }
                 },
                 activities: this.form.activities,
             }).then(data => {
@@ -340,13 +333,12 @@ export default {
                 this.customer.legal_info_bank_correspondent_account = this.form.legal_info_bank_correspondent_account;
                 this.customer.referral_code = this.form.referral_code;
                 this.savedActivities = this.form.activities;
-                this.customer.pdr_lastName = this.form.pdr_lastName;
-                this.customer.pdr_firstName = this.form.pdr_firstName;
-                this.customer.pdr_middleName = this.form.pdr_lastName;
-                this.customer.pdr_birthDate = this.form.pdr_birthDate;
-                this.customer.pdr_docNumber = this.form.pdr_docNumber;
-                this.customer.pdr_docIssueDate = this.form.pdr_docIssueDate;
-                this.customer.pdr_address = this.form.pdr_address;
+                this.customer.passport.surname = this.form.pdr_lastName;
+                this.customer.passport.name = this.form.pdr_firstName;
+                this.customer.passport.patronymic = this.form.pdr_lastName;
+                this.customer.passport.serial = this.form.pdr_docSerial;
+                this.customer.passport.no = this.form.pdr_docNumber;
+                this.customer.passport.issue_date = this.form.pdr_docIssueDate;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
@@ -367,13 +359,12 @@ export default {
             this.form.legal_info_bank_correspondent_account = this.customer.legal_info_bank_correspondent_account;
             this.form.referral_code = this.customer.referral_code;
             this.form.activities = this.savedActivities;
-            this.form.pdr_lastName = this.customer.pdr_lastName;
-            this.form.pdr_firstName = this.customer.pdr_firstName;
-            this.form.pdr_middleName = this.customer.pdr_lastName;
-            this.form.pdr_birthDate = this.customer.pdr_birthDate;
-            this.form.pdr_docNumber = this.customer.pdr_docNumber;
-            this.form.pdr_docIssueDate = this.customer.pdr_docIssueDate;
-            this.form.pdr_address = this.customer.pdr_address;
+            this.form.pdr_lastName = this.customer.passport.surname;
+            this.form.pdr_firstName = this.customer.passport.name;
+            this.form.pdr_middleName = this.customer.passport.patronymic;
+            this.form.pdr_docSerial = this.customer.passport.serial;
+            this.form.pdr_docNumber = this.customer.passport.no;
+            this.form.pdr_docIssueDate = this.customer.passport.issue_date;
         },
         deleteCertificate(certificate_id, index) {
             Services.showLoader();
