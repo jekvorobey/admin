@@ -211,6 +211,8 @@ class CustomerDetailController extends Controller
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
 
+            'passport' => 'nullable|array',
+			
             'user' => 'nullable|array',
             'user.id' => 'numeric',
             'user.last_name' => 'nullable',
