@@ -211,6 +211,8 @@ class CustomerDetailController extends Controller
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
 
+            'passport' => 'nullable|array',
+			
             'user' => 'nullable|array',
             'user.id' => 'numeric',
             'user.last_name' => 'nullable',
@@ -223,7 +225,7 @@ class CustomerDetailController extends Controller
         $customer = request('customer');
         $user = request('user');
         $activities = request('activities');
-        $passport  = request('passport');
+        $passport = request('customer.passport');
 
         // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
         if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
