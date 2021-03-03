@@ -314,7 +314,8 @@ export default {
                         patronymic: this.form.pdr_middleName,
                         no: this.form.pdr_docNumber,
                         serial: this.form.pdr_docSerial,
-                        issue_date: this.form.pdr_docIssueDate
+                        issue_date: this.form.pdr_docIssueDate,
+                        address: this.form.legal_info_company_address
                     }
                 },
                 activities: this.form.activities,
@@ -339,6 +340,7 @@ export default {
                 this.customer.passport.serial = this.form.pdr_docSerial;
                 this.customer.passport.no = this.form.pdr_docNumber;
                 this.customer.passport.issue_date = this.form.pdr_docIssueDate;
+                this.customer.passport.address = this.form.legal_info_company_address;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
