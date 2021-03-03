@@ -118,7 +118,7 @@
             <b-row>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Трекинг-номер у ЛО:</span>
-                    {{delivery.xml_id ? delivery.xml_id : 'Заказ на доставку ещё не создан'}}
+                    {{ delivery.tracknumber ? delivery.tracknumber : (delivery.xml_id ? delivery.xml_id : 'Заказ на доставку ещё не создан')}}
                 </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Последняя ошибка при создании заказа на доставку у ЛО:</span>
