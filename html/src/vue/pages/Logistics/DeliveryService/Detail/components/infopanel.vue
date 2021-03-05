@@ -40,6 +40,13 @@
                 </v-input>
             </b-col>
         </b-row>
+        <b-row>
+            <b-col>
+                <v-input v-model="$v.form.pickup_priority.$model" :error="errorPickupPriority">
+                    Приоритет Самовывоз
+                </v-input>
+            </b-col>
+        </b-row>
     </b-card>
 </template>
 
@@ -73,6 +80,7 @@
                 registered_at: this.model.registered_at,
                 status: this.model.status,
                 priority: this.model.priority,
+                pickup_priority: this.model.pickup_priority,
             },
         };
     },
@@ -82,6 +90,7 @@
             registered_at: {required},
             status: {required},
             priority: {required, integer, minValue: minValue(1)},
+            pickup_priority: {required, integer, minValue: minValue(1)},
         }
     },
     methods: {
@@ -97,6 +106,7 @@
                 this.deliveryService.registered_at = this.form.registered_at;
                 this.deliveryService.status = this.form.status;
                 this.deliveryService.priority = this.form.priority;
+                this.deliveryService.pickup_priority = this.form.pickup_priority;
 
                 Services.msg("Изменения сохранены");
             }).finally(data => {
@@ -108,6 +118,7 @@
             this.form.registered_at = this.deliveryService.registered_at;
             this.form.status = this.deliveryService.status;
             this.form.priority = this.deliveryService.priority;
+            this.form.pickup_priority = this.deliveryService.pickup_priority;
         },
     },
     computed: {
@@ -141,6 +152,16 @@
                     return "Обязательное поле!";
                 }
                 if (!this.$v.form.priority.integer || !this.$v.form.priority.minValue) {
+                    return "Только целое число больше 0";
+                }
+            }
+        },
+        errorPickupPriority() {
+            if (this.$v.form.pickup_priority.$dirty) {
+                if (!this.$v.form.pickup_priority.required) {
+                    return "Обязательное поле!";
+                }
+                if (!this.$v.form.pickup_priority.integer || !this.$v.form.pickup_priority.minValue) {
                     return "Только целое число больше 0";
                 }
             }
