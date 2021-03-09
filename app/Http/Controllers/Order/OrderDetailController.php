@@ -90,6 +90,7 @@ class OrderDetailController extends Controller
             'id',
             'status',
             'number',
+            'is_canceled',
             'created_at'
         );
         $shipments = $shipmentService->shipments($restQuery);
@@ -99,13 +100,14 @@ class OrderDetailController extends Controller
 
         foreach($shipments as $item)
         {
+            if ($item->is_canceled)
+                continue;
+
             if ($item->status == self::READY_TO_SHIP) {
                 $readyToShipItemsCount += 1;
             }
 
-            if ($item->status != self::ON_COMPLECT || $item->status == self::READY_TO_SHIP) {
-                $notCanceledShipmentItemsCount += 1;
-            }
+            $notCanceledShipmentItemsCount += 1;
         }
 
         return $readyToShipItemsCount == $notCanceledShipmentItemsCount;
@@ -374,7 +376,7 @@ class OrderDetailController extends Controller
                 $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems()->keyBy('id');
-                $shipment['delivery_xml_id'] = $delivery->xml_id;
+                $shipment['delivery_xml_id'] = !$shipment->is_canceled ? $delivery->xml_id : null;
                 $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;
                 $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;
                 $shipment['delivery_pdd'] = $delivery->pdd;

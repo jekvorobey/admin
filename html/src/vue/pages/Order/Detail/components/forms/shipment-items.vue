@@ -11,7 +11,7 @@
                             @click="changeShipmentStatus(shipmentStatuses.assembled.id)">
                         Собрано
                     </button>
-                    <template v-if="!isProblem && isAssemblingStatus && !isAssembled">
+                    <template v-if="!isProblem && !isCancel && isAssemblingStatus && !isAssembled">
                         <button class="btn btn-primary" @click="addShipmentPackage(shipment)">
                             + Добавить коробку
                         </button>
