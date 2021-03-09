@@ -51,6 +51,7 @@ class DeliveryServiceDetailController extends Controller
                 'registered_at' => $deliveryService->registered_at ? $deliveryService->registered_at->format(AbstractDto::DATE_FORMAT) : '',
                 'status' => $deliveryService->status,
                 'priority' => $deliveryService->priority,
+                'pickup_priority' => $deliveryService->pickup_priority,
                 //Вкладка "Настройки"
                 'do_consolidation' => $deliveryService->do_consolidation,
                 'do_deconsolidation' => $deliveryService->do_deconsolidation,
@@ -89,6 +90,7 @@ class DeliveryServiceDetailController extends Controller
             'registered_at' => ['required', 'date'],
             'status' => ['required', Rule::in(array_keys(DeliveryServiceStatus::allStatuses()))],
             'priority' => ['required', 'integer', 'min:1'],
+            'pickup_priority' => ['required', 'integer', 'min:1'],
         ]);
 
         $deliveryService = new DeliveryService();
@@ -96,6 +98,7 @@ class DeliveryServiceDetailController extends Controller
         $deliveryService->registered_at = $data['registered_at'];
         $deliveryService->status = $data['status'];
         $deliveryService->priority = $data['priority'];
+        $deliveryService->pickup_priority = $data['pickup_priority'];
 
         $listsService->updateDeliveryService($id, $deliveryService);
 

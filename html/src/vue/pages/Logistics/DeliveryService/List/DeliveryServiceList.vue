@@ -147,6 +147,15 @@ export default {
                     isShown: true,
                     isAlwaysShown: false,
                 },
+                {
+                    name: 'Приоритет Самовывоз',
+                    code: 'pickup_priority',
+                    value: function(deliveryService) {
+                        return deliveryService.pickup_priority;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
             ],
         };
     },
