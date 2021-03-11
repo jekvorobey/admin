@@ -1,0 +1,4 @@
+include:
+    - project: ibt.studio/ci-templates
+      file: /AutoDevops.gitlab-ci.yml
+
