@@ -35,7 +35,15 @@
         </tr>
         <tr>
             <th>Дата рождения</th>
-            <td><input type="date" v-model="form.birthday" class="form-control form-control-sm"/></td>
+            <td>
+                <date-picker
+                    class="w-100"
+                    v-model="form.birthday"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    input-class="form-control form-control-sm"
+                />
+            </td>
         </tr>
         <tr>
             <th>Возраст</th>
@@ -210,7 +218,13 @@
             <tr>
                 <th>Дата выдачи паспорта</th>
                 <td>
-                    <input  type="date" class="form-control form-control-sm" v-model="form.pdr_docIssueDate"/>
+                    <date-picker
+                        class="w-100"
+                        v-model="form.pdr_docIssueDate"
+                        format="DD.MM.YYYY"
+                        value-type="DD.MM.YYYY"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
             </tr>
         </template>
@@ -223,10 +237,12 @@ import Services from '../../../../../scripts/services/services.js';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
 export default {
     name: 'tab-main',
-    components: {FileInput, VDeleteButton},
+    components: {DatePicker, FileInput, VDeleteButton},
     props: ['model', 'order'],
     data() {
         return {
@@ -432,5 +448,7 @@ export default {
 </script>
 
 <style scoped>
+.w-100 {
 
+}
 </style>
