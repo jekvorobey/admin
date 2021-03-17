@@ -35,7 +35,15 @@
         </tr>
         <tr>
             <th>Дата рождения</th>
-            <td><input type="date" v-model="form.birthday" class="form-control form-control-sm"/></td>
+            <td>
+                <date-picker
+                    class="w-100"
+                    v-model="form.birthday"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    input-class="form-control form-control-sm"
+                />
+            </td>
         </tr>
         <tr>
             <th>Возраст</th>
@@ -162,6 +170,12 @@
                 </td>
             </tr>
             <tr>
+                <th>Город, в котором находится отделение банка</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_bank_city"/>
+                </td>
+            </tr>
+            <tr>
                 <th>Корреспондентский счет банка</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.legal_info_bank_correspondent_account"/>
@@ -204,7 +218,13 @@
             <tr>
                 <th>Дата выдачи паспорта</th>
                 <td>
-                    <input  type="date" class="form-control form-control-sm" v-model="form.pdr_docIssueDate"/>
+                    <date-picker
+                        class="w-100"
+                        v-model="form.pdr_docIssueDate"
+                        format="DD.MM.YYYY"
+                        value-type="DD.MM.YYYY"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
             </tr>
         </template>
@@ -217,10 +237,12 @@ import Services from '../../../../../scripts/services/services.js';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
+import DatePicker from 'vue2-datepicker';
+import 'vue2-datepicker/index.css';
 
 export default {
     name: 'tab-main',
-    components: {FileInput, VDeleteButton},
+    components: {DatePicker, FileInput, VDeleteButton},
     props: ['model', 'order'],
     data() {
         return {
@@ -245,6 +267,7 @@ export default {
                 legal_info_bik: this.model.legal_info_bik,
                 legal_info_bank: this.model.legal_info_bank,
                 legal_info_bank_correspondent_account: this.model.legal_info_bank_correspondent_account,
+                legal_info_bank_city: this.model.legal_info_bank_city,
                 referral_code: this.model.referral_code,
                 pdr_lastName: this.model.passport.surname,
                 pdr_firstName: this.model.passport.name,
@@ -279,6 +302,7 @@ export default {
                 (this.customer.legal_info_bik || '') !== (this.form.legal_info_bik || '') ||
                 (this.customer.legal_info_bank || '') !== (this.form.legal_info_bank || '') ||
                 (this.customer.legal_info_bank_correspondent_account || '') !== (this.form.legal_info_bank_correspondent_account || '') ||
+                (this.customer.legal_info_bank_city || '') !== (this.form.legal_info_bank_city || '') ||
                 (this.customer.passport.surname || '') !== (this.form.pdr_lastName || '') ||
                 (this.customer.passport.name || '') !== (this.form.pdr_firstName || '') ||
                 (this.customer.passport.patronymic || '') !== (this.form.pdr_middleName || '') ||
@@ -307,6 +331,7 @@ export default {
                     legal_info_bik: this.form.legal_info_bik,
                     legal_info_bank: this.form.legal_info_bank,
                     legal_info_bank_correspondent_account: this.form.legal_info_bank_correspondent_account,
+                    legal_info_bank_city: this.form.legal_info_bank_city,
                     referral_code: this.form.referral_code,
                     passport: {
                         surname: this.form.pdr_lastName,
@@ -314,7 +339,8 @@ export default {
                         patronymic: this.form.pdr_middleName,
                         no: this.form.pdr_docNumber,
                         serial: this.form.pdr_docSerial,
-                        issue_date: this.form.pdr_docIssueDate
+                        issue_date: this.form.pdr_docIssueDate,
+                        address: this.form.legal_info_company_address
                     }
                 },
                 activities: this.form.activities,
@@ -331,6 +357,7 @@ export default {
                 this.customer.legal_info_bik = this.form.legal_info_bik;
                 this.customer.legal_info_bank = this.form.legal_info_bank;
                 this.customer.legal_info_bank_correspondent_account = this.form.legal_info_bank_correspondent_account;
+                this.customer.legal_info_bank_city = this.form.legal_info_bank_city;
                 this.customer.referral_code = this.form.referral_code;
                 this.savedActivities = this.form.activities;
                 this.customer.passport.surname = this.form.pdr_lastName;
@@ -339,6 +366,7 @@ export default {
                 this.customer.passport.serial = this.form.pdr_docSerial;
                 this.customer.passport.no = this.form.pdr_docNumber;
                 this.customer.passport.issue_date = this.form.pdr_docIssueDate;
+                this.customer.passport.address = this.form.legal_info_company_address;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
@@ -357,6 +385,7 @@ export default {
             this.form.legal_info_bik = this.customer.legal_info_bik;
             this.form.legal_info_bank = this.customer.legal_info_bank;
             this.form.legal_info_bank_correspondent_account = this.customer.legal_info_bank_correspondent_account;
+            this.form.legal_info_bank_city = this.customer.legal_info_bank_city;
             this.form.referral_code = this.customer.referral_code;
             this.form.activities = this.savedActivities;
             this.form.pdr_lastName = this.customer.passport.surname;
@@ -419,5 +448,7 @@ export default {
 </script>
 
 <style scoped>
+.w-100 {
 
+}
 </style>
