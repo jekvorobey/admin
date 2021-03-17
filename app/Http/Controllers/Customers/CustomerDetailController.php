@@ -141,6 +141,7 @@ class CustomerDetailController extends Controller
                 'legal_info_payment_account' => $customer->legal_info_payment_account,
                 'legal_info_bik' => $customer->legal_info_bik,
                 'legal_info_bank' => $customer->legal_info_bank,
+                'legal_info_bank_city' => $customer->legal_info_bank_city,
                 'legal_info_bank_correspondent_account' => $customer->legal_info_bank_correspondent_account,
                 'referral_code' => $customer->referral_code,
                 'referral_bill' => $customer->referral_bill,
