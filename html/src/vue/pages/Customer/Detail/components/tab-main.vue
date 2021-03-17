@@ -172,7 +172,7 @@
             <tr>
                 <th>Город, в котором находится отделение банка</th>
                 <td>
-                    <input class="form-control form-control-sm" v-model="form.payment_city"/>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_bank_city"/>
                 </td>
             </tr>
             <tr>
@@ -267,7 +267,7 @@ export default {
                 legal_info_bik: this.model.legal_info_bik,
                 legal_info_bank: this.model.legal_info_bank,
                 legal_info_bank_correspondent_account: this.model.legal_info_bank_correspondent_account,
-                payment_city: this.model.payment_city,
+                legal_info_bank_city: this.model.legal_info_bank_city,
                 referral_code: this.model.referral_code,
                 pdr_lastName: this.model.passport.surname,
                 pdr_firstName: this.model.passport.name,
@@ -302,7 +302,7 @@ export default {
                 (this.customer.legal_info_bik || '') !== (this.form.legal_info_bik || '') ||
                 (this.customer.legal_info_bank || '') !== (this.form.legal_info_bank || '') ||
                 (this.customer.legal_info_bank_correspondent_account || '') !== (this.form.legal_info_bank_correspondent_account || '') ||
-                (this.customer.payment_city || '') !== (this.form.payment_city || '') ||
+                (this.customer.legal_info_bank_city || '') !== (this.form.legal_info_bank_city || '') ||
                 (this.customer.passport.surname || '') !== (this.form.pdr_lastName || '') ||
                 (this.customer.passport.name || '') !== (this.form.pdr_firstName || '') ||
                 (this.customer.passport.patronymic || '') !== (this.form.pdr_middleName || '') ||
@@ -331,7 +331,7 @@ export default {
                     legal_info_bik: this.form.legal_info_bik,
                     legal_info_bank: this.form.legal_info_bank,
                     legal_info_bank_correspondent_account: this.form.legal_info_bank_correspondent_account,
-                    payment_city: this.form.payment_city,
+                    legal_info_bank_city: this.form.legal_info_bank_city,
                     referral_code: this.form.referral_code,
                     passport: {
                         surname: this.form.pdr_lastName,
@@ -357,7 +357,7 @@ export default {
                 this.customer.legal_info_bik = this.form.legal_info_bik;
                 this.customer.legal_info_bank = this.form.legal_info_bank;
                 this.customer.legal_info_bank_correspondent_account = this.form.legal_info_bank_correspondent_account;
-                this.customer.payment_city = this.form.payment_city;
+                this.customer.legal_info_bank_city = this.form.legal_info_bank_city;
                 this.customer.referral_code = this.form.referral_code;
                 this.savedActivities = this.form.activities;
                 this.customer.passport.surname = this.form.pdr_lastName;
@@ -385,7 +385,7 @@ export default {
             this.form.legal_info_bik = this.customer.legal_info_bik;
             this.form.legal_info_bank = this.customer.legal_info_bank;
             this.form.legal_info_bank_correspondent_account = this.customer.legal_info_bank_correspondent_account;
-            this.form.payment_city = this.customer.payment_city;
+            this.form.legal_info_bank_city = this.customer.legal_info_bank_city;
             this.form.referral_code = this.customer.referral_code;
             this.form.activities = this.savedActivities;
             this.form.pdr_lastName = this.customer.passport.surname;
