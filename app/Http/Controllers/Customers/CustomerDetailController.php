@@ -317,9 +317,9 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function dial(int $id, CustomerService $customerService, RequestInitiator $requestInitiator)
+    public function dial(int $id, string $provider, CustomerService $customerService, RequestInitiator $requestInitiator)
     {
-        $customerService->dial($id, $requestInitiator->userId());
+        $customerService->dial($id, $requestInitiator->userId(), $provider);
 
         return response()->json([
             'status' => 'ok'
