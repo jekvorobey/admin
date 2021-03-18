@@ -26,6 +26,7 @@ use Illuminate\Validation\Rule;
 use Pim\Services\CertificateService\CertificateService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
 
 class CustomerDetailController extends Controller
 {
@@ -317,9 +318,9 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function dial(int $id, string $provider, CustomerService $customerService, RequestInitiator $requestInitiator)
+    public function dial(int $id, Request $request, CustomerService $customerService, RequestInitiator $requestInitiator)
     {
-        $customerService->dial($id, $requestInitiator->userId(), $provider);
+        $customerService->dial($id, $requestInitiator->userId(), $request->input('provider'));
 
         return response()->json([
             'status' => 'ok'

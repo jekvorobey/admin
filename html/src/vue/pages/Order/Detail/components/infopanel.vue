@@ -200,7 +200,7 @@
         },
         makeDial() {
             Services.showLoader();
-            Services.net().post(this.getRoute('customers.detail.dial', {id: this.order.customer.id, provider: 'check_order'}))
+            Services.net().post(this.getRoute('customers.detail.dial', {id: this.order.customer.id}), null, {provider: 'check_order'})
                 .then(data => {
                     Services.msg("Запрос на звонок отправлен");
                 }).finally(data => {
