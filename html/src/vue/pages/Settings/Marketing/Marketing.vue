@@ -70,7 +70,7 @@
 
             </div>
 
-            <div class="mb-3 row">
+            <div class="mb-3 row" style="display: none;">
                 <v-input v-model="$v.form.max_debit_percentage_for_order.$model" class="col-6"
                          :error="errorMaxDebitPercentageForOrder"
                          type="number"
