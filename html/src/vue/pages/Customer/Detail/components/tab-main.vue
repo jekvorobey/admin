@@ -140,12 +140,6 @@
                 </td>
             </tr>
             <tr>
-                <th>Юридический адрес</th>
-                <td>
-                    <input class="form-control form-control-sm" v-model="form.legal_info_company_address"/>
-                </td>
-            </tr>
-            <tr>
                 <th>ИНН</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.legal_info_inn"/>
@@ -225,6 +219,12 @@
                         value-type="DD.MM.YYYY"
                         input-class="form-control form-control-sm"
                     />
+                </td>
+            </tr>
+            <tr>
+                <th>Адрес регистрации</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_company_address"/>
                 </td>
             </tr>
         </template>
