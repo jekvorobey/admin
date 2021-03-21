@@ -224,10 +224,9 @@
         <td>{{ billingOperation.price }}</td>
         <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
         <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
-        <td>{{ billingOperation.action_percent ? parseInt(billingOperation.action_commission.toFixed()) :  parseInt(billingOperation.commission.toFixed()) }}</td>
-        <td v-if="billingOperation.action_percent">{{ parseInt((billingOperation.price - billingOperation.action_commission).toFixed()) }}</td>
-        <td v-else>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
-      </tr
+        <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
+        <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
+      </tr>
       <tr v-if="!billingList.length">
         <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
       </tr>
