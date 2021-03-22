@@ -252,7 +252,8 @@
 
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.save', {id: this.order.id, deliveryId: this.delivery.id}), {}, this.form).then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     this.$bvModal.hide('modal-delivery-edit');
 
                     Services.msg("Изменения сохранены");

@@ -93,7 +93,8 @@
                     {},
                     {qty: this.form['qty']})
                 .then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     this.$emit('onSave');
                     Services.msg("Изменения сохранены");
                 }).finally(() => {

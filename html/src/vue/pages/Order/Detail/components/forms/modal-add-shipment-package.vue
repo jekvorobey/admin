@@ -62,7 +62,8 @@
 
                 Services.showLoader();
                 Services.net().post(this.getRoute('orders.detail.shipments.addShipmentPackage', {id: this.order.id, shipmentId: this.shipment.id}), {}, this.form).then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     this.$bvModal.hide('modal-add-shipment-package');
 
                     Services.msg("Изменения сохранены");

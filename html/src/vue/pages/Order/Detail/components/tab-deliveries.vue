@@ -191,7 +191,8 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.saveDeliveryOrder', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
                     if (data.order) {
-                        this.order = data.order;
+                        this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                         Services.msg("Изменения сохранены");
                     } else {
                         Services.msg(errorMessage, 'danger');
@@ -211,7 +212,8 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.cancelDeliveryOrder', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
                     if (data.order) {
-                        this.order = data.order;
+                        this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                         Services.msg("Изменения сохранены");
                     } else {
                         Services.msg(errorMessage, 'danger');
@@ -231,7 +233,8 @@
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.deliveries.cancel', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
                     if (data.order) {
-                        this.order = data.order;
+                        this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                         Services.msg("Изменения сохранены");
                     } else {
                         Services.msg(errorMessage, 'danger');

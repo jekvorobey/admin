@@ -167,7 +167,8 @@
             Services.showLoader();
             Services.net().put(this.getRoute('orders.pay', {id: this.order.id})).then(data => {
                 if (data.order) {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     Services.msg("Изменения сохранены");
                 } else {
                     Services.msg(errorMessage, 'danger');
@@ -184,7 +185,8 @@
             Services.showLoader();
             Services.net().put(this.getRoute('orders.cancel', {id: this.order.id})).then(data => {
                 if (data.order) {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     Services.msg("Изменения сохранены");
                 } else {
                     Services.msg(errorMessage, 'danger');
