@@ -370,7 +370,8 @@
 
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.main.save', {id: this.order.id}), {}, this.form).then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
 
                     Services.msg("Изменения сохранены");
                 }).finally(() => {

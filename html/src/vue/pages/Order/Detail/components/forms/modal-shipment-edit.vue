@@ -94,7 +94,8 @@
 
                 Services.showLoader();
                 Services.net().put(this.getRoute('orders.detail.shipments.save', {id: this.order.id, shipmentId: this.shipment.id}), {}, this.form).then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     this.$bvModal.hide('modal-shipment-edit');
 
                     Services.msg("Изменения сохранены");

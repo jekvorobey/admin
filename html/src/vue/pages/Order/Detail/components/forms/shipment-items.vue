@@ -237,7 +237,8 @@
                     {},
                     {'status': statusId},
                 ).then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
 
                     Services.msg('Изменения сохранены');
                 }).finally(() => {
@@ -256,7 +257,8 @@
                     {}
                 )
                 .then((data) => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     Services.msg("Изменения сохранены");
                 }).finally(data => {
                     Services.hideLoader();
@@ -283,7 +285,8 @@
                     {}
                 )
                 .then(data => {
-                    this.order = data.order;
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
                     Services.msg("Изменения сохранены");
                 }).finally(data => {
                     Services.hideLoader();
