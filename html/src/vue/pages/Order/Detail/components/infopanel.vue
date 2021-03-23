@@ -73,7 +73,9 @@
         </b-row>
         <b-row>
             <div class="col-sm-6">
-                <span class="font-weight-bold">Тип доставки:</span> {{ order.delivery_type.name }}
+                <span class="font-weight-bold">Тип доставки:</span>
+                    <span v-if="order.deliveries.length > 1">Несколькими доставками</span>
+                    <span v-else>Одной доставкой</span>
             </div>
             <div class="col-sm-6">
                 <span class="font-weight-bold">Город доставки:</span> {{ order.delivery_cities }}
