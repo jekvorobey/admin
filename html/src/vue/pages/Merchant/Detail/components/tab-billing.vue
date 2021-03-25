@@ -204,43 +204,43 @@
           <a v-if="billingOperation.document_id"
              :href="$store.getters.getRoute('merchant.detail.download-correction-document',
           {id:getMerchantId, fileId:billingOperation.document_id})">
-            {{ availableTypes[billingOperation.correction_type].text }}
-          </a>
-          <p v-else >{{ availableTypes[billingOperation.correction_type].text }}</p>
-        </td>
-        <td>
-          <b-badge v-if="billingOperation.shipment_status === 2" variant="danger">Отменен</b-badge>
-          <b-badge v-if="billingOperation.shipment_status === 1" variant="success">Доставлен</b-badge>
-          <b-badge v-if="billingOperation.shipment_status === 3" variant="warning">Возврат</b-badge>
-        </td>
-        <td>{{ billingOperation.cost }}</td>
-        <td>{{ billingOperation.qty }}</td>
+              {{ availableTypes[billingOperation.correction_type].text }}
+            </a>
+            <p v-else >{{ availableTypes[billingOperation.correction_type].text }}</p>
+          </td>
+          <td>
+            <b-badge v-if="billingOperation.shipment_status === 2" variant="danger">Отменен</b-badge>
+            <b-badge v-if="billingOperation.shipment_status === 1" variant="success">Доставлен</b-badge>
+            <b-badge v-if="billingOperation.shipment_status === 3" variant="warning">Возврат</b-badge>
+          </td>
+          <td>{{ billingOperation.cost }}</td>
+          <td>{{ billingOperation.qty }}</td>
 
-        <td v-if="(billingOperation.discounts && billingOperation.discounts.hasOwnProperty('marketplace')) || (billingOperation.discounts && billingOperation.discounts.hasOwnProperty('merchant'))">
-           {{ billingOperation.discounts.hasOwnProperty('marketplace') && billingOperation.discounts.marketplace.sum > 0 ? 'М-с:' + billingOperation.discounts.marketplace.sum : '' }}
-           {{ billingOperation.discounts.hasOwnProperty('merchant') && billingOperation.discounts.merchant.sum > 0 ? 'М-т:' + billingOperation.discounts.merchant.sum : ''  }}
-        </td>
-        <td v-else>0</td>
-        <td>{{ billingOperation.bonuses && billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
-        <td>{{ billingOperation.price }}</td>
-        <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
-        <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
-        <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
-        <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
-        <td>
-          <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-success btn-sm" @click="deleteOperation(billingOperation.id)">
-            Удалить <fa-icon icon="check"/>
-          </b-button>
-          <b-button v-else-if="billingOperation.shipment_status === 1" class="btn btn-warning btn-sm" @click="addReturn(billingOperation.id)">
-            Возврат
-          </b-button>
-        </td>
-      </tr>
-      <tr v-if="!billingList.length">
-        <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
-      </tr>
-      </tbody>
-    </table>
+          <td v-if="(billingOperation.discounts && billingOperation.discounts.hasOwnProperty('marketplace')) || (billingOperation.discounts && billingOperation.discounts.hasOwnProperty('merchant'))">
+            {{ billingOperation.discounts.hasOwnProperty('marketplace') && billingOperation.discounts.marketplace.sum > 0 ? 'М-с:' + billingOperation.discounts.marketplace.sum : '' }}
+            {{ billingOperation.discounts.hasOwnProperty('merchant') && billingOperation.discounts.merchant.sum > 0 ? 'М-т:' + billingOperation.discounts.merchant.sum : ''  }}
+          </td>
+          <td v-else>0</td>
+          <td>{{ billingOperation.bonuses && billingOperation.bonuses.hasOwnProperty('bonus_discount') ? billingOperation.bonuses.bonus_discount : 0 }}</td>
+          <td>{{ billingOperation.price }}</td>
+          <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
+          <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
+          <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
+          <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
+          <td>
+            <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-danger btn-sm" @click="deleteOperation(billingOperation.id)">
+              Удалить
+            </b-button>
+            <b-button v-else-if="billingOperation.shipment_status === 1" class="btn btn-warning btn-sm" @click="addReturn(billingOperation.id)">
+              Возврат
+            </b-button>
+          </td>
+        </tr>
+        <tr v-if="!billingList.length">
+          <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <b-pagination v-if="pager.last_page > 1"
                   v-model="currentPage"
@@ -472,37 +472,37 @@ export default {
     removeItem(id) {
       Services.showLoader();
       Services.net()
-        .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
-        .then(() => {
-          this.loadReports();
-        })
-        .catch(() => {
-          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-        }).finally(() => {
-          Services.hideLoader();
-          this.showMessageBox({title: 'Отчет удалён'});
-        });
+          .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
+          .then(() => {
+            this.loadReports();
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+        this.showMessageBox({title: 'Отчет удалён'});
+      });
     },
     updateStatus(id, status) {
       Services.showLoader();
       Services.net()
-        .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: status})
-        .then(() => {
-          this.loadReports();
-        })
-        .catch(() => {
-          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-        }).finally(() => {
-          Services.hideLoader();
-          this.showMessageBox({title: 'Статус Обновлен'});
-        });
+          .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: status})
+          .then(() => {
+            this.loadReports();
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+        this.showMessageBox({title: 'Статус Обновлен'});
+      });
     },
     addReturn(id) {
       Services.showLoader();
       Services.net()
           .get(this.getRoute('merchant.detail.billingList.addReturn', {id: this.model.id, operationId: id}))
           .then(() => {
-            this.loadReports();
+            this.loadPage();
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
@@ -514,9 +514,9 @@ export default {
     deleteOperation(id) {
       Services.showLoader();
       Services.net()
-          .delete(this.getRoute('merchant.detail.billingList.deleteOperation', {id: this.model.id, reportId: id,}))
+          .delete(this.getRoute('merchant.detail.billingList.deleteOperation', {id: this.model.id, operationId: id,}))
           .then(() => {
-            this.loadReports();
+            this.loadPage();
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
@@ -529,27 +529,27 @@ export default {
       if (!this.newReportDates) { return false; }
       Services.showLoader();
       Services.net()
-        .post(this.getRoute('merchant.detail.billingReport.create', {id: this.model.id,}), {},
-            { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
-        .then(() => {
-          this.loadReports();
-          this.newReportDates = {dateFrom: null, dateTo: null};
-          this.billing.period = null;
-        })
-        .catch(() => {
-          this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-        }).finally(() => {
-          Services.hideLoader();
-          this.showMessageBox({title: 'Отчет создан'});
-        });
+          .post(this.getRoute('merchant.detail.billingReport.create', {id: this.model.id,}), {},
+              { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
+          .then(() => {
+            this.loadReports();
+            this.newReportDates = {dateFrom: null, dateTo: null};
+            this.billing.period = null;
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+        this.showMessageBox({title: 'Отчет создан'});
+      });
     },
     paginationPromise() {
       return Services.net().get(
-        this.getRoute('merchant.detail.billingList', {id: this.model.id}),
-        {
-          page: this.currentPage,
-          filter: this.appliedFilter,
-        }
+          this.getRoute('merchant.detail.billingList', {id: this.model.id}),
+          {
+            page: this.currentPage,
+            filter: this.appliedFilter,
+          }
       );
     },
     loadPage() {
@@ -640,25 +640,25 @@ export default {
     Services.net().get(this.getRoute('merchant.detail.billingList', {id: this.model.id}), {
       page: this.currentPage,
     })
-    .then(data => {
-      this.billingList = data.billingList.items;
-      this.setPager(data);
-    });
+        .then(data => {
+          this.billingList = data.billingList.items;
+          this.setPager(data);
+        });
 
     Services.net().get(this.getRoute('merchant.detail.billing', {id: this.model.id}))
-    .then(data => {
-      this.form.billing_cycle = data.billing_cycle;
-    })
-    .finally(() => {
-      Services.hideLoader();
-    });
+        .then(data => {
+          this.form.billing_cycle = data.billing_cycle;
+        })
+        .finally(() => {
+          Services.hideLoader();
+        });
     this.loadReports();
   },
   computed: {
     availableTypes() {
       return [
-          {text: 'Корректировка по обоснованным Комитентом причинам', value: 0},
-          {text: 'Корректировка по обоснованным Комиссионером причинам (включая сумму компенсации дополнительных расходов Комиссионера)', value: 1},
+        {text: 'Корректировка по обоснованным Комитентом причинам', value: 0},
+        {text: 'Корректировка по обоснованным Комиссионером причинам (включая сумму компенсации дополнительных расходов Комиссионера)', value: 1},
       ];
     },
     errorDate() {
