@@ -228,10 +228,10 @@
         <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
         <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
         <td>
-          <b-button v-if="billingOperation.shiping_status === 3" class="btn btn-success btn-sm" @click="deleteOperation(billingOperation.id)">
+          <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-success btn-sm" @click="deleteOperation(billingOperation.id)">
             Удалить <fa-icon icon="check"/>
           </b-button>
-          <b-button v-else class="btn btn-warning btn-sm" @click="addReturn(billingOperation.id)">
+          <b-button v-else-if="billingOperation.shipment_status === 1" class="btn btn-warning btn-sm" @click="addReturn(billingOperation.id)">
             Возврат
           </b-button>
         </td>
