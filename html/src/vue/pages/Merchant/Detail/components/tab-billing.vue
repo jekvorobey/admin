@@ -186,6 +186,7 @@
         <th>Акционная Комиссия Оператора, %</th>
         <th>Вознаграждение Оператора, руб</th>
         <th>Выплата Мерчанту, руб</th>
+        <th>Действия</th>
       </tr>
       </thead>
       <tbody>
@@ -226,6 +227,14 @@
         <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
         <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
         <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
+        <td>
+          <b-button v-if="billingOperation.shiping_status === 3" class="btn btn-success btn-sm" @click="deleteOperation(billingOperation.id)">
+            Удалить <fa-icon icon="check"/>
+          </b-button>
+          <b-button v-else class="btn btn-warning btn-sm" @click="addReturn(billingOperation.id)">
+            Возврат
+          </b-button>
+        </td>
       </tr>
       <tr v-if="!billingList.length">
         <td :colspan="billingList.length + 1">Заказы отсутствуют</td>
@@ -487,6 +496,34 @@ export default {
           Services.hideLoader();
           this.showMessageBox({title: 'Статус Обновлен'});
         });
+    },
+    addReturn(id) {
+      Services.showLoader();
+      Services.net()
+          .get(this.getRoute('merchant.detail.billingList.addReturn', {id: this.model.id, operationId: id}))
+          .then(() => {
+            this.loadReports();
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+        this.showMessageBox({title: 'На данную операцию добавлен возврат'});
+      });
+    },
+    deleteOperation(id) {
+      Services.showLoader();
+      Services.net()
+          .delete(this.getRoute('merchant.detail.billingList.deleteOperation', {id: this.model.id, reportId: id,}))
+          .then(() => {
+            this.loadReports();
+          })
+          .catch(() => {
+            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+          }).finally(() => {
+        Services.hideLoader();
+        this.showMessageBox({title: 'Данная операция удалена'});
+      });
     },
     createReport() {
       if (!this.newReportDates) { return false; }
