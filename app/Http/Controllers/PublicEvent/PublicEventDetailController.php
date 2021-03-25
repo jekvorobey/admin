@@ -24,6 +24,7 @@ class PublicEventDetailController extends Controller
         $this->loadPublicEventTypes = true;
         $this->loadPublicEventMediaTypes = true;
         $this->loadPublicEventMediaCollections = true;
+        $this->loadOrderStatuses = true;
         
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {

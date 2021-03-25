@@ -45,6 +45,18 @@
                 @onChange="onTabChange"
                 @updateSprintId="updateSprintId"
         />
+        <sprint-orders-tab
+                v-if="nav.currentTab === 'orders'"
+                :sprint-id.sync="sprintId"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
+        <sprint-tickets-tab
+                v-if="nav.currentTab === 'tickets'"
+                :sprint-id.sync="sprintId"
+                :public-event="publicEvent"
+                @onChange="onTabChange"
+        />
         <ticket-types-tab
                 v-if="nav.currentTab === 'ticketTypes'"
                 :sprint-id.sync="sprintId"
@@ -86,6 +98,8 @@
     import ProfessionsTab from './components/professions-tab.vue';
     import RecommendationsTab from './components/recommendations-tab.vue';
     import SprintResultsTab from './components/sprint-results-tab.vue';
+    import SprintOrdersTab from './components/sprint-orders-tab.vue';
+    import SprintTicketsTab from './components/sprint-tickets-tab.vue';
 
     import modalMixin from '../../../mixins/modal';
     import {ACT_LOAD_PUBLIC_EVENT, GET_DETAIL, NAMESPACE, SET_DETAIL,} from '../../../store/modules/public-events';
@@ -101,7 +115,9 @@
         SpeakersTab,
         ProfessionsTab,
         RecommendationsTab,
-        SprintResultsTab
+        SprintResultsTab,
+        SprintOrdersTab,
+        SprintTicketsTab,
     },
     mixins: [modalMixin],
     props: {
@@ -121,6 +137,8 @@
                     {value: 'sprints', text: 'Спринты'},
                     {value: 'spritnStages', text: 'Программа'},
                     {value: 'sprintResults', text: 'Результаты'},
+                    {value: 'orders', text: 'Заказы'},
+                    {value: 'tickets', text: 'Участники'},
                     {value: 'ticketTypes', text: 'Типы билетов'},
                     {value: 'speakers', text: 'Спикеры'},
                     {value: 'professions', text: 'Профессии'},

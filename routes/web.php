@@ -993,6 +993,9 @@ Route::middleware('auth')->group(function () {
                 Route::post('delete', 'PublicEventDetailController@deleteSprint')->name('public-event.deleteSprint');
             });
 
+            Route::get('orders', 'PublicEventOrdersController@getList')->name('public-event.orders.list');
+            Route::get('tickets', 'PublicEventTicketsController@getList')->name('public-event.tickets.list');
+            Route::get('tickets/file', 'PublicEventTicketsController@getFile')->name('public-event.tickets.file');
 
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');

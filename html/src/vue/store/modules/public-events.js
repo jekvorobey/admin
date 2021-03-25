@@ -61,6 +61,8 @@ export const ACT_SAVE_EVENT_RECOMMENDATION = 'act_save_event_recommendation';
 export const ACT_DELETE_EVENT_RECOMMENDATION = 'act_delete_event_recommendation';
 
 export const ACT_LOAD_SPRINT_RESULTS = 'act_load_sprint_results';
+export const ACT_LOAD_SPRINT_ORDERS = 'act_load_sprint_orders';
+export const ACT_LOAD_SPRINT_TICKETS = 'act_load_sprint_tickets';
 export const ACT_SAVE_SPRINT_RESULT = 'act_save_sprint_result';
 export const ACT_DELETE_SPRINT_RESULT = 'act_delete_sprint_result';
 
@@ -276,6 +278,16 @@ export default {
         [ACT_LOAD_SPRINT_RESULTS]({rootGetters, commit}, {sprintId}) {
             commit('loaderShow', true, {root:true});
             return Services.net().get(rootGetters.getRoute('public-event.sprint-documents.list'), {sprint_id: sprintId})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_SPRINT_ORDERS]({rootGetters, commit}, {publicEventId, page, sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.orders.list', {event_id: publicEventId}), {sprint_id: sprintId, page})
+                .finally(() => commit('loaderShow', false, {root:true}));
+        },
+        [ACT_LOAD_SPRINT_TICKETS]({rootGetters, commit}, {publicEventId, sprintId}) {
+            commit('loaderShow', true, {root:true});
+            return Services.net().get(rootGetters.getRoute('public-event.tickets.list', {event_id: publicEventId}), {sprint_id: sprintId})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
         [ACT_SAVE_SPRINT_RESULT]({rootGetters, commit}, {id, sprintDocument}) {
