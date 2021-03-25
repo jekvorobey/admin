@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('billingList')->group(function () {
                     Route::get('', 'TabBillingController@billingList')->name('merchant.detail.billingList');
                     Route::post('add-correction', 'TabBillingController@addCorrection')->name('merchant.detail.billingList.addCorrection');
+                    Route::get('add-return/{operationId}', 'TabBillingController@addReturn')->name('merchant.detail.billingList.addReturn');
+                    Route::delete('delete-operation/{operationId}', 'TabBillingController@deleteOperation')->name('merchant.detail.billingList.deleteOperation');
                     Route::get('correction/download/{fileId}', 'TabBillingController@correctionDownload')->name('merchant.detail.download-correction-document');
                 });
             });

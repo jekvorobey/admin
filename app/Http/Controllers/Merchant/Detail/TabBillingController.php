@@ -51,6 +51,31 @@ class TabBillingController extends Controller
     }
 
     /**
+     * Сохранить биллинговый период
+     * @param int $merchantId
+     * @param int $operationId
+     * @param MerchantService $merchantService
+     * @return Application|ResponseFactory|Response
+     */
+    public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
+    {
+        $merchantService->addReturn($merchantId, $operationId);
+        return response('', 204);
+    }
+
+    /**
+     * Сохранить биллинговый период
+     * @param int $merchantId
+     * @param int $operationId
+     * @param MerchantService $merchantService
+     * @return Application|ResponseFactory|Response
+     */
+    public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
+    {
+        $merchantService->deleteOperation($merchantId, $operationId);
+        return response('', 204);
+    }
+    /**
      * Получить биллинговые отчеты
      * @param Request $request
      * @param int $merchantId
