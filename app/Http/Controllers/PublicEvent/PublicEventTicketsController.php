@@ -62,7 +62,8 @@ class PublicEventTicketsController extends Controller
 
         $activities = resolve(CustomerService::class)->activities()->setActive(true)->load()->pluck('name', 'id')->toArray();
         $ticketService = resolve(PublicEventTicketService::class);
-        $restQuery = $ticketService->newQuery()->include('type', 'status')->setFilter('ids', $ticketIds);
+        $restQuery = $ticketService->newQuery()->include('type', 'status')->setFilter('ids', $ticketIds)
+            ->addSort('created_at', 'desc');
         $tickets = $ticketService->tickets($restQuery);
 
         return $tickets->map(function (TicketDto $ticket) use ($orderByTicketId, $activities) {
