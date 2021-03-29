@@ -92,6 +92,30 @@ class PublicEventTicketsController extends Controller
         return $restQuery;
     }
 
+    protected function getCsvContent($tickets, $separator = ';'): string
+    {
+        $content = "\xEF\xBB\xBF"; // UTF-8 BOM
+        $columns = array('ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус');
+        foreach ($columns as $column) {
+            $content .= "{$column}{$separator}";
+        }
+        $content .= "\n";
+        foreach ($tickets as $ticket) {
+            $content .= join($separator, [
+                $ticket['id'],
+                $ticket['order']['number'],
+                $ticket['last_name'] . " " . $ticket['first_name'] . " " . $ticket['middle_name'],
+                $ticket['phone'],
+                $ticket['email'],
+                $ticket['profession'],
+                $ticket['type']['name'],
+                $ticket['order']['count_tickets'],
+                $ticket['status']['name'],
+            ]) . "\n";
+        }
+        return $content;
+    }
+
     public function getFile(Request $request, int $eventId)
     {
         $sprints = $request->input('sprint_id')
@@ -101,26 +125,11 @@ class PublicEventTicketsController extends Controller
         $tickets = $this->getData($sprints);
         $fileName = 'tickets.csv';
 
-        $columns = array('ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус');
+        header('Content-Encoding: UTF-8');
+        header('Content-type: text/csv; charset=UTF-8');
+        header("Content-Disposition: attachment; filename={$fileName}");
 
-        return response()->streamDownload(function () use ($tickets, $columns) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, $columns, ";");
-            foreach ($tickets as $ticket) {
-                fputcsv($file, [
-                    $ticket['id'],
-                    $ticket['order']['number'],
-                    $ticket['last_name'] . " " . $ticket['first_name'] . " " . $ticket['middle_name'],
-                    $ticket['phone'],
-                    $ticket['email'],
-                    $ticket['profession'],
-                    $ticket['type']['name'],
-                    $ticket['order']['count_tickets'],
-                    $ticket['status']['name'],
-                ], ";");
-            }
-
-            fclose($file);
-        }, $fileName);
+        echo $this->getCsvContent($tickets);
+        exit(0);
     }
 }
