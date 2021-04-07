@@ -69,6 +69,7 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <b-form-checkbox v-model="$v.form.company.$model" @change="changeCompany">Юр. лицо*</b-form-checkbox>
+                        <f-select  :disabled="$v.form.company.$model == false" v-model="$v.form.merchant_id.$model" :options="merchantOptions" class="col-sm-12 col-md-3">Мерчант</f-select>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_name.$model">ФИО контакта</v-input>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_description.$model">Описание контакта</v-input>
                         <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
@@ -110,6 +111,7 @@
 
 <script>
     import withQuery from 'with-query';
+    import FSelect from '../../../components/filter/f-select.vue';
 
     import { mapActions, mapGetters } from 'vuex';
 
@@ -148,6 +150,7 @@
             validationMixin,
         ],
         components: {
+            FSelect,
             Modal,
             VInput,
             FileInput,
@@ -155,6 +158,7 @@
         },
         props: {
             iOrganizers: {},
+            iMerchants: {},
             iTotal: {},
             iCurrentPage: {},
         },
@@ -166,8 +170,10 @@
             });
 
             return {
+                merchants: this.iMerchants,
                 editOrganizerId: null,
                 form: {
+                    merchant_id: null,
                     owner_id: null,
                     global: true,
                     name: null,
@@ -188,6 +194,7 @@
         },
         validations: {
             form: {
+                merchant_id: {},
                 name: {required},
                 description: {required},
                 company: {required},
@@ -237,6 +244,7 @@
                 this.$v.form.$reset();
                 this.editOrganizerId = null;
                 this.form.name = null;
+                this.form.merchant_id = null;
                 this.form.company = false;
                 this.form.contact_name = null;
                 this.form.contact_description = null;
@@ -255,6 +263,7 @@
                 this.editOrganizerId = organizer.id;
                 this.form.owner_id = organizer.owner_id;
                 this.form.name = organizer.name;
+                this.form.merchant_id = organizer.merchant_id;
                 this.form.company = organizer.company ? true : false;
                 this.form.contact_name = organizer.contact_name;
                 this.form.contact_description = organizer.contact_description;
@@ -334,7 +343,9 @@
                     this.loadPage(page);
                 }
             },
-
+            merchantOptions() {
+              return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
