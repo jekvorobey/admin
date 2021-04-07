@@ -4,6 +4,9 @@ namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\OrganizerDto;
 use Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService;
@@ -17,6 +20,7 @@ class OrganizerController extends Controller
         [$total, $organizers]= $this->loadOrganizers($publicEventOrganizerService, $page);
         
         return $this->render('PublicEvent/OrganizerList', [
+            'iMerchants' => $this->getMerchants(),
             'iOrganizers' => $organizers,
             'iTotal' => $total['total'],
             'iCurrentPage' => $page,
