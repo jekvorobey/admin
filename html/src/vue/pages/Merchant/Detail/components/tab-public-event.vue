@@ -16,7 +16,7 @@
           <button
             class="btn btn-success btn-sm"
             :disabled="!isPeriod(billing.period)"
-            @click="createReport">Скачать отчет за период
+            @click="downloadReportUrl">Скачать отчет за период
           </button>
         </td>
       </tr>
@@ -45,7 +45,8 @@
             <p v-for="item in billingOperation.basket.items">{{ item.name }}</p>
           </td>
           <td>{{ billingOperation.count_tickets }}</td>
-          <td>{{ billingOperation.price / billingOperation.count_tickets }}</td>
+          <td v-if="billingOperation.count_tickets > 0">{{ billingOperation.price / billingOperation.count_tickets }}</td>
+          <td v-else>0</td>
           <td>{{ parseInt(billingOperation.price) }}</td>
           <td>{{ billingOperation.cost - billingOperation.price }}</td>
           <td>
@@ -194,22 +195,13 @@ export default {
     getMerchantId() {
       return this.model.id;
     },
-    createReport() {
-      if (!this.newReportDates) { return false; }
+    downloadReportUrl() {
       Services.showLoader();
-      Services.net()
-          .get(this.getRoute('merchant.detail.eventBillingList.downloadEventBillingList', {id: this.model.id,}), {date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo},
-              { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
-          .then(() => {
-            this.newReportDates = {dateFrom: null, dateTo: null};
-            this.billing.period = null;
-          })
-          .catch(() => {
-            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-          }).finally(() => {
-        Services.hideLoader();
-        this.showMessageBox({title: 'Отчет создан'});
-      });
+      let url = '/merchant/detail/'+ this.model.id +'/eventBillingList/download-report?date_from='+ this.newReportDates.dateFrom +'&date_to=' + this.newReportDates.dateTo;
+      window.open(url);
+      this.newReportDates = {dateFrom: null, dateTo: null};
+      this.billing.period = null;
+      Services.hideLoader();
     },
     paginationPromise() {
       return Services.net().get(

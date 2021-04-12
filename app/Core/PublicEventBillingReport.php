@@ -167,7 +167,7 @@ class PublicEventBillingReport
                     $eventNamesArr[]= $item->name;
                 }
                 $eventNames = implode(', ', $eventNamesArr);
-                $pricePerUnit = $operation['price'] / $operation['count_tickets']; //F
+                $pricePerUnit = $operation['count_tickets'] > 0 ?  $operation['price'] / $operation['count_tickets'] : 0; //F
                 $rewardPercent = 0.08;
                 $reward = $operation['price'] * $rewardPercent;
                 $toPrincipal = $operation['price'] - $reward;
