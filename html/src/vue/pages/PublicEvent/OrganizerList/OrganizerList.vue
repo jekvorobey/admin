@@ -69,7 +69,7 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <b-form-checkbox v-model="$v.form.company.$model" @change="changeCompany">Юр. лицо*</b-form-checkbox>
-                        <f-select  :disabled="$v.form.company.$model == false" v-model="$v.form.merchant_id.$model" :options="merchantOptions" class="col-sm-12 col-md-3">Мерчант</f-select>
+                        <f-select  :disabled="$v.form.company.$model == false" v-model="$v.form.merchant_id.$model" :options="merchantOptions" >Мерчант</f-select>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_name.$model">ФИО контакта</v-input>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_description.$model">Описание контакта</v-input>
                         <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>

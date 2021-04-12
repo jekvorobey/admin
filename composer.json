@@ -70,7 +70,8 @@
     "iwengo/ibt-pim-lib": "dev-master",
     "iwengo/ibt-store-lib": "dev-master",
     "laravel/framework": "5.8.*",
-    "laravel/tinker": "^1.0"
+    "laravel/tinker": "^1.0",
+    "phpoffice/phpspreadsheet": "^1.12"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^2.6",
