@@ -33,9 +33,7 @@ class TabPublicEventController extends Controller
     {
         $publicEventOrganizerService = resolve(PublicEventOrganizerService::class);
         $query = $publicEventOrganizerService->query()->setFilter('merchant_id', $merchantId);
-        $organizers = $publicEventOrganizerService->find($query)->pluck('id')->toArray();
-
-        return $organizers;
+        return $publicEventOrganizerService->find($query)->pluck('id')->toArray();
     }
 
     /**
@@ -45,14 +43,13 @@ class TabPublicEventController extends Controller
      */
     private function loadEvents($organizersIds)
     {
+        if (!count($organizersIds)) return [];
         $publicEventService = resolve(PublicEventService::class);
-        $events = $publicEventService
+        return $publicEventService
             ->query()
             ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer', 'sprints.tickets')
             ->setFilter('organizer_id', $organizersIds)
-            ->get();
-
-        return $events;
+            ->get()->pluck('id')->toArray();
     }
 
      /**
@@ -65,7 +62,7 @@ class TabPublicEventController extends Controller
     public function eventBillingList(int $merchantId): JsonResponse
     {
         $organizersIds = $this->loadOrganizers($merchantId);
-        $events = $this->loadEvents($organizersIds)->pluck('id');
+        $events = $this->loadEvents($organizersIds);
         $sprints = [];
         foreach ($events as $eventId) {
             $eventSprints = resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
@@ -74,8 +71,8 @@ class TabPublicEventController extends Controller
 
         $orderService = resolve(OrderService::class);
         $restQuery = $this->makeRestQuery($orderService, $sprints);
-        $pager = $orderService->ordersCount($restQuery);
-        $orders = $this->loadOrders($orderService, $restQuery);
+        $pager = $sprints ?  $orderService->ordersCount($restQuery) : null;
+        $orders = $sprints ? $this->loadOrders($orderService, $restQuery) : null;
 
         return response()->json([
             'billingList' => [
@@ -88,10 +85,7 @@ class TabPublicEventController extends Controller
 
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include(
-            'basketitem',
-            'promoCodes'
-        );
+        $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, self::PER_PAGE);
@@ -169,7 +163,7 @@ class TabPublicEventController extends Controller
     public function downloadEventBillingList(int $merchantId, Request $request)
     {
         $organizersIds = $this->loadOrganizers($merchantId);
-        $events = $this->loadEvents($organizersIds)->pluck('id');
+        $events = $this->loadEvents($organizersIds);
         $sprints = [];
         foreach ($events as $eventId) {
             $eventSprints = resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
