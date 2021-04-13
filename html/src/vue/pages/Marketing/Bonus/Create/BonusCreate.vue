@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                <v-input v-model="$v.bonus.value_period.$model"
+                <v-input v-model="$v.bonus.valid_period.$model"
                          v-if="!validPeriodBtn"
                          class="col-3 mt-3"
                          type="number"
@@ -170,7 +170,7 @@
                     type: null,
                     value: null,
                     value_type: 1,
-                    value_period: null,
+                    valid_period: null,
                     start_date: null,
                     end_date: null,
                     promo_code_only: null,
@@ -188,7 +188,7 @@
                 name: {required},
                 type: {required},
                 value: {required, integer, minValue: minValue(1)},
-                value_period: {
+                valid_period: {
                     required: requiredIf(function () { return !this.validPeriodBtn }),
                     integer,
                     minValue: minValue(1)
@@ -276,10 +276,10 @@
                 }
             },
             errorValuePeriod() {
-                if (this.$v.bonus.value_period.$dirty) {
-                    if (!this.$v.bonus.value_period.required) return "Обязательное поле!";
-                    if (!this.$v.bonus.value_period.integer) return "Введите целое число!";
-                    if (!this.$v.bonus.value_period.minValue) return "Значение должно быть > 0";
+                if (this.$v.bonus.valid_period.$dirty) {
+                    if (!this.$v.bonus.valid_period.required) return "Обязательное поле!";
+                    if (!this.$v.bonus.valid_period.integer) return "Введите целое число!";
+                    if (!this.$v.bonus.valid_period.minValue) return "Значение должно быть > 0";
                 }
             },
             errorStatus() {
