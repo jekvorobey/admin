@@ -131,8 +131,8 @@ class PublicEventBillingReport
         $betweenDatesText = 'по агентскому договору № '.$merchant->contract_number.' от '.$contractDate;
         $reportDateText = self::prepareDate(date('Y-m-d'));
 
-        $headerText = 'Во исполнение Договора № '.$merchant->contract_number.' от '.$contractDate.' («Договор»), ';
-        $headerText .= 'заключенного между '.$merchant->legal_name.', («Комитент») ';
+        $headerText = 'Во исполнение Агентского Договора № '.$merchant->contract_number.' от '.$contractDate.' («Договор»), ';
+        $headerText .= 'заключенного между '.$merchant->legal_name.', именуемого в дальнейшем «Принципал», ';
         $headerText .= 'и Общество с ограниченной ответственностью "Бессовестно Талантливый" ("Комиссионер") ';
         $headerText .= 'в лице Генерального директора Адельфинской Яны Юрьевны, действующей на основании Устава, именуемого в дальнейшем «Агент», ';
         $headerText .= 'Агент предоставляет Принципалу настоящий Отчет Агента.';
@@ -173,7 +173,7 @@ class PublicEventBillingReport
                 $toPrincipal = $operation['price'] - $reward;
 
                 $sheet->getCell('A' . $billingTableRow)->setValue($num);
-                $sheet->getCell('B' . $billingTableRow)->setValue($operation['id']);
+                $sheet->getCell('B' . $billingTableRow)->setValue($operation['number']);
                 $sheet->getCell('C' . $billingTableRow)->setValue($billingDate);
                 $sheet->getCell('D' . $billingTableRow)->setValue($eventNames);
                 $sheet->getCell('E' . $billingTableRow)->setValue($operation['count_tickets']);
@@ -201,14 +201,14 @@ class PublicEventBillingReport
 
         $footerRow = $billingTableRow + 5;
 
-        $sheet->getCell('K'.$footerRow)->setValue((int) $sumToPrincipal);
+        $sheet->getCell('K'.$footerRow)->setValue($sumToPrincipal);
         //$sheet->getCell('S'.$footerRow)->setValue((int) round($totalBillingWithNds).'+'.round($totalCorrectionToMerchant)*(-1).'+'.round($totalBillingCommission)*(-1).'+'.round($totalReturnedToMerchant)*(-1).'+'.$manualCorrections['merchant']*(-1));
         $footerRow++;
         $sheet->getCell('B'.$footerRow)->setValue('Сумма прописью: '.self::num2str($sumToPrincipal));
 
         $footerRow = $footerRow + 2;
 
-        $sheet->getCell('K'.$footerRow)->setValue((int) $sumReward);
+        $sheet->getCell('K'.$footerRow)->setValue($sumReward);
         $footerRow++;
         $sheet->getCell('B'.$footerRow)->setValue('Сумма прописью: '.self::num2str($sumReward));
 

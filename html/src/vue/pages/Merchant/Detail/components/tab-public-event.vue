@@ -39,7 +39,7 @@
       </thead>
       <tbody>
         <tr v-for="billingOperation in billingList">
-          <td><a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.id})">{{ billingOperation.id }}</a></td>
+          <td><a :href="$store.getters.getRoute('orders.detail', {id:billingOperation.id})">{{ billingOperation.number }}</a></td>
           <td>{{ billingOperation.created_at }}</td>
           <td>
             <p v-for="item in billingOperation.basket.items">{{ item.name }}</p>
