@@ -21,6 +21,7 @@
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
+                    <tab-public-event v-if="key === 'publicEvent'" :model.sync="merchant"/>
                     <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
@@ -45,6 +46,7 @@ import Infopanel from './components/infopanel.vue';
 
 import tabsMixin from '../../../mixins/tabs.js';
 import TabDigest from './components/tab-digest.vue';
+import TabPublicEvent from './components/tab-public-event.vue';
 import TabMain from './components/tab-main.vue';
 import TabStore from './components/tab-store.vue';
 import TabCommission from './components/tab-commission.vue';
@@ -70,6 +72,7 @@ export default {
         'categoryList',
     ],
     components: {
+        TabPublicEvent,
         TabBilling,
         Infopanel,
         TabDigest,

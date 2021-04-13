@@ -94,6 +94,10 @@ Route::middleware('auth')->group(function () {
                     Route::delete('delete-operation/{operationId}', 'TabBillingController@deleteOperation')->name('merchant.detail.billingList.deleteOperation');
                     Route::get('correction/download/{fileId}', 'TabBillingController@correctionDownload')->name('merchant.detail.download-correction-document');
                 });
+                Route::prefix('eventBillingList')->group(function () {
+                    Route::get('', 'TabPublicEventController@eventBillingList')->name('merchant.detail.eventBillingList');
+                    Route::get('download-report', 'TabPublicEventController@downloadEventBillingList')->name('merchant.detail.eventBillingList.downloadEventBillingList');
+                });
             });
         });
 

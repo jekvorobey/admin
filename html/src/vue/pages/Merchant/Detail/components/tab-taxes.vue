@@ -145,7 +145,10 @@ export default {
                 id: this.merchantVat.id,
                 value: this.merchantVat.value,
             }).then((data) => {
-                this.merchantVat = data.merchantVat;
+              this.merchantVat = {
+                id: data.merchantVat.id,
+                value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+              };
             }).finally(() => {
                 Services.hideLoader();
             })
@@ -156,7 +159,10 @@ export default {
                 id: id,
             }).then((data) => {
                 this.commissions = data.commissions;
-                this.merchantVat = data.merchantVat;
+                this.merchantVat = {
+                  id: data.merchantVat.id,
+                  value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+                };
                 this.brands = data.brands;
                 this.categories = data.categories;
                 this.products = data.products;
@@ -211,7 +217,10 @@ export default {
         Services.showLoader();
         Services.net().get(this.getRoute('merchant.detail.vat', {id: this.id})).then(data => {
             this.vats = data.vats;
-            this.merchantVat = data.merchantVat;
+            this.merchantVat = {
+              id: data.merchantVat.id,
+              value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+            };
             this.brands = data.brands;
             this.categories = data.categories;
             this.products = data.products;
