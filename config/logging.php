@@ -89,6 +89,12 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+
+        'ms-queries' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ms-queries.log'),
+            'level' => 'debug',
+        ],
     ],
 
 ];
