@@ -37,7 +37,7 @@ class TabVatController extends Controller
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
             'type' => ['required', Rule::in($types)],
-            'value'=> 'nullable|numeric|min:0|max:100',
+            'value'=> 'nullable|numeric|max:100',
             'related_id' => 'nullable',
         ], [
             'type' => 'тип',
