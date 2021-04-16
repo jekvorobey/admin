@@ -103,7 +103,7 @@
         color: #343A40;
     }
     .heading:hover {
-        opacity: 80%;
+        opacity: 0.8;
     }
     .shevron {
         position: relative;

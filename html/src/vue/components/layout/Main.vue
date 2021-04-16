@@ -114,7 +114,7 @@
         cursor: pointer;
     }
     .button-back:hover {
-        opacity: 80%;
+        opacity: 0.8;
     }
 
     /* ============= Loader ===================== */
