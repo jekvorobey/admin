@@ -23,35 +23,6 @@ class Authenticate
             return redirect()->route('page.login');
         }
 
-        $response = $next($request);
-
-        $this->logMsQueries($request);
-
-        return $response;
-    }
-
-    protected function logMsQueries(Request $request): void
-    {
-        if (!in_array($request->getPathInfo(), [
-            '/notifications',
-            '/communications/chats/unread/count',
-            '/audit/queries',
-            '/audit/queries/total',
-        ])) {
-            $measures = \Debugbar::getCollector('time')->getMeasures();
-
-            $queries = [];
-
-            foreach ($measures as $measure) {
-                if (\Str::startsWith($measure['label'], 'RQ')) {
-                    $queries[] = $measure['duration_str'] . ' - ' . \Str::after($measure['label'], 'RQ ');
-                }
-            }
-
-            logs('ms-queries')->info(implode(PHP_EOL, [
-                'REQUEST: ' . $request->getPathInfo(),
-                ...$queries,
-            ]));
-        }
+        return $next($request);
     }
 }
