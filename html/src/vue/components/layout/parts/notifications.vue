@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="position: relative">
         <fa-icon
                 @click="notificationsOpened = !notificationsOpened"
                 icon="comment-dots"
@@ -101,7 +101,8 @@
     }
     .notification-badge {
         position: absolute;
-        margin: 6px 0 0 -8px;
+        top: 6px;
+        right: -10px;
     }
     .notification-old {
         background: #eee;
