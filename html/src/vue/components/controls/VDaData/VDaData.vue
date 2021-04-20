@@ -56,7 +56,7 @@
                 inputId: `v-input-id-${this._uid}`,
                 suggestionOptions: {
                     // @see https://confluence.hflabs.ru/pages/viewpage.action?pageId=207454318
-                    token: '0e9c28bb087aec8844b490543b2a1c64d40cf93d', //todo Вынести ключ
+                    token: 'bb3fff1d45a8efed30a90f600fbfd3dd4320dfaa', //todo Вынести ключ
                     type: this.type,
                     bounds: this.bounds,
                     scrollOnFocus: false,
