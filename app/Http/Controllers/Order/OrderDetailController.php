@@ -484,8 +484,9 @@ class OrderDetailController extends Controller
                 $product = $basketItemDto->product;
                 $productPim = $productsByOffers->has($basketItemDto->offer_id) ?
                     $productsByOffers[$basketItemDto->offer_id]->product : [];
+
                 foreach ($product as $key => $value) {
-                    $productPim = $value;
+                    $productPim[$key] = $value;
                 }
                 $basketItemDto['product'] = $productPim;
 
