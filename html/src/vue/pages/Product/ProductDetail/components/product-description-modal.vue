@@ -10,7 +10,15 @@
                     Способов применения.<br><br>
                     Пример: <mark>Нанести|Подождать 5 минут|Смыть</mark>
                 </p>
-                <textarea v-model="$v.form[text_field].$model"
+
+                <ckeditor
+                    v-if="this.text_field === 'description'"
+                    class="custom-width"
+                    id="description"
+                    type="classic"
+                    v-model="v.form[text_field].$model" />
+
+                <textarea v-else v-model="$v.form[text_field].$model"
                           class="form-control" rows="14">
                 </textarea>
                 <button @click="save"
@@ -35,6 +43,8 @@ import modal from '../../../../components/controls/modal/modal.vue';
 import VInput from '../../../../components/controls/VInput/VInput.vue';
 
 import modalMixin from '../../../../mixins/modal.js';
+import VueCkeditor from '../../../../plugins/VueCkeditor';
+
 
 export default {
     components: {
