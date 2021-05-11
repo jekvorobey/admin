@@ -111,7 +111,7 @@ export default {
     computed: {
       availableVats() {
         return [
-          {text: 'Без НДС', value: null},
+          {text: 'Без НДС', value: -1},
           {text: '0', value: 0},
           {text: '10', value: 10},
           {text: '20', value: 20},
