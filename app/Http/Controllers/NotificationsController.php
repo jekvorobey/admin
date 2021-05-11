@@ -23,6 +23,7 @@ class NotificationsController extends Controller
         $restQuery = new RestQuery();
 
         $restQuery->setFilter('user_id', $user->userId());
+        $restQuery->addSort('created_at', 'desc');
         $restQuery->addSort('status', 'asc');
         $restQuery->pageOffset(0, 30);
 
