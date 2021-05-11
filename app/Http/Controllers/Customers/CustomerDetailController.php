@@ -155,6 +155,7 @@ class CustomerDetailController extends Controller
                     return [
                         'link' => $portfolio->link,
                         'name' => $portfolio->name,
+                        'duplicated_customer_id' => $portfolio->duplicated_customer_id,
                     ];
                 }),
                 'socials' => $socials->map(function (SocialUserLinkDto $socials) {
@@ -168,7 +169,7 @@ class CustomerDetailController extends Controller
                     'id' => $referrer->id,
                     'title' => $referrer_user->getTitle(),
                 ] : null,
-                'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'],
+                'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'] ?? null,
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
                 'commission_route' => $commission_route,
@@ -214,7 +215,7 @@ class CustomerDetailController extends Controller
             'activities.*' => 'numeric',
 
             'passport' => 'nullable|array',
-			
+
             'user' => 'nullable|array',
             'user.id' => 'numeric',
             'user.last_name' => 'nullable',
