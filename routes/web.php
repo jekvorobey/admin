@@ -847,6 +847,10 @@ Route::middleware('auth')->group(function () {
                 Route::post('', 'ActivitiesController@save')->name('customers.activities.save');
             });
 
+            Route::prefix('whitelist')->group(function () {
+                Route::get('', 'CustomerWhitelistController@index')->name('customers.whitelist');
+                Route::post('', 'CustomerWhitelistController@import')->name('customers.whitelist.import');
+            });
         });
     });
 

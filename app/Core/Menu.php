@@ -241,6 +241,10 @@ class Menu
                                 'title' => 'Виды деятельности',
                                 'route' => route('customers.activities'),
                             ],
+                            [
+                                'title' => 'Вайтлист',
+                                'route' => route('customers.whitelist'),
+                            ],
                         ]
                     ],
                 ],
