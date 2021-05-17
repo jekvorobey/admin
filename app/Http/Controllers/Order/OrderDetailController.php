@@ -103,7 +103,7 @@ class OrderDetailController extends Controller
             if ($item->is_canceled)
                 continue;
 
-            if ($item->status == self::READY_TO_SHIP) {
+            if ($item->status >= self::READY_TO_SHIP) {
                 $readyToShipItemsCount += 1;
             }
 
