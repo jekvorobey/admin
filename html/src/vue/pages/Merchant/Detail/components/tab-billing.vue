@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--
+
     <h4>Настройки</h4>
     <div class="row">
       <v-input
@@ -19,7 +19,7 @@
     </div>
 
     <hr>
-    -->
+
     <h4>Отчеты</h4>
     <table>
       <tr>
