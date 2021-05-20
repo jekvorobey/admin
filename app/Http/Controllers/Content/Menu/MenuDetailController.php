@@ -12,7 +12,6 @@ class MenuDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param MenuService $menuService
      * @return mixed
      * @throws CmsException
      */
@@ -43,8 +42,6 @@ class MenuDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param MenuService $menuService
      * @return mixed
      * @throws CmsException
      */

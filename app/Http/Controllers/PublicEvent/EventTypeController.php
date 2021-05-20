@@ -74,7 +74,6 @@ class EventTypeController extends Controller
     }
 
     /**
-     * @param PublicEventTypeService $publicEventTypeService
      * @param $page
      * @return array
      * @throws PimException

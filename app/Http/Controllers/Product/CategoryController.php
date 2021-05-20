@@ -48,7 +48,6 @@ class CategoryController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
      * @return Collection|CategoryDto[]
      * @throws \Pim\Core\PimException
      */

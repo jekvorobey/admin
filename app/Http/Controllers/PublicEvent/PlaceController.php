@@ -93,7 +93,6 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param PublicEventPlaceService $publicEventPlaceService
      * @param $page
      * @return array
      * @throws PimException

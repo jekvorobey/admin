@@ -21,7 +21,6 @@ class PropertiesController extends Controller
 {
     /**
      * Страница со списком всех товарных атрибутов
-     * @param ProductService $productService
      * @return mixed
      */
     public function list(ProductService $productService)
@@ -43,7 +42,6 @@ class PropertiesController extends Controller
 
     /**
      * Страница с детальной информацией о товарном атрибуте
-     * @param string $propCode
      * @return mixed
      * @throws PimException
      */
@@ -75,7 +73,6 @@ class PropertiesController extends Controller
 
     /**
      * Отправить запрос на сохранение редактируемого товарного атрибута
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function update(ProductService $productService)
@@ -105,8 +102,6 @@ class PropertiesController extends Controller
 
     /**
      * Отправить запрос на удаление товарного атрибута и всех связанных с ним данных
-     * @param int $propertyId
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function delete(int $propertyId, ProductService $productService)
@@ -118,7 +113,6 @@ class PropertiesController extends Controller
 
     /**
      * Подгрузить детальную информацию о товарном атрибуте
-     * @param string $code
      * @return mixed
      * @throws PimException
      */
@@ -194,7 +188,6 @@ class PropertiesController extends Controller
     /**
      * Заполнить DTO
      * @param array $data
-     * @return PropertyDto
      */
     private function fulfillDto(array $data): PropertyDto
     {

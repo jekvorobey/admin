@@ -45,7 +45,6 @@ class OrderDetailController extends Controller
     private const ON_COMPLECT = 4;
 
     /**
-     * @param int $id
      * @return mixed
      * @throws \Exception
      */
@@ -77,8 +76,6 @@ class OrderDetailController extends Controller
     /**
      * Проверить отправления на сборку
      * @param array $partsNumber
-     * @param ShipmentService $shipmentService
-     * @return bool
      */
     private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
     {
@@ -114,10 +111,7 @@ class OrderDetailController extends Controller
 
     /**
      * Изменить статус заказа
-     * @param int $id
-     * @param Request $request
      * @param ShipmentService $shipmentService
-     * @return JsonResponse
      */
     public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
     {
@@ -136,9 +130,7 @@ class OrderDetailController extends Controller
     /**
      * Вручную оплатить заказ
      * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
-     * @param int $id
      * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function pay(int $id, OrderService $orderService): JsonResponse
@@ -152,9 +144,7 @@ class OrderDetailController extends Controller
 
     /**
      * Отменить заказ
-     * @param int $id
      * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function cancel(int $id, OrderService $orderService): JsonResponse
@@ -167,8 +157,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @return OrderDto
      * @throws \Exception
      */
     protected function getOrder(int $id): OrderDto
@@ -259,7 +247,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param OrderDto $order
      * @throws \Exception
      */
     protected function addOrderDeliveryInfo(OrderDto $order): void
@@ -518,8 +505,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param OrderDto $order
-     * @return Collection
      * @throws \Exception
      */
     protected function getKpis(OrderDto $order): Collection

@@ -17,8 +17,6 @@ class ProductsExportController extends Controller
     /**
      * Экспорт выбранных товаров в файлы Excel
      *
-     * @param Request $request
-     * @param ProductsImportService $productsImportService
      * @return JsonResponse
      */
     public function exportByProductIds(
@@ -43,9 +41,6 @@ class ProductsExportController extends Controller
     /**
      * Экспорт отфильтрованных товаров в файлы Excel
      *
-     * @param Request $request
-     * @param SearchService $searchService
-     * @param ProductsImportService $productsImportService
      * @return JsonResponse
      */
     public function exportByFilters(
@@ -81,7 +76,6 @@ class ProductsExportController extends Controller
     /**
      * Получить оригинальный путь к файлу и его имя по id-шнику
      *
-     * @param int $fileId
      * @return array
      */
     protected static function getOriginalFileUrlAndName(int $fileId)

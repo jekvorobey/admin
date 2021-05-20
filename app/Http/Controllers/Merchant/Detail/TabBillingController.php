@@ -21,8 +21,6 @@ use Illuminate\Support\Carbon;
 class TabBillingController extends Controller
 {
     /**
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      *
      * @return JsonResponse
      */
@@ -37,8 +35,6 @@ class TabBillingController extends Controller
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function billingCycle(int $merchantId, MerchantService $merchantService)
@@ -52,9 +48,6 @@ class TabBillingController extends Controller
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param int $operationId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
@@ -65,9 +58,6 @@ class TabBillingController extends Controller
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param int $operationId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
@@ -78,9 +68,6 @@ class TabBillingController extends Controller
 
     /**
      * Получить биллинговые отчеты
-     * @param Request $request
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return JsonResponse
      * @throws Exception
      */
@@ -95,9 +82,6 @@ class TabBillingController extends Controller
 
     /**
      * Удалить биллинговый отчет
-     * @param int $merchantId
-     * @param int $reportId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function deleteBillingReport(int $merchantId, int $reportId, MerchantService $merchantService)
@@ -108,9 +92,6 @@ class TabBillingController extends Controller
 
     /**
      * Обновить статус у биллингового отчета
-     * @param int $reportId
-     * @param Request $request
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|JsonResponse|Response
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -128,8 +109,6 @@ class TabBillingController extends Controller
 
     /**
      * Создать биллинговый отчет
-     * @param int $merchantId
-     * @param Request $request
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function billingReportCreate(int $merchantId, Request $request)
@@ -148,11 +127,6 @@ class TabBillingController extends Controller
 
     /**
      * Скачать биллинговый отчет
-     * @param int $merchantId
-     * @param int $reportId
-     * @param FileService $fileService
-     * @param MerchantService $merchantService
-     * @return StreamedResponse
      */
     public function billingReportDownload(
         int $merchantId,
@@ -180,9 +154,6 @@ class TabBillingController extends Controller
 
     /**
      * Скачать документ о корректировке
-     * @param int $fileId
-     * @param FileService $fileService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
@@ -198,8 +169,6 @@ class TabBillingController extends Controller
     /**
      * AJAX добавление корректировки биллинга
      *
-     * @param int $merchantId
-     * @param Request $request
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function addCorrection(int $merchantId, Request $request)
@@ -219,10 +188,6 @@ class TabBillingController extends Controller
      /**
      * AJAX пагинация списка операций биллинга
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param MerchantService $merchantService
-     * @return JsonResponse
      * @throws Exception
      */
     public function billingList(int $merchantId, Request $request, MerchantService $merchantService): JsonResponse
@@ -241,7 +206,6 @@ class TabBillingController extends Controller
 
     /**
      * @param $merchantId
-     * @param DataQuery $restQuery
      * @return array
      */
     protected function loadBillingList($merchantId, DataQuery $restQuery): array
@@ -253,9 +217,6 @@ class TabBillingController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param int $merchantId
-     * @return DataQuery
      * @throws Exception
      */
     protected function makeRestQuery(Request $request, int $merchantId): DataQuery

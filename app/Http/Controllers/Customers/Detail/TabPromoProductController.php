@@ -25,7 +25,6 @@ class TabPromoProductController extends Controller
 {
     /**
      * Возвращает список промо-товаров
-     * @param int|null $merchantId
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -38,10 +37,6 @@ class TabPromoProductController extends Controller
 
     /**
      * Обновить/Добавить промо-товар
-     * @param int|null $merchantId
-     * @param Request $request
-     * @param ProductService $productService
-     * @param ReferralService $referralService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -125,7 +120,6 @@ class TabPromoProductController extends Controller
 
     /**
      * Подгрузить информацию о промо-товарах
-     * @param int|null $merchantId
      * @return array
      * @throws \Pim\Core\PimException
      */

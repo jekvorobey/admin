@@ -11,7 +11,6 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -34,9 +33,6 @@ class DiscountController extends Controller
     /**
      * Список скидок
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return mixed
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -69,9 +65,6 @@ class DiscountController extends Controller
     /**
      * AJAX пагинация страниц со скидками
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
     public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -90,8 +83,6 @@ class DiscountController extends Controller
     /**
      * Страница для создания скидки
      *
-     * @param CategoryService $categoryService
-     * @param BrandService $brandService
      *
      * @return mixed
      * @throws PimException
@@ -119,8 +110,6 @@ class DiscountController extends Controller
     /**
      * Запрос на создание заявки на скидки
      *
-     * @param Request $request
-     * @param DiscountService $discountService
      * @return JsonResponse
      */
     public function create(Request $request, DiscountService $discountService)
@@ -136,9 +125,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param DiscountService $discountService
      * @return JsonResponse
      */
     public function update(int $id, Request $request, DiscountService $discountService)
@@ -154,8 +140,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param OfferService $offerService
      *
      * @return mixed
      * @throws PimException
@@ -188,12 +172,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param DiscountService $discountService
-     * @param CategoryService $categoryService
-     * @param ListsService $listsService
-     * @param BrandService $brandService
-     *
      * @return mixed
      * @throws PimException
      */
@@ -211,7 +189,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
      *
      * @return JsonResponse
      */
@@ -244,8 +221,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param DiscountService $discountService
      *
      * @return JsonResponse
      */
@@ -263,8 +238,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param DiscountService $discountService
      *
      * @return JsonResponse
      */

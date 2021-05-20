@@ -28,10 +28,6 @@ class TabShipmentsController extends OrderDetailController
 {
     /**
      * Обновить отправление
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function save(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -57,10 +53,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Изменить статус отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function changeShipmentStatus(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -80,10 +72,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить штрихкоды для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function barcodes(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
@@ -97,10 +85,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить квитанцию cdek для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function cdekReceipt(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
@@ -114,10 +98,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Акт приема-передачи по отправлению"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function acceptanceAct(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
@@ -127,10 +107,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Карточка сборки отправления"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function assemblingCard(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
@@ -140,10 +116,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Опись отправления заказа"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return StreamedResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function inventory(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
@@ -160,10 +132,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Пометить отправление как непроблемное
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function markAsNonProblemShipment(
@@ -180,10 +148,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Отменить отправление
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function cancelShipment(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -197,12 +161,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Добавить коробку для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param Request $request
-     * @param ShipmentPackageService $shipmentPackageService
-     * @param PackageService $packageService
-     * @return JsonResponse
      * @throws Exception
      */
     public function addShipmentPackage(
@@ -234,11 +192,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Удалить коробку для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param int $shipmentPackageId
-     * @param ShipmentPackageService $shipmentPackageService
-     * @return JsonResponse
      * @throws Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -255,11 +208,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Добавить товары в коробку отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param int $shipmentPackageId
-     * @param Request $request
-     * @return JsonResponse
      * @throws Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -302,12 +250,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Отредактировать кол-ва товара в коробке отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param int $shipmentPackageId
-     * @param int $basketItemId
-     * @param Request $request
-     * @return JsonResponse
      * @throws Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -340,11 +282,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Удалить товар в полном кол-ве из коробки отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param int $shipmentPackageId
-     * @param int $basketItemId
-     * @return JsonResponse
      * @throws Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -373,9 +310,6 @@ class TabShipmentsController extends OrderDetailController
     }
 
     /**
-     * @param int $orderId
-     * @param Closure $action
-     * @return JsonResponse
      * @throws Exception
      */
     protected function abstractAction(int $orderId, Closure $action): JsonResponse

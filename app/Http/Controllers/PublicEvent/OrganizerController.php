@@ -71,7 +71,6 @@ class OrganizerController extends Controller
     }
 
     /**
-     * @param PublicEventOrganizerService $publicEventOrganizerService
      * @param $page
      * @return array
      * @throws PimException

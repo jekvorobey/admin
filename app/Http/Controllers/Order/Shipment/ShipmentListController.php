@@ -31,7 +31,6 @@ class ShipmentListController extends Controller
 
     /**
      * Отобразить список отправлений
-     * @param ShipmentService $shipmentService
      * @return mixed
      * @throws ValidationException
      */
@@ -61,8 +60,6 @@ class ShipmentListController extends Controller
 
     /**
      * Получить конкретную страницу списка отправлений
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws ValidationException
      */
     public function page(ShipmentService $shipmentService): JsonResponse
@@ -87,7 +84,6 @@ class ShipmentListController extends Controller
 
     /**
      * Получить номер страницы
-     * @return int
      */
     protected function getPage(): int
     {
@@ -97,9 +93,6 @@ class ShipmentListController extends Controller
     /**
      * Сконструировать запрос, исходя из переданных условий
      * @uses Request
-     * @param ShipmentService $shipmentService
-     * @param bool $withDefaultFilter
-     * @return DataQuery
      * @throws ValidationException
      */
     protected function createQuery(ShipmentService $shipmentService, bool $withDefaultFilter = false): DataQuery
@@ -140,7 +133,6 @@ class ShipmentListController extends Controller
 
     /**
      * Прочитать и проверить переданные правила фильтрации
-     * @param bool $withDefault
      * @return array
      * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
@@ -186,7 +178,6 @@ class ShipmentListController extends Controller
 
     /**
      * Получить порцию данных, соответствующую запросу
-     * @param DataQuery $restQuery
      * @return array
      */
     protected function loadData(DataQuery $restQuery): array

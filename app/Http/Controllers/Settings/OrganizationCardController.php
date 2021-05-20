@@ -46,7 +46,6 @@ class OrganizationCardController extends Controller
 
     /**
      * Страница Карточка организации
-     * @param OptionService $optionService
      * @return mixed
      * @throws CmsException
      */

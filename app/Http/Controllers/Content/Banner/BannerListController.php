@@ -94,7 +94,6 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -119,9 +118,7 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
      * @param BannerService $bannerService ,
-     * @param FileService $fileService
      * @return BannerDto[]|Collection
      * @throws CmsException
      */
@@ -144,7 +141,6 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */

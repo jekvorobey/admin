@@ -33,11 +33,7 @@ class PromoCodeController extends Controller
 {
     /**
      * Список промокодов
-     * @param PromoCodeService $promoCodeService
-     * @param UserService $userService
-     * @param CustomerService $customerService
      * @param MerchantService $merchantService
-     * @param CommunicationService $communicationService
      * @return mixed
      */
     public function index(
@@ -161,13 +157,6 @@ class PromoCodeController extends Controller
     /**
      * Страница для создания промокода
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     *
-     * @param PromoCodeService $promoCodeService
-     *
-     * @param MerchantService $merchantService
-     *
      * @return mixed
      */
     public function createPage(Request $request)
@@ -213,8 +202,6 @@ class PromoCodeController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param PromoCodeService $promoCodeService
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -262,7 +249,6 @@ class PromoCodeController extends Controller
 
     /**
      * @param Request $request
-     * @param PromoCodeService $promoCodeService
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -274,7 +260,6 @@ class PromoCodeController extends Controller
 
     /**
      * Проверка промокода на уникальность
-     * @param PromoCodeService $promoCodeService
      * @return \Illuminate\Http\JsonResponse
      */
     public function checkUnique(PromoCodeService $promoCodeService)

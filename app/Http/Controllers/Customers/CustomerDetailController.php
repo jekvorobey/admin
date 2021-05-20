@@ -31,12 +31,6 @@ class CustomerDetailController extends Controller
 {
     /**
      * @param $id
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param OrderService $orderService
-     * @param FileService $fileService
-     * @param ReferralService $referralService
-     * @param CommunicationService $communicationService
      * @return mixed
      */
     public function detail(

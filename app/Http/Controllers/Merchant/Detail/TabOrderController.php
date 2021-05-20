@@ -31,8 +31,6 @@ class TabOrderController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации отправлений
      *
-     * @param int $merchantId
-     * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
@@ -53,10 +51,6 @@ class TabOrderController extends Controller
     /**
      * AJAX пагинация списка заказов
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param ShipmentService $shipmentService
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(int $merchantId, Request $request, ShipmentService $shipmentService): JsonResponse
@@ -122,7 +116,6 @@ class TabOrderController extends Controller
     }
 
     /**
-     * @param int $merchantId
      * @return Collection|StoreDto[]
      */
     public function loadStores(int $merchantId): Collection
@@ -144,8 +137,6 @@ class TabOrderController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(

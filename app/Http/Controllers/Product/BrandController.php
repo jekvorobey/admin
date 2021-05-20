@@ -68,7 +68,6 @@ class BrandController extends Controller
     }
 
     /**
-     * @param BrandService $brandService
      * @param $page
      * @return array
      * @throws PimException

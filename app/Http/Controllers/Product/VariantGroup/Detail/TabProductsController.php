@@ -20,8 +20,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabProductsController extends VariantGroupDetailController
 {
     /**
-     * @param int $variantGroupId
-     * @return JsonResponse
      * @throws \Pim\Core\PimException|\Exception
      */
     public function load(int $variantGroupId): JsonResponse
@@ -66,7 +64,6 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @param VariantGroupDto $variantGroupDto
      * @throws \Exception
      */
     protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
@@ -108,9 +105,6 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @param Request $request
-     * @return JsonResponse
      * @throws \Exception
      */
     public function add(int $variantGroupId, Request $request): JsonResponse
@@ -125,9 +119,6 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @param Request $request
-     * @return JsonResponse
      * @throws \Exception
      */
     public function delete(int $variantGroupId, Request $request): JsonResponse
@@ -142,9 +133,6 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @param int $productId
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function setMain(int $variantGroupId, int $productId): JsonResponse

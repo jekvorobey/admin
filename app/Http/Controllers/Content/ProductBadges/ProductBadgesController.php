@@ -20,7 +20,6 @@ class ProductBadgesController extends Controller
 
     /**
      * Список всех товарных ярлыков
-     * @param ContentBadgesService $badgesService
      * @return mixed
      */
     public function list(ContentBadgesService $badgesService)
@@ -36,7 +35,6 @@ class ProductBadgesController extends Controller
 
     /**
      * Добавить новый продуктовый ярлык
-     * @param ContentBadgesService $badgesService
      * @return JsonResponse
      */
     public function add(ContentBadgesService $badgesService)
@@ -63,7 +61,6 @@ class ProductBadgesController extends Controller
 
     /**
      * Редактировать продуктовый ярлык
-     * @param ContentBadgesService $badgesService
      * @return JsonResponse
      */
     public function edit(ContentBadgesService $badgesService)
@@ -91,7 +88,6 @@ class ProductBadgesController extends Controller
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @param ContentBadgesService $badgesService
      * @return Application|ResponseFactory|Response
      */
     public function reorder(ContentBadgesService $badgesService)
@@ -107,8 +103,6 @@ class ProductBadgesController extends Controller
 
     /**
      * Удалить продуктовый ярлык и его связи с товарами
-     * @param ContentBadgesService $badgesService
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function remove(

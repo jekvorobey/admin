@@ -48,7 +48,6 @@ class PublicEventBillingReport
     /**
      * Возвращает сумму прописью
      * @param $num
-     * @return string
      * @uses morph(...)
      */
     protected static function num2str($num): string
@@ -125,7 +124,6 @@ class PublicEventBillingReport
     }
 
     /**
-     * @param Worksheet $sheet
      *
      * @param $merchant
      * @throws PhpSpreadsheetException
@@ -153,7 +151,6 @@ class PublicEventBillingReport
     }
 
     /**
-     * @param Worksheet $sheet
      * @param $orders
      * @throws PhpSpreadsheetException
      */

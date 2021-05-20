@@ -157,7 +157,6 @@ class ProductListController extends Controller
 
     /**
      * Назначить или обнулить шильдики у товаров
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function attachBadges(ProductService $productService)

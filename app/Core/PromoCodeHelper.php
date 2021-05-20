@@ -18,9 +18,6 @@ class PromoCodeHelper
     /**
      * Получение списка промокодов c типом скидка
      *
-     * @param DiscountService $discountService
-     * @param PromoCodeService $promoCodeService
-     * @param int $merchantId
      * @return Collection
      */
     public static function getDiscountPromoCodes(
@@ -49,8 +46,6 @@ class PromoCodeHelper
     /**
      * Получение списка промокодов
      *
-     * @param PromoCodeService $promoCodeService
-     * @param int $merchantId
      * @return Collection
      */
     public static function getPromoCodes(
@@ -68,7 +63,6 @@ class PromoCodeHelper
      * Получение списка реферальных партнеров в списке промокодов
      *
      * @param Collection $promoCodes
-     * @param CustomerService $customerService
      * @return Collection
      */
     public static function getReferrals(
@@ -91,8 +85,6 @@ class PromoCodeHelper
      * Получение списка пользователей в списке промокодов
      *
      * @param Collection $promoCodes
-     * @param UserService $userService
-     * @param Collection $referrals
      * @return Collection
      */
     public static function getUsers(
@@ -120,9 +112,6 @@ class PromoCodeHelper
     /**
      * Форматирование списка промокодов для вывода в таблицу
      *
-     * @param Collection $promoCodes
-     * @param Collection $referrals
-     * @param Collection $users
      * @return Collection
      */
     public static function formatPromoCodes(
@@ -163,8 +152,6 @@ class PromoCodeHelper
     /**
      * Получение списка пользователей-создателей промокодов
      *
-     * @param Collection $creatorIds
-     * @param Collection $users
      * @return Collection
      */
     public static function getCreators(Collection $creatorIds, Collection $users)
@@ -184,8 +171,6 @@ class PromoCodeHelper
      * Получение списка реферальных партнеров, которые есть в списке промокодов
      *
      * @param Collection $creatorIds
-     * @param Collection $users
-     * @param Collection $referrals
      * @return Collection
      */
     public static function getOwners(Collection $referralIds, Collection $users, Collection $referrals)

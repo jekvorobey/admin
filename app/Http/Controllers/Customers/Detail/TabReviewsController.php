@@ -35,11 +35,7 @@ class TabReviewsController extends Controller
      * Постраничный вывод отзывов
      *
      * @param $customerId
-     * @param CustomerService $customerService
      * @param UserService $userService
-     * @param ReviewService $reviewService
-     * @param ProductService $productService
-     * @param FileService $fileService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */

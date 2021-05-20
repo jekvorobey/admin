@@ -19,9 +19,6 @@ class BannerDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param BannerService $bannerService
-     * @param BannerTypeService $bannerTypeService
-     * @param FileService $fileService
      * @return mixed
      * @throws CmsException
      */
@@ -52,7 +49,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return mixed
      * @throws CmsException
      */
@@ -74,7 +70,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return mixed
      * @throws CmsException
      */
@@ -114,8 +109,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param BannerService $bannerService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -139,9 +132,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param BannerService $bannerService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -175,8 +165,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param BannerService $bannerService
      * @return BannerDto|null
      * @throws CmsException
      */
@@ -193,7 +181,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */
@@ -204,7 +191,6 @@ class BannerDetailController extends Controller
 
     /**
      * @param array $ids
-     * @param FileService $fileService
      * @return Collection|FileDto[]
      */
     private function getBannerImages(array $ids, FileService $fileService)

@@ -18,9 +18,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class FrequentCategoryController extends Controller
 {
     /**
-     * @param CategoryService $categoryService
-     * @param FrequentCategoryService $frequentCategoryService
-     * @param FileService $fileService
      * @return mixed
      * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException
@@ -39,8 +36,6 @@ class FrequentCategoryController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param FrequentCategoryService $frequentCategoryService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      */
     public function editCategories(
@@ -69,9 +64,6 @@ class FrequentCategoryController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
-     * @param FrequentCategoryService $frequentCategoryService
-     * @param FileService $fileService
      * @return Collection|CategoryDto[]
      * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException

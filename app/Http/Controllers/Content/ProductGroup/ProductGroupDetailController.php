@@ -203,7 +203,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param ProductGroupTypeService $productGroupTypeService
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */
@@ -213,7 +212,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
@@ -225,10 +223,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param ProductGroupService $productGroupService
-     * @param PropertyDirectoryValueService $propertyDirectoryValueService
-     * @param BrandService $brandService
      * @return mixed
      * @throws PimException
      */
@@ -284,7 +278,6 @@ class ProductGroupDetailController extends Controller
 
     /**
      * @param array $ids
-     * @param FileService $fileService
      * @return Collection|FileDto[]
      */
     protected function getProductGroupImages(array $ids, FileService $fileService)
@@ -303,7 +296,6 @@ class ProductGroupDetailController extends Controller
     /**
      * Дополнить объекты фильтров их названиями
      * @param array $target
-     * @param Collection $source
      */
     protected function injectNames(array &$target, Collection $source)
     {

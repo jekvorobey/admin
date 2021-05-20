@@ -15,8 +15,6 @@ class PaymentMethodsController extends Controller
 {
     /**
      * Информация о доступных способах оплаты и их настройки
-     * @param PaymentService $paymentService
-     * @param ListsService $listsService
      * @return mixed
      */
     public function list(PaymentService $paymentService, ListsService $listsService)
@@ -48,8 +46,6 @@ class PaymentMethodsController extends Controller
 
     /**
      * Изменить параметры способа оплаты
-     * @param int $id
-     * @param PaymentService $paymentService
      * @return JsonResponse
      */
     public function edit(int $id, PaymentService $paymentService)
@@ -80,7 +76,6 @@ class PaymentMethodsController extends Controller
     /**
      * Вспомогательный метод, заполняющий Dto полями из Request
      * @param array $data
-     * @return PaymentMethod
      */
     private function fulfillDto(array $data): PaymentMethod
     {

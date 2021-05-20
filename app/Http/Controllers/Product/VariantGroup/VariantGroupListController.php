@@ -40,7 +40,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return mixed
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Pim\Core\PimException
@@ -66,8 +65,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function create(Request $request): JsonResponse
@@ -121,7 +118,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @return JsonResponse
      * @throws \Exception
      */
     public function page(): JsonResponse
@@ -139,7 +135,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param bool $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
@@ -166,7 +161,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param DataQuery $restQuery
      * @return Collection|VariantGroupDto[]
      * @throws \Pim\Core\PimException
      */
@@ -189,8 +183,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param bool $withDefaultFilter
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(bool $withDefaultFilter = false): DataQuery

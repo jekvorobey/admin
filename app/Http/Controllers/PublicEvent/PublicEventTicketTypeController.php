@@ -130,7 +130,6 @@ class PublicEventTicketTypeController extends Controller
     }
 
     /**
-     * @param PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
      * @param $page
      * @return array
      * @throws PimException

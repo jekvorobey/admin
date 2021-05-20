@@ -128,7 +128,6 @@ class PublicEventProfessionController extends Controller
     }
 
     /**
-     * @param PublicEventProfessionService $publicEventPublicEventProfessionService
      * @param $page
      * @return array
      * @throws PimException

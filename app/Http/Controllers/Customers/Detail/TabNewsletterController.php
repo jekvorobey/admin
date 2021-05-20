@@ -22,8 +22,6 @@ class TabNewsletterController extends Controller
     /**
      * Получить информацию о новостных подписках пользователя
      * @param $customerId
-     * @param ContentNewsletterService $contentNewsletterService
-     * @param CustomerNewsletterService $customerNewsletterService
      * @return JsonResponse
      */
     public function load(
@@ -55,8 +53,6 @@ class TabNewsletterController extends Controller
     /**
      * Редактировать параметры новостной подписки у пользователя
      * @param $customerId
-     * @param CustomerNewsletterService $customerNewsletterService
-     * @param ContentNewsletterService $contentNewsletterService
      * @return Application|ResponseFactory|Response
      */
     public function edit(

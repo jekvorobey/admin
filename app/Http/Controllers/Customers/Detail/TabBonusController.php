@@ -15,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class TabBonusController extends Controller
 {
     /**
-     * @param int $id
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -49,10 +48,7 @@ class TabBonusController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
      *
-     * @param RequestInitiator $user
      *
      * @return \Illuminate\Http\JsonResponse
      */

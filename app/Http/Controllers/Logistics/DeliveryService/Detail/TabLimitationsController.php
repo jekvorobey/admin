@@ -15,7 +15,6 @@ class TabLimitationsController extends Controller
 {
     /**
      * @param $id
-     * @param ListsService $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function save($id, ListsService $listsService): Response

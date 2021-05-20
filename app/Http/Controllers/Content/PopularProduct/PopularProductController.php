@@ -19,7 +19,6 @@ class PopularProductController extends Controller
 {
     /**
      * Список всех популярных товаров
-     * @param PopularProductService $popularProductService
      * @return mixed
      * @throws CmsException|PimException
      */
@@ -58,8 +57,6 @@ class PopularProductController extends Controller
 
     /**
      * Добавить новый популярный товар
-     * @param PopularProductService $popularProductService
-     * @param ProductService $productService
      * @return JsonResponse
      */
     public function create(PopularProductService $popularProductService, ProductService $productService)
@@ -141,7 +138,6 @@ class PopularProductController extends Controller
 
     /**
      * Удалить популярный товар
-     * @param PopularProductService $popularProductService
      * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
@@ -159,7 +155,6 @@ class PopularProductController extends Controller
 
     /**
      * Изменить порядок популярных товаров
-     * @param PopularProductService $popularProductService
      * @return Response
      */
     public function reorder(PopularProductService $popularProductService)

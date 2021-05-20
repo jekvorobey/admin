@@ -18,7 +18,6 @@ class ContactsController extends Controller
 {
     /**
      * Список всех контактов и соц. сетей
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function list(ContactsService $contactsService)
@@ -34,7 +33,6 @@ class ContactsController extends Controller
 
     /**
      * Добавить контакт или соц. сеть
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function add(ContactsService $contactsService)
@@ -60,7 +58,6 @@ class ContactsController extends Controller
 
     /**
      * Изменить данные о контакте или соц. сети
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function edit(ContactsService $contactsService)
@@ -87,7 +84,6 @@ class ContactsController extends Controller
 
     /**
      * Удалить контакт или соц. сеть
-     * @param ContactsService $contactsService
      * @return Application|ResponseFactory|Response
      */
     public function remove(ContactsService $contactsService)

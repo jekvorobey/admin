@@ -19,8 +19,6 @@ class TabOperatorController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации отправлений
      *
-     * @param int $merchantId
-     * @param Request $request
      * @return JsonResponse
      */
     public function loadData()
@@ -34,10 +32,6 @@ class TabOperatorController extends Controller
     /**
      * AJAX пагинация списка операторов
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param OperatorService $operatorService
-     * @param UserService $userService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -94,7 +88,6 @@ class TabOperatorController extends Controller
      * true если нужно сделать выборку
      * false если выборку делать не нужно (например если какой-то фильтр не дал результата)
      *
-     * @return bool
      */
     protected function getFilter(RestQuery $restQuery): bool
     {

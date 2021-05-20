@@ -122,7 +122,6 @@ class PublicEventSprintStageController extends Controller
     }
 
     /**
-     * @param PublicEventSprintStageService $publicEventPublicEventSprintStageService
      * @param $page
      * @return array
      * @throws PimException

@@ -14,8 +14,6 @@ class DocumentTemplatesController extends Controller
 {
     /**
      * Получить шаблон "Акт-претензия по отправлению"
-     * @param DocumentTemplateService $documentTemplateService
-     * @return StreamedResponse
      */
     public function claimAct(DocumentTemplateService $documentTemplateService): StreamedResponse
     {
@@ -24,8 +22,6 @@ class DocumentTemplatesController extends Controller
 
     /**
      * Получить шаблон "Акт приема-передачи по отправлению/грузу"
-     * @param DocumentTemplateService $documentTemplateService
-     * @return StreamedResponse
      */
     public function acceptanceAct(DocumentTemplateService $documentTemplateService): StreamedResponse
     {
@@ -34,8 +30,6 @@ class DocumentTemplatesController extends Controller
 
     /**
      * Получить шаблон "Опись отправления заказа"
-     * @param DocumentTemplateService $documentTemplateService
-     * @return StreamedResponse
      */
     public function inventory(DocumentTemplateService $documentTemplateService): StreamedResponse
     {
@@ -44,8 +38,6 @@ class DocumentTemplatesController extends Controller
 
     /**
      * Получить шаблон "Карточка сборки отправления"
-     * @param DocumentTemplateService $documentTemplateService
-     * @return StreamedResponse
      */
     public function assemblingCard(DocumentTemplateService $documentTemplateService): StreamedResponse
     {

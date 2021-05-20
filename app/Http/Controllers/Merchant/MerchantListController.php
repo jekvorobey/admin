@@ -226,7 +226,6 @@ class MerchantListController extends Controller
 
     /**
      * Создать нового мерчанта
-     * @param MerchantService $merchantService
      * @return \Illuminate\Http\JsonResponse
      */
     public function createMerchant(MerchantService $merchantService)

@@ -22,7 +22,6 @@ class TabProductController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации оферов
      *
-     * @param int $merchantId
      * @return JsonResponse
      * @throws \Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
@@ -37,8 +36,6 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @param int $merchantId
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(int $merchantId): JsonResponse
@@ -61,7 +58,6 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @param int $merchantId
      * @return RestQuery
      * @throws \Exception
      */
@@ -116,7 +112,6 @@ class TabProductController extends Controller
     }
 
     /**
-     * @param RestQuery $query
      * @return Collection
      * @throws PimException
      */

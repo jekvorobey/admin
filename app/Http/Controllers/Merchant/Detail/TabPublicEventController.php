@@ -58,8 +58,6 @@ class TabPublicEventController extends Controller
      /**
      * AJAX пагинация списка операций биллинга Мастер-классов
      *
-     * @param int $merchantId
-     * @return JsonResponse
      * @throws Exception
      */
     public function eventBillingList(int $merchantId): JsonResponse

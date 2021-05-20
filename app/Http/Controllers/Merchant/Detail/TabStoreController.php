@@ -17,10 +17,6 @@ class TabStoreController extends Controller
     /**
      * AJAX пагинация списка складов
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(int $merchantId, Request $request, StoreService $storeService): JsonResponse
@@ -38,8 +34,6 @@ class TabStoreController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(

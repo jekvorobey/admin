@@ -52,7 +52,6 @@ class ProductGroupListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -87,9 +86,6 @@ class ProductGroupListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
-     * @param ProductGroupService $productGroupService
-     * @param FileService $fileService
      * @return ProductGroupDto[]|Collection
      * @throws CmsException
      */
@@ -112,7 +108,6 @@ class ProductGroupListController extends Controller
     }
 
     /**
-     * @param ProductGroupTypeService $productGroupTypeService
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */

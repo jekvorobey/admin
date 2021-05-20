@@ -388,7 +388,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -424,7 +423,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -443,7 +441,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -475,7 +472,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -502,7 +498,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -524,7 +519,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -562,7 +556,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -600,7 +593,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -624,7 +616,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -647,7 +638,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -670,7 +660,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */
@@ -731,7 +720,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
      *
      * @return $this
      */

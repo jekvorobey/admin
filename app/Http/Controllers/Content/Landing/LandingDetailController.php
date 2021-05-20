@@ -14,7 +14,6 @@ class LandingDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param LandingService $landingService
      * @return mixed
      * @throws CmsException
      */
@@ -50,8 +49,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param LandingService $landingService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -70,9 +67,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param LandingService $landingService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -101,8 +95,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param LandingService $landingService
      * @return LandingDto|null
      * @throws CmsException
      */
@@ -115,7 +107,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param LandingService $landingService
      * @return LandingWidgetDto[]|Collection
      * @throws CmsException
      */

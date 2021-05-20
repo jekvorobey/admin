@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryPriceDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -21,7 +20,6 @@ use Illuminate\Validation\Rule;
 class DeliveryPriceController extends Controller
 {
     /**
-     * @param ListsService $listsService
      * @return mixed
      */
     public function index(ListsService $listsService)
@@ -59,11 +57,6 @@ class DeliveryPriceController extends Controller
         ]);
     }
 
-    /**
-     * @param RestQuery $restQuery
-     * @param ListsService $listsService
-     * @return Collection
-     */
     protected function loadData(ListsService $listsService): Collection
     {
         $deliveryPrices = $listsService->deliveryPrices();

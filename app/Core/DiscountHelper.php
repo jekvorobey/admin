@@ -37,10 +37,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DiscountHelper
 {
     /**
-     * @param Request $request
-     * @param int $userId
      * @param array $pager
-     * @param int $merchantId
      * @param array $type
      * @return array
      */
@@ -87,9 +84,7 @@ class DiscountHelper
 
     /**
      * @param array $params
-     * @param DiscountService $discountService
      *
-     * @return Collection
      */
     public static function load(array $params, DiscountService $discountService): Collection
     {
@@ -121,7 +116,6 @@ class DiscountHelper
 
     /**
      * @param array $params
-     * @param DiscountService $discountService
      *
      * @return int
      */
@@ -133,7 +127,6 @@ class DiscountHelper
     }
 
     /**
-     * @param Request $request
      *
      * @return DiscountDto
      */
@@ -416,8 +409,6 @@ class DiscountHelper
     }
 
     /**
-     * @param Request $request
-     * @param int $perPage
      *
      * @return array
      */
@@ -468,7 +459,6 @@ class DiscountHelper
     }
 
     /**
-     * @param int $id
      *
      * @return array
      * @throws \Pim\Core\PimException
@@ -519,7 +509,6 @@ class DiscountHelper
 
     /**
      * @param $id
-     * @param Request $request
      *
      * @return array
      */
@@ -593,7 +582,6 @@ class DiscountHelper
     }
 
     /**
-     * @param string $fullName
      *
      * @return array
      */

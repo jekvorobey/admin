@@ -35,10 +35,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ContentClaimController extends Controller
 {
     /**
-     * @param Request $request
-     * @param ContentClaimService $claimService
-     * @param UserService $userService
-     * @param MerchantService $merchantService
      * @return mixed
      */
     public function index(
@@ -85,8 +81,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param ContentClaimService $claimService
-     * @param MerchantService $merchantService
      * @return mixed
      */
     public function create(
@@ -123,9 +117,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param RequestInitiator $user
-     * @param ContentClaimService $contentClaimService
      * @return \Illuminate\Http\JsonResponse
      */
     public function saveClaim(
@@ -148,10 +139,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param ContentClaimService $claimService
-     * @param UserService $userService
-     * @param MerchantService $merchantService
      * @return \Illuminate\Http\JsonResponse
      */
     public function page(
@@ -171,11 +158,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param ContentClaimService $claimService
-     * @param UserService $userService
-     * @param MerchantService $merchantService
-     * @param ProductService $productService
      * @return mixed
      */
     public function detail(
@@ -251,8 +233,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param ContentClaimService $contentClaimService
      * @return \Illuminate\Http\JsonResponse
      */
     public function changeStatuses(
@@ -269,8 +249,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param ContentClaimService $contentClaimService
      * @return \Illuminate\Http\JsonResponse
      */
     public function deleteClaims(
@@ -286,8 +264,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param OfferService $offerService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -352,9 +328,6 @@ class ContentClaimController extends Controller
 //    }
 
     /**
-     * @param Request $request
-     * @param ContentClaimService $claimService
-     * @param UserService $userService
      * @return \Greensight\CommonMsa\Dto\DataQuery|null
      */
     protected function prepareQuery(Request $request, ContentClaimService $claimService, UserService $userService)
@@ -412,9 +385,6 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @param RestQuery $query
-     * @param UserService $userService
-     * @param MerchantService $merchantService
      * @return Collection
      */
     protected function loadClaims(RestQuery $query, UserService $userService, MerchantService $merchantService)

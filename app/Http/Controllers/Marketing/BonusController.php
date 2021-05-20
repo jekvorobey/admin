@@ -40,7 +40,6 @@ class BonusController extends Controller
     }
 
     /**
-     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -155,7 +154,6 @@ class BonusController extends Controller
     }
 
     /**
-     * @param Request $request
      *
      * @return \Illuminate\Http\Response
      */

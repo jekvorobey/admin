@@ -45,7 +45,6 @@ class LandingListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -66,8 +65,6 @@ class LandingListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
-     * @param LandingService $landingService
      * @return LandingDto[]|Collection
      * @throws CmsException
      */

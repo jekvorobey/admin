@@ -24,14 +24,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class MerchantDetailController extends Controller
 {
     /**
-     * @param int $id
-     * @param MerchantService $merchantService
-     * @param OperatorService $operatorService
-     * @param UserService $userService
-     * @param CommunicationService $communicationService
-     * @param BrandService $brandService
-     * @param CategoryService $categoryService
-     * @param OfferService $offerService
      * @return mixed
      * @throws \Pim\Core\PimException
      */

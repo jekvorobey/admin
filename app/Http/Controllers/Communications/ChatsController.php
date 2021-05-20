@@ -175,8 +175,6 @@ class ChatsController extends Controller
     /**
      * Привязываем пользователя к чату (LiveTex)
      *
-     * @param CommunicationService $communicationService
-     * @param RequestInitiator $user
      */
     public function updateChatUser(CommunicationService $communicationService)
     {
@@ -199,7 +197,6 @@ class ChatsController extends Controller
     /**
      * Список чатов из мессенджеров (LiveTex), которые не привязаны к пользователям
      *
-     * @param CommunicationService $communicationService
      * @param RequestInitiator $user
      */
     public function unlinkMessengerChats(CommunicationService $communicationService, UserService $userService)

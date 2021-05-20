@@ -35,8 +35,6 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function load(int $variantGroupId): JsonResponse
@@ -124,9 +122,6 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @param int $propertyId
-     * @return JsonResponse
      * @throws \Exception
      */
     public function add(int $variantGroupId, int $propertyId): JsonResponse
@@ -137,9 +132,6 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param int $variantGroupId
-     * @param Request $request
-     * @return JsonResponse
      * @throws \Exception
      */
     public function delete(int $variantGroupId, Request $request): JsonResponse

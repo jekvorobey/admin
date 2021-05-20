@@ -19,7 +19,6 @@ class PopularBrandController extends Controller
 {
     /**
      * Список всех популярных брендов
-     * @param PopularBrandService $popularBrandService
      * @return mixed
      * @throws CmsException|PimException
      */
@@ -63,7 +62,6 @@ class PopularBrandController extends Controller
 
     /**
      * Добавить новый популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return JsonResponse
      * @throws CmsException
      */
@@ -87,7 +85,6 @@ class PopularBrandController extends Controller
 
     /**
      * Редактировать популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return Response|JsonResponse
      * @throws CmsException
      */
@@ -111,7 +108,6 @@ class PopularBrandController extends Controller
 
     /**
      * Удалить популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
@@ -129,7 +125,6 @@ class PopularBrandController extends Controller
 
     /**
      * Изменить порядок популярных брендов
-     * @param PopularBrandService $popularBrandService
      * @return Response
      */
     public function reorder(PopularBrandService $popularBrandService)

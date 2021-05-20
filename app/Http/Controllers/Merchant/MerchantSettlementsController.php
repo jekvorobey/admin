@@ -144,9 +144,6 @@ class MerchantSettlementsController extends Controller
 
     /**
      * Создать реестр выплат
-     * @param Request $request
-     * @param RequestInitiator $user
-     * @return Response
      */
     public function createPayRegistry(Request $request, RequestInitiator $user): Response
     {
@@ -158,8 +155,6 @@ class MerchantSettlementsController extends Controller
 
     /**
      * Удалить реестр выплат
-     * @param int $payRegistryId
-     * @return Response
      */
     public function deletePayRegistry(int $payRegistryId): Response
     {
@@ -172,9 +167,6 @@ class MerchantSettlementsController extends Controller
 
     /**
      * Скачать биллинговый отчет
-     * @param int $registryFileId
-     * @param FileService $fileService
-     * @return StreamedResponse
      */
     public function downloadPayRegistry(int $registryFileId, FileService $fileService): ?StreamedResponse
     {

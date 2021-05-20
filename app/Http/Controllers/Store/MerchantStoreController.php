@@ -182,8 +182,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function delete(int $id, StoreService $storeService)
@@ -193,8 +191,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function deleteArray(Request $request, StoreService $storeService)
@@ -261,9 +257,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function createContact(int $id, Request $request, StoreService $storeService)
@@ -296,8 +289,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function deleteContact(int $id, StoreService $storeService)

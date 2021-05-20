@@ -130,9 +130,6 @@ class UsersController extends Controller
     /**
      * Получение пользователей по массиву ролей
      *
-     * @param UserService $userService
-     * @param OperatorService $operatorService
-     * @param RequestInitiator $user
      * @return \Illuminate\Http\JsonResponse
      */
     public function usersByRoles(

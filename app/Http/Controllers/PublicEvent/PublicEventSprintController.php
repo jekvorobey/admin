@@ -67,7 +67,6 @@ class PublicEventSprintController extends Controller
     }
 
     /**
-     * @param PublicEventSprintService $publicEventPublicEventSprintService
      * @param $page
      * @return array
      * @throws PimException

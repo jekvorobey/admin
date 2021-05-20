@@ -21,10 +21,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabDeliveriesController extends OrderDetailController
 {
     /**
-     * @param int $orderId
-     * @param int $deliveryId
-     * @param DeliveryService $deliveryService
-     * @param ListsService $listsService
      * @return JsonResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -76,10 +72,6 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Обновить доставку
-     * @param int $orderId
-     * @param int $deliveryId
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function save(
@@ -154,10 +146,6 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Создать/обновить заказ на доставку у службы доставки
-     * @param int $orderId
-     * @param int $deliveryId
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function saveDeliveryOrder(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
@@ -171,10 +159,6 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить заказ на доставку у службы доставки
-     * @param int $orderId
-     * @param int $deliveryId
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function cancelDeliveryOrder(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
@@ -188,10 +172,6 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить доставку
-     * @param int $orderId
-     * @param int $deliveryId
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function cancelDelivery(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse

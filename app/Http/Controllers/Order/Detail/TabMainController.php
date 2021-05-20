@@ -22,9 +22,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabMainController extends OrderDetailController
 {
     /**
-     * @param int $id
-     * @param OrderService $orderService
-     * @param ListsService $listsService
      * @return \Illuminate\Http\JsonResponse
      */
     public function load(
@@ -78,10 +75,6 @@ class TabMainController extends OrderDetailController
     }
 
     /**
-     * @param int $id
-     * @param OrderService $orderService
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function save(int $id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse

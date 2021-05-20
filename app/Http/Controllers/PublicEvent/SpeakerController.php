@@ -110,7 +110,6 @@ class SpeakerController extends Controller
     }
 
     /**
-     * @param PublicEventSpeakerService $publicEventSpeakerService
      * @param $page
      * @return array
      * @throws PimException

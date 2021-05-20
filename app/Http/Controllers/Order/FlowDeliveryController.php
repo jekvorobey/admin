@@ -24,8 +24,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class FlowDeliveryController extends Controller
 {
     /**
-     * @param int $orderId
-     * @param int $deliveryId
      * @return mixed
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -136,7 +134,6 @@ class FlowDeliveryController extends Controller
     /**
      * Получить доставку
      * @param int $deliveryId ID доставки
-     * @return DeliveryDto|null
      */
     protected function loadDelivery(int $deliveryId): ?DeliveryDto
     {
@@ -153,7 +150,6 @@ class FlowDeliveryController extends Controller
     /**
      * Получить отправления доставки
      * @param int $deliveryId ID доставки
-     * @return Collection|null
      */
     protected function loadShipments(int $deliveryId): ?Collection
     {
@@ -175,7 +171,6 @@ class FlowDeliveryController extends Controller
     /**
      * Получить мерчантов
      * @param array $merchantIds
-     * @return Collection|null
      */
     protected function loadMerchants(array $merchantIds): ?Collection
     {

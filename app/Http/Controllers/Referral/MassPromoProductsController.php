@@ -19,8 +19,6 @@ class MassPromoProductsController extends Controller
 {
     /**
      * Список промо-товаров, которые назначаются на реф. партнеров массово
-     * @param CustomerService $customerService
-     * @param ReferralService $referralService
      * @return mixed
      * @throws PimException
      * @throws CustomerException
@@ -49,9 +47,6 @@ class MassPromoProductsController extends Controller
 
     /**
      * Обновить/Добавить промо-товар для массового назначения
-     * @param Request $request
-     * @param ProductService $productService
-     * @param ReferralService $referralService
      * @return JsonResponse
      * @throws PimException
      */
@@ -67,7 +62,6 @@ class MassPromoProductsController extends Controller
 
     /**
      * Назначить промо-товар реф. партнерам по критериям
-     * @param ReferralService $referralService
      * @return JsonResponse
      * @throws PimException
      */
@@ -96,7 +90,6 @@ class MassPromoProductsController extends Controller
 
     /**
      * Удалить промо-товар
-     * @param ReferralService $referralService
      * @return Application|ResponseFactory|Response
      */
     public function removeProduct(ReferralService $referralService)

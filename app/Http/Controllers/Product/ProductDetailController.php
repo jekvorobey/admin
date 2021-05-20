@@ -39,10 +39,6 @@ class ProductDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param ProductService $productService
-     * @param CategoryService $categoryService
-     * @param BrandService $brandService
-     * @param ContentBadgesService $badgesService
      * @return mixed
      */
     public function index(
@@ -153,8 +149,6 @@ class ProductDetailController extends Controller
 
     /**
      * Обновить состав продукта
-     * @param int $productId
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function saveIngredients(int $productId, ProductService $productService)
@@ -189,10 +183,6 @@ class ProductDetailController extends Controller
 
     /**
      * Изменить статус согласования товара
-     * @param int $id
-     * @param Request $request
-     * @param ProductService $productService
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function changeApproveStatus(int $id, Request $request, ProductService $productService): JsonResponse
@@ -207,10 +197,6 @@ class ProductDetailController extends Controller
 
     /**
      * Изменить статус согласования товара на "Отклонен" с комментарием
-     * @param int $id
-     * @param Request $request
-     * @param ProductService $productService
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function reject(int $id, Request $request, ProductService $productService): JsonResponse

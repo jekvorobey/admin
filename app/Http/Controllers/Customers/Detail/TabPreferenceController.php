@@ -25,11 +25,6 @@ class TabPreferenceController extends Controller
 {
     /**
      * @param $id
-     * @param BrandService $brandService
-     * @param CategoryService $categoryService
-     * @param CustomerService $customerService
-     * @param ProductService $productService
-     * @param Request $request
      * @return JsonResponse
      * @throws PimException
      */
@@ -99,9 +94,6 @@ class TabPreferenceController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param int $prefType
-     * @param CustomerService $customerService
      * @return ResponseFactory|Response
      */
     public function putBrands(int $id, int $prefType, CustomerService $customerService)
@@ -117,9 +109,6 @@ class TabPreferenceController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param int $prefType
-     * @param CustomerService $customerService
      * @return ResponseFactory|Response
      */
     public function putCategories(int $id, int $prefType, CustomerService $customerService)

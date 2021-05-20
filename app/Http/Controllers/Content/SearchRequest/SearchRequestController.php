@@ -15,7 +15,6 @@ class SearchRequestController extends Controller
 {
     /**
      * Список всех поисковых запросов
-     * @param SearchRequestService $searchRequestService
      * @return mixed
      */
     public function list(SearchRequestService $searchRequestService)
@@ -34,7 +33,6 @@ class SearchRequestController extends Controller
 
     /**
      * Добавить новый продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return JsonResponse
      */
     public function create(SearchRequestService $searchRequestService)
@@ -65,7 +63,6 @@ class SearchRequestController extends Controller
 
     /**
      * Редактировать продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return Response|JsonResponse
      */
     public function update(SearchRequestService $searchRequestService)
@@ -96,7 +93,6 @@ class SearchRequestController extends Controller
 
     /**
      * Удалить продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return Application|ResponseFactory|Response
      */
     public function delete(SearchRequestService $searchRequestService)
@@ -113,7 +109,6 @@ class SearchRequestController extends Controller
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @param SearchRequestService $searchRequestService
      * @return Response
      */
     public function reorder(SearchRequestService $searchRequestService)

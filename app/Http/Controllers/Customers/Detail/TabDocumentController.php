@@ -25,9 +25,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class TabDocumentController extends Controller
 {
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
-     * @param FileService $fileService
      * @return \Illuminate\Http\JsonResponse
      */
     public function load(int $customerId, CustomerService $customerService, FileService $fileService)
@@ -64,9 +61,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
-     * @param FileService $fileService
      * @throws \Box\Spout\Common\Exception\IOException
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
@@ -121,12 +115,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param int $documentId
-     * @param MailService\MailService $mailService
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param FileService $fileService
      * @return \Illuminate\Http\JsonResponse
      */
     public function sendEmail(
@@ -176,8 +164,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
      * @return \Illuminate\Http\JsonResponse
      */
     public function createDocument(int $customerId, CustomerService $customerService)
@@ -216,9 +202,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param int $document_id
-     * @param CustomerService $customerService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function deleteDocument(int $customerId, int $document_id, CustomerService $customerService)

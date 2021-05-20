@@ -24,9 +24,6 @@ class BundleController extends Controller
     /**
      * Список бандлов
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return mixed
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -67,9 +64,6 @@ class BundleController extends Controller
     /**
      * AJAX пагинация страниц с бандлами
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
     public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -94,8 +88,6 @@ class BundleController extends Controller
     /**
      * Страница для создания бандла
      *
-     * @param CategoryService $categoryService
-     * @param BrandService $brandService
      *
      * @return mixed
      * @throws PimException

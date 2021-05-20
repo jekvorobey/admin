@@ -17,11 +17,6 @@ class TabDigestController extends Controller
 {
     /**
      * Загрузить основную информацию
-     * @param int $merchantId
-     * @param PriceService $priceService
-     * @param MerchantService $merchantService
-     * @param OfferService $offerService
-     * @param ShipmentService $shipmentService
      * @return JsonResponse
      */
     public function load(
@@ -76,8 +71,6 @@ class TabDigestController extends Controller
 
     /**
      * Сохранить комментарий к мерчанту
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function comment(int $merchantId, MerchantService $merchantService)
@@ -101,7 +94,6 @@ class TabDigestController extends Controller
 
     /**
      * Получить начало текущего месяца в формате Unix
-     * @return string
      */
     protected function getPeriod(): string
     {

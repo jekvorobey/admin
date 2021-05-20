@@ -21,8 +21,6 @@ use Illuminate\Validation\Rule;
 class DeliveryServiceListController extends Controller
 {
     /**
-     * @param Request $request
-     * @param ListsService $listsService
      * @return mixed
      * @throws \Exception
      */
@@ -51,8 +49,6 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param ListsService $listsService
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(ListsService $listsService): JsonResponse
@@ -70,7 +66,6 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param bool $withDefault
      * @return array
      */
     protected function getFilter(bool $withDefault = false): array
@@ -90,8 +85,6 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param DataQuery $restQuery
-     * @param ListsService $listsService
      * @return Collection|DeliveryService[]
      */
     protected function loadDeliveryServices(DataQuery $restQuery, ListsService $listsService): Collection
@@ -117,9 +110,6 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param ListsService $listsService
-     * @param bool $withDefaultFilter
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(ListsService $listsService, bool $withDefaultFilter = false): DataQuery

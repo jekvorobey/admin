@@ -85,11 +85,6 @@ class OrderCreateController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param ProductService $productService
-     * @param StockService $stockService
-     * @param MerchantService $merchantService
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function searchProducts(
