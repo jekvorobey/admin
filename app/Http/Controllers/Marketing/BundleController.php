@@ -95,7 +95,7 @@ class BundleController extends Controller
      * Страница для создания бандла
      *
      * @param CategoryService $categoryService
-     * @param BrandService    $brandService
+     * @param BrandService $brandService
      *
      * @return mixed
      * @throws PimException

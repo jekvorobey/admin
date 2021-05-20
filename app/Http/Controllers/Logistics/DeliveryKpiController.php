@@ -43,7 +43,7 @@ class DeliveryKpiController extends Controller
     }
 
     /**
-     * @param  ListsService  $listsService
+     * @param ListsService $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function setMain(ListsService $listsService): Response

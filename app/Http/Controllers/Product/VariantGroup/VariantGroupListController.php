@@ -40,7 +40,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return mixed
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Pim\Core\PimException
@@ -66,7 +66,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -107,7 +107,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return mixed
      */
     /*public function byOffers(Request $request)
@@ -139,7 +139,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefault
+     * @param bool $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
@@ -166,7 +166,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  DataQuery  $restQuery
+     * @param DataQuery $restQuery
      * @return Collection|VariantGroupDto[]
      * @throws \Pim\Core\PimException
      */
@@ -189,7 +189,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefaultFilter
+     * @param bool $withDefaultFilter
      * @return DataQuery
      * @throws \Exception
      */

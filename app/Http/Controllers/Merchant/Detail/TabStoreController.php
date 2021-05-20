@@ -19,7 +19,7 @@ class TabStoreController extends Controller
      *
      * @param int $merchantId
      * @param Request $request
-     * @param  StoreService $storeService
+     * @param StoreService $storeService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -38,7 +38,7 @@ class TabStoreController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return DataQuery
      * @throws \Exception
      */

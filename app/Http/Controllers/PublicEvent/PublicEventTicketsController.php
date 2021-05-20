@@ -19,7 +19,7 @@ class PublicEventTicketsController extends Controller
     public function getList(Request $request, int $eventId)
     {
         $sprints = $request->input('sprint_id')
-            ? [(int)$request->input('sprint_id')]
+            ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
 
         $tickets = $this->getData($sprints);
@@ -95,7 +95,7 @@ class PublicEventTicketsController extends Controller
     protected function getCsvContent($tickets, $separator = ';'): string
     {
         $content = "\xEF\xBB\xBF"; // UTF-8 BOM
-        $columns = array('ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус');
+        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус'];
         foreach ($columns as $column) {
             $content .= "{$column}{$separator}";
         }
@@ -119,7 +119,7 @@ class PublicEventTicketsController extends Controller
     public function getFile(Request $request, int $eventId)
     {
         $sprints = $request->input('sprint_id')
-            ? [(int)$request->input('sprint_id')]
+            ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
 
         $tickets = $this->getData($sprints);

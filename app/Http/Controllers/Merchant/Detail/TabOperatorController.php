@@ -36,8 +36,8 @@ class TabOperatorController extends Controller
      *
      * @param int $merchantId
      * @param Request $request
-     * @param  OperatorService $operatorService
-     * @param  UserService $userService
+     * @param OperatorService $operatorService
+     * @param UserService $userService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */

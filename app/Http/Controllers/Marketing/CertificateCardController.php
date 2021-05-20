@@ -38,7 +38,7 @@ class CertificateCardController extends Controller
 
     public function updateExpireAt($id, Request $request): JsonResponse
     {
-        $this->service()->updateExpireAt($id, (int)$request->get('days'));
+        $this->service()->updateExpireAt($id, (int) $request->get('days'));
         return response()->json(['status' => 'ok']);
     }
 

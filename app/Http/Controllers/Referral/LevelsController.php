@@ -78,7 +78,7 @@ class LevelsController extends Controller
 
     public function putCommission($level_id, ReferralService $referralService)
     {
-        $isGlobal = !(bool)request('customer_id');
+        $isGlobal = !(bool) request('customer_id');
         $percent_rule = ($isGlobal ? 'required' : 'nullable') . '|numeric|min:0|max:100';
         $data = $this->validate(request(), [
             'customer_id' => 'nullable|integer',

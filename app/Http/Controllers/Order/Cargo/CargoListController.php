@@ -27,9 +27,9 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 class CargoListController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  CargoService  $cargoService
-     * @param  MerchantService  $merchantService
+     * @param Request $request
+     * @param CargoService $cargoService
+     * @param MerchantService $merchantService
      * @return mixed
      * @throws \Exception
      */
@@ -57,8 +57,8 @@ class CargoListController extends Controller
     }
 
     /**
-     * @param  Request $request
-     * @param  CargoService $cargoService
+     * @param Request $request
+     * @param CargoService $cargoService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -107,8 +107,8 @@ class CargoListController extends Controller
     }
 
     /**
-     * @param  DataQuery  $restQuery
-     * @param  CargoService $cargoService
+     * @param DataQuery $restQuery
+     * @param CargoService $cargoService
      * @return Collection|CargoDto[]
      */
     protected function loadCargos(DataQuery $restQuery, CargoService $cargoService): Collection
@@ -146,8 +146,8 @@ class CargoListController extends Controller
     }
 
     /**
-     * @param  CargoService $cargoService
-     * @param  Request  $request
+     * @param CargoService $cargoService
+     * @param Request $request
      * @param bool $withDefaultFilter
      * @return DataQuery
      * @throws \Exception

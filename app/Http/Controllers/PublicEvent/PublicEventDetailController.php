@@ -137,18 +137,24 @@ class PublicEventDetailController extends Controller
     public function saveMedia(int $event_id, Request $request, PublicEventService $publicEventService)
     {
         $data = $this->validate($request, [
-            'type' => ['required', Rule::in([
-                PublicEventMediaDto::TYPE_IMAGE,
-                PublicEventMediaDto::TYPE_VIDEO,
-                PublicEventMediaDto::TYPE_YOUTUBE,
-            ])],
-            'collection' => ['required', Rule::in([
-                PublicEventDto::MEDIA_CATALOG,
-                PublicEventDto::MEDIA_DETAIL,
-                PublicEventDto::MEDIA_GALLERY,
-                PublicEventDto::MEDIA_DESCRIPTION,
-                PublicEventDto::MEDIA_HISTORY,
-            ])],
+            'type' => [
+                'required',
+                Rule::in([
+                    PublicEventMediaDto::TYPE_IMAGE,
+                    PublicEventMediaDto::TYPE_VIDEO,
+                    PublicEventMediaDto::TYPE_YOUTUBE,
+                ]),
+            ],
+            'collection' => [
+                'required',
+                Rule::in([
+                    PublicEventDto::MEDIA_CATALOG,
+                    PublicEventDto::MEDIA_DETAIL,
+                    PublicEventDto::MEDIA_GALLERY,
+                    PublicEventDto::MEDIA_DESCRIPTION,
+                    PublicEventDto::MEDIA_HISTORY,
+                ]),
+            ],
             'value' => 'required',
             'oldMedia' => 'nullable|integer',
         ]);

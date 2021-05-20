@@ -37,8 +37,8 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param Request $request
+     * @param SearchSynonymService $searchSynonymService
      * @return JsonResponse
      */
     public function page(SearchSynonymService $searchSynonymService)
@@ -73,8 +73,8 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param RestQuery $query
+     * @param SearchSynonymService $searchSynonymService
      * @return Collection|SearchSynonymDto[]
      */
     protected function loadItems(
@@ -92,7 +92,7 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param SearchSynonymService $searchSynonymService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -113,7 +113,7 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param SearchSynonymService $searchSynonymService
      * @return Application|ResponseFactory|JsonResponse|Response
      * @throws \Exception
      */
@@ -134,7 +134,7 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param SearchSynonymService $searchSynonymService
      * @return Application|ResponseFactory|Response
      */
     public function delete(SearchSynonymService $searchSynonymService)

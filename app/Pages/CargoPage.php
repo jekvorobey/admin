@@ -29,7 +29,7 @@ class CargoPage extends AbstractPage
 
     /**
      * OrderPage constructor.
-     * @param  int|null  $id
+     * @param int|null $id
      */
     public function __construct(?int $id = null)
     {
@@ -104,7 +104,7 @@ class CargoPage extends AbstractPage
 
     /**
      * Информация о цене, складе, кол-ве товара и кол-ве единиц товара отправления
-     * @param  CargoDto  $cargo
+     * @param CargoDto $cargo
      * @return array
      */
     public function priceQtyInfo(CargoDto $cargo): array

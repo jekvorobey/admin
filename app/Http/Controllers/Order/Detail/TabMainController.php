@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabMainController extends OrderDetailController
 {
     /**
-     * @param  int  $id
-     * @param  OrderService  $orderService
-     * @param  ListsService  $listsService
+     * @param int $id
+     * @param OrderService $orderService
+     * @param ListsService $listsService
      * @return \Illuminate\Http\JsonResponse
      */
     public function load(
@@ -79,8 +79,8 @@ class TabMainController extends OrderDetailController
 
     /**
      * @param int $id
-     * @param  OrderService  $orderService
-     * @param  DeliveryService  $deliveryService
+     * @param OrderService $orderService
+     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -108,9 +108,12 @@ class TabMainController extends OrderDetailController
             'delivery_address.floor' => ['sometimes', 'string', 'nullable'],
             'delivery_address.intercom' => ['sometimes', 'string', 'nullable'],
             'delivery_address.comment' => ['sometimes', 'string', 'nullable'],
-            'point_id' => [Rule::requiredIf(function () {
-                return !count(array_filter(request()->get('delivery_address')));
-            }), 'integer'],
+            'point_id' => [
+                Rule::requiredIf(function () {
+                    return !count(array_filter(request()->get('delivery_address')));
+                }),
+                'integer',
+            ],
             'manager_comment' => ['sometimes', 'string', 'nullable'],
         ]);
 

@@ -23,7 +23,7 @@ class PublicEventOrdersController extends Controller
     public function getList(Request $request, int $eventId)
     {
         $sprints = $request->input('sprint_id')
-            ? [(int)$request->input('sprint_id')]
+            ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
 
         $orderService = resolve(OrderService::class);

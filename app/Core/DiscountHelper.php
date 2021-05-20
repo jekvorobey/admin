@@ -38,9 +38,9 @@ class DiscountHelper
 {
     /**
      * @param Request $request
-     * @param int     $userId
-     * @param array   $pager
-     * @param int     $merchantId
+     * @param int $userId
+     * @param array $pager
+     * @param int $merchantId
      * @param array $type
      * @return array
      */
@@ -86,7 +86,7 @@ class DiscountHelper
     }
 
     /**
-     * @param array           $params
+     * @param array $params
      * @param DiscountService $discountService
      *
      * @return Collection
@@ -120,7 +120,7 @@ class DiscountHelper
     }
 
     /**
-     * @param array           $params
+     * @param array $params
      * @param DiscountService $discountService
      *
      * @return int
@@ -327,22 +327,22 @@ class DiscountHelper
                     $conditions[] = $model->setFirstOrder();
                     break;
                 case DiscountConditionDto::MIN_PRICE_ORDER:
-                    $conditions[] = $model->setMinPriceOrder((float)$condition['sum']);
+                    $conditions[] = $model->setMinPriceOrder((float) $condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_BRAND:
                     if (empty($condition['brands'])) {
                         break;
                     }
-                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float)$condition['sum']);
+                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float) $condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_CATEGORY:
                     if (empty($condition['categories'])) {
                         break;
                     }
-                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float)$condition['sum']);
+                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float) $condition['sum']);
                     break;
                 case DiscountConditionDto::EVERY_UNIT_PRODUCT:
-                    $conditions[] = $model->setEveryUnitProduct((int)$condition['offer'], (int)$condition['count']);
+                    $conditions[] = $model->setEveryUnitProduct((int) $condition['offer'], (int) $condition['count']);
                     break;
                 case DiscountConditionDto::DELIVERY_METHOD:
                     if (empty($condition['deliveryMethods'])) {
@@ -369,7 +369,7 @@ class DiscountHelper
                     $conditions[] = $model->setCustomers($condition['users']);
                     break;
                 case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
-                    $conditions[] = $model->setOrderSequenceNumber((int)$condition['sequenceNumber']);
+                    $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
                     if (!empty($condition['synergy'])) {
@@ -417,14 +417,14 @@ class DiscountHelper
 
     /**
      * @param Request $request
-     * @param int     $perPage
+     * @param int $perPage
      *
      * @return array
      */
     public static function getDefaultPager(Request $request, int $perPage = 20)
     {
         return [
-            'page' => (int)$request->get('page', 1),
+            'page' => (int) $request->get('page', 1),
             'perPage' => $perPage,
         ];
     }
@@ -468,7 +468,7 @@ class DiscountHelper
     }
 
     /**
-     * @param int             $id
+     * @param int $id
      *
      * @return array
      * @throws \Pim\Core\PimException
@@ -518,7 +518,7 @@ class DiscountHelper
     }
 
     /**
-     * @param         $id
+     * @param $id
      * @param Request $request
      *
      * @return array

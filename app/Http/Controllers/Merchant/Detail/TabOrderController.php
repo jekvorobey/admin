@@ -55,7 +55,7 @@ class TabOrderController extends Controller
      *
      * @param int $merchantId
      * @param Request $request
-     * @param  ShipmentService $shipmentService
+     * @param ShipmentService $shipmentService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -144,7 +144,7 @@ class TabOrderController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return DataQuery
      * @throws \Exception
      */

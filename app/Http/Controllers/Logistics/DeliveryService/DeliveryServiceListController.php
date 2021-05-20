@@ -21,8 +21,8 @@ use Illuminate\Validation\Rule;
 class DeliveryServiceListController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  ListsService  $listsService
+     * @param Request $request
+     * @param ListsService $listsService
      * @return mixed
      * @throws \Exception
      */
@@ -51,7 +51,7 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param  ListsService $listsService
+     * @param ListsService $listsService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
@@ -90,8 +90,8 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param  DataQuery  $restQuery
-     * @param  ListsService $listsService
+     * @param DataQuery $restQuery
+     * @param ListsService $listsService
      * @return Collection|DeliveryService[]
      */
     protected function loadDeliveryServices(DataQuery $restQuery, ListsService $listsService): Collection
@@ -117,8 +117,8 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @param  ListsService $listsService
-     * @param  bool $withDefaultFilter
+     * @param ListsService $listsService
+     * @param bool $withDefaultFilter
      * @return DataQuery
      * @throws \Exception
      */

@@ -53,7 +53,7 @@ class TabOrderReferrerController extends Controller
 
     public function delete($id, $history_id, ReferralService $referralService)
     {
-        $referralService->deleteReferralOrderHistory((int)$id, (int)$history_id);
+        $referralService->deleteReferralOrderHistory((int) $id, (int) $history_id);
 
         return response()->json([
             'orders' => $this->loadOrders($id),

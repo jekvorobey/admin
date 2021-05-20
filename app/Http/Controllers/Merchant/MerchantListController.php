@@ -278,7 +278,7 @@ class MerchantListController extends Controller
                 ->setPassword($data['password'])
                 ->setStorageAddress($data['storage_address'])
                 ->setSite($data['site'])
-                ->setCanIntegration((bool)$data['can_integration'])
+                ->setCanIntegration((bool) $data['can_integration'])
                 ->setSaleInfo($data['sale_info'])
                 ->setCommunicationMethod($data['communication_method'])
         );

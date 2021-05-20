@@ -69,8 +69,8 @@ class TabPromoProductController extends Controller
         $promotionDto = new PutPromotionDto();
         $promotionDto
             ->setProductId($data['product_id'])
-            ->setMass((bool)$data['mass'])
-            ->setActive((bool)$data['active'])
+            ->setMass((bool) $data['mass'])
+            ->setActive((bool) $data['active'])
             ->setFiles(request('files', []))
             ->setDescription($data['description'])
             ->setCustomerId($merchantId);
@@ -112,7 +112,7 @@ class TabPromoProductController extends Controller
                 $promoProduct['product_name'],
                 isset($promoProduct['brand']) ? $promoProduct['brand']['name'] : '',
                 isset($promoProduct['category']) ? $promoProduct['category']['name'] : '',
-                isset($promoProduct['price']) ? (string)$promoProduct['price'] : '',
+                isset($promoProduct['price']) ? (string) $promoProduct['price'] : '',
                 $promoProduct['description'],
                 join(', ', $files),
                 $promoProduct['created_at'],

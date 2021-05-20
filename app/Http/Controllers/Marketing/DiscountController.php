@@ -91,7 +91,7 @@ class DiscountController extends Controller
      * Страница для создания скидки
      *
      * @param CategoryService $categoryService
-     * @param BrandService    $brandService
+     * @param BrandService $brandService
      *
      * @return mixed
      * @throws PimException
@@ -154,7 +154,7 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int             $id
+     * @param int $id
      * @param OfferService $offerService
      *
      * @return mixed
@@ -188,11 +188,11 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int             $id
+     * @param int $id
      * @param DiscountService $discountService
      * @param CategoryService $categoryService
-     * @param ListsService    $listsService
-     * @param BrandService    $brandService
+     * @param ListsService $listsService
+     * @param BrandService $brandService
      *
      * @return mixed
      * @throws PimException
@@ -244,7 +244,7 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param Request         $request
+     * @param Request $request
      * @param DiscountService $discountService
      *
      * @return JsonResponse
@@ -263,7 +263,7 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param Request         $request
+     * @param Request $request
      * @param DiscountService $discountService
      *
      * @return JsonResponse

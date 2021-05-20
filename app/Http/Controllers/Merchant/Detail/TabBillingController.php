@@ -21,7 +21,7 @@ use Illuminate\Support\Carbon;
 class TabBillingController extends Controller
 {
     /**
-     * @param int             $merchantId
+     * @param int $merchantId
      * @param MerchantService $merchantService
      *
      * @return JsonResponse
@@ -31,7 +31,7 @@ class TabBillingController extends Controller
         $settings = $merchantService->getSetting($merchantId, MerchantSettingDto::BILLING_CYCLE)->first();
         $billingCycle = $settings ? $settings->value : MerchantSettingDto::DEFAULT_BILLING_CYCLE;
         return response()->json([
-            'billing_cycle' => (int)$billingCycle,
+            'billing_cycle' => (int) $billingCycle,
         ]);
     }
 
@@ -221,7 +221,7 @@ class TabBillingController extends Controller
      *
      * @param int $merchantId
      * @param Request $request
-     * @param  MerchantService $merchantService
+     * @param MerchantService $merchantService
      * @return JsonResponse
      * @throws Exception
      */

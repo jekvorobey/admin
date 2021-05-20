@@ -28,8 +28,8 @@ class StatusController extends Controller
         $rStatus = request('status');
         $status = new CommunicationStatusDto();
         $status->name = $rStatus['name'];
-        $status->active = (bool)$rStatus['active'];
-        $status->default = (bool)$rStatus['default'];
+        $status->active = (bool) $rStatus['active'];
+        $status->default = (bool) $rStatus['default'];
         $status->channel_id = $rStatus['channel_id'];
 
         if ($rStatus['id']) {

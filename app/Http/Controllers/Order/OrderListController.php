@@ -40,10 +40,10 @@ use Pim\Services\BrandService\BrandService;
 class OrderListController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  OrderService  $orderService
-     * @param  BrandService  $brandService
-     * @param  StoreService  $storeService
+     * @param Request $request
+     * @param OrderService $orderService
+     * @param BrandService $brandService
+     * @param StoreService $storeService
      * @return mixed
      * @throws \Exception
      */
@@ -91,7 +91,7 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param  OrderService  $orderService
+     * @param OrderService $orderService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -110,7 +110,7 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefault
+     * @param bool $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
@@ -304,8 +304,8 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param  OrderService  $orderService
-     * @param  bool  $withDefaultFilter
+     * @param OrderService $orderService
+     * @param bool $withDefaultFilter
      * @return DataQuery
      * @throws \Exception
      */

@@ -30,10 +30,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PriceChangeClaimController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  MerchantService  $merchantService
-     * @param  UserService  $userService
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param MerchantService $merchantService
+     * @param UserService $userService
      * @return mixed
      */
     public function index(
@@ -66,9 +66,9 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return JsonResponse
      */
     public function page(
@@ -87,9 +87,9 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
+     * @param int $id
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return mixed
      */
     public function detail(
@@ -150,10 +150,10 @@ class PriceChangeClaimController extends Controller
 
     /**
      * Изменить статус заявки
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService $userService
+     * @param int $id
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return JsonResponse
      */
     public function changeStatus(
@@ -189,10 +189,10 @@ class PriceChangeClaimController extends Controller
 
     /**
      * Изменить ценц
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService $userService
+     * @param int $id
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return JsonResponse
      */
     public function changePrice(
@@ -292,9 +292,9 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  UserService  $userService
-     * @param  bool  $withProducts
+     * @param RestQuery $query
+     * @param UserService $userService
+     * @param bool $withProducts
      * @return Collection|PriceChangeClaimDto[]
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection

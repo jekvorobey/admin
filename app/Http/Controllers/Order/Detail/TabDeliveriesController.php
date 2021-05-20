@@ -21,10 +21,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabDeliveriesController extends OrderDetailController
 {
     /**
-     * @param  int  $orderId
-     * @param  int  $deliveryId
-     * @param  DeliveryService  $deliveryService
-     * @param  ListsService  $listsService
+     * @param int $orderId
+     * @param int $deliveryId
+     * @param DeliveryService $deliveryService
+     * @param ListsService $listsService
      * @return JsonResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -78,7 +78,7 @@ class TabDeliveriesController extends OrderDetailController
      * Обновить доставку
      * @param int $orderId
      * @param int $deliveryId
-     * @param  DeliveryService  $deliveryService
+     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -114,7 +114,8 @@ class TabDeliveriesController extends OrderDetailController
             'delivery_address.comment' => ['sometimes', 'string', 'nullable'],
             'point_id' => [Rule::requiredIf(function () {
                 return !count(array_filter(request()->get('delivery_address')));
-            }), 'integer'],
+            }), 'integer',
+            ],
         ]);
 
         $deliveryDto = new DeliveryDto();
@@ -153,9 +154,9 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Создать/обновить заказ на доставку у службы доставки
-     * @param  int  $orderId
-     * @param  int  $deliveryId
-     * @param  DeliveryService $deliveryService
+     * @param int $orderId
+     * @param int $deliveryId
+     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -170,9 +171,9 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить заказ на доставку у службы доставки
-     * @param  int  $orderId
-     * @param  int  $deliveryId
-     * @param  DeliveryService $deliveryService
+     * @param int $orderId
+     * @param int $deliveryId
+     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -187,9 +188,9 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить доставку
-     * @param  int  $orderId
-     * @param  int  $deliveryId
-     * @param  DeliveryService $deliveryService
+     * @param int $orderId
+     * @param int $deliveryId
+     * @param DeliveryService $deliveryService
      * @return JsonResponse
      * @throws \Exception
      */

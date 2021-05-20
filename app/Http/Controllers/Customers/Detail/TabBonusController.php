@@ -49,8 +49,8 @@ class TabBonusController extends Controller
     }
 
     /**
-     * @param int              $id
-     * @param Request          $request
+     * @param int $id
+     * @param Request $request
      *
      * @param RequestInitiator $user
      *
@@ -60,11 +60,14 @@ class TabBonusController extends Controller
     {
         $data = $request->validate([
             'name' => 'string|required',
-            'status' => ['required', Rule::in([
-                CustomerBonusDto::STATUS_ON_HOLD,
-                CustomerBonusDto::STATUS_ACTIVE,
-                CustomerBonusDto::STATUS_DEBITED,
-            ])],
+            'status' => [
+                'required',
+                Rule::in([
+                    CustomerBonusDto::STATUS_ON_HOLD,
+                    CustomerBonusDto::STATUS_ACTIVE,
+                    CustomerBonusDto::STATUS_DEBITED,
+                ]),
+            ],
             'value' => 'integer|required',
             'message' => 'string|min:1|required',
             'expiration_date' => 'date|after_or_equal:tomorrow|nullable',

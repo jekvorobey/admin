@@ -839,10 +839,10 @@ class ViewRender
 
             if (isset($webPack[$this->componentName])) {
                 if (isset($webPack[$this->componentName]['js'])) {
-                    $js = array_filter((array)$webPack[$this->componentName]['js']);
+                    $js = array_filter((array) $webPack[$this->componentName]['js']);
                 }
                 if (isset($webPack[$this->componentName]['css'])) {
-                    $css = array_filter((array)$webPack[$this->componentName]['css']);
+                    $css = array_filter((array) $webPack[$this->componentName]['css']);
                 }
             }
             return [

@@ -28,7 +28,7 @@ class TypeController extends Controller
         $rType = request('type');
         $type = new CommunicationTypeDto();
         $type->name = $rType['name'];
-        $type->active = (bool)$rType['active'];
+        $type->active = (bool) $rType['active'];
         $type->channel_id = $rType['channel_id'];
 
         if ($rType['id']) {

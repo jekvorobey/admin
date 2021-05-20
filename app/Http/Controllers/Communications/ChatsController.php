@@ -79,7 +79,7 @@ class ChatsController extends Controller
             $listConstructor->setTypeIds(request('type_ids'));
         }
         if (!is_null(request('unread_admin'))) {
-            $listConstructor->setUnreadAdmin((bool)request('unread_admin'));
+            $listConstructor->setUnreadAdmin((bool) request('unread_admin'));
         }
 
         [$chats, $users, $files, $customers, $operators] = $this->loadChats($listConstructor);

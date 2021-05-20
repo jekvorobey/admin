@@ -35,6 +35,15 @@
         <exclude-pattern>*/database/*</exclude-pattern>
     </rule>
 
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="Generic.Arrays.ArrayIndent"/>
+    <rule ref="Generic.Formatting.SpaceAfterCast"/>
+    <rule ref="Generic.PHP.LowerCaseConstant"/>
+    <rule ref="Generic.PHP.LowerCaseKeyword"/>
+    <rule ref="Generic.PHP.LowerCaseType"/>
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+    <rule ref="Generic.VersionControl.GitMergeConflict"/>
+
     <rule ref="Squiz.WhiteSpace.FunctionSpacing">
         <properties>
             <property name="spacing" value="1"/>
@@ -192,13 +201,6 @@
     <rule ref="SlevomatCodingStandard.ControlStructures.RequireMultiLineCondition">
         <properties>
             <property name="minLineLength" value="140"/>
-        </properties>
-    </rule>
-
-    <rule ref="SlevomatCodingStandard.Whitespaces.DuplicateSpaces">
-        <properties>
-            <property name="ignoreSpacesInAnnotation" value="true"/>
-            <property name="ignoreSpacesInComments" value="true"/>
         </properties>
     </rule>
 

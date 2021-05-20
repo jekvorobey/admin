@@ -37,7 +37,7 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return mixed
      * @throws \Exception
      */
@@ -52,7 +52,7 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @param  int  $id
+     * @param int $id
      * @return VariantGroupDto
      * @throws \Exception
      */
@@ -82,7 +82,7 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @param  VariantGroupDto  $variantGroupDto
+     * @param VariantGroupDto $variantGroupDto
      * @throws \Exception
      */
     protected function addVariantGroupCommonInfo(VariantGroupDto $variantGroupDto): void
@@ -95,8 +95,8 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @param  Request  $request
+     * @param int $variantGroupId
+     * @param Request $request
      * @return Response
      * @throws \Pim\Core\PimException
      */

@@ -161,12 +161,12 @@ class PromoCodeController extends Controller
     /**
      * Страница для создания промокода
      *
-     * @param Request          $request
-     * @param DiscountService  $discountService
+     * @param Request $request
+     * @param DiscountService $discountService
      *
      * @param PromoCodeService $promoCodeService
      *
-     * @param MerchantService  $merchantService
+     * @param MerchantService $merchantService
      *
      * @return mixed
      */
@@ -213,7 +213,7 @@ class PromoCodeController extends Controller
     }
 
     /**
-     * @param Request          $request
+     * @param Request $request
      * @param PromoCodeService $promoCodeService
      *
      * @return \Illuminate\Http\JsonResponse
@@ -261,7 +261,7 @@ class PromoCodeController extends Controller
     }
 
     /**
-     * @param Request          $request
+     * @param Request $request
      * @param PromoCodeService $promoCodeService
      *
      * @return \Illuminate\Http\JsonResponse

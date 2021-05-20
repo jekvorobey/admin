@@ -79,7 +79,7 @@ class ContentClaimController extends Controller
                 'deliveryConfirm' => $meta['deliveryConfirm'],
             ],
             'iPager' => $pager,
-            'iCurrentPage' => (int)$request->get('page', 1),
+            'iCurrentPage' => (int) $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
         ]);
     }

@@ -29,10 +29,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ProductCheckClaimController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  MerchantService  $merchantService
-     * @param  UserService  $userService
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param MerchantService $merchantService
+     * @param UserService $userService
      * @return mixed
      */
     public function index(
@@ -65,9 +65,9 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return JsonResponse
      */
     public function page(
@@ -86,9 +86,9 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
+     * @param int $id
+     * @param ClaimService $claimService
+     * @param UserService $userService
      * @return mixed
      */
     public function detail(
@@ -151,11 +151,11 @@ class ProductCheckClaimController extends Controller
 
     /**
      * Изменить статус заявки
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService $userService
-     * @param  ProductService $productService
+     * @param int $id
+     * @param Request $request
+     * @param ClaimService $claimService
+     * @param UserService $userService
+     * @param ProductService $productService
      * @return JsonResponse
      */
     public function changeStatus(
@@ -238,9 +238,9 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  UserService  $userService
-     * @param  bool  $withProducts
+     * @param RestQuery $query
+     * @param UserService $userService
+     * @param bool $withProducts
      * @return Collection|ProductCheckClaimDto[]
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection

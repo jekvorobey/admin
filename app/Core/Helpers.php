@@ -34,8 +34,8 @@ class Helpers
     }
 
     /**
-     * @param        $price
-     * @param int    $decimals
+     * @param $price
+     * @param int $decimals
      * @param string $decPoint
      * @param string $thousandsSep
      *

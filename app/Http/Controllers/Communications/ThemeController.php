@@ -29,7 +29,7 @@ class ThemeController extends Controller
         $rTheme = request('theme');
         $theme = new CommunicationThemeDto();
         $theme->name = $rTheme['name'];
-        $theme->active = (bool)$rTheme['active'];
+        $theme->active = (bool) $rTheme['active'];
         $theme->type = $rTheme['type'];
         $theme->channel_id = $rTheme['channel_id'];
 

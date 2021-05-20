@@ -21,8 +21,8 @@ class DeliveryServiceDetailController extends Controller
 {
     /**
      * @param $id
-     * @param  ListsService  $listsService
-     * @param  ShipmentService  $shipmentService
+     * @param ListsService $listsService
+     * @param ShipmentService $shipmentService
      * @return mixed
      */
     public function index(
@@ -78,7 +78,7 @@ class DeliveryServiceDetailController extends Controller
 
     /**
      * @param $id
-     * @param  ListsService  $listsService
+     * @param ListsService $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function save($id, ListsService $listsService): Response

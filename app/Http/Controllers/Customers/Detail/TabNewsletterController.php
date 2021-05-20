@@ -71,23 +71,31 @@ class TabNewsletterController extends Controller
 
         $data = $this->validate(request(), [
             'topics.*' => ['nullable', 'integer', Rule::in($topics)],
-            'periodicity' => ['required', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods())
-            )],
-            'channels.*' => ['nullable', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods())
-            )],
+            'periodicity' => [
+                'required',
+                'integer',
+                Rule::in(
+                    array_keys(CustomerNewsletterDto::periods())
+                ),
+            ],
+            'channels.*' => [
+                'nullable',
+                'integer',
+                Rule::in(
+                    array_keys(CustomerNewsletterDto::periods())
+                ),
+            ],
         ]);
 
         if (isset($data['topics'])) {
             $data['topics'] = array_map(function ($item) {
-                return (int)$item;
+                return (int) $item;
             }, $data['topics']);
         }
 
         if (isset($data['channels'])) {
             $data['channels'] = array_map(function ($item) {
-                return (int)$item;
+                return (int) $item;
             }, $data['channels']);
         }
 

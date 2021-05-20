@@ -39,7 +39,7 @@ class MerchantStoreController extends Controller
 
         return $this->render('Store/MerchantStore/List', [
             'iStores' => $stores,
-            'iFilter' => $this->getFilter() ? : null,
+            'iFilter' => $this->getFilter() ?: null,
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),

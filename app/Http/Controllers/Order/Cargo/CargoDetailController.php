@@ -21,7 +21,7 @@ use Illuminate\Validation\Rule;
 class CargoDetailController extends Controller
 {
     /**
-     * @param  int  $id
+     * @param int $id
      * @return mixed
      * @throws \Exception
      */
@@ -37,9 +37,9 @@ class CargoDetailController extends Controller
 
     /**
      * Изменить статус груза
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  CargoService  $cargoService
+     * @param int $id
+     * @param Request $request
+     * @param CargoService $cargoService
      * @return JsonResponse
      */
     public function changeStatus(int $id, Request $request, CargoService $cargoService): JsonResponse
@@ -71,8 +71,8 @@ class CargoDetailController extends Controller
 
     /**
      * Создать задание на забор груза (заявку на вызов курьера)
-     * @param  int  $id
-     * @param  CargoService  $cargoService
+     * @param int $id
+     * @param CargoService $cargoService
      * @return JsonResponse
      */
     public function createCourierCall(int $id, CargoService $cargoService): JsonResponse
@@ -84,8 +84,8 @@ class CargoDetailController extends Controller
 
     /**
      * Отменить задание на забор груза (заявку на вызов курьера)
-     * @param  int  $id
-     * @param  CargoService  $cargoService
+     * @param int $id
+     * @param CargoService $cargoService
      * @return JsonResponse
      */
     public function cancelCourierCall(int $id, CargoService $cargoService): JsonResponse
@@ -110,8 +110,8 @@ class CargoDetailController extends Controller
 
     /**
      * Отменить груз
-     * @param  int  $id
-     * @param  CargoService  $cargoService
+     * @param int $id
+     * @param CargoService $cargoService
      * @return JsonResponse
      */
     public function cancel(int $id, CargoService $cargoService): JsonResponse
@@ -123,9 +123,9 @@ class CargoDetailController extends Controller
 
     /**
      * Добавить отправление в груз
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ShipmentService  $shipmentService
+     * @param int $id
+     * @param Request $request
+     * @param ShipmentService $shipmentService
      * @return JsonResponse
      */
     public function addShipment2Cargo(
@@ -150,9 +150,9 @@ class CargoDetailController extends Controller
 
     /**
      * Удалить отправление из груза
-     * @param  int  $id
-     * @param  int  $shipmentId
-     * @param  ShipmentService  $shipmentService
+     * @param int $id
+     * @param int $shipmentId
+     * @param ShipmentService $shipmentService
      * @return JsonResponse
      */
     public function deleteShipmentFromCargo(
@@ -169,9 +169,9 @@ class CargoDetailController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  Closure  $action
+     * @param int $id
+     * @param Request $request
+     * @param Closure $action
      * @return JsonResponse
      */
     protected function abstractAction(int $id, Closure $action): JsonResponse

@@ -133,7 +133,7 @@ class ProductDetailController extends Controller
         ProductService $productService
     ) {
         $data = $this->validate($request, [
-           'props' => 'required|array',
+            'props' => 'required|array',
         ]);
         $productService->saveProperties($id, $data['props']);
         return response()->json();
@@ -189,9 +189,9 @@ class ProductDetailController extends Controller
 
     /**
      * Изменить статус согласования товара
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ProductService  $productService
+     * @param int $id
+     * @param Request $request
+     * @param ProductService $productService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -207,9 +207,9 @@ class ProductDetailController extends Controller
 
     /**
      * Изменить статус согласования товара на "Отклонен" с комментарием
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ProductService  $productService
+     * @param int $id
+     * @param Request $request
+     * @param ProductService $productService
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */

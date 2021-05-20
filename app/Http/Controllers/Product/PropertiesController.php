@@ -84,9 +84,10 @@ class PropertiesController extends Controller
             'id' => 'present|nullable|integer',
             'name' => 'required|string',
             'display_name' => 'required|string',
-            'type' => ['required', Rule::in(
-                array_keys(PropertyDto::getTypes())
-            )],
+            'type' => [
+                'required',
+                Rule::in(array_keys(PropertyDto::getTypes())),
+            ],
             'is_filterable' => 'required|boolean',
             'is_multiple' => 'required|boolean',
             'is_color' => 'required|boolean',

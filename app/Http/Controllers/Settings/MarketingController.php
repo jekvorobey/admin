@@ -53,7 +53,8 @@ class MarketingController extends Controller
                 Rule::in([
                     UserDto::SHOWCASE__PROFESSIONAL,
                     UserDto::SHOWCASE__REFERRAL_PARTNER,
-                ])],
+                ]),
+            ],
             'activation_bonus' => 'array|nullable',
             'activation_bonus.name' => 'string|nullable',
             'activation_bonus.value' => 'integer|gt:0|nullable',
@@ -92,7 +93,7 @@ class MarketingController extends Controller
                     $customerOptionService->put(CustomerOptionDto::KEY_ACTIVATION_BONUS, $v);
                     break;
                 case 'bonus_expire_days_notify':
-                    $customerOptionService->put(CustomerOptionDto::BONUS_EXPIRE_DAYS_NOTIFY, $v ? (int)$v : null);
+                    $customerOptionService->put(CustomerOptionDto::BONUS_EXPIRE_DAYS_NOTIFY, $v ? (int) $v : null);
                     break;
             }
         }

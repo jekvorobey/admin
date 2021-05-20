@@ -35,7 +35,7 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param  int  $variantGroupId
+     * @param int $variantGroupId
      * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
@@ -110,13 +110,13 @@ class TabPropertiesController extends VariantGroupDetailController
                                 'color' => '',
                             ];
                     }, $gluedPropertyValues[$propertyDto->id]), function ($value) {
-                        return is_int($value['name']) ? (int)$value['name'] : $value['name'];
+                        return is_int($value['name']) ? (int) $value['name'] : $value['name'];
                     })) : [];
 
                 return [
                     'id' => $propertyDto->id,
                     'name' => $propertyDto->name,
-                    'isColor' => (bool)array_filter(array_column($usedValues, 'color')),
+                    'isColor' => (bool) array_filter(array_column($usedValues, 'color')),
                     'usedValues' => $usedValues,
                 ];
             }),
@@ -124,8 +124,8 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @param  int  $propertyId
+     * @param int $variantGroupId
+     * @param int $propertyId
      * @return JsonResponse
      * @throws \Exception
      */
@@ -137,8 +137,8 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @param  Request  $request
+     * @param int $variantGroupId
+     * @param Request $request
      * @return JsonResponse
      * @throws \Exception
      */
