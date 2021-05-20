@@ -112,6 +112,7 @@ class TabBillingController extends Controller
      * @param Request $request
      * @param MerchantService $merchantService
      * @return Application|ResponseFactory|JsonResponse|Response
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function billingReportStatusUpdate(
         int $merchantId,
@@ -182,6 +183,7 @@ class TabBillingController extends Controller
      * @param int $fileId
      * @param FileService $fileService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
     {
@@ -202,7 +204,7 @@ class TabBillingController extends Controller
      */
     public function addCorrection(int $merchantId, Request $request)
     {
-        $data = $this->validate(request(), [
+        $data = $this->validate($request, [
             'correction_sum' => 'integer',
             'correction_type' => 'integer',
             'date' => 'date',

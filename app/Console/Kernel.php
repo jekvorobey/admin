@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function schedule(Schedule $schedule)
     {

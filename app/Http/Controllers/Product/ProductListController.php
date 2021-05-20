@@ -158,10 +158,9 @@ class ProductListController extends Controller
     /**
      * Назначить или обнулить шильдики у товаров
      * @param ProductService $productService
-     * @param SearchService $searchService
      * @return Application|ResponseFactory|Response
      */
-    public function attachBadges(ProductService $productService, SearchService $searchService)
+    public function attachBadges(ProductService $productService)
     {
         $data = $this->validate(request(), [
             'product_ids' => 'required|array',

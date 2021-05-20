@@ -31,7 +31,7 @@ class TabVatController extends Controller
 
     public function saveVat(int $id, MerchantService $merchantService)
     {
-        $types = [VatDto::TYPE_MERCHANT, VatDTO::TYPE_BRAND, VatDto::TYPE_CATEGORY, VatDto::TYPE_SKU];
+        $types = [VatDto::TYPE_MERCHANT, VatDto::TYPE_BRAND, VatDto::TYPE_CATEGORY, VatDto::TYPE_SKU];
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
             'type' => ['required', Rule::in($types)],

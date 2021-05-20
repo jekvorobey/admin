@@ -8,10 +8,6 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\BasketService\BasketService;
-use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
-use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,27 +25,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class OrderCreateController extends Controller
 {
     /**
-     * @param OrderService $orderService
-     * @param ProductService $productService
-     * @param UserService $userService
-     * @param CustomerService $customerService
-     * @param DeliveryService $deliveryService
-     * @param ShipmentService $shipmentService
-     * @param ShipmentPackageService $shipmentPackageService
      * @return mixed
      */
-    public function create(
-        OrderService $orderService,
-        ProductService $productService,
-        UserService $userService,
-        CustomerService $customerService,
-        DeliveryService $deliveryService,
-        ShipmentService $shipmentService,
-        ShipmentPackageService $shipmentPackageService
-    ) {
+    public function create()
+    {
         $this->title = 'Создание заказа';
-
-
 
         return $this->render('Order/Create', [
             'iOrder' => '',
@@ -63,8 +43,8 @@ class OrderCreateController extends Controller
         UserService $userService,
         CustomerService $customerService
     ): JsonResponse {
-        /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
+        /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
             'type' => 'required|string',
             'search' => 'required',
@@ -78,11 +58,11 @@ class OrderCreateController extends Controller
         $query->include('profile');
 
         switch ($data['type']) {
-            case 'fio';
+            case 'fio':
                 $query->setFilter('first_name', 'like', $data['search']);
                 $query->setFilter('last_name', 'like', $data['search']);
                 break;
-            case 'email';
+            case 'email':
                 $query->setFilter('email', 'like', $data['search']);
                 break;
             default:
@@ -118,8 +98,8 @@ class OrderCreateController extends Controller
         StockService $stockService,
         MerchantService $merchantService
     ): JsonResponse {
-        /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
+        /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
             'search' => 'required|string',
         ]);
@@ -166,7 +146,7 @@ class OrderCreateController extends Controller
 //            ->toArray();
 
 
-        foreach ($products as $key => &$product) {
+        foreach ($products as &$product) {
             $product['photo'] = $images[$product->id] ?? '';
             $product['qty'] = 1;
         }
@@ -178,7 +158,7 @@ class OrderCreateController extends Controller
         ]);
     }
 
-    public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
+    public function createOrder(Request $request, BasketService $basketService)
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($request->all(), [

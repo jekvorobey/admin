@@ -30,7 +30,6 @@ class DeliveryServiceDetailController extends Controller
         ListsService $listsService,
         ShipmentService $shipmentService
     ) {
-        /** @var DeliveryService $deliveryService */
         $deliveryServiceQuery = $listsService->newQuery();
         $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
         if (!$deliveryService) {

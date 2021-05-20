@@ -53,7 +53,7 @@ class BundleController extends Controller
             'roles' => Helpers::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
-            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->filter(function ($value, $key) {
+            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->keys()->filter(function ($key) {
                 return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
             }),
             'merchantNames' => DiscountHelper::getMerchantNames(),
@@ -108,7 +108,7 @@ class BundleController extends Controller
         $this->title = 'Создание бандла';
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
-            'optionDiscountTypes' => $data['optionDiscountTypes']->filter(function ($value, $key) {
+            'optionDiscountTypes' => $data['optionDiscountTypes']->keys()->filter(function ($key) {
                 return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
             }),
             'iConditionTypes' => $data['conditionTypes'],

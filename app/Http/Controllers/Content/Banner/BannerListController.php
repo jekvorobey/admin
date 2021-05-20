@@ -136,7 +136,7 @@ class BannerListController extends Controller
 
         // Получается дополненный BannerDto
         return $banners->map(function (BannerDto $banner) use ($images) {
-            /** @var FileDto $photo */
+            /** @var FileDto $image */
             $image = $images->get($banner['desktop_image_id']);
             $banner['desktop_image'] = $image ? $image->absoluteUrl() : null;
             return $banner;

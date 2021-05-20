@@ -24,7 +24,7 @@ use Pim\Services\PublicEventService\PublicEventService;
 
 class TabPublicEventController extends Controller
 {
-    const PER_PAGE = 50;
+    public const PER_PAGE = 50;
 
     /**
      * @param $merchantId

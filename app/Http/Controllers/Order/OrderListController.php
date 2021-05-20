@@ -113,6 +113,7 @@ class OrderListController extends Controller
      * @param  bool  $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
     {

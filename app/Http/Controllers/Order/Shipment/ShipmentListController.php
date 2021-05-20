@@ -143,6 +143,7 @@ class ShipmentListController extends Controller
      * @param bool $withDefault
      * @return array
      * @throws ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
     {

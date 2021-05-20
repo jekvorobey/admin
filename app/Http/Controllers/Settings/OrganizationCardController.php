@@ -9,7 +9,7 @@ use Cms\Services\OptionService\OptionService;
 
 class OrganizationCardController extends Controller
 {
-    const MAPPING_KEYS = [
+    public const MAPPING_KEYS = [
         'short_name' => OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME,
         'full_name' => OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME,
 
@@ -57,7 +57,7 @@ class OrganizationCardController extends Controller
         $organizationCardKeys = array_values(self::MAPPING_KEYS);
         $options = $optionService->get($organizationCardKeys);
         $data = collect(self::MAPPING_KEYS)
-            ->map(function ($item, $key) use ($options) {
+            ->map(function ($item) use ($options) {
                 return $options[$item];
             })
             ->all();
@@ -110,7 +110,7 @@ class OrganizationCardController extends Controller
                 ];
             })
             ->keyBy('newKey')
-            ->map(function ($item, $key) {
+            ->map(function ($item) {
                 return $item['value'];
             })
             ->all();

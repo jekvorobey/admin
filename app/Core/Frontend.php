@@ -71,6 +71,7 @@ class Frontend
      * @param string $path
      * @param bool $addVersion
      * @return string
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function path($path, $addVersion = false)
     {

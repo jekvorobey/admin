@@ -261,8 +261,8 @@ class ViewRender
         if ($load) {
             /** @var PublicEventTypeService $publicEventTypeService */
             $publicEventTypeService = resolve(PublicEventTypeService::class);
-            /** @var Collection $typesCollection */
             try {
+                /** @var Collection $typesCollection */
                 $typesCollection = $publicEventTypeService
                     ->query()
                     ->get();

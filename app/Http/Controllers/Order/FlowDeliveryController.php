@@ -27,6 +27,7 @@ class FlowDeliveryController extends Controller
      * @param int $orderId
      * @param int $deliveryId
      * @return mixed
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function detail(int $orderId, int $deliveryId)
     {
@@ -54,6 +55,7 @@ class FlowDeliveryController extends Controller
         ]);
     }
 
+    /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter */
     public function editDelivery(int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -96,6 +98,7 @@ class FlowDeliveryController extends Controller
         return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
+    /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter */
     public function editShipment(int $deliveryId, Request $request, ShipmentService $shipmentService): JsonResponse
     {
         $validatedData = $request->validate([

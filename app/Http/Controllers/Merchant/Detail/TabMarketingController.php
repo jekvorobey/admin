@@ -79,6 +79,7 @@ class TabMarketingController extends Controller
      *
      * @param int $merchantId
      * @return JsonResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function loadPromoCodesData(int $merchantId)
     {

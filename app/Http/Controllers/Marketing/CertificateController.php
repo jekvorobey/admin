@@ -8,7 +8,7 @@ use Pim\Services\CertificateService\CertificateService;
 
 class CertificateController extends Controller
 {
-    const PER_PAGE = 15;
+    public const PER_PAGE = 15;
 
     private function service(): CertificateService
     {
@@ -90,7 +90,7 @@ class CertificateController extends Controller
         ];
     }
 
-    private function getTabContent(Request $request): array
+    private function getTabContent(): array
     {
         return [
             'content' => $this->service()->options(),

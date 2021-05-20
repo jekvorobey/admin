@@ -160,7 +160,7 @@ class PublicEventBillingReport
     protected static function body(Worksheet $sheet, $orders)
     {
         $startBillingRow = $billingTableRow = 16; //Начальная строка списка проданных товаров
-        $sumSells = $sumReward = $sumToPrincipal = 0;
+//        $sumSells = $sumReward = $sumToPrincipal = 0;
 
         //Заполняем таблицу c продажами//
 
@@ -192,7 +192,7 @@ class PublicEventBillingReport
                 $sheet->getCell('J' . $billingTableRow)->setValue('=G' . $billingTableRow . '*I' . $billingTableRow);
                 $sheet->getCell('K' . $billingTableRow)->setValue('=G' . $billingTableRow . '-J' . $billingTableRow);
 
-                $sumSells += $operation['price']; // total in G
+//                $sumSells += $operation['price']; // total in G
                 $sumReward += $reward; // total in J
                 $sumToPrincipal += $toPrincipal; // total in K
 

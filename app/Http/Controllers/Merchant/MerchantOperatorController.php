@@ -63,7 +63,7 @@ class MerchantOperatorController extends Controller
             'login' => $user->login,
             'position' => $operator->position,
             'communication_method' => $operator->communication_method,
-            'roles' => collect($user->roles)->map(function ($item, $roleId) {
+            'roles' => collect($user->roles)->keys()->map(function ($roleId) {
                 return $roleId;
             })->values()
                 ->all(),
@@ -122,8 +122,7 @@ class MerchantOperatorController extends Controller
         int $operatorId,
         Request $request,
         OperatorService $operatorService,
-        UserService $userService,
-        MerchantService $merchantService
+        UserService $userService
     ) {
         $userData = $request->validate([
             'last_name' => 'string',

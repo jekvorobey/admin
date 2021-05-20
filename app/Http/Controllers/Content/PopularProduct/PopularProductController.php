@@ -73,7 +73,6 @@ class PopularProductController extends Controller
 
         $data['product_id'] = explode(',', $data['product_id']);
 
-        /** @var ProductDto $product */
         $products = $productService->products(
             (new RestQuery())
                 ->addFields(ProductDto::entity(), 'id', 'name')

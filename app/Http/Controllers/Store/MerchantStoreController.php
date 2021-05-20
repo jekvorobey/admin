@@ -25,11 +25,6 @@ use MerchantManagement\Services\MerchantService\MerchantService;
  */
 class MerchantStoreController extends Controller
 {
-    /**
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return mixed
-     */
     public function index(Request $request, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Склады мерчантов';
@@ -65,9 +60,6 @@ class MerchantStoreController extends Controller
         ]);
     }
 
-    /**
-     * @return array
-     */
     protected function getFilter(): array
     {
         return Validator::make(request('filter') ?? [], [
@@ -91,11 +83,6 @@ class MerchantStoreController extends Controller
         ]);
     }
 
-    /**
-     * @param int $id
-     * @param StoreService $storeService
-     * @return mixed
-     */
     public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Редактирование склада мерчанта';
@@ -108,11 +95,6 @@ class MerchantStoreController extends Controller
         ]);
     }
 
-    /**
-     * @param  int  $storeId
-     * @param  StoreService  $storeService
-     * @return array
-     */
     protected function getStore(int $storeId, StoreService $storeService): array
     {
         $restQuery = new RestQuery();
@@ -126,9 +108,6 @@ class MerchantStoreController extends Controller
         return $store;
     }
 
-    /**
-     * @return array
-     */
     protected function getPickupTimes(): array
     {
         return [
@@ -138,7 +117,7 @@ class MerchantStoreController extends Controller
 
     public function create(Request $request, StoreService $storeService): JsonResponse
     {
-        $addressValidate = $this->_getAddressValidate();
+        $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'merchant_id' => 'integer|required',
             'name' => 'string|required',
@@ -153,7 +132,7 @@ class MerchantStoreController extends Controller
 
     public function update(int $id, Request $request, StoreService $storeService): JsonResponse
     {
-        $addressValidate = $this->_getAddressValidate();
+        $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'id' => 'integer|required',
             'merchant_id' => 'integer|required',
@@ -168,7 +147,7 @@ class MerchantStoreController extends Controller
         return response()->json([]);
     }
 
-    private function _getAddressValidate(): array
+    private function getAddressValidate(): array
     {
         return [
             'address.address_string' => 'string|required',

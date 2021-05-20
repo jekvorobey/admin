@@ -25,6 +25,7 @@ class TabProductController extends Controller
      * @param int $merchantId
      * @return JsonResponse
      * @throws \Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function loadProductsData(int $merchantId)
     {

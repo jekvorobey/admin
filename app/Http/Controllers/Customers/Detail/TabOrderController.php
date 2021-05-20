@@ -9,6 +9,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\Payment\PaymentDto;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
+use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Support\Collection;
@@ -46,7 +47,7 @@ class TabOrderController extends Controller
                     return DeliveryMethod::methodById($delivery->delivery_method)->name;
                 })->unique()->join(', ');
                 $ar['deliverySystems'] = $ds->map(function (DeliveryDto $delivery) {
-                    return \Greensight\Logistics\Dto\Lists\DeliveryService::serviceById($delivery->delivery_service)->name;
+                    return DeliveryServiceDto::serviceById($delivery->delivery_service)->name;
                 })->unique()->join(', ');
                 $ar['deliveryCount'] = $ds->count();
                 $ar['deliveryDate'] = $ds->map(function (DeliveryDto $delivery) {

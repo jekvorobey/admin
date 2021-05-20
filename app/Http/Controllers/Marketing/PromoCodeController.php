@@ -44,7 +44,6 @@ class PromoCodeController extends Controller
         PromoCodeService $promoCodeService,
         UserService $userService,
         CustomerService $customerService,
-        MerchantService $merchantService,
         CommunicationService $communicationService
     ) {
         $this->title = 'Промокоды';
@@ -253,6 +252,7 @@ class PromoCodeController extends Controller
                 ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
                 : null;
         } catch (\Throwable $ex) {
+            //
         }
 
         $builder = new PromoCodeBuilder($data);
@@ -266,7 +266,7 @@ class PromoCodeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generate(Request $request, PromoCodeService $promoCodeService)
+    public function generate(PromoCodeService $promoCodeService)
     {
         $r = $promoCodeService->generate();
         return response()->json($r);

@@ -42,7 +42,7 @@ class CertificateCardController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function sendNotification($id, Request $request): JsonResponse
+    public function sendNotification($id): JsonResponse
     {
         $this->service()->sendNotification($id);
         return response()->json(['status' => 'ok']);

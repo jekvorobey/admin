@@ -152,14 +152,12 @@ class CargoDetailController extends Controller
      * Удалить отправление из груза
      * @param  int  $id
      * @param  int  $shipmentId
-     * @param  Request  $request
      * @param  ShipmentService  $shipmentService
      * @return JsonResponse
      */
     public function deleteShipmentFromCargo(
         int $id,
         int $shipmentId,
-        Request $request,
         ShipmentService $shipmentService
     ): JsonResponse {
         return $this->abstractAction($id, function () use ($shipmentId, $shipmentService) {

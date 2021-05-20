@@ -227,13 +227,10 @@ class MerchantListController extends Controller
     /**
      * Создать нового мерчанта
      * @param MerchantService $merchantService
-     * @param UserService $userService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createMerchant(
-        MerchantService $merchantService,
-        UserService $userService
-    ) {
+    public function createMerchant(MerchantService $merchantService)
+    {
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
             'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],

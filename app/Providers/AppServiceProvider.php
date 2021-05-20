@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -31,8 +30,6 @@ class AppServiceProvider extends ServiceProvider
             $this->app['request']->server->set('HTTPS', true);
         }
         Factory::macro('component', function ($name, $props = [], $layoutData = [], $viewData = []) {
-            /** @var TokenStore $store */
-            $store = resolve(TokenStore::class);
             $routes = [];
             foreach (Route::getRoutes() as $route) {
                 /** @var \Illuminate\Routing\Route $route */

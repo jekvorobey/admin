@@ -310,7 +310,14 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $product['currentOffer'] = $currentOffer;
-        $product['publicEvents'] = [['id' => 3, 'name' => 'СТАРТ-ВИЗАЖ', 'description' => 'Для визажистов начального уровня'], ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня']];
+        $product['publicEvents'] = [
+            [
+                'id' => 3,
+                'name' => 'СТАРТ-ВИЗАЖ',
+                'description' => 'Для визажистов начального уровня',
+            ],
+            ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня'],
+        ];
         //После реализации сервиса мастер классов - тут получение привязанных
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);

@@ -84,6 +84,7 @@ class TabShipmentsController extends OrderDetailController
      * @param int $shipmentId
      * @param  ShipmentService  $shipmentService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function barcodes(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -100,6 +101,7 @@ class TabShipmentsController extends OrderDetailController
      * @param int $shipmentId
      * @param  ShipmentService  $shipmentService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function cdekReceipt(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -116,6 +118,7 @@ class TabShipmentsController extends OrderDetailController
      * @param int $shipmentId
      * @param  ShipmentService  $shipmentService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function acceptanceAct(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -128,6 +131,7 @@ class TabShipmentsController extends OrderDetailController
      * @param int $shipmentId
      * @param  ShipmentService  $shipmentService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function assemblingCard(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -140,6 +144,7 @@ class TabShipmentsController extends OrderDetailController
      * @param int $shipmentId
      * @param  ShipmentService  $shipmentService
      * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function inventory(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -232,16 +237,15 @@ class TabShipmentsController extends OrderDetailController
      * @param  int  $orderId
      * @param  int  $shipmentId
      * @param  int  $shipmentPackageId
-     * @param  Request  $request
      * @param  ShipmentPackageService  $shipmentPackageService
      * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function deleteShipmentPackage(
         int $orderId,
         int $shipmentId,
         int $shipmentPackageId,
-        Request $request,
         ShipmentPackageService $shipmentPackageService
     ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $shipmentPackageService) {
@@ -257,6 +261,7 @@ class TabShipmentsController extends OrderDetailController
      * @param  Request  $request
      * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function addShipmentPackageItems(
         int $orderId,
@@ -304,6 +309,7 @@ class TabShipmentsController extends OrderDetailController
      * @param  Request  $request
      * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function editShipmentPackageItem(
         int $orderId,
@@ -338,16 +344,15 @@ class TabShipmentsController extends OrderDetailController
      * @param  int  $shipmentId
      * @param  int  $shipmentPackageId
      * @param  int  $basketItemId
-     * @param  Request  $request
      * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function deleteShipmentPackageItem(
         int $orderId,
         int $shipmentId,
         int $shipmentPackageId,
-        int $basketItemId,
-        Request $request
+        int $basketItemId
     ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);

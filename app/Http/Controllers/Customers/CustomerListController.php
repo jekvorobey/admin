@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
 {
-    const PER_PAGE = 10;
+    public const PER_PAGE = 10;
 
     /**
      * Отображаем всех пользователей

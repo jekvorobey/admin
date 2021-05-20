@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 
 class PublicEventOrdersController extends Controller
 {
-    const PER_PAGE = 15;
+    public const PER_PAGE = 15;
 
     public function getList(Request $request, int $eventId)
     {

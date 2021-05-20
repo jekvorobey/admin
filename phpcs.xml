@@ -26,6 +26,7 @@
 
     <rule ref="PSR12">
         <exclude name="PSR12.Traits.UseDeclaration.MultipleImport"/>
+        <exclude name="PSR12.Properties.ConstantVisibility.NotFound"/>
 
         <exclude name="Generic.Files.LineLength.TooLong"/>
     </rule>
@@ -99,6 +100,8 @@
 
         <exclude name="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
         <exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>
+
+        <exclude name="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">

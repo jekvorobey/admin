@@ -12,7 +12,6 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Services\ListsService\ListsService;
-use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -258,8 +257,8 @@ class DiscountController extends Controller
             'status' => 'integer|required',
         ]);
 
-        /** @var DiscountDto $discount */
         $discountService->updateStatuses($data['ids'], (int) $data['status']);
+
         return response()->json(['status' => 'ok']);
     }
 
@@ -276,8 +275,8 @@ class DiscountController extends Controller
             'ids.*' => 'integer|required',
         ]);
 
-        /** @var DiscountDto $discount */
         $discountService->delete($data['ids']);
+
         return response()->json(['status' => 'ok']);
     }
 }

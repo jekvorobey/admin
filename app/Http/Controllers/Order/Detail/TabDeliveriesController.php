@@ -10,7 +10,6 @@ use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,6 +26,7 @@ class TabDeliveriesController extends OrderDetailController
      * @param  DeliveryService  $deliveryService
      * @param  ListsService  $listsService
      * @return JsonResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function load(
         int $orderId,
@@ -78,7 +78,6 @@ class TabDeliveriesController extends OrderDetailController
      * Обновить доставку
      * @param int $orderId
      * @param int $deliveryId
-     * @param  OrderService  $orderService
      * @param  DeliveryService  $deliveryService
      * @return JsonResponse
      * @throws \Exception
@@ -86,7 +85,6 @@ class TabDeliveriesController extends OrderDetailController
     public function save(
         int $orderId,
         int $deliveryId,
-        OrderService $orderService,
         DeliveryService $deliveryService
     ): JsonResponse {
         $requiredIfDeliveryAddressExist = function () {

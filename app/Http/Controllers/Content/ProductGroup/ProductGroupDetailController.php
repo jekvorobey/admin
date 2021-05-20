@@ -52,10 +52,8 @@ class ProductGroupDetailController extends Controller
     }
 
     public function createPage(
-        ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
-        CategoryService $categoryService,
-        FileService $fileService
+        CategoryService $categoryService
     ) {
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
@@ -256,7 +254,7 @@ class ProductGroupDetailController extends Controller
         $categoryFilters = [];
         $brandFilters = [];
         $otherFilters = [];
-        foreach ($productGroup->filters as $index => $filter) {
+        foreach ($productGroup->filters as $filter) {
             switch ($filter['code']) {
                 case ProductGroupFilterDto::CATEGORY_FILTER:
                     $categoryFilters[] = $filter['value'];

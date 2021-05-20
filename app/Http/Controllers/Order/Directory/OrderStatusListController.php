@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
  */
 class OrderStatusListController extends Controller
 {
-    const PER_PAGE = 20;
+    public const PER_PAGE = 20;
 
     /**
      * @return mixed

@@ -268,7 +268,7 @@ class OrderDetailController extends Controller
         $listsService = resolve(ListsService::class);
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
-        /** @var PackageService $brandService */
+        /** @var PackageService $packageService */
         $packageService = resolve(PackageService::class);
 
         //Справочник типов коробок
@@ -299,7 +299,6 @@ class OrderDetailController extends Controller
                 ->keyBy('id');
         }
 
-        /** @var Collection|PointDto[] $points */
         $tariffs = collect();
         $tariffIds = $order->deliveries->pluck('tariff_id')->filter()->unique()->values()->all();
         if ($tariffIds) {
@@ -328,14 +327,14 @@ class OrderDetailController extends Controller
             } else {
                 $cities->push($delivery->getCity());
                 $deliveryAddress = $delivery->delivery_address;
-                $deliveryAddress['address_string'] = join(', ', array_filter([
+                $deliveryAddress['address_string'] = implode(', ', array_filter([
                     $deliveryAddress['post_index'] ?? '',
-                    isset($deliveryAddress['region']) ? $delivery->delivery_address['region'] : '',
-                    isset($deliveryAddress['city']) ? $delivery->delivery_address['city'] : '',
-                    isset($deliveryAddress['street']) ? $delivery->delivery_address['street'] : '',
-                    isset($deliveryAddress['house']) ? $delivery->delivery_address['house'] : '',
-                    isset($deliveryAddress['block']) ? $delivery->delivery_address['block'] : '',
-                    isset($deliveryAddress['flat']) ? $delivery->delivery_address['flat'] : '',
+                    $deliveryAddress['region'] ?? '',
+                    $deliveryAddress['city'] ?? '',
+                    $deliveryAddress['street'] ?? '',
+                    $deliveryAddress['house'] ?? '',
+                    $deliveryAddress['block'] ?? '',
+                    $deliveryAddress['flat'] ?? '',
                 ]));
                 $deliveryAddress['full_address_string'] = $delivery->getAddressString();
                 $delivery->delivery_address = $deliveryAddress;
