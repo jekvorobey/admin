@@ -194,10 +194,10 @@
       <tbody>
       <tr v-for="billingOperation in billingList">
         <td v-if="billingOperation.order_id">
-          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.created_at }}</a>
+          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.status_at }}</a>
         </td>
         <td v-else>
-          {{ billingOperation.created_at }}
+          {{ billingOperation.status_at }}
         </td>
         <td v-if="billingOperation.offer_id">
           <a :href="$store.getters.getRoute('offers.detail', {id:billingOperation.offer_id})">{{ billingOperation.name }}</a>
