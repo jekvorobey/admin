@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: madri
@@ -8,11 +9,8 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Marketing\Dto\Price\OfferPriceDto;
-use Greensight\Marketing\Dto\Price\PriceOutDto;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Dto\StockDto;
@@ -38,8 +36,7 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    )
-    {
+    ) {
         $this->title = 'Предложения мерчантов';
         $this->loadOfferSaleStatuses = true;
 
@@ -51,7 +48,7 @@ class OfferListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'merchants' => $this->getMerchants()->pluck('legal_name', 'id')
+                'merchants' => $this->getMerchants()->pluck('legal_name', 'id'),
             ],
         ]);
     }
@@ -62,13 +59,12 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    )
-    {
+    ) {
         $query = $this->makeQuery($request);
         $data = [
             'offers' => $this->loadItems($query, $offerService, $merchantService, $priceService, $stockService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $offerService->offersCount($query);
         }
         return response()->json($data);
@@ -86,12 +82,12 @@ class OfferListController extends Controller
             'price' => 'numeric|required',
             'sale_status' => [
                 'nullable',
-                Rule::in(array_keys(OfferSaleStatus::offerCreateStatuses()))
+                Rule::in(array_keys(OfferSaleStatus::offerCreateStatuses())),
             ],
             'sale_at' => 'nullable|date',
             'stocks' => 'array',
             'stocks.*.store_id' => 'integer|required',
-            'stocks.*.qty' => 'integer|required'
+            'stocks.*.qty' => 'integer|required',
         ]);
 
         $offerDto = new OfferDto([
@@ -99,7 +95,9 @@ class OfferListController extends Controller
             'merchant_id' => $data['merchant_id'],
             'sale_status' => $data['sale_status'],
         ]);
-        if ($data['sale_at']) $offerDto['sale_at'] = $data['sale_at'];
+        if ($data['sale_at']) {
+            $offerDto['sale_at'] = $data['sale_at'];
+        }
         $offerId = $offerService->createOffer($offerDto);
 
         if (!$offerId) {
@@ -115,7 +113,7 @@ class OfferListController extends Controller
                     'store_id' => $stock['store_id'],
                     'product_id' => $data['product_id'],
                     'offer_id' => $offerId,
-                    'qty' => (double) $stock['qty']
+                    'qty' => (float) $stock['qty'],
                 ]);
                 $stocks->push($stockDto);
             }
@@ -137,12 +135,12 @@ class OfferListController extends Controller
             'price' => 'sometimes|numeric|required',
             'sale_status' => [
                 'sometimes',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses()))
+                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
             ],
             'sale_at' => 'sometimes|date',
             'stocks' => 'array',
             'stocks.*.store_id' => 'integer|required',
-            'stocks.*.qty' => 'integer|required'
+            'stocks.*.qty' => 'integer|required',
         ]);
 
         $statusChanged = array_key_exists('sale_status', $data);
@@ -170,7 +168,7 @@ class OfferListController extends Controller
                     'store_id' => $stock['store_id'],
                     'product_id' => $data['product_id'],
                     'offer_id' => $id,
-                    'qty' => (double) $stock['qty']
+                    'qty' => (float) $stock['qty'],
                 ]);
                 $stocks->push($stockDto);
             }
@@ -183,23 +181,22 @@ class OfferListController extends Controller
     public function changeSaleStatus(
         Request $request,
         OfferService $offerService
-    )
-    {
+    ) {
         $data = $request->validate([
             'offer_ids' => 'array|required',
             'offer_ids.*' => 'integer',
             'sale_status' => [
                 'required',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses()))
+                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
             ],
-            'sale_at' => 'nullable|date'
+            'sale_at' => 'nullable|date',
         ]);
 
         $offerService->changeSaleStatus($data['offer_ids'], $data['sale_status']);
 
         if ($data['sale_at']) {
             $offerDto = new OfferDto([
-                'sale_at' => $data['sale_at']
+                'sale_at' => $data['sale_at'],
             ]);
             foreach ($data['offer_ids'] as $offer_id) {
                 $offerService->updateOffer($offer_id, $offerDto);
@@ -211,8 +208,7 @@ class OfferListController extends Controller
     public function deleteOffers(
         Request $request,
         OfferService $offerService
-    )
-    {
+    ) {
         $data = $request->validate([
             'offer_ids' => 'array|required',
             'offer_ids.*' => 'integer',
@@ -256,10 +252,10 @@ class OfferListController extends Controller
     ) {
         $data = $request->validate([
             'merchant_id' => 'integer|required',
-            'offer_id' => 'sometimes|integer|required'
+            'offer_id' => 'sometimes|integer|required',
         ]);
 
-        $storeQuery = $storeService->newQuery()->addFields(StoreDto::entity(),'id', 'name');
+        $storeQuery = $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'name');
         $stores = $storeService->stores($storeQuery, $data['merchant_id'])->keyBy('id');
         $qtys = collect([]);
 
@@ -284,7 +280,7 @@ class OfferListController extends Controller
     ) {
         $data = $request->validate([
             'product_id' => 'integer|required',
-            'merchant_id' => 'integer|required'
+            'merchant_id' => 'integer|required',
         ]);
 
         $isOk = true;
@@ -311,7 +307,7 @@ class OfferListController extends Controller
 
         return response()->json([
             'isOk' => $isOk,
-            'message' => $message
+            'message' => $message,
         ]);
     }
 
@@ -350,8 +346,7 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    )
-    {
+    ) {
         $offers = $offerService->offers($query);
         $merchantIds = $offers->pluck('merchant_id')->all();
         $offerIds = $offers->pluck('id')->all();
@@ -371,7 +366,7 @@ class OfferListController extends Controller
         $pricesIn = (new PricesInDto())->setOffers($offerIds);
         $prices = $priceService->prices($pricesIn)->keyBy('offer_id');
 
-        $items = $offers->map(function (OfferDto $offer) use ($merchants, $prices, $stocks) {
+        return $offers->map(function (OfferDto $offer) use ($merchants, $prices, $stocks) {
             return [
                 'id' => $offer->id,
                 'productId' => $offer->product ? $offer->product->id : null,
@@ -382,10 +377,8 @@ class OfferListController extends Controller
                 'merchantId' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->id : 'N/A',
                 'merchantName' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->legal_name : 'N/A',
                 'price' => $prices->has($offer->id) ? $prices->get($offer->id)->price : 0,
-                'qty' => $stocks->has($offer->id) ? $stocks->get($offer->id) : 0
+                'qty' => $stocks->has($offer->id) ? $stocks->get($offer->id) : 0,
             ];
         });
-
-        return $items;
     }
 }

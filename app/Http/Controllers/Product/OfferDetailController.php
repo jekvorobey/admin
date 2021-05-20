@@ -9,7 +9,6 @@ use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Dto\StockDto;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StockService\StockService;
-use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\Request;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -25,8 +24,7 @@ class OfferDetailController extends Controller
         PriceService $priceService,
         StockService $stockService,
         MerchantService $merchantService
-    )
-    {
+    ) {
         $this->loadOfferSaleStatuses = true;
         $offerInfo = $this->loadOfferInfo($id, $offerService, $priceService, $stockService, $merchantService);
 
@@ -90,8 +88,7 @@ class OfferDetailController extends Controller
         PriceService $priceService,
         StockService $stockService,
         MerchantService $merchantService
-    )
-    {
+    ) {
         $offer = $offerService->newQuery()
             ->setFilter('id', $id)
             ->include(ProductDto::entity())
@@ -121,7 +118,7 @@ class OfferDetailController extends Controller
             'id' => $offer->id,
             'product_id' => $offer->product->id,
             'merchant_id' => $offer->merchant_id,
-            'merchantName' => $merchant ? $merchant->legal_name  : 'N/A',
+            'merchantName' => $merchant ? $merchant->legal_name : 'N/A',
             'name' => $offer->product ? $offer->product->name : 'N/A',
             'status' => $offer->sale_status,
             'sale_at' => $offer->sale_at,
@@ -136,8 +133,7 @@ class OfferDetailController extends Controller
                     'address' => $stock->store ? $stock->store->address['address_string'] : 'N/A',
                     'contacts' => $q = $stock->store->storeContact->first() ?? null,
                 ];
-            })->toArray()
+            })->toArray(),
         ];
     }
-
 }

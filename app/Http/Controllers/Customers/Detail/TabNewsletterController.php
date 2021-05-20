@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Cms\Dto\ContentNewsletterDto;
 use Cms\Services\ContentNewsletterService\ContentNewsletterService;
@@ -30,8 +29,8 @@ class TabNewsletterController extends Controller
     public function load(
         $customerId,
         ContentNewsletterService $contentNewsletterService,
-        CustomerNewsletterService $customerNewsletterService)
-    {
+        CustomerNewsletterService $customerNewsletterService
+    ) {
         /** @var ContentNewsletterDto $topics */
         $topics = $contentNewsletterService->getTopics();
         /** @var CustomerNewsletterDto $subscriptions */
@@ -48,8 +47,8 @@ class TabNewsletterController extends Controller
             'customer' => [
                 'topics' => $customer_topics,
                 'periodicity' => $customer_periodicity,
-                'channels' => $customer_channels
-            ]
+                'channels' => $customer_channels,
+            ],
         ]);
     }
 
@@ -63,8 +62,8 @@ class TabNewsletterController extends Controller
     public function edit(
         $customerId,
         CustomerNewsletterService $customerNewsletterService,
-        ContentNewsletterService $contentNewsletterService)
-    {
+        ContentNewsletterService $contentNewsletterService
+    ) {
         $topics = $contentNewsletterService->getTopics()
             ->keyBy('id')
             ->keys()
@@ -73,9 +72,11 @@ class TabNewsletterController extends Controller
         $data = $this->validate(request(), [
             'topics.*' => ['nullable', 'integer', Rule::in($topics)],
             'periodicity' => ['required', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods()))],
+                array_keys(CustomerNewsletterDto::periods())
+            )],
             'channels.*' => ['nullable', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods()))]
+                array_keys(CustomerNewsletterDto::periods())
+            )],
         ]);
 
         if (isset($data['topics'])) {
@@ -94,5 +95,4 @@ class TabNewsletterController extends Controller
 
         return response('', 204);
     }
-
 }

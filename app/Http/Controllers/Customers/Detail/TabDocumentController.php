@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
@@ -80,7 +79,7 @@ class TabDocumentController extends Controller
                 'string',
                 // Using available types in Box\Spout\Common\Type //
                 Rule::in(['csv', 'xlsx', 'ods']),
-            ]
+            ],
         ]);
         $format = request('format');
 
@@ -116,7 +115,6 @@ class TabDocumentController extends Controller
                     $document->statusName($document->status),
                     $file->url,
                 ], null));
-
         }
 
         $writer->close();
@@ -131,21 +129,20 @@ class TabDocumentController extends Controller
      * @param FileService $fileService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendEmail
-    (int $customerId,
-     int $documentId,
-     MailService\MailService $mailService,
-     CustomerService $customerService,
-     UserService $userService,
-     FileService $fileService)
-    {
+    public function sendEmail(
+        int $customerId,
+        int $documentId,
+        MailService\MailService $mailService,
+        CustomerService $customerService,
+        UserService $userService,
+        FileService $fileService
+    ) {
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $customerId))->first();
         $userId = $customer->user_id;
         /** @var UserDto $user */
         $user = $userService->users((new RestQuery())->setFilter('id', $userId))->first();
-        if (!$user->email)
-        {
+        if (!$user->email) {
             throw new BadRequestHttpException('Ошибка: Не указан Email пользователя');
         }
         /** @var CustomerDocumentDto $document */

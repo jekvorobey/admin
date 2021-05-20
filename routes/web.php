@@ -12,7 +12,7 @@ Route::middleware('auth')->group(function () {
     Route::post('upload', 'MainController@uploadFile')->name('uploadFile');
     Route::post('logout', 'MainController@logoutAjax')->name('logout');
 
-    Route::prefix('search')->group(function() {
+    Route::prefix('search')->group(function () {
         Route::get('products', 'SearchController@products')->name('search.products');
     });
 
@@ -82,21 +82,33 @@ Route::middleware('auth')->group(function () {
                     Route::get('', 'TabBillingController@load')->name('merchant.detail.billing');
                     Route::put('billing_cycle', 'TabBillingController@billingCycle')->name('merchant.detail.billing.billing_cycle');
                     Route::get('billing-reports', 'TabBillingController@billingReports')->name('merchant.detail.billingReport');
-                    Route::delete('billing-reports/{reportId}', 'TabBillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name('merchant.detail.billingReport.delete');
-                    Route::put('billing-reports/{reportId}', 'TabBillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name('merchant.detail.billingReport.updateStatus');
+                    Route::delete('billing-reports/{reportId}', 'TabBillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
+                        'merchant.detail.billingReport.delete'
+                    );
+                    Route::put('billing-reports/{reportId}', 'TabBillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
+                        'merchant.detail.billingReport.updateStatus'
+                    );
                     Route::post('billing-reports/create', 'TabBillingController@billingReportCreate')->name('merchant.detail.billingReport.create');
-                    Route::get('billing-reports/download/{reportId}', 'TabBillingController@billingReportDownload')->name('merchant.detail.billingReport.download');
+                    Route::get('billing-reports/download/{reportId}', 'TabBillingController@billingReportDownload')->name(
+                        'merchant.detail.billingReport.download'
+                    );
                 });
                 Route::prefix('billingList')->group(function () {
                     Route::get('', 'TabBillingController@billingList')->name('merchant.detail.billingList');
                     Route::post('add-correction', 'TabBillingController@addCorrection')->name('merchant.detail.billingList.addCorrection');
                     Route::get('add-return/{operationId}', 'TabBillingController@addReturn')->name('merchant.detail.billingList.addReturn');
-                    Route::delete('delete-operation/{operationId}', 'TabBillingController@deleteOperation')->name('merchant.detail.billingList.deleteOperation');
-                    Route::get('correction/download/{fileId}', 'TabBillingController@correctionDownload')->name('merchant.detail.download-correction-document');
+                    Route::delete('delete-operation/{operationId}', 'TabBillingController@deleteOperation')->name(
+                        'merchant.detail.billingList.deleteOperation'
+                    );
+                    Route::get('correction/download/{fileId}', 'TabBillingController@correctionDownload')->name(
+                        'merchant.detail.download-correction-document'
+                    );
                 });
                 Route::prefix('eventBillingList')->group(function () {
                     Route::get('', 'TabPublicEventController@eventBillingList')->name('merchant.detail.eventBillingList');
-                    Route::get('download-report', 'TabPublicEventController@downloadEventBillingList')->name('merchant.detail.eventBillingList.downloadEventBillingList');
+                    Route::get('download-report', 'TabPublicEventController@downloadEventBillingList')->name(
+                        'merchant.detail.eventBillingList.downloadEventBillingList'
+                    );
                 });
             });
         });
@@ -113,7 +125,9 @@ Route::middleware('auth')->group(function () {
             Route::get('pay-registry', 'MerchantSettlementsController@getPayRegistry')->name('merchant.settlements.payRegistry');
             Route::get('pay-registry/page', 'MerchantSettlementsController@getPayRegistryPage')->name('merchant.settlements.payRegistry.page');
 
-            Route::get('pay-registry/download/{registryFileId}', 'MerchantSettlementsController@downloadPayRegistry')->name('merchant.settlements.downloadPayRegistry');
+            Route::get('pay-registry/download/{registryFileId}', 'MerchantSettlementsController@downloadPayRegistry')->name(
+                'merchant.settlements.downloadPayRegistry'
+            );
             Route::post('pay', 'MerchantSettlementsController@createPayRegistry')->name('merchant.settlements.createPayRegistry');
             Route::delete('pay-registry/{payRegistryId}', 'MerchantSettlementsController@deletePayRegistry')->name('merchant.settlements.deletePayRegistry');
         });
@@ -328,7 +342,9 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabDeliveriesController@load')->name('orders.detail.deliveries');
                         Route::put('', 'TabDeliveriesController@save')->name('orders.detail.deliveries.save');
                         Route::put('save-delivery-order', 'TabDeliveriesController@saveDeliveryOrder')->name('orders.detail.deliveries.saveDeliveryOrder');
-                        Route::put('cancel-delivery-order', 'TabDeliveriesController@cancelDeliveryOrder')->name('orders.detail.deliveries.cancelDeliveryOrder');
+                        Route::put('cancel-delivery-order', 'TabDeliveriesController@cancelDeliveryOrder')->name(
+                            'orders.detail.deliveries.cancelDeliveryOrder'
+                        );
                         Route::put('cancel', 'TabDeliveriesController@cancelDelivery')->name('orders.detail.deliveries.cancel');
                     });
                 });
@@ -787,7 +803,9 @@ Route::middleware('auth')->group(function () {
                     Route::prefix('preference')->group(function () {
                         Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');
                         Route::post('favorite/{product_id}', 'TabPreferenceController@addFavoriteItem')->name('customers.detail.preference.favorite.add');
-                        Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name('customers.detail.preference.favorite.delete');
+                        Route::delete('favorite/{product_id}', 'TabPreferenceController@deleteFavoriteItem')->name(
+                            'customers.detail.preference.favorite.delete'
+                        );
                         Route::prefix('{type}')->group(function () {
                             Route::put('brands', 'TabPreferenceController@putBrands')->name('customers.detail.preference.brand.save');
                             Route::put('categories', 'TabPreferenceController@putCategories')->name('customers.detail.preference.category.save');
@@ -839,7 +857,6 @@ Route::middleware('auth')->group(function () {
                         Route::get('page', 'TabReviewsController@page')->name('customers.detail.reviews.pagination');
                     });
                 });
-
             });
 
             Route::prefix('activities')->group(function () {

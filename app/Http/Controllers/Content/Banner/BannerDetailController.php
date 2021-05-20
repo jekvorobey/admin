@@ -35,7 +35,7 @@ class BannerDetailController extends Controller
         $bannerImages = $this->getBannerImages([
             $banner['desktop_image_id'],
             $banner['tablet_image_id'],
-            $banner['mobile_image_id']
+            $banner['mobile_image_id'],
         ], $fileService);
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
         $bannerButtonTypes = $this->getBannerButtonTypes();
@@ -94,7 +94,7 @@ class BannerDetailController extends Controller
             $bannerImages = $this->getBannerImages([
                 $banner['desktop_image_id'],
                 $banner['tablet_image_id'],
-                $banner['mobile_image_id']
+                $banner['mobile_image_id'],
             ], $fileService);
         } else {
             $banner = null;

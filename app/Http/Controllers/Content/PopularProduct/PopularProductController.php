@@ -14,7 +14,6 @@ use Illuminate\Http\Response;
 use Pim\Core\PimException;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PopularProductController extends Controller
 {
@@ -68,7 +67,7 @@ class PopularProductController extends Controller
         $data = $this->validate(request(), [
             'product_id' => [
                 'required',
-                'regex:/^\d+(,\d+)*$/'
+                'regex:/^\d+(,\d+)*$/',
             ],
         ]);
 
@@ -85,8 +84,10 @@ class PopularProductController extends Controller
 
         // Несуществующие товары. Т.к. PIM отправляет инфу только он валидных ID,
         // приходится считать невалидные
-        $missingProducts = array_udiff($data['product_id'], $products->toArray(),
-            function($first, $second) {
+        $missingProducts = array_udiff(
+            $data['product_id'],
+            $products->toArray(),
+            function ($first, $second) {
                 if (is_numeric($first)) {
                     $f = $first;
                 } else {

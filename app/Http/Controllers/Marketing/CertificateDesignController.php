@@ -38,8 +38,8 @@ class CertificateDesignController extends Controller
 
         return $this->render('Marketing/Certificate/Designs/Add', [
             'design' => [
-                'is_active' => 1
-            ]
+                'is_active' => 1,
+            ],
         ]);
     }
 
@@ -49,7 +49,7 @@ class CertificateDesignController extends Controller
         $this->setActiveMenu();
 
         return $this->render('Marketing/Certificate/Designs/Edit', [
-            'design' => $this->service()->designQuery()->withFile()->id($id)->designs()->first()
+            'design' => $this->service()->designQuery()->withFile()->id($id)->designs()->first(),
         ]);
     }
 

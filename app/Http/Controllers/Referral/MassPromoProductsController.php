@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Referral;
 
-
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customers\Detail\TabPromoProductController;
 use Greensight\Customer\Core\CustomerException;
@@ -28,8 +27,8 @@ class MassPromoProductsController extends Controller
      */
     public function list(
         CustomerService $customerService,
-        ReferralService $referralService)
-    {
+        ReferralService $referralService
+    ) {
         // Получить список массовых промо-товаров //
         $helper = resolve(TabPromoProductController::class);
         $promoProducts = $helper->loadPromotionProducts(null);
@@ -44,7 +43,7 @@ class MassPromoProductsController extends Controller
         return $this->render('Referral/PromoProducts', [
             'iPromoProducts' => $promoProducts,
             'activities' => $activities,
-            'ref_levels' => $ref_levels
+            'ref_levels' => $ref_levels,
         ]);
     }
 
@@ -59,11 +58,11 @@ class MassPromoProductsController extends Controller
     public function editProduct(
         Request $request,
         ProductService $productService,
-        ReferralService $referralService)
-    {
+        ReferralService $referralService
+    ) {
         $helper = resolve(TabPromoProductController::class);
         return $helper
-            ->save(null,$request,$productService,$referralService);
+            ->save(null, $request, $productService, $referralService);
     }
 
     /**
@@ -72,7 +71,8 @@ class MassPromoProductsController extends Controller
      * @return JsonResponse
      * @throws PimException
      */
-    public function attachProduct(ReferralService $referralService) {
+    public function attachProduct(ReferralService $referralService)
+    {
         $data = $this->validate(request(), [
             'promo_products' => 'required|json',
             'segments' => 'nullable|array',
@@ -84,7 +84,7 @@ class MassPromoProductsController extends Controller
             'segments.user_ids.*' => 'nullable|integer',
         ]);
 
-        $segments = isset($data['segments']) ? $data['segments'] : null;
+        $segments = $data['segments'] ?? null;
         $referralService->attachMassPromotions($data['promo_products'], $segments);
 
         $helper = resolve(TabPromoProductController::class);
@@ -99,13 +99,13 @@ class MassPromoProductsController extends Controller
      * @param ReferralService $referralService
      * @return Application|ResponseFactory|Response
      */
-    public function removeProduct(ReferralService $referralService) {
+    public function removeProduct(ReferralService $referralService)
+    {
         $data = $this->validate(request(), [
-            'promo_id' => 'required|integer'
+            'promo_id' => 'required|integer',
         ]);
 
         $referralService->deletePromoProduct($data['promo_id']);
         return response('', 204);
     }
-
 }

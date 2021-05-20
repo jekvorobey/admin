@@ -17,7 +17,6 @@ use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-
 class TabMarketingController extends Controller
 {
     /**
@@ -29,7 +28,8 @@ class TabMarketingController extends Controller
      * @param RequestInitiator $user
      * @return JsonResponse
      */
-    public function loadDiscountsData(int $merchantId,
+    public function loadDiscountsData(
+        int $merchantId,
         Request $request,
         DiscountService $discountService,
         RequestInitiator $user
@@ -73,7 +73,6 @@ class TabMarketingController extends Controller
             'total' => DiscountHelper::count($countParams, $discountService),
         ]);
     }
-
 
     /**
      * AJAX подгрузка информации для фильтрации промокодов

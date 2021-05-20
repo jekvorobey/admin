@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App\Core;
 
-
-use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
@@ -100,7 +97,7 @@ class ViewRender
         $this->componentName = $componentName;
         $this->props = $props;
     }
-    
+
     public function setTitle($title): self
     {
         $this->title = $title;
@@ -258,7 +255,7 @@ class ViewRender
 
         return $this;
     }
-    
+
     public function loadPublicEventTypes(bool $load = false): self
     {
         if ($load) {
@@ -269,7 +266,7 @@ class ViewRender
                 $typesCollection = $publicEventTypeService
                     ->query()
                     ->get();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 logger()->error('Error while load public event types', ['exception' => $e]);
                 $typesCollection = collect();
             }
@@ -285,7 +282,7 @@ class ViewRender
         }
         return $this;
     }
-    
+
     public function loadPublicEventMediaTypes(bool $load = false): self
     {
         if ($load) {
@@ -297,7 +294,7 @@ class ViewRender
         }
         return $this;
     }
-    
+
     public function loadPublicEventMediaCollections(bool $load = false): self
     {
         if ($load) {
@@ -354,7 +351,7 @@ class ViewRender
                 'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
                 'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
                 'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
-                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS
+                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS,
             ];
         }
         return $this;
@@ -419,7 +416,7 @@ class ViewRender
         if ($load) {
             $this->bonusValueTypes = [
                 'percent' => BonusDto::VALUE_TYPE_PERCENT,
-                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE
+                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE,
             ];
         }
 
@@ -706,7 +703,7 @@ class ViewRender
                 OfferSaleStatus::STATUS_PRE_ORDER => 'preOrder',
                 OfferSaleStatus::STATUS_OUT_SALE => 'outSale',
                 OfferSaleStatus::STATUS_AVAILABLE_SALE => 'availableSale',
-                OfferSaleStatus::STATUS_NOT_AVAILABLE_SALE => 'notAvailableSale'
+                OfferSaleStatus::STATUS_NOT_AVAILABLE_SALE => 'notAvailableSale',
             ];
             foreach (OfferSaleStatus::allStatuses() as $id => $status) {
                 if (!isset($mapOfferSaleStatuses[$id])) {

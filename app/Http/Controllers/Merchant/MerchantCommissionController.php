@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant;
-
 
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
@@ -66,7 +64,7 @@ class MerchantCommissionController extends Controller
                 'name' => 'Глобальный',
                 'type' => CommissionDto::TYPE_GLOBAL,
                 'rating_id' => null,
-            ]
+            ],
         ];
 
         foreach ($ratings as $rating) {

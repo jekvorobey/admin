@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;

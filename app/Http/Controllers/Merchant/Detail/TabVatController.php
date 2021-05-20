@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
-
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -37,7 +35,7 @@ class TabVatController extends Controller
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
             'type' => ['required', Rule::in($types)],
-            'value'=> 'nullable|numeric|max:100',
+            'value' => 'nullable|numeric|max:100',
             'related_id' => 'nullable',
         ], [
             'type' => 'тип',
@@ -175,5 +173,4 @@ class TabVatController extends Controller
 
         return [$productVats, $merchantVat, $brands, $categories, $products];
     }
-
 }

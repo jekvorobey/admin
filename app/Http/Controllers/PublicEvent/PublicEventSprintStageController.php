@@ -19,50 +19,50 @@ class PublicEventSprintStageController extends Controller
             'sprintStages' => $sprintStages['items'],
         ]);
     }
-    
+
     public function page(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
     {
         $page = $request->get('page', 1);
         [$total, $publicEventSprintStages] = $this->loadPublicEventSprintStages($publicEventPublicEventSprintStageService, $page);
-        
+
         return response()->json([
             'publicEventSprintStages' => $publicEventSprintStages,
             'total' => $total['total'],
         ]);
     }
-    
+
     public function save(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
     {
         $id = $request->get('id');
         $publicEventSprintStage = $request->get('sprintStage');
-        
+
         if (!$publicEventSprintStage) {
             throw new BadRequestHttpException('publicEventSprintStage required');
         }
-        
+
         $publicEventSprintStage = new StageDto($publicEventSprintStage);
-        
+
         if ($id) {
             $publicEventPublicEventSprintStageService->update($id, $publicEventSprintStage);
         } else {
             $publicEventPublicEventSprintStageService->create($publicEventSprintStage);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $publicEventPublicEventSprintStageService->delete($id);
         }
-        
+
         return response()->json();
     }
 
@@ -71,28 +71,34 @@ class PublicEventSprintStageController extends Controller
         $sprintStages = $publicEventPublicEventSprintStageService->getBySprint($sprint_id);
 
         return response()->json([
-            'sprintStages' => $sprintStages
+            'sprintStages' => $sprintStages,
         ]);
     }
 
-    public function createBySprint(int $sprint_id, Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function createBySprint(
+        int $sprint_id,
+        Request $request,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ) {
         $publicEventSprintStage = $request->get('publicEventSprintStage');
-        
+
         if (!$publicEventSprintStage) {
             throw new BadRequestHttpException('publicEventSprintStage required');
         }
-        
+
         $publicEventSprintStage = new StageDto($publicEventSprintStage);
-        
+
         $publicEventPublicEventSprintStageService->createBySprint($sprint_id, $publicEventSprintStage);
-        
+
         return response()->json();
     }
 
-    public function attachType(Request $request, int $type_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
-        if(!$request->has('id')) {
+    public function attachType(
+        Request $request,
+        int $type_id,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ) {
+        if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
 
@@ -101,9 +107,12 @@ class PublicEventSprintStageController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function detachType(Request $request, int $type_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
-        if(!$request->has('id')) {
+    public function detachType(
+        Request $request,
+        int $type_id,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ) {
+        if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
 
@@ -111,17 +120,19 @@ class PublicEventSprintStageController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
-    
+
     /**
      * @param PublicEventSprintStageService $publicEventPublicEventSprintStageService
      * @param $page
      * @return array
      * @throws PimException
      */
-    private function loadPublicEventSprintStages(PublicEventSprintStageService $publicEventPublicEventSprintStageService, $page): array
-    {
+    private function loadPublicEventSprintStages(
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService,
+        $page
+    ): array {
         $query = $publicEventPublicEventSprintStageService->query()->pageNumber($page, 10);
-        
+
         $total = $publicEventPublicEventSprintStageService->count($query);
         $publicEventSprintStages = $publicEventPublicEventSprintStageService->find($query);
         return [$total, $publicEventSprintStages];

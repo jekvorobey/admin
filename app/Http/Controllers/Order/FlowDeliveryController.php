@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
-use Exception;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
@@ -42,7 +42,7 @@ class FlowDeliveryController extends Controller
             $merchants = $this->loadMerchants($merchantsIds);
         }
 
-        $this->title = 'Доставка '.$delivery->number;
+        $this->title = 'Доставка ' . $delivery->number;
 
         return $this->render('Order/Flow/Delivery', [
             'iDelivery' => $delivery,
@@ -54,12 +54,6 @@ class FlowDeliveryController extends Controller
         ]);
     }
 
-    /**
-     * @param int $deliveryId
-     * @param Request $request
-     * @param DeliveryService $deliveryService
-     * @return JsonResponse
-     */
     public function editDelivery(int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -95,19 +89,13 @@ class FlowDeliveryController extends Controller
         $result = true;
         try {
             $deliveryService->updateDelivery($validatedData['id'], $deliveryDto);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $result = false;
         }
 
         return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
-    /**
-     * @param int $deliveryId
-     * @param Request $request
-     * @param ShipmentService $shipmentService
-     * @return JsonResponse
-     */
     public function editShipment(int $deliveryId, Request $request, ShipmentService $shipmentService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -134,26 +122,27 @@ class FlowDeliveryController extends Controller
 
         $result = true;
         try {
-           $shipmentService->updateShipment($validatedData['id'], $shipmentDto);
-        } catch (Exception $e) {
+            $shipmentService->updateShipment($validatedData['id'], $shipmentDto);
+        } catch (\Throwable $e) {
             $result = false;
         }
 
         return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
-
     /**
      * Получить доставку
      * @param int $deliveryId ID доставки
      * @return DeliveryDto|null
      */
-    protected function loadDelivery(int $deliveryId):? DeliveryDto
+    protected function loadDelivery(int $deliveryId): ?DeliveryDto
     {
         $deliveryService = resolve(DeliveryService::class);
         try {
             $delivery = $deliveryService->delivery($deliveryId);
-        } catch (Exception $e) {}
+        } catch (\Throwable $e) {
+            //
+        }
 
         return $delivery ?? null;
     }
@@ -163,7 +152,7 @@ class FlowDeliveryController extends Controller
      * @param int $deliveryId ID доставки
      * @return Collection|null
      */
-    protected function loadShipments(int $deliveryId):? Collection
+    protected function loadShipments(int $deliveryId): ?Collection
     {
         $shipmentService = resolve(ShipmentService::class);
         $restQuery = $shipmentService
@@ -173,7 +162,9 @@ class FlowDeliveryController extends Controller
 
         try {
             $shipments = $shipmentService->shipments($restQuery);
-        } catch (Exception $e) {}
+        } catch (\Throwable $e) {
+            //
+        }
 
         return $shipments ?? null;
     }
@@ -183,7 +174,7 @@ class FlowDeliveryController extends Controller
      * @param array $merchantIds
      * @return Collection|null
      */
-    protected function loadMerchants(array $merchantIds):? Collection
+    protected function loadMerchants(array $merchantIds): ?Collection
     {
         $merchantService = resolve(MerchantService::class);
         $restQuery = $merchantService
@@ -192,7 +183,9 @@ class FlowDeliveryController extends Controller
 
         try {
             $merchants = $merchantService->merchants($restQuery);
-        } catch (Exception $e) {}
+        } catch (\Throwable $e) {
+            //
+        }
 
         return isset($merchants) ? $merchants->keyBy('id') : null;
     }

@@ -44,7 +44,7 @@ class CargoListController extends Controller
         $restQuery = $this->makeRestQuery($cargoService, $request, true);
         $pager = $cargoService->cargosCount($restQuery);
         $cargos = $this->loadCargos($restQuery, $cargoService);
-        
+
         return $this->render('Order/Cargo/List', [
             'iCargos' => $cargos,
             'iCurrentPage' => $request->get('page', 1),
@@ -55,7 +55,7 @@ class CargoListController extends Controller
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
     }
-    
+
     /**
      * @param  Request $request
      * @param  CargoService $cargoService
@@ -74,17 +74,18 @@ class CargoListController extends Controller
         if ($request->get('page') == 1) {
             $result['pager'] = $cargoService->cargosCount($restQuery);
         }
-        
+
         return response()->json($result);
     }
-    
+
     /**
      * @param bool $withDefault
      * @return array
      */
     protected function getFilter(bool $withDefault = false): array
     {
-        return Validator::make(request('filter') ??
+        return Validator::make(
+            request('filter') ??
             ($withDefault ?
                 [
                     'status' => [
@@ -104,7 +105,7 @@ class CargoListController extends Controller
             ]
         )->attributes();
     }
-    
+
     /**
      * @param  DataQuery  $restQuery
      * @param  CargoService $cargoService
@@ -123,27 +124,27 @@ class CargoListController extends Controller
             'shipping_problem_comment'
         );
         $cargos = $cargoService->cargos($restQuery);
-    
+
         $merchantIds = $cargos->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantIds);
-        
+
         $stores = $this->loadStores();
         $deliveryServices = DeliveryService::allServices();
         $cargos = $cargos->map(function (CargoDto $cargo) use ($merchants, $stores, $deliveryServices) {
             $data = $cargo->toArray();
-    
+
             $data['merchant'] = $merchants->has($cargo->merchant_id) ? $merchants[$cargo->merchant_id] : [];
             $data['status'] = $cargo->status()->toArray();
             $data['created_at'] = (new Carbon($cargo->created_at))->format('H:i:s Y-m-d');
             $data['store'] = $stores[$cargo->store_id];
             $data['delivery_service'] = $deliveryServices[$cargo->delivery_service];
-        
+
             return $data;
         });
-        
+
         return $cargos;
     }
-    
+
     /**
      * @param  CargoService $cargoService
      * @param  Request  $request
@@ -151,14 +152,17 @@ class CargoListController extends Controller
      * @return DataQuery
      * @throws \Exception
      */
-    protected function makeRestQuery(CargoService $cargoService, Request $request, bool $withDefaultFilter = false): DataQuery
-    {
+    protected function makeRestQuery(
+        CargoService $cargoService,
+        Request $request,
+        bool $withDefaultFilter = false
+    ): DataQuery {
         /** @var RestQuery $restQuery */
         $restQuery = $cargoService->newQuery()->addSort('created_at', 'desc');
-        
+
         $page = $request->get('page', 1);
         $restQuery->pageNumber($page, 20);
-        
+
         $filter = $this->getFilter($withDefaultFilter);
         if ($filter) {
             foreach ($filter as $key => $value) {
@@ -170,16 +174,16 @@ class CargoListController extends Controller
                             $restQuery->setFilter($key, '<=', $value[1]);
                         }
                         break;
-                
+
                     default:
                         $restQuery->setFilter($key, $value);
                 }
             }
         }
-        
+
         return $restQuery;
     }
-    
+
     /**
      * @return Collection|StoreDto[]
      */
@@ -187,27 +191,27 @@ class CargoListController extends Controller
     {
         /** @var Collection|StoreDto[] $stores */
         static $stores = null;
-        
+
         if (is_null($stores)) {
             /** @var StoreService $storeService */
             $storeService = resolve(StoreService::class);
-    
+
             $restQuery = $storeService->newQuery();
             $restQuery->addFields(StoreDto::entity(), 'id', 'name', 'merchant_id');
             $stores = $storeService->stores($restQuery)->keyBy('id');
-    
+
             $merchantIds = $stores->pluck('merchant_id')->unique()->all();
             $merchants = $this->getMerchants($merchantIds);
-    
+
             $stores = $stores->map(function (StoreDto $store) use ($merchants) {
                 $data = $store->toArray();
-        
+
                 $data['merchant'] = $merchants->has($store->merchant_id) ? $merchants[$store->merchant_id] : [];
-        
+
                 return $data;
             });
         }
-        
+
         return $stores;
     }
 }

@@ -18,7 +18,6 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Services\MerchantService\MerchantService;
-use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Offer\OfferDto;
@@ -35,7 +34,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ContentClaimController extends Controller
 {
-
     /**
      * @param Request $request
      * @param ContentClaimService $claimService
@@ -48,8 +46,7 @@ class ContentClaimController extends Controller
         ContentClaimService $claimService,
         UserService $userService,
         MerchantService $merchantService
-    )
-    {
+    ) {
         $this->title = 'Заявки на производство контента';
 
         /** @var Collection|ContentClaimMetaDto[] $claimMeta */
@@ -79,7 +76,7 @@ class ContentClaimController extends Controller
                 'unpack' => $meta['unpackNames'],
                 'adjustStatuses' => $meta['adjustStatuses'],
                 'noUnpack' => $meta['noUnpack'],
-                'deliveryConfirm' => $meta['deliveryConfirm']
+                'deliveryConfirm' => $meta['deliveryConfirm'],
             ],
             'iPager' => $pager,
             'iCurrentPage' => (int)$request->get('page', 1),
@@ -112,15 +109,16 @@ class ContentClaimController extends Controller
             ->setFilter('status', MerchantStatus::STATUS_WORK);
         $merchants = $merchantService
             ->merchants($merchantsQuery)
-            ->pluck('legal_name', 'id');;
+            ->pluck('legal_name', 'id');
+
 
         return $this->render('Claim/Content/Create', [
             'options' => [
                 'merchantOptions' => $merchants,
                 'typeOptions' => $meta['typeNames'],
                 'unpackOptions' => $meta['unpackNames'],
-                'noUnpack' => $meta['noUnpack']
-            ]
+                'noUnpack' => $meta['noUnpack'],
+            ],
         ]);
     }
 
@@ -139,7 +137,7 @@ class ContentClaimController extends Controller
             'merchant_id' => 'required|integer',
             'type' => 'required|integer',
             'unpacking' => 'nullable|boolean',
-            'product_ids' => 'required|array'
+            'product_ids' => 'required|array',
         ]);
         $data['user_id'] = $user->userId();
 
@@ -163,7 +161,7 @@ class ContentClaimController extends Controller
         MerchantService $merchantService
     ) {
         $query = $this->prepareQuery($request, $claimService, $userService);
-        $result = $query? [
+        $result = $query ? [
             'items' => $this->loadClaims($query, $userService, $merchantService),
         ] : [];
         if ($query && $request->get('page') == 1) {
@@ -243,7 +241,7 @@ class ContentClaimController extends Controller
     ) {
         $data = $this->validate($request, [
             'service_message' => 'sometimes|required|string',
-            'status' => 'sometimes|required|integer'
+            'status' => 'sometimes|required|integer',
         ]);
 
         $contentClaim = new ContentClaimDto($data);
@@ -308,34 +306,24 @@ class ContentClaimController extends Controller
         $availableIds = $products->pluck('product_id')->all();
 
         return response()->json([
-            'ids' => $availableIds
+            'ids' => $availableIds,
         ]);
     }
 
-    /**
-     * @param int $id
-     * @param ContentClaimService $contentClaimService
-     * @return StreamedResponse
-     */
     public function acceptanceAct(
         int $id,
         ContentClaimService $contentClaimService
-    ) : StreamedResponse {
+    ): StreamedResponse {
 
         return $this->getDocumentResponse($contentClaimService->claimAcceptanceAct($id));
     }
 
-    /**
-     * @param DocumentDto $documentDto
-     * @return StreamedResponse
-     */
-    protected function getDocumentResponse(DocumentDto $documentDto) : StreamedResponse
+    protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
     {
         return response()->streamDownload(function () use ($documentDto) {
             echo file_get_contents($documentDto->absolute_url);
         }, $documentDto->original_name);
     }
-
 
 //    public function create(
 //        ClaimService $claimService,
@@ -374,7 +362,7 @@ class ContentClaimController extends Controller
         $page = $request->get('page', 1);
         $filters = array_filter($request->get('filter', []), function ($v, $k) {
             return $v || ($k == 'unpack');
-        }, ARRAY_FILTER_USE_BOTH );
+        }, ARRAY_FILTER_USE_BOTH);
 
         $restQuery = $claimService
             ->newQuery()
@@ -392,7 +380,7 @@ class ContentClaimController extends Controller
 
                 case 'created_at':
                     $value = array_filter($value);
-                    if ($value){
+                    if ($value) {
                         $restQuery->setFilter('created_at', '>=', $value[0]);
                         $restQuery->setFilter('created_at', '<', Carbon::parse($value[1])
                             ->addDay()
@@ -407,7 +395,9 @@ class ContentClaimController extends Controller
                         ->addFields('id')
                         ->setFilter('login', $value);
                     $user = $userQuery->users()->first();
-                    if (!$user) return null;
+                    if (!$user) {
+                        return null;
+                    }
                     $restQuery->setFilter('user_id', $user->id);
                     break;
 
@@ -452,7 +442,8 @@ class ContentClaimController extends Controller
         });
     }
 
-    protected function loadClaimHistory(RestQuery $query, UserService $userService) {
+    protected function loadClaimHistory(RestQuery $query, UserService $userService)
+    {
 
         /** @var Collection|ClaimHistoryDto[] $history */
         $history = $query->claimHistory();

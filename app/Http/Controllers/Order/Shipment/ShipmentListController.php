@@ -9,7 +9,6 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\StoreDto;
@@ -51,7 +50,7 @@ class ShipmentListController extends Controller
             $this->stores,
             $this->orders,
             $this->customers,
-            $this->users
+            $this->users,
         ] = $this->loadData($restQuery);
 
         $this->pager = $shipmentService->shipmentsCount($restQuery);
@@ -75,7 +74,7 @@ class ShipmentListController extends Controller
             $this->stores,
             $this->orders,
             $this->customers,
-            $this->users
+            $this->users,
         ] = $this->loadData($restQuery);
 
         $result = $this->getOutputData();
@@ -241,7 +240,7 @@ class ShipmentListController extends Controller
             'iOrders' => $this->orders,
             'iPager' => $this->pager,
             'iCurrentPage' => $this->getPage(),
-            'iFilter' => $this->getFilter(true)
+            'iFilter' => $this->getFilter(true),
         ];
     }
 }

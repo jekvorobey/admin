@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use \Illuminate\Support\Collection;
+use Illuminate\Support\Collection;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -12,7 +12,6 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Dto\CustomerDto;
-
 
 class PromoCodeHelper
 {
@@ -34,7 +33,7 @@ class PromoCodeHelper
         $discounts = $discountService->discounts([
             'filter' => [
                 'relateToMerchant' => $merchantId,
-            ]
+            ],
         ]);
 
         if ($discounts->isNotEmpty()) {
@@ -56,7 +55,7 @@ class PromoCodeHelper
      */
     public static function getPromoCodes(
         PromoCodeService $promoCodeService,
-        int $merchantId = null
+        ?int $merchantId = null
     ) {
         $promoCodeInDto = (new PromoCodeInDto());
         if ($merchantId) {
@@ -99,7 +98,7 @@ class PromoCodeHelper
     public static function getUsers(
         Collection $userIds,
         UserService $userService,
-        Collection $referrals = null
+        ?Collection $referrals = null
     ) {
         if ($referrals) {
             $userIds = $userIds->merge($referrals->pluck('user_id'));
@@ -141,7 +140,7 @@ class PromoCodeHelper
                 $promoCode['creator'] = $creatorUser ? [
                     'id' => $creatorUser->id,
                     'title' => $creatorUser->getTitle(),
-                ]: null;
+                ] : null;
 
                 $promoCode['owner'] = null;
                 if ($promoCode->owner_id) {
@@ -153,7 +152,7 @@ class PromoCodeHelper
                         $promoCode['owner'] = $ownerUser ? [
                             'id' => $promoCode->owner_id,
                             'title' => $ownerUser->getTitle(),
-                        ]: null;
+                        ] : null;
                     }
                 }
 

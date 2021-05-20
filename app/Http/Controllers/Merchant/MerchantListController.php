@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Merchant;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -76,7 +75,7 @@ class MerchantListController extends Controller
         $data = [
             'items' => $this->loadItems($query),
         ];
-        if (1 == request()->get('page', 1)) {
+        if (request()->get('page', 1) == 1) {
             $data['pager'] = is_null($query) ? 0 : $merchantService->merchantsCount($query);
         }
 
@@ -88,13 +87,13 @@ class MerchantListController extends Controller
         $data = $this->validate(request(), [
             'ids' => 'array',
             'ids.' => 'numeric',
-            'status' => Rule::in(array_keys(MerchantStatus::allStatuses()))
+            'status' => Rule::in(array_keys(MerchantStatus::allStatuses())),
         ]);
 
         foreach ($data['ids'] as $id) {
             $merchantService->update(new MerchantDto([
                 'id' => $id,
-                'status' => $data['status']
+                'status' => $data['status'],
             ]));
         }
 
@@ -234,8 +233,7 @@ class MerchantListController extends Controller
     public function createMerchant(
         MerchantService $merchantService,
         UserService $userService
-    )
-    {
+    ) {
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
             'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],
@@ -307,7 +305,7 @@ class MerchantListController extends Controller
         $exists = $userService->exists($email, Front::FRONT_MAS);
 
         return response()->json([
-            'exists' => $exists
+            'exists' => $exists,
         ]);
     }
 }

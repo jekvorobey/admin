@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
-use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -82,7 +81,7 @@ class PromoCodeController extends Controller
                 $promoCode['creator'] = $creatorUser ? [
                     'id' => $creatorUser->id,
                     'title' => $creatorUser->getTitle(),
-                ]: null;
+                ] : null;
 
                 $promoCode['owner'] = null;
                 if ($promoCode->owner_id) {
@@ -94,7 +93,7 @@ class PromoCodeController extends Controller
                         $promoCode['owner'] = $ownerUser ? [
                             'id' => $promoCode->owner_id,
                             'title' => $ownerUser->getTitle(),
-                        ]: null;
+                        ] : null;
                     }
                 }
 
@@ -172,7 +171,8 @@ class PromoCodeController extends Controller
      *
      * @return mixed
      */
-    public function createPage(Request $request) {
+    public function createPage(Request $request)
+    {
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
@@ -189,7 +189,7 @@ class PromoCodeController extends Controller
                 return [
                     'merchant_id' => $item->merchant_id,
                     'value' => $item->id,
-                    'text' => "{$item->name} ({$item->validityPeriod()})"
+                    'text' => "{$item->name} ({$item->validityPeriod()})",
                 ];
             })
             ->values();
@@ -252,8 +252,7 @@ class PromoCodeController extends Controller
             $data['end_date'] = $data['end_date']
                 ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
                 : null;
-        } catch (Exception $ex) {
-
+        } catch (\Throwable $ex) {
         }
 
         $builder = new PromoCodeBuilder($data);
@@ -280,8 +279,8 @@ class PromoCodeController extends Controller
      */
     public function checkUnique(PromoCodeService $promoCodeService)
     {
-        $data = $this->validate(request(),[
-            'code' => 'required|string|max:32'
+        $data = $this->validate(request(), [
+            'code' => 'required|string|max:32',
         ]);
 
         $status = $promoCodeService->checkUnique($data['code']);

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -30,7 +29,7 @@ class TabPromoProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function load(int $merchantId = null)
+    public function load(?int $merchantId = null)
     {
         return response()->json([
             'promoProducts' => $this->loadPromotionProducts($merchantId),
@@ -46,21 +45,24 @@ class TabPromoProductController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function save(?int $merchantId, Request $request, ProductService $productService, ReferralService $referralService)
-    {
+    public function save(
+        ?int $merchantId,
+        Request $request,
+        ProductService $productService,
+        ReferralService $referralService
+    ) {
         $data = $this->validate($request, [
             'product_id' => 'required|integer',
             'mass' => 'required|integer',
             'active' => 'integer',
             'files' => 'nullable',
-            'description' => 'required'
+            'description' => 'required',
         ]);
 
         $product = $productService->newQuery()
         ->setFilter('id', $data['product_id'])
         ->products();
-        if ($product->isEmpty())
-        {
+        if ($product->isEmpty()) {
             throw new BadRequestHttpException('Ошибка: товар не найден');
         }
 
@@ -127,7 +129,7 @@ class TabPromoProductController extends Controller
      * @return array
      * @throws \Pim\Core\PimException
      */
-    public function loadPromotionProducts(int $merchantId = null)
+    public function loadPromotionProducts(?int $merchantId = null)
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);

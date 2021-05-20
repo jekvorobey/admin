@@ -35,7 +35,7 @@ class TabPromocodesController
             'promocodes' => $promoCodes->map(function (PromoCodeOutDto $promoCode) {
                 $promoCode['validityPeriod'] = $promoCode->validityPeriod();
                 return $promoCode;
-            })
+            }),
         ]);
     }
 }

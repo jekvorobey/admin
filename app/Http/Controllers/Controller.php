@@ -87,7 +87,7 @@ class Controller extends BaseController
             ->loadPropertyTypes($this->loadPropertyTypes)
             ->render();
     }
-    
+
     protected function validate(Request $request, array $rules, array $customAttributes = []): array
     {
         $data = $request->all();
@@ -97,15 +97,15 @@ class Controller extends BaseController
         }
         return $data;
     }
-    
+
     /**
      * @param  array|null  $merchantIds
      * @return Collection|MerchantDto[]
      */
-    protected function getMerchants(array $merchantIds = null): Collection
+    protected function getMerchants(?array $merchantIds = null): Collection
     {
         $merchants = collect();
-        
+
         if (is_null($merchantIds) || count($merchantIds) > 0) {
             /** @var MerchantService $merchantService */
             $merchantService = resolve(MerchantService::class);
@@ -116,7 +116,7 @@ class Controller extends BaseController
             }
             $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
         }
-        
+
         return $merchants;
     }
 }

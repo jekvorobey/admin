@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                 'env' => [
                     // some services keys like dadata key
                 ],
-                'routes' => $routes
+                'routes' => $routes,
             ]));
         });
         frontend()->handle();

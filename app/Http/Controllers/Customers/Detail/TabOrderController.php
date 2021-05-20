@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -16,8 +15,12 @@ use Illuminate\Support\Collection;
 
 class TabOrderController extends Controller
 {
-    public function load($id, OrderService $orderService, PaymentService $paymentService, DeliveryService $deliveryService)
-    {
+    public function load(
+        $id,
+        OrderService $orderService,
+        PaymentService $paymentService,
+        DeliveryService $deliveryService
+    ) {
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
         if ($orders->count()) {
             $orderIds = $orders->pluck('id')->all();

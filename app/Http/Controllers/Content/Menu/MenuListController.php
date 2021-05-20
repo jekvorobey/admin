@@ -21,7 +21,7 @@ class MenuListController extends Controller
             'iPager' => $menuService->menusCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
-            'options' => []
+            'options' => [],
         ]);
     }
 

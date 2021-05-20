@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order\Detail;
 
-
 use App\Http\Controllers\Order\OrderDetailController;
 use Closure;
 use Exception;
@@ -45,9 +44,9 @@ class TabShipmentsController extends OrderDetailController
         ]);
 
         $shipmentDto = new ShipmentDto();
-        $shipmentDto->delivery_service_zero_mile = isset($data['delivery_service_zero_mile']) ? $data['delivery_service_zero_mile'] : null;
+        $shipmentDto->delivery_service_zero_mile = $data['delivery_service_zero_mile'] ?? null;
         $shipmentDto->psd = $data['psd'];
-        $shipmentDto->fsd = isset($data['fsd']) ? $data['fsd'] : null;
+        $shipmentDto->fsd = $data['fsd'] ?? null;
         $shipmentDto->status = $data['status'];
         $shipmentService->updateShipment($shipmentId, $shipmentDto);
 
@@ -147,10 +146,6 @@ class TabShipmentsController extends OrderDetailController
         return $this->getDocumentResponse($shipmentService->shipmentInventory($shipmentId));
     }
 
-    /**
-     * @param  DocumentDto  $documentDto
-     * @return StreamedResponse
-     */
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
     {
         return response()->streamDownload(function () use ($documentDto) {
@@ -166,8 +161,11 @@ class TabShipmentsController extends OrderDetailController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function markAsNonProblemShipment(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
-    {
+    public function markAsNonProblemShipment(
+        int $orderId,
+        int $shipmentId,
+        ShipmentService $shipmentService
+    ): JsonResponse {
         $shipmentService->markAsNonProblemShipment($shipmentId);
 
         return response()->json([
@@ -208,8 +206,7 @@ class TabShipmentsController extends OrderDetailController
         Request $request,
         ShipmentPackageService $shipmentPackageService,
         PackageService $packageService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentId, $request, $shipmentPackageService, $packageService) {
             $data = $this->validate($request, [
                 'package_id' => ['required', 'integer'],
@@ -246,9 +243,8 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         Request $request,
         ShipmentPackageService $shipmentPackageService
-    ): JsonResponse
-    {
-        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $request, $shipmentPackageService) {
+    ): JsonResponse {
+        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $shipmentPackageService) {
             $shipmentPackageService->deleteShipmentPackage($shipmentPackageId);
         });
     }
@@ -267,8 +263,7 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentId,
         int $shipmentPackageId,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
@@ -287,7 +282,7 @@ class TabShipmentsController extends OrderDetailController
                         $shipmentPackageId,
                         $basketItemId
                     );
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     $shipmentPackageItem = new ShipmentPackageItemDto();
                 }
                 $shipmentPackageItem->basket_item_id = $basketItemId;
@@ -316,8 +311,7 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         int $basketItemId,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
@@ -354,9 +348,8 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         int $basketItemId,
         Request $request
-    ): JsonResponse
-    {
-        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId, $request) {
+    ): JsonResponse {
+        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
 
@@ -385,7 +378,7 @@ class TabShipmentsController extends OrderDetailController
         $action();
 
         return response()->json([
-            'order' => $this->getOrder($orderId)
+            'order' => $this->getOrder($orderId),
         ]);
     }
 }

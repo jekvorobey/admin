@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\UserDto;

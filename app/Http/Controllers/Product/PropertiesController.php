@@ -27,7 +27,8 @@ class PropertiesController extends Controller
     public function list(ProductService $productService)
     {
         $restQuery = $productService->newQuery()
-            ->addFields(PropertyDto::entity(),
+            ->addFields(
+                PropertyDto::entity(),
                 'id',
                 'name',
                 'code',
@@ -36,7 +37,7 @@ class PropertiesController extends Controller
 
         $this->title = 'Справочник товарных атрибутов';
         return $this->render('Product/PropertiesList', [
-            'iProperties' => $productService->getProperties($restQuery)
+            'iProperties' => $productService->getProperties($restQuery),
         ]);
     }
 
@@ -54,7 +55,7 @@ class PropertiesController extends Controller
         return $this->render('Product/PropertyDetail', [
             'iProperty' => $productProperty,
             'iCategories' => $this->getCategoriesData(),
-            'property_types' => PropertyDto::getTypes()
+            'property_types' => PropertyDto::getTypes(),
         ]);
     }
 
@@ -68,7 +69,7 @@ class PropertiesController extends Controller
         $this->title = "Создание товарного атрибута";
         return $this->render('Product/PropertyDetail', [
             'iCategories' => $this->getCategoriesData(),
-            'property_types' => PropertyDto::getTypes()
+            'property_types' => PropertyDto::getTypes(),
         ]);
     }
 
@@ -127,7 +128,8 @@ class PropertiesController extends Controller
 
         $propQuery = $productService->newQuery()
             ->include('categoryPropertyLinks')
-            ->addFields(PropertyDto::entity(),
+            ->addFields(
+                PropertyDto::entity(),
                 'id',
                 'name',
                 'display_name',
@@ -137,7 +139,7 @@ class PropertiesController extends Controller
                 'is_multiple',
                 'is_color',
                 'updated_at',
-				'measurement_unit'
+                'measurement_unit'
             )->setFilter('code', $code);
 
         /** @var PropertyDto $property */
@@ -152,7 +154,8 @@ class PropertiesController extends Controller
             $valuesQuery = $valuesService
                 ->newQuery()
                 ->setFilter('property_id', $property->id)
-                ->addFields(PropertyDirectoryValueDto::entity(),
+                ->addFields(
+                    PropertyDirectoryValueDto::entity(),
                     'id',
                     'name',
                     'code',
@@ -175,7 +178,8 @@ class PropertiesController extends Controller
     {
         $categoryService = resolve(CategoryService::class);
         $categoriesQuery = $categoryService->newQuery()
-            ->addFields(CategoryDto::entity(),
+            ->addFields(
+                CategoryDto::entity(),
                 'id',
                 'name',
                 'parent_id',

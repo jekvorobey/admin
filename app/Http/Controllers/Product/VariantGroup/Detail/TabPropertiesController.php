@@ -63,13 +63,17 @@ class TabPropertiesController extends VariantGroupDetailController
                 if (!in_array($productPropertyValueDto->property_id, $gluedPropertyIds)) {
                     continue;
                 }
-                if (!in_array($productPropertyValueDto->value, $propertyDirectoryValueIds) &&
-                    $productPropertyValueDto->property->type == PropertyDto::TYPE_DIRECTORY) {
+                if (
+                    !in_array($productPropertyValueDto->value, $propertyDirectoryValueIds) &&
+                    $productPropertyValueDto->property->type == PropertyDto::TYPE_DIRECTORY
+                ) {
                     $propertyDirectoryValueIds[] = $productPropertyValueDto->value;
                 }
 
-                if (!isset($gluedPropertyValues[$productPropertyValueDto->property_id]) ||
-                    !in_array($productPropertyValueDto->value, $gluedPropertyValues[$productPropertyValueDto->property_id])) {
+                if (
+                    !isset($gluedPropertyValues[$productPropertyValueDto->property_id]) ||
+                    !in_array($productPropertyValueDto->value, $gluedPropertyValues[$productPropertyValueDto->property_id])
+                ) {
                     $gluedPropertyValues[$productPropertyValueDto->property_id][] = $productPropertyValueDto->value;
                 }
             }
@@ -115,7 +119,7 @@ class TabPropertiesController extends VariantGroupDetailController
                     'isColor' => (bool)array_filter(array_column($usedValues, 'color')),
                     'usedValues' => $usedValues,
                 ];
-            })
+            }),
         ]);
     }
 

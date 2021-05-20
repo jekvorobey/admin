@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Referral;
 
-
 use App\Http\Controllers\Controller;
 use Cms\Dto\OptionDto;
 use Cms\Services\OptionService\OptionService;

@@ -54,9 +54,9 @@ class OrganizationCardController extends Controller
     {
         $this->title = 'Карточка организации iBT.Studio';
 
-        $organizationCardKeys = array_values(static::MAPPING_KEYS);
+        $organizationCardKeys = array_values(self::MAPPING_KEYS);
         $options = $optionService->get($organizationCardKeys);
-        $data = collect(static::MAPPING_KEYS)
+        $data = collect(self::MAPPING_KEYS)
             ->map(function ($item, $key) use ($options) {
                 return $options[$item];
             })
@@ -105,7 +105,7 @@ class OrganizationCardController extends Controller
         $data = collect($data)
             ->map(function ($item, $key) {
                 return [
-                    'newKey' => static::MAPPING_KEYS[$key],
+                    'newKey' => self::MAPPING_KEYS[$key],
                     'value' => $item,
                 ];
             })

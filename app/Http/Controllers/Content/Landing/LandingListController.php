@@ -25,7 +25,7 @@ class LandingListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-            ]
+            ],
         ]);
     }
 
@@ -37,7 +37,7 @@ class LandingListController extends Controller
         $data = [
             'landings' => $this->loadItems($query, $landingService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $landingService->landingsCount($query);
         }
 

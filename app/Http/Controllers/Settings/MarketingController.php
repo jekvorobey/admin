@@ -11,7 +11,6 @@ use Greensight\Marketing\Services\OptionService\OptionService as MarketingOption
 use Greensight\Customer\Services\OptionService\OptionService as CustomerOptionService;
 use Illuminate\Validation\Rule;
 
-
 class MarketingController extends Controller
 {
     public function index()
@@ -49,16 +48,16 @@ class MarketingController extends Controller
             'max_debit_percentage_for_product' => 'integer|between:0,100',
             'max_debit_percentage_for_discount_product' => 'integer|between:0,100',
             'max_debit_percentage_for_order' => 'integer|between:0,100',
-            'roles_available_for_bonuses'  => 'array',
-            'roles_available_for_bonuses.*'  => [
+            'roles_available_for_bonuses' => 'array',
+            'roles_available_for_bonuses.*' => [
                 Rule::in([
                     UserDto::SHOWCASE__PROFESSIONAL,
-                    UserDto::SHOWCASE__REFERRAL_PARTNER
+                    UserDto::SHOWCASE__REFERRAL_PARTNER,
                 ])],
             'activation_bonus' => 'array|nullable',
-            'activation_bonus.name'  => 'string|nullable',
-            'activation_bonus.value'  => 'integer|gt:0|nullable',
-            'activation_bonus.valid_period'  => 'integer|gte:0|nullable',
+            'activation_bonus.name' => 'string|nullable',
+            'activation_bonus.value' => 'integer|gt:0|nullable',
+            'activation_bonus.valid_period' => 'integer|gte:0|nullable',
         ]);
 
         $marketingOptionService = resolve(MarketingOptionService::class);

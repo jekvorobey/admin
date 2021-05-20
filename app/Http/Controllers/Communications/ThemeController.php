@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Communications;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\Communication\CommunicationThemeDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
@@ -10,8 +9,10 @@ use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
 
 class ThemeController extends Controller
 {
-    public function index(CommunicationService $communicationService, CommunicationThemeService $communicationThemeService)
-    {
+    public function index(
+        CommunicationService $communicationService,
+        CommunicationThemeService $communicationThemeService
+    ) {
         $this->title = 'Темы';
         $channels = $communicationService->channels()->keyBy('id');
         $themes = $communicationThemeService->themes()->keyBy('id');

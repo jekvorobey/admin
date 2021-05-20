@@ -24,7 +24,8 @@ class TabReviewsController extends Controller
      *
      * @return JsonResponse
      */
-    public function load() {
+    public function load()
+    {
         return response()->json([
             'perPage' => self::PER_PAGE,
         ]);

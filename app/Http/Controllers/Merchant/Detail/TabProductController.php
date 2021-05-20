@@ -17,7 +17,6 @@ use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
 
-
 class TabProductController extends Controller
 {
     /**
@@ -100,7 +99,8 @@ class TabProductController extends Controller
      */
     protected function getFilter(): array
     {
-        $filter = Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'id' => 'string|someone',
                 'product_name' => 'string|someone',
@@ -112,8 +112,6 @@ class TabProductController extends Controller
                 'qty_to' => 'numeric|someone',
             ]
         )->attributes();
-
-        return $filter;
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Logistics\DeliveryService;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -102,6 +101,6 @@ class DeliveryServiceDetailController extends Controller
 
         $listsService->updateDeliveryService($id, $deliveryService);
 
-        return  response('', 204);
+        return response('', 204);
     }
 }

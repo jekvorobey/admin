@@ -31,8 +31,9 @@ class PublicEventTicketsController extends Controller
         $orderService = resolve(OrderService::class);
         $restQuery = $this->makeRestQuery($orderService, $sprints);
         $orders = $orderService->orders($restQuery);
-        if (empty($orders))
+        if (empty($orders)) {
             return [];
+        }
         $ticketIds = [];
         $orders = $orders->map(function (OrderDto $order) use (&$ticketIds) {
             $data['id'] = $order->id;
@@ -50,8 +51,9 @@ class PublicEventTicketsController extends Controller
             return $data;
         });
         array_unique($ticketIds);
-        if (!$ticketIds)
+        if (!$ticketIds) {
             return [];
+        }
 
         $orderByTicketId = [];
         foreach ($orders as $order) {
@@ -74,7 +76,7 @@ class PublicEventTicketsController extends Controller
                 ? [
                     'id' => $orderByTicketId[$ticket->id]['id'],
                     'number' => $orderByTicketId[$ticket->id]['number'],
-                    'count_tickets' => $orderByTicketId[$ticket->id]['count_tickets']
+                    'count_tickets' => $orderByTicketId[$ticket->id]['count_tickets'],
                 ]
                 : null;
             return $data;
@@ -83,9 +85,7 @@ class PublicEventTicketsController extends Controller
 
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include(
-            'basketitem'
-        );
+        $restQuery = $orderService->newQuery()->include('basketitem');
 
         $restQuery->setFilter('sprint_id', $sprints);
         $restQuery->setFilter('type', OrderType::PUBLIC_EVENT);

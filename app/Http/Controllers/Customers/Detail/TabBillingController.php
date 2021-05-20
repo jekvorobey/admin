@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
@@ -26,7 +25,7 @@ class TabBillingController extends Controller
     {
         $data = $this->validate(request(), [
             'comment' => 'required',
-            'value' => 'numeric'
+            'value' => 'numeric',
         ], [
             'comment' => 'Комментарий',
             'value' => 'Сумма',
@@ -53,7 +52,7 @@ class TabBillingController extends Controller
         $referralService = resolve(ReferralService::class);
         return $referralService->getReferralBillOperations(
             (new GetReferralBillOperationDto())->setReferralId($id)
-        )->map(function(ReferralBillOperationDto $dto) {
+        )->map(function (ReferralBillOperationDto $dto) {
             return [
                 'action_id' => $dto->action_id,
                 'created_at' => $dto->created_at,

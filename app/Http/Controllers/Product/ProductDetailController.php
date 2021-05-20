@@ -51,17 +51,16 @@ class ProductDetailController extends Controller
         CategoryService $categoryService,
         BrandService $brandService,
         ContentBadgesService $badgesService
-    )
-    {
+    ) {
         [
             $product,
             $images,
             $badges,
             $props,
             $availableProps,
-            $directoryValues
+            $directoryValues,
         ] = $this->getProductData($id, $productService);
-        
+
         $approvalStatuses = collect(ProductApprovalStatus::allStatuses())->pluck('name', 'id')->all();
         $brands = $brandService->newQuery()->prepare($brandService)->brands();
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
@@ -87,12 +86,12 @@ class ProductDetailController extends Controller
                 'marketing' => [
                     'bonus' => [
                         'maxPercentagePayment' => $maxPercentagePayment,
-                    ]
-                ]
+                    ],
+                ],
             ],
         ]);
     }
-    
+
     public function detailData(int $id, ProductService $productService)
     {
         [$product, $images, $props, $availableProps, $directoryValues] = $this->getProductData($id, $productService);
@@ -104,13 +103,12 @@ class ProductDetailController extends Controller
             'directoryValues' => $directoryValues,
         ]);
     }
-    
+
     public function saveProduct(
         int $id,
         Request $request,
         ProductService $productService
-    )
-    {
+    ) {
         $data = $this->validate($request, [
             'name' => 'string',
             'brand_id' => 'integer',
@@ -123,20 +121,19 @@ class ProductDetailController extends Controller
             'weight' => 'integer',
         ]);
         $product = new ProductDto($data);
-        
+
         $productService->updateProduct($id, $product);
-        
+
         return response()->json();
     }
-    
+
     public function saveProps(
         int $id,
         Request $request,
         ProductService $productService
-    )
-    {
+    ) {
         $data = $this->validate($request, [
-           'props' => 'required|array'
+           'props' => 'required|array',
         ]);
         $productService->saveProperties($id, $data['props']);
         return response()->json();
@@ -146,10 +143,9 @@ class ProductDetailController extends Controller
         int $id,
         Request $request,
         OfferService $offerService
-    )
-    {
+    ) {
         $data = $this->validate($request, [
-            'props' => 'required'
+            'props' => 'required',
         ]);
         $offerService->saveProperties($id, $data['props']);
         return response()->json();
@@ -164,28 +160,28 @@ class ProductDetailController extends Controller
     public function saveIngredients(int $productId, ProductService $productService)
     {
         $data = $this->validate(request(), [
-            'items' => 'present|nullable|json'
+            'items' => 'present|nullable|json',
         ]);
 
         $productService->updateIngredients($productId, $data['items']);
         return response('', 204);
     }
-    
+
     public function saveImage(int $id, Request $request, ProductService $productService)
     {
         $data = $this->validate($request, [
             'id' => 'required|integer',
-            'type' => 'required|integer'
+            'type' => 'required|integer',
         ]);
         $productService->addImage($id, $data['id'], $data['type']);
         return response()->json();
     }
-    
+
     public function deleteImage(int $id, Request $request, ProductService $productService)
     {
         $data = $this->validate($request, [
             'id' => 'required|integer',
-            'type' => 'required|integer'
+            'type' => 'required|integer',
         ]);
         $productService->deleteImage($id, $data['id'], $data['type']);
         return response()->json();
@@ -227,40 +223,40 @@ class ProductDetailController extends Controller
         $productService->updateProduct($id, $product);
         return response()->json();
     }
-    
+
     public function addTip(int $id, Request $request, ProductService $productService): JsonResponse
     {
         $data = $this->validate($request, [
             'description' => 'required',
-            'fileId' => 'required'
+            'fileId' => 'required',
         ]);
         $tip = new ProductTipDto();
         $tip->description = $data['description'];
         $tip->file_id = $data['fileId'];
-        
+
         $productService->addTip($id, $tip);
         return response()->json();
     }
-    
+
     public function editTip(int $id, int $tipId, Request $request, ProductService $productService): JsonResponse
     {
         $description = $request->get('description');
         $fileId = $request->get('fileId');
-        
+
         $tip = new ProductTipDto();
         $tip->description = $description;
         $tip->file_id = $fileId;
-    
+
         $productService->updateTip($id, $tipId, $tip);
         return response()->json();
     }
-    
+
     public function deleteTip(int $id, int $tipId, ProductService $productService): JsonResponse
     {
         $productService->deleteTip($id, $tipId);
         return response()->json();
     }
-    
+
     protected function getProductData(int $id, ProductService $productService)
     {
         /** @var Collection|ProductDto[] $products */
@@ -292,7 +288,7 @@ class ProductDetailController extends Controller
                 $item->created_at = date_time2str(new Carbon($item->created_at));
 
                 return $item;
-            });
+        });
 
         $query = new ProductQuery();
         $query->fields([
@@ -330,15 +326,15 @@ class ProductDetailController extends Controller
             $badges,
             $props,
             $availableProps,
-            $directoryValues
+            $directoryValues,
         ];
     }
-    
+
     protected function properties(ProductDto $product)
     {
         $categoryService = resolve(CategoryService::class);
         $directoryValueService = resolve(PropertyDirectoryValueService::class);
-        
+
         $propertiesQuery = $categoryService->newQuery()->addFields('id', 'name', 'display_name', 'type', 'is_multiple');
         $availableProperties = $categoryService
             ->categoryProperties($product->category_id, $propertiesQuery);
@@ -347,12 +343,12 @@ class ProductDetailController extends Controller
                 return $property->type == PropertyDto::TYPE_DIRECTORY;
             })
             ->pluck('id')->toArray();
-        
+
         $directoryValuesQuery = $directoryValueService
             ->newQuery()
             ->setFilter('property_id', $directoryPropertyIds)
             ->addFields(PropertyDirectoryValueDto::entity(), 'id', 'name', 'property_id');
-        
+
         $directoryValues = $directoryValueService->values($directoryValuesQuery)->groupBy('property_id');
         $properties = [];
         foreach ($product->properties as $property) {

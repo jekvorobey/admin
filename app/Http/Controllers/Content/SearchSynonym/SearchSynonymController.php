@@ -54,9 +54,6 @@ class SearchSynonymController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
@@ -113,7 +110,6 @@ class SearchSynonymController extends Controller
         return response()->json([
             'search_synonym' => $searchSynonymService->synonym($id),
         ], 201);
-
     }
 
     /**
@@ -135,7 +131,6 @@ class SearchSynonymController extends Controller
         $searchSynonymService->updateSynonym($data['id'], $searchRequest);
 
         return response('', 204);
-
     }
 
     /**

@@ -30,7 +30,8 @@ class PublicEventListController extends Controller
                     $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
                     return $publicEvent;
                 });
-            } catch (\Exception $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         return $this->render('PublicEvent/PublicEventList', [
@@ -40,7 +41,7 @@ class PublicEventListController extends Controller
             'options' => [
                 'eventStatuses' => PublicEventStatus::all(),
                 'sprintStatuses' => PublicEventSprintStatus::all(),
-            ]
+            ],
         ]);
     }
 
@@ -60,9 +61,10 @@ class PublicEventListController extends Controller
                     $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
                     return $publicEvent;
                 });
-            } catch (\Exception $e) {}
+            } catch (\Throwable $e) {
+            }
         }
-        
+
         return response()->json([
             'publicEvents' => $publicEvents,
             'total' => $this->loadTotalCount($publicEventService),
@@ -72,7 +74,7 @@ class PublicEventListController extends Controller
     public function load(PublicEventService $publicEventService)
     {
         return response()->json([
-            'events' => $publicEventService->query()->get()
+            'events' => $publicEventService->query()->get(),
         ]);
     }
 

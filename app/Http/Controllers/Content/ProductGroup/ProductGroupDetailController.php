@@ -15,7 +15,6 @@ use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
-use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
@@ -92,7 +91,7 @@ class ProductGroupDetailController extends Controller
             foreach ($validatedData['category_code'] as $categoryCode) {
                 $validatedData['filters'][] = [
                     'code' => ProductGroupFilterDto::CATEGORY_FILTER,
-                    'value' => $categoryCode
+                    'value' => $categoryCode,
                 ];
             }
         }
@@ -124,7 +123,7 @@ class ProductGroupDetailController extends Controller
             foreach ($validatedData['category_code'] as $categoryCode) {
                 $validatedData['filters'][] = [
                     'code' => ProductGroupFilterDto::CATEGORY_FILTER,
-                    'value' => $categoryCode
+                    'value' => $categoryCode,
                 ];
             }
         }
@@ -147,7 +146,7 @@ class ProductGroupDetailController extends Controller
     ) {
         $brandsFilter = $brandService->filters();
         $appliedFilters = [
-            'brand' => $brandsFilter->pluck('code')
+            'brand' => $brandsFilter->pluck('code'),
         ];
         $excludedFilters = ['brand'];
         $filters = $productService->filters($appliedFilters, $excludedFilters)->all();
@@ -224,8 +223,7 @@ class ProductGroupDetailController extends Controller
     {
         return $categoryService->categories($categoryService->newQuery()
             ->include('ancestors')
-            ->addSort('_lft', 'asc')
-        );
+            ->addSort('_lft', 'asc'));
     }
 
     /**
@@ -241,8 +239,7 @@ class ProductGroupDetailController extends Controller
         ProductGroupService $productGroupService,
         PropertyDirectoryValueService $propertyDirectoryValueService,
         BrandService $brandService
-    )
-    {
+    ) {
         $productGroups = $productGroupService
             ->newQuery()
             ->addFields('type', '*')
@@ -275,14 +272,12 @@ class ProductGroupDetailController extends Controller
 
         $filterValues = collect($otherFilters)->pluck('value')->all();
         $directoryValues = $propertyDirectoryValueService->values((new RestQuery())
-            ->setFilter('code', 'in', $filterValues)
-        )->keyBy('code');
+            ->setFilter('code', 'in', $filterValues))->keyBy('code');
         $this->injectNames($otherFilters, $directoryValues);
 
         $brandCodes = collect($brandFilters)->pluck('value')->all();
         $brands = $brandService->brands((new RestQuery())
-            ->setFilter('code', 'in', $brandCodes)
-        )->keyBy('code');
+            ->setFilter('code', 'in', $brandCodes))->keyBy('code');
         $this->injectNames($brandFilters, $brands);
 
         $productGroup->filters = array_merge($brandFilters, $otherFilters);

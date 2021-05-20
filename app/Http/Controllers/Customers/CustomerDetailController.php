@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers;
 
-
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -104,7 +103,8 @@ class CustomerDetailController extends Controller
 
         // Счетчик непрочитанных сообщений от пользователя //
         $unreadMsgCount = $communicationService->unreadCount(
-            [$user->id],true
+            [$user->id],
+            true
         );
 
         /** @var UserDto $referrer_user */
@@ -177,19 +177,23 @@ class CustomerDetailController extends Controller
             'order' => [
                 'count' => $orders->count(),
                 'price' => Helpers::getPriceFormat($orders->sum('price')),
-                'availableCertificateAmount' => $availableCertificateAmount
+                'availableCertificateAmount' => $availableCertificateAmount,
             ],
             'referralLevels' => $referralLevels,
             'options' => [
                 'promoCodeTypes' => PromoCodeOutDto::allTypes(),
                 'promoCodeStatuses' => PromoCodeOutDto::allStatuses(),
             ],
-            'unreadMsgCount' => $unreadMsgCount
+            'unreadMsgCount' => $unreadMsgCount,
         ]);
     }
 
-    public function save($id, CustomerService $customerService, UserService $userService, RequestInitiator $requestInitiator)
-    {
+    public function save(
+        $id,
+        CustomerService $customerService,
+        UserService $userService,
+        RequestInitiator $requestInitiator
+    ) {
         $this->validate(request(), [
             'customer' => 'nullable|array',
             'customer.avatar' => 'nullable',
@@ -254,7 +258,9 @@ class CustomerDetailController extends Controller
             // Если пользователь использует телефон для авторизации, то меняем пользователю логин
             if ($userDto->hasPassword()) {
                 if (!$user['phone']) {
-                    throw new BadRequestHttpException("Невозможно удалить телефон. Он используется в качестве логина");
+                    throw new BadRequestHttpException(
+                        "Невозможно удалить телефон. Он используется в качестве логина"
+                    );
                 } else {
                     $user['login'] = $user['phone'];
                 }
@@ -319,12 +325,16 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function dial(int $id, Request $request, CustomerService $customerService, RequestInitiator $requestInitiator)
-    {
+    public function dial(
+        int $id,
+        Request $request,
+        CustomerService $customerService,
+        RequestInitiator $requestInitiator
+    ) {
         $customerService->dial($id, $requestInitiator->userId(), $request->input('provider'));
 
         return response()->json([
-            'status' => 'ok'
+            'status' => 'ok',
         ]);
     }
 }

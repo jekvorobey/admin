@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Communications;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\Communication\CommunicationTypeDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
@@ -10,8 +9,10 @@ use Greensight\Message\Services\CommunicationService\CommunicationTypeService;
 
 class TypeController extends Controller
 {
-    public function index(CommunicationService $communicationService, CommunicationTypeService $communicationTypeService)
-    {
+    public function index(
+        CommunicationService $communicationService,
+        CommunicationTypeService $communicationTypeService
+    ) {
         $this->title = 'Типы';
         $channels = $communicationService->channels()->keyBy('id');
         $types = $communicationTypeService->types()->keyBy('id');

@@ -1,6 +1,6 @@
 <?php
-namespace App\Http\Controllers\Order\Create;
 
+namespace App\Http\Controllers\Order\Create;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -46,8 +46,7 @@ class OrderCreateController extends Controller
         DeliveryService $deliveryService,
         ShipmentService $shipmentService,
         ShipmentPackageService $shipmentPackageService
-    )
-    {
+    ) {
         $this->title = 'Создание заказа';
 
 
@@ -59,19 +58,11 @@ class OrderCreateController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param UserService $userService
-     * @param CustomerService $customerService
-     * @return JsonResponse
-     */
-    public function searchCustomer
-    (
+    public function searchCustomer(
         Request $request,
         UserService $userService,
         CustomerService $customerService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -99,12 +90,12 @@ class OrderCreateController extends Controller
         }
 
         $users = $userService->users($query);
-        if($users->isEmpty()) {
+        if ($users->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
         $customers = $customerService->customers($query);
-        if($customers->isEmpty()) {
+        if ($customers->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
@@ -112,7 +103,6 @@ class OrderCreateController extends Controller
 
         return response()->json($customer);
     }
-
 
     /**
      * @param Request $request
@@ -127,8 +117,7 @@ class OrderCreateController extends Controller
         ProductService $productService,
         StockService $stockService,
         MerchantService $merchantService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         /** @var \Illuminate\Validation\Validator $validator */
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -147,7 +136,7 @@ class OrderCreateController extends Controller
             ->include('offers')
             ->setFilter('vendor_code', $productVendors);
         $products = $productService->products($query);
-        if($products->isEmpty()) {
+        if ($products->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
@@ -185,15 +174,10 @@ class OrderCreateController extends Controller
         return response()->json([
             'products' => $products,
             'stocks' => $stocks,
-            'merchants' => $merchants
+            'merchants' => $merchants,
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param OrderService $orderService
-     * @param BasketService $basketService
-     */
     public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
     {
         /** @var \Illuminate\Validation\Validator $validator */
@@ -213,11 +197,9 @@ class OrderCreateController extends Controller
         $basket = $basketService->getByUser($data['user_id'], 1, true);
 
         foreach ($data['items'] as $item) {
-            $basketService->setItem($basket->id , $item['offer_id']);
+            $basketService->setItem($basket->id, $item['offer_id']);
         }
 
 //        $basketService->setItem();
-
-
     }
 }

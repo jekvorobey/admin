@@ -129,7 +129,7 @@ class DiscountController extends Controller
         try {
             $discount = DiscountHelper::validate($request);
             $result = $discountService->create($discount);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             return response()->json(['status' => $ex->getMessage()]);
         }
 
@@ -147,7 +147,7 @@ class DiscountController extends Controller
         try {
             $discount = DiscountHelper::validate($request);
             $discountService->update($id, $discount);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             return response()->json(['error' => $ex->getMessage()], 400);
         }
 
@@ -187,7 +187,6 @@ class DiscountController extends Controller
         $this->title = $data['title'];
         return $this->render('Marketing/Discount/Edit', $data);
     }
-
 
     /**
      * @param int             $id
@@ -238,7 +237,7 @@ class DiscountController extends Controller
                 ->setFilter('id', '=', $userIds)
         )->keyBy('id');
 
-        $data['customers'] = $customers->map(function ($customer) use($users) {
+        $data['customers'] = $customers->map(function ($customer) use ($users) {
             return $users[$customer['user_id']]['full_name'] ?? '–';
         });
 

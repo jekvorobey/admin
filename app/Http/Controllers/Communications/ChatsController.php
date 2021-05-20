@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Communications;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\Front;
@@ -19,7 +18,6 @@ use Greensight\Message\Services\CommunicationService\Constructors\ListConstructo
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
-
 
 class ChatsController extends Controller
 {
@@ -99,7 +97,7 @@ class ChatsController extends Controller
     {
         $count = $communicationService->unreadCount();
         return response()->json([
-            'count' => $count
+            'count' => $count,
         ]);
     }
 
@@ -252,10 +250,11 @@ class ChatsController extends Controller
 
         if ($userIds) {
             $users = $userService
-                ->users($userService
-                    ->newQuery()
-                    ->include('profile')
-                    ->setFilter('id', 'in', array_values($userIds))
+                ->users(
+                    $userService
+                        ->newQuery()
+                        ->include('profile')
+                        ->setFilter('id', 'in', array_values($userIds))
                 )
                 ->keyBy('id');
         } else {

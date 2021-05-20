@@ -32,7 +32,7 @@ class ProductGroupListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'types' => $this->loadTypes($productGroupTypeService),
-            ]
+            ],
         ]);
     }
 
@@ -40,13 +40,12 @@ class ProductGroupListController extends Controller
         Request $request,
         ProductGroupService $productGroupService,
         FileService $fileService
-    )
-    {
+    ) {
         $query = $this->makeQuery($request);
         $data = [
             'productGroups' => $this->loadItems($query, $productGroupService, $fileService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $productGroupService->productGroupsCount($query);
         }
         return response()->json($data);
@@ -104,7 +103,7 @@ class ProductGroupListController extends Controller
         $photos = $fileService->getFiles($photoIds)->keyBy('id');
 
         // Получается дополненный ProductGroupDto
-        return $productGroups->map(function(ProductGroupDto $productGroup) use ($photos) {
+        return $productGroups->map(function (ProductGroupDto $productGroup) use ($photos) {
             /** @var FileDto $photo */
             $photo = $photos->get($productGroup['preview_photo_id']);
             $productGroup['photo'] = $photo ? $photo->absoluteUrl() : null;

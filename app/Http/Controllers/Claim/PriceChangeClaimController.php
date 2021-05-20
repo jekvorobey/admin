@@ -41,8 +41,7 @@ class PriceChangeClaimController extends Controller
         ClaimService $claimService,
         MerchantService $merchantService,
         UserService $userService
-    )
-    {
+    ) {
         $this->title = 'Заявки на изменение цен';
 
         /** @var Collection|ClaimTypeDto[] $claimTypes */
@@ -123,7 +122,8 @@ class PriceChangeClaimController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ??
+        return Validator::make(
+            request('filter') ??
             [
                 'status' => [
                     PriceChangeClaimDto::STATUS_NEW,
@@ -139,9 +139,6 @@ class PriceChangeClaimController extends Controller
         )->attributes();
     }
 
-    /**
-     * @return \Illuminate\Validation\Rules\In
-     */
     protected function validateStatus(): In
     {
         return Rule::in([
@@ -164,8 +161,7 @@ class PriceChangeClaimController extends Controller
         Request $request,
         ClaimService $claimService,
         UserService $userService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -180,7 +176,7 @@ class PriceChangeClaimController extends Controller
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
             $claim = $this->loadClaims($query, $userService)->first();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             if ($request->get('status') == PriceChangeClaimDto::STATUS_DONE) {
                 $error = 'Не все запросы на изменение цены в заявке обработаны';
@@ -188,7 +184,7 @@ class PriceChangeClaimController extends Controller
             $systemError = $e->getMessage();
         }
 
-        return response()->json(['result' => $result, 'claimStatus' => $claim->status, 'error' => $error,'systemErrors' => $systemError]);
+        return response()->json(['result' => $result, 'claimStatus' => $claim->status, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
     /**
@@ -204,8 +200,7 @@ class PriceChangeClaimController extends Controller
         Request $request,
         ClaimService $claimService,
         UserService $userService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -255,19 +250,14 @@ class PriceChangeClaimController extends Controller
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
             $claim = $this->loadClaims($query, $userService)->first();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
         }
 
-        return response()->json(['result' => $result, 'claimPayload' => $claim->payload, 'error' => $error,'systemErrors' => $systemError]);
+        return response()->json(['result' => $result, 'claimPayload' => $claim->payload, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
-    /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @return DataQuery
-     */
     protected function prepareQuery(Request $request, ClaimService $claimService): DataQuery
     {
         $page = $request->get('page', 1);
@@ -290,7 +280,7 @@ class PriceChangeClaimController extends Controller
                         $restQuery->setFilter($key, 'like', "{$value}%");
                     }
                     break;
-                    
+
                 default:
                     $restQuery->setFilter($key, $value);
             }

@@ -61,7 +61,7 @@ class TabProductsController extends VariantGroupDetailController
                 'updated_at' => $variantGroupDto->updated_at,
                 'products_count' => $variantGroupDto->products_count,
             ],
-            'products' => $variantGroupDto->products
+            'products' => $variantGroupDto->products,
         ]);
     }
 

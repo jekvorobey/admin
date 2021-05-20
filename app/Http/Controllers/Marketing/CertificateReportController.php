@@ -25,8 +25,9 @@ class CertificateReportController extends Controller
         /** @var CertificateReportDto $report */
         $report = $this->service()->reportQuery()->id($id)->reports()->first();
 
-        if (!$report)
+        if (!$report) {
             abort(404, 'Отчет не найден');
+        }
 
         $report->sendToBrowser();
     }

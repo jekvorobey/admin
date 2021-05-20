@@ -29,43 +29,43 @@ class SystemAlertController extends Controller
                 ['name' => 'TYPE_SHIPMENT_CANCEL', 'id' => 22],
                 ['name' => 'TYPE_CATALOG_IMPORT_CHANGE_STATUS', 'id' => 30],
                 ['name' => 'TYPE_CLAIM_NEW', 'id' => 40],
-                ['name' => 'TYPE_CLAIM_UNDONE', 'id' => 41]
-            ]
+                ['name' => 'TYPE_CLAIM_UNDONE', 'id' => 41],
+            ],
         ]);
     }
-    
+
     public function save(Request $request, SystemAlertService $systemAlertService)
     {
         $id = $request->get('id');
         $systemAlert = $request->get('alert');
-        
+
         if (!$systemAlert) {
             throw new BadRequestHttpException('alert required');
         }
-        
+
         $systemAlertDto = new SystemAlertDto($systemAlert);
-        
+
         if ($id) {
             $systemAlertService->update($id, $systemAlertDto);
         } else {
             $systemAlertService->create($systemAlertDto);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, SystemAlertService $systemAlertService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $systemAlertService->delete($id);
         }
-        
+
         return response()->json();
     }
 }

@@ -17,7 +17,7 @@ class CategoryController extends Controller
         $this->title = 'Категории';
 
         return $this->render('Product/CategoryList', [
-            'categories' =>  $this->loadCategories($categoryService),
+            'categories' => $this->loadCategories($categoryService),
         ]);
     }
 

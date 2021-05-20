@@ -48,7 +48,7 @@ class SearchRequestController extends Controller
 
         try {
             $newSearchRequest = $searchRequestService->create($searchRequest);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -61,7 +61,6 @@ class SearchRequestController extends Controller
         return response()->json([
             'search_request' => $newSearchRequest->toArray(),
         ], 201);
-
     }
 
     /**
@@ -82,7 +81,7 @@ class SearchRequestController extends Controller
 
         try {
             $searchRequestService->update($searchRequest);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -93,7 +92,6 @@ class SearchRequestController extends Controller
         }
 
         return response('', 204);
-
     }
 
     /**

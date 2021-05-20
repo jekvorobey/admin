@@ -25,28 +25,28 @@ class PublicEventDetailController extends Controller
         $this->loadPublicEventMediaTypes = true;
         $this->loadPublicEventMediaCollections = true;
         $this->loadOrderStatuses = true;
-        
+
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {
             throw new NotFoundHttpException('public event not found');
         }
-        
+
         return $this->render('PublicEvent/PublicEventDetail', [
             'iPublicEvent' => $publicEvent,
             'sprintStatuses' => PublicEventSprintStatus::all(),
         ]);
     }
-    
+
     public function load($event_id, PublicEventService $publicEventService)
     {
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {
             throw new NotFoundHttpException('public event not found');
         }
-    
+
         return response()->json($publicEvent->toArray());
     }
-    
+
     public function isCodeUnique(Request $request, PublicEventService $publicEventService)
     {
         $code = $request->get('code');
@@ -57,7 +57,7 @@ class PublicEventDetailController extends Controller
         if (!$id) {
             throw new BadRequestHttpException('id is required');
         }
-        
+
         $countData = $publicEventService
             ->query()
             ->setFilter('code', $code)
@@ -67,7 +67,7 @@ class PublicEventDetailController extends Controller
             'unique' => $countData['total'] == 0,
         ]);
     }
-    
+
     public function save(Request $request, PublicEventService $publicEventService)
     {
         $id = $request->get('id');
@@ -81,7 +81,7 @@ class PublicEventDetailController extends Controller
             $id = $publicEventService->createPublicEvent(new PublicEventDto($data));
         }
         return response()->json([
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -90,12 +90,14 @@ class PublicEventDetailController extends Controller
         $event = $publicEventService->query()->setFilter('id', $event_id)->withRecommendations()->get()->first()->recommendations;
 
         return response()->json([
-            'recommendations' => $event
+            'recommendations' => $event,
         ]);
     }
-    
-    public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService, RequestInitiator $requestInitiator)
-    {
+
+    public function availableOrganizers(
+        PublicEventOrganizerService $publicEventOrganizerService,
+        RequestInitiator $requestInitiator
+    ) {
         /** @var Collection|OrganizerDto[] $organizers */
         $organizers = $publicEventOrganizerService->query()
             ->setFilter('owner_id', 0)
@@ -108,26 +110,30 @@ class PublicEventDetailController extends Controller
             ->get();
 
         $organizers = $organizers->merge($userOrganizers)->unique('id');
-        
+
         return response()->json($organizers);
     }
-    
+
     public function addOrganizerById($event_id, Request $request, PublicEventService $publicEventService)
     {
         $organizerId = $request->get('organizerId');
         $publicEventService->addOrganizerById($event_id, $organizerId);
         return response()->json();
     }
-    
-    public function addOrganizerByValue($event_id, Request $request, PublicEventService $publicEventService, RequestInitiator $user)
-    {
+
+    public function addOrganizerByValue(
+        $event_id,
+        Request $request,
+        PublicEventService $publicEventService,
+        RequestInitiator $user
+    ) {
         $organizerData = $request->all();
         $organizerDto = new OrganizerDto($organizerData);
         $organizerDto->owner_id = $user->userId();
         $publicEventService->addOrganizerByValue($event_id, $organizerDto);
         return response()->json();
     }
-    
+
     public function saveMedia(int $event_id, Request $request, PublicEventService $publicEventService)
     {
         $data = $this->validate($request, [
@@ -144,22 +150,22 @@ class PublicEventDetailController extends Controller
                 PublicEventDto::MEDIA_HISTORY,
             ])],
             'value' => 'required',
-            'oldMedia' => 'nullable|integer'
+            'oldMedia' => 'nullable|integer',
         ]);
-        
+
         $oldMediaId = $data['oldMedia'] ?? null;
         if ($oldMediaId) {
             $publicEventService->delMedia($event_id, $oldMediaId);
         }
         $publicEventService->addMedia($event_id, $data['collection'], $data['type'], $data['value']);
-        
+
         return response()->json();
     }
-    
+
     public function deleteMedia(int $event_id, Request $request, PublicEventService $publicEventService)
     {
         $data = $this->validate($request, [
-            'mediaId' => 'required'
+            'mediaId' => 'required',
         ]);
         $publicEventService->delMedia($event_id, $data['mediaId']);
         return response()->json();
@@ -196,7 +202,7 @@ class PublicEventDetailController extends Controller
         $publicEventService->detachRecommendation($event_id, $recommendation_id);
         return response()->json();
     }
-    
+
     protected function loadEvent(int $id, PublicEventService $publicEventService): ?PublicEventDto
     {
         try {
@@ -214,7 +220,7 @@ class PublicEventDetailController extends Controller
                 ->withMedia()
                 ->get()
                 ->first();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return null;
         }
     }

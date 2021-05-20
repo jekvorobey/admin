@@ -150,7 +150,7 @@ class BonusController extends Controller
                 'items' => array_values($failed),
                 'code' => BonusService::FAILED_DEPENDENCY_CODE,
                 'message' => 'Ошибка при удалении бонусов',
-            ]
+            ],
         ], BonusService::FAILED_DEPENDENCY_CODE);
     }
 
@@ -163,7 +163,7 @@ class BonusController extends Controller
     {
         $data = $request->validate([
             'product_id' => 'integer|required',
-            'value' => 'integer|nullable'
+            'value' => 'integer|nullable',
         ]);
 
         $key = ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT;

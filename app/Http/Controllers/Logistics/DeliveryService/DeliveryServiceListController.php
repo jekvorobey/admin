@@ -34,7 +34,7 @@ class DeliveryServiceListController extends Controller
         $restQuery = $this->makeRestQuery($listsService, true);
         $pager = $listsService->deliveryServicesCount($restQuery);
         $deliveryServices = $this->loadDeliveryServices($restQuery, $listsService);
-        
+
         return $this->render('Logistics/DeliveryService/List', [
             'iDeliveryServices' => $deliveryServices,
             'iCurrentPage' => $this->getPage(),
@@ -45,14 +45,11 @@ class DeliveryServiceListController extends Controller
         ]);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
     }
-    
+
     /**
      * @param  ListsService $listsService
      * @return \Illuminate\Http\JsonResponse
@@ -68,17 +65,18 @@ class DeliveryServiceListController extends Controller
         if ($this->getPage() == 1) {
             $result['pager'] = $listsService->deliveryServicesCount($restQuery);
         }
-        
+
         return response()->json($result);
     }
-    
+
     /**
      * @param bool $withDefault
      * @return array
      */
     protected function getFilter(bool $withDefault = false): array
     {
-        return Validator::make(request('filter') ??
+        return Validator::make(
+            request('filter') ??
             ($withDefault ?
                 [
                     'status' => [DeliveryServiceStatus::ACTIVE],
@@ -90,7 +88,7 @@ class DeliveryServiceListController extends Controller
             ]
         )->attributes();
     }
-    
+
     /**
      * @param  DataQuery  $restQuery
      * @param  ListsService $listsService
@@ -109,15 +107,15 @@ class DeliveryServiceListController extends Controller
         $deliveryServices = $listsService->deliveryServices($restQuery);
         $deliveryServices = $deliveryServices->map(function (DeliveryService $deliveryService) {
             $data = $deliveryService->toArray();
-    
+
             $data['status'] = $deliveryService->status()->toArray();
-        
+
             return $data;
         });
-        
+
         return $deliveryServices;
     }
-    
+
     /**
      * @param  ListsService $listsService
      * @param  bool $withDefaultFilter
@@ -128,10 +126,10 @@ class DeliveryServiceListController extends Controller
     {
         /** @var RestQuery $restQuery */
         $restQuery = $listsService->newQuery();
-        
+
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20)->addSort('priority', 'asc');
-        
+
         $filter = $this->getFilter($withDefaultFilter);
         if ($filter) {
             foreach ($filter as $key => $value) {
@@ -139,13 +137,13 @@ class DeliveryServiceListController extends Controller
                     case 'name':
                         $restQuery->setFilter($key, 'like', "%{$value}%");
                         break;
-                
+
                     default:
                         $restQuery->setFilter($key, $value);
                 }
             }
         }
-        
+
         return $restQuery;
     }
 }

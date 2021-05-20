@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Product\VariantGroup;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +24,7 @@ class VariantGroupListController extends Controller
 {
     /** @var VariantGroupService */
     protected $variantGroupService;
-    /** @var BrandService  */
+    /** @var BrandService */
     protected $brandService;
     /** @var CategoryService */
     protected $categoryService;
@@ -88,10 +87,6 @@ class VariantGroupListController extends Controller
         ]);
     }
 
-    /**
-     * @param  Request  $request
-     * @return Response
-     */
     public function delete(Request $request): Response
     {
         $data = $this->validate($request, [
@@ -101,7 +96,7 @@ class VariantGroupListController extends Controller
 
         try {
             $this->variantGroupService->deleteVariantGroups($data['ids']);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             if (strpos($exception->getMessage(), 'Cannot delete or update a parent row') !== false) {
                 return response('', 424);
             }
@@ -120,9 +115,6 @@ class VariantGroupListController extends Controller
         return $this->variantGroupService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }*/
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);

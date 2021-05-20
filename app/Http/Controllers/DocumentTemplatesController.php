@@ -52,10 +52,6 @@ class DocumentTemplatesController extends Controller
         return $this->getDocumentResponse($documentTemplateService->assemblingCard());
     }
 
-    /**
-     * @param  DocumentTemplateDto  $documentTemplateDto
-     * @return StreamedResponse
-     */
     protected function getDocumentResponse(DocumentTemplateDto $documentTemplateDto): StreamedResponse
     {
         return response()->streamDownload(function () use ($documentTemplateDto) {

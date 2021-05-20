@@ -25,6 +25,7 @@ use Pim\Services\PublicEventService\PublicEventService;
 class TabPublicEventController extends Controller
 {
     const PER_PAGE = 50;
+
     /**
      * @param $merchantId
      * @return array $organizers
@@ -43,7 +44,9 @@ class TabPublicEventController extends Controller
      */
     private function loadEvents($organizersIds)
     {
-        if (!count($organizersIds)) return [];
+        if (!count($organizersIds)) {
+            return [];
+        }
         $publicEventService = resolve(PublicEventService::class);
         return $publicEventService
             ->query()
@@ -71,7 +74,7 @@ class TabPublicEventController extends Controller
 
         $orderService = resolve(OrderService::class);
         $restQuery = $this->makeRestQuery($orderService, $sprints);
-        $pager = $sprints ?  $orderService->ordersCount($restQuery) : null;
+        $pager = $sprints ? $orderService->ordersCount($restQuery) : null;
         $orders = $sprints ? $this->loadOrders($orderService, $restQuery) : null;
 
         return response()->json([
@@ -79,7 +82,7 @@ class TabPublicEventController extends Controller
                 'page' => $this->getPage(),
                 'pager' => $pager,
                 'items' => $orders,
-            ]
+            ],
         ]);
     }
 
@@ -185,7 +188,7 @@ class TabPublicEventController extends Controller
         PublicEventBillingReport::makePublicEventReport($orders, $merchant, $dates);
     }
 
-    protected function makeDownloadRestQuery( array $sprints, array $dates): DataQuery
+    protected function makeDownloadRestQuery(array $sprints, array $dates): DataQuery
     {
         $orderService = resolve(OrderService::class);
         $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');

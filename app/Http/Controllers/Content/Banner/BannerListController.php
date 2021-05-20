@@ -33,7 +33,7 @@ class BannerListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'types' => $this->loadTypes($bannerTypeService),
-            ]
+            ],
         ]);
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -60,12 +59,12 @@ class OrderDetailController extends Controller
         $this->loadDeliveryServices = true;
 
         $order = $this->getOrder($id);
-        $number=$order->number;
+        $number = $order->number;
         $partsNumber = explode('-', $number);
 
         $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
 
-        $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
+        $this->title = 'Заказ ' . $order->number . ' от ' . $order->created_at;
 
         $order['barcodes'] = $barCodes;
 
@@ -84,7 +83,7 @@ class OrderDetailController extends Controller
     private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
     {
         $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
-            ->setFilter('number', 'like', $partsNumber[0].'%');
+            ->setFilter('number', 'like', $partsNumber[0] . '%');
         $restQuery->addFields(
             ShipmentDto::entity(),
             'id',
@@ -98,10 +97,10 @@ class OrderDetailController extends Controller
         $readyToShipItemsCount = 0;
         $notCanceledShipmentItemsCount = 0;
 
-        foreach($shipments as $item)
-        {
-            if ($item->is_canceled)
+        foreach ($shipments as $item) {
+            if ($item->is_canceled) {
                 continue;
+            }
 
             if ($item->status == self::READY_TO_SHIP) {
                 $readyToShipItemsCount += 1;
@@ -292,7 +291,7 @@ class OrderDetailController extends Controller
         $pointIds = $order->deliveries->pluck('point_id')->filter()->unique()->values()->all();
         if ($pointIds) {
             $points = $listsService->points($listsService->newQuery()->setFilter('id', $pointIds))
-                ->map(function(PointDto $point) {
+                ->map(function (PointDto $point) {
                     $point->type = $point->type();
 
                     return $point;
@@ -330,7 +329,7 @@ class OrderDetailController extends Controller
                 $cities->push($delivery->getCity());
                 $deliveryAddress = $delivery->delivery_address;
                 $deliveryAddress['address_string'] = join(', ', array_filter([
-                    isset($deliveryAddress['post_index']) ? $deliveryAddress['post_index'] : '',
+                    $deliveryAddress['post_index'] ?? '',
                     isset($deliveryAddress['region']) ? $delivery->delivery_address['region'] : '',
                     isset($deliveryAddress['city']) ? $delivery->delivery_address['city'] : '',
                     isset($deliveryAddress['street']) ? $delivery->delivery_address['street'] : '',
@@ -530,7 +529,7 @@ class OrderDetailController extends Controller
             OrderStatus::CREATED => [
                 'status' => OrderStatus::statusById(OrderStatus::CREATED),
                 'status_at' => $order->created_at,
-            ]
+            ],
         ]);
         if ($order->history->isNotEmpty()) {
             foreach ($order->history as $historyDto) {

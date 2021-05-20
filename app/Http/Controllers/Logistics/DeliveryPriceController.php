@@ -34,12 +34,7 @@ class DeliveryPriceController extends Controller
             'iData' => $this->loadData($listsService),
         ]);
     }
-    
-    /**
-     * @param  Request  $request
-     * @param  ListsService $listsService
-     * @return JsonResponse
-     */
+
     public function save(Request $request, ListsService $listsService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -51,19 +46,19 @@ class DeliveryPriceController extends Controller
             'delivery_method' => ['required', Rule::in(array_keys(DeliveryMethod::allMethods()))],
             'price' => 'numeric|required',
         ]);
-        
+
         $deliveryPriceDto = new DeliveryPriceDto($validatedData);
         if ($deliveryPriceDto->id) {
             $listsService->updateDeliveryPrice($deliveryPriceDto->id, $deliveryPriceDto);
         } else {
             $deliveryPriceDto->id = $listsService->createDeliveryPrice($deliveryPriceDto);
         }
-        
+
         return response()->json([
-            'deliveryPrice' => $deliveryPriceDto
+            'deliveryPrice' => $deliveryPriceDto,
         ]);
     }
-    
+
     /**
      * @param RestQuery $restQuery
      * @param ListsService $listsService
@@ -90,48 +85,48 @@ class DeliveryPriceController extends Controller
                     return $pricesByDeliveryService->keyBy('delivery_method');
                 });
         });
-        
+
         $federalDistrictsQuery = $listsService->newQuery()
             ->include('regions');
         $federalDistricts = $listsService->federalDistricts($federalDistrictsQuery);
-    
-        $federalDistricts = $federalDistricts->map(function (FederalDistrictDto $federalDistrict) use ($deliveryPricesByFederalDistrict, $deliveryPricesByRegions) {
-            $data = $federalDistrict->toArray();
-            foreach (DeliveryService::allServices() as $deliveryService) {
-                foreach (DeliveryMethod::allMethods() as $deliveryMethod) {
-                    $emptyDeliveryPriceDto = new DeliveryPriceDto([
-                        'federal_district_id' => $federalDistrict->id,
-                        'delivery_service' => $deliveryService->id,
-                        'delivery_method' => $deliveryMethod->id,
-                        'price' => '',
-                    ]);
-                    $data['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
-                        isset($deliveryPricesByFederalDistrict[$data['id']][$deliveryService->id][$deliveryMethod->id]) ?
-                            $deliveryPricesByFederalDistrict[$data['id']][$deliveryService->id][$deliveryMethod->id] : $emptyDeliveryPriceDto->toArray();
-                }
-            }
-            
-            foreach ($data['regions'] as &$region) {
+
+        $federalDistricts = $federalDistricts->map(
+            function (FederalDistrictDto $federalDistrict) use ($deliveryPricesByFederalDistrict, $deliveryPricesByRegions) {
+                $data = $federalDistrict->toArray();
                 foreach (DeliveryService::allServices() as $deliveryService) {
                     foreach (DeliveryMethod::allMethods() as $deliveryMethod) {
                         $emptyDeliveryPriceDto = new DeliveryPriceDto([
                             'federal_district_id' => $federalDistrict->id,
-                            'region_id' => $region['id'],
-                            'region_guid' => $region['guid'],
                             'delivery_service' => $deliveryService->id,
                             'delivery_method' => $deliveryMethod->id,
                             'price' => '',
                         ]);
-                        $region['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
-                            isset($deliveryPricesByRegions[$region['id']][$deliveryService->id][$deliveryMethod->id]) ?
-                                $deliveryPricesByRegions[$region['id']][$deliveryService->id][$deliveryMethod->id] : $emptyDeliveryPriceDto->toArray();
+                        $data['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
+                            $deliveryPricesByFederalDistrict[$data['id']][$deliveryService->id][$deliveryMethod->id] ?? $emptyDeliveryPriceDto->toArray();
                     }
                 }
+
+                foreach ($data['regions'] as &$region) {
+                    foreach (DeliveryService::allServices() as $deliveryService) {
+                        foreach (DeliveryMethod::allMethods() as $deliveryMethod) {
+                            $emptyDeliveryPriceDto = new DeliveryPriceDto([
+                                'federal_district_id' => $federalDistrict->id,
+                                'region_id' => $region['id'],
+                                'region_guid' => $region['guid'],
+                                'delivery_service' => $deliveryService->id,
+                                'delivery_method' => $deliveryMethod->id,
+                                'price' => '',
+                            ]);
+                            $region['deliveryPrices'][$deliveryService->id][$deliveryMethod->id] =
+                                $deliveryPricesByRegions[$region['id']][$deliveryService->id][$deliveryMethod->id] ?? $emptyDeliveryPriceDto->toArray();
+                        }
+                    }
+                }
+
+                return $data;
             }
-    
-            return $data;
-        });
-        
+        );
+
         return $federalDistricts;
     }
 }

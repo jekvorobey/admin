@@ -36,16 +36,13 @@ class PublicEventOrdersController extends Controller
                 'page' => $this->getPage(),
                 'pager' => $pager,
                 'orders' => $orders,
-            ]
+            ],
         ]);
     }
 
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include(
-            'basketitem',
-            'promoCodes'
-        );
+        $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, self::PER_PAGE);

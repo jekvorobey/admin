@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order\Detail;
 
-
 use App\Http\Controllers\Order\OrderDetailController;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
@@ -56,7 +55,7 @@ class TabDeliveriesController extends OrderDetailController
             if (!$points->has($point->id)) {
                 $points->put($point->id, $point);
             }
-            $points = $points->map(function(PointDto $point) {
+            $points = $points->map(function (PointDto $point) {
                 $point->type = $point->type();
 
                 return $point;
@@ -84,9 +83,13 @@ class TabDeliveriesController extends OrderDetailController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function save(int $orderId, int $deliveryId, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
-    {
-        $requiredIfDeliveryAddressExist = function() {
+    public function save(
+        int $orderId,
+        int $deliveryId,
+        OrderService $orderService,
+        DeliveryService $deliveryService
+    ): JsonResponse {
+        $requiredIfDeliveryAddressExist = function () {
             return count(array_filter(request()->get('delivery_address'))) > 0;
         };
         $data = $this->validate(request(), [
@@ -111,7 +114,7 @@ class TabDeliveriesController extends OrderDetailController
             'delivery_address.floor' => ['sometimes', 'string', 'nullable'],
             'delivery_address.intercom' => ['sometimes', 'string', 'nullable'],
             'delivery_address.comment' => ['sometimes', 'string', 'nullable'],
-            'point_id' => [Rule::requiredIf(function() {
+            'point_id' => [Rule::requiredIf(function () {
                 return !count(array_filter(request()->get('delivery_address')));
             }), 'integer'],
         ]);
@@ -131,14 +134,14 @@ class TabDeliveriesController extends OrderDetailController
             $deliveryAddress['region_guid'] = $dataDeliveryAddress['region_guid'];
             $deliveryAddress['city'] = $dataDeliveryAddress['city'];
             $deliveryAddress['city_guid'] = $dataDeliveryAddress['city_guid'];
-            $deliveryAddress['street'] = isset($dataDeliveryAddress['street']) ? $dataDeliveryAddress['street'] : '';
-            $deliveryAddress['house'] = isset($dataDeliveryAddress['house']) ? $dataDeliveryAddress['house'] : '';
-            $deliveryAddress['block'] = isset($dataDeliveryAddress['block']) ? $dataDeliveryAddress['block'] : '';
-            $deliveryAddress['flat'] = isset($dataDeliveryAddress['flat']) ? $dataDeliveryAddress['flat'] : '';
-            $deliveryAddress['porch'] = isset($dataDeliveryAddress['porch']) ? $dataDeliveryAddress['porch'] : '';
-            $deliveryAddress['floor'] = isset($dataDeliveryAddress['floor']) ? $dataDeliveryAddress['floor'] : '';
-            $deliveryAddress['intercom'] = isset($dataDeliveryAddress['intercom']) ? $dataDeliveryAddress['intercom'] : '';
-            $deliveryAddress['comment'] = isset($dataDeliveryAddress['comment']) ? $dataDeliveryAddress['comment'] : '';
+            $deliveryAddress['street'] = $dataDeliveryAddress['street'] ?? '';
+            $deliveryAddress['house'] = $dataDeliveryAddress['house'] ?? '';
+            $deliveryAddress['block'] = $dataDeliveryAddress['block'] ?? '';
+            $deliveryAddress['flat'] = $dataDeliveryAddress['flat'] ?? '';
+            $deliveryAddress['porch'] = $dataDeliveryAddress['porch'] ?? '';
+            $deliveryAddress['floor'] = $dataDeliveryAddress['floor'] ?? '';
+            $deliveryAddress['intercom'] = $dataDeliveryAddress['intercom'] ?? '';
+            $deliveryAddress['comment'] = $dataDeliveryAddress['comment'] ?? '';
             $deliveryDto->delivery_address = $deliveryAddress;
         } else {
             $deliveryDto->point_id = $data['point_id'];

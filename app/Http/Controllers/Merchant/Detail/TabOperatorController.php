@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
-
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -43,8 +41,12 @@ class TabOperatorController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function loadOperators(int $merchantId, Request $request, OperatorService $operatorService, UserService $userService)
-    {
+    public function loadOperators(
+        int $merchantId,
+        Request $request,
+        OperatorService $operatorService,
+        UserService $userService
+    ) {
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())->pageNumber($page, 10)
             ->setFilter('merchant_id', $merchantId);
@@ -99,7 +101,8 @@ class TabOperatorController extends Controller
         /** UserService $userService */
         $userService = resolve(UserService::class);
 
-        $filter = Validator::make(request('filter') ?? [],
+        $filter = Validator::make(
+            request('filter') ?? [],
             [
                 'user_id' => 'integer|someone',
                 'full_name' => 'string|someone',
@@ -131,7 +134,7 @@ class TabOperatorController extends Controller
                         if ($key === 'phone') {
                             $value = phone_format($value);
                         }
-                        $userIds = $userService->users((new RestQuery)->setFilter($key, $value))
+                        $userIds = $userService->users((new RestQuery())->setFilter($key, $value))
                             ->pluck('id');
                         if ($filterUserKey) {
                             $filterUserIds = $userIds;

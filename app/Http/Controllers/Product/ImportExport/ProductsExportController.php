@@ -84,7 +84,8 @@ class ProductsExportController extends Controller
      * @param int $fileId
      * @return array
      */
-    protected static function getOriginalFileUrlAndName(int $fileId) {
+    protected static function getOriginalFileUrlAndName(int $fileId)
+    {
         /** @var FileService $fileService */
         $fileService = resolve(FileService::class);
 

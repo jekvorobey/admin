@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant;
-
 
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rule;
@@ -16,7 +14,6 @@ use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
-
 
 class MerchantOperatorController extends Controller
 {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -34,13 +33,13 @@ class CustomerListController extends Controller
         return $this->list('Список реферальных партнеров', true);
     }
 
-    protected function list($title, $isReferral=null)
+    protected function list($title, $isReferral = null)
     {
         $this->title = $title;
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
-            'perPage' => static::PER_PAGE,
+            'perPage' => self::PER_PAGE,
             'roles' => $this->getRoles($isReferral),
         ]);
     }
@@ -59,7 +58,7 @@ class CustomerListController extends Controller
             'created_between' => 'nullable',
             'isReferral' => 'required|boolean',
             'page' => 'nullable',
-            'role' => 'numeric'
+            'role' => 'numeric',
         ]);
 
         $restQueryCustomer = new RestQuery();
@@ -72,7 +71,7 @@ class CustomerListController extends Controller
         $customers = $customerService->customers($restQueryCustomer);
         if (!$customers) {
             return response()->json([
-                'users' => []
+                'users' => [],
             ]);
         }
 
@@ -103,7 +102,7 @@ class CustomerListController extends Controller
 
         if (!empty($filter['role'])) {
             $restQueryUser->setFilter('role', $filter['role']);
-        } else if (isset($filter['isReferral']) && $filter['isReferral']) {
+        } elseif (isset($filter['isReferral']) && $filter['isReferral']) {
             $restQueryUser->setFilter('role', UserDto::SHOWCASE__REFERRAL_PARTNER);
         }
 
@@ -130,8 +129,8 @@ class CustomerListController extends Controller
         })->filter()->sortByDesc('id')->values();
 
         return response()->json([
-            'users' => $result->forPage(request('page', 1), static::PER_PAGE),
-            'count' => $result->count()
+            'users' => $result->forPage(request('page', 1), self::PER_PAGE),
+            'count' => $result->count(),
         ]);
     }
 
@@ -179,9 +178,9 @@ class CustomerListController extends Controller
     protected function getRoles($isReferral)
     {
         return $isReferral === null ? [
-            0                                   => 'Все',
-            UserDto::SHOWCASE__PROFESSIONAL     => 'Профессионалы',
+            0 => 'Все',
+            UserDto::SHOWCASE__PROFESSIONAL => 'Профессионалы',
             UserDto::SHOWCASE__REFERRAL_PARTNER => 'Реферальные партнеры',
         ] : null;
-}
+    }
 }

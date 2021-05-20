@@ -74,7 +74,7 @@ class Frontend
      */
     public function path($path, $addVersion = false)
     {
-        $resultPath = $this->isInDevMode()
+        return $this->isInDevMode()
             ? $this->devDir . $path
             : $this->productionDir . $path;
 
@@ -153,5 +153,4 @@ class Frontend
             $this->cookieValue = '';
         }
     }
-
 }

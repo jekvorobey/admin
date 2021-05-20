@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\DataQuery;
@@ -86,9 +85,6 @@ class OrderListController extends Controller
         return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
@@ -158,10 +154,6 @@ class OrderListController extends Controller
         );
     }
 
-    /**
-     * @param DataQuery $restQuery
-     * @return Collection
-     */
     protected function loadOrders(DataQuery $restQuery): Collection
     {
         /** @var OrderService $orderService */

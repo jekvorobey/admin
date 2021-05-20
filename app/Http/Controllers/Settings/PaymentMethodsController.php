@@ -42,7 +42,7 @@ class PaymentMethodsController extends Controller
             'iMethods' => $paymentMethods,
             'regions' => $regions,
             'delivery_services' => $deliveryServices,
-            'offer_statuses' => $offerStatuses
+            'offer_statuses' => $offerStatuses,
         ]);
     }
 
@@ -67,13 +67,13 @@ class PaymentMethodsController extends Controller
             'excluded_delivery_services' => 'nullable|json',
             'excluded_offer_statuses' => 'nullable|json',
             'excluded_customers' => 'nullable|json',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
         ]);
 
         $paymentService->updatePaymentMethod($id, $this->fulfillDto($data));
 
         return response()->json([
-            'payment_method' => $paymentService->getPaymentMethods($id)->first()
+            'payment_method' => $paymentService->getPaymentMethods($id)->first(),
         ]);
     }
 

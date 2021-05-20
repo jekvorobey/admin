@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -41,8 +40,7 @@ class TabPreferenceController extends Controller
         CustomerService $customerService,
         ProductService $productService,
         Request $request
-    )
-    {
+    ) {
         $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
@@ -151,13 +149,12 @@ class TabPreferenceController extends Controller
     public function searchItem(
         Request $request,
         SearchService $searchService
-    )
-    {
+    ) {
         $query = $this->makeFavoriteProductQuery($request);
         $productSearchResult = $searchService->products($query);
         $data = [
             'products' => $productSearchResult->products,
-            'total' => $productSearchResult->total
+            'total' => $productSearchResult->total,
         ];
         return response()->json($data);
     }

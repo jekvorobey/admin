@@ -26,7 +26,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-
 class TabOrderController extends Controller
 {
     /**
@@ -235,7 +234,8 @@ class TabOrderController extends Controller
     protected function getFilter(): array
     {
         $allDeliveryServices = DeliveryService::allServices();
-        $filter = Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'order_number' => 'string|someone',
                 'number' => 'string|someone',
@@ -267,19 +267,13 @@ class TabOrderController extends Controller
                 'delivery_address_floor' => 'string|someone',
                 'delivery_address_flat' => 'string|someone',
                 'required_shipping_at' => 'array|someone',
-                'required_shipping_at.'  => 'date',
+                'required_shipping_at.' => 'date',
                 'delivery_at' => 'array|someone',
-                'delivery_at.'  => 'date',
+                'delivery_at.' => 'date',
             ]
         )->attributes();
-
-        return $filter;
     }
 
-    /**
-     * @param DataQuery $restQuery
-     * @return Collection
-     */
     protected function loadShipments(DataQuery $restQuery): Collection
     {
         /** @var ShipmentService $shipmentService */
@@ -335,7 +329,7 @@ class TabOrderController extends Controller
 
         $storesIds = $shipments->pluck('store_id')->all();
         $stores = $storeService->stores(
-            (new RestQuery)->addFields(StoreDto::class, 'id', 'name')
+            (new RestQuery())->addFields(StoreDto::class, 'id', 'name')
                 ->setFilter('id', $storesIds)
         )->keyBy('id')
             ->all();
@@ -360,11 +354,9 @@ class TabOrderController extends Controller
             $customerId = array_key_exists($orders[$delivery->order_id]->customer_id, $customers) ?
                 $orders[$delivery->order_id]->customer_id :
                 'N/A';
-            $userFullName = (
-                    array_key_exists($customerId, $customers) &&
+            $userFullName = array_key_exists($customerId, $customers) &&
                     array_key_exists($customers[$customerId]->user_id, $users) &&
-                    $users[$customers[$customerId]->user_id]->full_name
-                ) ?
+                    $users[$customers[$customerId]->user_id]->full_name ?
                 $users[$customers[$customerId]->user_id]->full_name :
                 'N/A';
             $data['customer'] = [

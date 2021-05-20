@@ -29,12 +29,12 @@ class CargoDetailController extends Controller
     {
         $this->loadCargoStatuses = true;
         $page = new CargoPage($id);
-        
+
         return $this->render('Order/Cargo/Detail', [
             'iCargo' => $page->loadCargo()['cargo'],
         ]);
     }
-    
+
     /**
      * Изменить статус груза
      * @param  int  $id
@@ -55,7 +55,7 @@ class CargoDetailController extends Controller
             $cargo = new CargoDto();
             $cargo->status = $data['status'];
             $cargoService->updateCargo($id, $cargo);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             if ($data['status'] == CargoStatus::SHIPPED) {
                 $error = 'Груз не содержит заказов';
@@ -65,8 +65,8 @@ class CargoDetailController extends Controller
 
         $page = new CargoPage($id);
         $cargo = $page->loadCargo()['cargo'];
-    
-        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
+
+        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
     /**
@@ -120,7 +120,7 @@ class CargoDetailController extends Controller
             $cargoService->cancelCargo($id);
         });
     }
-    
+
     /**
      * Добавить отправление в груз
      * @param  int  $id
@@ -132,23 +132,22 @@ class CargoDetailController extends Controller
         int $id,
         Request $request,
         ShipmentService $shipmentService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($id, function () use ($id, $request, $shipmentService) {
             $data = $this->validate($request, [
                 'shipment_id' => ['required', 'array'],
                 'shipment_id.*' => ['required', 'integer'],
             ]);
-            
+
             foreach ($data['shipment_id'] as $shipmentId) {
                 $shipment = new ShipmentDto();
                 $shipment->cargo_id = $id;
-    
+
                 $shipmentService->updateShipment($shipmentId, $shipment);
             }
         });
     }
-    
+
     /**
      * Удалить отправление из груза
      * @param  int  $id
@@ -162,16 +161,15 @@ class CargoDetailController extends Controller
         int $shipmentId,
         Request $request,
         ShipmentService $shipmentService
-    ): JsonResponse
-    {
-        return $this->abstractAction($id, function () use ($shipmentId, $request, $shipmentService) {
+    ): JsonResponse {
+        return $this->abstractAction($id, function () use ($shipmentId, $shipmentService) {
             $shipment = new ShipmentDto();
             $shipment->cargo_id = null;
-            
+
             $shipmentService->updateShipment($shipmentId, $shipment);
         });
     }
-    
+
     /**
      * @param  int  $id
      * @param  Request  $request
@@ -184,26 +182,21 @@ class CargoDetailController extends Controller
         $systemError = '';
         try {
             $action();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
         }
 
         $page = new CargoPage($id);
         $cargo = $page->loadCargo()['cargo'];
-    
+
         return response()->json(['result' => $result, 'cargo' => $cargo, 'systemErrors' => $systemError]);
     }
-    
-    /**
-     * @param  int  $id
-     * @param  ShipmentService $shipmentService
-     * @return JsonResponse
-     */
+
     protected function getUnshippedShipments(int $id, ShipmentService $shipmentService): JsonResponse
     {
         $shipments = $shipmentService->similarUnshippedShipments($id);
-        
+
         return response()->json(['shipments' => $shipments]);
     }
 }

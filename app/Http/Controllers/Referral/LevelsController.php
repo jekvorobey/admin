@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Referral;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -61,7 +60,8 @@ class LevelsController extends Controller
             'order_referral_sum' => 'required|integer',
         ]);
 
-        $referralService->putLevel((new PutLevelDto())
+        $referralService->putLevel(
+            (new PutLevelDto())
             ->setLevelId($level_id)
             ->setName($data['name'])
             ->setSort($data['sort'])
@@ -96,7 +96,8 @@ class LevelsController extends Controller
             'percent_z' => 'Promo-business - 3',
         ]);
 
-        $referralService->putCommission((new PutCommissionDto())
+        $referralService->putCommission(
+            (new PutCommissionDto())
             ->setLevelId($level_id)
             ->setCustomerId($data['customer_id'])
             ->setPercentX($data['percent_x'])
@@ -119,7 +120,8 @@ class LevelsController extends Controller
             'customer_id' => 'Реферальный партнёр',
         ]);
 
-        $referralService->removeCommission((new RemoveCommissionDto())
+        $referralService->removeCommission(
+            (new RemoveCommissionDto())
             ->setLevelId($level_id)
             ->setCustomerId($data['customer_id'])
         );
@@ -143,7 +145,8 @@ class LevelsController extends Controller
             'brand_id' => 'Бренд',
         ]);
 
-        $referralService->putSpecialCommission((new PutSpecialCommissionDto())
+        $referralService->putSpecialCommission(
+            (new PutSpecialCommissionDto())
             ->setLevelId($level_id)
             ->setIsSum($data['is_sum'])
             ->setCoefficient($data['coefficient'])
@@ -166,7 +169,8 @@ class LevelsController extends Controller
             'brand_id' => 'Бренд',
         ]);
 
-        $referralService->removeSpecialCommission((new RemoveSpecialCommissionDto())
+        $referralService->removeSpecialCommission(
+            (new RemoveSpecialCommissionDto())
             ->setLevelId($level_id)
             ->setProductId($data['product_id'] ?: null)
             ->setBrandId($data['brand_id'] ?: null)

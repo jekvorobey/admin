@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Product\VariantGroup;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;

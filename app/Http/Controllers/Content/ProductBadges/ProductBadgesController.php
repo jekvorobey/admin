@@ -15,7 +15,7 @@ class ProductBadgesController extends Controller
 {
     private $replacements = [
         '{plus}' => '+',
-        '{equal}' => '='
+        '{equal}' => '=',
     ];
 
     /**
@@ -30,7 +30,7 @@ class ProductBadgesController extends Controller
         $this->title = 'Справочник товарных шильдиков';
 
         return $this->render('Content/ProductBadges', [
-            'iBadges' => $badges
+            'iBadges' => $badges,
         ]);
     }
 
@@ -42,7 +42,7 @@ class ProductBadgesController extends Controller
     public function add(ContentBadgesService $badgesService)
     {
         $data = $this->validate(request(), [
-            'text' => 'required|string'
+            'text' => 'required|string',
         ]);
 
         foreach ($this->replacements as $code => $symbol) {
@@ -57,9 +57,8 @@ class ProductBadgesController extends Controller
         $badges = $badgesService->productBadges();
 
         return response()->json([
-            'badges' => $badges
+            'badges' => $badges,
         ]);
-
     }
 
     /**
@@ -73,7 +72,7 @@ class ProductBadgesController extends Controller
             'id' => 'required|integer',
             'text' => 'required|string',
         ]);
-        
+
         foreach ($this->replacements as $code => $symbol) {
             $data['text'] = str_replace($code, $symbol, $data['text']);
         }
@@ -86,9 +85,8 @@ class ProductBadgesController extends Controller
         $badges = $badgesService->productBadges();
 
         return response()->json([
-            'badges' => $badges
+            'badges' => $badges,
         ]);
-
     }
 
     /**

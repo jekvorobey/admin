@@ -12,16 +12,16 @@ use Illuminate\Http\JsonResponse;
  */
 class OrderStatusListController extends Controller
 {
-    /** @var int - кол-во выводимых статусов на странице */
     const PER_PAGE = 20;
 
     /**
      * @return mixed
      */
-    public function index() {
+    public function index()
+    {
         $this->title = 'Статусы заказа';
         $this->loadBasketTypes = true;
-        
+
         return $this->render('Order/Directory/OrderStatusList', [
             'iOrderStatuses' => $this->getOrderStatuses(),
             'iCurrentPage' => $this->getPage(),
@@ -29,9 +29,6 @@ class OrderStatusListController extends Controller
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function page(): JsonResponse
     {
         $result = [
@@ -40,13 +37,10 @@ class OrderStatusListController extends Controller
         if ($this->getPage() == 1) {
             $result['pager'] = $this->getPager();
         }
-        
+
         return response()->json($result);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);

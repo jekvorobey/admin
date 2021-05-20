@@ -16,7 +16,6 @@ use MerchantManagement\Dto\RatingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use Pim\Dto\CategoryDto;
-use Pim\Dto\PropertyDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
@@ -107,7 +106,8 @@ class MerchantDetailController extends Controller
 
         // Счетчик непрочитанных сообщений от пользователя //
         $unreadMsgCount = $communicationService->unreadCount(
-            [$operatorMain->user_id],true
+            [$operatorMain->user_id],
+            true
         );
 
         $restQuery = (new RestQuery())
@@ -123,8 +123,10 @@ class MerchantDetailController extends Controller
         $managers = $userService->users((new RestQuery())
             ->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
 
-        $brandList = $brandIds ? $brandService->brands((new RestQuery())
-            ->setFilter('id', $brandIds)->addSort('name')
+        $brandList = $brandIds ? $brandService->brands(
+            (new RestQuery())
+                ->setFilter('id', $brandIds)
+                ->addSort('name')
         )->toArray() : [];
 
         $categories = $categoryIds ? $categoryService->categories((new RestQuery())
@@ -132,13 +134,13 @@ class MerchantDetailController extends Controller
             ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active'))->toArray() : [];
 
         $allCategoryList = [];
-        foreach($categories as $category) {
+        foreach ($categories as $category) {
             $categoryNameArr = [];
             if (count($category['ancestors']) > 0) {
                 foreach ($category['ancestors'] as $ancestor) {
                     $categoryNameArr[] = $ancestor['name'];
                 }
-                $categoryName = implode('→', $categoryNameArr).'→'.$category['name'];
+                $categoryName = implode('→', $categoryNameArr) . '→' . $category['name'];
             } else {
                 $categoryName = $category['name'];
             }
@@ -188,10 +190,13 @@ class MerchantDetailController extends Controller
                 'operators' => $operatorUsers->map(function (UserDto $operatorUser) {
                         return [
                             'id' => $operatorUser->id,
-                            'title' => $operatorUser->getTitle() . (in_array(UserDto::MAS__MERCHANT_ADMIN, array_keys ($operatorUser->roles)) ? ' (Администратор)' : ''),
+                            'title' => $operatorUser->getTitle() . (array_key_exists(
+                                UserDto::MAS__MERCHANT_ADMIN,
+                                $operatorUser->roles
+                            ) ? ' (Администратор)' : ''),
                             'email' => $operatorUser->email,
                         ];
-                    })->values()
+                })->values()
                         ->all(),
             ],
             'statuses' => MerchantStatus::statusesByMode($isRequest),
@@ -253,7 +258,7 @@ class MerchantDetailController extends Controller
         if (isset($data['merchant']['sale_info_brands']) && isset($data['merchant']['sale_info_categories'])) {
             $sale_info = [
                 'brands' => $data['merchant']['sale_info_brands'],
-                'categories' => $data['merchant']['sale_info_categories']
+                'categories' => $data['merchant']['sale_info_categories'],
             ];
             $data['merchant']['sale_info'] = json_encode($sale_info);
             unset($data['merchant']['sale_info_brands']);

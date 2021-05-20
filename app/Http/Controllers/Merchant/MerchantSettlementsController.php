@@ -1,16 +1,12 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant;
-
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,7 +20,6 @@ class MerchantSettlementsController extends Controller
     {
         $this->title = 'Взаиморасчёты';
         return $this->list();
-
     }
 
     protected function list()
@@ -40,7 +35,7 @@ class MerchantSettlementsController extends Controller
             'iPager' => is_null($query) ? 0 : $merchantService->merchantBillingReportsCount($query),
             'iCurrentPage' => request()->get('page', 1),
             'iFilter' => request()->get('filter', []),
-            'merchants' =>  $this->getMerchants(),
+            'merchants' => $this->getMerchants(),
 
             'iPayRegisters' => $this->getPayRegistry(),
             'iPayRegistersPager' => is_null($payQuery) ? 0 : $merchantService->payRegistryCount($payQuery),
@@ -54,7 +49,7 @@ class MerchantSettlementsController extends Controller
         $data = [
             'items' => $this->loadItems(),
         ];
-        if (1 == request()->get('page', 1)) {
+        if (request()->get('page', 1) == 1) {
             $data['pager'] = is_null($query) ? 0 : $merchantService->merchantBillingReportsCount($query);
         }
 
@@ -68,13 +63,9 @@ class MerchantSettlementsController extends Controller
 
         $restQuery = $this->makeRestQuery();
 
-        return  $merchantService->merchantBillingReports($restQuery);
-
+        return $merchantService->merchantBillingReports($restQuery);
     }
 
-    /**
-     * @return DataQuery
-     */
     protected function makeRestQuery(): DataQuery
     {
         $page = request()->get('page', 1);
@@ -107,7 +98,8 @@ class MerchantSettlementsController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'status' => 'integer|someone',
                 'legal_name' => 'string|someone',
@@ -135,24 +127,19 @@ class MerchantSettlementsController extends Controller
         $data = [
             'items' => $this->getPayRegistry(),
         ];
-        if (1 == request()->get('payRegistersPage', 1)) {
+        if (request()->get('payRegistersPage', 1) == 1) {
             $data['iPayRegistersPager'] = is_null($query) ? 0 : $merchantService->payRegistryCount($query);
         }
 
         return response()->json($data);
     }
 
-    /**
-     * @return DataQuery
-     */
     protected function makeQuery(): DataQuery
     {
         $page = request()->get('payRegistersPage', 1);
-        $restQuery = (new RestQuery())
+        return (new RestQuery())
             ->pageNumber($page, 30)
             ->addSort('id', 'desc');
-
-        return $restQuery;
     }
 
     /**
@@ -192,12 +179,13 @@ class MerchantSettlementsController extends Controller
     public function downloadPayRegistry(int $registryFileId, FileService $fileService): ?StreamedResponse
     {
         $registryDto = $fileService->getFiles([$registryFileId])->first();
-        if (!$registryDto) return null;
+        if (!$registryDto) {
+            return null;
+        }
 
         $domain = env('SHOWCASE_HOST');
         return response()->streamDownload(function () use ($registryDto, $domain) {
-            echo file_get_contents($domain.$registryDto->url);
+            echo file_get_contents($domain . $registryDto->url);
         }, $registryDto->original_name);
     }
-
 }

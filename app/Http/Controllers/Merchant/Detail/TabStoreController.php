@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
-
 class TabStoreController extends Controller
 {
     /**
@@ -81,7 +80,8 @@ class TabStoreController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'id' => 'integer|someone',
                 'name' => 'string|someone',
@@ -92,10 +92,6 @@ class TabStoreController extends Controller
         )->attributes();
     }
 
-    /**
-     * @param DataQuery $restQuery
-     * @return Collection
-     */
     protected function loadStores(DataQuery $restQuery): Collection
     {
         /** @var StoreService $storeService */
@@ -113,6 +109,6 @@ class TabStoreController extends Controller
                     'contact_name' => $contact ? $contact->name : 'N/A',
                     'contact_phone' => $contact ? $contact->phone : 'N/A',
                 ];
-            });
+        });
     }
 }
