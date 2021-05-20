@@ -23,11 +23,8 @@ class DeliveryServiceDetailController extends Controller
      * @param $id
      * @return mixed
      */
-    public function index(
-        $id,
-        ListsService $listsService,
-        ShipmentService $shipmentService
-    ) {
+    public function index($id, ListsService $listsService, ShipmentService $shipmentService)
+    {
         $deliveryServiceQuery = $listsService->newQuery();
         $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
         if (!$deliveryService) {

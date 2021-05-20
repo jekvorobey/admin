@@ -37,11 +37,8 @@ class BannerListController extends Controller
         ]);
     }
 
-    public function page(
-        Request $request,
-        BannerService $bannerService,
-        FileService $fileService
-    ) {
+    public function page(Request $request, BannerService $bannerService, FileService $fileService)
+    {
         $query = $this->makeQuery($request);
         $data = [
             'banners' => $this->loadItems($query, $bannerService, $fileService),
@@ -53,10 +50,8 @@ class BannerListController extends Controller
         return response()->json($data);
     }
 
-    public function widgetBanners(
-        BannerService $bannerService,
-        BannerTypeService $bannerTypeService
-    ) {
+    public function widgetBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
+    {
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::WIDGET_CODE);
@@ -73,10 +68,8 @@ class BannerListController extends Controller
         return response()->json($banners);
     }
 
-    public function productGroupBanners(
-        BannerService $bannerService,
-        BannerTypeService $bannerTypeService
-    ) {
+    public function productGroupBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
+    {
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::PRODUCT_GROUP_CODE);
@@ -122,11 +115,8 @@ class BannerListController extends Controller
      * @return BannerDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        BannerService $bannerService,
-        FileService $fileService
-    ) {
+    protected function loadItems(RestQuery $query, BannerService $bannerService, FileService $fileService)
+    {
         $banners = $bannerService->banners($query);
         $imagesIds = $banners->pluck('desktop_image_id')->all();
         $images = $fileService->getFiles($imagesIds)->keyBy('id');

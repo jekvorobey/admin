@@ -105,10 +105,8 @@ class ProductBadgesController extends Controller
      * Удалить продуктовый ярлык и его связи с товарами
      * @return Application|ResponseFactory|Response
      */
-    public function remove(
-        ContentBadgesService $badgesService,
-        ProductService $productService
-    ) {
+    public function remove(ContentBadgesService $badgesService, ProductService $productService)
+    {
         $data = $this->validate(request(), [
             'id' => 'required|integer',
         ]);

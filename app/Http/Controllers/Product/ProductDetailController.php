@@ -100,11 +100,8 @@ class ProductDetailController extends Controller
         ]);
     }
 
-    public function saveProduct(
-        int $id,
-        Request $request,
-        ProductService $productService
-    ) {
+    public function saveProduct(int $id, Request $request, ProductService $productService)
+    {
         $data = $this->validate($request, [
             'name' => 'string',
             'brand_id' => 'integer',
@@ -123,11 +120,8 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
-    public function saveProps(
-        int $id,
-        Request $request,
-        ProductService $productService
-    ) {
+    public function saveProps(int $id, Request $request, ProductService $productService)
+    {
         $data = $this->validate($request, [
             'props' => 'required|array',
         ]);
@@ -135,11 +129,8 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
-    public function saveOfferProps(
-        int $id,
-        Request $request,
-        OfferService $offerService
-    ) {
+    public function saveOfferProps(int $id, Request $request, OfferService $offerService)
+    {
         $data = $this->validate($request, [
             'props' => 'required',
         ]);

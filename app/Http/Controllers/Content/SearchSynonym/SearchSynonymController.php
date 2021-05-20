@@ -72,10 +72,8 @@ class SearchSynonymController extends Controller
     /**
      * @return Collection|SearchSynonymDto[]
      */
-    protected function loadItems(
-        RestQuery $query,
-        SearchSynonymService $searchSynonymService
-    ) {
+    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService)
+    {
         $synonyms = $searchSynonymService->synonyms($query);
 
         return $synonyms->map(function (SearchSynonymDto $synonymDto) {

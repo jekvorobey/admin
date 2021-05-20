@@ -38,10 +38,8 @@ class FrequentCategoryController extends Controller
     /**
      * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      */
-    public function editCategories(
-        Request $request,
-        FrequentCategoryService $frequentCategoryService
-    ) {
+    public function editCategories(Request $request, FrequentCategoryService $frequentCategoryService)
+    {
         $data = $request->validate([
             'items' => 'array|required',
             'items.*.id' => 'integer|required',

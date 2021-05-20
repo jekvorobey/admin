@@ -132,11 +132,8 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function usersByRoles(
-        UserService $userService,
-        OperatorService $operatorService,
-        RequestInitiator $user
-    ) {
+    public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
+    {
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
             'role_ids.' => 'integer',

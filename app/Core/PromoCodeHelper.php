@@ -48,10 +48,8 @@ class PromoCodeHelper
      *
      * @return Collection
      */
-    public static function getPromoCodes(
-        PromoCodeService $promoCodeService,
-        ?int $merchantId = null
-    ) {
+    public static function getPromoCodes(PromoCodeService $promoCodeService, ?int $merchantId = null)
+    {
         $promoCodeInDto = (new PromoCodeInDto());
         if ($merchantId) {
             $promoCodeInDto = $promoCodeInDto->merchant($merchantId);
@@ -65,10 +63,8 @@ class PromoCodeHelper
      * @param Collection $promoCodes
      * @return Collection
      */
-    public static function getReferrals(
-        Collection $referralIds,
-        CustomerService $customerService
-    ) {
+    public static function getReferrals(Collection $referralIds, CustomerService $customerService)
+    {
         $referrals = collect();
         if ($referralIds->isNotEmpty()) {
             $referrals = $customerService
@@ -87,11 +83,8 @@ class PromoCodeHelper
      * @param Collection $promoCodes
      * @return Collection
      */
-    public static function getUsers(
-        Collection $userIds,
-        UserService $userService,
-        ?Collection $referrals = null
-    ) {
+    public static function getUsers(Collection $userIds, UserService $userService, ?Collection $referrals = null)
+    {
         if ($referrals) {
             $userIds = $userIds->merge($referrals->pluck('user_id'));
         }
@@ -114,11 +107,8 @@ class PromoCodeHelper
      *
      * @return Collection
      */
-    public static function formatPromoCodes(
-        Collection $promoCodes,
-        Collection $referrals,
-        Collection $users
-    ) {
+    public static function formatPromoCodes(Collection $promoCodes, Collection $referrals, Collection $users)
+    {
         return $promoCodes
             ->sortByDesc('created_at')
             ->map(function (PromoCodeOutDto $promoCode) use ($users, $referrals) {

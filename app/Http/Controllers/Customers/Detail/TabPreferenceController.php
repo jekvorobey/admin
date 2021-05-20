@@ -135,10 +135,8 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
-    public function searchItem(
-        Request $request,
-        SearchService $searchService
-    ) {
+    public function searchItem(Request $request, SearchService $searchService)
+    {
         $query = $this->makeFavoriteProductQuery($request);
         $productSearchResult = $searchService->products($query);
         $data = [

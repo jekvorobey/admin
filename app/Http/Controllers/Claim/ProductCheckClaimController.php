@@ -63,11 +63,8 @@ class ProductCheckClaimController extends Controller
     /**
      * @return JsonResponse
      */
-    public function page(
-        Request $request,
-        ClaimService $claimService,
-        UserService $userService
-    ) {
+    public function page(Request $request, ClaimService $claimService, UserService $userService)
+    {
         $query = $this->prepareQuery($request, $claimService);
         $result = [
             'items' => $this->loadClaims($query, $userService),
@@ -81,11 +78,8 @@ class ProductCheckClaimController extends Controller
     /**
      * @return mixed
      */
-    public function detail(
-        int $id,
-        ClaimService $claimService,
-        UserService $userService
-    ) {
+    public function detail(int $id, ClaimService $claimService, UserService $userService)
+    {
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
         $claim = $this->loadClaims($query, $userService, true)->first();

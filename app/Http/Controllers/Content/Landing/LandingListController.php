@@ -12,10 +12,8 @@ use Illuminate\Support\Collection;
 
 class LandingListController extends Controller
 {
-    public function listPage(
-        Request $request,
-        LandingService $landingService
-    ) {
+    public function listPage(Request $request, LandingService $landingService)
+    {
         $this->title = 'Страницы';
         $query = $this->makeQuery($request);
 
@@ -29,10 +27,8 @@ class LandingListController extends Controller
         ]);
     }
 
-    public function page(
-        Request $request,
-        LandingService $landingService
-    ) {
+    public function page(Request $request, LandingService $landingService)
+    {
         $query = $this->makeQuery($request);
         $data = [
             'landings' => $this->loadItems($query, $landingService),
@@ -68,10 +64,8 @@ class LandingListController extends Controller
      * @return LandingDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        LandingService $landingService
-    ) {
+    protected function loadItems(RestQuery $query, LandingService $landingService)
+    {
         return $landingService->landings($query);
     }
 }

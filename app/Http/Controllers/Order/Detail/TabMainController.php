@@ -24,11 +24,8 @@ class TabMainController extends OrderDetailController
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function load(
-        int $id,
-        OrderService $orderService,
-        ListsService $listsService
-    ) {
+    public function load(int $id, OrderService $orderService, ListsService $listsService)
+    {
         $restQuery = $orderService
             ->newQuery()
             ->setFilter('id', $id)

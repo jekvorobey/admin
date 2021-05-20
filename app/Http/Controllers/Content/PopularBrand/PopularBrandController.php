@@ -22,10 +22,8 @@ class PopularBrandController extends Controller
      * @return mixed
      * @throws CmsException|PimException
      */
-    public function list(
-        PopularBrandService $popularBrandService,
-        BrandService $brandService
-    ) {
+    public function list(PopularBrandService $popularBrandService, BrandService $brandService)
+    {
         $popularBrands = $popularBrandService->popularBrands(
             (new RestQuery())
                 ->addSort('order_num')

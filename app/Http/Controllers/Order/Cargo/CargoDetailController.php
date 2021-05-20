@@ -107,11 +107,8 @@ class CargoDetailController extends Controller
     /**
      * Добавить отправление в груз
      */
-    public function addShipment2Cargo(
-        int $id,
-        Request $request,
-        ShipmentService $shipmentService
-    ): JsonResponse {
+    public function addShipment2Cargo(int $id, Request $request, ShipmentService $shipmentService): JsonResponse
+    {
         return $this->abstractAction($id, function () use ($id, $request, $shipmentService) {
             $data = $this->validate($request, [
                 'shipment_id' => ['required', 'array'],
@@ -130,11 +127,8 @@ class CargoDetailController extends Controller
     /**
      * Удалить отправление из груза
      */
-    public function deleteShipmentFromCargo(
-        int $id,
-        int $shipmentId,
-        ShipmentService $shipmentService
-    ): JsonResponse {
+    public function deleteShipmentFromCargo(int $id, int $shipmentId, ShipmentService $shipmentService): JsonResponse
+    {
         return $this->abstractAction($id, function () use ($shipmentId, $shipmentService) {
             $shipment = new ShipmentDto();
             $shipment->cargo_id = null;

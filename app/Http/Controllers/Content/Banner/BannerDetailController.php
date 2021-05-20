@@ -52,9 +52,8 @@ class BannerDetailController extends Controller
      * @return mixed
      * @throws CmsException
      */
-    public function createPage(
-        BannerTypeService $bannerTypeService
-    ) {
+    public function createPage(BannerTypeService $bannerTypeService)
+    {
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
         $bannerButtonTypes = $this->getBannerButtonTypes();
         $bannerButtonLocations = $this->getBannerButtonLocations();
@@ -168,10 +167,8 @@ class BannerDetailController extends Controller
      * @return BannerDto|null
      * @throws CmsException
      */
-    private function getBanner(
-        int $id,
-        BannerService $bannerService
-    ) {
+    private function getBanner(int $id, BannerService $bannerService)
+    {
         $query = $bannerService->newQuery();
         $query->setFilter('id', $id);
         $query->include('button');

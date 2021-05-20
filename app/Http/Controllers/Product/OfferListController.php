@@ -178,10 +178,8 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
-    public function changeSaleStatus(
-        Request $request,
-        OfferService $offerService
-    ) {
+    public function changeSaleStatus(Request $request, OfferService $offerService)
+    {
         $data = $request->validate([
             'offer_ids' => 'array|required',
             'offer_ids.*' => 'integer',
@@ -205,10 +203,8 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
-    public function deleteOffers(
-        Request $request,
-        OfferService $offerService
-    ) {
+    public function deleteOffers(Request $request, OfferService $offerService)
+    {
         $data = $request->validate([
             'offer_ids' => 'array|required',
             'offer_ids.*' => 'integer',
@@ -245,11 +241,8 @@ class OfferListController extends Controller
 //        return response('', 204);
 //    }
 
-    public function loadStoreAndQty(
-        Request $request,
-        StoreService $storeService,
-        StockService $stockService
-    ) {
+    public function loadStoreAndQty(Request $request, StoreService $storeService, StockService $stockService)
+    {
         $data = $request->validate([
             'merchant_id' => 'integer|required',
             'offer_id' => 'sometimes|integer|required',
@@ -273,11 +266,8 @@ class OfferListController extends Controller
         return response()->json($data);
     }
 
-    public function validateOffer(
-        Request $request,
-        ProductService $productService,
-        OfferService $offerService
-    ) {
+    public function validateOffer(Request $request, ProductService $productService, OfferService $offerService)
+    {
         $data = $request->validate([
             'product_id' => 'integer|required',
             'merchant_id' => 'integer|required',

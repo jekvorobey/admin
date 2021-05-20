@@ -23,10 +23,8 @@ class MassPromoProductsController extends Controller
      * @throws PimException
      * @throws CustomerException
      */
-    public function list(
-        CustomerService $customerService,
-        ReferralService $referralService
-    ) {
+    public function list(CustomerService $customerService, ReferralService $referralService)
+    {
         // Получить список массовых промо-товаров //
         $helper = resolve(TabPromoProductController::class);
         $promoProducts = $helper->loadPromotionProducts(null);
@@ -50,11 +48,8 @@ class MassPromoProductsController extends Controller
      * @return JsonResponse
      * @throws PimException
      */
-    public function editProduct(
-        Request $request,
-        ProductService $productService,
-        ReferralService $referralService
-    ) {
+    public function editProduct(Request $request, ProductService $productService, ReferralService $referralService)
+    {
         $helper = resolve(TabPromoProductController::class);
         return $helper
             ->save(null, $request, $productService, $referralService);

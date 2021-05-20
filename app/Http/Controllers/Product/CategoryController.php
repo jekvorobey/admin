@@ -11,9 +11,8 @@ use Pim\Services\CategoryService\CategoryService;
 
 class CategoryController extends Controller
 {
-    public function index(
-        CategoryService $categoryService
-    ) {
+    public function index(CategoryService $categoryService)
+    {
         $this->title = 'Категории';
 
         return $this->render('Product/CategoryList', [

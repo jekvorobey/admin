@@ -83,10 +83,8 @@ class ContentClaimController extends Controller
     /**
      * @return mixed
      */
-    public function create(
-        ContentClaimService $claimService,
-        MerchantService $merchantService
-    ) {
+    public function create(ContentClaimService $claimService, MerchantService $merchantService)
+    {
         $this->title = 'Создание заявки на производство контента';
 
         $claimMeta = $claimService->newQuery()
@@ -119,11 +117,8 @@ class ContentClaimController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function saveClaim(
-        Request $request,
-        RequestInitiator $user,
-        ContentClaimService $contentClaimService
-    ) {
+    public function saveClaim(Request $request, RequestInitiator $user, ContentClaimService $contentClaimService)
+    {
         $data = $this->validate($request, [
             'merchant_id' => 'required|integer',
             'type' => 'required|integer',
@@ -216,11 +211,8 @@ class ContentClaimController extends Controller
         ]);
     }
 
-    public function update(
-        int $id,
-        Request $request,
-        ContentClaimService $contentClaimService
-    ) {
+    public function update(int $id, Request $request, ContentClaimService $contentClaimService)
+    {
         $data = $this->validate($request, [
             'service_message' => 'sometimes|required|string',
             'status' => 'sometimes|required|integer',
@@ -235,10 +227,8 @@ class ContentClaimController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function changeStatuses(
-        Request $request,
-        ContentClaimService $contentClaimService
-    ) {
+    public function changeStatuses(Request $request, ContentClaimService $contentClaimService)
+    {
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
             'status' => 'required|integer',
@@ -251,10 +241,8 @@ class ContentClaimController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function deleteClaims(
-        Request $request,
-        ContentClaimService $contentClaimService
-    ) {
+    public function deleteClaims(Request $request, ContentClaimService $contentClaimService)
+    {
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
         ]);
@@ -267,10 +255,8 @@ class ContentClaimController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function loadProductsByMerchantId(
-        Request $request,
-        OfferService $offerService
-    ) {
+    public function loadProductsByMerchantId(Request $request, OfferService $offerService)
+    {
         $data = $this->validate($request, [
             'id' => 'required|integer',
         ]);
@@ -286,10 +272,8 @@ class ContentClaimController extends Controller
         ]);
     }
 
-    public function acceptanceAct(
-        int $id,
-        ContentClaimService $contentClaimService
-    ): StreamedResponse {
+    public function acceptanceAct(int $id, ContentClaimService $contentClaimService): StreamedResponse
+    {
 
         return $this->getDocumentResponse($contentClaimService->claimAcceptanceAct($id));
     }

@@ -36,11 +36,8 @@ class ProductGroupListController extends Controller
         ]);
     }
 
-    public function page(
-        Request $request,
-        ProductGroupService $productGroupService,
-        FileService $fileService
-    ) {
+    public function page(Request $request, ProductGroupService $productGroupService, FileService $fileService)
+    {
         $query = $this->makeQuery($request);
         $data = [
             'productGroups' => $this->loadItems($query, $productGroupService, $fileService),
@@ -89,11 +86,8 @@ class ProductGroupListController extends Controller
      * @return ProductGroupDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        ProductGroupService $productGroupService,
-        FileService $fileService
-    ) {
+    protected function loadItems(RestQuery $query, ProductGroupService $productGroupService, FileService $fileService)
+    {
         $productGroups = $productGroupService->productGroups($query);
         $photoIds = $productGroups->pluck('preview_photo_id')->all();
         $photos = $fileService->getFiles($photoIds)->keyBy('id');

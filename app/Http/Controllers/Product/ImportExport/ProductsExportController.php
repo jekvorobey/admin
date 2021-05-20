@@ -19,10 +19,8 @@ class ProductsExportController extends Controller
      *
      * @return JsonResponse
      */
-    public function exportByProductIds(
-        Request $request,
-        ProductsImportService $productsImportService
-    ) {
+    public function exportByProductIds(Request $request, ProductsImportService $productsImportService)
+    {
         $data = $this->validate($request, [
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',

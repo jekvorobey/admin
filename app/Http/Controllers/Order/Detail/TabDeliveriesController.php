@@ -24,12 +24,8 @@ class TabDeliveriesController extends OrderDetailController
      * @return JsonResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function load(
-        int $orderId,
-        int $deliveryId,
-        DeliveryService $deliveryService,
-        ListsService $listsService
-    ) {
+    public function load(int $orderId, int $deliveryId, DeliveryService $deliveryService, ListsService $listsService)
+    {
         $delivery = $deliveryService->delivery($deliveryId);
         if (!$delivery) {
             throw new NotFoundHttpException();
@@ -74,11 +70,8 @@ class TabDeliveriesController extends OrderDetailController
      * Обновить доставку
      * @throws \Exception
      */
-    public function save(
-        int $orderId,
-        int $deliveryId,
-        DeliveryService $deliveryService
-    ): JsonResponse {
+    public function save(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
+    {
         $requiredIfDeliveryAddressExist = function () {
             return count(array_filter(request()->get('delivery_address'))) > 0;
         };

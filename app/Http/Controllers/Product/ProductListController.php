@@ -77,11 +77,8 @@ class ProductListController extends Controller
         ]);
     }
 
-    public function page(
-        Request $request,
-        SearchService $searchService,
-        ShoppilotService $shoppilotService
-    ) {
+    public function page(Request $request, SearchService $searchService, ShoppilotService $shoppilotService)
+    {
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
 

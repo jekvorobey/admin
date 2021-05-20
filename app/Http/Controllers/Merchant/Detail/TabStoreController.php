@@ -36,10 +36,8 @@ class TabStoreController extends Controller
     /**
      * @throws \Exception
      */
-    protected function makeRestQuery(
-        Request $request,
-        int $merchantId
-    ): DataQuery {
+    protected function makeRestQuery(Request $request, int $merchantId): DataQuery
+    {
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())->pageNumber($page, 10)
             ->setFilter('merchant_id', $merchantId);

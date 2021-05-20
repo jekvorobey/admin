@@ -30,11 +30,8 @@ class CargoListController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function index(
-        Request $request,
-        CargoService $cargoService,
-        MerchantService $merchantService
-    ) {
+    public function index(Request $request, CargoService $cargoService, MerchantService $merchantService)
+    {
         $this->title = 'Грузы';
         $this->loadCargoStatuses = true;
         $this->loadDeliveryServices = true;
@@ -56,10 +53,8 @@ class CargoListController extends Controller
     /**
      * @throws \Exception
      */
-    public function page(
-        Request $request,
-        CargoService $cargoService
-    ): JsonResponse {
+    public function page(Request $request, CargoService $cargoService): JsonResponse
+    {
         $restQuery = $this->makeRestQuery($cargoService, $request);
         $cargos = $this->loadCargos($restQuery, $cargoService);
         $result = [

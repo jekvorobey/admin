@@ -51,10 +51,8 @@ class ProductGroupDetailController extends Controller
         ]);
     }
 
-    public function createPage(
-        ProductGroupTypeService $productGroupTypeService,
-        CategoryService $categoryService
-    ) {
+    public function createPage(ProductGroupTypeService $productGroupTypeService, CategoryService $categoryService)
+    {
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
 
@@ -138,10 +136,8 @@ class ProductGroupDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function getFilters(
-        BrandService $brandService,
-        ProductService $productService
-    ) {
+    public function getFilters(BrandService $brandService, ProductService $productService)
+    {
         $brandsFilter = $brandService->filters();
         $appliedFilters = [
             'brand' => $brandsFilter->pluck('code'),
@@ -153,10 +149,8 @@ class ProductGroupDetailController extends Controller
         return response()->json($result);
     }
 
-    public function getFiltersByCategory(
-        Request $request,
-        ProductService $productService
-    ) {
+    public function getFiltersByCategory(Request $request, ProductService $productService)
+    {
         $appliedFilters = [
             'category' => $request->get('category', ''),
         ];
@@ -165,10 +159,8 @@ class ProductGroupDetailController extends Controller
         return response()->json($filters);
     }
 
-    public function getProducts(
-        Request $request,
-        ProductService $productService
-    ) {
+    public function getProducts(Request $request, ProductService $productService)
+    {
         $validatedData = $request->validate([
             'id' => 'array',
             'vendor_code' => 'string',

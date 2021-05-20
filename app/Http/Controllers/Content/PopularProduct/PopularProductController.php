@@ -22,10 +22,8 @@ class PopularProductController extends Controller
      * @return mixed
      * @throws CmsException|PimException
      */
-    public function list(
-        PopularProductService $popularProductService,
-        ProductService $productService
-    ) {
+    public function list(PopularProductService $popularProductService, ProductService $productService)
+    {
         $popularProducts = $popularProductService->popularProducts(
             (new RestQuery())
                 ->addSort('weight', 'desc')

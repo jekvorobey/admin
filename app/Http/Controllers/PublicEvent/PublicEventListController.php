@@ -11,11 +11,8 @@ use Pim\Services\ShoppilotService\ShoppilotService;
 
 class PublicEventListController extends Controller
 {
-    public function list(
-        Request $request,
-        PublicEventService $publicEventService,
-        ShoppilotService $shoppilotService
-    ) {
+    public function list(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
+    {
         $this->loadPublicEventStatus = true;
         $this->loadPublicEventSprintStatus = true;
 
@@ -45,11 +42,8 @@ class PublicEventListController extends Controller
         ]);
     }
 
-    public function page(
-        Request $request,
-        PublicEventService $publicEventService,
-        ShoppilotService $shoppilotService
-    ) {
+    public function page(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
+    {
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
 

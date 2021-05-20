@@ -17,10 +17,8 @@ class LandingDetailController extends Controller
      * @return mixed
      * @throws CmsException
      */
-    public function updatePage(
-        $id,
-        LandingService $landingService
-    ) {
+    public function updatePage($id, LandingService $landingService)
+    {
         $landing = $this->getLanding($id, $landingService);
         $widgets = $this->getWidgets($landingService);
 
@@ -98,10 +96,8 @@ class LandingDetailController extends Controller
      * @return LandingDto|null
      * @throws CmsException
      */
-    private function getLanding(
-        int $id,
-        LandingService $landingService
-    ) {
+    private function getLanding(int $id, LandingService $landingService)
+    {
         $query = $landingService->newQuery()->setFilter('id', $id);
         return $landingService->landings($query)->first();
     }

@@ -24,10 +24,8 @@ class DeliveryServiceListController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function index(
-        Request $request,
-        ListsService $listsService
-    ) {
+    public function index(Request $request, ListsService $listsService)
+    {
         $this->title = 'Логистические операторы';
         $restQuery = $this->makeRestQuery($listsService, true);
         $pager = $listsService->deliveryServicesCount($restQuery);
