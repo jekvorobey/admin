@@ -70,7 +70,7 @@ class TabBonusController extends Controller
         $data['customer_id'] = $id;
         $statuses = array_keys(CustomerBonusDto::statusesNames());
         if (!in_array($data['status'], $statuses)) {
-            throw new BadRequestHttpException("Некорректный статус");
+            throw new BadRequestHttpException('Некорректный статус');
         }
 
         $customerBonusDto = new CustomerBonusDto($data);

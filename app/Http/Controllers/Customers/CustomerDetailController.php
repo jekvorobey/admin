@@ -245,7 +245,7 @@ class CustomerDetailController extends Controller
             if ($user['phone'] && $user['phone'] != $userDto->phone) {
                 $count = $userService->count((new RestQuery())->setFilter('phone', $user['phone']));
                 if ($count['total'] > 0) {
-                    throw new BadRequestHttpException("Пользователь с таким телефоном уже существует");
+                    throw new BadRequestHttpException('Пользователь с таким телефоном уже существует');
                 }
             }
 
@@ -253,7 +253,7 @@ class CustomerDetailController extends Controller
             if ($userDto->hasPassword()) {
                 if (!$user['phone']) {
                     throw new BadRequestHttpException(
-                        "Невозможно удалить телефон. Он используется в качестве логина"
+                        'Невозможно удалить телефон. Он используется в качестве логина'
                     );
                 } else {
                     $user['login'] = $user['phone'];
@@ -265,7 +265,7 @@ class CustomerDetailController extends Controller
             if ($user['email'] != $userDto->email) {
                 $count = $userService->count((new RestQuery())->setFilter('email', $user['email']));
                 if ($count['total'] > 0) {
-                    throw new BadRequestHttpException("Пользователь с такой почтой уже существует");
+                    throw new BadRequestHttpException('Пользователь с такой почтой уже существует');
                 }
             }
         }

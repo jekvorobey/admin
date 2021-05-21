@@ -49,7 +49,7 @@ class PropertiesController extends Controller
     {
         $productProperty = $this->getPropData($propCode);
 
-        $this->title = "Редактирование товарного атрибута";
+        $this->title = 'Редактирование товарного атрибута';
         return $this->render('Product/PropertyDetail', [
             'iProperty' => $productProperty,
             'iCategories' => $this->getCategoriesData(),
@@ -64,7 +64,7 @@ class PropertiesController extends Controller
      */
     public function create()
     {
-        $this->title = "Создание товарного атрибута";
+        $this->title = 'Создание товарного атрибута';
         return $this->render('Product/PropertyDetail', [
             'iCategories' => $this->getCategoriesData(),
             'property_types' => PropertyDto::getTypes(),

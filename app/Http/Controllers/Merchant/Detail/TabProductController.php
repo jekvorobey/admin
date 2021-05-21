@@ -147,8 +147,8 @@ class TabProductController extends Controller
                     'name' => $offer->product->name,
                 ],
                 'sale_status' => OfferSaleStatus::statusById($offer->sale_status),
-                'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : "Нет данных",
-                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id] : "Нет данных",
+                'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : 'Нет данных',
+                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id] : 'Нет данных',
                 'created_at' => $offer->created_at,
             ];
         })->all();

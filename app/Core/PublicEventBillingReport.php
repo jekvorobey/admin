@@ -68,7 +68,7 @@ class PublicEventBillingReport
             ['миллиард','миллиарда','миллиардов',0],
         ];
         //
-        [$rub, $kop] = explode('.', sprintf("%015.2f", floatval($num)));
+        [$rub, $kop] = explode('.', sprintf('%015.2f', floatval($num)));
         $out = [];
         if (intval($rub) > 0) {
             foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols

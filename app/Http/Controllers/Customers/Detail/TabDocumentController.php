@@ -141,16 +141,16 @@ class TabDocumentController extends Controller
         !$file ? $attachment = null : $attachment = $file->absoluteUrl();
 
         $arrayData = [
-            "u_first_name" => $user->first_name,
-            "u_mid_name" => $user->middle_name,
-            "d_id" => $document->id,
-            "d_period_since" => $document->period_since,
-            "d_period_to" => $document->period_to,
-            "d_creation_date" => $document->updated_at,
-            "d_amount_reward" => $document->amount_reward,
-            "d_type" => $document->typeName($document->type),
-            "d_status" => $document->statusName($document->status),
-            "file_url" => $attachment,
+            'u_first_name' => $user->first_name,
+            'u_mid_name' => $user->middle_name,
+            'd_id' => $document->id,
+            'd_period_since' => $document->period_since,
+            'd_period_to' => $document->period_to,
+            'd_creation_date' => $document->updated_at,
+            'd_amount_reward' => $document->amount_reward,
+            'd_type' => $document->typeName($document->type),
+            'd_status' => $document->statusName($document->status),
+            'file_url' => $attachment,
         ];
 
         $message = new SendReferralDocumentMailDto();

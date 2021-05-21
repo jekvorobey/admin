@@ -104,7 +104,7 @@ class PublicEventTicketsController extends Controller
             $content .= join($separator, [
                 $ticket['id'],
                 $ticket['order']['number'],
-                $ticket['last_name'] . " " . $ticket['first_name'] . " " . $ticket['middle_name'],
+                $ticket['last_name'] . ' ' . $ticket['first_name'] . ' ' . $ticket['middle_name'],
                 $ticket['phone'],
                 $ticket['email'],
                 $ticket['profession'],
