@@ -140,7 +140,6 @@ class DiscountController extends Controller
     }
 
     /**
-     *
      * @return mixed
      * @throws PimException
      */
@@ -189,7 +188,6 @@ class DiscountController extends Controller
     }
 
     /**
-     *
      * @return JsonResponse
      */
     public function discountOrdersDetail(int $id, Request $request)
@@ -221,7 +219,6 @@ class DiscountController extends Controller
     }
 
     /**
-     *
      * @return JsonResponse
      */
     public function status(Request $request, DiscountService $discountService)
@@ -238,7 +235,6 @@ class DiscountController extends Controller
     }
 
     /**
-     *
      * @return JsonResponse
      */
     public function delete(Request $request, DiscountService $discountService)

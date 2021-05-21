@@ -40,7 +40,6 @@ class BonusController extends Controller
     }
 
     /**
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request)
@@ -154,7 +153,6 @@ class BonusController extends Controller
     }
 
     /**
-     *
      * @return \Illuminate\Http\Response
      */
     public function changeProductLimit(Request $request)

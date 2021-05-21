@@ -84,7 +84,6 @@ class DiscountHelper
 
     /**
      * @param array $params
-     *
      */
     public static function load(array $params, DiscountService $discountService): Collection
     {
@@ -127,7 +126,6 @@ class DiscountHelper
     }
 
     /**
-     *
      * @return DiscountDto
      */
     public static function validate(Request $request)
@@ -409,7 +407,6 @@ class DiscountHelper
     }
 
     /**
-     *
      * @return array
      */
     public static function getDefaultPager(Request $request, int $perPage = 20)
@@ -459,7 +456,6 @@ class DiscountHelper
     }
 
     /**
-     *
      * @return array
      * @throws \Pim\Core\PimException
      */
@@ -582,7 +578,6 @@ class DiscountHelper
     }
 
     /**
-     *
      * @return array
      */
     public static function getCustomerIdsByFullName(string $fullName)

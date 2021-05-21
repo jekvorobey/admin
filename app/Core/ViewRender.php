@@ -388,7 +388,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadBonusTypes(bool $load = false): self
@@ -423,7 +422,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadCustomerBonusStatus(bool $load = false): self
@@ -441,7 +439,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadOrderStatuses(bool $load = false): self
@@ -472,7 +469,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadPaymentStatuses(bool $load = false): self
@@ -498,7 +494,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadPaymentMethods(bool $load = false): self
@@ -519,7 +514,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadDeliveryStatuses(bool $load = false): self
@@ -556,7 +550,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadShipmentStatuses(bool $load = false): self
@@ -593,7 +586,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadCargoStatuses(bool $load = false): self
@@ -616,7 +608,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadDeliveryTypes(bool $load = false): self
@@ -638,7 +629,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadDeliveryMethods(bool $load = false): self
@@ -660,7 +650,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadDeliveryServices(bool $load = false): self
@@ -720,7 +709,6 @@ class ViewRender
     }
 
     /**
-     *
      * @return $this
      */
     public function loadBasketTypes(bool $load = false): self

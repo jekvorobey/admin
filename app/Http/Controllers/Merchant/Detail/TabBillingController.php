@@ -21,7 +21,6 @@ use Illuminate\Support\Carbon;
 class TabBillingController extends Controller
 {
     /**
-     *
      * @return JsonResponse
      */
     public function load(int $merchantId, MerchantService $merchantService)

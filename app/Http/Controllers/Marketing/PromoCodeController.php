@@ -202,7 +202,6 @@ class PromoCodeController extends Controller
     }
 
     /**
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request, PromoCodeService $promoCodeService, RequestInitiator $requestInitiator)

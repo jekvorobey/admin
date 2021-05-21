@@ -174,7 +174,6 @@ class ChatsController extends Controller
 
     /**
      * Привязываем пользователя к чату (LiveTex)
-     *
      */
     public function updateChatUser(CommunicationService $communicationService)
     {

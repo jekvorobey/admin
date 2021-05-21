@@ -87,7 +87,6 @@ class TabOperatorController extends Controller
      * Возвращает
      * true если нужно сделать выборку
      * false если выборку делать не нужно (например если какой-то фильтр не дал результата)
-     *
      */
     protected function getFilter(RestQuery $restQuery): bool
     {

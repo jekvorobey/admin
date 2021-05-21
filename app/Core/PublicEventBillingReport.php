@@ -124,7 +124,6 @@ class PublicEventBillingReport
     }
 
     /**
-     *
      * @param $merchant
      * @throws PhpSpreadsheetException
      */

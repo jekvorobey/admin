@@ -67,7 +67,6 @@
         <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
         <exclude name="SlevomatCodingStandard.Functions.FunctionLength"/>
         <exclude name="SlevomatCodingStandard.Files.FunctionLength"/>
-        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing"/>
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment"/>
 
         <!-- Ненужные правила -->
@@ -115,6 +114,7 @@
 
         <exclude name="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
         <exclude name="SlevomatCodingStandard.Operators.DisallowIncrementAndDecrementOperators"/>
+        <exclude name="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators"/>
 
         <exclude name="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
     </rule>
@@ -216,5 +216,14 @@
 
     <rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration">
         <exclude-pattern>database/factories/*</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDescriptionAndAnnotations"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenDifferentAnnotationsTypes"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectLinesCountBetweenAnnotationsGroups"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectAnnotationsGroup"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectOrderOfAnnotationsGroup"/>
+        <exclude name="SlevomatCodingStandard.Commenting.DocCommentSpacing.IncorrectOrderOfAnnotationsInGroup"/>
     </rule>
 </ruleset>
