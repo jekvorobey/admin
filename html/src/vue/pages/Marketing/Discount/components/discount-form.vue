@@ -206,6 +206,8 @@
     import CategoriesSearch from '../../components/categories-search.vue';
     import Services from '../../../../../scripts/services/services';
     import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
 
     moment.locale('ru');
 
