@@ -591,7 +591,8 @@ export default {
       }
     },
     setMonthlyPeriod() {
-      if (this.monthly) {
+      if (this.monthly && this.form.billing_cycle && this.form.billing_cycle !== 0) {
+
         this.form.billing_cycle = 0;
         this.saveBillingCycle();
       }
