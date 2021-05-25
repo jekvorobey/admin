@@ -158,7 +158,7 @@ class TabBillingController extends Controller
         $reportDto = $fileService->getFiles([$reportFileId])->first();
         if (!$reportDto) return null;
 
-        $domain = env('SHOWCASE_HOST');
+        $domain = config('common-lib.showcaseHost');
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain.$reportDto->url);
         }, $reportDto->original_name);
@@ -173,7 +173,7 @@ class TabBillingController extends Controller
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
     {
         $reportDto = $fileService->getFiles([$fileId])->first();
-        $domain = env('SHOWCASE_HOST');
+        $domain = config('common-lib.showcaseHost');
 
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain.$reportDto->url);
