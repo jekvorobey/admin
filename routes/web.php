@@ -849,7 +849,8 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('whitelist')->group(function () {
                 Route::get('', 'CustomerWhitelistController@index')->name('customers.whitelist');
-                Route::post('', 'CustomerWhitelistController@import')->name('customers.whitelist.import');
+                Route::post('import', 'CustomerWhitelistController@import')->name('customers.whitelist.import');
+                Route::get('export', 'CustomerWhitelistController@export')->name('customers.whitelist.export');
             });
         });
     });

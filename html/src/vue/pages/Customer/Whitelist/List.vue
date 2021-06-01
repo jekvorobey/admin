@@ -5,8 +5,11 @@
                 <file-input @uploaded="(data) => onFileUpload(data)"
                             class="mb-3"
                             destination="whitelist"
-                            label="Загрузить файл вайтлиста"
+                            label="Загрузить вайтлист"
                 ></file-input>
+                <button class="btn btn-secondary" @click="downloadWhitelistLink()">
+                    Выгрузить вайтлист
+                </button>
             </div>
         </div>
     </layout-main>
@@ -30,6 +33,9 @@ export default {
             }).finally(() => {
                 Services.hideLoader();
             });
+        },
+        downloadWhitelistLink() {
+            window.open(this.getRoute('customers.whitelist.export'));
         },
     },
 };
