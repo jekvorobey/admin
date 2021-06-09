@@ -1,7 +1,13 @@
 <template>
   <div>
-    <!--
-    <h4>Настройки</h4>
+
+    <h4>Биллинговый период</h4>
+    <span class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" id="monthly-merchant_cycle" key="monthly" v-model="monthly">
+        <label class="custom-control-label" for="monthly-merchant_cycle"></label>
+        <label for="monthly-merchant_cycle">Календарный месяц</label>
+    </span>
+    <template v-if="!monthly">
     <div class="row">
       <v-input
           v-model="form.billing_cycle"
@@ -9,7 +15,7 @@
           type="number"
           min="1"
           step="1"
-          help="период указывается в днях">Биллинговый период
+          help="период указывается в днях">Произвольный период
       </v-input>
 
       <div class="col-12">
@@ -17,9 +23,9 @@
         </button>
       </div>
     </div>
-
+    </template>
     <hr>
-    -->
+
     <h4>Отчеты</h4>
     <table>
       <tr>
@@ -194,10 +200,10 @@
       <tbody>
       <tr v-for="billingOperation in billingList">
         <td v-if="billingOperation.order_id">
-          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.created_at }}</a>
+          <a  :href="$store.getters.getRoute('orders.detail', {id:billingOperation.order_id})">{{ billingOperation.status_at }}</a>
         </td>
         <td v-else>
-          {{ billingOperation.created_at }}
+          {{ billingOperation.status_at }}
         </td>
         <td v-if="billingOperation.offer_id">
           <a :href="$store.getters.getRoute('offers.detail', {id:billingOperation.offer_id})">{{ billingOperation.name }}</a>
@@ -379,6 +385,7 @@ export default {
       form: {
         billing_cycle: null,
       },
+      monthly: true,
       billing: {
         period: null,
       },
@@ -583,6 +590,13 @@ export default {
         this.applyFilter();
       }
     },
+    setMonthlyPeriod() {
+      if (this.monthly && this.form.billing_cycle && this.form.billing_cycle !== 0) {
+
+        this.form.billing_cycle = 0;
+        this.saveBillingCycle();
+      }
+    },
     saveBillingCycle() {
       Services.showLoader();
       Services.net().put(this.getRoute('merchant.detail.billing.billing_cycle',
@@ -649,7 +663,10 @@ export default {
 
     Services.net().get(this.getRoute('merchant.detail.billing', {id: this.model.id}))
         .then(data => {
-          this.form.billing_cycle = data.billing_cycle;
+          if (data.billing_cycle) {
+            this.form.billing_cycle = data.billing_cycle;
+            this.monthly = false;
+          }
         })
         .finally(() => {
           Services.hideLoader();
@@ -677,6 +694,9 @@ export default {
   watch: {
     currentPage() {
       this.loadPage();
+    },
+    monthly: function () {
+      this.setMonthlyPeriod();
     }
   }
 };

@@ -29,7 +29,7 @@ class TabBillingController extends Controller
     public function load(int $merchantId, MerchantService $merchantService)
     {
         $settings = $merchantService->getSetting($merchantId, MerchantSettingDto::BILLING_CYCLE)->first();
-        $billingCycle = $settings ? $settings->value : MerchantSettingDto::DEFAULT_BILLING_CYCLE;
+        $billingCycle = $settings ? $settings->value : null;
         return response()->json([
             'billing_cycle' => (int)$billingCycle,
         ]);
@@ -44,7 +44,7 @@ class TabBillingController extends Controller
     public function billingCycle(int $merchantId, MerchantService $merchantService)
     {
         $data = $this->validate(request(),[
-            'billing_cycle' => 'integer|gt:0'
+            'billing_cycle' => 'integer'
         ]);
         $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
         return response('', 204);
@@ -158,7 +158,7 @@ class TabBillingController extends Controller
         $reportDto = $fileService->getFiles([$reportFileId])->first();
         if (!$reportDto) return null;
 
-        $domain = env('SHOWCASE_HOST');
+        $domain = config('common-lib.showcaseHost');
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain.$reportDto->url);
         }, $reportDto->original_name);
@@ -173,7 +173,7 @@ class TabBillingController extends Controller
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
     {
         $reportDto = $fileService->getFiles([$fileId])->first();
-        $domain = env('SHOWCASE_HOST');
+        $domain = config('common-lib.showcaseHost');
 
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain.$reportDto->url);

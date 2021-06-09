@@ -11,9 +11,9 @@
                     <b-dropdown-item-button>
                         Пометить, как проблемный
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
+                    <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
                         Оплатить
-                    </b-dropdown-item-button>
+                    </b-dropdown-item-button>-->
                     <b-dropdown-item-button v-if="!isNotPaid">
                         Вернуть деньги
                     </b-dropdown-item-button>

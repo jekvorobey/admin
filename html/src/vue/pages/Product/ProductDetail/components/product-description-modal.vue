@@ -1,34 +1,26 @@
 <template>
-    <transition name="modal">
-        <modal :close="closeModal" type="wide" v-if="isModalOpen(modalName)">
-            <div slot="header">
-                {{ title }}
-            </div>
-            <div slot="body">
-                <p v-if="this.text_field === 'how_to'">
-                    Используйте разделитель <b>|</b> для описания пунктов
-                    Способов применения.<br><br>
-                    Пример: <mark>Нанести|Подождать 5 минут|Смыть</mark>
-                </p>
-
-                <ckeditor
-                    v-if="this.text_field === 'description'"
-                    class="custom-width"
-                    id="description"
-                    type="classic"
-                    v-model="v.form[text_field].$model" />
-
-                <textarea v-else v-model="$v.form[text_field].$model"
-                          class="form-control" rows="14">
-                </textarea>
-                <button @click="save"
-                        class="btn btn-dark mt-3"
-                        :disabled="!$v.form.$anyDirty || this.form.description === ''">
-                    Сохранить
-                </button>
-            </div>
-        </modal>
-    </transition>
+  <transition name="modal">
+    <modal :close="closeModal" type="wide" v-if="isModalOpen(modalName)">
+      <div slot="header">
+        {{ title }}
+      </div>
+      <div slot="body">
+        <p v-if="this.text_field === 'how_to'">
+          Используйте разделитель <b>|</b> для описания пунктов
+          Способов применения.<br><br>
+          Пример: <mark>Нанести|Подождать 5 минут|Смыть</mark>
+        </p>
+        <textarea v-model="$v.form[text_field].$model"
+                  class="form-control" rows="14">
+        </textarea>
+        <button @click="save"
+                class="btn btn-dark mt-3"
+                :disabled="!$v.form.$anyDirty || this.form.description === ''">
+            Сохранить
+        </button>
+      </div>
+    </modal>
+  </transition>
 </template>
 
 <script>
