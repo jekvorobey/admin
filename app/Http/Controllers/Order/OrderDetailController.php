@@ -99,7 +99,7 @@ class OrderDetailController extends Controller
                 continue;
             }
 
-            if ($item->status == self::READY_TO_SHIP) {
+            if ($item->status >= self::READY_TO_SHIP) {
                 $readyToShipItemsCount += 1;
             }
 

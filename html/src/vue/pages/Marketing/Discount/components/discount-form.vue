@@ -131,16 +131,27 @@
         <div class="row">
             <div class="col-3 mb-3">
                 <label for="start_date">Дата старта</label>
-                <b-form-input id="start_date" v-model="discount.start_date" type="date"></b-form-input>
+                <date-picker
+                    class="w-100"
+                    id="start_date"
+                    v-model="discount.start_date"
+                    format="DD.MM.YYYY"
+                    value-type="YYYY-MM-DD"
+                    input-class="form-control form-control-sm"
+                />
             </div>
             <div class="col-3">
                 <label for="end_date">Дата окончания</label>
-                <b-form-input id="end_date"
-                              v-model="discount.end_date"
-                              type="date"
-                              :state="checkEndDate"
-                              @change="initErrorEndDate"
-                ></b-form-input>
+                <date-picker
+                    class="w-100"
+                    id="end_date"
+                    v-model="discount.end_date"
+                    value-type="YYYY-MM-DD"
+                    format="DD.MM.YYYY"
+                    :state="checkEndDate"
+                    @change="initErrorEndDate"
+                    input-class="form-control form-control-sm"
+                />
                 <b-form-invalid-feedback id="end_date-feedback">
                     {{ discountErrors.end_date }}
                 </b-form-invalid-feedback>
@@ -194,6 +205,9 @@
     import Conditions from './conditions.vue';
     import CategoriesSearch from '../../components/categories-search.vue';
     import Services from '../../../../../scripts/services/services';
+    import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
 
     moment.locale('ru');
 
@@ -204,6 +218,7 @@
             BrandsSearch,
             Conditions,
             CategoriesSearch,
+            DatePicker,
         },
         props: {
             iDiscount: Object,

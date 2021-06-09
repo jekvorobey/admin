@@ -58,7 +58,7 @@ class CustomerListController extends Controller
             'created_between' => 'nullable',
             'isReferral' => 'required|boolean',
             'page' => 'nullable',
-            'role' => 'numeric',
+            'role' => 'nullable',
         ]);
 
         $restQueryCustomer = new RestQuery();
@@ -76,7 +76,10 @@ class CustomerListController extends Controller
         }
 
         $restQueryUser = new RestQuery();
-        $restQueryUser->setFilter('id', $customers->pluck('user_id')->all());
+
+        $customerIds = isset($filter['status']) && $filter['status'] ? $customers->pluck('user_id')->all() : [];
+        $restQueryUser->setFilter('id', $customerIds);
+
         if (isset($filter['phone']) && $filter['phone']) {
             $restQueryUser->setFilter('phone', phone_format($filter['phone']));
         }
@@ -108,10 +111,13 @@ class CustomerListController extends Controller
 
         $users = $userService->users($restQueryUser)->keyBy('id');
 
-        $result = $customers->map(function (CustomerDto $customer) use ($users) {
+        $result = $customers->map(function (CustomerDto $customer) use ($users, $filter) {
             /** @var UserDto $user */
             $user = $users->get($customer->user_id);
             if (!$user) {
+                return false;
+            }
+            if (!empty($filter['gender']) && $filter['gender'] != $customer->gender) {
                 return false;
             }
 
