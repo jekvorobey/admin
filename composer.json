@@ -73,7 +73,8 @@
     "iwengo/ibt-store-lib": "dev-master-ylab as dev-master",
     "laravel/framework": "5.8.*",
     "laravel/tinker": "^1.0",
-    "phpoffice/phpspreadsheet": "^1.12"
+    "phpoffice/phpspreadsheet": "^1.12",
+    "sentry/sentry-laravel": "^2.7"
   },
   "require-dev": {
     "barryvdh/laravel-ide-helper": "^2.6",
