@@ -58,6 +58,7 @@
     "ext-json": "*",
     "barryvdh/laravel-debugbar": "3.4",
     "box/spout": "^3.1",
+    "cubesystems/laravel-health-check": "^1.2",
     "fideloper/proxy": "^4.0",
     "iwengo/ibt-catalog-import-lib": "dev-master-ylab as dev-master",
     "iwengo/ibt-cm-lib": "dev-master-ylab as dev-master",
