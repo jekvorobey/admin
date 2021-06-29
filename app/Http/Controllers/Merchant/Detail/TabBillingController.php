@@ -38,7 +38,7 @@ class TabBillingController extends Controller
      */
     public function billingCycle(int $merchantId, MerchantService $merchantService)
     {
-        $data = $this->validate(request(),[
+        $data = $this->validate(request(), [
             'billing_cycle' => 'integer',
         ]);
         $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
