@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Communications;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\Communication\CommunicationStatusDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
@@ -10,8 +9,10 @@ use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
 
 class StatusController extends Controller
 {
-    public function index(CommunicationService $communicationService, CommunicationStatusService $communicationStatusService)
-    {
+    public function index(
+        CommunicationService $communicationService,
+        CommunicationStatusService $communicationStatusService
+    ) {
         $this->title = 'Статусы';
         $channels = $communicationService->channels()->keyBy('id');
         $statuses = $communicationStatusService->statuses()->keyBy('id');
@@ -27,8 +28,8 @@ class StatusController extends Controller
         $rStatus = request('status');
         $status = new CommunicationStatusDto();
         $status->name = $rStatus['name'];
-        $status->active = (bool)$rStatus['active'];
-        $status->default = (bool)$rStatus['default'];
+        $status->active = (bool) $rStatus['active'];
+        $status->default = (bool) $rStatus['default'];
         $status->channel_id = $rStatus['channel_id'];
 
         if ($rStatus['id']) {

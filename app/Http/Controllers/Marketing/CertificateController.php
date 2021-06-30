@@ -8,7 +8,7 @@ use Pim\Services\CertificateService\CertificateService;
 
 class CertificateController extends Controller
 {
-    const PER_PAGE = 15;
+    public const PER_PAGE = 15;
 
     private function service(): CertificateService
     {
@@ -38,21 +38,27 @@ class CertificateController extends Controller
         $tab = $request->get('tab', 'nominals');
 
         return $this->render('Marketing/Certificate/Main', $this->getTab($tab, $request) + [
-            'kpis' => $this->service()->kpi()
+            'kpis' => $this->service()->kpi(),
         ]);
     }
 
     public function getTab(string $tab, Request $request): array
     {
-        switch ($tab)
-        {
-            case 'nominals': return $this->getTabNominals($request);
-            case 'designs': return $this->getTabDesigns($request);
-            case 'cards': return $this->getTabCards($request);
-            case 'content': return $this->getTabContent($request);
-            case 'reports': return $this->getTabReports($request);
-            case 'logs': return $this->getTabLogs($request);
-            default: return [];
+        switch ($tab) {
+            case 'nominals':
+                return $this->getTabNominals($request);
+            case 'designs':
+                return $this->getTabDesigns($request);
+            case 'cards':
+                return $this->getTabCards($request);
+            case 'content':
+                return $this->getTabContent($request);
+            case 'reports':
+                return $this->getTabReports($request);
+            case 'logs':
+                return $this->getTabLogs($request);
+            default:
+                return [];
         }
     }
 
@@ -66,7 +72,7 @@ class CertificateController extends Controller
                 'page' => $page,
                 'pager' => $query->nominalsCount(),
                 'items' => $query->nominals(),
-            ]
+            ],
         ];
     }
 
@@ -80,14 +86,14 @@ class CertificateController extends Controller
                 'page' => $page,
                 'pager' => $query->designsCount(),
                 'items' => $query->designs(),
-            ]
+            ],
         ];
     }
 
-    private function getTabContent(Request $request): array
+    private function getTabContent(): array
     {
         return [
-            'content' => $this->service()->options()
+            'content' => $this->service()->options(),
         ];
     }
 
@@ -104,7 +110,7 @@ class CertificateController extends Controller
                 'page' => $page,
                 'pager' => $query->reportsCount(),
                 'items' => $query->reports(),
-            ]
+            ],
         ];
     }
 
@@ -127,7 +133,7 @@ class CertificateController extends Controller
                 'page' => $page,
                 'pager' => $query->transactionItemsCount(),
                 'items' => $query->transactionItems(),
-            ]
+            ],
         ];
     }
 
@@ -143,13 +149,17 @@ class CertificateController extends Controller
 
         $filter = (array) $request->get('filter');
 
-        foreach ($filter as $key => $val)
-        {
-            switch ($key)
-            {
-                case 'customer_or_recipient_id': $query->customerOrRecipientId($val); break;
-                case 'customer_id': $query->customerId($val); break;
-                case 'recipient_id': $query->recipientId($val); break;
+        foreach ($filter as $key => $val) {
+            switch ($key) {
+                case 'customer_or_recipient_id':
+                    $query->customerOrRecipientId($val);
+                    break;
+                case 'customer_id':
+                    $query->customerId($val);
+                    break;
+                case 'recipient_id':
+                    $query->recipientId($val);
+                    break;
             }
         }
 
@@ -158,7 +168,7 @@ class CertificateController extends Controller
                 'page' => $page,
                 'pager' => $query->certificatesCount(),
                 'items' => $query->certificates(),
-            ]
+            ],
         ];
     }
 

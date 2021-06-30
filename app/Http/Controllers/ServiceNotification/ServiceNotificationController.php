@@ -41,42 +41,42 @@ class ServiceNotificationController extends Controller
 
         return response()->json([
             'notifications' => $notifications,
-            'total' => $serviceNotificationService->count($serviceNotificationService->newQuery())['total']
+            'total' => $serviceNotificationService->count($serviceNotificationService->newQuery())['total'],
         ]);
     }
-    
+
     public function save(Request $request, ServiceNotificationService $serviceNotificationService)
     {
         $id = $request->get('id');
         $notification = $request->get('notification');
-        
+
         if (!$notification) {
             throw new BadRequestHttpException('notification required');
         }
-        
+
         $notificationDto = new ServiceNotificationDto($notification);
-        
+
         if ($id) {
             $serviceNotificationService->update($id, $notificationDto);
         } else {
             $serviceNotificationService->create($notificationDto);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, ServiceNotificationService $serviceNotificationService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $serviceNotificationService->delete($id);
         }
-        
+
         return response()->json();
     }
 

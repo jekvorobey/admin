@@ -40,8 +40,6 @@ class BonusController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request)
@@ -150,20 +148,18 @@ class BonusController extends Controller
                 'items' => array_values($failed),
                 'code' => BonusService::FAILED_DEPENDENCY_CODE,
                 'message' => 'Ошибка при удалении бонусов',
-            ]
+            ],
         ], BonusService::FAILED_DEPENDENCY_CODE);
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Illuminate\Http\Response
      */
     public function changeProductLimit(Request $request)
     {
         $data = $request->validate([
             'product_id' => 'integer|required',
-            'value' => 'integer|nullable'
+            'value' => 'integer|nullable',
         ]);
 
         $key = ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT;

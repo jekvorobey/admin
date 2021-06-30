@@ -41,7 +41,7 @@ class Menu
                                 'title' => 'Товарные атрибуты',
                                 'route' => route('products.properties.list'),
                             ],
-                        ]
+                        ],
                     ],
 //                    [
 //                        'title' => 'Подарки',
@@ -87,7 +87,7 @@ class Menu
 //                    ],
                     [
                         'title' => 'Грузы',
-                        'route' => route('cargo.list')
+                        'route' => route('cargo.list'),
                     ],
                     /* @link https://redmine.greensight.ru/issues/57841 [
                         'title' => 'Отправления',
@@ -100,7 +100,7 @@ class Menu
                                 'title' => 'Статусы заказов',
                                 'route' => route('orderStatuses.list'),
                             ],
-                        ]
+                        ],
                     ],
                 ],
             ],
@@ -110,7 +110,7 @@ class Menu
                     ['title' => 'Проверка товаров', 'route' => route('productCheckClaims.list')],
                     ['title' => 'Производство контента', 'route' => route('contentClaims.list')],
                     ['title' => 'Изменение цен', 'route' => route('priceChangeClaims.list')],
-                ]
+                ],
             ],
             [
                 'title' => 'Контент',
@@ -175,14 +175,14 @@ class Menu
                         'title' => 'Популярные товары',
                         'route' => route('popularProducts.list'),
                     ],
-                ]
+                ],
             ],
             [
                 'title' => 'Логистика',
                 'items' => [
                     [
                         'title' => 'Логистические операторы',
-                        'route' => route('deliveryService.list')
+                        'route' => route('deliveryService.list'),
                     ],
 //                    [
 //                        'title' => 'Статусы доставки',
@@ -241,7 +241,11 @@ class Menu
                                 'title' => 'Виды деятельности',
                                 'route' => route('customers.activities'),
                             ],
-                        ]
+                            [
+                                'title' => 'Вайтлист',
+                                'route' => route('customers.whitelist'),
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -409,7 +413,7 @@ class Menu
                                 'title' => 'Типы событий',
                                 'route' => route('public-event.types.list'),
                             ],
-                        ]
+                        ],
                     ],
                 ],
             ],

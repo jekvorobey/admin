@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\DataQuery;
@@ -41,10 +40,6 @@ use Pim\Services\BrandService\BrandService;
 class OrderListController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  OrderService  $orderService
-     * @param  BrandService  $brandService
-     * @param  StoreService  $storeService
      * @return mixed
      * @throws \Exception
      */
@@ -86,17 +81,12 @@ class OrderListController extends Controller
         return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
     }
 
     /**
-     * @param  OrderService  $orderService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function page(OrderService $orderService): JsonResponse
@@ -114,9 +104,9 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
     {
@@ -158,10 +148,6 @@ class OrderListController extends Controller
         );
     }
 
-    /**
-     * @param DataQuery $restQuery
-     * @return Collection
-     */
     protected function loadOrders(DataQuery $restQuery): Collection
     {
         /** @var OrderService $orderService */
@@ -311,9 +297,6 @@ class OrderListController extends Controller
     }
 
     /**
-     * @param  OrderService  $orderService
-     * @param  bool  $withDefaultFilter
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(OrderService $orderService, bool $withDefaultFilter = false): DataQuery

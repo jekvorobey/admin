@@ -25,54 +25,41 @@ use MerchantManagement\Services\MerchantService\MerchantService;
  */
 class MerchantStoreController extends Controller
 {
-    /**
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return mixed
-     */
     public function index(Request $request, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Склады мерчантов';
-        
+
         $page = $request->get('page', 1);
-        
+
         $restQuery = new RestQuery();
         $restQuery->pageNumber($page, 20);
-        
+
         $stores = $this->loadStores($restQuery, $storeService);
         $pager = $storeService->storesCount($restQuery);
-        
+
         return $this->render('Store/MerchantStore/List', [
             'iStores' => $stores,
-            'iFilter' => $this->getFilter() ? : null,
+            'iFilter' => $this->getFilter() ?: null,
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
     }
-    
-    /**
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function page(Request $request, StoreService $storeService): JsonResponse
     {
         $page = $request->get('page', 1);
-        
+
         $restQuery = new RestQuery();
         $restQuery->pageNumber($page, 20);
-        
+
         $stores = $this->loadStores($restQuery, $storeService);
-        
+
         return response()->json([
             'iStores' => $stores,
         ]);
     }
-    
-    /**
-     * @return array
-     */
+
     protected function getFilter(): array
     {
         return Validator::make(request('filter') ?? [], [
@@ -83,7 +70,7 @@ class MerchantStoreController extends Controller
             'cdek_address.city' => 'string|someone',
         ])->attributes();
     }
-    
+
     /**
      * @return mixed
      */
@@ -95,12 +82,7 @@ class MerchantStoreController extends Controller
             'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
         ]);
     }
-    
-    /**
-     * @param int $id
-     * @param StoreService $storeService
-     * @return mixed
-     */
+
     public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
         $this->title = 'Редактирование склада мерчанта';
@@ -112,12 +94,7 @@ class MerchantStoreController extends Controller
             'pickupTimes' => $this->getPickupTimes(),
         ]);
     }
-    
-    /**
-     * @param  int  $storeId
-     * @param  StoreService  $storeService
-     * @return array
-     */
+
     protected function getStore(int $storeId, StoreService $storeService): array
     {
         $restQuery = new RestQuery();
@@ -126,50 +103,36 @@ class MerchantStoreController extends Controller
         $stores = $this->loadStores($restQuery, $storeService);
         $store = $stores->first();
         if (!$store['cdek_address']) {
-            $store['cdek_address'] = ['address_string'=>''];
+            $store['cdek_address'] = ['address_string' => ''];
         }
         return $store;
     }
-    
-    /**
-     * @return array
-     */
+
     protected function getPickupTimes(): array
     {
         return [
             DeliveryService::SERVICE_B2CPL => B2CplCourierCallTime::all(),
         ];
     }
-    
-    /**
-     * @param  Request  $request
-     * @param  StoreService  $storeService
-     * @return JsonResponse
-     */
+
     public function create(Request $request, StoreService $storeService): JsonResponse
     {
-        $addressValidate = $this->_getAddressValidate();
+        $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'merchant_id' => 'integer|required',
             'name' => 'string|required',
             'xml_id' => 'string|nullable',
         ], $addressValidate);
         $validatedData = $request->validate($validate);
-        
+
         $storeId = $storeService->createStore(new StoreDto($validatedData));
-        
+
         return response()->json(['id' => $storeId]);
     }
-    
-    /**
-     * @param int $id
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return JsonResponse
-     */
+
     public function update(int $id, Request $request, StoreService $storeService): JsonResponse
     {
-        $addressValidate = $this->_getAddressValidate();
+        $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'id' => 'integer|required',
             'merchant_id' => 'integer|required',
@@ -178,13 +141,13 @@ class MerchantStoreController extends Controller
             'name' => 'string|required',
         ], $addressValidate);
         $validatedData = $request->validate($validate);
-        
+
         $validatedData['id'] = $id;
         $storeService->updateStore($validatedData['id'], new StoreDto($validatedData));
         return response()->json([]);
     }
 
-    private function _getAddressValidate(): array
+    private function getAddressValidate(): array
     {
         return [
             'address.address_string' => 'string|required',
@@ -219,8 +182,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function delete(int $id, StoreService $storeService)
@@ -230,8 +191,6 @@ class MerchantStoreController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function deleteArray(Request $request, StoreService $storeService)
@@ -244,13 +203,7 @@ class MerchantStoreController extends Controller
         $storeService->deleteStores($data['ids']);
         return response()->json([]);
     }
-    
-    /**
-     * @param int $id
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return JsonResponse
-     */
+
     public function updateWorking(int $id, Request $request, StoreService $storeService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -261,18 +214,14 @@ class MerchantStoreController extends Controller
             'working_end_time' => 'string|nullable',
             'active' => 'boolean',
         ]);
-        
+
         $validatedData['id'] = $id;
-        
+
         $storeService->updateStoreWorking($validatedData['id'], new StoreWorkingDto($validatedData));
-        
+
         return response()->json([]);
     }
 
-    /**
-     * @param  StoreService  $storeService
-     * @return JsonResponse
-     */
     public function pickupTime(Request $request, StoreService $storeService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -280,15 +229,10 @@ class MerchantStoreController extends Controller
         ]);
 
         return response()->json([
-            'pickupTimes' => $this->getStore($validatedData['store_id'], $storeService)['pickupTimes']
+            'pickupTimes' => $this->getStore($validatedData['store_id'], $storeService)['pickupTimes'],
         ]);
     }
-    
-    /**
-     * @param  Request  $request
-     * @param  StoreService  $storeService
-     * @return JsonResponse
-     */
+
     public function savePickupTime(Request $request, StoreService $storeService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -301,22 +245,18 @@ class MerchantStoreController extends Controller
             'cargo_export_time' => 'string|nullable',
             'delivery_service' => ['sometimes', Rule::in(array_keys(DeliveryService::allServices()))],
         ]);
-        
+
         $storePickupTimeDto = new StorePickupTimeDto($validatedData);
         if ($storePickupTimeDto->id) {
             $storeService->updateStorePickupTime($storePickupTimeDto->id, $storePickupTimeDto);
         } else {
             $storeService->createStorePickupTime($storePickupTimeDto->store_id, $storePickupTimeDto);
         }
-        
+
         return response()->json([]);
     }
-    
-    
+
     /**
-     * @param int $id
-     * @param Request $request
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function createContact(int $id, Request $request, StoreService $storeService)
@@ -327,18 +267,12 @@ class MerchantStoreController extends Controller
             'phone' => 'string|nullable',
             'email' => 'email|nullable',
         ]);
-        
+
         $result = $storeService->createContact($id, new StoreContactDto($validatedData));
-        
+
         return response()->json(['id' => $result]);
     }
-    
-    /**
-     * @param int $id
-     * @param Request $request
-     * @param StoreService $storeService
-     * @return JsonResponse
-     */
+
     public function updateContact(int $id, Request $request, StoreService $storeService): JsonResponse
     {
         $validatedData = $request->validate([
@@ -347,16 +281,14 @@ class MerchantStoreController extends Controller
             'phone' => 'string|required',
             'email' => 'email|nullable',
         ]);
-        
+
         $validatedData['id'] = $id;
-        
+
         $storeService->updateContact($validatedData['id'], new StoreContactDto($validatedData));
         return response()->json([]);
     }
-    
+
     /**
-     * @param int $id
-     * @param StoreService $storeService
      * @return JsonResponse
      */
     public function deleteContact(int $id, StoreService $storeService)
@@ -364,13 +296,7 @@ class MerchantStoreController extends Controller
         $storeService->deleteContact($id);
         return response()->json([]);
     }
-    
-    
-    /**
-     * @param RestQuery $restQuery
-     * @param StoreService $storeService
-     * @return Collection
-     */
+
     protected function loadStores(RestQuery $restQuery, StoreService $storeService): Collection
     {
         $filter = $this->getFilter();
@@ -384,7 +310,7 @@ class MerchantStoreController extends Controller
                     case 'address':
                         foreach ($value as $key1 => $value1) {
                             $field = $key . '->' . $key1;
-                            
+
                             if ($value1) {
                                 switch ($key1) {
                                     case 'city':
@@ -394,21 +320,21 @@ class MerchantStoreController extends Controller
                             }
                         }
                         break;
-        
+
                     default:
                         $restQuery->setFilter($key, $value);
                 }
             }
         }
-        
+
         $stores = $storeService->stores($restQuery);
 
         $merchantIds = $stores->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantIds);
-        
+
         $stores = $stores->map(function (StoreDto $store) use ($merchants) {
             $data = $store->toArray();
-            
+
             $data['merchant'] = $merchants->has($store->merchant_id) ? $merchants[$store->merchant_id] : [];
             $data['storeWorking'] = $store->storeWorking ? $store->storeWorking->keyBy('day') : [];
 
@@ -453,10 +379,10 @@ class MerchantStoreController extends Controller
                     $data['pickupTimes'][$day]['hasPickupTime'] = $dayHasPickupTime;
                 }
             }
-            
+
             return $data;
         });
-        
+
         return $stores;
     }
 }

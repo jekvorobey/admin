@@ -21,7 +21,6 @@ use Illuminate\Validation\Rule;
 class CargoDetailController extends Controller
 {
     /**
-     * @param  int  $id
      * @return mixed
      * @throws \Exception
      */
@@ -29,18 +28,14 @@ class CargoDetailController extends Controller
     {
         $this->loadCargoStatuses = true;
         $page = new CargoPage($id);
-        
+
         return $this->render('Order/Cargo/Detail', [
             'iCargo' => $page->loadCargo()['cargo'],
         ]);
     }
-    
+
     /**
      * Изменить статус груза
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  CargoService  $cargoService
-     * @return JsonResponse
      */
     public function changeStatus(int $id, Request $request, CargoService $cargoService): JsonResponse
     {
@@ -55,7 +50,7 @@ class CargoDetailController extends Controller
             $cargo = new CargoDto();
             $cargo->status = $data['status'];
             $cargoService->updateCargo($id, $cargo);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             if ($data['status'] == CargoStatus::SHIPPED) {
                 $error = 'Груз не содержит заказов';
@@ -65,15 +60,12 @@ class CargoDetailController extends Controller
 
         $page = new CargoPage($id);
         $cargo = $page->loadCargo()['cargo'];
-    
-        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error,'systemErrors' => $systemError]);
+
+        return response()->json(['result' => $result, 'cargo' => $cargo, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
     /**
      * Создать задание на забор груза (заявку на вызов курьера)
-     * @param  int  $id
-     * @param  CargoService  $cargoService
-     * @return JsonResponse
      */
     public function createCourierCall(int $id, CargoService $cargoService): JsonResponse
     {
@@ -84,9 +76,6 @@ class CargoDetailController extends Controller
 
     /**
      * Отменить задание на забор груза (заявку на вызов курьера)
-     * @param  int  $id
-     * @param  CargoService  $cargoService
-     * @return JsonResponse
      */
     public function cancelCourierCall(int $id, CargoService $cargoService): JsonResponse
     {
@@ -97,9 +86,6 @@ class CargoDetailController extends Controller
 
     /**
      * Проверить заявку на вызов курьера во внешнем сервисе на наличие ошибок
-     * @param int $id
-     * @param CargoService $cargoService
-     * @return JsonResponse
      */
     public function checkCourierCallStatus(int $id, CargoService $cargoService): JsonResponse
     {
@@ -110,9 +96,6 @@ class CargoDetailController extends Controller
 
     /**
      * Отменить груз
-     * @param  int  $id
-     * @param  CargoService  $cargoService
-     * @return JsonResponse
      */
     public function cancel(int $id, CargoService $cargoService): JsonResponse
     {
@@ -120,63 +103,42 @@ class CargoDetailController extends Controller
             $cargoService->cancelCargo($id);
         });
     }
-    
+
     /**
      * Добавить отправление в груз
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
      */
-    public function addShipment2Cargo(
-        int $id,
-        Request $request,
-        ShipmentService $shipmentService
-    ): JsonResponse
+    public function addShipment2Cargo(int $id, Request $request, ShipmentService $shipmentService): JsonResponse
     {
         return $this->abstractAction($id, function () use ($id, $request, $shipmentService) {
             $data = $this->validate($request, [
                 'shipment_id' => ['required', 'array'],
                 'shipment_id.*' => ['required', 'integer'],
             ]);
-            
+
             foreach ($data['shipment_id'] as $shipmentId) {
                 $shipment = new ShipmentDto();
                 $shipment->cargo_id = $id;
-    
+
                 $shipmentService->updateShipment($shipmentId, $shipment);
             }
         });
     }
-    
+
     /**
      * Удалить отправление из груза
-     * @param  int  $id
-     * @param  int  $shipmentId
-     * @param  Request  $request
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
      */
-    public function deleteShipmentFromCargo(
-        int $id,
-        int $shipmentId,
-        Request $request,
-        ShipmentService $shipmentService
-    ): JsonResponse
+    public function deleteShipmentFromCargo(int $id, int $shipmentId, ShipmentService $shipmentService): JsonResponse
     {
-        return $this->abstractAction($id, function () use ($shipmentId, $request, $shipmentService) {
+        return $this->abstractAction($id, function () use ($shipmentId, $shipmentService) {
             $shipment = new ShipmentDto();
             $shipment->cargo_id = null;
-            
+
             $shipmentService->updateShipment($shipmentId, $shipment);
         });
     }
-    
+
     /**
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  Closure  $action
-     * @return JsonResponse
+     * @param Request $request
      */
     protected function abstractAction(int $id, Closure $action): JsonResponse
     {
@@ -184,26 +146,21 @@ class CargoDetailController extends Controller
         $systemError = '';
         try {
             $action();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
         }
 
         $page = new CargoPage($id);
         $cargo = $page->loadCargo()['cargo'];
-    
+
         return response()->json(['result' => $result, 'cargo' => $cargo, 'systemErrors' => $systemError]);
     }
-    
-    /**
-     * @param  int  $id
-     * @param  ShipmentService $shipmentService
-     * @return JsonResponse
-     */
+
     protected function getUnshippedShipments(int $id, ShipmentService $shipmentService): JsonResponse
     {
         $shipments = $shipmentService->similarUnshippedShipments($id);
-        
+
         return response()->json(['shipments' => $shipments]);
     }
 }

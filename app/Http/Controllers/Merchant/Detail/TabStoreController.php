@@ -12,16 +12,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
-
 class TabStoreController extends Controller
 {
     /**
      * AJAX пагинация списка складов
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param  StoreService $storeService
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(int $merchantId, Request $request, StoreService $storeService): JsonResponse
@@ -39,14 +34,10 @@ class TabStoreController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @return DataQuery
      * @throws \Exception
      */
-    protected function makeRestQuery(
-        Request $request,
-        int $merchantId
-    ): DataQuery {
+    protected function makeRestQuery(Request $request, int $merchantId): DataQuery
+    {
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())->pageNumber($page, 10)
             ->setFilter('merchant_id', $merchantId);
@@ -81,7 +72,8 @@ class TabStoreController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'id' => 'integer|someone',
                 'name' => 'string|someone',
@@ -92,10 +84,6 @@ class TabStoreController extends Controller
         )->attributes();
     }
 
-    /**
-     * @param DataQuery $restQuery
-     * @return Collection
-     */
     protected function loadStores(DataQuery $restQuery): Collection
     {
         /** @var StoreService $storeService */
@@ -113,6 +101,6 @@ class TabStoreController extends Controller
                     'contact_name' => $contact ? $contact->name : 'N/A',
                     'contact_phone' => $contact ? $contact->phone : 'N/A',
                 ];
-            });
+        });
     }
 }

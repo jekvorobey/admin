@@ -17,19 +17,15 @@ use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-
 class TabMarketingController extends Controller
 {
     /**
      * AJAX подгрузка информации для фильтрации скидок
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
-    public function loadDiscountsData(int $merchantId,
+    public function loadDiscountsData(
+        int $merchantId,
         Request $request,
         DiscountService $discountService,
         RequestInitiator $user
@@ -51,10 +47,6 @@ class TabMarketingController extends Controller
     /**
      * AJAX пагинация слайдера со скидками на странице мерчанта
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
     public function pageDiscounts(
@@ -74,12 +66,11 @@ class TabMarketingController extends Controller
         ]);
     }
 
-
     /**
      * AJAX подгрузка информации для фильтрации промокодов
      *
-     * @param int $merchantId
      * @return JsonResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function loadPromoCodesData(int $merchantId)
     {
@@ -92,9 +83,6 @@ class TabMarketingController extends Controller
     /**
      * AJAX получение промокодов для слайдера промокодов
      *
-     * @param int $merchantId
-     * @param PromoCodeService $promoCodeService
-     * @param DiscountService $discountService
      * @return JsonResponse
      */
     public function loadPromoCodes(

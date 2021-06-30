@@ -21,7 +21,6 @@ class SearchSynonymController extends Controller
 {
     /**
      * Список всех поисковых запросов
-     * @param SearchSynonymService $searchSynonymService
      * @return mixed
      */
     public function list(SearchSynonymService $searchSynonymService)
@@ -37,8 +36,7 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  SearchSynonymService  $searchSynonymService
+     * @param Request $request
      * @return JsonResponse
      */
     public function page(SearchSynonymService $searchSynonymService)
@@ -54,16 +52,12 @@ class SearchSynonymController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery()
@@ -76,14 +70,10 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  SearchSynonymService  $searchSynonymService
      * @return Collection|SearchSynonymDto[]
      */
-    protected function loadItems(
-        RestQuery $query,
-        SearchSynonymService $searchSynonymService
-    ) {
+    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService)
+    {
         $synonyms = $searchSynonymService->synonyms($query);
 
         return $synonyms->map(function (SearchSynonymDto $synonymDto) {
@@ -95,7 +85,6 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
      * @return JsonResponse
      * @throws \Exception
      */
@@ -113,11 +102,9 @@ class SearchSynonymController extends Controller
         return response()->json([
             'search_synonym' => $searchSynonymService->synonym($id),
         ], 201);
-
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
      * @return Application|ResponseFactory|JsonResponse|Response
      * @throws \Exception
      */
@@ -135,11 +122,9 @@ class SearchSynonymController extends Controller
         $searchSynonymService->updateSynonym($data['id'], $searchRequest);
 
         return response('', 204);
-
     }
 
     /**
-     * @param  SearchSynonymService  $searchSynonymService
      * @return Application|ResponseFactory|Response
      */
     public function delete(SearchSynonymService $searchSynonymService)

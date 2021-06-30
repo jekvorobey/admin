@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\Frontend;
+
 if (!function_exists('frontend')) {
     /**
      * Входная точка в класс работы со сборщиком.
@@ -11,7 +13,7 @@ if (!function_exists('frontend')) {
         static $frontend = null;
 
         if ($frontend === null) {
-            $frontend = new \App\Core\Frontend();
+            $frontend = new Frontend();
         }
 
         return $frontend;

@@ -1,20 +1,15 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
 
-
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
-use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Services\OfferService\OfferService;
 
@@ -22,11 +17,6 @@ class TabDigestController extends Controller
 {
     /**
      * Загрузить основную информацию
-     * @param int $merchantId
-     * @param PriceService $priceService
-     * @param MerchantService $merchantService
-     * @param OfferService $offerService
-     * @param ShipmentService $shipmentService
      * @return JsonResponse
      */
     public function load(
@@ -34,8 +24,8 @@ class TabDigestController extends Controller
         PriceService $priceService,
         MerchantService $merchantService,
         OfferService $offerService,
-        ShipmentService $shipmentService)
-    {
+        ShipmentService $shipmentService
+    ) {
         $period = $this->getPeriod();
 
         // Товаров на витрине //
@@ -69,7 +59,7 @@ class TabDigestController extends Controller
         return response()->json([
             'products' => [
                 'count' => $offers_total_count,
-                'price' => $offers_total_price
+                'price' => $offers_total_price,
             ],
             'orders' => $accepted_orders,
             'shipments' => $delivered_shipments,
@@ -81,14 +71,12 @@ class TabDigestController extends Controller
 
     /**
      * Сохранить комментарий к мерчанту
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function comment(int $merchantId, MerchantService $merchantService)
     {
-        $data = $this->validate(request(),[
-            'comment' => 'nullable|string|max:1500'
+        $data = $this->validate(request(), [
+            'comment' => 'nullable|string|max:1500',
         ]);
         $merchantService->commentMerchant($merchantId, $data['comment']);
         return response('', 204);
@@ -106,7 +94,6 @@ class TabDigestController extends Controller
 
     /**
      * Получить начало текущего месяца в формате Unix
-     * @return string
      */
     protected function getPeriod(): string
     {

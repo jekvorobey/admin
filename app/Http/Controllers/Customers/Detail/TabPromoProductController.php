@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -26,11 +25,10 @@ class TabPromoProductController extends Controller
 {
     /**
      * Возвращает список промо-товаров
-     * @param int|null $merchantId
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function load(int $merchantId = null)
+    public function load(?int $merchantId = null)
     {
         return response()->json([
             'promoProducts' => $this->loadPromotionProducts($merchantId),
@@ -39,36 +37,35 @@ class TabPromoProductController extends Controller
 
     /**
      * Обновить/Добавить промо-товар
-     * @param int|null $merchantId
-     * @param Request $request
-     * @param ProductService $productService
-     * @param ReferralService $referralService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Pim\Core\PimException
      */
-    public function save(?int $merchantId, Request $request, ProductService $productService, ReferralService $referralService)
-    {
+    public function save(
+        ?int $merchantId,
+        Request $request,
+        ProductService $productService,
+        ReferralService $referralService
+    ) {
         $data = $this->validate($request, [
             'product_id' => 'required|integer',
             'mass' => 'required|integer',
             'active' => 'integer',
             'files' => 'nullable',
-            'description' => 'required'
+            'description' => 'required',
         ]);
 
         $product = $productService->newQuery()
         ->setFilter('id', $data['product_id'])
         ->products();
-        if ($product->isEmpty())
-        {
+        if ($product->isEmpty()) {
             throw new BadRequestHttpException('Ошибка: товар не найден');
         }
 
         $promotionDto = new PutPromotionDto();
         $promotionDto
             ->setProductId($data['product_id'])
-            ->setMass((bool)$data['mass'])
-            ->setActive((bool)$data['active'])
+            ->setMass((bool) $data['mass'])
+            ->setActive((bool) $data['active'])
             ->setFiles(request('files', []))
             ->setDescription($data['description'])
             ->setCustomerId($merchantId);
@@ -110,7 +107,7 @@ class TabPromoProductController extends Controller
                 $promoProduct['product_name'],
                 isset($promoProduct['brand']) ? $promoProduct['brand']['name'] : '',
                 isset($promoProduct['category']) ? $promoProduct['category']['name'] : '',
-                isset($promoProduct['price']) ? (string)$promoProduct['price'] : '',
+                isset($promoProduct['price']) ? (string) $promoProduct['price'] : '',
                 $promoProduct['description'],
                 join(', ', $files),
                 $promoProduct['created_at'],
@@ -123,11 +120,10 @@ class TabPromoProductController extends Controller
 
     /**
      * Подгрузить информацию о промо-товарах
-     * @param int|null $merchantId
      * @return array
      * @throws \Pim\Core\PimException
      */
-    public function loadPromotionProducts(int $merchantId = null)
+    public function loadPromotionProducts(?int $merchantId = null)
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);

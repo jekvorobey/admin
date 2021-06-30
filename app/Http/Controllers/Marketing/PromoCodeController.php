@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
-use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -34,18 +33,13 @@ class PromoCodeController extends Controller
 {
     /**
      * Список промокодов
-     * @param PromoCodeService $promoCodeService
-     * @param UserService $userService
-     * @param CustomerService $customerService
      * @param MerchantService $merchantService
-     * @param CommunicationService $communicationService
      * @return mixed
      */
     public function index(
         PromoCodeService $promoCodeService,
         UserService $userService,
         CustomerService $customerService,
-        MerchantService $merchantService,
         CommunicationService $communicationService
     ) {
         $this->title = 'Промокоды';
@@ -82,7 +76,7 @@ class PromoCodeController extends Controller
                 $promoCode['creator'] = $creatorUser ? [
                     'id' => $creatorUser->id,
                     'title' => $creatorUser->getTitle(),
-                ]: null;
+                ] : null;
 
                 $promoCode['owner'] = null;
                 if ($promoCode->owner_id) {
@@ -94,7 +88,7 @@ class PromoCodeController extends Controller
                         $promoCode['owner'] = $ownerUser ? [
                             'id' => $promoCode->owner_id,
                             'title' => $ownerUser->getTitle(),
-                        ]: null;
+                        ] : null;
                     }
                 }
 
@@ -163,16 +157,10 @@ class PromoCodeController extends Controller
     /**
      * Страница для создания промокода
      *
-     * @param Request          $request
-     * @param DiscountService  $discountService
-     *
-     * @param PromoCodeService $promoCodeService
-     *
-     * @param MerchantService  $merchantService
-     *
      * @return mixed
      */
-    public function createPage(Request $request) {
+    public function createPage(Request $request)
+    {
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
@@ -189,7 +177,7 @@ class PromoCodeController extends Controller
                 return [
                     'merchant_id' => $item->merchant_id,
                     'value' => $item->id,
-                    'text' => "{$item->name} ({$item->validityPeriod()})"
+                    'text' => "{$item->name} ({$item->validityPeriod()})",
                 ];
             })
             ->values();
@@ -214,9 +202,6 @@ class PromoCodeController extends Controller
     }
 
     /**
-     * @param Request          $request
-     * @param PromoCodeService $promoCodeService
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request, PromoCodeService $promoCodeService, RequestInitiator $requestInitiator)
@@ -252,8 +237,8 @@ class PromoCodeController extends Controller
             $data['end_date'] = $data['end_date']
                 ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
                 : null;
-        } catch (Exception $ex) {
-
+        } catch (\Throwable $ex) {
+            //
         }
 
         $builder = new PromoCodeBuilder($data);
@@ -262,12 +247,11 @@ class PromoCodeController extends Controller
     }
 
     /**
-     * @param Request          $request
-     * @param PromoCodeService $promoCodeService
+     * @param Request $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function generate(Request $request, PromoCodeService $promoCodeService)
+    public function generate(PromoCodeService $promoCodeService)
     {
         $r = $promoCodeService->generate();
         return response()->json($r);
@@ -275,13 +259,12 @@ class PromoCodeController extends Controller
 
     /**
      * Проверка промокода на уникальность
-     * @param PromoCodeService $promoCodeService
      * @return \Illuminate\Http\JsonResponse
      */
     public function checkUnique(PromoCodeService $promoCodeService)
     {
-        $data = $this->validate(request(),[
-            'code' => 'required|string|max:32'
+        $data = $this->validate(request(), [
+            'code' => 'required|string|max:32',
         ]);
 
         $status = $promoCodeService->checkUnique($data['code']);

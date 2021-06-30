@@ -15,8 +15,6 @@ class PaymentMethodsController extends Controller
 {
     /**
      * Информация о доступных способах оплаты и их настройки
-     * @param PaymentService $paymentService
-     * @param ListsService $listsService
      * @return mixed
      */
     public function list(PaymentService $paymentService, ListsService $listsService)
@@ -42,14 +40,12 @@ class PaymentMethodsController extends Controller
             'iMethods' => $paymentMethods,
             'regions' => $regions,
             'delivery_services' => $deliveryServices,
-            'offer_statuses' => $offerStatuses
+            'offer_statuses' => $offerStatuses,
         ]);
     }
 
     /**
      * Изменить параметры способа оплаты
-     * @param int $id
-     * @param PaymentService $paymentService
      * @return JsonResponse
      */
     public function edit(int $id, PaymentService $paymentService)
@@ -67,20 +63,19 @@ class PaymentMethodsController extends Controller
             'excluded_delivery_services' => 'nullable|json',
             'excluded_offer_statuses' => 'nullable|json',
             'excluded_customers' => 'nullable|json',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
         ]);
 
         $paymentService->updatePaymentMethod($id, $this->fulfillDto($data));
 
         return response()->json([
-            'payment_method' => $paymentService->getPaymentMethods($id)->first()
+            'payment_method' => $paymentService->getPaymentMethods($id)->first(),
         ]);
     }
 
     /**
      * Вспомогательный метод, заполняющий Dto полями из Request
      * @param array $data
-     * @return PaymentMethod
      */
     private function fulfillDto(array $data): PaymentMethod
     {

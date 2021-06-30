@@ -15,7 +15,6 @@ class SearchRequestController extends Controller
 {
     /**
      * Список всех поисковых запросов
-     * @param SearchRequestService $searchRequestService
      * @return mixed
      */
     public function list(SearchRequestService $searchRequestService)
@@ -34,7 +33,6 @@ class SearchRequestController extends Controller
 
     /**
      * Добавить новый продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return JsonResponse
      */
     public function create(SearchRequestService $searchRequestService)
@@ -48,7 +46,7 @@ class SearchRequestController extends Controller
 
         try {
             $newSearchRequest = $searchRequestService->create($searchRequest);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -61,12 +59,10 @@ class SearchRequestController extends Controller
         return response()->json([
             'search_request' => $newSearchRequest->toArray(),
         ], 201);
-
     }
 
     /**
      * Редактировать продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return Response|JsonResponse
      */
     public function update(SearchRequestService $searchRequestService)
@@ -82,7 +78,7 @@ class SearchRequestController extends Controller
 
         try {
             $searchRequestService->update($searchRequest);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -93,12 +89,10 @@ class SearchRequestController extends Controller
         }
 
         return response('', 204);
-
     }
 
     /**
      * Удалить продуктовый ярлык
-     * @param SearchRequestService $searchRequestService
      * @return Application|ResponseFactory|Response
      */
     public function delete(SearchRequestService $searchRequestService)
@@ -115,7 +109,6 @@ class SearchRequestController extends Controller
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @param SearchRequestService $searchRequestService
      * @return Response
      */
     public function reorder(SearchRequestService $searchRequestService)

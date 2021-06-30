@@ -9,10 +9,8 @@ use Illuminate\Http\Request;
 
 class MenuListController extends Controller
 {
-    public function index(
-        Request $request,
-        MenuService $menuService
-    ) {
+    public function index(Request $request, MenuService $menuService)
+    {
         $this->title = 'Меню';
         $query = $this->makeQuery($request);
 
@@ -21,7 +19,7 @@ class MenuListController extends Controller
             'iPager' => $menuService->menusCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
-            'options' => []
+            'options' => [],
         ]);
     }
 

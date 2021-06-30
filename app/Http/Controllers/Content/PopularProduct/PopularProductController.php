@@ -14,20 +14,16 @@ use Illuminate\Http\Response;
 use Pim\Core\PimException;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PopularProductController extends Controller
 {
     /**
      * Список всех популярных товаров
-     * @param PopularProductService $popularProductService
      * @return mixed
      * @throws CmsException|PimException
      */
-    public function list(
-        PopularProductService $popularProductService,
-        ProductService $productService
-    ) {
+    public function list(PopularProductService $popularProductService, ProductService $productService)
+    {
         $popularProducts = $popularProductService->popularProducts(
             (new RestQuery())
                 ->addSort('weight', 'desc')
@@ -59,8 +55,6 @@ class PopularProductController extends Controller
 
     /**
      * Добавить новый популярный товар
-     * @param PopularProductService $popularProductService
-     * @param ProductService $productService
      * @return JsonResponse
      */
     public function create(PopularProductService $popularProductService, ProductService $productService)
@@ -68,13 +62,12 @@ class PopularProductController extends Controller
         $data = $this->validate(request(), [
             'product_id' => [
                 'required',
-                'regex:/^\d+(,\d+)*$/'
+                'regex:/^\d+(,\d+)*$/',
             ],
         ]);
 
         $data['product_id'] = explode(',', $data['product_id']);
 
-        /** @var ProductDto $product */
         $products = $productService->products(
             (new RestQuery())
                 ->addFields(ProductDto::entity(), 'id', 'name')
@@ -85,8 +78,10 @@ class PopularProductController extends Controller
 
         // Несуществующие товары. Т.к. PIM отправляет инфу только он валидных ID,
         // приходится считать невалидные
-        $missingProducts = array_udiff($data['product_id'], $products->toArray(),
-            function($first, $second) {
+        $missingProducts = array_udiff(
+            $data['product_id'],
+            $products->toArray(),
+            function ($first, $second) {
                 if (is_numeric($first)) {
                     $f = $first;
                 } else {
@@ -141,7 +136,6 @@ class PopularProductController extends Controller
 
     /**
      * Удалить популярный товар
-     * @param PopularProductService $popularProductService
      * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
@@ -159,7 +153,6 @@ class PopularProductController extends Controller
 
     /**
      * Изменить порядок популярных товаров
-     * @param PopularProductService $popularProductService
      * @return Response
      */
     public function reorder(PopularProductService $popularProductService)

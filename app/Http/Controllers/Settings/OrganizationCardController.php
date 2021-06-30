@@ -9,7 +9,7 @@ use Cms\Services\OptionService\OptionService;
 
 class OrganizationCardController extends Controller
 {
-    const MAPPING_KEYS = [
+    public const MAPPING_KEYS = [
         'short_name' => OptionDto::KEY_ORGANIZATION_CARD_SHORT_NAME,
         'full_name' => OptionDto::KEY_ORGANIZATION_CARD_FULL_NAME,
 
@@ -46,7 +46,6 @@ class OrganizationCardController extends Controller
 
     /**
      * Страница Карточка организации
-     * @param OptionService $optionService
      * @return mixed
      * @throws CmsException
      */
@@ -54,10 +53,10 @@ class OrganizationCardController extends Controller
     {
         $this->title = 'Карточка организации iBT.Studio';
 
-        $organizationCardKeys = array_values(static::MAPPING_KEYS);
+        $organizationCardKeys = array_values(self::MAPPING_KEYS);
         $options = $optionService->get($organizationCardKeys);
-        $data = collect(static::MAPPING_KEYS)
-            ->map(function ($item, $key) use ($options) {
+        $data = collect(self::MAPPING_KEYS)
+            ->map(function ($item) use ($options) {
                 return $options[$item];
             })
             ->all();
@@ -105,12 +104,12 @@ class OrganizationCardController extends Controller
         $data = collect($data)
             ->map(function ($item, $key) {
                 return [
-                    'newKey' => static::MAPPING_KEYS[$key],
+                    'newKey' => self::MAPPING_KEYS[$key],
                     'value' => $item,
                 ];
             })
             ->keyBy('newKey')
-            ->map(function ($item, $key) {
+            ->map(function ($item) {
                 return $item['value'];
             })
             ->all();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Cms\Dto\ContentNewsletterDto;
 use Cms\Services\ContentNewsletterService\ContentNewsletterService;
@@ -23,15 +22,13 @@ class TabNewsletterController extends Controller
     /**
      * Получить информацию о новостных подписках пользователя
      * @param $customerId
-     * @param ContentNewsletterService $contentNewsletterService
-     * @param CustomerNewsletterService $customerNewsletterService
      * @return JsonResponse
      */
     public function load(
         $customerId,
         ContentNewsletterService $contentNewsletterService,
-        CustomerNewsletterService $customerNewsletterService)
-    {
+        CustomerNewsletterService $customerNewsletterService
+    ) {
         /** @var ContentNewsletterDto $topics */
         $topics = $contentNewsletterService->getTopics();
         /** @var CustomerNewsletterDto $subscriptions */
@@ -48,23 +45,21 @@ class TabNewsletterController extends Controller
             'customer' => [
                 'topics' => $customer_topics,
                 'periodicity' => $customer_periodicity,
-                'channels' => $customer_channels
-            ]
+                'channels' => $customer_channels,
+            ],
         ]);
     }
 
     /**
      * Редактировать параметры новостной подписки у пользователя
      * @param $customerId
-     * @param CustomerNewsletterService $customerNewsletterService
-     * @param ContentNewsletterService $contentNewsletterService
      * @return Application|ResponseFactory|Response
      */
     public function edit(
         $customerId,
         CustomerNewsletterService $customerNewsletterService,
-        ContentNewsletterService $contentNewsletterService)
-    {
+        ContentNewsletterService $contentNewsletterService
+    ) {
         $topics = $contentNewsletterService->getTopics()
             ->keyBy('id')
             ->keys()
@@ -72,21 +67,31 @@ class TabNewsletterController extends Controller
 
         $data = $this->validate(request(), [
             'topics.*' => ['nullable', 'integer', Rule::in($topics)],
-            'periodicity' => ['required', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods()))],
-            'channels.*' => ['nullable', 'integer', Rule::in(
-                array_keys(CustomerNewsletterDto::periods()))]
+            'periodicity' => [
+                'required',
+                'integer',
+                Rule::in(
+                    array_keys(CustomerNewsletterDto::periods())
+                ),
+            ],
+            'channels.*' => [
+                'nullable',
+                'integer',
+                Rule::in(
+                    array_keys(CustomerNewsletterDto::periods())
+                ),
+            ],
         ]);
 
         if (isset($data['topics'])) {
             $data['topics'] = array_map(function ($item) {
-                return (int)$item;
+                return (int) $item;
             }, $data['topics']);
         }
 
         if (isset($data['channels'])) {
             $data['channels'] = array_map(function ($item) {
-                return (int)$item;
+                return (int) $item;
             }, $data['channels']);
         }
 
@@ -94,5 +99,4 @@ class TabNewsletterController extends Controller
 
         return response('', 204);
     }
-
 }

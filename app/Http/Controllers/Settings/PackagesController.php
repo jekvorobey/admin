@@ -14,16 +14,12 @@ use Illuminate\Http\JsonResponse;
  */
 class PackagesController extends Controller
 {
-    /**
-     * @param  PackageService  $packageService
-     * @return JsonResponse
-     */
     public function list(PackageService $packageService): JsonResponse
     {
         return response()->json([
             'packages' => $packageService->packages($packageService->newQuery()
                 ->setFilter('type', PackageType::TYPE_BOX)
-                ->addFields(PackageDto::entity(), 'id', 'name'))->keyBy('id')
+                ->addFields(PackageDto::entity(), 'id', 'name'))->keyBy('id'),
         ]);
     }
 }

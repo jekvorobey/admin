@@ -18,12 +18,12 @@ use Illuminate\Support\Collection;
 
 class PublicEventOrdersController extends Controller
 {
-    const PER_PAGE = 15;
+    public const PER_PAGE = 15;
 
     public function getList(Request $request, int $eventId)
     {
         $sprints = $request->input('sprint_id')
-            ? [(int)$request->input('sprint_id')]
+            ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
 
         $orderService = resolve(OrderService::class);
@@ -36,16 +36,13 @@ class PublicEventOrdersController extends Controller
                 'page' => $this->getPage(),
                 'pager' => $pager,
                 'orders' => $orders,
-            ]
+            ],
         ]);
     }
 
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include(
-            'basketitem',
-            'promoCodes'
-        );
+        $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, self::PER_PAGE);

@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
-use Pim\Dto\Search\IndexType;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -32,8 +31,7 @@ class ProductListController extends Controller
         ShoppilotService $shoppilotService,
         ContentBadgesService $badgesService,
         OfferService $offerService
-    )
-    {
+    ) {
         $this->title = 'Товары';
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
@@ -75,15 +73,11 @@ class ProductListController extends Controller
                 'availableBadges' => $badgesService->productBadges()->keyBy('id'),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
-            ]
+            ],
         ]);
     }
 
-    public function page(
-        Request $request,
-        SearchService $searchService,
-        ShoppilotService $shoppilotService
-    )
+    public function page(Request $request, SearchService $searchService, ShoppilotService $shoppilotService)
     {
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
@@ -100,7 +94,7 @@ class ProductListController extends Controller
 
         $data = [
             'products' => $productSearchResult->products,
-            'total' => $productSearchResult->total
+            'total' => $productSearchResult->total,
         ];
         return response()->json($data);
     }
@@ -118,7 +112,8 @@ class ProductListController extends Controller
             case 'reject':
                 $status = ProductApprovalStatus::STATUS_REJECT;
                 break;
-            default: $status = $request->get('status');
+            default:
+                $status = $request->get('status');
         }
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
@@ -159,11 +154,9 @@ class ProductListController extends Controller
 
     /**
      * Назначить или обнулить шильдики у товаров
-     * @param ProductService $productService
-     * @param SearchService $searchService
      * @return Application|ResponseFactory|Response
      */
-    public function attachBadges(ProductService $productService, SearchService $searchService)
+    public function attachBadges(ProductService $productService)
     {
         $data = $this->validate(request(), [
             'product_ids' => 'required|array',

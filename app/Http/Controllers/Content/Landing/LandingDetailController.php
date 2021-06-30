@@ -14,14 +14,11 @@ class LandingDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param LandingService $landingService
      * @return mixed
      * @throws CmsException
      */
-    public function updatePage(
-        $id,
-        LandingService $landingService
-    ) {
+    public function updatePage($id, LandingService $landingService)
+    {
         $landing = $this->getLanding($id, $landingService);
         $widgets = $this->getWidgets($landingService);
 
@@ -50,8 +47,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param LandingService $landingService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -70,9 +65,6 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param LandingService $landingService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -101,21 +93,16 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param LandingService $landingService
      * @return LandingDto|null
      * @throws CmsException
      */
-    private function getLanding(
-        int $id,
-        LandingService $landingService
-    ) {
+    private function getLanding(int $id, LandingService $landingService)
+    {
         $query = $landingService->newQuery()->setFilter('id', $id);
         return $landingService->landings($query)->first();
     }
 
     /**
-     * @param LandingService $landingService
      * @return LandingWidgetDto[]|Collection
      * @throws CmsException
      */
