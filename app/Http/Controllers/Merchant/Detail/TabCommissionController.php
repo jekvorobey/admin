@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
-
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -38,7 +36,7 @@ class TabCommissionController extends Controller
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
             'type' => ['required', Rule::in($types)],
-            'value'=> 'required|numeric|min:0|max:100',
+            'value' => 'required|numeric|min:0|max:100',
             'related_id' => 'nullable',
             'dates' => 'nullable|array',
         ], [
@@ -163,7 +161,7 @@ class TabCommissionController extends Controller
                         'dates' => [
                             $commission->date_start,
                             $commission->date_end,
-                        ]
+                        ],
                     ]);
                 }
             }
@@ -190,5 +188,4 @@ class TabCommissionController extends Controller
 
         return [$productCommissions, $merchantCommission, $brands, $categories, $products];
     }
-
 }

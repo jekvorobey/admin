@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -14,7 +13,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
 {
-    const PER_PAGE = 10;
+    public const PER_PAGE = 10;
 
     /**
      * Отображаем всех пользователей
@@ -34,13 +33,13 @@ class CustomerListController extends Controller
         return $this->list('Список реферальных партнеров', true);
     }
 
-    protected function list($title, $isReferral=null)
+    protected function list($title, $isReferral = null)
     {
         $this->title = $title;
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
-            'perPage' => static::PER_PAGE,
+            'perPage' => self::PER_PAGE,
             'roles' => $this->getRoles($isReferral),
         ]);
     }
@@ -59,7 +58,7 @@ class CustomerListController extends Controller
             'created_between' => 'nullable',
             'isReferral' => 'required|boolean',
             'page' => 'nullable',
-            'role' => 'numeric'
+            'role' => 'nullable',
         ]);
 
         $restQueryCustomer = new RestQuery();
@@ -72,12 +71,15 @@ class CustomerListController extends Controller
         $customers = $customerService->customers($restQueryCustomer);
         if (!$customers) {
             return response()->json([
-                'users' => []
+                'users' => [],
             ]);
         }
 
         $restQueryUser = new RestQuery();
-        $restQueryUser->setFilter('id', $customers->pluck('user_id')->all());
+
+        $customerIds = isset($filter['status']) && $filter['status'] ? $customers->pluck('user_id')->all() : [];
+        $restQueryUser->setFilter('id', $customerIds);
+
         if (isset($filter['phone']) && $filter['phone']) {
             $restQueryUser->setFilter('phone', phone_format($filter['phone']));
         }
@@ -103,16 +105,19 @@ class CustomerListController extends Controller
 
         if (!empty($filter['role'])) {
             $restQueryUser->setFilter('role', $filter['role']);
-        } else if (isset($filter['isReferral']) && $filter['isReferral']) {
+        } elseif (isset($filter['isReferral']) && $filter['isReferral']) {
             $restQueryUser->setFilter('role', UserDto::SHOWCASE__REFERRAL_PARTNER);
         }
 
         $users = $userService->users($restQueryUser)->keyBy('id');
 
-        $result = $customers->map(function (CustomerDto $customer) use ($users) {
+        $result = $customers->map(function (CustomerDto $customer) use ($users, $filter) {
             /** @var UserDto $user */
             $user = $users->get($customer->user_id);
             if (!$user) {
+                return false;
+            }
+            if (!empty($filter['gender']) && $filter['gender'] != $customer->gender) {
                 return false;
             }
 
@@ -130,8 +135,8 @@ class CustomerListController extends Controller
         })->filter()->sortByDesc('id')->values();
 
         return response()->json([
-            'users' => $result->forPage(request('page', 1), static::PER_PAGE),
-            'count' => $result->count()
+            'users' => $result->forPage(request('page', 1), self::PER_PAGE),
+            'count' => $result->count(),
         ]);
     }
 
@@ -179,9 +184,9 @@ class CustomerListController extends Controller
     protected function getRoles($isReferral)
     {
         return $isReferral === null ? [
-            0                                   => 'Все',
-            UserDto::SHOWCASE__PROFESSIONAL     => 'Профессионалы',
+            0 => 'Все',
+            UserDto::SHOWCASE__PROFESSIONAL => 'Профессионалы',
             UserDto::SHOWCASE__REFERRAL_PARTNER => 'Реферальные партнеры',
         ] : null;
-}
+    }
 }

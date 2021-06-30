@@ -29,10 +29,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ProductCheckClaimController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  MerchantService  $merchantService
-     * @param  UserService  $userService
      * @return mixed
      */
     public function index(
@@ -40,8 +36,7 @@ class ProductCheckClaimController extends Controller
         ClaimService $claimService,
         MerchantService $merchantService,
         UserService $userService
-    )
-    {
+    ) {
         $this->title = 'Заявки на проверку товаров';
 
         /** @var Collection|ClaimTypeDto[] $claimTypes */
@@ -66,16 +61,10 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
      * @return JsonResponse
      */
-    public function page(
-        Request $request,
-        ClaimService $claimService,
-        UserService $userService
-    ) {
+    public function page(Request $request, ClaimService $claimService, UserService $userService)
+    {
         $query = $this->prepareQuery($request, $claimService);
         $result = [
             'items' => $this->loadClaims($query, $userService),
@@ -87,16 +76,10 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @param  ClaimService  $claimService
-     * @param  UserService  $userService
      * @return mixed
      */
-    public function detail(
-        int $id,
-        ClaimService $claimService,
-        UserService $userService
-    ) {
+    public function detail(int $id, ClaimService $claimService, UserService $userService)
+    {
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
         $claim = $this->loadClaims($query, $userService, true)->first();
@@ -115,7 +98,7 @@ class ProductCheckClaimController extends Controller
             'iClaim' => $claim,
             'claimStatuses' => $claimTypes
                 ->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)
-                ->statusNames
+                ->statusNames,
         ]);
     }
 
@@ -124,7 +107,8 @@ class ProductCheckClaimController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ??
+        return Validator::make(
+            request('filter') ??
             [
                 'status' => [
                     ProductCheckClaimDto::STATUS_NEW,
@@ -140,9 +124,6 @@ class ProductCheckClaimController extends Controller
         )->attributes();
     }
 
-    /**
-     * @return \Illuminate\Validation\Rules\In
-     */
     protected function validateStatus(): In
     {
         return Rule::in([
@@ -154,12 +135,6 @@ class ProductCheckClaimController extends Controller
 
     /**
      * Изменить статус заявки
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @param  UserService $userService
-     * @param  ProductService $productService
-     * @return JsonResponse
      */
     public function changeStatus(
         int $id,
@@ -167,8 +142,7 @@ class ProductCheckClaimController extends Controller
         ClaimService $claimService,
         UserService $userService,
         ProductService $productService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -197,7 +171,7 @@ class ProductCheckClaimController extends Controller
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var ProductCheckClaimDto $claim */
             $claim = $this->loadClaims($query, $userService, true)->first();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = 'fail';
             if ($request->get('status') == ProductCheckClaimDto::STATUS_DONE) {
                 $error = 'Не все товары в заявке проверены (согласованы или отменены)';
@@ -205,14 +179,9 @@ class ProductCheckClaimController extends Controller
             $systemError = $e->getMessage();
         }
 
-        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error,'systemErrors' => $systemError]);
+        return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
-    /**
-     * @param  Request  $request
-     * @param  ClaimService  $claimService
-     * @return DataQuery
-     */
     protected function prepareQuery(Request $request, ClaimService $claimService): DataQuery
     {
         $page = $request->get('page', 1);
@@ -247,9 +216,6 @@ class ProductCheckClaimController extends Controller
     }
 
     /**
-     * @param  RestQuery  $query
-     * @param  UserService  $userService
-     * @param  bool  $withProducts
      * @return Collection|ProductCheckClaimDto[]
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection

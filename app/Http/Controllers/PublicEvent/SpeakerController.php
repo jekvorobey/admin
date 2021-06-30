@@ -14,20 +14,20 @@ class SpeakerController extends Controller
     public function list(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
         $page = $request->get('page', 1);
-        [$total, $speakers]= $this->loadSpeakers($publicEventSpeakerService, $page);
-        
+        [$total, $speakers] = $this->loadSpeakers($publicEventSpeakerService, $page);
+
         return $this->render('PublicEvent/SpeakerList', [
             'iSpeakers' => $speakers,
             'iTotal' => $total['total'],
             'iCurrentPage' => $page,
         ]);
     }
-    
+
     public function page(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
         $page = $request->get('page', 1);
         [$total, $speakers] = $this->loadSpeakers($publicEventSpeakerService, $page);
-        
+
         return response()->json([
             'speakers' => $speakers,
             'total' => $total['total'],
@@ -37,44 +37,44 @@ class SpeakerController extends Controller
     public function fullPage(PublicEventSpeakerService $publicEventSpeakerService)
     {
         $query = $publicEventSpeakerService->query();
-        
+
         return response()->json([
             'speakers' => $publicEventSpeakerService->find($query),
         ]);
     }
-    
+
     public function save(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
         $id = $request->get('id');
         $speaker = $request->get('speaker');
-        
+
         if (!$speaker) {
             throw new BadRequestHttpException('speaker required');
         }
-        
+
         $speaker = new PublicEventSpeakerDto($speaker);
-        
+
         if ($id) {
             $publicEventSpeakerService->update($id, $speaker);
         } else {
             $publicEventSpeakerService->create($speaker);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $publicEventSpeakerService->delete($id);
         }
-        
+
         return response()->json();
     }
 
@@ -89,7 +89,7 @@ class SpeakerController extends Controller
 
     public function attachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
     {
-        if(!$request->has('id')) {
+        if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
 
@@ -100,7 +100,7 @@ class SpeakerController extends Controller
 
     public function detachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
     {
-        if(!$request->has('id')) {
+        if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
 
@@ -110,7 +110,6 @@ class SpeakerController extends Controller
     }
 
     /**
-     * @param PublicEventSpeakerService $publicEventSpeakerService
      * @param $page
      * @return array
      * @throws PimException
@@ -118,7 +117,7 @@ class SpeakerController extends Controller
     private function loadSpeakers(PublicEventSpeakerService $publicEventSpeakerService, $page): array
     {
         $query = $publicEventSpeakerService->query()->pageNumber($page, 10);
-        
+
         $total = $publicEventSpeakerService->count($query);
         $speakers = $publicEventSpeakerService->find($query);
         return [$total, $speakers];

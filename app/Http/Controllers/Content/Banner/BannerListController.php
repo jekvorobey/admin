@@ -33,15 +33,12 @@ class BannerListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'types' => $this->loadTypes($bannerTypeService),
-            ]
+            ],
         ]);
     }
 
-    public function page(
-        Request $request,
-        BannerService $bannerService,
-        FileService $fileService
-    ) {
+    public function page(Request $request, BannerService $bannerService, FileService $fileService)
+    {
         $query = $this->makeQuery($request);
         $data = [
             'banners' => $this->loadItems($query, $bannerService, $fileService),
@@ -53,10 +50,8 @@ class BannerListController extends Controller
         return response()->json($data);
     }
 
-    public function widgetBanners(
-        BannerService $bannerService,
-        BannerTypeService $bannerTypeService
-    ) {
+    public function widgetBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
+    {
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::WIDGET_CODE);
@@ -73,10 +68,8 @@ class BannerListController extends Controller
         return response()->json($banners);
     }
 
-    public function productGroupBanners(
-        BannerService $bannerService,
-        BannerTypeService $bannerTypeService
-    ) {
+    public function productGroupBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
+    {
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::PRODUCT_GROUP_CODE);
@@ -94,7 +87,6 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -119,24 +111,19 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
      * @param BannerService $bannerService ,
-     * @param FileService $fileService
      * @return BannerDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        BannerService $bannerService,
-        FileService $fileService
-    ) {
+    protected function loadItems(RestQuery $query, BannerService $bannerService, FileService $fileService)
+    {
         $banners = $bannerService->banners($query);
         $imagesIds = $banners->pluck('desktop_image_id')->all();
         $images = $fileService->getFiles($imagesIds)->keyBy('id');
 
         // Получается дополненный BannerDto
         return $banners->map(function (BannerDto $banner) use ($images) {
-            /** @var FileDto $photo */
+            /** @var FileDto $image */
             $image = $images->get($banner['desktop_image_id']);
             $banner['desktop_image'] = $image ? $image->absoluteUrl() : null;
             return $banner;
@@ -144,7 +131,6 @@ class BannerListController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */

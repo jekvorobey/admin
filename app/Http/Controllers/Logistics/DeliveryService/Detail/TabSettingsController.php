@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Logistics\DeliveryService\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -16,7 +15,6 @@ class TabSettingsController extends Controller
 {
     /**
      * @param $id
-     * @param  ListsService  $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function save($id, ListsService $listsService): Response
@@ -50,6 +48,6 @@ class TabSettingsController extends Controller
 
         $listsService->updateDeliveryService($id, $deliveryService);
 
-        return  response('', 204);
+        return response('', 204);
     }
 }

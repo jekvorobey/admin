@@ -41,42 +41,42 @@ class VariableController extends Controller
 
         return response()->json([
             'variables' => $variables,
-            'total' => $VariableService->count($VariableService->newQuery())['total']
+            'total' => $VariableService->count($VariableService->newQuery())['total'],
         ]);
     }
-    
+
     public function save(Request $request, VariableService $VariableService)
     {
         $id = $request->get('id');
         $variable = $request->get('variable');
-        
+
         if (!$variable) {
             throw new BadRequestHttpException('variable required');
         }
-        
+
         $variableDto = new VariableDto($variable);
-        
+
         if ($id) {
             $VariableService->update($id, $variableDto);
         } else {
             $VariableService->create($variableDto);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, VariableService $VariableService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $VariableService->delete($id);
         }
-        
+
         return response()->json();
     }
 }

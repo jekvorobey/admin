@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order\Detail;
 
-
 use App\Http\Controllers\Order\OrderDetailController;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
@@ -23,16 +22,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabMainController extends OrderDetailController
 {
     /**
-     * @param  int  $id
-     * @param  OrderService  $orderService
-     * @param  ListsService  $listsService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function load(
-        int $id,
-        OrderService $orderService,
-        ListsService $listsService
-    ) {
+    public function load(int $id, OrderService $orderService, ListsService $listsService)
+    {
         $restQuery = $orderService
             ->newQuery()
             ->setFilter('id', $id)
@@ -46,7 +39,7 @@ class TabMainController extends OrderDetailController
         $order = $orders->first();
         $pickupDelivery = null;
         foreach ($order->deliveries as $delivery) {
-            if($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP && is_null($pickupDelivery)) {
+            if ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP && is_null($pickupDelivery)) {
                 $pickupDelivery = $delivery;
             }
         }
@@ -66,7 +59,7 @@ class TabMainController extends OrderDetailController
             if (!$points->has($point->id)) {
                 $points->put($point->id, $point);
             }
-            $points = $points->map(function(PointDto $point) {
+            $points = $points->map(function (PointDto $point) {
                 $point->type = $point->type();
 
                 return $point;
@@ -79,15 +72,11 @@ class TabMainController extends OrderDetailController
     }
 
     /**
-     * @param int $id
-     * @param  OrderService  $orderService
-     * @param  DeliveryService  $deliveryService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function save(int $id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
     {
-        $requiredIfDeliveryAddressExist = function() {
+        $requiredIfDeliveryAddressExist = function () {
             return count(array_filter(request()->get('delivery_address'))) > 0;
         };
         $data = $this->validate(request(), [
@@ -109,9 +98,12 @@ class TabMainController extends OrderDetailController
             'delivery_address.floor' => ['sometimes', 'string', 'nullable'],
             'delivery_address.intercom' => ['sometimes', 'string', 'nullable'],
             'delivery_address.comment' => ['sometimes', 'string', 'nullable'],
-            'point_id' => [Rule::requiredIf(function() {
-                return !count(array_filter(request()->get('delivery_address')));
-            }), 'integer'],
+            'point_id' => [
+                Rule::requiredIf(function () {
+                    return !count(array_filter(request()->get('delivery_address')));
+                }),
+                'integer',
+            ],
             'manager_comment' => ['sometimes', 'string', 'nullable'],
         ]);
 
@@ -147,14 +139,14 @@ class TabMainController extends OrderDetailController
                 $deliveryAddress['region_guid'] = $dataDeliveryAddress['region_guid'];
                 $deliveryAddress['city'] = $dataDeliveryAddress['city'];
                 $deliveryAddress['city_guid'] = $dataDeliveryAddress['city_guid'];
-                $deliveryAddress['street'] = isset($dataDeliveryAddress['street']) ? $dataDeliveryAddress['street'] : '';
-                $deliveryAddress['house'] = isset($dataDeliveryAddress['house']) ? $dataDeliveryAddress['house'] : '';
-                $deliveryAddress['block'] = isset($dataDeliveryAddress['block']) ? $dataDeliveryAddress['block'] : '';
-                $deliveryAddress['flat'] = isset($dataDeliveryAddress['flat']) ? $dataDeliveryAddress['flat'] : '';
-                $deliveryAddress['porch'] = isset($dataDeliveryAddress['porch']) ? $dataDeliveryAddress['porch'] : '';
-                $deliveryAddress['floor'] = isset($dataDeliveryAddress['floor']) ? $dataDeliveryAddress['floor'] : '';
-                $deliveryAddress['intercom'] = isset($dataDeliveryAddress['intercom']) ? $dataDeliveryAddress['intercom'] : '';
-                $deliveryAddress['comment'] = isset($dataDeliveryAddress['comment']) ? $dataDeliveryAddress['comment'] : '';
+                $deliveryAddress['street'] = $dataDeliveryAddress['street'] ?? '';
+                $deliveryAddress['house'] = $dataDeliveryAddress['house'] ?? '';
+                $deliveryAddress['block'] = $dataDeliveryAddress['block'] ?? '';
+                $deliveryAddress['flat'] = $dataDeliveryAddress['flat'] ?? '';
+                $deliveryAddress['porch'] = $dataDeliveryAddress['porch'] ?? '';
+                $deliveryAddress['floor'] = $dataDeliveryAddress['floor'] ?? '';
+                $deliveryAddress['intercom'] = $dataDeliveryAddress['intercom'] ?? '';
+                $deliveryAddress['comment'] = $dataDeliveryAddress['comment'] ?? '';
                 $newDeliveryDto->delivery_address = $deliveryAddress;
             } elseif ($delivery->delivery_method == DeliveryMethod::METHOD_PICKUP) {
                 $newDeliveryDto->point_id = $data['point_id'];

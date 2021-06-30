@@ -15,7 +15,6 @@ use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
-use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
@@ -52,12 +51,8 @@ class ProductGroupDetailController extends Controller
         ]);
     }
 
-    public function createPage(
-        ProductGroupService $productGroupService,
-        ProductGroupTypeService $productGroupTypeService,
-        CategoryService $categoryService,
-        FileService $fileService
-    ) {
+    public function createPage(ProductGroupTypeService $productGroupTypeService, CategoryService $categoryService)
+    {
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
 
@@ -92,7 +87,7 @@ class ProductGroupDetailController extends Controller
             foreach ($validatedData['category_code'] as $categoryCode) {
                 $validatedData['filters'][] = [
                     'code' => ProductGroupFilterDto::CATEGORY_FILTER,
-                    'value' => $categoryCode
+                    'value' => $categoryCode,
                 ];
             }
         }
@@ -124,7 +119,7 @@ class ProductGroupDetailController extends Controller
             foreach ($validatedData['category_code'] as $categoryCode) {
                 $validatedData['filters'][] = [
                     'code' => ProductGroupFilterDto::CATEGORY_FILTER,
-                    'value' => $categoryCode
+                    'value' => $categoryCode,
                 ];
             }
         }
@@ -141,13 +136,11 @@ class ProductGroupDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function getFilters(
-        BrandService $brandService,
-        ProductService $productService
-    ) {
+    public function getFilters(BrandService $brandService, ProductService $productService)
+    {
         $brandsFilter = $brandService->filters();
         $appliedFilters = [
-            'brand' => $brandsFilter->pluck('code')
+            'brand' => $brandsFilter->pluck('code'),
         ];
         $excludedFilters = ['brand'];
         $filters = $productService->filters($appliedFilters, $excludedFilters)->all();
@@ -156,10 +149,8 @@ class ProductGroupDetailController extends Controller
         return response()->json($result);
     }
 
-    public function getFiltersByCategory(
-        Request $request,
-        ProductService $productService
-    ) {
+    public function getFiltersByCategory(Request $request, ProductService $productService)
+    {
         $appliedFilters = [
             'category' => $request->get('category', ''),
         ];
@@ -168,10 +159,8 @@ class ProductGroupDetailController extends Controller
         return response()->json($filters);
     }
 
-    public function getProducts(
-        Request $request,
-        ProductService $productService
-    ) {
+    public function getProducts(Request $request, ProductService $productService)
+    {
         $validatedData = $request->validate([
             'id' => 'array',
             'vendor_code' => 'string',
@@ -206,7 +195,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param ProductGroupTypeService $productGroupTypeService
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */
@@ -216,7 +204,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
@@ -224,15 +211,10 @@ class ProductGroupDetailController extends Controller
     {
         return $categoryService->categories($categoryService->newQuery()
             ->include('ancestors')
-            ->addSort('_lft', 'asc')
-        );
+            ->addSort('_lft', 'asc'));
     }
 
     /**
-     * @param int $id
-     * @param ProductGroupService $productGroupService
-     * @param PropertyDirectoryValueService $propertyDirectoryValueService
-     * @param BrandService $brandService
      * @return mixed
      * @throws PimException
      */
@@ -241,8 +223,7 @@ class ProductGroupDetailController extends Controller
         ProductGroupService $productGroupService,
         PropertyDirectoryValueService $propertyDirectoryValueService,
         BrandService $brandService
-    )
-    {
+    ) {
         $productGroups = $productGroupService
             ->newQuery()
             ->addFields('type', '*')
@@ -259,7 +240,7 @@ class ProductGroupDetailController extends Controller
         $categoryFilters = [];
         $brandFilters = [];
         $otherFilters = [];
-        foreach ($productGroup->filters as $index => $filter) {
+        foreach ($productGroup->filters as $filter) {
             switch ($filter['code']) {
                 case ProductGroupFilterDto::CATEGORY_FILTER:
                     $categoryFilters[] = $filter['value'];
@@ -275,14 +256,12 @@ class ProductGroupDetailController extends Controller
 
         $filterValues = collect($otherFilters)->pluck('value')->all();
         $directoryValues = $propertyDirectoryValueService->values((new RestQuery())
-            ->setFilter('code', 'in', $filterValues)
-        )->keyBy('code');
+            ->setFilter('code', 'in', $filterValues))->keyBy('code');
         $this->injectNames($otherFilters, $directoryValues);
 
         $brandCodes = collect($brandFilters)->pluck('value')->all();
         $brands = $brandService->brands((new RestQuery())
-            ->setFilter('code', 'in', $brandCodes)
-        )->keyBy('code');
+            ->setFilter('code', 'in', $brandCodes))->keyBy('code');
         $this->injectNames($brandFilters, $brands);
 
         $productGroup->filters = array_merge($brandFilters, $otherFilters);
@@ -291,7 +270,6 @@ class ProductGroupDetailController extends Controller
 
     /**
      * @param array $ids
-     * @param FileService $fileService
      * @return Collection|FileDto[]
      */
     protected function getProductGroupImages(array $ids, FileService $fileService)
@@ -310,7 +288,6 @@ class ProductGroupDetailController extends Controller
     /**
      * Дополнить объекты фильтров их названиями
      * @param array $target
-     * @param Collection $source
      */
     protected function injectNames(array &$target, Collection $source)
     {

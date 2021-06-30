@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order\Detail;
 
-
 use App\Http\Controllers\Order\OrderDetailController;
 use Closure;
 use Exception;
@@ -29,10 +28,6 @@ class TabShipmentsController extends OrderDetailController
 {
     /**
      * Обновить отправление
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function save(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -45,9 +40,9 @@ class TabShipmentsController extends OrderDetailController
         ]);
 
         $shipmentDto = new ShipmentDto();
-        $shipmentDto->delivery_service_zero_mile = isset($data['delivery_service_zero_mile']) ? $data['delivery_service_zero_mile'] : null;
+        $shipmentDto->delivery_service_zero_mile = $data['delivery_service_zero_mile'] ?? null;
         $shipmentDto->psd = $data['psd'];
-        $shipmentDto->fsd = isset($data['fsd']) ? $data['fsd'] : null;
+        $shipmentDto->fsd = $data['fsd'] ?? null;
         $shipmentDto->status = $data['status'];
         $shipmentService->updateShipment($shipmentId, $shipmentDto);
 
@@ -58,10 +53,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Изменить статус отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function changeShipmentStatus(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -81,10 +72,7 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить штрихкоды для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function barcodes(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -97,10 +85,7 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить квитанцию cdek для отправления
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function cdekReceipt(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -113,10 +98,7 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Акт приема-передачи по отправлению"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function acceptanceAct(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -125,10 +107,7 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Карточка сборки отправления"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function assemblingCard(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
@@ -137,20 +116,13 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Получить документ "Опись отправления заказа"
-     * @param int $orderId
-     * @param int $shipmentId
-     * @param  ShipmentService  $shipmentService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function inventory(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
         return $this->getDocumentResponse($shipmentService->shipmentInventory($shipmentId));
     }
 
-    /**
-     * @param  DocumentDto  $documentDto
-     * @return StreamedResponse
-     */
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
     {
         return response()->streamDownload(function () use ($documentDto) {
@@ -160,14 +132,13 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Пометить отправление как непроблемное
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
-    public function markAsNonProblemShipment(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
-    {
+    public function markAsNonProblemShipment(
+        int $orderId,
+        int $shipmentId,
+        ShipmentService $shipmentService
+    ): JsonResponse {
         $shipmentService->markAsNonProblemShipment($shipmentId);
 
         return response()->json([
@@ -177,10 +148,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Отменить отправление
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  ShipmentService $shipmentService
-     * @return JsonResponse
      * @throws \Exception
      */
     public function cancelShipment(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
@@ -194,12 +161,6 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Добавить коробку для отправления
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  Request  $request
-     * @param  ShipmentPackageService  $shipmentPackageService
-     * @param  PackageService  $packageService
-     * @return JsonResponse
      * @throws Exception
      */
     public function addShipmentPackage(
@@ -208,8 +169,7 @@ class TabShipmentsController extends OrderDetailController
         Request $request,
         ShipmentPackageService $shipmentPackageService,
         PackageService $packageService
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentId, $request, $shipmentPackageService, $packageService) {
             $data = $this->validate($request, [
                 'package_id' => ['required', 'integer'],
@@ -232,43 +192,31 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Удалить коробку для отправления
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  int  $shipmentPackageId
-     * @param  Request  $request
-     * @param  ShipmentPackageService  $shipmentPackageService
-     * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function deleteShipmentPackage(
         int $orderId,
         int $shipmentId,
         int $shipmentPackageId,
-        Request $request,
         ShipmentPackageService $shipmentPackageService
-    ): JsonResponse
-    {
-        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $request, $shipmentPackageService) {
+    ): JsonResponse {
+        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $shipmentPackageService) {
             $shipmentPackageService->deleteShipmentPackage($shipmentPackageId);
         });
     }
 
     /**
      * Добавить товары в коробку отправления
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  int  $shipmentPackageId
-     * @param  Request  $request
-     * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function addShipmentPackageItems(
         int $orderId,
         int $shipmentId,
         int $shipmentPackageId,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
@@ -287,7 +235,7 @@ class TabShipmentsController extends OrderDetailController
                         $shipmentPackageId,
                         $basketItemId
                     );
-                } catch (Exception $e) {
+                } catch (\Throwable $e) {
                     $shipmentPackageItem = new ShipmentPackageItemDto();
                 }
                 $shipmentPackageItem->basket_item_id = $basketItemId;
@@ -302,13 +250,8 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Отредактировать кол-ва товара в коробке отправления
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  int  $shipmentPackageId
-     * @param  int  $basketItemId
-     * @param  Request  $request
-     * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function editShipmentPackageItem(
         int $orderId,
@@ -316,8 +259,7 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         int $basketItemId,
         Request $request
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
@@ -340,23 +282,16 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Удалить товар в полном кол-ве из коробки отправления
-     * @param  int  $orderId
-     * @param  int  $shipmentId
-     * @param  int  $shipmentPackageId
-     * @param  int  $basketItemId
-     * @param  Request  $request
-     * @return JsonResponse
      * @throws Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function deleteShipmentPackageItem(
         int $orderId,
         int $shipmentId,
         int $shipmentPackageId,
-        int $basketItemId,
-        Request $request
-    ): JsonResponse
-    {
-        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId, $request) {
+        int $basketItemId
+    ): JsonResponse {
+        return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
 
@@ -375,9 +310,6 @@ class TabShipmentsController extends OrderDetailController
     }
 
     /**
-     * @param  int  $orderId
-     * @param  Closure  $action
-     * @return JsonResponse
      * @throws Exception
      */
     protected function abstractAction(int $orderId, Closure $action): JsonResponse
@@ -385,7 +317,7 @@ class TabShipmentsController extends OrderDetailController
         $action();
 
         return response()->json([
-            'order' => $this->getOrder($orderId)
+            'order' => $this->getOrder($orderId),
         ]);
     }
 }

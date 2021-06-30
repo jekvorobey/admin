@@ -12,14 +12,11 @@ class MenuDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param MenuService $menuService
      * @return mixed
      * @throws CmsException
      */
-    public function index(
-        $id,
-        MenuService $menuService
-    ) {
+    public function index($id, MenuService $menuService)
+    {
         $menu = $this->getMenu($id, $menuService);
 
         return $this->render('Content/MenuDetail', [
@@ -43,15 +40,11 @@ class MenuDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param MenuService $menuService
      * @return mixed
      * @throws CmsException
      */
-    private function getMenu(
-        int $id,
-        MenuService $menuService
-    ) {
+    private function getMenu(int $id, MenuService $menuService)
+    {
         $query = $menuService->newQuery();
         $query->setFilter('id', $id);
         $query->include('all_items');

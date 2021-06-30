@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Order;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -46,7 +45,6 @@ class OrderDetailController extends Controller
     private const ON_COMPLECT = 4;
 
     /**
-     * @param  int  $id
      * @return mixed
      * @throws \Exception
      */
@@ -60,12 +58,12 @@ class OrderDetailController extends Controller
         $this->loadDeliveryServices = true;
 
         $order = $this->getOrder($id);
-        $number=$order->number;
+        $number = $order->number;
         $partsNumber = explode('-', $number);
 
         $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
 
-        $this->title = 'Заказ '.$order->number.' от '.$order->created_at;
+        $this->title = 'Заказ ' . $order->number . ' от ' . $order->created_at;
 
         $order['barcodes'] = $barCodes;
 
@@ -78,13 +76,11 @@ class OrderDetailController extends Controller
     /**
      * Проверить отправления на сборку
      * @param array $partsNumber
-     * @param ShipmentService $shipmentService
-     * @return bool
      */
     private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
     {
         $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
-            ->setFilter('number', 'like', $partsNumber[0].'%');
+            ->setFilter('number', 'like', $partsNumber[0] . '%');
         $restQuery->addFields(
             ShipmentDto::entity(),
             'id',
@@ -98,12 +94,12 @@ class OrderDetailController extends Controller
         $readyToShipItemsCount = 0;
         $notCanceledShipmentItemsCount = 0;
 
-        foreach($shipments as $item)
-        {
-            if ($item->is_canceled)
+        foreach ($shipments as $item) {
+            if ($item->is_canceled) {
                 continue;
+            }
 
-            if ($item->status == self::READY_TO_SHIP) {
+            if ($item->status >= self::READY_TO_SHIP) {
                 $readyToShipItemsCount += 1;
             }
 
@@ -115,10 +111,7 @@ class OrderDetailController extends Controller
 
     /**
      * Изменить статус заказа
-     * @param  int  $id
-     * @param  Request  $request
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
+     * @param ShipmentService $shipmentService
      */
     public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
     {
@@ -137,9 +130,7 @@ class OrderDetailController extends Controller
     /**
      * Вручную оплатить заказ
      * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
-     * @param  int  $id
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
+     * @param ShipmentService $shipmentService
      * @throws \Exception
      */
     public function pay(int $id, OrderService $orderService): JsonResponse
@@ -153,9 +144,7 @@ class OrderDetailController extends Controller
 
     /**
      * Отменить заказ
-     * @param  int  $id
-     * @param  ShipmentService  $shipmentService
-     * @return JsonResponse
+     * @param ShipmentService $shipmentService
      * @throws \Exception
      */
     public function cancel(int $id, OrderService $orderService): JsonResponse
@@ -168,8 +157,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param  int  $id
-     * @return OrderDto
      * @throws \Exception
      */
     protected function getOrder(int $id): OrderDto
@@ -260,7 +247,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param  OrderDto  $order
      * @throws \Exception
      */
     protected function addOrderDeliveryInfo(OrderDto $order): void
@@ -269,7 +255,7 @@ class OrderDetailController extends Controller
         $listsService = resolve(ListsService::class);
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
-        /** @var PackageService $brandService */
+        /** @var PackageService $packageService */
         $packageService = resolve(PackageService::class);
 
         //Справочник типов коробок
@@ -292,7 +278,7 @@ class OrderDetailController extends Controller
         $pointIds = $order->deliveries->pluck('point_id')->filter()->unique()->values()->all();
         if ($pointIds) {
             $points = $listsService->points($listsService->newQuery()->setFilter('id', $pointIds))
-                ->map(function(PointDto $point) {
+                ->map(function (PointDto $point) {
                     $point->type = $point->type();
 
                     return $point;
@@ -300,7 +286,6 @@ class OrderDetailController extends Controller
                 ->keyBy('id');
         }
 
-        /** @var Collection|PointDto[] $points */
         $tariffs = collect();
         $tariffIds = $order->deliveries->pluck('tariff_id')->filter()->unique()->values()->all();
         if ($tariffIds) {
@@ -329,14 +314,14 @@ class OrderDetailController extends Controller
             } else {
                 $cities->push($delivery->getCity());
                 $deliveryAddress = $delivery->delivery_address;
-                $deliveryAddress['address_string'] = join(', ', array_filter([
-                    isset($deliveryAddress['post_index']) ? $deliveryAddress['post_index'] : '',
-                    isset($deliveryAddress['region']) ? $delivery->delivery_address['region'] : '',
-                    isset($deliveryAddress['city']) ? $delivery->delivery_address['city'] : '',
-                    isset($deliveryAddress['street']) ? $delivery->delivery_address['street'] : '',
-                    isset($deliveryAddress['house']) ? $delivery->delivery_address['house'] : '',
-                    isset($deliveryAddress['block']) ? $delivery->delivery_address['block'] : '',
-                    isset($deliveryAddress['flat']) ? $delivery->delivery_address['flat'] : '',
+                $deliveryAddress['address_string'] = implode(', ', array_filter([
+                    $deliveryAddress['post_index'] ?? '',
+                    $deliveryAddress['region'] ?? '',
+                    $deliveryAddress['city'] ?? '',
+                    $deliveryAddress['street'] ?? '',
+                    $deliveryAddress['house'] ?? '',
+                    $deliveryAddress['block'] ?? '',
+                    $deliveryAddress['flat'] ?? '',
                 ]));
                 $deliveryAddress['full_address_string'] = $delivery->getAddressString();
                 $delivery->delivery_address = $deliveryAddress;
@@ -520,8 +505,6 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @param  OrderDto  $order
-     * @return Collection
      * @throws \Exception
      */
     protected function getKpis(OrderDto $order): Collection
@@ -530,7 +513,7 @@ class OrderDetailController extends Controller
             OrderStatus::CREATED => [
                 'status' => OrderStatus::statusById(OrderStatus::CREATED),
                 'status_at' => $order->created_at,
-            ]
+            ],
         ]);
         if ($order->history->isNotEmpty()) {
             foreach ($order->history as $historyDto) {

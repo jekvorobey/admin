@@ -11,13 +11,12 @@ use Pim\Services\CategoryService\CategoryService;
 
 class CategoryController extends Controller
 {
-    public function index(
-        CategoryService $categoryService
-    ) {
+    public function index(CategoryService $categoryService)
+    {
         $this->title = 'Категории';
 
         return $this->render('Product/CategoryList', [
-            'categories' =>  $this->loadCategories($categoryService),
+            'categories' => $this->loadCategories($categoryService),
         ]);
     }
 
@@ -48,7 +47,6 @@ class CategoryController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
      * @return Collection|CategoryDto[]
      * @throws \Pim\Core\PimException
      */

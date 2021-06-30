@@ -17,15 +17,14 @@ use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
 
-
 class TabProductController extends Controller
 {
     /**
      * AJAX подгрузка информации для фильтрации оферов
      *
-     * @param int $merchantId
      * @return JsonResponse
      * @throws \Exception
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function loadProductsData(int $merchantId)
     {
@@ -37,8 +36,6 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @param int $merchantId
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(int $merchantId): JsonResponse
@@ -61,7 +58,6 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @param int $merchantId
      * @return RestQuery
      * @throws \Exception
      */
@@ -100,7 +96,8 @@ class TabProductController extends Controller
      */
     protected function getFilter(): array
     {
-        $filter = Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'id' => 'string|someone',
                 'product_name' => 'string|someone',
@@ -112,12 +109,9 @@ class TabProductController extends Controller
                 'qty_to' => 'numeric|someone',
             ]
         )->attributes();
-
-        return $filter;
     }
 
     /**
-     * @param RestQuery $query
      * @return Collection
      * @throws PimException
      */
@@ -153,8 +147,8 @@ class TabProductController extends Controller
                     'name' => $offer->product->name,
                 ],
                 'sale_status' => OfferSaleStatus::statusById($offer->sale_status),
-                'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : "Нет данных",
-                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id] : "Нет данных",
+                'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : 'Нет данных',
+                'qty' => array_key_exists($offer->id, $qtys) ? $qtys[$offer->id] : 'Нет данных',
                 'created_at' => $offer->created_at,
             ];
         })->all();

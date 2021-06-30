@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Services\ReferralService\Dto\GetPromoPageProductsDto;
@@ -29,14 +28,13 @@ class TabPromoPageController extends Controller
     public function add($id, ProductService $productService, ReferralService $referralService)
     {
         $data = $this->validate(request(), [
-            'product_id' => 'integer'
+            'product_id' => 'integer',
         ]);
 
         $product = $productService->newQuery()
             ->setFilter('id', $data['product_id'])
             ->products();
-        if ($product->isEmpty())
-        {
+        if ($product->isEmpty()) {
             throw new BadRequestHttpException('Ошибка: товар не найден');
         }
 
@@ -48,7 +46,7 @@ class TabPromoPageController extends Controller
     public function delete($id, ReferralService $referralService)
     {
         $data = $this->validate(request(), [
-            'product_id' => 'numeric'
+            'product_id' => 'numeric',
         ]);
         $referralService->deletePromoPageProduct($id, $data['product_id']);
 

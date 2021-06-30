@@ -1,10 +1,7 @@
 <?php
 
-
 namespace App\Core;
 
-
-use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
@@ -100,7 +97,7 @@ class ViewRender
         $this->componentName = $componentName;
         $this->props = $props;
     }
-    
+
     public function setTitle($title): self
     {
         $this->title = $title;
@@ -258,18 +255,18 @@ class ViewRender
 
         return $this;
     }
-    
+
     public function loadPublicEventTypes(bool $load = false): self
     {
         if ($load) {
             /** @var PublicEventTypeService $publicEventTypeService */
             $publicEventTypeService = resolve(PublicEventTypeService::class);
-            /** @var Collection $typesCollection */
             try {
+                /** @var Collection $typesCollection */
                 $typesCollection = $publicEventTypeService
                     ->query()
                     ->get();
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 logger()->error('Error while load public event types', ['exception' => $e]);
                 $typesCollection = collect();
             }
@@ -285,7 +282,7 @@ class ViewRender
         }
         return $this;
     }
-    
+
     public function loadPublicEventMediaTypes(bool $load = false): self
     {
         if ($load) {
@@ -297,7 +294,7 @@ class ViewRender
         }
         return $this;
     }
-    
+
     public function loadPublicEventMediaCollections(bool $load = false): self
     {
         if ($load) {
@@ -354,7 +351,7 @@ class ViewRender
                 'anyBundle' => DiscountTypeDto::TYPE_ANY_BUNDLE,
                 'anyBrand' => DiscountTypeDto::TYPE_ANY_BRAND,
                 'anyCategory' => DiscountTypeDto::TYPE_ANY_CATEGORY,
-                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS
+                'anyMasterclass' => DiscountTypeDto::TYPE_ANY_MASTERCLASS,
             ];
         }
         return $this;
@@ -391,8 +388,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadBonusTypes(bool $load = false): self
@@ -419,7 +414,7 @@ class ViewRender
         if ($load) {
             $this->bonusValueTypes = [
                 'percent' => BonusDto::VALUE_TYPE_PERCENT,
-                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE
+                'absolute' => BonusDto::VALUE_TYPE_ABSOLUTE,
             ];
         }
 
@@ -427,8 +422,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadCustomerBonusStatus(bool $load = false): self
@@ -446,8 +439,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadOrderStatuses(bool $load = false): self
@@ -478,8 +469,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadPaymentStatuses(bool $load = false): self
@@ -505,8 +494,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadPaymentMethods(bool $load = false): self
@@ -527,8 +514,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadDeliveryStatuses(bool $load = false): self
@@ -565,8 +550,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadShipmentStatuses(bool $load = false): self
@@ -603,8 +586,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadCargoStatuses(bool $load = false): self
@@ -627,8 +608,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadDeliveryTypes(bool $load = false): self
@@ -650,8 +629,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadDeliveryMethods(bool $load = false): self
@@ -673,8 +650,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadDeliveryServices(bool $load = false): self
@@ -706,7 +681,7 @@ class ViewRender
                 OfferSaleStatus::STATUS_PRE_ORDER => 'preOrder',
                 OfferSaleStatus::STATUS_OUT_SALE => 'outSale',
                 OfferSaleStatus::STATUS_AVAILABLE_SALE => 'availableSale',
-                OfferSaleStatus::STATUS_NOT_AVAILABLE_SALE => 'notAvailableSale'
+                OfferSaleStatus::STATUS_NOT_AVAILABLE_SALE => 'notAvailableSale',
             ];
             foreach (OfferSaleStatus::allStatuses() as $id => $status) {
                 if (!isset($mapOfferSaleStatuses[$id])) {
@@ -734,8 +709,6 @@ class ViewRender
     }
 
     /**
-     * @param bool $load
-     *
      * @return $this
      */
     public function loadBasketTypes(bool $load = false): self
@@ -842,10 +815,10 @@ class ViewRender
 
             if (isset($webPack[$this->componentName])) {
                 if (isset($webPack[$this->componentName]['js'])) {
-                    $js = array_filter((array)$webPack[$this->componentName]['js']);
+                    $js = array_filter((array) $webPack[$this->componentName]['js']);
                 }
                 if (isset($webPack[$this->componentName]['css'])) {
-                    $css = array_filter((array)$webPack[$this->componentName]['css']);
+                    $css = array_filter((array) $webPack[$this->componentName]['css']);
                 }
             }
             return [

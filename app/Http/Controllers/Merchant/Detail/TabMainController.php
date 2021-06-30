@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
-
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\FileDto;
@@ -36,7 +34,7 @@ class TabMainController extends Controller
     public function createDocument(int $id, MerchantService $merchantService)
     {
         $data = $this->validate(request(), [
-            'file_id' => 'required'
+            'file_id' => 'required',
         ]);
 
         $merchantService->createDocument($id, $data['file_id']);
@@ -47,7 +45,7 @@ class TabMainController extends Controller
     public function deleteDocument(int $id, MerchantService $merchantService)
     {
         $data = $this->validate(request(), [
-            'file_id' => 'required'
+            'file_id' => 'required',
         ]);
 
         $merchantService->deleteDocument($id, $data['file_id']);

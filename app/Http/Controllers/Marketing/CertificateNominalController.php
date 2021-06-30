@@ -40,9 +40,9 @@ class CertificateNominalController extends Controller
 
         return $this->render('Marketing/Certificate/Nominals/Add', [
             'nominal' => [
-                'is_active' => 1
+                'is_active' => 1,
             ],
-            'all_designs' => $this->designDictionary()
+            'all_designs' => $this->designDictionary(),
         ]);
     }
 
@@ -52,7 +52,7 @@ class CertificateNominalController extends Controller
         $this->setActiveMenu();
         return $this->render('Marketing/Certificate/Nominals/Edit', [
             'nominal' => $this->service()->nominalQuery()->withDesigns()->id($id)->nominals()->first() ?? [],
-            'all_designs' => $this->designDictionary()
+            'all_designs' => $this->designDictionary(),
         ]);
     }
 

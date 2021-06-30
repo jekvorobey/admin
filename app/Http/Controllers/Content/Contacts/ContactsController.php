@@ -18,7 +18,6 @@ class ContactsController extends Controller
 {
     /**
      * Список всех контактов и соц. сетей
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function list(ContactsService $contactsService)
@@ -28,13 +27,12 @@ class ContactsController extends Controller
         $this->title = 'Управление соц. сетями и контактами';
         return $this->render('Content/Contacts', [
             'iContacts' => $contacts,
-            'iContactTypes' => ContactDto::contactTypes()
+            'iContactTypes' => ContactDto::contactTypes(),
         ]);
     }
 
     /**
      * Добавить контакт или соц. сеть
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function add(ContactsService $contactsService)
@@ -44,7 +42,7 @@ class ContactsController extends Controller
             'address' => 'nullable|string',
             'icon_file.id' => 'nullable|integer',
             'description' => 'nullable|string',
-            'type' => 'required|integer'
+            'type' => 'required|integer',
         ]);
 
         $contactDto = $this->fulfillDto($data);
@@ -54,13 +52,12 @@ class ContactsController extends Controller
         $contacts = $contactsService->getContacts()->keyBy('id');
 
         return response()->json([
-            'contacts' => $contacts
+            'contacts' => $contacts,
         ]);
     }
 
     /**
      * Изменить данные о контакте или соц. сети
-     * @param ContactsService $contactsService
      * @return JsonResponse
      */
     public function edit(ContactsService $contactsService)
@@ -71,7 +68,7 @@ class ContactsController extends Controller
             'address' => 'nullable|string',
             'icon_file.id' => 'nullable|integer',
             'description' => 'nullable|string',
-            'type' => 'required|integer'
+            'type' => 'required|integer',
         ]);
 
         $contactDto = $this->fulfillDto($data);
@@ -81,13 +78,12 @@ class ContactsController extends Controller
         $contacts = $contactsService->getContacts()->keyBy('id');
 
         return response()->json([
-            'contacts' => $contacts
+            'contacts' => $contacts,
         ]);
     }
 
     /**
      * Удалить контакт или соц. сеть
-     * @param ContactsService $contactsService
      * @return Application|ResponseFactory|Response
      */
     public function remove(ContactsService $contactsService)
@@ -109,12 +105,12 @@ class ContactsController extends Controller
     protected function fulfillDto(array $data)
     {
         $contactDto = new ContactDto();
-        $contactDto->id = isset($data['id']) ? $data['id'] : null;
-        $contactDto->name = isset($data['name']) ? $data['name'] : null;
-        $contactDto->address = isset($data['address']) ? $data['address'] : null;
-        $contactDto->icon_file = isset($data['icon_file']['id']) ? $data['icon_file']['id'] : null;
-        $contactDto->description = isset($data['description']) ? $data['description'] : null;
-        $contactDto->type = isset($data['type']) ? $data['type'] : null;
+        $contactDto->id = $data['id'] ?? null;
+        $contactDto->name = $data['name'] ?? null;
+        $contactDto->address = $data['address'] ?? null;
+        $contactDto->icon_file = $data['icon_file']['id'] ?? null;
+        $contactDto->description = $data['description'] ?? null;
+        $contactDto->type = $data['type'] ?? null;
 
         return $contactDto;
     }

@@ -19,14 +19,11 @@ class PopularBrandController extends Controller
 {
     /**
      * Список всех популярных брендов
-     * @param PopularBrandService $popularBrandService
      * @return mixed
      * @throws CmsException|PimException
      */
-    public function list(
-        PopularBrandService $popularBrandService,
-        BrandService $brandService
-    ) {
+    public function list(PopularBrandService $popularBrandService, BrandService $brandService)
+    {
         $popularBrands = $popularBrandService->popularBrands(
             (new RestQuery())
                 ->addSort('order_num')
@@ -43,7 +40,7 @@ class PopularBrandController extends Controller
         });
 
         $brandsForPopularBrands = isset($groupedBrands['popular']) ? $groupedBrands['popular']->keyBy('id') : [];
-        $otherBrands = isset($groupedBrands['other']) ? $groupedBrands['other'] : [];
+        $otherBrands = $groupedBrands['other'] ?? [];
 
         $this->title = 'Популярные бренды';
         return $this->render('Content/PopularBrands', [
@@ -63,7 +60,6 @@ class PopularBrandController extends Controller
 
     /**
      * Добавить новый популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return JsonResponse
      * @throws CmsException
      */
@@ -71,7 +67,7 @@ class PopularBrandController extends Controller
     {
         $data = $this->validate(request(), [
             'brand_id' => 'required|integer',
-            'show_logo' => 'required|boolean'
+            'show_logo' => 'required|boolean',
         ]);
 
         $popularBrand = new PopularBrandDto();
@@ -87,7 +83,6 @@ class PopularBrandController extends Controller
 
     /**
      * Редактировать популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return Response|JsonResponse
      * @throws CmsException
      */
@@ -111,7 +106,6 @@ class PopularBrandController extends Controller
 
     /**
      * Удалить популярный бренд
-     * @param PopularBrandService $popularBrandService
      * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
@@ -129,7 +123,6 @@ class PopularBrandController extends Controller
 
     /**
      * Изменить порядок популярных брендов
-     * @param PopularBrandService $popularBrandService
      * @return Response
      */
     public function reorder(PopularBrandService $popularBrandService)

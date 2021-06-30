@@ -21,20 +21,16 @@ use Illuminate\Validation\Rule;
 class DeliveryServiceListController extends Controller
 {
     /**
-     * @param  Request  $request
-     * @param  ListsService  $listsService
      * @return mixed
      * @throws \Exception
      */
-    public function index(
-        Request $request,
-        ListsService $listsService
-    ) {
+    public function index(Request $request, ListsService $listsService)
+    {
         $this->title = 'Логистические операторы';
         $restQuery = $this->makeRestQuery($listsService, true);
         $pager = $listsService->deliveryServicesCount($restQuery);
         $deliveryServices = $this->loadDeliveryServices($restQuery, $listsService);
-        
+
         return $this->render('Logistics/DeliveryService/List', [
             'iDeliveryServices' => $deliveryServices,
             'iCurrentPage' => $this->getPage(),
@@ -45,17 +41,12 @@ class DeliveryServiceListController extends Controller
         ]);
     }
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
     }
-    
+
     /**
-     * @param  ListsService $listsService
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function page(ListsService $listsService): JsonResponse
@@ -68,17 +59,17 @@ class DeliveryServiceListController extends Controller
         if ($this->getPage() == 1) {
             $result['pager'] = $listsService->deliveryServicesCount($restQuery);
         }
-        
+
         return response()->json($result);
     }
-    
+
     /**
-     * @param bool $withDefault
      * @return array
      */
     protected function getFilter(bool $withDefault = false): array
     {
-        return Validator::make(request('filter') ??
+        return Validator::make(
+            request('filter') ??
             ($withDefault ?
                 [
                     'status' => [DeliveryServiceStatus::ACTIVE],
@@ -90,10 +81,8 @@ class DeliveryServiceListController extends Controller
             ]
         )->attributes();
     }
-    
+
     /**
-     * @param  DataQuery  $restQuery
-     * @param  ListsService $listsService
      * @return Collection|DeliveryService[]
      */
     protected function loadDeliveryServices(DataQuery $restQuery, ListsService $listsService): Collection
@@ -109,29 +98,26 @@ class DeliveryServiceListController extends Controller
         $deliveryServices = $listsService->deliveryServices($restQuery);
         $deliveryServices = $deliveryServices->map(function (DeliveryService $deliveryService) {
             $data = $deliveryService->toArray();
-    
+
             $data['status'] = $deliveryService->status()->toArray();
-        
+
             return $data;
         });
-        
+
         return $deliveryServices;
     }
-    
+
     /**
-     * @param  ListsService $listsService
-     * @param  bool $withDefaultFilter
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(ListsService $listsService, bool $withDefaultFilter = false): DataQuery
     {
         /** @var RestQuery $restQuery */
         $restQuery = $listsService->newQuery();
-        
+
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20)->addSort('priority', 'asc');
-        
+
         $filter = $this->getFilter($withDefaultFilter);
         if ($filter) {
             foreach ($filter as $key => $value) {
@@ -139,13 +125,13 @@ class DeliveryServiceListController extends Controller
                     case 'name':
                         $restQuery->setFilter($key, 'like', "%{$value}%");
                         break;
-                
+
                     default:
                         $restQuery->setFilter($key, $value);
                 }
             }
         }
-        
+
         return $restQuery;
     }
 }
