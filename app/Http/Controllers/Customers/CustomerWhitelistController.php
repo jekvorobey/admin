@@ -7,8 +7,6 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
-use Greensight\Customer\Services\CustomerService\CustomerService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
