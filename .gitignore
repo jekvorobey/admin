@@ -18,6 +18,7 @@
 !phpcs.xml
 !phpunit.xml
 *.txt
+!public/robots.txt
 
 # Compiled source #
 ###################
