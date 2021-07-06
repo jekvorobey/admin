@@ -15,12 +15,11 @@ class ProductBadgesController extends Controller
 {
     private $replacements = [
         '{plus}' => '+',
-        '{equal}' => '='
+        '{equal}' => '=',
     ];
 
     /**
      * Список всех товарных ярлыков
-     * @param ContentBadgesService $badgesService
      * @return mixed
      */
     public function list(ContentBadgesService $badgesService)
@@ -30,19 +29,18 @@ class ProductBadgesController extends Controller
         $this->title = 'Справочник товарных шильдиков';
 
         return $this->render('Content/ProductBadges', [
-            'iBadges' => $badges
+            'iBadges' => $badges,
         ]);
     }
 
     /**
      * Добавить новый продуктовый ярлык
-     * @param ContentBadgesService $badgesService
      * @return JsonResponse
      */
     public function add(ContentBadgesService $badgesService)
     {
         $data = $this->validate(request(), [
-            'text' => 'required|string'
+            'text' => 'required|string',
         ]);
 
         foreach ($this->replacements as $code => $symbol) {
@@ -57,14 +55,12 @@ class ProductBadgesController extends Controller
         $badges = $badgesService->productBadges();
 
         return response()->json([
-            'badges' => $badges
+            'badges' => $badges,
         ]);
-
     }
 
     /**
      * Редактировать продуктовый ярлык
-     * @param ContentBadgesService $badgesService
      * @return JsonResponse
      */
     public function edit(ContentBadgesService $badgesService)
@@ -73,7 +69,7 @@ class ProductBadgesController extends Controller
             'id' => 'required|integer',
             'text' => 'required|string',
         ]);
-        
+
         foreach ($this->replacements as $code => $symbol) {
             $data['text'] = str_replace($code, $symbol, $data['text']);
         }
@@ -86,14 +82,12 @@ class ProductBadgesController extends Controller
         $badges = $badgesService->productBadges();
 
         return response()->json([
-            'badges' => $badges
+            'badges' => $badges,
         ]);
-
     }
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @param ContentBadgesService $badgesService
      * @return Application|ResponseFactory|Response
      */
     public function reorder(ContentBadgesService $badgesService)
@@ -109,14 +103,10 @@ class ProductBadgesController extends Controller
 
     /**
      * Удалить продуктовый ярлык и его связи с товарами
-     * @param ContentBadgesService $badgesService
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
-    public function remove(
-        ContentBadgesService $badgesService,
-        ProductService $productService
-    ) {
+    public function remove(ContentBadgesService $badgesService, ProductService $productService)
+    {
         $data = $this->validate(request(), [
             'id' => 'required|integer',
         ]);

@@ -11,8 +11,6 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Logistics\Services\ListsService\ListsService;
-use Greensight\Marketing\Dto\Discount\DiscountDto;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -35,9 +33,6 @@ class DiscountController extends Controller
     /**
      * Список скидок
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return mixed
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -70,9 +65,6 @@ class DiscountController extends Controller
     /**
      * AJAX пагинация страниц со скидками
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
     public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -91,8 +83,6 @@ class DiscountController extends Controller
     /**
      * Страница для создания скидки
      *
-     * @param CategoryService $categoryService
-     * @param BrandService    $brandService
      *
      * @return mixed
      * @throws PimException
@@ -120,8 +110,6 @@ class DiscountController extends Controller
     /**
      * Запрос на создание заявки на скидки
      *
-     * @param Request $request
-     * @param DiscountService $discountService
      * @return JsonResponse
      */
     public function create(Request $request, DiscountService $discountService)
@@ -129,7 +117,7 @@ class DiscountController extends Controller
         try {
             $discount = DiscountHelper::validate($request);
             $result = $discountService->create($discount);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             return response()->json(['status' => $ex->getMessage()]);
         }
 
@@ -137,9 +125,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param DiscountService $discountService
      * @return JsonResponse
      */
     public function update(int $id, Request $request, DiscountService $discountService)
@@ -147,7 +132,7 @@ class DiscountController extends Controller
         try {
             $discount = DiscountHelper::validate($request);
             $discountService->update($id, $discount);
-        } catch (\Exception $ex) {
+        } catch (\Throwable $ex) {
             return response()->json(['error' => $ex->getMessage()], 400);
         }
 
@@ -155,9 +140,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int             $id
-     * @param OfferService $offerService
-     *
      * @return mixed
      * @throws PimException
      */
@@ -188,14 +170,7 @@ class DiscountController extends Controller
         return $this->render('Marketing/Discount/Edit', $data);
     }
 
-
     /**
-     * @param int             $id
-     * @param DiscountService $discountService
-     * @param CategoryService $categoryService
-     * @param ListsService    $listsService
-     * @param BrandService    $brandService
-     *
      * @return mixed
      * @throws PimException
      */
@@ -213,8 +188,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param int $id
-     *
      * @return JsonResponse
      */
     public function discountOrdersDetail(int $id, Request $request)
@@ -238,7 +211,7 @@ class DiscountController extends Controller
                 ->setFilter('id', '=', $userIds)
         )->keyBy('id');
 
-        $data['customers'] = $customers->map(function ($customer) use($users) {
+        $data['customers'] = $customers->map(function ($customer) use ($users) {
             return $users[$customer['user_id']]['full_name'] ?? '–';
         });
 
@@ -246,9 +219,6 @@ class DiscountController extends Controller
     }
 
     /**
-     * @param Request         $request
-     * @param DiscountService $discountService
-     *
      * @return JsonResponse
      */
     public function status(Request $request, DiscountService $discountService)
@@ -259,15 +229,12 @@ class DiscountController extends Controller
             'status' => 'integer|required',
         ]);
 
-        /** @var DiscountDto $discount */
         $discountService->updateStatuses($data['ids'], (int) $data['status']);
+
         return response()->json(['status' => 'ok']);
     }
 
     /**
-     * @param Request         $request
-     * @param DiscountService $discountService
-     *
      * @return JsonResponse
      */
     public function delete(Request $request, DiscountService $discountService)
@@ -277,8 +244,8 @@ class DiscountController extends Controller
             'ids.*' => 'integer|required',
         ]);
 
-        /** @var DiscountDto $discount */
         $discountService->delete($data['ids']);
+
         return response()->json(['status' => 'ok']);
     }
 }

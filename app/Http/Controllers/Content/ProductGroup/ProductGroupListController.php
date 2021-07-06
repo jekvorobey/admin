@@ -32,28 +32,23 @@ class ProductGroupListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'types' => $this->loadTypes($productGroupTypeService),
-            ]
+            ],
         ]);
     }
 
-    public function page(
-        Request $request,
-        ProductGroupService $productGroupService,
-        FileService $fileService
-    )
+    public function page(Request $request, ProductGroupService $productGroupService, FileService $fileService)
     {
         $query = $this->makeQuery($request);
         $data = [
             'productGroups' => $this->loadItems($query, $productGroupService, $fileService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $productGroupService->productGroupsCount($query);
         }
         return response()->json($data);
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -88,23 +83,17 @@ class ProductGroupListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
-     * @param ProductGroupService $productGroupService
-     * @param FileService $fileService
      * @return ProductGroupDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        ProductGroupService $productGroupService,
-        FileService $fileService
-    ) {
+    protected function loadItems(RestQuery $query, ProductGroupService $productGroupService, FileService $fileService)
+    {
         $productGroups = $productGroupService->productGroups($query);
         $photoIds = $productGroups->pluck('preview_photo_id')->all();
         $photos = $fileService->getFiles($photoIds)->keyBy('id');
 
         // Получается дополненный ProductGroupDto
-        return $productGroups->map(function(ProductGroupDto $productGroup) use ($photos) {
+        return $productGroups->map(function (ProductGroupDto $productGroup) use ($photos) {
             /** @var FileDto $photo */
             $photo = $photos->get($productGroup['preview_photo_id']);
             $productGroup['photo'] = $photo ? $photo->absoluteUrl() : null;
@@ -113,7 +102,6 @@ class ProductGroupListController extends Controller
     }
 
     /**
-     * @param ProductGroupTypeService $productGroupTypeService
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */

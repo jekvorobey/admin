@@ -17,8 +17,6 @@ class SearchController extends Controller
 {
     /**
      * Поиск товаров по запросу
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function products(Request $request): JsonResponse
     {

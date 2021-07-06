@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Merchant;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -76,7 +75,7 @@ class MerchantListController extends Controller
         $data = [
             'items' => $this->loadItems($query),
         ];
-        if (1 == request()->get('page', 1)) {
+        if (request()->get('page', 1) == 1) {
             $data['pager'] = is_null($query) ? 0 : $merchantService->merchantsCount($query);
         }
 
@@ -88,13 +87,13 @@ class MerchantListController extends Controller
         $data = $this->validate(request(), [
             'ids' => 'array',
             'ids.' => 'numeric',
-            'status' => Rule::in(array_keys(MerchantStatus::allStatuses()))
+            'status' => Rule::in(array_keys(MerchantStatus::allStatuses())),
         ]);
 
         foreach ($data['ids'] as $id) {
             $merchantService->update(new MerchantDto([
                 'id' => $id,
-                'status' => $data['status']
+                'status' => $data['status'],
             ]));
         }
 
@@ -227,14 +226,9 @@ class MerchantListController extends Controller
 
     /**
      * Создать нового мерчанта
-     * @param MerchantService $merchantService
-     * @param UserService $userService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createMerchant(
-        MerchantService $merchantService,
-        UserService $userService
-    )
+    public function createMerchant(MerchantService $merchantService)
     {
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
@@ -283,7 +277,7 @@ class MerchantListController extends Controller
                 ->setPassword($data['password'])
                 ->setStorageAddress($data['storage_address'])
                 ->setSite($data['site'])
-                ->setCanIntegration((bool)$data['can_integration'])
+                ->setCanIntegration((bool) $data['can_integration'])
                 ->setSaleInfo($data['sale_info'])
                 ->setCommunicationMethod($data['communication_method'])
         );
@@ -307,7 +301,7 @@ class MerchantListController extends Controller
         $exists = $userService->exists($email, Front::FRONT_MAS);
 
         return response()->json([
-            'exists' => $exists
+            'exists' => $exists,
         ]);
     }
 }

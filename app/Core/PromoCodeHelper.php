@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use \Illuminate\Support\Collection;
+use Illuminate\Support\Collection;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -13,15 +13,11 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Dto\CustomerDto;
 
-
 class PromoCodeHelper
 {
     /**
      * Получение списка промокодов c типом скидка
      *
-     * @param DiscountService $discountService
-     * @param PromoCodeService $promoCodeService
-     * @param int $merchantId
      * @return Collection
      */
     public static function getDiscountPromoCodes(
@@ -34,7 +30,7 @@ class PromoCodeHelper
         $discounts = $discountService->discounts([
             'filter' => [
                 'relateToMerchant' => $merchantId,
-            ]
+            ],
         ]);
 
         if ($discounts->isNotEmpty()) {
@@ -50,14 +46,10 @@ class PromoCodeHelper
     /**
      * Получение списка промокодов
      *
-     * @param PromoCodeService $promoCodeService
-     * @param int $merchantId
      * @return Collection
      */
-    public static function getPromoCodes(
-        PromoCodeService $promoCodeService,
-        int $merchantId = null
-    ) {
+    public static function getPromoCodes(PromoCodeService $promoCodeService, ?int $merchantId = null)
+    {
         $promoCodeInDto = (new PromoCodeInDto());
         if ($merchantId) {
             $promoCodeInDto = $promoCodeInDto->merchant($merchantId);
@@ -69,13 +61,10 @@ class PromoCodeHelper
      * Получение списка реферальных партнеров в списке промокодов
      *
      * @param Collection $promoCodes
-     * @param CustomerService $customerService
      * @return Collection
      */
-    public static function getReferrals(
-        Collection $referralIds,
-        CustomerService $customerService
-    ) {
+    public static function getReferrals(Collection $referralIds, CustomerService $customerService)
+    {
         $referrals = collect();
         if ($referralIds->isNotEmpty()) {
             $referrals = $customerService
@@ -92,15 +81,10 @@ class PromoCodeHelper
      * Получение списка пользователей в списке промокодов
      *
      * @param Collection $promoCodes
-     * @param UserService $userService
-     * @param Collection $referrals
      * @return Collection
      */
-    public static function getUsers(
-        Collection $userIds,
-        UserService $userService,
-        Collection $referrals = null
-    ) {
+    public static function getUsers(Collection $userIds, UserService $userService, ?Collection $referrals = null)
+    {
         if ($referrals) {
             $userIds = $userIds->merge($referrals->pluck('user_id'));
         }
@@ -121,16 +105,10 @@ class PromoCodeHelper
     /**
      * Форматирование списка промокодов для вывода в таблицу
      *
-     * @param Collection $promoCodes
-     * @param Collection $referrals
-     * @param Collection $users
      * @return Collection
      */
-    public static function formatPromoCodes(
-        Collection $promoCodes,
-        Collection $referrals,
-        Collection $users
-    ) {
+    public static function formatPromoCodes(Collection $promoCodes, Collection $referrals, Collection $users)
+    {
         return $promoCodes
             ->sortByDesc('created_at')
             ->map(function (PromoCodeOutDto $promoCode) use ($users, $referrals) {
@@ -141,7 +119,7 @@ class PromoCodeHelper
                 $promoCode['creator'] = $creatorUser ? [
                     'id' => $creatorUser->id,
                     'title' => $creatorUser->getTitle(),
-                ]: null;
+                ] : null;
 
                 $promoCode['owner'] = null;
                 if ($promoCode->owner_id) {
@@ -153,7 +131,7 @@ class PromoCodeHelper
                         $promoCode['owner'] = $ownerUser ? [
                             'id' => $promoCode->owner_id,
                             'title' => $ownerUser->getTitle(),
-                        ]: null;
+                        ] : null;
                     }
                 }
 
@@ -164,8 +142,6 @@ class PromoCodeHelper
     /**
      * Получение списка пользователей-создателей промокодов
      *
-     * @param Collection $creatorIds
-     * @param Collection $users
      * @return Collection
      */
     public static function getCreators(Collection $creatorIds, Collection $users)
@@ -185,8 +161,6 @@ class PromoCodeHelper
      * Получение списка реферальных партнеров, которые есть в списке промокодов
      *
      * @param Collection $creatorIds
-     * @param Collection $users
-     * @param Collection $referrals
      * @return Collection
      */
     public static function getOwners(Collection $referralIds, Collection $users, Collection $referrals)

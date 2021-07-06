@@ -28,7 +28,6 @@ class MainController extends Controller
 
     /**
      * Вывести форму авторизации
-     * @param RequestInitiator $user
      * @return mixed
      */
     public function login(RequestInitiator $user)
@@ -40,9 +39,6 @@ class MainController extends Controller
 
     /**
      * Выполнить авторизацию
-     * @param Request $request
-     * @param RequestInitiator $user
-     * @return \Illuminate\Http\JsonResponse
      */
     public function loginAjax(Request $request, RequestInitiator $user): JsonResponse
     {
@@ -56,8 +52,6 @@ class MainController extends Controller
 
     /**
      * Выполнить выход
-     * @param RequestInitiator $user
-     * @return \Illuminate\Http\JsonResponse
      */
     public function logoutAjax(RequestInitiator $user): JsonResponse
     {

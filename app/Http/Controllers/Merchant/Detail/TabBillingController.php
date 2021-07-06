@@ -15,15 +15,12 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use MerchantManagement\Dto\MerchantSettingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
-use phpDocumentor\Reflection\Types\False_;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Carbon;
 
 class TabBillingController extends Controller
 {
     /**
-     * @param int             $merchantId
-     * @param MerchantService $merchantService
-     *
      * @return JsonResponse
      */
     public function load(int $merchantId, MerchantService $merchantService)
@@ -31,20 +28,18 @@ class TabBillingController extends Controller
         $settings = $merchantService->getSetting($merchantId, MerchantSettingDto::BILLING_CYCLE)->first();
         $billingCycle = $settings ? $settings->value : null;
         return response()->json([
-            'billing_cycle' => (int)$billingCycle,
+            'billing_cycle' => (int) $billingCycle,
         ]);
     }
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function billingCycle(int $merchantId, MerchantService $merchantService)
     {
-        $data = $this->validate(request(),[
-            'billing_cycle' => 'integer'
+        $data = $this->validate(request(), [
+            'billing_cycle' => 'integer',
         ]);
         $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
         return response('', 204);
@@ -52,9 +47,6 @@ class TabBillingController extends Controller
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param int $operationId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
@@ -65,9 +57,6 @@ class TabBillingController extends Controller
 
     /**
      * Сохранить биллинговый период
-     * @param int $merchantId
-     * @param int $operationId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|Response
      */
     public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
@@ -75,11 +64,9 @@ class TabBillingController extends Controller
         $merchantService->deleteOperation($merchantId, $operationId);
         return response('', 204);
     }
+
     /**
      * Получить биллинговые отчеты
-     * @param Request $request
-     * @param int $merchantId
-     * @param MerchantService $merchantService
      * @return JsonResponse
      * @throws Exception
      */
@@ -94,9 +81,6 @@ class TabBillingController extends Controller
 
     /**
      * Удалить биллинговый отчет
-     * @param int $merchantId
-     * @param int $reportId
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function deleteBillingReport(int $merchantId, int $reportId, MerchantService $merchantService)
@@ -107,13 +91,15 @@ class TabBillingController extends Controller
 
     /**
      * Обновить статус у биллингового отчета
-     * @param int $reportId
-     * @param Request $request
-     * @param MerchantService $merchantService
      * @return Application|ResponseFactory|JsonResponse|Response
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function billingReportStatusUpdate(int $merchantId, int $reportId, Request $request, MerchantService $merchantService)
-    {
+    public function billingReportStatusUpdate(
+        int $merchantId,
+        int $reportId,
+        Request $request,
+        MerchantService $merchantService
+    ) {
         $status = $request->status;
 
         $merchantService->billingReportStatusUpdate($reportId, $status);
@@ -122,15 +108,13 @@ class TabBillingController extends Controller
 
     /**
      * Создать биллинговый отчет
-     * @param int $merchantId
-     * @param Request $request
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function billingReportCreate(int $merchantId, Request $request)
     {
         $dates = [
             'date_from' => $request->date_from,
-            'date_to' => $request->date_to
+            'date_to' => $request->date_to,
         ];
 
         /** @var MerchantService $merchantService */
@@ -142,33 +126,34 @@ class TabBillingController extends Controller
 
     /**
      * Скачать биллинговый отчет
-     * @param int $merchantId
-     * @param int $reportId
-     * @param FileService $fileService
-     * @param MerchantService $merchantService
-     * @return StreamedResponse
      */
-    public function billingReportDownload(int $merchantId, int $reportId, FileService $fileService, MerchantService $merchantService): ?StreamedResponse
-    {
+    public function billingReportDownload(
+        int $merchantId,
+        int $reportId,
+        FileService $fileService,
+        MerchantService $merchantService
+    ): ?StreamedResponse {
         $report = $merchantService->getBillingReport($merchantId, $reportId);
 
-        if (!$report || !isset($report['file'])) return null;
+        if (!$report || !isset($report['file'])) {
+            return null;
+        }
         $reportFileId = $report['file'];
 
         $reportDto = $fileService->getFiles([$reportFileId])->first();
-        if (!$reportDto) return null;
+        if (!$reportDto) {
+            return null;
+        }
 
         $domain = config('common-lib.showcaseHost');
         return response()->streamDownload(function () use ($reportDto, $domain) {
-            echo file_get_contents($domain.$reportDto->url);
+            echo file_get_contents($domain . $reportDto->url);
         }, $reportDto->original_name);
     }
 
     /**
      * Скачать документ о корректировке
-     * @param int $fileId
-     * @param FileService $fileService
-     * @return StreamedResponse
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
     {
@@ -176,20 +161,18 @@ class TabBillingController extends Controller
         $domain = config('common-lib.showcaseHost');
 
         return response()->streamDownload(function () use ($reportDto, $domain) {
-            echo file_get_contents($domain.$reportDto->url);
+            echo file_get_contents($domain . $reportDto->url);
         }, $reportDto->original_name);
     }
 
     /**
      * AJAX добавление корректировки биллинга
      *
-     * @param int $merchantId
-     * @param Request $request
      * @return Application|ResponseFactory|JsonResponse|Response
      */
     public function addCorrection(int $merchantId, Request $request)
     {
-        $data = $this->validate(request(),[
+        $data = $this->validate($request, [
             'correction_sum' => 'integer',
             'correction_type' => 'integer',
             'date' => 'date',
@@ -204,10 +187,6 @@ class TabBillingController extends Controller
      /**
      * AJAX пагинация списка операций биллинга
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param  MerchantService $merchantService
-     * @return JsonResponse
      * @throws Exception
      */
     public function billingList(int $merchantId, Request $request, MerchantService $merchantService): JsonResponse
@@ -226,7 +205,6 @@ class TabBillingController extends Controller
 
     /**
      * @param $merchantId
-     * @param DataQuery $restQuery
      * @return array
      */
     protected function loadBillingList($merchantId, DataQuery $restQuery): array
@@ -238,12 +216,9 @@ class TabBillingController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param int $merchantId
-     * @return DataQuery
      * @throws Exception
      */
-    protected function makeRestQuery( Request $request, int $merchantId ): DataQuery
+    protected function makeRestQuery(Request $request, int $merchantId): DataQuery
     {
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())
@@ -281,7 +256,7 @@ class TabBillingController extends Controller
                             $value = array_filter($value);
                             if ($value) {
                                 $restQuery->setFilter($key, '>=', $value[0]);
-                                $restQuery->setFilter($key, '<=', (new \Illuminate\Support\Carbon($value[1]))->modify('+1 day')->format('Y-m-d'));
+                                $restQuery->setFilter($key, '<=', (new Carbon($value[1]))->modify('+1 day')->format('Y-m-d'));
                             }
                             break;
                         default:
@@ -299,7 +274,8 @@ class TabBillingController extends Controller
      */
     protected function getFilter(): array
     {
-        return Validator::make(request('filter') ?? [],
+        return Validator::make(
+            request('filter') ?? [],
             [
                 'commission_from' => 'integer|someone',
                 'commission_to' => 'integer|someone',
@@ -312,5 +288,4 @@ class TabBillingController extends Controller
             ]
         )->attributes();
     }
-
 }

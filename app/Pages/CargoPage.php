@@ -2,7 +2,6 @@
 
 namespace App\Pages;
 
-use Exception;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Oms\Dto\Delivery\CargoDto;
 use Greensight\Oms\Services\CargoService\CargoService;
@@ -19,24 +18,23 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CargoPage extends AbstractPage
 {
     use WithOmsHistory;
-    
+
     /** @var int - id груза */
     private $id;
-    
+
     /** @var bool */
     private $cargoLoaded = false;
     /** @var CargoDto */
     private $cargo;
-    
+
     /**
      * OrderPage constructor.
-     * @param  int|null  $id
      */
     public function __construct(?int $id = null)
     {
         $this->id = $id;
     }
-    
+
     /**
      * Загрузить груз
      * @return array
@@ -46,7 +44,7 @@ class CargoPage extends AbstractPage
         if (!$this->cargoLoaded) {
             /** @var CargoService $cargoService */
             $cargoService = resolve(CargoService::class);
-    
+
             $restQuery = $cargoService
                 ->newQuery()
                 ->addFields(
@@ -67,10 +65,10 @@ class CargoPage extends AbstractPage
             if (!$this->cargo) {
                 throw new NotFoundHttpException();
             }
-    
+
             $this->cargoLoaded = true;
         }
-        
+
         $cargo = $this->cargo->toArray();
         $cargo = array_merge(
             $cargo,
@@ -81,7 +79,9 @@ class CargoPage extends AbstractPage
             foreach (['created_at', 'updated_at'] as $date) {
                 $cargo[$date] = (new Carbon($date))->format('H:i:s Y-m-d');
             }
-        } catch (Exception $e) {}
+        } catch (\Throwable $e) {
+            //
+        }
 
         // TODO: Проверку заявки на вызов курьера поддерживает только CDEK //
         if ($cargo['delivery_service']['id'] == DeliveryService::SERVICE_CDEK) {
@@ -92,45 +92,41 @@ class CargoPage extends AbstractPage
             'cargo' => $cargo,
         ];
     }
-    
-    /**
-     * @return Collection
-     */
+
     protected function getHistory(): Collection
     {
         /** @var CargoService $cargoService */
         $cargoService = resolve(CargoService::class);
-        
+
         return $cargoService->cargoHistory($this->id);
     }
-    
+
     /**
      * Информация о цене, складе, кол-ве товара и кол-ве единиц товара отправления
-     * @param  CargoDto  $cargo
      * @return array
      */
     public function priceQtyInfo(CargoDto $cargo): array
     {
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
-        
+
         $restQuery = $storeService->newQuery();
         $restQuery->addFields(StoreDto::entity(), 'id', 'name');
         $store = $storeService->store($cargo->store_id, $restQuery);
-    
+
         $cost = $discount = $totalQty = $weight = 0;
         if ($cargo->shipments()) {
             foreach ($cargo->shipments() as $shipment) {
                 $cost += $shipment->cost;
                 $weight += $shipment->weight;
-        
+
                 foreach ($shipment->basketItems() as $basketItem) {
                     $discount += $basketItem->discount;
                     $totalQty += $basketItem->qty;
                 }
             }
         }
-        
+
         return [
             'status' => $cargo->status()->toArray(),
             'delivery_service' => DeliveryService::allServices()[$cargo->delivery_service]->toArray(),

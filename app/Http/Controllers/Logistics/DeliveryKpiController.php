@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Logistics;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiCtDto;
 use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiDto;
@@ -25,14 +24,11 @@ class DeliveryKpiController extends Controller
     /**
      * @return mixed
      */
-    public function index() {
+    public function index()
+    {
         return $this->render('Logistics/DeliveryKpi/Index');
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function getMain(ListsService $listsService): JsonResponse
     {
         $deliveryKpiDto = $listsService->getDeliveryKpi();
@@ -42,12 +38,11 @@ class DeliveryKpiController extends Controller
                 'rtg' => $deliveryKpiDto->rtg,
                 'ct' => $deliveryKpiDto->ct,
                 'ppt' => $deliveryKpiDto->ppt,
-            ]
+            ],
         ]);
     }
 
     /**
-     * @param  ListsService  $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function setMain(ListsService $listsService): Response
@@ -65,13 +60,9 @@ class DeliveryKpiController extends Controller
 
         $listsService->setDeliveryKpi($deliveryKpiDto);
 
-        return  response('', 204);
+        return response('', 204);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function getCt(ListsService $listsService): JsonResponse
     {
         $deliveryKpiCts = $listsService->getDeliveryKpiCt();
@@ -91,7 +82,7 @@ class DeliveryKpiController extends Controller
                         $merchants[$deliveryKpiCtDto->merchant_id]
                         : [
                             'id' => $deliveryKpiCtDto->merchant_id,
-                            'name' => 'N/A'
+                            'name' => 'N/A',
                         ],
                     'ct' => $deliveryKpiCtDto->ct,
                 ];
@@ -102,10 +93,6 @@ class DeliveryKpiController extends Controller
         ]);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function setCt(ListsService $listsService): JsonResponse
     {
         $data = $this->validate(request(), [
@@ -122,10 +109,6 @@ class DeliveryKpiController extends Controller
         return $this->getCt($listsService);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function getPpt(ListsService $listsService): JsonResponse
     {
         $deliveryKpiPpts = $listsService->getDeliveryKpiPpt();
@@ -145,7 +128,7 @@ class DeliveryKpiController extends Controller
                         $merchants[$deliveryKpiPptDto->merchant_id]
                         : [
                             'id' => $deliveryKpiPptDto->merchant_id,
-                            'name' => 'N/A'
+                            'name' => 'N/A',
                         ],
                     'ppt' => $deliveryKpiPptDto->ct,
                 ];
@@ -156,10 +139,6 @@ class DeliveryKpiController extends Controller
         ]);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function setPpt(ListsService $listsService): JsonResponse
     {
         $data = $this->validate(request(), [
@@ -176,10 +155,6 @@ class DeliveryKpiController extends Controller
         return $this->getPpt($listsService);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function getPct(ListsService $listsService): JsonResponse
     {
         $deliveryServiceQuery = $listsService->newQuery()
@@ -211,10 +186,6 @@ class DeliveryKpiController extends Controller
         ]);
     }
 
-    /**
-     * @param  ListsService  $listsService
-     * @return JsonResponse
-     */
     public function setPct(ListsService $listsService): JsonResponse
     {
         $data = $this->validate(request(), [

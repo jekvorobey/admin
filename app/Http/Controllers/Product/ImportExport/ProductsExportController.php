@@ -17,14 +17,10 @@ class ProductsExportController extends Controller
     /**
      * Экспорт выбранных товаров в файлы Excel
      *
-     * @param Request $request
-     * @param ProductsImportService $productsImportService
      * @return JsonResponse
      */
-    public function exportByProductIds(
-        Request $request,
-        ProductsImportService $productsImportService
-    ) {
+    public function exportByProductIds(Request $request, ProductsImportService $productsImportService)
+    {
         $data = $this->validate($request, [
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',
@@ -43,9 +39,6 @@ class ProductsExportController extends Controller
     /**
      * Экспорт отфильтрованных товаров в файлы Excel
      *
-     * @param Request $request
-     * @param SearchService $searchService
-     * @param ProductsImportService $productsImportService
      * @return JsonResponse
      */
     public function exportByFilters(
@@ -81,10 +74,10 @@ class ProductsExportController extends Controller
     /**
      * Получить оригинальный путь к файлу и его имя по id-шнику
      *
-     * @param int $fileId
      * @return array
      */
-    protected static function getOriginalFileUrlAndName(int $fileId) {
+    protected static function getOriginalFileUrlAndName(int $fileId)
+    {
         /** @var FileService $fileService */
         $fileService = resolve(FileService::class);
 

@@ -12,10 +12,8 @@ use Illuminate\Support\Collection;
 
 class LandingListController extends Controller
 {
-    public function listPage(
-        Request $request,
-        LandingService $landingService
-    ) {
+    public function listPage(Request $request, LandingService $landingService)
+    {
         $this->title = 'Страницы';
         $query = $this->makeQuery($request);
 
@@ -25,19 +23,17 @@ class LandingListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-            ]
+            ],
         ]);
     }
 
-    public function page(
-        Request $request,
-        LandingService $landingService
-    ) {
+    public function page(Request $request, LandingService $landingService)
+    {
         $query = $this->makeQuery($request);
         $data = [
             'landings' => $this->loadItems($query, $landingService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $landingService->landingsCount($query);
         }
 
@@ -45,7 +41,6 @@ class LandingListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return RestQuery
      */
     protected function makeQuery(Request $request)
@@ -66,15 +61,11 @@ class LandingListController extends Controller
     }
 
     /**
-     * @param RestQuery $query
-     * @param LandingService $landingService
      * @return LandingDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(
-        RestQuery $query,
-        LandingService $landingService
-    ) {
+    protected function loadItems(RestQuery $query, LandingService $landingService)
+    {
         return $landingService->landings($query);
     }
 }

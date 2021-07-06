@@ -21,13 +21,13 @@ class PropertiesController extends Controller
 {
     /**
      * Страница со списком всех товарных атрибутов
-     * @param ProductService $productService
      * @return mixed
      */
     public function list(ProductService $productService)
     {
         $restQuery = $productService->newQuery()
-            ->addFields(PropertyDto::entity(),
+            ->addFields(
+                PropertyDto::entity(),
                 'id',
                 'name',
                 'code',
@@ -36,13 +36,12 @@ class PropertiesController extends Controller
 
         $this->title = 'Справочник товарных атрибутов';
         return $this->render('Product/PropertiesList', [
-            'iProperties' => $productService->getProperties($restQuery)
+            'iProperties' => $productService->getProperties($restQuery),
         ]);
     }
 
     /**
      * Страница с детальной информацией о товарном атрибуте
-     * @param string $propCode
      * @return mixed
      * @throws PimException
      */
@@ -50,11 +49,11 @@ class PropertiesController extends Controller
     {
         $productProperty = $this->getPropData($propCode);
 
-        $this->title = "Редактирование товарного атрибута";
+        $this->title = 'Редактирование товарного атрибута';
         return $this->render('Product/PropertyDetail', [
             'iProperty' => $productProperty,
             'iCategories' => $this->getCategoriesData(),
-            'property_types' => PropertyDto::getTypes()
+            'property_types' => PropertyDto::getTypes(),
         ]);
     }
 
@@ -65,16 +64,15 @@ class PropertiesController extends Controller
      */
     public function create()
     {
-        $this->title = "Создание товарного атрибута";
+        $this->title = 'Создание товарного атрибута';
         return $this->render('Product/PropertyDetail', [
             'iCategories' => $this->getCategoriesData(),
-            'property_types' => PropertyDto::getTypes()
+            'property_types' => PropertyDto::getTypes(),
         ]);
     }
 
     /**
      * Отправить запрос на сохранение редактируемого товарного атрибута
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function update(ProductService $productService)
@@ -83,9 +81,10 @@ class PropertiesController extends Controller
             'id' => 'present|nullable|integer',
             'name' => 'required|string',
             'display_name' => 'required|string',
-            'type' => ['required', Rule::in(
-                array_keys(PropertyDto::getTypes())
-            )],
+            'type' => [
+                'required',
+                Rule::in(array_keys(PropertyDto::getTypes())),
+            ],
             'is_filterable' => 'required|boolean',
             'is_multiple' => 'required|boolean',
             'is_color' => 'required|boolean',
@@ -103,8 +102,6 @@ class PropertiesController extends Controller
 
     /**
      * Отправить запрос на удаление товарного атрибута и всех связанных с ним данных
-     * @param int $propertyId
-     * @param ProductService $productService
      * @return Application|ResponseFactory|Response
      */
     public function delete(int $propertyId, ProductService $productService)
@@ -116,7 +113,6 @@ class PropertiesController extends Controller
 
     /**
      * Подгрузить детальную информацию о товарном атрибуте
-     * @param string $code
      * @return mixed
      * @throws PimException
      */
@@ -127,7 +123,8 @@ class PropertiesController extends Controller
 
         $propQuery = $productService->newQuery()
             ->include('categoryPropertyLinks')
-            ->addFields(PropertyDto::entity(),
+            ->addFields(
+                PropertyDto::entity(),
                 'id',
                 'name',
                 'display_name',
@@ -137,7 +134,7 @@ class PropertiesController extends Controller
                 'is_multiple',
                 'is_color',
                 'updated_at',
-				'measurement_unit'
+                'measurement_unit'
             )->setFilter('code', $code);
 
         /** @var PropertyDto $property */
@@ -152,7 +149,8 @@ class PropertiesController extends Controller
             $valuesQuery = $valuesService
                 ->newQuery()
                 ->setFilter('property_id', $property->id)
-                ->addFields(PropertyDirectoryValueDto::entity(),
+                ->addFields(
+                    PropertyDirectoryValueDto::entity(),
                     'id',
                     'name',
                     'code',
@@ -175,7 +173,8 @@ class PropertiesController extends Controller
     {
         $categoryService = resolve(CategoryService::class);
         $categoriesQuery = $categoryService->newQuery()
-            ->addFields(CategoryDto::entity(),
+            ->addFields(
+                CategoryDto::entity(),
                 'id',
                 'name',
                 'parent_id',
@@ -189,7 +188,6 @@ class PropertiesController extends Controller
     /**
      * Заполнить DTO
      * @param array $data
-     * @return PropertyDto
      */
     private function fulfillDto(array $data): PropertyDto
     {

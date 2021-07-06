@@ -18,9 +18,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class FrequentCategoryController extends Controller
 {
     /**
-     * @param CategoryService $categoryService
-     * @param FrequentCategoryService $frequentCategoryService
-     * @param FileService $fileService
      * @return mixed
      * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException
@@ -33,20 +30,16 @@ class FrequentCategoryController extends Controller
         $this->title = 'Управление категориями';
 
         return $this->render('Content/Category', [
-            'categories' =>  $this->loadCategories($categoryService, $frequentCategoryService, $fileService),
+            'categories' => $this->loadCategories($categoryService, $frequentCategoryService, $fileService),
             'frequentMaxCount' => FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT,
         ]);
     }
 
     /**
-     * @param Request $request
-     * @param FrequentCategoryService $frequentCategoryService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
      */
-    public function editCategories(
-        Request $request,
-        FrequentCategoryService $frequentCategoryService
-    ) {
+    public function editCategories(Request $request, FrequentCategoryService $frequentCategoryService)
+    {
         $data = $request->validate([
             'items' => 'array|required',
             'items.*.id' => 'integer|required',
@@ -69,21 +62,22 @@ class FrequentCategoryController extends Controller
     }
 
     /**
-     * @param CategoryService $categoryService
-     * @param FrequentCategoryService $frequentCategoryService
-     * @param FileService $fileService
      * @return Collection|CategoryDto[]
      * @throws \Cms\Core\CmsException
      * @throws \Pim\Core\PimException
      */
-    protected function loadCategories(CategoryService $categoryService, FrequentCategoryService $frequentCategoryService, FileService $fileService)
-    {
+    protected function loadCategories(
+        CategoryService $categoryService,
+        FrequentCategoryService $frequentCategoryService,
+        FileService $fileService
+    ) {
         $categories = $categoryService->categories((new RestQuery())
             ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active')
             ->include(CategoryService::PRODUCTS_COUNT));
 
-        $frequentCategories = $frequentCategoryService->list((new RestQuery())
-            ->addFields(FrequentCategoryDto::entity(), 'category_id', 'frequent', 'position', 'file_id')
+        $frequentCategories = $frequentCategoryService->list(
+            (new RestQuery())
+                ->addFields(FrequentCategoryDto::entity(), 'category_id', 'frequent', 'position', 'file_id')
         )->keyBy('category_id');
 
         $frequentCategoriesWithImages = $this->injectFiles($fileService, $frequentCategories);
@@ -97,8 +91,8 @@ class FrequentCategoryController extends Controller
                 'parent_id' => $category->parent_id,
                 'active' => $category->active,
                 'productsCount' => $category->productsCount,
-                'frequent' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->frequent : false,
-                'position' => $frequentCategoriesWithImages->has($id) ? ($frequentCategoriesWithImages->get($id))->position : 0,
+                'frequent' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)->frequent : false,
+                'position' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)->position : 0,
                 'image' => $frequentCategoriesWithImages->has($id) ? $frequentCategoriesWithImages->get($id)['file'] : null,
             ];
         });
@@ -125,6 +119,6 @@ class FrequentCategoryController extends Controller
      */
     protected function validateSelectedCount($items)
     {
-        return (count($items) <= FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT);
+        return count($items) <= FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT;
     }
 }

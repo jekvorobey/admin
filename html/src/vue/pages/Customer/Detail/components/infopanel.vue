@@ -148,8 +148,22 @@
             </td>
             <th>Ссылка на портфолио</th>
             <td>
-                <div v-for="portfolio in customer.portfolios">
-                    <a :href="portfolio.link" target="_blank">{{ portfolio.name }}</a>
+                <div v-for="(portfolio, i) in customer.portfolios">
+                    <a :href="portfolio.link" target="_blank">
+                        {{ portfolio.name }}
+                    </a>
+                    <b-button v-if="portfolio.duplicated_customer_id"
+                              :id="'duplicated-portfolio-tooltip-' + i"
+                              class="btn btn-warning btn-sm"
+                    >
+                        <fa-icon icon="exclamation"/>
+                    </b-button>
+                    <b-tooltip
+                        :target="'duplicated-portfolio-tooltip-' + i"
+                        triggers="hover"
+                    >
+                        <span v-html="portfolioDuplicatedMessage(portfolio.duplicated_customer_id)"></span>
+                    </b-tooltip>
                 </div>
                 <div v-if="!customer.portfolios.length">-</div>
                 <button class="btn btn-info btn-sm" v-b-modal.modal-portfolios><fa-icon icon="pencil-alt"/></button>
@@ -291,6 +305,16 @@
         openModal(id) {
             this.$bvModal.show(id);
         },
+        portfolioDuplicatedMessage(duplicated_customer_id) {
+            let customerRoute = this.getRoute('customers.detail', {id: duplicated_customer_id});
+            let customerLink = `<a href="${customerRoute}" target="_blank">#${duplicated_customer_id}</a>`;
+
+            if (this.customer.status === this.customerStatus.active) {
+                return `Ссылка совпадает с портфолио другого клиента ${customerLink}`;
+            }
+
+            return `Проф.статус не подтвержден автоматически из-за совпадения с другим клиентом ${customerLink}`;
+        }
     }
 };
 </script>

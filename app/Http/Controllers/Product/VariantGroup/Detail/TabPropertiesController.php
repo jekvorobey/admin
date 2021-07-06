@@ -35,8 +35,6 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function load(int $variantGroupId): JsonResponse
@@ -63,13 +61,17 @@ class TabPropertiesController extends VariantGroupDetailController
                 if (!in_array($productPropertyValueDto->property_id, $gluedPropertyIds)) {
                     continue;
                 }
-                if (!in_array($productPropertyValueDto->value, $propertyDirectoryValueIds) &&
-                    $productPropertyValueDto->property->type == PropertyDto::TYPE_DIRECTORY) {
+                if (
+                    !in_array($productPropertyValueDto->value, $propertyDirectoryValueIds) &&
+                    $productPropertyValueDto->property->type == PropertyDto::TYPE_DIRECTORY
+                ) {
                     $propertyDirectoryValueIds[] = $productPropertyValueDto->value;
                 }
 
-                if (!isset($gluedPropertyValues[$productPropertyValueDto->property_id]) ||
-                    !in_array($productPropertyValueDto->value, $gluedPropertyValues[$productPropertyValueDto->property_id])) {
+                if (
+                    !isset($gluedPropertyValues[$productPropertyValueDto->property_id]) ||
+                    !in_array($productPropertyValueDto->value, $gluedPropertyValues[$productPropertyValueDto->property_id])
+                ) {
                     $gluedPropertyValues[$productPropertyValueDto->property_id][] = $productPropertyValueDto->value;
                 }
             }
@@ -106,23 +108,20 @@ class TabPropertiesController extends VariantGroupDetailController
                                 'color' => '',
                             ];
                     }, $gluedPropertyValues[$propertyDto->id]), function ($value) {
-                        return is_int($value['name']) ? (int)$value['name'] : $value['name'];
+                        return is_int($value['name']) ? (int) $value['name'] : $value['name'];
                     })) : [];
 
                 return [
                     'id' => $propertyDto->id,
                     'name' => $propertyDto->name,
-                    'isColor' => (bool)array_filter(array_column($usedValues, 'color')),
+                    'isColor' => (bool) array_filter(array_column($usedValues, 'color')),
                     'usedValues' => $usedValues,
                 ];
-            })
+            }),
         ]);
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @param  int  $propertyId
-     * @return JsonResponse
      * @throws \Exception
      */
     public function add(int $variantGroupId, int $propertyId): JsonResponse
@@ -133,9 +132,6 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @param  int  $variantGroupId
-     * @param  Request  $request
-     * @return JsonResponse
      * @throws \Exception
      */
     public function delete(int $variantGroupId, Request $request): JsonResponse

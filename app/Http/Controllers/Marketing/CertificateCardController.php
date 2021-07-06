@@ -4,16 +4,13 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
-use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Pim\Dto\Certificate\CertificateRequestDto;
 use Pim\Services\CertificateService\CertificateService;
 
 class CertificateCardController extends Controller
 {
-
     private function setActiveMenu()
     {
         Menu::setActiveUrl(route('certificate.index'));
@@ -41,11 +38,11 @@ class CertificateCardController extends Controller
 
     public function updateExpireAt($id, Request $request): JsonResponse
     {
-        $this->service()->updateExpireAt($id, (int)$request->get('days'));
+        $this->service()->updateExpireAt($id, (int) $request->get('days'));
         return response()->json(['status' => 'ok']);
     }
 
-    public function sendNotification($id, Request $request): JsonResponse
+    public function sendNotification($id): JsonResponse
     {
         $this->service()->sendNotification($id);
         return response()->json(['status' => 'ok']);

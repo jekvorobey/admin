@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Product\VariantGroup;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +24,7 @@ class VariantGroupListController extends Controller
 {
     /** @var VariantGroupService */
     protected $variantGroupService;
-    /** @var BrandService  */
+    /** @var BrandService */
     protected $brandService;
     /** @var CategoryService */
     protected $categoryService;
@@ -41,7 +40,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
      * @return mixed
      * @throws \Illuminate\Validation\ValidationException
      * @throws \Pim\Core\PimException
@@ -67,8 +65,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function create(Request $request): JsonResponse
@@ -88,10 +84,6 @@ class VariantGroupListController extends Controller
         ]);
     }
 
-    /**
-     * @param  Request  $request
-     * @return Response
-     */
     public function delete(Request $request): Response
     {
         $data = $this->validate($request, [
@@ -101,7 +93,7 @@ class VariantGroupListController extends Controller
 
         try {
             $this->variantGroupService->deleteVariantGroups($data['ids']);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             if (strpos($exception->getMessage(), 'Cannot delete or update a parent row') !== false) {
                 return response('', 424);
             }
@@ -112,7 +104,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  Request  $request
+     * @param Request $request
      * @return mixed
      */
     /*public function byOffers(Request $request)
@@ -120,16 +112,12 @@ class VariantGroupListController extends Controller
         return $this->variantGroupService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }*/
 
-    /**
-     * @return int
-     */
     protected function getPage(): int
     {
         return request()->get('page', 1);
     }
 
     /**
-     * @return JsonResponse
      * @throws \Exception
      */
     public function page(): JsonResponse
@@ -147,9 +135,9 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefault
      * @return array
      * @throws \Illuminate\Validation\ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
     {
@@ -173,7 +161,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  DataQuery  $restQuery
      * @return Collection|VariantGroupDto[]
      * @throws \Pim\Core\PimException
      */
@@ -196,8 +183,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param  bool  $withDefaultFilter
-     * @return DataQuery
      * @throws \Exception
      */
     protected function makeRestQuery(bool $withDefaultFilter = false): DataQuery

@@ -11,11 +11,8 @@ use Pim\Services\ShoppilotService\ShoppilotService;
 
 class PublicEventListController extends Controller
 {
-    public function list(
-        Request $request,
-        PublicEventService $publicEventService,
-        ShoppilotService $shoppilotService
-    ) {
+    public function list(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
+    {
         $this->loadPublicEventStatus = true;
         $this->loadPublicEventSprintStatus = true;
 
@@ -30,7 +27,8 @@ class PublicEventListController extends Controller
                     $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
                     return $publicEvent;
                 });
-            } catch (\Exception $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         return $this->render('PublicEvent/PublicEventList', [
@@ -40,15 +38,12 @@ class PublicEventListController extends Controller
             'options' => [
                 'eventStatuses' => PublicEventStatus::all(),
                 'sprintStatuses' => PublicEventSprintStatus::all(),
-            ]
+            ],
         ]);
     }
 
-    public function page(
-        Request $request,
-        PublicEventService $publicEventService,
-        ShoppilotService $shoppilotService
-    ) {
+    public function page(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
+    {
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
 
@@ -60,9 +55,10 @@ class PublicEventListController extends Controller
                     $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
                     return $publicEvent;
                 });
-            } catch (\Exception $e) {}
+            } catch (\Throwable $e) {
+            }
         }
-        
+
         return response()->json([
             'publicEvents' => $publicEvents,
             'total' => $this->loadTotalCount($publicEventService),
@@ -72,7 +68,7 @@ class PublicEventListController extends Controller
     public function load(PublicEventService $publicEventService)
     {
         return response()->json([
-            'events' => $publicEventService->query()->get()
+            'events' => $publicEventService->query()->get(),
         ]);
     }
 

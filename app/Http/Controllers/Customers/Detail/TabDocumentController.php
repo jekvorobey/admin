@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
-
 use App\Http\Controllers\Controller;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
@@ -26,9 +25,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class TabDocumentController extends Controller
 {
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
-     * @param FileService $fileService
      * @return \Illuminate\Http\JsonResponse
      */
     public function load(int $customerId, CustomerService $customerService, FileService $fileService)
@@ -65,9 +61,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
-     * @param FileService $fileService
      * @throws \Box\Spout\Common\Exception\IOException
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
@@ -80,7 +73,7 @@ class TabDocumentController extends Controller
                 'string',
                 // Using available types in Box\Spout\Common\Type //
                 Rule::in(['csv', 'xlsx', 'ods']),
-            ]
+            ],
         ]);
         $format = request('format');
 
@@ -116,36 +109,28 @@ class TabDocumentController extends Controller
                     $document->statusName($document->status),
                     $file->url,
                 ], null));
-
         }
 
         $writer->close();
     }
 
     /**
-     * @param int $customerId
-     * @param int $documentId
-     * @param MailService\MailService $mailService
-     * @param CustomerService $customerService
-     * @param UserService $userService
-     * @param FileService $fileService
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendEmail
-    (int $customerId,
-     int $documentId,
-     MailService\MailService $mailService,
-     CustomerService $customerService,
-     UserService $userService,
-     FileService $fileService)
-    {
+    public function sendEmail(
+        int $customerId,
+        int $documentId,
+        MailService\MailService $mailService,
+        CustomerService $customerService,
+        UserService $userService,
+        FileService $fileService
+    ) {
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $customerId))->first();
         $userId = $customer->user_id;
         /** @var UserDto $user */
         $user = $userService->users((new RestQuery())->setFilter('id', $userId))->first();
-        if (!$user->email)
-        {
+        if (!$user->email) {
             throw new BadRequestHttpException('Ошибка: Не указан Email пользователя');
         }
         /** @var CustomerDocumentDto $document */
@@ -156,16 +141,16 @@ class TabDocumentController extends Controller
         !$file ? $attachment = null : $attachment = $file->absoluteUrl();
 
         $arrayData = [
-            "u_first_name" => $user->first_name,
-            "u_mid_name" => $user->middle_name,
-            "d_id" => $document->id,
-            "d_period_since" => $document->period_since,
-            "d_period_to" => $document->period_to,
-            "d_creation_date" => $document->updated_at,
-            "d_amount_reward" => $document->amount_reward,
-            "d_type" => $document->typeName($document->type),
-            "d_status" => $document->statusName($document->status),
-            "file_url" => $attachment,
+            'u_first_name' => $user->first_name,
+            'u_mid_name' => $user->middle_name,
+            'd_id' => $document->id,
+            'd_period_since' => $document->period_since,
+            'd_period_to' => $document->period_to,
+            'd_creation_date' => $document->updated_at,
+            'd_amount_reward' => $document->amount_reward,
+            'd_type' => $document->typeName($document->type),
+            'd_status' => $document->statusName($document->status),
+            'file_url' => $attachment,
         ];
 
         $message = new SendReferralDocumentMailDto();
@@ -179,8 +164,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param CustomerService $customerService
      * @return \Illuminate\Http\JsonResponse
      */
     public function createDocument(int $customerId, CustomerService $customerService)
@@ -219,9 +202,6 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @param int $customerId
-     * @param int $document_id
-     * @param CustomerService $customerService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function deleteDocument(int $customerId, int $document_id, CustomerService $customerService)

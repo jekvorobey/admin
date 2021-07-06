@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers\Merchant\Detail;
-
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -21,8 +19,6 @@ class TabOperatorController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации отправлений
      *
-     * @param int $merchantId
-     * @param Request $request
      * @return JsonResponse
      */
     public function loadData()
@@ -36,15 +32,15 @@ class TabOperatorController extends Controller
     /**
      * AJAX пагинация списка операторов
      *
-     * @param int $merchantId
-     * @param Request $request
-     * @param  OperatorService $operatorService
-     * @param  UserService $userService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function loadOperators(int $merchantId, Request $request, OperatorService $operatorService, UserService $userService)
-    {
+    public function loadOperators(
+        int $merchantId,
+        Request $request,
+        OperatorService $operatorService,
+        UserService $userService
+    ) {
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())->pageNumber($page, 10)
             ->setFilter('merchant_id', $merchantId);
@@ -57,7 +53,7 @@ class TabOperatorController extends Controller
             $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
                 ->keyBy('id');
 
-            $operators = $operators->map(function ($operator, $key) use ($users) {
+            $operators = $operators->map(function ($operator) use ($users) {
                 return [
                     'id' => $operator->id,
                     'user_id' => $operator->user_id,
@@ -66,7 +62,7 @@ class TabOperatorController extends Controller
                     'email' => $users[$operator->user_id]->email,
                     'phone' => $users[$operator->user_id]->phone,
                     'communication_method' => OperatorCommunicationMethod::methodById($operator->communication_method)['name'],
-                    'roles' => collect($users[$operator->user_id]->roles)->map(function ($item, $roleId) {
+                    'roles' => collect($users[$operator->user_id]->roles)->keys()->map(function ($roleId) {
                         return UserDto::roles()[$roleId];
                     })->all(),
                     'active' => $users[$operator->user_id]->active,
@@ -91,15 +87,14 @@ class TabOperatorController extends Controller
      * Возвращает
      * true если нужно сделать выборку
      * false если выборку делать не нужно (например если какой-то фильтр не дал результата)
-     *
-     * @return bool
      */
     protected function getFilter(RestQuery $restQuery): bool
     {
         /** UserService $userService */
         $userService = resolve(UserService::class);
 
-        $filter = Validator::make(request('filter') ?? [],
+        $filter = Validator::make(
+            request('filter') ?? [],
             [
                 'user_id' => 'integer|someone',
                 'full_name' => 'string|someone',
@@ -131,7 +126,7 @@ class TabOperatorController extends Controller
                         if ($key === 'phone') {
                             $value = phone_format($value);
                         }
-                        $userIds = $userService->users((new RestQuery)->setFilter($key, $value))
+                        $userIds = $userService->users((new RestQuery())->setFilter($key, $value))
                             ->pluck('id');
                         if ($filterUserKey) {
                             $filterUserIds = $userIds;

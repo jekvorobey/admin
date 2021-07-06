@@ -24,9 +24,6 @@ class BundleController extends Controller
     /**
      * Список бандлов
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return mixed
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -53,7 +50,7 @@ class BundleController extends Controller
             'roles' => Helpers::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
-            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->filter(function ($value, $key) {
+            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->keys()->filter(function ($key) {
                 return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
             }),
             'merchantNames' => DiscountHelper::getMerchantNames(),
@@ -67,9 +64,6 @@ class BundleController extends Controller
     /**
      * AJAX пагинация страниц с бандлами
      *
-     * @param Request $request
-     * @param DiscountService $discountService
-     * @param RequestInitiator $user
      * @return JsonResponse
      */
     public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
@@ -94,8 +88,6 @@ class BundleController extends Controller
     /**
      * Страница для создания бандла
      *
-     * @param CategoryService $categoryService
-     * @param BrandService    $brandService
      *
      * @return mixed
      * @throws PimException
@@ -108,7 +100,7 @@ class BundleController extends Controller
         $this->title = 'Создание бандла';
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
-            'optionDiscountTypes' => $data['optionDiscountTypes']->filter(function ($value, $key) {
+            'optionDiscountTypes' => $data['optionDiscountTypes']->keys()->filter(function ($key) {
                 return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
             }),
             'iConditionTypes' => $data['conditionTypes'],

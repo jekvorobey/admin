@@ -29,8 +29,8 @@ class UsersController extends Controller
             'iPager' => $userService->count($query),
             'iCurrentPage' => $request->get('page', 1),
             'options' => [
-                'fronts' => Front::allFronts()
-            ]
+                'fronts' => Front::allFronts(),
+            ],
         ]);
     }
 
@@ -40,7 +40,7 @@ class UsersController extends Controller
         $data = [
             'items' => $this->loadItems($query, $userService),
         ];
-        if (1 == $request->get('page', 1)) {
+        if ($request->get('page', 1) == 1) {
             $data['pager'] = $userService->count($query);
         }
         return response()->json($data);
@@ -66,8 +66,8 @@ class UsersController extends Controller
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'roles' => UserDto::roles()
-            ]
+                'roles' => UserDto::roles(),
+            ],
         ]);
     }
 
@@ -79,7 +79,7 @@ class UsersController extends Controller
             'login' => 'required',
             'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
             'password' => 'required_without:id',
-            'infinity_sip_extension' => 'nullable|string'
+            'infinity_sip_extension' => 'nullable|string',
         ]);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
@@ -99,7 +99,7 @@ class UsersController extends Controller
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
-            'expires' => 'nullable|date'
+            'expires' => 'nullable|date',
         ]);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
@@ -107,7 +107,7 @@ class UsersController extends Controller
 
         $userService->addRoles($id, [$data['role']], $data['expires'] ?? null);
         return response()->json([
-            'roles' => $userService->userRoles($id)
+            'roles' => $userService->userRoles($id),
         ]);
     }
 
@@ -123,22 +123,16 @@ class UsersController extends Controller
 
         $userService->deleteRole($id, $data['role']);
         return response()->json([
-            'roles' => $userService->userRoles($id)
+            'roles' => $userService->userRoles($id),
         ]);
     }
 
     /**
      * Получение пользователей по массиву ролей
      *
-     * @param UserService $userService
-     * @param OperatorService $operatorService
-     * @param RequestInitiator $user
      * @return \Illuminate\Http\JsonResponse
      */
-    public function usersByRoles(
-        UserService $userService,
-        OperatorService $operatorService,
-        RequestInitiator $user)
+    public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
     {
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
@@ -156,8 +150,8 @@ class UsersController extends Controller
         // У сотрудников мерчанта подгружается информация о доступности SMS-канала //
         $operators = null;
         if (
-            (in_array(UserDto::MAS__MERCHANT_OPERATOR, $data['role_ids']))
-            ||(in_array(UserDto::MAS__MERCHANT_ADMIN, $data['role_ids']))
+            in_array(UserDto::MAS__MERCHANT_OPERATOR, $data['role_ids'])
+            || (in_array(UserDto::MAS__MERCHANT_ADMIN, $data['role_ids']))
         ) {
             $operators = $operatorService->operators(
                 (new RestQuery())->setFilter('user_id', $user_ids)
@@ -193,13 +187,12 @@ class UsersController extends Controller
     protected function makeQuery(Request $request): RestQuery
     {
         $restQuery = new RestQuery();
-        $restQuery->pageNumber($request->get('page',1), 10);
+        $restQuery->pageNumber($request->get('page', 1), 10);
         return $restQuery;
     }
 
     protected function loadItems(RestQuery $query, UserService $userService)
     {
-        $users = $userService->users($query);
-        return $users;
+        return $userService->users($query);
     }
 }

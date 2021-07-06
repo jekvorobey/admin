@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Logistics\DeliveryService;
 
-
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -22,16 +21,10 @@ class DeliveryServiceDetailController extends Controller
 {
     /**
      * @param $id
-     * @param  ListsService  $listsService
-     * @param  ShipmentService  $shipmentService
      * @return mixed
      */
-    public function index(
-        $id,
-        ListsService $listsService,
-        ShipmentService $shipmentService
-    ) {
-        /** @var DeliveryService $deliveryService */
+    public function index($id, ListsService $listsService, ShipmentService $shipmentService)
+    {
         $deliveryServiceQuery = $listsService->newQuery();
         $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
         if (!$deliveryService) {
@@ -80,7 +73,6 @@ class DeliveryServiceDetailController extends Controller
 
     /**
      * @param $id
-     * @param  ListsService  $listsService
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function save($id, ListsService $listsService): Response
@@ -102,6 +94,6 @@ class DeliveryServiceDetailController extends Controller
 
         $listsService->updateDeliveryService($id, $deliveryService);
 
-        return  response('', 204);
+        return response('', 204);
     }
 }

@@ -15,7 +15,7 @@ class TemplateController extends Controller
         $page = $request->input('page') ?? 1;
 
         return response()->json([
-            'iTemplates' => $templateService->templates($templateService->newQuery()->pageNumber($page, 10))
+            'iTemplates' => $templateService->templates($templateService->newQuery()->pageNumber($page, 10)),
         ]);
     }
 
@@ -40,39 +40,39 @@ class TemplateController extends Controller
             'service_notification_id' => $id,
         ]);
     }
-    
+
     public function save(Request $request, TemplateService $templateService)
     {
         $id = $request->get('id');
         $template = $request->get('template');
-        
+
         if (!$template) {
             throw new BadRequestHttpException('template required');
         }
-        
+
         $templateDto = new TemplateDto($template);
-        
+
         if ($id) {
             $templateService->update($id, $templateDto);
         } else {
             $templateService->create($templateDto);
         }
-        
+
         return response()->json();
     }
-    
+
     public function delete(Request $request, TemplateService $templateService)
     {
         $ids = $request->get('ids');
-        
+
         if (!$ids || !is_array($ids)) {
             throw new BadRequestHttpException('ids required');
         }
-        
-        foreach($ids as $id) {
+
+        foreach ($ids as $id) {
             $templateService->delete($id);
         }
-        
+
         return response()->json();
     }
 }

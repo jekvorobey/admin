@@ -10,7 +10,7 @@ class ChannelController extends Controller
     public function channels(CommunicationService $communicationService)
     {
         return response()->json([
-            'channels' => $communicationService->channels()
+            'channels' => $communicationService->channels(),
         ]);
     }
 }

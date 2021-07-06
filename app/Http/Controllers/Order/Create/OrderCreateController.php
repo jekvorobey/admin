@@ -1,6 +1,6 @@
 <?php
-namespace App\Http\Controllers\Order\Create;
 
+namespace App\Http\Controllers\Order\Create;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -8,10 +8,6 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\BasketService\BasketService;
-use Greensight\Oms\Services\DeliveryService\DeliveryService;
-use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
-use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,28 +25,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class OrderCreateController extends Controller
 {
     /**
-     * @param OrderService $orderService
-     * @param ProductService $productService
-     * @param UserService $userService
-     * @param CustomerService $customerService
-     * @param DeliveryService $deliveryService
-     * @param ShipmentService $shipmentService
-     * @param ShipmentPackageService $shipmentPackageService
      * @return mixed
      */
-    public function create(
-        OrderService $orderService,
-        ProductService $productService,
-        UserService $userService,
-        CustomerService $customerService,
-        DeliveryService $deliveryService,
-        ShipmentService $shipmentService,
-        ShipmentPackageService $shipmentPackageService
-    )
+    public function create()
     {
         $this->title = 'Создание заказа';
-
-
 
         return $this->render('Order/Create', [
             'iOrder' => '',
@@ -59,21 +38,13 @@ class OrderCreateController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param UserService $userService
-     * @param CustomerService $customerService
-     * @return JsonResponse
-     */
-    public function searchCustomer
-    (
+    public function searchCustomer(
         Request $request,
         UserService $userService,
         CustomerService $customerService
-    ): JsonResponse
-    {
-        /** @var \Illuminate\Validation\Validator $validator */
+    ): JsonResponse {
         $data = $request->all();
+        /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
             'type' => 'required|string',
             'search' => 'required',
@@ -87,11 +58,11 @@ class OrderCreateController extends Controller
         $query->include('profile');
 
         switch ($data['type']) {
-            case 'fio';
+            case 'fio':
                 $query->setFilter('first_name', 'like', $data['search']);
                 $query->setFilter('last_name', 'like', $data['search']);
                 break;
-            case 'email';
+            case 'email':
                 $query->setFilter('email', 'like', $data['search']);
                 break;
             default:
@@ -99,12 +70,12 @@ class OrderCreateController extends Controller
         }
 
         $users = $userService->users($query);
-        if($users->isEmpty()) {
+        if ($users->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
         $customers = $customerService->customers($query);
-        if($customers->isEmpty()) {
+        if ($customers->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
@@ -113,13 +84,7 @@ class OrderCreateController extends Controller
         return response()->json($customer);
     }
 
-
     /**
-     * @param Request $request
-     * @param ProductService $productService
-     * @param StockService $stockService
-     * @param MerchantService $merchantService
-     * @return JsonResponse
      * @throws \Pim\Core\PimException
      */
     public function searchProducts(
@@ -127,10 +92,9 @@ class OrderCreateController extends Controller
         ProductService $productService,
         StockService $stockService,
         MerchantService $merchantService
-    ): JsonResponse
-    {
-        /** @var \Illuminate\Validation\Validator $validator */
+    ): JsonResponse {
         $data = $request->all();
+        /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
             'search' => 'required|string',
         ]);
@@ -147,7 +111,7 @@ class OrderCreateController extends Controller
             ->include('offers')
             ->setFilter('vendor_code', $productVendors);
         $products = $productService->products($query);
-        if($products->isEmpty()) {
+        if ($products->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
@@ -177,7 +141,7 @@ class OrderCreateController extends Controller
 //            ->toArray();
 
 
-        foreach ($products as $key => &$product) {
+        foreach ($products as &$product) {
             $product['photo'] = $images[$product->id] ?? '';
             $product['qty'] = 1;
         }
@@ -185,16 +149,11 @@ class OrderCreateController extends Controller
         return response()->json([
             'products' => $products,
             'stocks' => $stocks,
-            'merchants' => $merchants
+            'merchants' => $merchants,
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @param OrderService $orderService
-     * @param BasketService $basketService
-     */
-    public function createOrder(Request $request, OrderService $orderService, BasketService $basketService)
+    public function createOrder(Request $request, BasketService $basketService)
     {
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($request->all(), [
@@ -213,11 +172,9 @@ class OrderCreateController extends Controller
         $basket = $basketService->getByUser($data['user_id'], 1, true);
 
         foreach ($data['items'] as $item) {
-            $basketService->setItem($basket->id , $item['offer_id']);
+            $basketService->setItem($basket->id, $item['offer_id']);
         }
 
 //        $basketService->setItem();
-
-
     }
 }

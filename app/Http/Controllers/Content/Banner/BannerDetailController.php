@@ -19,9 +19,6 @@ class BannerDetailController extends Controller
 {
     /**
      * @param int $id
-     * @param BannerService $bannerService
-     * @param BannerTypeService $bannerTypeService
-     * @param FileService $fileService
      * @return mixed
      * @throws CmsException
      */
@@ -35,7 +32,7 @@ class BannerDetailController extends Controller
         $bannerImages = $this->getBannerImages([
             $banner['desktop_image_id'],
             $banner['tablet_image_id'],
-            $banner['mobile_image_id']
+            $banner['mobile_image_id'],
         ], $fileService);
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
         $bannerButtonTypes = $this->getBannerButtonTypes();
@@ -52,13 +49,11 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return mixed
      * @throws CmsException
      */
-    public function createPage(
-        BannerTypeService $bannerTypeService
-    ) {
+    public function createPage(BannerTypeService $bannerTypeService)
+    {
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
         $bannerButtonTypes = $this->getBannerButtonTypes();
         $bannerButtonLocations = $this->getBannerButtonLocations();
@@ -74,7 +69,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return mixed
      * @throws CmsException
      */
@@ -94,7 +88,7 @@ class BannerDetailController extends Controller
             $bannerImages = $this->getBannerImages([
                 $banner['desktop_image_id'],
                 $banner['tablet_image_id'],
-                $banner['mobile_image_id']
+                $banner['mobile_image_id'],
             ], $fileService);
         } else {
             $banner = null;
@@ -114,8 +108,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param BannerService $bannerService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -139,9 +131,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param Request $request
-     * @param BannerService $bannerService
      * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
@@ -175,15 +164,11 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param int $id
-     * @param BannerService $bannerService
      * @return BannerDto|null
      * @throws CmsException
      */
-    private function getBanner(
-        int $id,
-        BannerService $bannerService
-    ) {
+    private function getBanner(int $id, BannerService $bannerService)
+    {
         $query = $bannerService->newQuery();
         $query->setFilter('id', $id);
         $query->include('button');
@@ -193,7 +178,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param BannerTypeService $bannerTypeService
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */
@@ -204,7 +188,6 @@ class BannerDetailController extends Controller
 
     /**
      * @param array $ids
-     * @param FileService $fileService
      * @return Collection|FileDto[]
      */
     private function getBannerImages(array $ids, FileService $fileService)

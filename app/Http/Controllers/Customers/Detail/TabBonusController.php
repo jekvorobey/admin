@@ -15,8 +15,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class TabBonusController extends Controller
 {
     /**
-     * @param int $id
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function load(int $id)
@@ -49,22 +47,20 @@ class TabBonusController extends Controller
     }
 
     /**
-     * @param int              $id
-     * @param Request          $request
-     *
-     * @param RequestInitiator $user
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function add(int $id, Request $request, RequestInitiator $user)
     {
         $data = $request->validate([
             'name' => 'string|required',
-            'status' => ['required', Rule::in([
-                CustomerBonusDto::STATUS_ON_HOLD,
-                CustomerBonusDto::STATUS_ACTIVE,
-                CustomerBonusDto::STATUS_DEBITED,
-            ])],
+            'status' => [
+                'required',
+                Rule::in([
+                    CustomerBonusDto::STATUS_ON_HOLD,
+                    CustomerBonusDto::STATUS_ACTIVE,
+                    CustomerBonusDto::STATUS_DEBITED,
+                ]),
+            ],
             'value' => 'integer|required',
             'message' => 'string|min:1|required',
             'expiration_date' => 'date|after_or_equal:tomorrow|nullable',
@@ -74,7 +70,7 @@ class TabBonusController extends Controller
         $data['customer_id'] = $id;
         $statuses = array_keys(CustomerBonusDto::statusesNames());
         if (!in_array($data['status'], $statuses)) {
-            throw new BadRequestHttpException("Некорректный статус");
+            throw new BadRequestHttpException('Некорректный статус');
         }
 
         $customerBonusDto = new CustomerBonusDto($data);

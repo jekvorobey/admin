@@ -37,10 +37,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DiscountHelper
 {
     /**
-     * @param Request $request
-     * @param int     $userId
-     * @param array   $pager
-     * @param int     $merchantId
+     * @param array $pager
      * @param array $type
      * @return array
      */
@@ -48,7 +45,7 @@ class DiscountHelper
         Request $request,
         int $userId,
         array $pager = [],
-        int $merchantId = null,
+        ?int $merchantId = null,
         array $type = []
     ) {
         $discountInDto = new DiscountInDto();
@@ -65,7 +62,7 @@ class DiscountHelper
         isset($filter['merchant_id']) ? $discountInDto->merchant($filter['merchant_id']) : null;
         isset($filter['type']) ? $discountInDto->type($filter['type']) : null;
         isset($filter['role_id']) ? $discountInDto->role($filter['role_id']) : null;
-        (isset($filter['created_at_from']) || isset($filter['created_at_to']))
+        isset($filter['created_at_from']) || isset($filter['created_at_to'])
             ? $discountInDto->createdAt($filter['created_at_from'] ?? null, $filter['created_at_to'] ?? null)
             : null;
         isset($filter['start_date'])
@@ -76,8 +73,8 @@ class DiscountHelper
             : null;
         isset($filter['indefinitely']) ? $discountInDto->indefinitely($filter['indefinitely']) : null;
 
-        ($merchantId) ? $discountInDto->merchant($merchantId) : null;
-        ($type) ? $discountInDto->type($type) : null;
+        $merchantId ? $discountInDto->merchant($merchantId) : null;
+        $type ? $discountInDto->type($type) : null;
 
         return $discountInDto
             ->status(DiscountStatusDto::STATUS_CREATED, true, $userId)
@@ -86,17 +83,14 @@ class DiscountHelper
     }
 
     /**
-     * @param array           $params
-     * @param DiscountService $discountService
-     *
-     * @return Collection
+     * @param array $params
      */
     public static function load(array $params, DiscountService $discountService): Collection
     {
         $discounts = $discountService->discounts($params);
-        $discounts = $discounts->map(function (DiscountDto $discount) use ($discountService) {
-            $data                   = $discount->toArray();
-            $data['statusName']     = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
+        $discounts = $discounts->map(function (DiscountDto $discount) {
+            $data = $discount->toArray();
+            $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
             $data['validityPeriod'] = $discount->validityPeriod();
 
             return $data;
@@ -111,7 +105,7 @@ class DiscountHelper
             'filter' => [
                 '!status' => DiscountStatusDto::STATUS_CREATED,
                 '!status_user_id' => $userId,
-            ]
+            ],
         ];
         if ($merchantId) {
             $filter['filter']['merchant_id'] = $merchantId;
@@ -120,8 +114,7 @@ class DiscountHelper
     }
 
     /**
-     * @param array           $params
-     * @param DiscountService $discountService
+     * @param array $params
      *
      * @return int
      */
@@ -133,29 +126,27 @@ class DiscountHelper
     }
 
     /**
-     * @param Request $request
-     *
      * @return DiscountDto
      */
     public static function validate(Request $request)
     {
         $data = $request->validate([
-            'name'            => 'string|required',
-            'type'            => 'numeric|required',
-            'value'           => 'numeric|required',
-            'value_type'      => 'numeric|required',
-            'merchant_id'     => 'numeric|nullable',
-            'start_date'      => 'string|nullable',
-            'end_date'        => 'string|nullable',
+            'name' => 'string|required',
+            'type' => 'numeric|required',
+            'value' => 'numeric|required',
+            'value_type' => 'numeric|required',
+            'merchant_id' => 'numeric|nullable',
+            'start_date' => 'string|nullable',
+            'end_date' => 'string|nullable',
             'promo_code_only' => 'boolean|required',
-            'status'          => 'numeric|required',
-            'offers'          => 'array',
-            'bundle_items'    => 'array',
-            'brands'          => 'array',
-            'categories'      => 'array',
-            'public_events'   => 'array',
-            'except'          => 'array',
-            'conditions'      => 'array',
+            'status' => 'numeric|required',
+            'offers' => 'array',
+            'bundle_items' => 'array',
+            'brands' => 'array',
+            'categories' => 'array',
+            'public_events' => 'array',
+            'except' => 'array',
+            'conditions' => 'array',
         ]);
 
         $data['start_date'] = $data['start_date']
@@ -166,19 +157,19 @@ class DiscountHelper
             ? Carbon::createFromFormat('Y-m-d', $data['end_date'])->format('Y-m-d')
             : null;
 
-        $data['merchant_id'] = isset($data['merchant_id']) ? $data['merchant_id'] : null;
+        $data['merchant_id'] ??= null;
 
         $discount = new DiscountDto([
-            'merchant_id'     => $data['merchant_id'],
-            'type'            => $data['type'],
-            'name'            => $data['name'],
-            'value_type'      => $data['value_type'],
-            'value'           => $data['value'],
-            'status'          => $data['status'],
-            'start_date'      => $data['start_date'],
-            'end_date'        => $data['end_date'],
+            'merchant_id' => $data['merchant_id'],
+            'type' => $data['type'],
+            'name' => $data['name'],
+            'value_type' => $data['value_type'],
+            'value' => $data['value'],
+            'status' => $data['status'],
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
-            'relations'       => [],
+            'relations' => [],
         ]);
 
         $arRelations = DiscountHelper::getDiscountRelations($data);
@@ -327,37 +318,49 @@ class DiscountHelper
                     $conditions[] = $model->setFirstOrder();
                     break;
                 case DiscountConditionDto::MIN_PRICE_ORDER:
-                    $conditions[] = $model->setMinPriceOrder((float)$condition['sum']);
+                    $conditions[] = $model->setMinPriceOrder((float) $condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_BRAND:
-                    if (empty($condition['brands'])) break;
-                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float)$condition['sum']);
+                    if (empty($condition['brands'])) {
+                        break;
+                    }
+                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float) $condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_CATEGORY:
-                    if (empty($condition['categories'])) break;
-                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float)$condition['sum']);
+                    if (empty($condition['categories'])) {
+                        break;
+                    }
+                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float) $condition['sum']);
                     break;
                 case DiscountConditionDto::EVERY_UNIT_PRODUCT:
-                    $conditions[] = $model->setEveryUnitProduct((int)$condition['offer'], (int)$condition['count']);
+                    $conditions[] = $model->setEveryUnitProduct((int) $condition['offer'], (int) $condition['count']);
                     break;
                 case DiscountConditionDto::DELIVERY_METHOD:
-                    if (empty($condition['deliveryMethods'])) break;
+                    if (empty($condition['deliveryMethods'])) {
+                        break;
+                    }
                     $conditions[] = $model->setDeliveryMethods($condition['deliveryMethods']);
                     break;
                 case DiscountConditionDto::PAY_METHOD:
-                    if (empty($condition['paymentMethods'])) break;
+                    if (empty($condition['paymentMethods'])) {
+                        break;
+                    }
                     $conditions[] = $model->setPaymentMethods($condition['paymentMethods']);
                     break;
                 case DiscountConditionDto::REGION:
-                    if (empty($condition['regions'])) break;
+                    if (empty($condition['regions'])) {
+                        break;
+                    }
                     $conditions[] = $model->setRegions($condition['regions']);
                     break;
                 case DiscountConditionDto::USER:
-                    if (empty($condition['users'])) break;
+                    if (empty($condition['users'])) {
+                        break;
+                    }
                     $conditions[] = $model->setCustomers($condition['users']);
                     break;
                 case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
-                    $conditions[] = $model->setOrderSequenceNumber((int)$condition['sequenceNumber']);
+                    $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
                     if (!empty($condition['synergy'])) {
@@ -404,15 +407,12 @@ class DiscountHelper
     }
 
     /**
-     * @param Request $request
-     * @param int     $perPage
-     *
      * @return array
      */
     public static function getDefaultPager(Request $request, int $perPage = 20)
     {
         return [
-            'page'    => (int)$request->get('page', 1),
+            'page' => (int) $request->get('page', 1),
             'perPage' => $perPage,
         ];
     }
@@ -420,19 +420,20 @@ class DiscountHelper
     /**
      * @return array
      */
-    public static function loadData() {
+    public static function loadData()
+    {
         $discountService = resolve(DiscountService::class);
         $listsService = resolve(ListsService::class);
         $merchantService = resolve(MerchantService::class);
 
-        $data                     = [];
-        $data['optionDiscountTypes']    = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
-        $data['conditionTypes']   = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
-        $data['deliveryMethods']  = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
-        $data['paymentMethods']   = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
-        $data['roles']            = Helpers::getOptionRoles(false);
+        $data = [];
+        $data['optionDiscountTypes'] = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
+        $data['conditionTypes'] = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
+        $data['deliveryMethods'] = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
+        $data['paymentMethods'] = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
+        $data['roles'] = Helpers::getOptionRoles(false);
         $data['discountStatuses'] = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
-        $data['merchants']        = $merchantService->merchants()->map(function (MerchantDto $merchant) {
+        $data['merchants'] = $merchantService->merchants()->map(function (MerchantDto $merchant) {
             return ['id' => $merchant->id, 'name' => $merchant->legal_name];
         });
 
@@ -455,8 +456,6 @@ class DiscountHelper
     }
 
     /**
-     * @param int             $id
-     *
      * @return array
      * @throws \Pim\Core\PimException
      */
@@ -487,26 +486,25 @@ class DiscountHelper
         $author = $userService->users($query)->first();
 
         return [
-            'title'            => $title,
-            'iDiscount'        => $discount,
-            'discounts'        => $data['discounts'],
-            'optionDiscountTypes'    => $data['optionDiscountTypes'],
-            'iConditionTypes'  => $data['conditionTypes'],
-            'iDeliveryMethods'  => $data['deliveryMethods'],
+            'title' => $title,
+            'iDiscount' => $discount,
+            'discounts' => $data['discounts'],
+            'optionDiscountTypes' => $data['optionDiscountTypes'],
+            'iConditionTypes' => $data['conditionTypes'],
+            'iDeliveryMethods' => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
-            'iPaymentMethods'   => $data['paymentMethods'],
-            'roles'            => $data['roles'],
-            'iDistricts'       => $data['districts'],
-            'merchants'        => $data['merchants'],
-            'author'           => $author,
-            'categories'       => $categoryService->categories($categoryService->newQuery()),
-            'brands'           => $brandService->brands($brandService->newQuery()),
+            'iPaymentMethods' => $data['paymentMethods'],
+            'roles' => $data['roles'],
+            'iDistricts' => $data['districts'],
+            'merchants' => $data['merchants'],
+            'author' => $author,
+            'categories' => $categoryService->categories($categoryService->newQuery()),
+            'brands' => $brandService->brands($brandService->newQuery()),
         ];
     }
 
     /**
-     * @param         $id
-     * @param Request $request
+     * @param $id
      *
      * @return array
      */
@@ -532,10 +530,10 @@ class DiscountHelper
                     $query->setFilter('status', $value);
                     break;
                 case 'orderDateFrom':
-                    $query->setFilter('created_at', '>=', ($value . ' 00:00:00'));
+                    $query->setFilter('created_at', '>=', $value . ' 00:00:00');
                     break;
                 case 'orderDateTo':
-                    $query->setFilter('created_at', '<=', ($value . ' 23:59:59'));
+                    $query->setFilter('created_at', '<=', $value . ' 23:59:59');
                     break;
                 case 'orderNum':
                     $query->setFilter('number', 'like', "%{$value}%");
@@ -571,7 +569,7 @@ class DiscountHelper
                 'created_at' => $order['created_at'],
                 'discount' => collect($order['discounts'])->filter(function ($discount) use ($id) {
                     return $discount['discount_id'] === $id;
-                })->sum('change')
+                })->sum('change'),
             ];
         });
         $data['count'] = resolve(OrderService::class)->ordersCount($query);
@@ -580,8 +578,6 @@ class DiscountHelper
     }
 
     /**
-     * @param string $fullName
-     *
      * @return array
      */
     public static function getCustomerIdsByFullName(string $fullName)

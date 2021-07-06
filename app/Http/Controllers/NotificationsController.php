@@ -13,11 +13,6 @@ use Illuminate\Http\JsonResponse;
  */
 class NotificationsController extends Controller
 {
-    /**
-     * @param  NotificationService  $notificationService
-     * @param  RequestInitiator  $user
-     * @return JsonResponse
-     */
     public function read(NotificationService $notificationService, RequestInitiator $user): JsonResponse
     {
         $restQuery = new RestQuery();
@@ -32,14 +27,9 @@ class NotificationsController extends Controller
         return response()->json($notifications);
     }
 
-    /**
-     * @param  NotificationService  $notificationService
-     * @param  RequestInitiator  $user
-     * @return JsonResponse
-     */
     public function markAll(NotificationService $notificationService, RequestInitiator $user): JsonResponse
     {
-       $notificationService->markAll($user->userId());
+        $notificationService->markAll($user->userId());
 
         return response()->json('ok');
     }
