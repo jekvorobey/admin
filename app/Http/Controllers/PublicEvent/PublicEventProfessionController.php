@@ -14,7 +14,7 @@ class PublicEventProfessionController extends Controller
 {
     public function list(PublicEventProfessionService $publicEventPublicEventProfessionService, Client $client)
     {
-        $response = $client->get(config('customer-lib.cmHost') . '/api/v1/activities');
+        $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
         $response = collect(json_decode($response->getBody()->getContents(), true)['items'])->keyBy('id');
 
         $query = $publicEventPublicEventProfessionService->query();
@@ -29,7 +29,7 @@ class PublicEventProfessionController extends Controller
 
     public function names(Client $client)
     {
-        $response = $client->get(config('customer-lib.cmHost') . '/api/v1/activities');
+        $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
 
         return response()->json([
             'professions' => optional(json_decode($response->getBody()->getContents()))->items,
@@ -96,7 +96,7 @@ class PublicEventProfessionController extends Controller
         PublicEventProfessionService $publicEventPublicEventProfessionService,
         Client $client
     ) {
-        $response = $client->get(config('customer-lib.cmHost') . '/api/v1/activities');
+        $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
         $response = collect(json_decode($response->getBody()->getContents(), true)['items'])->keyBy('id');
 
         $professions = $publicEventPublicEventProfessionService->getByEvent($event_id);
