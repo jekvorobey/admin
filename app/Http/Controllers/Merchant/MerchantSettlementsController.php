@@ -175,9 +175,8 @@ class MerchantSettlementsController extends Controller
             return null;
         }
 
-        $domain = env('SHOWCASE_HOST');
-        return response()->streamDownload(function () use ($registryDto, $domain) {
-            echo file_get_contents($domain . $registryDto->url);
+        return response()->streamDownload(function () use ($registryDto) {
+            echo file_get_contents($registryDto->absoluteUrl());
         }, $registryDto->original_name);
     }
 }
