@@ -157,6 +157,7 @@ class PublicEventBillingReport
     {
         $startBillingRow = $billingTableRow = 16; //Начальная строка списка проданных товаров
 //        $sumSells = $sumReward = $sumToPrincipal = 0;
+        $sumReward = $sumToPrincipal = 0;
 
         //Заполняем таблицу c продажами//
 
