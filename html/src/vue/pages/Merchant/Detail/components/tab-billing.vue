@@ -233,8 +233,8 @@
           <td>{{ billingOperation.price }}</td>
           <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
           <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
-          <td>{{ parseInt(billingOperation.commission.toFixed()) }}</td>
-          <td>{{ parseInt((billingOperation.price - billingOperation.commission).toFixed()) }}</td>
+          <td>{{ billingOperation.commission.toFixed() }}</td>
+          <td>{{ (billingOperation.price - billingOperation.commission).toFixed() }}</td>
           <td>
             <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-danger btn-sm" @click="deleteOperation(billingOperation.id)">
               Удалить
