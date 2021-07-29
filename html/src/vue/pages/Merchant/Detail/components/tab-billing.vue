@@ -234,7 +234,7 @@
           <td>{{ billingOperation.percent ? billingOperation.percent : 0 }}</td>
           <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
           <td>{{ billingOperation.commission }}</td>
-          <td>{{ (billingOperation.price - billingOperation.commission)}}</td>
+          <td>{{ billingOperation.price - billingOperation.commission }}</td>
           <td>
             <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-danger btn-sm" @click="deleteOperation(billingOperation.id)">
               Удалить
