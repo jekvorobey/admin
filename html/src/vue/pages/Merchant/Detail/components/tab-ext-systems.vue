@@ -19,6 +19,10 @@
                 <td>{{ extSystem.connection_params.password }}</td>
             </tr>
             <tr>
+                <th width="400px">Хост</th>
+                <td>{{ host }}</td>
+            </tr>
+            <tr>
                 <th width="400px">Дата создания</th>
                 <td>{{ datetimePrint(extSystem.created_at) }}</td>
             </tr>
@@ -38,6 +42,7 @@ export default {
     data() {
         return {
             extSystem: null,
+            host: null,
         }
     },
     methods: {
@@ -49,6 +54,7 @@ export default {
 
             Services.net().get(this.getRoute('merchant.detail.extSystems', {id: this.id})).then(data => {
                 this.extSystem = data.extSystem;
+                this.host = data.host;
             }).finally(() => {
                 Services.hideLoader();
             })

@@ -22,6 +22,7 @@ class TabExtSystemsController extends Controller
 
         return response()->json([
             'extSystem' => $extSystem,
+            'host' => config('common-lib.integration1CHost'),
         ]);
     }
 
