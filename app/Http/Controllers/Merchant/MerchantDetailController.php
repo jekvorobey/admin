@@ -97,10 +97,10 @@ class MerchantDetailController extends Controller
         )->keyBy('id');
 
         // Счетчик непрочитанных сообщений от пользователя //
-        $unreadMsgCount = $communicationService->unreadCount(
+        $unreadMsgCount = $operatorMain ? $communicationService->unreadCount(
             [$operatorMain->user_id],
             true
-        );
+        ) : 0;
 
         $restQuery = (new RestQuery())
             ->include('product')
