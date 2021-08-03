@@ -32,6 +32,7 @@
                     <tab-communication v-else-if="key === 'communication'" :operators="merchant.operators"/>
                     <tab-marketing v-else-if="key === 'marketing'" :id="merchant.id" :legal_name="merchant.legal_name"/>
                     <tab-billing v-else-if="key === 'bill'" :model.sync="merchant"/>
+                    <tab-ext-systems v-else-if="key === 'extSystems'" :id="merchant.id"/>
                     <template v-else>
                         Заглушка
                     </template>
@@ -57,6 +58,7 @@ import TabCommunication from './components/tab-communication.vue';
 import TabMarketing from './components/tab-marketing.vue';
 import TabBilling from "./components/tab-billing.vue";
 import TabTaxes from "./components/tab-taxes.vue";
+import TabExtSystems from "./components/tab-ext-systems.vue";
 import Services from "../../../../scripts/services/services";
 
 export default {
@@ -72,6 +74,7 @@ export default {
         'categoryList',
     ],
     components: {
+        TabExtSystems,
         TabPublicEvent,
         TabBilling,
         Infopanel,
@@ -84,7 +87,7 @@ export default {
         TabOrder,
         TabCommunication,
         TabMarketing,
-        TabTaxes
+        TabTaxes,
     },
     data() {
         return {
@@ -143,6 +146,7 @@ export default {
             tabs.report = {i: i++, title: 'Отчеты'};
             tabs.eDocument = {i: i++, title: 'Электронный документооборот'};
             tabs.log = {i: i++, title: 'Логи'};
+            tabs.extSystems = {i: i++, title: 'Интеграция'};
 
             return tabs;
         },

@@ -110,6 +110,10 @@ Route::middleware('auth')->group(function () {
                         'merchant.detail.eventBillingList.downloadEventBillingList'
                     );
                 });
+                Route::prefix('extSystems')->group(function () {
+                    Route::get('', 'TabExtSystemsController@load')->name('merchant.detail.extSystems');
+                    Route::post('', 'TabExtSystemsController@create')->name('merchant.detail.extSystems.store');
+                });
             });
         });
 
