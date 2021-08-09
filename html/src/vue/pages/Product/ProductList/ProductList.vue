@@ -60,6 +60,13 @@
                             </div>
                             <div class="row">
                                 <f-select
+                                    v-model="filter.isPriceHidden"
+                                    :options="priceHiddenOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Видимость цен</f-select>
+                            </div>
+                            <div class="row">
+                                <f-select
                                         v-model="filter.brand"
                                         :options="brandOptions"
                                         class="col-md-3 col-sm-12"
@@ -287,6 +294,7 @@
         category: '',
         approvalStatus: '',
         productionStatus: '',
+        isPriceHidden: '',
         priceFrom: null,
         priceTo: null,
         qtyFrom: null,
@@ -632,6 +640,12 @@
                     {value: true, text: 'Да'},
                     {value: false, text: 'Нет'},
                 ];
+            },
+            priceHiddenOptions() {
+              return [
+                {value: false, text: 'Цены видны'},
+                {value: true, text: 'Цены спрятаны'},
+              ];
             },
             checkAll() {
                 let BreakException = {};
