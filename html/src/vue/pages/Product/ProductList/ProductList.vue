@@ -300,7 +300,7 @@
         qtyTo: null,
         dateFrom: null,
         dateTo: null,
-        isPriceHidden: '',
+        isPriceHidden: null,
     };
 
     const cleanFilter = Object.assign({
