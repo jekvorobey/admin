@@ -45,16 +45,10 @@ class ProductListController extends Controller
             }, $productSearchResult->products);
         }
 
-        $offersQuery = new RestQuery();
-        $offersQuery->setFilter('product_id', $productIds);
-
-        $isPriceHiddenOfferFilter = $request->get('filter', []);
-        if ($isPriceHiddenOfferFilter) {
-            $offersQuery->setFilter('is_price_hidden', $isPriceHiddenOfferFilter);
-        }
-
-        $offers = $offerService->offers($offersQuery);
-
+        $offers = $offerService->offers(
+            (new RestQuery())
+                ->setFilter('product_id', $productIds)
+        );
         $offers = $offers->mapToGroups(function ($item) {
             return [$item->product_id => $item->id];
         });
@@ -223,8 +217,6 @@ class ProductListController extends Controller
         $query->qtyTo = data_get($filter, 'qtyTo');
         $query->dateFrom = data_get($filter, 'dateFrom');
         $query->dateTo = data_get($filter, 'dateTo');
-        $query->isPriceHidden = data_get($filter, 'isPriceHidden');
-
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
         return $query;
     }
