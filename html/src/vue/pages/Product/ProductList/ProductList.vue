@@ -60,6 +60,13 @@
                             </div>
                             <div class="row">
                                 <f-select
+                                    v-model="filter.isPriceHidden"
+                                    :options="priceHiddenOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Видимость цен</f-select>
+                            </div>
+                            <div class="row">
+                                <f-select
                                         v-model="filter.brand"
                                         :options="brandOptions"
                                         class="col-md-3 col-sm-12"
@@ -293,6 +300,7 @@
         qtyTo: null,
         dateFrom: null,
         dateTo: null,
+        isPriceHidden: '',
     };
 
     const cleanFilter = Object.assign({
@@ -631,6 +639,12 @@
                 return [
                     {value: true, text: 'Да'},
                     {value: false, text: 'Нет'},
+                ];
+            },
+            priceHiddenOptions() {
+                return [
+                  {value: false, text: 'Цены видны'},
+                  {value: true, text: 'Цены спрятаны'},
                 ];
             },
             checkAll() {
