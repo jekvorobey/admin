@@ -45,16 +45,10 @@ class ProductListController extends Controller
             }, $productSearchResult->products);
         }
 
-        $offersQuery = new RestQuery();
-        $offersQuery->setFilter('product_id', $productIds);
-
-        $isPriceHiddenOfferFilter = $request->get('filter', []);
-        if ($isPriceHiddenOfferFilter) {
-            $offersQuery->setFilter('is_price_hidden', $isPriceHiddenOfferFilter);
-        }
-
-        $offers = $offerService->offers($offersQuery);
-
+        $offers = $offerService->offers(
+            (new RestQuery())
+                ->setFilter('product_id', $productIds)
+        );
         $offers = $offers->mapToGroups(function ($item) {
             return [$item->product_id => $item->id];
         });
