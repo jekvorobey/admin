@@ -218,7 +218,6 @@ class ProductListController extends Controller
         $query->dateFrom = data_get($filter, 'dateFrom');
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
-        
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
         return $query;
     }
