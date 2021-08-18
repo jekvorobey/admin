@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
@@ -62,7 +63,7 @@ class ProductDetailController extends Controller
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
 
         $productBonusOptionService = resolve(ProductBonusOptionService::class);
-        $availableBadges = $badgesService->productBadges()->keyBy('id');
+        $availableBadges = $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id');
         $maxPercentagePayment = $productBonusOptionService->get($id, ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT);
 
         return $this->render('Product/ProductDetail', [
