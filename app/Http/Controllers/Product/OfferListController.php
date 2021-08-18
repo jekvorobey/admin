@@ -82,7 +82,7 @@ class OfferListController extends Controller
             'price' => 'numeric|required',
             'sale_status' => [
                 'nullable',
-                Rule::in(array_keys(OfferSaleStatus::offerCreateStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'nullable|date',
             'stocks' => 'array',
@@ -135,7 +135,7 @@ class OfferListController extends Controller
             'price' => 'sometimes|numeric|required',
             'sale_status' => [
                 'sometimes',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'sometimes|date',
             'stocks' => 'array',
@@ -185,7 +185,7 @@ class OfferListController extends Controller
             'offer_ids.*' => 'integer',
             'sale_status' => [
                 'required',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'nullable|date',
         ]);

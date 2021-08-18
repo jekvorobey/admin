@@ -86,8 +86,6 @@ class ViewRender
     private $deliveryServices = [];
 
     private $offerAllSaleStatuses = [];
-    private $offerCreateSaleStatuses = [];
-    private $offerEditSaleStatuses = [];
     private $offerCountdownSaleStatuses = [];
 
     private $propertyTypes = [];
@@ -689,18 +687,6 @@ class ViewRender
                 }
                 $this->offerAllSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
             }
-            foreach (OfferSaleStatus::offerCreateStatuses() as $id => $status) {
-                if (!isset($mapOfferSaleStatuses[$id])) {
-                    continue;
-                }
-                $this->offerCreateSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
-            }
-            foreach (OfferSaleStatus::offerEditStatuses() as $id => $status) {
-                if (!isset($mapOfferSaleStatuses[$id])) {
-                    continue;
-                }
-                $this->offerEditSaleStatuses[$mapOfferSaleStatuses[$id]] = $status->toArray();
-            }
 
             $this->offerCountdownSaleStatuses = OfferSaleStatus::countdownStatuses();
         }
@@ -786,8 +772,6 @@ class ViewRender
                 'deliveryServices' => $this->deliveryServices,
 
                 'offerAllSaleStatuses' => $this->offerAllSaleStatuses,
-                'offerCreateSaleStatuses' => $this->offerCreateSaleStatuses,
-                'offerEditSaleStatuses' => $this->offerEditSaleStatuses,
                 'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
 
                 'propertyTypes' => $this->propertyTypes,

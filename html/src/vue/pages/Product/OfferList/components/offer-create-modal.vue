@@ -414,16 +414,7 @@
                 return total;
             },
             modalStatuses() {
-                let saleStatuses;
-                switch (this.mode) {
-                    case 'create':
-                        saleStatuses = this.offerCreateSaleStatuses;
-                        break;
-                    case 'edit':
-                        saleStatuses = this.offerEditSaleStatuses;
-                        break;
-                }
-                return Object.values(saleStatuses).map((val) => {
+                return Object.values(this.offerAllSaleStatuses).map((val) => {
                     return {value: parseInt(val.id), text: val.name};
                 });
             },

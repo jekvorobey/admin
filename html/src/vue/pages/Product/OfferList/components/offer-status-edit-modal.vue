@@ -111,7 +111,7 @@
                 return Object.values(this.offers).map((offer) => offer.id);
             },
             modalStatuses() {
-                return Object.values(this.offerEditSaleStatuses).map((val) => {
+                return Object.values(this.offerAllSaleStatuses).map((val) => {
                     return {value: parseInt(val.id), text: val.name};
                 });
             },

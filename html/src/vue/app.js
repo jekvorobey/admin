@@ -234,14 +234,6 @@ Vue.mixin({
         offerAllSaleStatuses() {
             return this.$store.state.layout.offerAllSaleStatuses;
         },
-        /** @return {OfferCreateSaleStatuses} */
-        offerCreateSaleStatuses() {
-            return this.$store.state.layout.offerCreateSaleStatuses;
-        },
-        /** @return {OfferEditSaleStatuses} */
-        offerEditSaleStatuses() {
-            return this.$store.state.layout.offerEditSaleStatuses;
-        },
         /** @return {OfferCountdownSaleStatuses} */
         offerCountdownSaleStatuses() {
             return this.$store.state.layout.offerCountdownSaleStatuses;
@@ -679,18 +671,6 @@ Vue.mixin({
  @property {OfferSaleStatus} outSale - снято с продажи
  @property {OfferSaleStatus} availableSale - доступен к продаже
  @property {OfferSaleStatus} notAvailableSale - недоступен к продаже
- */
-/**
- @typedef OfferCreateSaleStatuses - доступные при создании оффера статусы
- @type {Object}
- @property {OfferSaleStatus} onSale - в продаже
- @property {OfferSaleStatus} preOrder - предзаказ
- */
-/**
- @typedef OfferEditSaleStatuses - доступные при редактировании оффера статусы
- @type {Object}
- @property {OfferSaleStatus} preOrder - предзаказ
- @property {OfferSaleStatus} outSale - снято с продажи
  */
 /**
  @typedef OfferSaleStatus - статус оффера
