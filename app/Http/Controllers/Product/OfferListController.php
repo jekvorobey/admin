@@ -95,7 +95,7 @@ class OfferListController extends Controller
             'merchant_id' => $data['merchant_id'],
             'sale_status' => $data['sale_status'],
         ]);
-        if ($data['sale_at']) {
+        if ($data['sale_at'] ?? null) {
             $offerDto['sale_at'] = $data['sale_at'];
         }
         $offerId = $offerService->createOffer($offerDto);
@@ -192,7 +192,7 @@ class OfferListController extends Controller
 
         $offerService->changeSaleStatus($data['offer_ids'], $data['sale_status']);
 
-        if ($data['sale_at']) {
+        if ($data['sale_at'] ?? null) {
             $offerDto = new OfferDto([
                 'sale_at' => $data['sale_at'],
             ]);
