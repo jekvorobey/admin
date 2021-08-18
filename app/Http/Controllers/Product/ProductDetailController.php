@@ -63,7 +63,7 @@ class ProductDetailController extends Controller
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
 
         $productBonusOptionService = resolve(ProductBonusOptionService::class);
-        $availableBadges = $badgesService->productBadges()->where('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id');
+        $availableBadges = $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id');
         $maxPercentagePayment = $productBonusOptionService->get($id, ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT);
 
         return $this->render('Product/ProductDetail', [

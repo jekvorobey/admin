@@ -71,7 +71,7 @@ class ProductListController extends Controller
                 'productionDone' => ProductProductionStatus::DONE,
                 'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
-                'availableBadges' => $badgesService->productBadges()->where('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id'),
+                'availableBadges' => $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id'),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ],
