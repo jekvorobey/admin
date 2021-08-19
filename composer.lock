@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0788155d1b4fa1c4a4367fbabde24c06",
+    "content-hash": "a80a38bff449874ead899512c4bad14a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1130,11 +1130,11 @@
         },
         {
             "name": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "6863adf689c2b251b3702918b059330641f55295"
+                "reference": "d738d3f388793a11688395a3e34352435aa1b2f7"
             },
             "require": {
                 "ext-json": "*",
@@ -1157,7 +1157,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-04-13T08:12:13+00:00"
+            "time": "2021-08-18T12:16:09+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -10675,7 +10675,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
