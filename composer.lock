@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ea62da3036f9e7d3e4e0f6e2a1958db",
+    "content-hash": "0788155d1b4fa1c4a4367fbabde24c06",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "fda5233dac01883faacacaa17601c342413ef093"
+                "reference": "d9bb4f76925b12f1f5042782a68c671715b93dd0"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-08-16T14:21:43+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
@@ -10717,7 +10717,7 @@
         },
         {
             "package": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10750,5 +10750,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
