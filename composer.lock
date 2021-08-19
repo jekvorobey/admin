@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e65059e88623a1054007efe654418412",
+    "content-hash": "a80a38bff449874ead899512c4bad14a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1130,11 +1130,11 @@
         },
         {
             "name": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-468-add-product-badge-for-professional",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "1a7024d6a98253a977c9b7c9ebb2cec633858a39"
+                "reference": "d738d3f388793a11688395a3e34352435aa1b2f7"
             },
             "require": {
                 "ext-json": "*",
@@ -1157,7 +1157,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-08-17T13:31:27+00:00"
+            "time": "2021-08-18T12:16:09+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "fda5233dac01883faacacaa17601c342413ef093"
+                "reference": "d9bb4f76925b12f1f5042782a68c671715b93dd0"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-08-16T14:21:43+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
@@ -10675,7 +10675,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-468-add-product-badge-for-professional",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10717,7 +10717,7 @@
         },
         {
             "package": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-462-implement-hidden-prices",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
