@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -70,7 +71,7 @@ class ProductListController extends Controller
                 'productionDone' => ProductProductionStatus::DONE,
                 'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
-                'availableBadges' => $badgesService->productBadges()->keyBy('id'),
+                'availableBadges' => $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id'),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ],
@@ -218,7 +219,6 @@ class ProductListController extends Controller
         $query->dateFrom = data_get($filter, 'dateFrom');
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
-        
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
         return $query;
     }
