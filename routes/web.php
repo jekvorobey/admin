@@ -445,6 +445,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'OrderStatusListController@index')->name('orderStatuses.list');
                 Route::get('page', 'OrderStatusListController@page')->name('orderStatuses.pagination');
             });
+            Route::prefix('order-return-reasons')->group(function () {
+                Route::get('', 'OrderReturnReasonListController@list')->name('orderReturnReasons.list');
+                Route::get('page', 'OrderReturnReasonListController@page')->name('orderReturnReasons.pagination');
+            });
         });
     });
 
