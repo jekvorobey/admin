@@ -447,7 +447,9 @@ Route::middleware('auth')->group(function () {
             });
             Route::prefix('order-return-reasons')->group(function () {
                 Route::get('', 'OrderReturnReasonListController@list')->name('orderReturnReasons.list');
-                Route::get('page', 'OrderReturnReasonListController@page')->name('orderReturnReasons.pagination');
+                Route::get('page', 'OrderReturnReasonListController@page')->name('orderReturnReasons.listPage');
+                Route::post('save', 'OrderReturnReasonListController@save')->name('orderReturnReasons.save');
+                Route::post('delete', 'OrderReturnReasonListController@delete')->name('orderReturnReasons.delete');
             });
         });
     });

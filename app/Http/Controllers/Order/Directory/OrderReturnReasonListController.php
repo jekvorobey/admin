@@ -16,8 +16,8 @@ class OrderReturnReasonListController extends Controller
         $page = $request->get('page', 1);
         [$total, $reasons] = $this->loadReasons($orderService, $page);
 
-        return $this->render('Order/OrderReturnReasonList', [
-            'iReasons' => $reasons,
+        return $this->render('Order/Directory/OrderReturnReasonList', [
+            'iOrderReturnReasons' => $reasons,
             'iTotal' => $total['total'],
             'iCurrentPage' => $page,
         ]);
@@ -26,10 +26,10 @@ class OrderReturnReasonListController extends Controller
     public function page(Request $request, OrderService $orderService)
     {
         $page = $request->get('page', 1);
-        [$total, $brands] = $this->loadReasons($orderService, $page);
+        [$total, $reasons] = $this->loadReasons($orderService, $page);
 
         return response()->json([
-            'brands' => $brands,
+            'orderReturnReasons' => $reasons,
             'total' => $total['total'],
         ]);
     }
@@ -37,13 +37,13 @@ class OrderReturnReasonListController extends Controller
     public function save(Request $request, OrderService $orderService)
     {
         $id = $request->get('id');
-        $text = $request->get('text');
+        $orderReturnReason = $request->get('orderReturnReason');
 
-        if (!$text) {
-            throw new BadRequestHttpException('text required');
+        if (!$orderReturnReason) {
+            throw new BadRequestHttpException('Order return reason is required');
         }
 
-        $orderReturnReasonDto = new OrderReturnReasonDto();
+        $orderReturnReasonDto = new OrderReturnReasonDto($orderReturnReason);
 
         if ($id) {
             $orderService->updateOrderReturnReason($id, $orderReturnReasonDto);
@@ -56,13 +56,13 @@ class OrderReturnReasonListController extends Controller
 
     public function delete(Request $request, OrderService $orderService)
     {
-        $ids = $request->get('ids');
+        $id = $request->get('id');
 
-        if (!$ids || !is_array($ids)) {
+        if (!$id || !is_int($id)) {
             throw new BadRequestHttpException('ids required');
         }
 
-        $orderService->deleteOrderReturnReason($ids);
+        $orderService->deleteOrderReturnReason($id);
 
         return response()->json();
     }
