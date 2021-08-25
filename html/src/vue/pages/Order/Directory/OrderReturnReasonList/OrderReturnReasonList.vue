@@ -36,7 +36,7 @@
     <transition name="modal">
       <modal :close="closeModal" v-if="isModalOpen('ReturnReasonFormModal')">
         <div slot="header">
-          Причина возврата
+          Причина отмены
         </div>
         <div slot="body">
           <div class="form-group">

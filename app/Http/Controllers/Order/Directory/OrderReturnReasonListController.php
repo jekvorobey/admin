@@ -36,13 +36,14 @@ class OrderReturnReasonListController extends Controller
 
     public function save(Request $request, OrderService $orderService)
     {
+        $this->validate($request, [
+            'id' => ['nullable', 'int'],
+            'orderReturnReason' => ['required', 'array'],
+            'orderReturnReason.text' => ['required', 'string'],
+        ]);
+
         $id = $request->get('id');
         $orderReturnReason = $request->get('orderReturnReason');
-
-        if (!$orderReturnReason) {
-            throw new BadRequestHttpException('Order return reason is required');
-        }
-
         $orderReturnReasonDto = new OrderReturnReasonDto($orderReturnReason);
 
         if ($id) {
@@ -58,9 +59,9 @@ class OrderReturnReasonListController extends Controller
     {
         $id = $request->get('id');
 
-        if (!$id || !is_int($id)) {
-            throw new BadRequestHttpException('ids required');
-        }
+        $this->validate($request, [
+            'id' => ['required', 'int'],
+        ]);
 
         $orderService->deleteOrderReturnReason($id);
 
