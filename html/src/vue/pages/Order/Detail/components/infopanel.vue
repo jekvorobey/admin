@@ -27,7 +27,7 @@
                         Ожидает подтверждения Мерчантом
                     </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="this.order.status && this.order.status.id < 9 && !isCancel"
-                            @click="cancelOrder()">
+                            @click="showOrderReturnModel()">
                         Отменить заказ
                     </b-dropdown-item-button>
                 </b-dropdown>
@@ -127,17 +127,19 @@
                 <span class="font-weight-bold">Вес заказа:</span> {{order.weight}} г.
             </div>
         </b-row>
-    </b-card>
+	  <modal-add-return-reason :returnReasons="order.orderReturnReasons" @update:modelElement="cancelOrder($event)"/>
+	</b-card>
 </template>
 
 <script>
     import Services from '../../../../../scripts/services/services.js';
 
     import {validationMixin} from 'vuelidate';
+	import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
 
     export default {
     name: 'infopanel',
-    components: {},
+    components: {ModalAddReturnReason},
     mixins: [
         validationMixin,
     ],
@@ -181,24 +183,27 @@
                 Services.hideLoader();
             });
         },
-        cancelOrder() {
-            let errorMessage = 'Ошибка при отмене заказа';
+        showOrderReturnModel() {
+		  	this.$bvModal.show('modal-add-return-reason');
+		},
+	  	cancelOrder(returnReason) {
+			let errorMessage = 'Ошибка при отмене заказа';
 
-            Services.showLoader();
-            Services.net().put(this.getRoute('orders.cancel', {id: this.order.id})).then(data => {
-                if (data.order) {
-                    this.$set(this, 'order', data.order);
-                    this.$set(this.order, 'shipments', data.order.shipments);
-                    Services.msg("Изменения сохранены");
-                } else {
-                    Services.msg(errorMessage, 'danger');
-                }
-            }, () => {
-                Services.msg(errorMessage, 'danger');
-            }).finally(data => {
-                Services.hideLoader();
-            });
-        },
+			Services.showLoader();
+			Services.net().put(this.getRoute('orders.cancel', {id: this.order.id, orderReturnReason: returnReason})).then(data => {
+			    if (data.order) {
+			        this.$set(this, 'order', data.order);
+			        this.$set(this.order, 'shipments', data.order.shipments);
+			        Services.msg("Изменения сохранены");
+			    } else {
+			        Services.msg(errorMessage, 'danger');
+			    }
+			}, () => {
+			    Services.msg(errorMessage, 'danger');
+			}).finally(data => {
+			    Services.hideLoader();
+			});
+		},
         isStatus(statusId) {
             return this.order.status && this.order.status.id === statusId;
         },

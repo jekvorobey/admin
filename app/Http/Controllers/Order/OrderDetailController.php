@@ -48,7 +48,7 @@ class OrderDetailController extends Controller
      * @return mixed
      * @throws \Exception
      */
-    public function detail(int $id, ShipmentService $shipmentService)
+    public function detail(int $id, ShipmentService $shipmentService, OrderService $orderService)
     {
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
@@ -63,9 +63,13 @@ class OrderDetailController extends Controller
 
         $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
 
+        $query = $orderService->newQuery();
+        $orderReturnReasons = $orderService->orderReturnReasons($query);
+
         $this->title = 'Заказ ' . $order->number . ' от ' . $order->created_at;
 
         $order['barcodes'] = $barCodes;
+        $order['orderReturnReasons'] = $orderReturnReasons;
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
@@ -147,7 +151,7 @@ class OrderDetailController extends Controller
      * @param ShipmentService $shipmentService
      * @throws \Exception
      */
-    public function cancel(int $id, OrderService $orderService): JsonResponse
+    public function cancel(int $id, int $orderReturnReason, OrderService $orderService): JsonResponse
     {
         $orderService->cancelOrder($id);
 
