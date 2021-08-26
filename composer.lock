@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ea62da3036f9e7d3e4e0f6e2a1958db",
+    "content-hash": "dca1a4b878001cf127d77375cd240cc7",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1369,11 +1369,11 @@
         },
         {
             "name": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-453-add-order-return-reasons-dictionary",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "92af833d878b73ed910989ea6e03443cfce8f063"
+                "reference": "ed6c38aa0c3a252fcf40d22c7f578c755c4ab6f8"
             },
             "require": {
                 "ext-json": "*",
@@ -1408,7 +1408,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-08-25T13:45:56+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10711,7 +10711,7 @@
         },
         {
             "package": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-453-add-order-return-reasons-dictionary",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
