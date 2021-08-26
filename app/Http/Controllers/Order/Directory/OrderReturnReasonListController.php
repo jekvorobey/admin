@@ -7,7 +7,6 @@ use Greensight\Oms\Core\OmsException;
 use Greensight\Oms\Services\OrderService\Dto\OrderReturnReasonDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class OrderReturnReasonListController extends Controller
 {
