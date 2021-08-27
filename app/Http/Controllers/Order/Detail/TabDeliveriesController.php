@@ -11,6 +11,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -167,9 +168,12 @@ class TabDeliveriesController extends OrderDetailController
      * Отменить доставку
      * @throws \Exception
      */
-    public function cancelDelivery(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
+    public function cancelDelivery(int $orderId, int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
     {
-        $deliveryService->cancelDelivery($deliveryId);
+        $data = $this->validate($request, [
+            'orderReturnReason' => 'required|int',
+        ]);
+        $deliveryService->cancelDelivery($deliveryId, $data['orderReturnReason']);
 
         return response()->json([
             'order' => $this->getOrder($orderId),

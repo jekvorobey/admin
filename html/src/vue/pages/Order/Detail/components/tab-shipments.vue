@@ -32,7 +32,7 @@
                                     <fa-icon icon="file-invoice"></fa-icon> Получить квитанцию
                                 </a>
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="canCancelShipment(shipment)" @click="cancelShipment(shipment)">
+                            <b-dropdown-item-button v-if="canCancelShipment(shipment)" @click="showOrderReturnModal(shipment)">
                                 <fa-icon icon="times"></fa-icon> Отменить отправление
                             </b-dropdown-item-button>
                         </b-dropdown>
@@ -150,12 +150,14 @@
         </b-card>
 
         <modal-shipment-edit :model-shipment.sync="selectedShipment" :model-order.sync="order" v-if="Object.values(selectedShipment).length > 0"/>
+	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'shipment'" @update:modelElement="cancelShipment($event)"/>
     </div>
 </template>
 <script>
     import ModalShipmentEdit from './forms/modal-shipment-edit.vue';
     import ShipmentItems from './forms/shipment-items.vue';
     import Services from '../../../../../scripts/services/services';
+	import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
 
     export default {
         props: {
@@ -165,10 +167,12 @@
         components: {
             ModalShipmentEdit,
             ShipmentItems,
+		  	ModalAddReturnReason,
         },
         data() {
             return {
                 selectedShipment: {},
+			  	shipmentForCancel: {},
                 documentTemplates: [
                     {value: 'claimAct', text: 'Акт-претензия'},
                     {value: 'acceptanceAct', text: 'Акт приема-передачи'},
@@ -227,11 +231,17 @@
                     Services.hideLoader();
                 });
             },
-            cancelShipment(shipment) {
+			showOrderReturnModal(shipment) {
+				this.shipmentForCancel = shipment;
+				this.$bvModal.show('modal-add-return-reason-shipment');
+			},
+            cancelShipment(returnReason) {
                 let errorMessage = 'Ошибка при отмене отправления';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: this.order.id, shipmentId: shipment.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.shipments.cancel', {id: this.order.id, shipmentId: this.shipmentForCancel.id}), null, {
+				  orderReturnReason: returnReason
+				}).then(data => {
                     if (data.order) {
                         this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);

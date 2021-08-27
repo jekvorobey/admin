@@ -12,7 +12,7 @@
                             <b-dropdown-item-button v-if="canCancelDeliveryOrder(delivery)" @click="cancelDeliveryOrder(delivery)">
                                 Отменить заказ на доставку у ЛО
                             </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="canCancelDelivery(delivery)" @click="cancelDelivery(delivery)">
+                            <b-dropdown-item-button v-if="canCancelDelivery(delivery)" @click="showOrderReturnModal(delivery)">
                                 Отменить доставку
                             </b-dropdown-item-button>
                         </b-dropdown>
@@ -158,11 +158,13 @@
         </b-card>
 
         <modal-delivery-edit :model-delivery.sync="selectedDelivery" :model-order.sync="order" v-if="Object.values(selectedDelivery).length > 0"/>
-    </div>
+	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'delivery'" @update:modelElement="cancelDelivery($event)"/>
+	</div>
 </template>
 <script>
     import Services from '../../../../../scripts/services/services';
     import ModalDeliveryEdit from './forms/modal-delivery-edit.vue';
+	import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
 
     export default {
         props: {
@@ -170,10 +172,12 @@
         },
         components: {
             ModalDeliveryEdit,
+		  	ModalAddReturnReason,
         },
         data() {
             return {
                 selectedDelivery: {},
+			  	deliveryForCancel: {},
             }
         },
         methods: {
@@ -206,7 +210,12 @@
             canCancelDeliveryOrder(delivery) {
                 return delivery.status && delivery.status.id < this.deliveryStatuses.onPointIn.id && delivery.xml_id;
             },
+		  	showOrderReturnModal(delivery) {
+			  	this.deliveryForCancel = delivery;
+			  	this.$bvModal.show('modal-add-return-reason-delivery');
+			},
             cancelDeliveryOrder(delivery) {
+
                 let errorMessage = 'Ошибка при отмене заказа на доставку у ЛО';
 
                 Services.showLoader();
@@ -227,11 +236,13 @@
             canCancelDelivery(delivery) {
                return delivery.status && delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
             },
-            cancelDelivery(delivery) {
+            cancelDelivery(returnReason) {
                 let errorMessage = 'Ошибка при отмене доставки';
 
                 Services.showLoader();
-                Services.net().put(this.getRoute('orders.detail.deliveries.cancel', {id: delivery.order_id, deliveryId: delivery.id})).then(data => {
+                Services.net().put(this.getRoute('orders.detail.deliveries.cancel', {id: this.deliveryForCancel.order_id, deliveryId: this.deliveryForCancel.id}), null, {
+				  	orderReturnReason: returnReason
+				}).then(data => {
                     if (data.order) {
                         this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);

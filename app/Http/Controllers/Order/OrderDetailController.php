@@ -151,9 +151,13 @@ class OrderDetailController extends Controller
      * @param ShipmentService $shipmentService
      * @throws \Exception
      */
-    public function cancel(int $id, int $orderReturnReason, OrderService $orderService): JsonResponse
+    public function cancel(int $id, Request $request, OrderService $orderService): JsonResponse
     {
-        $orderService->cancelOrder($id);
+        $data = $this->validate($request, [
+            'orderReturnReason' => 'required|int',
+        ]);
+
+        $orderService->cancelOrder($id, $data['orderReturnReason']);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -184,6 +188,10 @@ class OrderDetailController extends Controller
         $this->addOrderDeliveryInfo($order);
         $this->addOrderCommonInfo($order);
         $this->addOrderProductInfo($order);
+
+        $orderReturnReasonsquery = $orderService->newQuery();
+        $orderReturnReasons = $orderService->orderReturnReasons($orderReturnReasonsquery);
+        $order['orderReturnReasons'] = $orderReturnReasons;
 
         return $order;
     }

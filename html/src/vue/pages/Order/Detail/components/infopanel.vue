@@ -27,7 +27,7 @@
                         Ожидает подтверждения Мерчантом
                     </b-dropdown-item-button>
                     <b-dropdown-item-button v-if="this.order.status && this.order.status.id < 9 && !isCancel"
-                            @click="showOrderReturnModel()">
+                            @click="showOrderReturnModal()">
                         Отменить заказ
                     </b-dropdown-item-button>
                 </b-dropdown>
@@ -127,7 +127,7 @@
                 <span class="font-weight-bold">Вес заказа:</span> {{order.weight}} г.
             </div>
         </b-row>
-	  <modal-add-return-reason :returnReasons="order.orderReturnReasons" @update:modelElement="cancelOrder($event)"/>
+	  <modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'order'" @update:modelElement="cancelOrder($event)"/>
 	</b-card>
 </template>
 
@@ -183,14 +183,16 @@
                 Services.hideLoader();
             });
         },
-        showOrderReturnModel() {
-		  	this.$bvModal.show('modal-add-return-reason');
+        showOrderReturnModal() {
+		  	this.$bvModal.show('modal-add-return-reason-order');
 		},
 	  	cancelOrder(returnReason) {
 			let errorMessage = 'Ошибка при отмене заказа';
 
 			Services.showLoader();
-			Services.net().put(this.getRoute('orders.cancel', {id: this.order.id, orderReturnReason: returnReason})).then(data => {
+			Services.net().put(this.getRoute('orders.cancel', {id: this.order.id}), null, {
+			  orderReturnReason: returnReason
+			}).then(data => {
 			    if (data.order) {
 			        this.$set(this, 'order', data.order);
 			        this.$set(this.order, 'shipments', data.order.shipments);

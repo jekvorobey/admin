@@ -1,5 +1,5 @@
 <template>
-	<b-modal id="modal-add-return-reason" hide-footer ref="modal" size="lg" @hidden="resetModal">
+	<b-modal :id="'modal-add-return-reason-' + type" hide-footer ref="modal" size="lg" @hidden="resetModal">
 		<template v-slot:default="{close}">
 		  <b-form-row>
 			<div class="col-sm-4">
@@ -29,13 +29,14 @@
 		},
 	  	props: [
 		  	'returnReasons',
+			'type'
 		],
 		mixins: [
 		  	validationMixin,
 		],
 	  	data() {
 	  	  	return {
-			  	returnReason: this.returnReasons.returnReason ? this.returnReasons.returnReason.text : '',
+			  	returnReason: this.returnReasons.returnReason ? this.returnReasons.returnReason.text : 0,
 			}
 		},
 	  	validations() {
@@ -51,10 +52,10 @@
 				}
 
 			  	this.$emit('update:modelElement', this.returnReason)
-			  	this.$bvModal.hide('modal-add-return-reason');
+			  	this.$bvModal.hide('modal-add-return-reason-' + this.type);
 			},
 			resetModal() {
-			  	this.returnReason = {};
+			  	this.returnReason = 0;
 			},
 		},
 	  	computed: {
@@ -64,6 +65,9 @@
 				text: returnReason.text
 			  }));
 		  },
+		},
+		created() {
+			this.resetModal();
 		}
 	}
 </script>
