@@ -168,8 +168,11 @@ class TabDeliveriesController extends OrderDetailController
      * Отменить доставку
      * @throws \Exception
      */
-    public function cancelDelivery(int $orderId, int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
-    {
+    public function cancelDelivery(int $orderId,
+                                   int $deliveryId,
+                                   Request $request,
+                                   DeliveryService $deliveryService
+    ): JsonResponse {
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
         ]);
