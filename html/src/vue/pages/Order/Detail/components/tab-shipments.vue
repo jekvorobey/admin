@@ -150,7 +150,7 @@
         </b-card>
 
         <modal-shipment-edit :model-shipment.sync="selectedShipment" :model-order.sync="order" v-if="Object.values(selectedShipment).length > 0"/>
-	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'shipment'" @update:modelElement="cancelShipment($event)"/>
+	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" type="shipment" @update:modelElement="cancelShipment($event)"/>
     </div>
 </template>
 <script>

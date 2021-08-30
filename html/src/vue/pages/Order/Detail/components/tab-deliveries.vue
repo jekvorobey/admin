@@ -158,7 +158,7 @@
         </b-card>
 
         <modal-delivery-edit :model-delivery.sync="selectedDelivery" :model-order.sync="order" v-if="Object.values(selectedDelivery).length > 0"/>
-	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'delivery'" @update:modelElement="cancelDelivery($event)"/>
+	  	<modal-add-return-reason :returnReasons="order.orderReturnReasons" type="delivery" @update:modelElement="cancelDelivery($event)"/>
 	</div>
 </template>
 <script>

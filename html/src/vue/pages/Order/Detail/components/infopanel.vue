@@ -127,7 +127,7 @@
                 <span class="font-weight-bold">Вес заказа:</span> {{order.weight}} г.
             </div>
         </b-row>
-	  <modal-add-return-reason :returnReasons="order.orderReturnReasons" :type="'order'" @update:modelElement="cancelOrder($event)"/>
+	  <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="order" @update:modelElement="cancelOrder($event)"/>
 	</b-card>
 </template>
 
