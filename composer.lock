@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dca1a4b878001cf127d77375cd240cc7",
+    "content-hash": "53837311e80f8dadf781fdc2d6ae7c97",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1369,11 +1369,11 @@
         },
         {
             "name": "iwengo/ibt-oms-lib",
-            "version": "dev-feature/IBT-453-add-order-return-reasons-dictionary",
+            "version": "dev-feature/IBT-453-enter-return-reason",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "ed6c38aa0c3a252fcf40d22c7f578c755c4ab6f8"
+                "reference": "9db5cb7ab19956449c6ca976efb373c48fad3483"
             },
             "require": {
                 "ext-json": "*",
@@ -1408,7 +1408,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-08-25T13:45:56+00:00"
+            "time": "2021-08-27T15:17:25+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10711,7 +10711,7 @@
         },
         {
             "package": "iwengo/ibt-oms-lib",
-            "version": "dev-feature/IBT-453-add-order-return-reasons-dictionary",
+            "version": "dev-feature/IBT-453-enter-return-reason",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
