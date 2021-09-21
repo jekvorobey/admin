@@ -57,6 +57,10 @@
                     <span class="badge badge-danger">Отменен</span>
                     {{ order.is_canceled_at }}
                 </p>
+                <p v-if="isCancel">
+                    <span class="font-weight-bold">Причина отмены:</span>
+                    {{ returnReason }}
+                </p>
             </div>
         </b-row>
         <b-row>
@@ -261,7 +265,18 @@ export default {
         },
         customerPhoneLink() {
             return 'tel:' + (this.order.customer && this.order.customer.user ? this.order.customer.user.phone : '');
-        }
+        },
+        returnReason() {
+            let _this = this,
+                savedReturnReason;
+            this.order.orderReturnReasons.map(returnReason => {
+                if (returnReason.id === _this.order.return_reason_id) {
+                    savedReturnReason = returnReason;
+                }
+            });
+
+            return savedReturnReason.text;
+        },
     },
 };
 </script>

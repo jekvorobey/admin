@@ -48,6 +48,10 @@
                         <span class="badge badge-danger">Отменена</span>
                         {{ delivery.is_canceled_at }}
                     </p>
+                    <p v-if="delivery.is_canceled">
+                        <span class="font-weight-bold">Причина отмены:</span>
+                        {{ getReturnReason(delivery) }}
+                    </p>
                 </div>
             </b-row>
             <b-row>
@@ -295,7 +299,17 @@ export default {
         editDelivery(delivery) {
             this.selectedDelivery = delivery;
             this.$bvModal.show('modal-delivery-edit');
-        }
+        },
+        getReturnReason(delivery) {
+            let savedReturnReason;
+            this.order.orderReturnReasons.map(returnReason => {
+                if (returnReason.id === delivery.return_reason_id) {
+                    savedReturnReason = returnReason;
+                }
+            });
+
+            return savedReturnReason.text;
+        },
     },
     computed: {
         order: {

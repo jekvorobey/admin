@@ -76,6 +76,10 @@
                         <span class="badge badge-danger">Отменено</span>
                         {{ shipment.is_canceled_at }}
                     </p>
+                    <p v-if="shipment.is_canceled">
+                        <span class="font-weight-bold">Причина отмены:</span>
+                        {{ getReturnReason(shipment) }}
+                    </p>
                 </div>
             </b-row>
             <b-row>
@@ -310,6 +314,16 @@ export default {
             }
 
             return documents;
+        },
+        getReturnReason(shipment) {
+            let savedReturnReason;
+            this.order.orderReturnReasons.map(returnReason => {
+                if (returnReason.id === shipment.return_reason_id) {
+                    savedReturnReason = returnReason;
+                }
+            });
+
+            return savedReturnReason.text;
         },
     },
     computed: {
