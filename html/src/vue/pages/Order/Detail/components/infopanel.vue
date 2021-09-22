@@ -61,6 +61,9 @@
                     <span class="font-weight-bold">Причина отмены:</span>
                     {{ returnReason }}
                 </p>
+                <p v-if="isPartiallyCancel && !isCancel">
+                    <span class="badge badge-danger">Частично отменен</span>
+                </p>
             </div>
         </b-row>
         <b-row>
@@ -260,6 +263,9 @@ export default {
         isCancel() {
             return this.order.is_canceled;
         },
+        isPartiallyCancel() {
+            return this.order.is_partially_cancelled;
+        },
         isProblem() {
             return this.order.is_problem;
         },
@@ -275,7 +281,7 @@ export default {
                 }
             });
 
-            return savedReturnReason.text;
+            return savedReturnReason ? savedReturnReason.text : '';
         },
     },
 };
