@@ -111,7 +111,7 @@
                 set(value) {this.$emit('update:model', value)},
             },
             statusOptions() {
-                return Object.values(this.offerEditSaleStatuses).map((val) => {
+                return Object.values(this.offerAllSaleStatuses).map((val) => {
                     return {value: parseInt(val.id), text: val.name};
                 });
             },

@@ -82,7 +82,7 @@ class OfferListController extends Controller
             'price' => 'numeric|required',
             'sale_status' => [
                 'nullable',
-                Rule::in(array_keys(OfferSaleStatus::offerCreateStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'nullable|date',
             'stocks' => 'array',
@@ -95,7 +95,7 @@ class OfferListController extends Controller
             'merchant_id' => $data['merchant_id'],
             'sale_status' => $data['sale_status'],
         ]);
-        if ($data['sale_at']) {
+        if ($data['sale_at'] ?? null) {
             $offerDto['sale_at'] = $data['sale_at'];
         }
         $offerId = $offerService->createOffer($offerDto);
@@ -135,7 +135,7 @@ class OfferListController extends Controller
             'price' => 'sometimes|numeric|required',
             'sale_status' => [
                 'sometimes',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'sometimes|date',
             'stocks' => 'array',
@@ -185,14 +185,14 @@ class OfferListController extends Controller
             'offer_ids.*' => 'integer',
             'sale_status' => [
                 'required',
-                Rule::in(array_keys(OfferSaleStatus::offerEditStatuses())),
+                Rule::in(array_keys(OfferSaleStatus::allStatuses())),
             ],
             'sale_at' => 'nullable|date',
         ]);
 
         $offerService->changeSaleStatus($data['offer_ids'], $data['sale_status']);
 
-        if ($data['sale_at']) {
+        if ($data['sale_at'] ?? null) {
             $offerDto = new OfferDto([
                 'sale_at' => $data['sale_at'],
             ]);
