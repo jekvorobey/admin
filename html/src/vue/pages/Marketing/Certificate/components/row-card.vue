@@ -22,7 +22,7 @@
         <td>{{request.to_email}}</td>
         <td>{{request.to_phone}}</td>
         <td>
-            <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
+            <b-button class="btn btn-info btn-sm m-1" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
             <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">
@@ -35,7 +35,17 @@
                 </div>
             </b-popover>
 
-            <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" :id="'btn-notify-' + card.id">
+          <div class="custom-control custom-switch m-1">
+            <input @click="changeStatus"
+                   type="checkbox"
+                   class="custom-control-input"
+                   :id="'status-switcher-' + card.id"
+                   :checked="card.activated_at"
+            />
+            <label class="custom-control-label" :for="'status-switcher-' + card.id"></label>
+          </div>
+
+          <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm m-1" :id="'btn-notify-' + card.id">
                 <fa-icon icon="paper-plane" class="float-right media-btn" v-b-popover.hover="'Отправить сертификат Получателю'"></fa-icon>
             </a>
             <b-popover :show.sync="notificationPopoverShow" placement="auto" ref="popover" :target="'btn-notify-' + card.id">
@@ -46,7 +56,7 @@
                 </div>
             </b-popover>
 
-            <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+            <a :href="editLink" class="btn btn-info btn-sm m-1">
                 <fa-icon icon="pencil-alt" class="float-right media-btn" v-b-popover.hover="'Редактировать'"></fa-icon>
             </a>
         </td>
@@ -65,6 +75,7 @@ export default {
     components: {CardStatus, VInput},
     computed: {
         request() {
+          // console.log(this.card.request);
             return this.card.request || {}
         },
         orderPayTransactions() {
@@ -119,6 +130,34 @@ export default {
                     this.$emit('update')
                 })
         },
+
+        changeStatus(e){
+          const newStatus = e.target.checked;
+          const id = this.card.id
+          let req = {};
+
+          e.preventDefault();
+          Services.showLoader();
+
+          if (!this.card.activated_at) {
+            req = Services.net().put(this.getRoute('certificate.card_activate', {id}), {
+              pin: this.card.pin,
+              customer_id: this.card.request.customer_id
+            })
+          } else {
+            req = Services.net().put(this.getRoute('certificate.card_deactivate', {id}))
+          }
+
+          req.then(() => {
+            e.target.checked = newStatus;
+            this.$emit('update')
+          })
+          .catch(() => {
+            e.target.checked = !newStatus;
+          })
+          .finally(() => Services.hideLoader())
+        },
+
         sendNotification() {
             this.notificationPopoverShow = false
             Services.showLoader();
