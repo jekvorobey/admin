@@ -8,6 +8,7 @@
         <td>{{ card.created_at | datetime }}</td>
         <td>{{ card.notified_at | datetime }}</td>
         <td>{{ card.activated_at | datetime }}</td>
+        <td>{{ card.expire_at | datetime }}</td>
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
