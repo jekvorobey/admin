@@ -1,26 +1,55 @@
 <template>
-  <transition name="modal">
-    <modal :close="closeModal" type="wide" v-if="isModalOpen(modalName)">
-      <div slot="header">
-        {{ title }}
-      </div>
-      <div slot="body">
-        <p v-if="this.text_field === 'how_to'">
-          Используйте разделитель <b>|</b> для описания пунктов
-          Способов применения.<br><br>
-          Пример: <mark>Нанести|Подождать 5 минут|Смыть</mark>
-        </p>
-        <textarea v-model="$v.form[text_field].$model"
-                  class="form-control" rows="14">
-        </textarea>
-        <button @click="save"
+    <modal :close="closeModal" v-if="isModalOpen(modalName)">
+        <div slot="header">
+            {{ title }}
+        </div>
+        <div slot="body">
+            <p v-if="this.text_field === 'how_to'">
+                Используйте разделитель <b>|</b> для описания пунктов
+                Способов применения.<br><br>
+                Пример:
+                <mark>Нанести|Подождать 5 минут|Смыть</mark>
+            </p>
+
+            <div class="text-right mb-3">
+                <b-button
+                    :pressed="editorMode === 'wysiwyg'"
+                    size="sm"
+                    variant="outline-secondary"
+                    @click="editorMode = 'wysiwyg'"
+                >WYSIWYG</b-button>
+
+                <b-button
+                    :pressed="editorMode === 'html'"
+                    size="sm"
+                    variant="outline-secondary"
+                    @click="editorMode = 'html'"
+                >HTML</b-button>
+            </div>
+
+            <ckeditor
+                v-if="editorMode === 'wysiwyg'"
+                v-model="$v.form[text_field].$model"
+                class="custom-width"
+                type="classic"
+            />
+
+            <textarea
+                v-else
+                v-model="$v.form[text_field].$model"
+                class="form-control"
+                rows="14"
+            />
+
+            <button
+                @click="save"
                 class="btn btn-dark mt-3"
-                :disabled="!$v.form.$anyDirty || this.form.description === ''">
-            Сохранить
-        </button>
-      </div>
+                :disabled="!$v.form.$anyDirty || this.form.description === ''"
+            >
+                Сохранить
+            </button>
+        </div>
     </modal>
-  </transition>
 </template>
 
 <script>
@@ -42,6 +71,7 @@ export default {
     components: {
         modal,
         VInput,
+        VueCkeditor
     },
     mixins: [modalMixin, validationMixin],
     props: {
@@ -50,6 +80,13 @@ export default {
         title: String,
         source: Object,
     },
+
+    data() {
+        return {
+            editorMode: 'wysiwyg',
+        };
+    },
+
     computed: {
         form: {
             get() {return this.source}
