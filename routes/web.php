@@ -490,6 +490,7 @@ Route::middleware('auth')->group(function () {
             Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
+            Route::post('imagesSort', 'ProductDetailController@sortImages')->name('products.sortImages');
             Route::put('ingredients', 'ProductDetailController@saveIngredients')->name('products.saveIngredients');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');

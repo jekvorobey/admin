@@ -163,6 +163,17 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
+    public function sortImages(int $id, Request $request, ProductService $productService)
+    {
+        $data = $this->validate($request, [
+            'images_ids' => 'required|array',
+            'images_ids.*' => 'integer',
+            'type' => 'required|integer',
+        ]);
+        $productService->sortImages($id, $data['images_ids'], $data['type']);
+        return response()->json();
+    }
+
     public function deleteImage(int $id, Request $request, ProductService $productService)
     {
         $data = $this->validate($request, [
