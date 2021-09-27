@@ -117,6 +117,7 @@
                     bundles: null,
                     bundleItems: null,
                     status: 1, // STATUS_ACTIVE
+                    limit: null,
                     brands: [],
                     categories: [],
                     conditions: [],

@@ -91,6 +91,15 @@
                     ></v-input>
                 </td>
             </tr>
+            <tr>
+                <th><label for="discount-limit-input">Ограничить кол-во товаров по скидке</label></th>
+                <td colspan="2">
+                    <v-input v-model="$v.discount.limit.$model"
+                             :type="'number'"
+                             :min="0"
+                    ></v-input>
+                </td>
+            </tr>
             <tr v-show="showBundle">
                 <th><label for="discount-type-select">{{ bundleTitle }}</label></th>
                 <td colspan="2">
@@ -197,6 +206,7 @@
             brands: Array,
         },
         data() {
+            console.log(this.props);
             return {
                 merchantBtn: false,
 
@@ -250,6 +260,7 @@
                     end_date: discount.end_date,
                     conditions: discount.conditions,
                     status: discount.status,
+                    limit: discount.limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
                 };
@@ -426,7 +437,7 @@
                 if (this.$v.discount.bundleItems.$dirty) {
                     if (!this.$v.discount.bundleItems.required) return "Обязательное поле";
                 }
-            }
+            },
         },
         watch: {
             'discount.offers': {

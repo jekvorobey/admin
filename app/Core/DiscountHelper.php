@@ -140,6 +140,7 @@ class DiscountHelper
             'end_date' => 'string|nullable',
             'promo_code_only' => 'boolean|required',
             'status' => 'numeric|required',
+            'limit' => 'numeric|nullable',
             'offers' => 'array',
             'bundle_items' => 'array',
             'brands' => 'array',
@@ -166,6 +167,7 @@ class DiscountHelper
             'value_type' => $data['value_type'],
             'value' => $data['value'],
             'status' => $data['status'],
+            'limit' => $data['limit'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
@@ -485,6 +487,7 @@ class DiscountHelper
         $query = $userService->newQuery()->setFilter('id', $discount->user_id);
         $author = $userService->users($query)->first();
 
+        \Log::debug(json_encode($discount));
         return [
             'title' => $title,
             'iDiscount' => $discount,
