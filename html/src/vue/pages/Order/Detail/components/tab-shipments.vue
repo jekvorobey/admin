@@ -271,7 +271,11 @@ export default {
         },
         showOrderReturnModal(shipment) {
             this.shipmentForCancel = shipment;
-            this.$bvModal.show('modal-add-return-reason-shipment');
+            if (Boolean(this.order.can_partially_cancelled)) {
+                this.$bvModal.show('modal-add-return-reason-shipment');
+            } else {
+                Services.msg('Заказ был оплачен способом оплаты, для которого недоступен частичный возврат', 'danger');
+            }
         },
         cancelShipment(returnReason) {
             let errorMessage = 'Ошибка при отмене отправления';

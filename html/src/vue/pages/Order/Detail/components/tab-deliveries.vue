@@ -243,7 +243,11 @@ export default {
         },
         showOrderReturnModal(delivery) {
             this.deliveryForCancel = delivery;
-            this.$bvModal.show('modal-add-return-reason-delivery');
+            if (Boolean(this.order.can_partially_cancelled)) {
+                this.$bvModal.show('modal-add-return-reason-delivery');
+            } else {
+                Services.msg('Заказ был оплачен способом оплаты, для которого недоступен частичный возврат', 'danger');
+            }
         },
         cancelDeliveryOrder(delivery) {
 
