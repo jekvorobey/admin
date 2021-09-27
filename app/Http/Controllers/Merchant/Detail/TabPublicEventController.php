@@ -14,6 +14,8 @@ use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
+use Greensight\Oms\Dto\OrderStatus;
+use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -26,35 +28,6 @@ class TabPublicEventController extends Controller
 {
     public const PER_PAGE = 50;
 
-    /**
-     * @param $merchantId
-     * @return array $organizers
-     */
-    private function loadOrganizers($merchantId): array
-    {
-        $publicEventOrganizerService = resolve(PublicEventOrganizerService::class);
-        $query = $publicEventOrganizerService->query()->setFilter('merchant_id', $merchantId);
-        return $publicEventOrganizerService->find($query)->pluck('id')->toArray();
-    }
-
-    /**
-     * @param $organizersIds
-     * @return \Illuminate\Support\Collection|\Pim\Dto\PublicEvent\PublicEventDto[]
-     * @throws Exception
-     */
-    private function loadEvents($organizersIds)
-    {
-        if (!count($organizersIds)) {
-            return [];
-        }
-        $publicEventService = resolve(PublicEventService::class);
-        return $publicEventService
-            ->query()
-            ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer', 'sprints.tickets')
-            ->setFilter('organizer_id', $organizersIds)
-            ->get()->pluck('id')->toArray();
-    }
-
      /**
      * AJAX пагинация списка операций биллинга Мастер-классов
      *
@@ -64,6 +37,7 @@ class TabPublicEventController extends Controller
     {
         $organizersIds = $this->loadOrganizers($merchantId);
         $events = $this->loadEvents($organizersIds);
+
         $sprints = [];
         foreach ($events as $eventId) {
             $eventSprints = resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
@@ -84,17 +58,50 @@ class TabPublicEventController extends Controller
         ]);
     }
 
+    /**
+     * @param $merchantId
+     * @return array $organizers
+     */
+    private function loadOrganizers($merchantId): array
+    {
+        $publicEventOrganizerService = resolve(PublicEventOrganizerService::class);
+        $query = $publicEventOrganizerService->query()->setFilter('merchant_id', $merchantId);
+
+        return $publicEventOrganizerService->find($query)->pluck('id')->toArray();
+    }
+
+    /**
+     * @param $organizersIds
+     * @return \Illuminate\Support\Collection|\Pim\Dto\PublicEvent\PublicEventDto[]
+     * @throws Exception
+     */
+    private function loadEvents($organizersIds)
+    {
+        if (!count($organizersIds)) {
+            return [];
+        }
+
+        $publicEventService = resolve(PublicEventService::class);
+
+        return $publicEventService
+            ->query()
+            ->include('sprints', 'sprints.ticketTypes', 'sprints.ticketTypes.offer', 'sprints.tickets')
+            ->setFilter('organizer_id', $organizersIds)
+            ->get()
+            ->pluck('id')
+            ->toArray();
+    }
+
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
-        $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');
-
-        $page = $this->getPage();
-        $restQuery->pageNumber($page, self::PER_PAGE);
-        $restQuery->setFilter('sprint_id', $sprints);
-        $restQuery->setFilter('type', OrderType::PUBLIC_EVENT);
-        $restQuery->addSort('created_at', 'desc');
-
-        return $restQuery;
+        return $orderService->newQuery()
+            ->include('basketitem', 'promoCodes')
+            ->pageNumber($this->getPage(), self::PER_PAGE)
+            ->setFilter('sprint_id', $sprints)
+            ->setFilter('status', OrderStatus::DONE)
+            ->setFilter('payment_status', PaymentStatus::PAID)
+            ->setFilter('type', OrderType::PUBLIC_EVENT)
+            ->addSort('created_at', 'desc');
     }
 
     protected function getPage(): int
@@ -136,7 +143,7 @@ class TabPublicEventController extends Controller
             $users = $userService->users($userQuery)->keyBy('id');
         }
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers) {
+        return $orders->map(function (OrderDto $order) use ($users, $customers) {
             $data = $order->toArray();
 
             $data['customer'] = $customers->has($order->customer_id) && $users->has($customers[$order->customer_id]->user_id)
@@ -154,8 +161,6 @@ class TabPublicEventController extends Controller
 
             return $data;
         });
-
-        return $orders;
     }
 
     /**
@@ -172,8 +177,8 @@ class TabPublicEventController extends Controller
         }
 
         $dates = [
-            'date_from' => $request->date_from ?? Carbon::now()->startOfMonth()->subMonth()->toDateString(),
-            'date_to' => $request->date_to ?? Carbon::now()->subMonth()->endOfMonth()->toDateString(),
+            'date_from' => $request->date_from ?: now()->startOfMonth()->subMonth()->toDateString(),
+            'date_to' => $request->date_to ?: now()->subMonth()->endOfMonth()->toDateString(),
         ];
 
         $orderService = resolve(OrderService::class);
@@ -189,14 +194,16 @@ class TabPublicEventController extends Controller
     protected function makeDownloadRestQuery(array $sprints, array $dates): DataQuery
     {
         $orderService = resolve(OrderService::class);
-        $restQuery = $orderService->newQuery()->include('basketitem', 'promoCodes');
-        $restQuery->setFilter('created_at', '>=', $dates['date_from']);
-        $restQuery->setFilter('created_at', '<=', $dates['date_to']);
-        $restQuery->setFilter('sprint_id', $sprints);
-        $restQuery->setFilter('is_canceled', 0);
-        $restQuery->setFilter('type', OrderType::PUBLIC_EVENT);
-        $restQuery->addSort('created_at', 'desc');
 
-        return $restQuery;
+        return $orderService->newQuery()
+            ->include('basketitem', 'promoCodes')
+            ->setFilter('created_at', '>=', Carbon::parse($dates['date_from'])->startOfDay()->toDateTimeString())
+            ->setFilter('created_at', '<=', Carbon::parse($dates['date_to'])->endOfDay()->toDateTimeString())
+            ->setFilter('sprint_id', $sprints)
+            ->setFilter('status', OrderStatus::DONE)
+            ->setFilter('payment_status', PaymentStatus::PAID)
+            ->setFilter('is_canceled', 0)
+            ->setFilter('type', OrderType::PUBLIC_EVENT)
+            ->addSort('created_at', 'desc');
     }
 }
