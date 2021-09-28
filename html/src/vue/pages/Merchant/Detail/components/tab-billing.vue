@@ -72,8 +72,8 @@
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
           {id:getMerchantId, reportId:report.id})">Скачать</a>
         </td>
-          <td>{{ report.created_at }}</td>
-          <td>{{ report.updated_at }}</td>
+        <td>{{ report.created_at }}</td>
+        <td>{{ report.updated_at }}</td>
         <td>
           <b-button v-if="report.status === 0" class="btn btn-warning btn-sm" @click="updateStatus(report.id, 4)">
             Отправить <fa-icon icon="check"/>
