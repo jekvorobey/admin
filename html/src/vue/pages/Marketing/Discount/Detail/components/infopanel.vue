@@ -94,7 +94,7 @@
             <tr>
                 <th><label for="discount-limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
-                    <v-input v-model="$v.discount.limit.$model"
+                    <v-input v-model="discount.limit"
                              :type="'number'"
                              :min="0"
                     ></v-input>
@@ -206,7 +206,6 @@
             brands: Array,
         },
         data() {
-            console.log(this.props);
             return {
                 merchantBtn: false,
 
