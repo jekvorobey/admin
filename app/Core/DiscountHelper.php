@@ -487,7 +487,6 @@ class DiscountHelper
         $query = $userService->newQuery()->setFilter('id', $discount->user_id);
         $author = $userService->users($query)->first();
 
-        \Log::debug(json_encode($discount));
         return [
             'title' => $title,
             'iDiscount' => $discount,
