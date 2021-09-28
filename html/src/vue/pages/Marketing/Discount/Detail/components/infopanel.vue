@@ -92,9 +92,9 @@
                 </td>
             </tr>
             <tr>
-                <th><label for="discount-limit-input">Ограничить кол-во товаров по скидке</label></th>
+                <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
-                    <v-input v-model="discount.limit"
+                    <v-input v-model="discount.product_qty_limit"
                              :type="'number'"
                              :min="0"
                     ></v-input>
@@ -259,7 +259,7 @@
                     end_date: discount.end_date,
                     conditions: discount.conditions,
                     status: discount.status,
-                    limit: discount.limit,
+                    product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
                 };
