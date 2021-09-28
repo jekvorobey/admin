@@ -391,7 +391,7 @@
                     }
                     let product_qty_limit = this.discount.product_qty_limit;
                     if (product_qty_limit && Number(product_qty_limit) <= 0) {
-                        this.discountErrors.product_qty_limit = "Количество товаров по скидке должно быть больше 0!";
+                        this.discountErrors.product_qty_limit = "Количество товаров по скидке должно быть больше или равно 0!";
                         bool = false;
                     }
                     if (bool) {
