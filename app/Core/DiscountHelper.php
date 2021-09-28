@@ -167,7 +167,7 @@ class DiscountHelper
             'value_type' => $data['value_type'],
             'value' => $data['value'],
             'status' => $data['status'],
-            'product_qty_limit' => $data['limit'],
+            'product_qty_limit' => $data['product_qty_limit'],
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
