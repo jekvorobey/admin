@@ -135,12 +135,12 @@ class TabPublicEventController extends Controller
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
+        /** @var Collection|UserDto[] $users */
         $users = collect();
         if ($userIds) {
             // chunking for prevent large query string
             foreach (array_chunk($userIds, 50) as $userIdsChunk) {
                 $userQuery = $userService->newQuery()->setFilter('id', $userIdsChunk);
-                /** @var Collection|UserDto[] $users */
                 $users->concat(
                     $userService->users($userQuery)->keyBy('id')
                 );
