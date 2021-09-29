@@ -137,10 +137,14 @@ class TabPublicEventController extends Controller
         $userIds = $customers->pluck('user_id')->all();
         $users = collect();
         if ($userIds) {
-            $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
+            // chunking for prevent large query string
+            foreach (array_chunk($userIds, 50) as $userIdsChunk) {
+                $userQuery = $userService->newQuery()->setFilter('id', $userIdsChunk);
+                /** @var Collection|UserDto[] $users */
+                $users->concat(
+                    $userService->users($userQuery)->keyBy('id')
+                );
+            }
         }
 
         return $orders->map(function (OrderDto $order) use ($users, $customers) {
