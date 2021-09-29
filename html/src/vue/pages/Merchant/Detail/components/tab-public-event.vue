@@ -100,10 +100,8 @@ export default {
         downloadReport() {
             Services.showLoader();
 
-            let url = this.getRoute('merchant.detail.eventBillingList.downloadEventBillingList', {id: this.model.id}, {
-                date_from: this.reportPeriod[0],
-                date_to: this.reportPeriod[1],
-            });
+            let url = this.getRoute('merchant.detail.eventBillingList.downloadEventBillingList', {id: this.model.id});
+            url += `?date_from=${this.reportPeriod[0]}&date_to=${this.reportPeriod[1]}`;
 
             window.open(url);
 
