@@ -74,6 +74,11 @@
                     <span class="font-weight-bold">Начислено бонусов:</span> {{preparePrice(order.added_bonus)}} руб.
                 </div>
             </b-row>
+            <b-row>
+                <div class="col-sm-4">
+                    <span class="font-weight-bold">Потрачено ПС:</span> {{preparePrice(order.spent_certificate)}} руб.
+                </div>
+            </b-row>
             <b-row class="mt-3">
                 <b-col>
                     <b-table-simple hover small caption-top responsive>

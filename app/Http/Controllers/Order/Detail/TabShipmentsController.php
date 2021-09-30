@@ -150,9 +150,17 @@ class TabShipmentsController extends OrderDetailController
      * Отменить отправление
      * @throws \Exception
      */
-    public function cancelShipment(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
-    {
-        $shipmentService->cancelShipment($shipmentId);
+    public function cancelShipment(
+        int $orderId,
+        int $shipmentId,
+        Request $request,
+        ShipmentService $shipmentService
+    ): JsonResponse {
+        $data = $this->validate($request, [
+            'orderReturnReason' => 'required|int',
+        ]);
+
+        $shipmentService->cancelShipment($shipmentId, $data['orderReturnReason']);
 
         return response()->json([
             'order' => $this->getOrder($orderId),
