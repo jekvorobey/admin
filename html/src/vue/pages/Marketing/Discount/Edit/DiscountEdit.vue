@@ -78,6 +78,7 @@
                     end_date: discount.end_date,
                     conditions: discount.conditions,
                     status: discount.status,
+                    product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                 };
 
