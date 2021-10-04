@@ -305,14 +305,11 @@ export default {
             this.$bvModal.show('modal-delivery-edit');
         },
         getReturnReason(delivery) {
-            let savedReturnReason;
-            this.order.orderReturnReasons.map(returnReason => {
-                if (returnReason.id === delivery.return_reason_id) {
-                    savedReturnReason = returnReason;
-                }
-            });
+            let returnReason = this.order.orderReturnReasons.find(
+                returnReason => returnReason.id === delivery.return_reason_id
+            );
 
-            return savedReturnReason.text;
+            return returnReason ? returnReason.text : '-';
         },
     },
     computed: {

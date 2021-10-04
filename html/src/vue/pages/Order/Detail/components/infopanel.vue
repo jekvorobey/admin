@@ -273,15 +273,11 @@ export default {
             return 'tel:' + (this.order.customer && this.order.customer.user ? this.order.customer.user.phone : '');
         },
         returnReason() {
-            let _this = this,
-                savedReturnReason;
-            this.order.orderReturnReasons.map(returnReason => {
-                if (returnReason.id === _this.order.return_reason_id) {
-                    savedReturnReason = returnReason;
-                }
-            });
+            let returnReason = this.order.orderReturnReasons.find(
+                returnReason => returnReason.id === this.order.return_reason_id
+            );
 
-            return savedReturnReason ? savedReturnReason.text : '';
+            return returnReason ? returnReason.text : '-';
         },
     },
 };
