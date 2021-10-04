@@ -153,9 +153,12 @@
             </tbody>
         </table>
 
-        <file-upload-modal
-                @accept="onAcceptImage"
-                modal-name="ImageUpload"/>
+        <images-upload-modal
+                @upload="onUploadImages"
+                modal-name="ImageUpload"
+                :product-id="this.product.id"
+        />
+
         <file-upload-modal
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
@@ -204,6 +207,7 @@ import modalMixin from '../../../../mixins/modal';
 import Modal from '../../../../components/controls/modal/modal.vue';
 import ShadowCard from '../../../../components/shadow-card.vue';
 import FileUploadModal from './file-upload-modal.vue';
+import ImagesUploadModal from './images-upload-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
 import TipForm from './tip-form.vue';
@@ -216,6 +220,7 @@ export default {
         Modal,
         ShadowCard,
         FileUploadModal,
+        ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
         TipForm
@@ -239,19 +244,12 @@ export default {
             this.replaceFileId = replaceFileId;
             this.openModal('ImageUpload');
         },
-        onAcceptImage(file) {
-            if (this.replaceFileId) {
-                this.onDeleteImage(this.currentType, this.replaceFileId);
-            }
-            Services.net().post(this.getRoute('products.saveImage', {id: this.product.id}), {}, {
-                id: file.id,
-                type: this.currentType,
-            })
-                .then(() => {
-                    this.$emit('onSave');
-                    this.closeModal();
-                });
+
+        onUploadImages() {
+            this.$emit('onSave');
+            this.closeModal();
         },
+
         onDeleteImage(type, fileId) {
             if (!fileId) {
                 return;

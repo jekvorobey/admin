@@ -24,6 +24,8 @@ import Media from '../scripts/media.js';
 import * as moment from 'moment';
 import {mapGetters} from 'vuex';
 
+import './plugins/VueUploadComponent';
+
 Vue.use(BootstrapVue);
 
 //Font Awesome Icons
