@@ -320,14 +320,11 @@ export default {
             return documents;
         },
         getReturnReason(shipment) {
-            let savedReturnReason;
-            this.order.orderReturnReasons.map(returnReason => {
-                if (returnReason.id === shipment.return_reason_id) {
-                    savedReturnReason = returnReason;
-                }
-            });
+            let returnReason = this.order.orderReturnReasons.find(
+                returnReason => returnReason.id === shipment.return_reason_id
+            );
 
-            return savedReturnReason.text;
+            return returnReason ? returnReason.text : '-';
         },
     },
     computed: {
