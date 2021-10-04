@@ -3,15 +3,35 @@
         <h3 class="mt-3">Изображения</h3>
         <div class="row">
             <div class="col">
-                <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
-                    <div v-for="image in galleryImages" class="shadow mt-3 mr-3">
-                        <img :src="image.url" class="small-image">
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(3, image.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(3, image.id)"></fa-icon>
-                    </div>
-                    <div class="align-self-center">
-                        <button class="btn btn-light" @click="startUploadImage(3)">Добавить</button>
-                    </div>
+                <draggable
+                    v-model="galleryImages"
+                    animation="200"
+                    @start="drag = true"
+                    @end="drag = false"
+                    @change="onGallerySort"
+                >
+                    <transition-group
+                        :name="!drag ? 'flip-list' : null"
+                        type="transition"
+                        class="media-container d-flex flex-wrap align-items-stretch justify-content-start"
+                    >
+                        <div v-for="image in galleryImages" :key="image.id" class="shadow mt-3 mr-3">
+                            <img :src="image.url" class="small-image">
+
+                            <fa-icon
+                                icon="trash-alt"
+                                class="float-right media-btn"
+                                @click="onDeleteImage(3, image.id)"
+                            ></fa-icon>
+                        </div>
+                    </transition-group>
+                </draggable>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col p-3">
+                <div class="align-self-center">
+                    <button class="btn btn-light" @click="startUploadImage(3)">Добавить</button>
                 </div>
             </div>
         </div>
@@ -144,14 +164,18 @@
         </table>
 
         <images-upload-modal
-                @upload="onUploadImages"
+                @accept="onAcceptImage"
                 modal-name="ImageUpload"
-                :product-id="this.product.id"
         />
+
+        <file-upload-modal
+            @accept="onAcceptImage"
+            modal-name="ImageUploadSingle"/>
 
         <file-upload-modal
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
+
         <description-edit-modal
                 :source="currentProduct"
                 text_field="description"
@@ -192,6 +216,8 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 import modalMixin from '../../../../mixins/modal';
 
 import Modal from '../../../../components/controls/modal/modal.vue';
@@ -213,29 +239,93 @@ export default {
         ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
-        TipForm
+        TipForm,
+        draggable
     },
+
     mixins: [modalMixin],
+
     props: {
         images: {},
         product: {},
     },
+
     data() {
         return {
             currentType: 0,
             replaceFileId: undefined,
             currentTip: {},
             currentProduct: Object.assign({}, this.product),
+            galleryImages: this.images.filter(image => image.type === 3),
+            drag: false,
         };
     },
+
+    watch: {
+        images() {
+            this.galleryImages = this.images.filter(image => image.type === 3);
+        }
+    },
+
     methods: {
         startUploadImage(type, replaceFileId) {
             this.currentType = type;
             this.replaceFileId = replaceFileId;
-            this.openModal('ImageUpload');
+
+            if (this.currentType === 3) {
+                this.openModal('ImageUpload');
+            } else {
+                this.openModal('ImageUploadSingle');
+            }
         },
 
-        onUploadImages() {
+        async onGallerySort() {
+            Services.showLoader();
+
+            await Services.net().post(
+                this.getRoute('products.sortImages', { id: this.product.id }),
+                {},
+                {
+                    images_ids: this.galleryImages.map(image => image.productImageId),
+                    type: 3
+                }
+            );
+
+            Services.hideLoader();
+
+            this.$emit('onSave');
+        },
+
+        async onAcceptImage(files) {
+            Services.showLoader();
+
+            let tFiles = files;
+
+            if (!Array.isArray(tFiles)) {
+                tFiles = [ tFiles ];
+            }
+
+            if (this.replaceFileId) {
+                this.onDeleteImage(this.currentType, this.replaceFileId);
+            }
+
+            for (const file of tFiles) {
+                try {
+                    await Services.net().post(
+                        this.getRoute('products.saveImage', { id: this.product.id }),
+                        {},
+                        {
+                            id: file.id,
+                            type: this.currentType
+                        }
+                    );
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            Services.hideLoader();
+
             this.$emit('onSave');
             this.closeModal();
         },
@@ -341,9 +431,7 @@ export default {
         howToList() {
             return this.product.how_to.split('|');
         },
-        galleryImages() {
-            return this.images.filter(image => image.type === 3);
-        },
+
         instructionUrl() {
             return Media.file(this.product.instruction_file_id);
         }
@@ -404,5 +492,17 @@ export default {
     }
     .tip-description {
         width: 260px;
+    }
+
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+
+    .no-move {
+        transition: transform 0s;
+    }
+
+    .sortable-ghost {
+        opacity: 0.5;
     }
 </style>

@@ -6,14 +6,7 @@
             </div>
             <div slot="body">
                 <file-uploader v-model="files" accept="image/png,image/jpeg,image/webp" />
-                <b-button :disabled="!canAccept || uploading" @click="accept">
-                    <template v-if="uploading">
-                        <b-spinner small />
-                    </template>
-                    <template v-else>
-                        Прикрепить загруженные файлы
-                    </template>
-                </b-button>
+                <b-button :disabled="!canAccept" @click="accept">Прикрепить загруженные файлы</b-button>
             </div>
         </modal>
     </transition>
@@ -24,8 +17,6 @@ import modal from '../../../../components/controls/modal/modal.vue';
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 import modalMixin from '../../../../mixins/modal.js';
 import FileUploader from '../../../../components/controls/FileUploader/FileUploader.vue';
-
-import Services from "../../../../../scripts/services/services";
 
 export default {
     components: {
@@ -41,17 +32,11 @@ export default {
             type: String,
             required: true
         },
-
-        productId: {
-            type: Number,
-            required: true
-        }
     },
 
     data () {
         return {
             files: [],
-            uploading: false,
         };
     },
 
@@ -72,7 +57,7 @@ export default {
     },
 
     methods: {
-        async accept() {
+        accept() {
             if (!this.canAccept) {
                 return false;
             }
@@ -81,27 +66,7 @@ export default {
                 return file.response;
             });
 
-            this.uploading = true;
-
-            for (const file of files) {
-                try {
-                    await Services.net().post(
-                        this.getRoute('products.saveImage', { id: this.productId }),
-                        {},
-                        {
-                            id: file.id,
-                            type: 3
-                        }
-                    );
-                } catch (error) {
-                    console.error(error);
-                }
-            }
-
-            this.uploading = false;
-            this.files = [];
-
-            this.$emit('upload', files);
+            this.$emit('accept', files);
         },
     },
 }
