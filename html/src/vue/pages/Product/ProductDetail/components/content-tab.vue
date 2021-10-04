@@ -4,16 +4,6 @@
         <div class="row">
             <div class="col">
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
-                    <div class="shadow mt-3 mr-3">
-                        <img :src="catalogImage.url" class="big-image">
-                        Фотография для каталога
-                        <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, catalogImage.id)"></fa-icon>
-                        <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(2, catalogImage.id)"></fa-icon>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <div v-for="image in galleryImages" class="shadow mt-3 mr-3">
                         <img :src="image.url" class="small-image">
                         <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(3, image.id)"></fa-icon>
@@ -334,13 +324,6 @@ export default {
         },
     },
     computed: {
-        catalogImage() {
-            let catalogImages = this.images.filter(image => image.type === 2);
-            return catalogImages.length > 0 ? catalogImages[0] : {
-                id: 0,
-                url: Media.empty(150, 150),
-            };
-        },
         descriptionImage() {
             let descriptionImages = this.images.filter(image => image.type === 4);
             return descriptionImages.length > 0 ? descriptionImages[0] : {
