@@ -178,6 +178,7 @@ export default {
 
             let xhr = new XMLHttpRequest();
             xhr.open('POST', `${this.uploadUrl}?destination=${this.destination}`);
+            xhr.setRequestHeader('X-XSRF-TOKEN', decodeURIComponent(this.getCookie('XSRF-TOKEN')));
 
             return fileUploadComponent.uploadXhr(xhr, file, form);
         },
@@ -192,6 +193,12 @@ export default {
             const i = Math.floor(Math.log(size) / Math.log(k));
 
             return parseFloat((size / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        },
+
+        getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
         }
     }
 };
