@@ -218,10 +218,10 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::prefix('card')->group(function () {
+                Route::post('activate', 'CertificateCardController@activate')->name('certificate.card_activate');
                 Route::prefix('{id}')->group(function () {
                     Route::get('', 'CertificateCardController@editPage')->name('certificate.card_edit');
                     Route::put('', 'CertificateCardController@update')->name('certificate.card_update');
-                    Route::put('activate', 'CertificateCardController@activate')->name('certificate.card_activate');
                     Route::put('deactivate', 'CertificateCardController@deactivate')->name('certificate.card_deactivate');
                     Route::post('update/expired', 'CertificateCardController@updateExpireAt')->name('certificate.update_activation_period');
                     Route::post('notify', 'CertificateCardController@sendNotification')->name('certificate.send_notification');

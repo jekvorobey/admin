@@ -41,6 +41,7 @@
                    class="custom-control-input"
                    :id="'status-switcher-' + card.id"
                    :checked="card.activated_at"
+                   :disabled="card.status >= 305 || (!card.pin && card.status <= 301)"
             />
             <label class="custom-control-label" :for="'status-switcher-' + card.id"></label>
           </div>
@@ -140,7 +141,7 @@ export default {
           Services.showLoader();
 
           if (!this.card.activated_at) {
-            req = Services.net().put(this.getRoute('certificate.card_activate', {id}), {
+            req = Services.net().post(this.getRoute('certificate.card_activate'), {
               pin: this.card.pin,
               customer_id: this.card.request.customer_id
             })

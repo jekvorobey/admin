@@ -64,6 +64,22 @@
       </div>
     </div>
 
+
+
+    <div class="form-group" v-show="this.getCustomerId()">
+      <div class="input-group m-0 p-0 col-3">
+        <input type="text"
+               class="form-control"
+               v-model="pin"
+               placeholder="Введите PIN сертификата"
+        />
+        <button @click="activate" type="button"  class="btn btn-sm btn-success">Активировать</button>
+
+      </div>
+
+    </div>
+
+
     <table class="table table-condensed">
       <thead>
       <tr>
@@ -128,6 +144,7 @@ import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
 import RowCard from './row-card.vue'
 import TabList from '../mixins/TabList.js'
+import Services from "../../../../../scripts/services/services";
 
 export default {
   components: {
@@ -147,6 +164,7 @@ export default {
   },
   data() {
     return {
+      pin: null,
       tabName: 'cards'
     };
   },
@@ -154,6 +172,36 @@ export default {
     clearFilter() {
       this.loadPage(1);
     },
+
+    getCustomerId() {
+      const filter = this.getFilter();
+      return filter.customer_or_recipient_id || null;
+    },
+
+    activate() {
+      if (!this.pin || this.pin.trim() === '' ){
+        return;
+      }
+
+      const filter = this.getFilter();
+      const customer_id = filter.customer_or_recipient_id || null;
+      let route = 'card_activate';
+
+      if (!customer_id) {
+        route = 'card_activate_by_pin';
+      }
+
+      Services.showLoader();
+
+      Services.net()
+          .post(this.getRoute(`certificate.${route}`), {pin: this.pin, customer_id})
+          .then(() => {
+            Services.msg('Сертификат активирован', 'success');
+            this.loadPage()
+          })
+          .finally(() => Services.hideLoader())
+
+    }
   },
   computed: {
     booleanOptions() {
