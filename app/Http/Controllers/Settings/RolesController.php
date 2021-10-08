@@ -27,7 +27,7 @@ class RolesController extends Controller
         $query = $this->makeQuery($request);
 
         return $this->render('Settings/RoleList', [
-            'iUsers' => $this->loadItems($query, $roleService),
+            'iRoles' => $this->loadItems($query, $roleService),
             'iPager' => $roleService->count($query),
             'iCurrentPage' => $request->get('page', 1),
             'options' => [
@@ -73,9 +73,11 @@ class RolesController extends Controller
         $this->title = "Роль - {$role->name}";
 
         return $this->render('Settings/RoleDetail', [
+            'iRole' => $role,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'blocks' => BlockDto::blocks(),
+                'blocks' => BlockDto::allBlocks(),
+                'permissions' => PermissionDto::allPermissions(),
             ],
         ]);
     }
@@ -87,23 +89,13 @@ class RolesController extends Controller
      */
     public function saveRole(RoleRequest $request, RoleService $roleService): JsonResponse
     {
-        $data = $request->all();
-        $newRole = new RoleDto($data);
-        if (isset($data['id'])) {
-            $roleService->update($newRole);
-        } else {
-            $roleService->create($newRole);
-        }
-
-        return response()->json([]);
-    }
-
-    public function addBlockPermission(BlockPermissionRequest $request, RoleService $roleService): JsonResponse
-    {
-        $data = $request->all();
-        foreach ($data as $blockPermission) {
-            $roleService->addBlockPermissin($blockPermission);
-        }
+        $newRole = new RoleDto([
+            'id' => $request->name,
+            'name' => $request->name,
+            'front' => $request->front,
+            'blocks' => $request->blocks,
+        ]);
+        $roleService->upsert($newRole);
 
         return response()->json([]);
     }
