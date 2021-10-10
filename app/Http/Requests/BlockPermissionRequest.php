@@ -5,7 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @property string $name
+ * @property int $block_id
+ * @property int $permission_id
  */
 class BlockPermissionRequest extends FormRequest
 {
@@ -19,13 +20,9 @@ class BlockPermissionRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'blocks' => 'required',
+        return [
+            'block_id' => 'required|integer',
+            'permission_id' => 'required|integer',
         ];
-        foreach($this->request->get('blocks') as $key => $val) {
-            $rules['state.'.$key] = 'required|integer';
-        }
-
-        return $rules;
     }
 }
