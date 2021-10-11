@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ea62da3036f9e7d3e4e0f6e2a1958db",
+    "content-hash": "9e8e344517a510c03b437e3c7df315a9",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1161,11 +1161,11 @@
         },
         {
             "name": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-441-user-roles",
             "source": {
                 "type": "git",
-                "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "2f9cbf8846b82440b37164130951c43e14191228"
+                "url": "https://git.yiilab.com/ibt.studio/ibt-common-ms-code.git",
+                "reference": "c2d733f8ed0942c878fe24a46b78b361902ff4a3"
             },
             "require": {
                 "ext-json": "*",
@@ -1208,7 +1208,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2021-04-15T10:05:28+00:00"
+            "time": "2021-10-11T11:34:39+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -10681,9 +10681,9 @@
         },
         {
             "package": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
+            "version": "dev-feature/IBT-441-user-roles",
+            "alias": "dev-master-ylab",
+            "alias_normalized": "dev-master-ylab"
         },
         {
             "package": "iwengo/ibt-logistics-lib",

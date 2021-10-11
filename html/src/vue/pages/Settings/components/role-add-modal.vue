@@ -6,7 +6,7 @@
             </div>
             <div slot="body">
                 <v-input v-model="$v.form.name.$model" :error="errorName"  autocomplete="no">
-                    Логин
+                    Наименование
                 </v-input>
                 <v-select v-model="$v.form.front.$model" :options="frontOptions" :error="errorFront">
                     Система
@@ -24,7 +24,7 @@
 
     import modalMixin from '../../../mixins/modal.js';
     import { validationMixin } from 'vuelidate';
-    import { minLength, required } from 'vuelidate/lib/validators';
+    import { required } from 'vuelidate/lib/validators';
     import Services from '../../../../scripts/services/services';
 
     export default {
@@ -55,7 +55,7 @@
             };
             if (!this.source) {
                 validations.form.name[required] = required;
-                validations.form.password[maxLength] = minLength(255);
+                validations.form.front[required] = required;
             }
             console.log(validations);
             return validations;
@@ -96,7 +96,7 @@
         },
         watch: {
             '$store.state.modal.currentModal': function(newValue) {
-                if (newValue === 'userAdd' && this.source) {
+                if (newValue === 'roleAdd' && this.source) {
                     this.form.name = this.source.name;
                     this.form.front = this.source.front;
                 }
@@ -104,7 +104,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

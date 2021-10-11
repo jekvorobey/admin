@@ -299,15 +299,15 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('roles')->group(function () {
-            Route::get('page', 'RolesController@page')->name('settings.roleListPagination');
+            Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                Route::get('', 'RolesController@detail')->name('settings.roleDetail');
-                Route::put('', 'RolesController@upsert')->name('settings.updateRole');
-                Route::post('addBlock', 'RolesController@addRole')->name('role.addBlock');
-                Route::post('deleteBlock', 'RolesController@deleteRole')->name('role.deleteBlock');
+                Route::get('', 'RoleController@detail')->name('settings.roleDetail');
+                Route::put('', 'RoleController@upsert')->name('settings.updateRole');
+                Route::post('addBlock', 'RoleController@addRole')->name('role.addBlock');
+                Route::post('deleteBlock', 'RoleController@deleteRole')->name('role.deleteBlock');
             });
-            Route::get('', 'RolesController@index')->name('settings.rolesList');
-            Route::post('', 'RolesController@upsert')->name('settings.createRole');
+            Route::get('', 'RoleController@index')->name('settings.rolesList');
+            Route::post('', 'RoleController@upsert')->name('settings.createRole');
         });
 
         Route::prefix('organization-card')->group(function () {

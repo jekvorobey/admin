@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlockPermissionRequest;
 use App\Http\Requests\RoleRequest;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\RoleService;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RolesController extends Controller
+class RoleController extends Controller
 {
     /**
      * @return mixed
@@ -65,6 +67,7 @@ class RolesController extends Controller
 
         return $this->render('Settings/RoleDetail', [
             'iRole' => $role,
+            'iBlockPermissions' => $roleService->roleBlocks($id),
             'options' => [
                 'fronts' => Front::allFronts(),
                 'blocks' => BlockDto::allBlocks(),
@@ -81,7 +84,7 @@ class RolesController extends Controller
         $data = $request->all();
         $newRole = new RoleDto($data);
         if (isset($data['id'])) {
-            $roleService->update($newRole);
+            $roleService->update($data['id'], $newRole);
         } else {
             $roleService->create($newRole);
         }
@@ -94,7 +97,7 @@ class RolesController extends Controller
      */
     public function deleteRole(int $id, RoleService $roleService): JsonResponse
     {
-        $roleService->deleteRole($id);
+        $roleService->delete($id);
 
         return response()->json(['status' => 'ok']);
     }
@@ -128,7 +131,7 @@ class RolesController extends Controller
      */
     public function deleteBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
-        $roleService->deleteRole($request->block_id);
+        $roleService->deleteBlock($request->block_id);
         return response()->json([
             'blocks' => $roleService->roleBlocks($id),
         ]);

@@ -72,6 +72,8 @@
                 roleValuesNames: {
                     name: 'Наименование',
                     front: 'Система',
+                    created_at: 'Дата добавления',
+                    updated_at: 'Дата обновления',
                 },
                 newBlock: ''
             };
@@ -113,8 +115,8 @@
         computed: {
             roleInfo() {
                 return {
-                    name: this.role.id,
-                    login: this.role.login,
+                    name: this.role.name,
+                    front: this.role.front.name,
                     created_at: this.role.created_at,
                     updated_at: this.role.updated_at
                 };
