@@ -73,18 +73,25 @@ class RolesController extends Controller
         ]);
     }
 
-    public function saveRole(RoleRequest $request, RoleService $roleService): JsonResponse
+    /**
+     * Добавить/обновить роль.
+     */
+    public function upsert(RoleRequest $request, RoleService $roleService): JsonResponse
     {
-        $newRole = new RoleDto([
-            'id' => $request->name,
-            'name' => $request->name,
-            'front' => $request->front,
-        ]);
-        $roleService->upsert($newRole);
+        $data = $request->all();
+        $newRole = new RoleDto($data);
+        if (isset($data['id'])) {
+            $roleService->update($newRole);
+        } else {
+            $roleService->create($newRole);
+        }
 
         return response()->json([]);
     }
 
+    /**
+     * Удалить роль.
+     */
     public function deleteRole(int $id, RoleService $roleService): JsonResponse
     {
         $roleService->deleteRole($id);
@@ -92,15 +99,33 @@ class RolesController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    /**
+     * Добавить блок у роли.
+     */
     public function addBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
-        $roleService->addRoles($id, $request->block_id, $request->permission_id);
+        $roleService->addBlock($id, $request->block_id, $request->permission_id);
 
         return response()->json([
             'blocks' => $roleService->roleBlocks($id),
         ]);
     }
 
+    /**
+     * Обновить блок у роли.
+     */
+    public function updateBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
+    {
+        $roleService->updateBlock($id, $request->block_id, $request->permission_id);
+
+        return response()->json([
+            'blocks' => $roleService->roleBlocks($id),
+        ]);
+    }
+
+    /**
+     * Удалить блок у роли.
+     */
     public function deleteBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
         $roleService->deleteRole($request->block_id);

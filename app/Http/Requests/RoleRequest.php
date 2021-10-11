@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Greensight\CommonMsa\Dto\Front;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * @property int $id
@@ -24,7 +26,11 @@ class RoleRequest extends FormRequest
         return [
             'id' => 'nullable|integer',
             'name' => 'required|string|max:255',
-            'front' => 'required|integer',
+            'front' => [
+                'required',
+                'integer',
+                Rule::in(Front::allFronts()),
+            ],
         ];
     }
 }
