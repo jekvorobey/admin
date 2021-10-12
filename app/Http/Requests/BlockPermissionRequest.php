@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\PermissionDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,12 +27,12 @@ class BlockPermissionRequest extends FormRequest
             'block_id' => [
                 'required',
                 'integer',
-                Rule::in(BlockDto::allBlocks()),
+                Rule::in(array_keys(BlockDto::allBlocks())),
             ],
             'permission_id' => [
                 'required',
                 'integer',
-                Rule::in(PermissionDto::allPermissions()),
+                Rule::in(array_keys(PermissionDto::allPermissions())),
             ],
         ];
     }

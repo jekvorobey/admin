@@ -5,7 +5,7 @@
                 <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}" @onEdit="openModal('roleAdd')">
                     <values-table :values="roleInfo" :names="roleValuesNames"/>
                 </shadow-card>
-                <shadow-card title="Блоки роли" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('add-role-block')">
+                <shadow-card title="Блоки роли" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('roleBlockAdd')">
                     <table class="table table-sm">
                         <thead>
                         <tr>
@@ -78,25 +78,19 @@
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
             blockName(id) {
-                return this.options.blocks.hasOwnProperty(id) ? this.options.blocks[id] : 'N/A';
+                let blocks = Object.values(this.options.blocks).filter(block => block.id === id);
+                return blocks.length > 0 ? blocks[0].name : 'N/A';
             },
             permissionName(id) {
-                return this.options.permissions.hasOwnProperty(id) ? this.options.permissions[id] : 'N/A';
+                let permissions = Object.values(this.options.permissions).filter(permission => permission.id === id);
+                return permissions.length > 0 ? permissions[0].name : 'N/A';
             },
-            addBlock() {
-                Services.net().post(this.getRoute('role.addBlock', {id: this.role.id}), {}, {
-                    blockPermissions: this.newBlock,
-                })
-                    .then(data => {
-                        this.newBlock = null;
-                        this.blockPermissions = data.blockPermissions;
-                        this.showMessageBox({text: 'Блок добавлен'});
-                    });
-            },
+
             deleteBlock(id) {
-                Services.net().post(this.getRoute('role.deleteBlock', {id: this.role.id}), {}, {
-                    block_id: id
-                })
+                let formData = {
+                  role_id: this.role.id,
+                };
+                Services.net().delete(this.getRoute('settings.deleteBlock', {blockId: id}), {}, formData)
                     .then(data => {
                         this.blockPermissions = data.blockPermissions;
                     });

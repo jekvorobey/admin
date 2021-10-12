@@ -1,8 +1,8 @@
 <template>
     <transition name="modal">
-        <modal :close="closeModal" v-if="isModalOpen('add-role-block-modal')">
+        <modal :close="closeModal" v-if="isModalOpen('roleBlockAdd')">
             <div slot="header">
-                {{source ? 'Редактирование блока' : 'Добавление блока'}}
+                Разрешение блока системы
             </div>
             <div slot="body">
                 <v-select v-model="$v.form.block.$model" :options="blockOptions" :error="errorBlock">
@@ -66,14 +66,14 @@
                     return;
                 }
                 let formData = {
-                    block: this.form.block,
-                    permission: this.form.permission,
+                    block_id: this.form.block,
+                    permission_id: this.form.permission,
                 };
                 if (this.source) {
-                    formData.id = this.source.id;
+                    formData.role_id = this.source.id;
                 }
-                Services.net().post(this.getRoute('role.addBlock'), {}, formData).then(() => {
-                    this.$emit('onSave', {block_id: this.form.name, permission_id: this.form.front});
+                Services.net().post(this.getRoute('settings.addBlock'), {}, formData).then(() => {
+                    this.$emit('onSave', {source: this.source, block: this.form.block, permission: this.form.permission});
                 });
             },
         },
@@ -98,7 +98,7 @@
         },
         watch: {
             '$store.state.modal.currentModal': function(newValue) {
-                if (newValue === 'roleAdd' && this.source) {
+                if (newValue === 'roleBlockAdd' && this.source) {
                     this.form.block = this.source.block;
                     this.form.permission = this.source.permission;
                 }

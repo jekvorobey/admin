@@ -303,11 +303,11 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'RoleController@detail')->name('settings.roleDetail');
                 Route::put('', 'RoleController@upsert')->name('settings.updateRole');
-                Route::post('addBlock', 'RoleController@addRole')->name('role.addBlock');
-                Route::post('deleteBlock', 'RoleController@deleteRole')->name('role.deleteBlock');
             });
             Route::get('', 'RoleController@index')->name('settings.rolesList');
             Route::post('', 'RoleController@upsert')->name('settings.createRole');
+            Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
+            Route::delete('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
         });
 
         Route::prefix('organization-card')->group(function () {
