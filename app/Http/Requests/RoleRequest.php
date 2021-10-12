@@ -29,7 +29,7 @@ class RoleRequest extends FormRequest
             'front' => [
                 'required',
                 'integer',
-                Rule::in(Front::allFronts()),
+                Rule::in(array_keys(Front::allFronts())),
             ],
         ];
     }

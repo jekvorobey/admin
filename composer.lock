@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e8e344517a510c03b437e3c7df315a9",
+    "content-hash": "da378bb54bb66994c8104061dc753539",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1164,8 +1164,8 @@
             "version": "dev-feature/IBT-441-user-roles",
             "source": {
                 "type": "git",
-                "url": "https://git.yiilab.com/ibt.studio/ibt-common-ms-code.git",
-                "reference": "c2d733f8ed0942c878fe24a46b78b361902ff4a3"
+                "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
+                "reference": "69c9f7f0734ec95eed9d74b100632486d74819a3"
             },
             "require": {
                 "ext-json": "*",
@@ -1208,7 +1208,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2021-10-11T11:34:39+00:00"
+            "time": "2021-10-11T18:28:02+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -1258,7 +1258,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "892422358086790919722f65fd0dd64a2279adff"
+                "reference": "1d7468eeb5005a748e54c67ab127c8c4e1fc1185"
             },
             "require": {
                 "ext-json": "*",
@@ -1292,7 +1292,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-09-29T14:42:04+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -1373,7 +1373,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "92af833d878b73ed910989ea6e03443cfce8f063"
+                "reference": "b3440962e0f0578e6f1cff9ab10088ff3cb2be17"
             },
             "require": {
                 "ext-json": "*",
@@ -1408,7 +1408,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-09-28T08:01:50+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10750,5 +10750,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

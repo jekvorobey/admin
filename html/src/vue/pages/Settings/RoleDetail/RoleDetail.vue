@@ -15,28 +15,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="block in blocks">
-                                <td>{{blockName(block.id)}}</td>
-                                <td v-for="permission in permissions">{{permissionName(permission.id)}}</td>
-                                <td><fa-icon v-if="block.id !== 2" @click="deleteBlock(block.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
+                            <tr v-for="blockPermission in blockPermissions">
+                                <td>{{blockName(blockPermission.block_id)}}</td>
+                                <td>{{permissionName(blockPermission.permission_id)}}</td>
+                                <td><fa-icon @click="deleteBlock(blockPermission.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
                             </tr>
                         </tbody>
                     </table>
                 </shadow-card>
             </div>
         </div>
-        <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('add-role-block')">
-                <div slot="header">
-                    Добавление блока
-                </div>
-                <div slot="body">
-                    <v-select v-model="newBlock" :options="blockOptions"></v-select>
-                    <button @click="addBlock" class="btn btn-dark">Сохранить</button>
-                </div>
-            </modal>
-        </transition>
         <role-edit-modal :source="role" :fronts="options.fronts" @onSave="updateRole"></role-edit-modal>
+        <add-role-block-modal :source="role" :blocks="options.blocks" :permissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
     </layout-main>
 </template>
 
@@ -52,6 +42,7 @@
     import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
     import RoleEditModal from '../components/role-add-modal.vue';
+    import AddRoleBlockModal from '../components/add-role-block-modal.vue';
 
     export default {
         mixins: [modalMixin],
@@ -60,15 +51,18 @@
             ValuesTable,
             modal,
             VSelect,
-            RoleEditModal
+            RoleEditModal,
+            AddRoleBlockModal
         },
         props: {
             iRole: {},
+            iBlockPermissions: {},
             options: {},
         },
         data() {
             return {
                 role: this.iRole,
+                blockPermissions: this.iBlockPermissions,
                 roleValuesNames: {
                     name: 'Наименование',
                     front: 'Система',
@@ -91,32 +85,35 @@
             },
             addBlock() {
                 Services.net().post(this.getRoute('role.addBlock', {id: this.role.id}), {}, {
-                    block: this.newBlock
+                    blockPermissions: this.newBlock,
                 })
                     .then(data => {
                         this.newBlock = null;
-                        this.blocks = data.blocks;
-                        this.showMessageBox({text: 'Роль добавлена'});
+                        this.blockPermissions = data.blockPermissions;
+                        this.showMessageBox({text: 'Блок добавлен'});
                     });
             },
             deleteBlock(id) {
                 Services.net().post(this.getRoute('role.deleteBlock', {id: this.role.id}), {}, {
-                    block: id
+                    block_id: id
                 })
                     .then(data => {
-                        this.blocks = data.blocks;
+                        this.blockPermissions = data.blockPermissions;
                     });
             },
             updateRole(newData) {
                 Object.assign(this.role, newData);
                 this.closeModal();
+            },
+            onBlockCreated() {
+              this.showMessageBox({text: "Блок с разрешением добавлен!"});
             }
         },
         computed: {
             roleInfo() {
                 return {
                     name: this.role.name,
-                    front: this.role.front.name,
+                    front: this.frontName(this.role.front),
                     created_at: this.role.created_at,
                     updated_at: this.role.updated_at
                 };
