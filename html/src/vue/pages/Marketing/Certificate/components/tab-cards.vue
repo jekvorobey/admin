@@ -66,7 +66,7 @@
 
 
 
-    <div class="form-group" v-show="this.getCustomerId()">
+    <div class="form-group" v-show="getCustomerId">
       <div class="input-group m-0 p-0 col-3">
         <input type="text"
                class="form-control"
@@ -162,20 +162,17 @@ export default {
         type: Object
     }
   },
+
   data() {
     return {
       pin: null,
       tabName: 'cards'
     };
   },
+
   methods: {
     clearFilter() {
       this.loadPage(1);
-    },
-
-    getCustomerId() {
-      const filter = this.getFilter();
-      return filter.customer_or_recipient_id || null;
     },
 
     activate() {
@@ -183,13 +180,13 @@ export default {
         return;
       }
 
-      const filter = this.getFilter();
-      const customer_id = filter.customer_or_recipient_id || null;
-      let route = 'card_activate';
+      const customer_id = this.getCustomerId;
 
       if (!customer_id) {
-        route = 'card_activate_by_pin';
+        return;
       }
+
+      let route = 'card_activate';
 
       Services.showLoader();
 
@@ -203,14 +200,22 @@ export default {
 
     }
   },
+
   computed: {
     booleanOptions() {
       return [{value: 0, text: 'Не активен'}, {value: 1, text: 'Активен'}];
     },
+
     showFilter() {
         return (this.externalFilter) ? false : false;
-    }
+    },
+
+    getCustomerId() {
+      const filter = this.getFilter();
+      return filter.customer_or_recipient_id || null;
+    },
   },
+
   created() {
       if (this.externalFilter) {
           this.filter = this.externalFilter

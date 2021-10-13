@@ -132,7 +132,7 @@ export default {
                 })
         },
 
-        changeStatus(e){
+        changeStatus(e) {
           const newStatus = e.target.checked;
           const id = this.card.id
           let req = {};
