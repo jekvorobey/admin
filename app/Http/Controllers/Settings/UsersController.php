@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -46,7 +49,7 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
-    public function detail(int $id, UserService $userService)
+    public function detail(int $id, UserService $userService, RoleService $roleService)
     {
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
@@ -60,13 +63,14 @@ class UsersController extends Controller
         $this->title = "Пользователь № {$user->id}";
 
         $userRoles = $userService->userRoles($id);
+        $roles = $roleService->roles();
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'roles' => UserDto::roles(),
+                'roles' => $roles,
             ],
         ]);
     }
@@ -130,7 +134,7 @@ class UsersController extends Controller
     /**
      * Получение пользователей по массиву ролей
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
     {
