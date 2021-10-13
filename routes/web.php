@@ -298,6 +298,18 @@ Route::middleware('auth')->group(function () {
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
         });
 
+        Route::prefix('roles')->group(function () {
+            Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'RoleController@detail')->name('settings.roleDetail');
+                Route::put('', 'RoleController@upsert')->name('settings.updateRole');
+            });
+            Route::get('', 'RoleController@index')->name('settings.rolesList');
+            Route::post('', 'RoleController@upsert')->name('settings.createRole');
+            Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
+            Route::delete('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
+        });
+
         Route::prefix('organization-card')->group(function () {
             Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
             Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
