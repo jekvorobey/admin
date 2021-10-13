@@ -76,7 +76,6 @@ export default {
     components: {CardStatus, VInput},
     computed: {
         request() {
-          // console.log(this.card.request);
             return this.card.request || {}
         },
         orderPayTransactions() {
