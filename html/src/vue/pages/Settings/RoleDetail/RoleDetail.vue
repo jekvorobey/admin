@@ -85,12 +85,8 @@
                 let permissions = Object.values(this.options.permissions).filter(permission => permission.id === id);
                 return permissions.length > 0 ? permissions[0].name : 'N/A';
             },
-
             deleteBlock(id) {
-                let formData = {
-                  role_id: this.role.id,
-                };
-                Services.net().delete(this.getRoute('settings.deleteBlock', {blockId: id}), {}, formData)
+                Services.net().delete(this.getRoute('settings.deleteBlock', {blockId: id, roleId: this.role.id}), {}, {},{})
                     .then(data => {
                         this.blockPermissions = data.blockPermissions;
                     });

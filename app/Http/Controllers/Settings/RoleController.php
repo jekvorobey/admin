@@ -119,7 +119,7 @@ class RoleController extends Controller
      */
     public function updateBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
-        $roleService->updateBlock($id, $request->block_id, $request->permission_id);
+        $roleService->updateBlock($id, $request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
             'blocks' => $roleService->roleBlocks($id),
@@ -129,12 +129,12 @@ class RoleController extends Controller
     /**
      * Удалить блок у роли.
      */
-    public function deleteBlock(int $blockId, Request $request, RoleService $roleService): JsonResponse
+    public function deleteBlock(int $blockId, int $roleId, RoleService $roleService): JsonResponse
     {
-        $data = $request->all();
         $roleService->deleteBlock($blockId);
+
         return response()->json([
-            'blocks' => $roleService->roleBlocks($data['role_id']),
+            'blocks' => $roleService->roleBlocks($roleId),
         ]);
     }
 
