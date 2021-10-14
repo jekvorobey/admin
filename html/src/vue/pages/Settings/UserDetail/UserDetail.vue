@@ -15,7 +15,7 @@
                         </thead>
                         <tbody>
                         <tr v-for="role in roles">
-                            <td>{{roleName(role.id)}}</td>
+                            <td>{{role.name}}</td>
                             <td><fa-icon @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
                         </tr>
                         </tbody>
