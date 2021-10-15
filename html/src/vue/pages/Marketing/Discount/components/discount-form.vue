@@ -162,6 +162,17 @@
             <v-select v-model="discount.status" :options="discountStatuses" class="col-3">Статус</v-select>
         </div>
 
+        <div class="row">
+            <div class="col-3">
+                <v-input v-model="discount.product_qty_limit"
+                         :error="discountErrors.product_qty_limit"
+                         :type="'number'"
+                         :min="'0'"
+                         @change="initErrorProductQtyLimit"
+                >Ограничить кол-во товаров</v-input>
+            </div>
+        </div>
+
         <div class="row" v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
             <div class="col-12">
                 <div class="form-check">
@@ -249,6 +260,7 @@
                     offers: null,
                     bundle_items: null,
                     status: 1, // STATUS_ACTIVE
+                    product_qty_limit: null,
                     brands: [],
                     categories: [],
                     publicEvents: null,
@@ -266,6 +278,7 @@
                     publicEvents: null,
                     value_type: null,
                     value: null,
+                    product_qty_limit: null,
                     end_date: null,
                     conditions: null,
                 },
@@ -374,6 +387,11 @@
                     let end = this.discount.end_date;
                     if ((start && end) && !(moment(start).unix() <= moment(end).unix())) {
                         this.discountErrors.end_date = "Дата окончания не может быть меньше даты начала!";
+                        bool = false;
+                    }
+                    let product_qty_limit = this.discount.product_qty_limit;
+                    if (product_qty_limit && Number(product_qty_limit) <= 0) {
+                        this.discountErrors.product_qty_limit = "Количество товаров по скидке должно быть больше или равно 0!";
                         bool = false;
                     }
                     if (bool) {
@@ -502,6 +520,9 @@
             initErrorEndDate() {
                 this.discountErrors.end_date = null;
             },
+            initErrorProductQtyLimit() {
+                this.discountErrors.product_qty_limit = null;
+            }
         },
         computed: {
             discountSizeTypes() {
