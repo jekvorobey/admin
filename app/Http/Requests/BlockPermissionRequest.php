@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 /**
+ * @property int $role_id
  * @property int $block_id
  * @property int $permission_id
  */
@@ -24,13 +25,17 @@ class BlockPermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'role_id' => [
+                'required_without_all:block_id, permission_id',
+                'integer',
+            ],
             'block_id' => [
-                'required',
+                'required_without:role_id',
                 'integer',
                 Rule::in(array_keys(BlockDto::allBlocks())),
             ],
             'permission_id' => [
-                'required',
+                'required_without:role_id',
                 'integer',
                 Rule::in(array_keys(PermissionDto::allPermissions())),
             ],

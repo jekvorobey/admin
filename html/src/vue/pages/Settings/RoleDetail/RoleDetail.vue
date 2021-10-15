@@ -86,7 +86,9 @@
                 return permissions.length > 0 ? permissions[0].name : 'N/A';
             },
             deleteBlock(id) {
-                Services.net().delete(this.getRoute('settings.deleteBlock', {blockId: id, roleId: this.role.id}), {}, {},{})
+                Services.net().post(this.getRoute('settings.deleteBlock', {blockId: id}), {}, {
+                  role_id: this.role.id
+                },{})
                     .then(data => {
                         this.blockPermissions = data.blockPermissions;
                     });
@@ -95,8 +97,9 @@
                 Object.assign(this.role, newData);
                 this.closeModal();
             },
-            onBlockCreated() {
-              this.showMessageBox({text: "Блок с разрешением добавлен!"});
+            onBlockCreated(newData) {
+              Object.assign(this.blockPermissions, newData);
+              this.closeModal();
             }
         },
         computed: {

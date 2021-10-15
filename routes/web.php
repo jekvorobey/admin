@@ -307,7 +307,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'RoleController@index')->name('settings.rolesList');
             Route::post('', 'RoleController@upsert')->name('settings.createRole');
             Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
-            Route::delete('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
+            Route::post('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
         });
 
         Route::prefix('organization-card')->group(function () {

@@ -13,6 +13,8 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RoleController extends Controller
@@ -110,7 +112,7 @@ class RoleController extends Controller
         $roleService->addBlock($request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($request->role_id),
+            'blockPermissions' => $roleService->roleBlocks($request->role_id),
         ]);
     }
 
@@ -122,19 +124,19 @@ class RoleController extends Controller
         $roleService->updateBlock($id, $request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($id),
+            'blockPermissions' => $roleService->roleBlocks($id),
         ]);
     }
 
     /**
      * Удалить блок у роли.
      */
-    public function deleteBlock(int $blockId, int $roleId, RoleService $roleService): JsonResponse
+    public function deleteBlock(int $blockId, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
         $roleService->deleteBlock($blockId);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($roleId),
+            'blockPermissions' => $roleService->roleBlocks($request->role_id),
         ]);
     }
 
