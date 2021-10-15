@@ -119,7 +119,7 @@ class RoleController extends Controller
         $roleService->addBlock($request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($request->role_id),
+            'blockPermissions' => $roleService->roleBlocks($request->role_id),
         ]);
     }
 
@@ -132,20 +132,20 @@ class RoleController extends Controller
         $roleService->updateBlock($id, $request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($id),
+            'blockPermissions' => $roleService->roleBlocks($id),
         ]);
     }
 
     /**
      * Удалить блок у роли.
      */
-    public function deleteBlock(int $blockId, int $roleId, RoleService $roleService): JsonResponse
+    public function deleteBlock(int $blockId, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
         $roleService->deleteBlock($blockId);
 
         return response()->json([
-            'blocks' => $roleService->roleBlocks($roleId),
+            'blockPermissions' => $roleService->roleBlocks($request->role_id),
         ]);
     }
 

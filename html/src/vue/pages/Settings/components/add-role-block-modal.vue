@@ -72,8 +72,8 @@
                 if (this.source) {
                     formData.role_id = this.source.id;
                 }
-                Services.net().post(this.getRoute('settings.addBlock'), {}, formData).then(() => {
-                    this.$emit('onSave', {source: this.source, block: this.form.block, permission: this.form.permission});
+                Services.net().post(this.getRoute('settings.addBlock'), {}, formData).then(data => {
+                    this.$emit('onSave', {blockPermissions: data.blockPermissions});
                 });
             },
         },
