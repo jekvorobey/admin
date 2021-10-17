@@ -35,18 +35,27 @@
                 </div>
             </b-popover>
 
-          <div class="custom-control custom-switch m-1">
-            <input @click="changeStatus"
-                   type="checkbox"
-                   class="custom-control-input"
-                   :id="'status-switcher-' + card.id"
-                   :checked="card.activated_at"
-                   :disabled="card.status >= 305 || (!card.pin && card.status <= 301)"
-            />
-            <label class="custom-control-label" :for="'status-switcher-' + card.id"></label>
-          </div>
+            <b-button
+                class="btn btn-info btn-sm m-1"
+                @click="togglePopover"
+                :id="`popover-id-${card.id}`"
+                :disabled="!([302, 303, 304].includes(card.status))"
+            >
+                <fa-icon icon="redo-alt"
+                         class="float-right media-btn"
+                         v-b-popover.hover="'Деактивировать сертификат'">
+                </fa-icon>
+            </b-button>
 
-          <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm m-1" :id="'btn-notify-' + card.id">
+            <b-popover placement="auto" ref="popover" :target="`popover-id-${card.id}`">
+                <template slot="title">Деактивировать сертификат</template>
+                <div>
+                    <button @click="togglePopover" class="btn btn-sm btn-secondary">Отмена</button>
+                    <button @click="deactivateCertificate" class="btn btn-sm btn-success">Деактивировать</button>
+                </div>
+            </b-popover>
+
+            <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm m-1" :id="'btn-notify-' + card.id">
                 <fa-icon icon="paper-plane" class="float-right media-btn" v-b-popover.hover="'Отправить сертификат Получателю'"></fa-icon>
             </a>
             <b-popover :show.sync="notificationPopoverShow" placement="auto" ref="popover" :target="'btn-notify-' + card.id">
@@ -131,31 +140,29 @@ export default {
                 })
         },
 
-        changeStatus(e) {
-          const newStatus = e.target.checked;
-          const id = this.card.id
-          let req = {};
+        togglePopover() {
+          this.$root.$emit('bv::hide::popover')
+          this.$root.$emit('bv::show::popover', `popover-id-${this.card.id}`)
+        },
 
-          e.preventDefault();
-          Services.showLoader();
+        deactivateCertificate(e) {
+            const newStatus = e.target.checked;
+            const id = this.card.id
 
-          if (!this.card.activated_at) {
-            req = Services.net().post(this.getRoute('certificate.card_activate'), {
-              pin: this.card.pin,
-              customer_id: this.card.request.customer_id
+            e.preventDefault();
+            Services.showLoader();
+
+            Services.net().put(this.getRoute('certificate.card_deactivate', {id})).then(() => {
+                e.target.checked = newStatus;
+                this.$emit('update')
             })
-          } else {
-            req = Services.net().put(this.getRoute('certificate.card_deactivate', {id}))
-          }
-
-          req.then(() => {
-            e.target.checked = newStatus;
-            this.$emit('update')
-          })
-          .catch(() => {
-            e.target.checked = !newStatus;
-          })
-          .finally(() => Services.hideLoader())
+            .catch(() => {
+                e.target.checked = !newStatus;
+            })
+            .finally(() => {
+                Services.hideLoader();
+                this.$root.$emit('bv::hide::popover')
+            })
         },
 
         sendNotification() {
