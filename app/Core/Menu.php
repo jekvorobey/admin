@@ -2,17 +2,20 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Services\TokenBuilder\TokenBuilder;
+use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 
 class Menu
 {
-    private static $activeUrl;
+    private static string $activeUrl;
 
-    private static function menu()
+    private static function menu(): array
     {
         return [
             [
-                'title' => 'Товары',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_PRODUCTS)->name,
                 'items' => [
                     [
                         'title' => 'Каталог товаров',
@@ -71,7 +74,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Заказы',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_ORDERS)->name,
                 'items' => [
                     [
                         'title' => 'Список заказов',
@@ -105,7 +108,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Заявки',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CLAIMS)->name,
                 'items' => [
                     ['title' => 'Проверка товаров', 'route' => route('productCheckClaims.list')],
                     ['title' => 'Производство контента', 'route' => route('contentClaims.list')],
@@ -113,7 +116,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Контент',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CONTENT)->name,
                 'items' => [
                     [
                         'title' => 'Меню сайта',
@@ -178,7 +181,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Логистика',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_LOGISTICS)->name,
                 'items' => [
                     [
                         'title' => 'Логистические операторы',
@@ -203,7 +206,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Склады',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_STORES)->name,
                 'items' => [
 //                    [
 //                        'title' => 'Склад консолидации',
@@ -224,7 +227,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Клиенты',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CLIENTS)->name,
                 'items' => [
                     [
                         'title' => 'Клиентская база',
@@ -250,7 +253,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Реферальные партнеры',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_REFERRALS)->name,
                 'items' => [
                     [
                         'title' => 'Список реферальных партнеров',
@@ -271,7 +274,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Мерчанты',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_MERCHANTS)->name,
                 'items' => [
                     [
                         'title' => 'Заявки на регистрацию',
@@ -292,7 +295,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Маркетинг',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_MARKETING)->name,
                 'items' => [
 //                    [
 //                        'title' => 'Баннеры',
@@ -355,7 +358,7 @@ class Menu
 //                ],
 //            ],
             [
-                'title' => 'Коммуникации',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_COMMUNICATIONS)->name,
                 'items' => [
                     [
                         'title' => 'Непрочитанные сообщения' . static::unreadCount(),
@@ -388,7 +391,7 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Мастер-классы',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS)->name,
                 'items' => [
                     [
                         'title' => 'Каталог мастер-классов',
@@ -418,7 +421,8 @@ class Menu
                 ],
             ],
             [
-                'title' => 'Настройки',
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_SETTINGS)->name,
+                'active' => false,
                 'items' => [
                     [
                         'title' => 'Способы оплаты',
@@ -450,17 +454,48 @@ class Menu
     {
         foreach ($items as &$item) {
             if (isset($item['route']) && $activeUrl == $item['route']) {
-                $item['active'] = true;
+                $item['active'] = false;
                 return true;
             }
             if (isset($item['items']) && self::detectActive($item['items'], $activeUrl)) {
                 return true;
             }
         }
+
         return false;
     }
 
-    public static function getMenuItems()
+    /**
+     * Выдать только доступные пользователю блоки.
+     * @param $items
+     * @return array
+     */
+    private static function checkPermission($items): array
+    {
+        $allowMenu = [];
+        $token = resolve(TokenStore::class)->token();
+        if (!$token) {
+            return $allowMenu;
+        }
+        $blockPermissions = collect(resolve(TokenBuilder::class)->decodeJwt($token)->blockPermissions);
+        if (!empty($blockPermissions)) {
+            $allBlockPermissions = BlockDto::allBlocks();
+            foreach ($items as $item) {
+                if (isset($item['title'])) {
+                    foreach ($blockPermissions as $blockPermission) {
+                        $blockName = $allBlockPermissions[$blockPermission->block_id]->name;
+                        if ($item['title'] === $blockName) {
+                            $allowMenu[] = $item;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $allowMenu;
+    }
+
+    public static function getMenuItems(): array
     {
         $menuItems = static::menu();
 
@@ -476,16 +511,17 @@ class Menu
 //                }
 //            }
 //        }
-        return $menuItems;
+
+        return self::checkPermission($menuItems);
     }
 
     /**
      * Получить кол-во непрочитанных сообщений для отображения у пункта меню
-     * @return string
      */
-    private static function unreadCount()
+    private static function unreadCount(): string
     {
         $communicationService = resolve(CommunicationService::class);
+
         return ' (' . $communicationService->unreadCount() . ')';
     }
 }
