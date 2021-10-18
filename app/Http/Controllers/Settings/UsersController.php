@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Traits\UserPermissions;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -22,11 +21,18 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
-    use UserPermissions;
+    private RequestInitiator $requestInitiator;
+
+    public function __construct(RequestInitiator $requestInitiator)
+    {
+        $this->requestInitiator = $requestInitiator;
+    }
 
     public function index(Request $request, UserService $userService)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $this->title = 'Список пользователей';
 
         $query = $this->makeQuery($request);
@@ -43,7 +49,9 @@ class UsersController extends Controller
 
     public function page(Request $request, UserService $userService)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $query = $this->makeQuery($request);
         $data = [
             'items' => $this->loadItems($query, $userService),
@@ -56,7 +64,9 @@ class UsersController extends Controller
 
     public function detail(int $id, UserService $userService, RoleService $roleService)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
         /** @var UserDto $user */
@@ -83,7 +93,9 @@ class UsersController extends Controller
 
     public function saveUser(Request $request, UserService $userService)
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'id' => 'nullable|integer',
@@ -107,7 +119,9 @@ class UsersController extends Controller
 
     public function addRole(int $id, Request $request, UserService $userService)
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
@@ -125,7 +139,7 @@ class UsersController extends Controller
 
     public function deleteRole(int $id, Request $request, UserService $userService)
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
@@ -147,7 +161,9 @@ class UsersController extends Controller
      */
     public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
             'role_ids.' => 'integer',

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Marketing\Dto\Price\OfferPriceDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
@@ -29,6 +31,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class PriceChangeClaimController extends Controller
 {
+    private RequestInitiator $requestInitiator;
+
+    public function __construct(RequestInitiator $requestInitiator)
+    {
+        $this->requestInitiator = $requestInitiator;
+    }
+
     /**
      * @return mixed
      */
@@ -38,6 +47,9 @@ class PriceChangeClaimController extends Controller
         MerchantService $merchantService,
         UserService $userService
     ) {
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $this->title = 'Заявки на изменение цен';
 
         /** @var Collection|ClaimTypeDto[] $claimTypes */
@@ -61,11 +73,9 @@ class PriceChangeClaimController extends Controller
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function page(Request $request, ClaimService $claimService, UserService $userService)
+    public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
     {
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
         $query = $this->prepareQuery($request, $claimService);
         $result = [
             'items' => $this->loadClaims($query, $userService),
@@ -81,6 +91,9 @@ class PriceChangeClaimController extends Controller
      */
     public function detail(int $id, ClaimService $claimService, UserService $userService)
     {
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var PriceChangeClaimDto $claim */
         $claim = $this->loadClaims($query, $userService, true)->first();
@@ -141,6 +154,9 @@ class PriceChangeClaimController extends Controller
         ClaimService $claimService,
         UserService $userService
     ): JsonResponse {
+        /** Проверка разрешения */
+        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -167,7 +183,7 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
-     * Изменить ценц
+     * Изменить цену
      */
     public function changePrice(
         int $id,
@@ -175,6 +191,9 @@ class PriceChangeClaimController extends Controller
         ClaimService $claimService,
         UserService $userService
     ): JsonResponse {
+        /** Проверка разрешения */
+        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -270,6 +289,9 @@ class PriceChangeClaimController extends Controller
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
     {
+        /** Проверка разрешения */
+        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         /** @var Collection|PriceChangeClaimDto[] $claims */
         $claims = $query->claims();
 

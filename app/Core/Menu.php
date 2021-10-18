@@ -458,7 +458,7 @@ class Menu
     {
         foreach ($items as &$item) {
             if (isset($item['route']) && $activeUrl == $item['route']) {
-                $item['active'] = false;
+                $item['active'] = true;
                 return true;
             }
             if (isset($item['items']) && self::detectActive($item['items'], $activeUrl)) {
