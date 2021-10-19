@@ -103,6 +103,10 @@ class Menu
                                 'title' => 'Статусы заказов',
                                 'route' => route('orderStatuses.list'),
                             ],
+                            [
+                                'title' => 'Причины отмены',
+                                'route' => route('orderReturnReasons.list'),
+                            ],
                         ],
                     ],
                 ],
