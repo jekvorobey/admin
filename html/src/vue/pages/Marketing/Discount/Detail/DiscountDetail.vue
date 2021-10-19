@@ -116,7 +116,9 @@
                     offers: null,
                     bundles: null,
                     bundleItems: null,
+                    publicEvents: null,
                     status: 1, // STATUS_ACTIVE
+                    product_qty_limit: null,
                     brands: [],
                     categories: [],
                     conditions: [],
@@ -146,6 +148,7 @@
                 let discount = {...this.iDiscount};
                 discount.offers = Object.values(discount.offers).map(offer => offer.offer_id).join(',');
                 discount.bundleItems = Object.values(discount.bundleItems).map(item => item.item_id).join(',');
+                discount.publicEvents = Object.values(discount.publicEvents).map(masterclass => masterclass.ticket_type_id).join(',');
                 discount.brands = Object.values(discount.brands).map(brand => brand.brand_id);
                 discount.categories = Object.values(discount.categories).map(category => category.category_id);
 
