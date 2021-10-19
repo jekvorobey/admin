@@ -106,7 +106,8 @@
                 let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
-            onUserCreated() {
+            onUserCreated(newData) {
+                Object.assign(this.users, newData);
                 this.showMessageBox({text: "Пользователь создан!"});
             }
         },

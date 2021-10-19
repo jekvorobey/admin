@@ -433,6 +433,10 @@ class Menu
                         'route' => route('settings.userList'),
                     ],
                     [
+                        'title' => 'Роли',
+                        'route' => route('settings.rolesList'),
+                    ],
+                    [
                         'title' => 'Карточка организации',
                         'route' => route('settings.organizationCard'),
                     ],
