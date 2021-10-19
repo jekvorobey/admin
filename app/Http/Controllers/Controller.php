@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\ViewRender;
+use Greensight\CommonMsa\Dto\PermissionDto;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
@@ -13,40 +15,47 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Controller extends BaseController
 {
-    protected $title = '';
-    protected $loadUserRoles = false;
-    protected $loadCustomerStatus = false;
-    protected $loadCommunicationChannelTypes = false;
-    protected $loadCommunicationChannels = false;
-    protected $loadCommunicationThemes = false;
-    protected $loadCommunicationStatuses = false;
-    protected $loadCommunicationTypes = false;
-    protected $loadMerchantStatuses = false;
-    protected $loadMerchantCommissionTypes = false;
-    protected $loadMerchantVatTypes = false;
-    protected $loadPublicEventTypes = false;
-    protected $loadPublicEventMediaTypes = false;
-    protected $loadPublicEventMediaCollections = false;
-    protected $loadPublicEventStatus = false;
-    protected $loadPublicEventSprintStatus = false;
-    protected $loadDiscountTypes = false;
-    protected $loadPromoCodeTypes = false;
-    protected $loadPromoCodeStatus = false;
-    protected $loadBonusValueTypes = false;
-    protected $loadBonusTypes = false;
-    protected $loadCustomerBonusStatus = false;
-    protected $loadOrderStatuses = false;
-    protected $loadBasketTypes = false;
-    protected $loadPaymentStatuses = false;
-    protected $loadPaymentMethods = false;
-    protected $loadDeliveryStatuses = false;
-    protected $loadShipmentStatuses = false;
-    protected $loadCargoStatuses = false;
-    protected $loadDeliveryTypes = false;
-    protected $loadDeliveryMethods = false;
-    protected $loadDeliveryServices = false;
-    protected $loadOfferSaleStatuses = false;
-    protected $loadPropertyTypes = false;
+    protected string $title = '';
+    protected bool $loadUserRoles = false;
+    protected bool $loadCustomerStatus = false;
+    protected bool $loadCommunicationChannelTypes = false;
+    protected bool $loadCommunicationChannels = false;
+    protected bool $loadCommunicationThemes = false;
+    protected bool $loadCommunicationStatuses = false;
+    protected bool $loadCommunicationTypes = false;
+    protected bool $loadMerchantStatuses = false;
+    protected bool $loadMerchantCommissionTypes = false;
+    protected bool $loadMerchantVatTypes = false;
+    protected bool $loadPublicEventTypes = false;
+    protected bool $loadPublicEventMediaTypes = false;
+    protected bool $loadPublicEventMediaCollections = false;
+    protected bool $loadPublicEventStatus = false;
+    protected bool $loadPublicEventSprintStatus = false;
+    protected bool $loadDiscountTypes = false;
+    protected bool $loadPromoCodeTypes = false;
+    protected bool $loadPromoCodeStatus = false;
+    protected bool $loadBonusValueTypes = false;
+    protected bool $loadBonusTypes = false;
+    protected bool $loadCustomerBonusStatus = false;
+    protected bool $loadOrderStatuses = false;
+    protected bool $loadBasketTypes = false;
+    protected bool $loadPaymentStatuses = false;
+    protected bool $loadPaymentMethods = false;
+    protected bool $loadDeliveryStatuses = false;
+    protected bool $loadShipmentStatuses = false;
+    protected bool $loadCargoStatuses = false;
+    protected bool $loadDeliveryTypes = false;
+    protected bool $loadDeliveryMethods = false;
+    protected bool $loadDeliveryServices = false;
+    protected bool $loadOfferSaleStatuses = false;
+    protected bool $loadPropertyTypes = false;
+
+    private RequestInitiator $requestInitiator;
+
+    private function __construct(RequestInitiator $requestInitiator)
+    {
+        $this->requestInitiator = $requestInitiator;
+    }
 
     public function render($componentName, $props = [])
     {
@@ -118,5 +127,24 @@ class Controller extends BaseController
         }
 
         return $merchants;
+    }
+
+    protected function checkPermission(int $permission, int $block): bool
+    {
+        $state = true;
+        switch ($permission) {
+            case PermissionDto::PERMISSION_VIEW:
+                $state = $this->requestInitiator->canView($block);
+                break;
+            case PermissionDto::PERMISSION_UPDATE:
+                $state = $this->requestInitiator->canUpdate($block);
+                break;
+        }
+
+        if ($state === false) {
+            abort(403, 'Недостаточно прав');
+        }
+
+        return true;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('login')->group(function () {
@@ -281,49 +280,47 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-    Route::group(['middleware' => 'block:' . BlockDto::ADMIN_BLOCK_SETTINGS], function () {
-        Route::prefix('settings')->namespace('Settings')->group(function () {
-            Route::prefix('payment-methods')->group(function () {
-                Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
-                Route::put('{id}/edit', 'PaymentMethodsController@edit')->name('settings.paymentMethods.edit');
+    Route::prefix('settings')->namespace('Settings')->group(function () {
+        Route::prefix('payment-methods')->group(function () {
+            Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
+            Route::put('{id}/edit', 'PaymentMethodsController@edit')->name('settings.paymentMethods.edit');
+        });
+        Route::prefix('users')->group(function () {
+            Route::get('page', 'UsersController@page')->name('settings.userListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'UsersController@detail')->name('settings.userDetail');
+                Route::post('addRole', 'UsersController@addRole')->name('user.addRole');
+                Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
             });
-            Route::prefix('users')->group(function () {
-                Route::get('page', 'UsersController@page')->name('settings.userListPagination');
-                Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                    Route::get('', 'UsersController@detail')->name('settings.userDetail');
-                    Route::post('addRole', 'UsersController@addRole')->name('user.addRole');
-                    Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
-                });
-                Route::get('', 'UsersController@index')->name('settings.userList');
-                Route::post('', 'UsersController@saveUser')->name('settings.createUser');
-                Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
-            });
+            Route::get('', 'UsersController@index')->name('settings.userList');
+            Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+            Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
+        });
 
-            Route::prefix('roles')->group(function () {
-                Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
-                Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-                    Route::get('', 'RoleController@detail')->name('settings.roleDetail');
-                    Route::put('', 'RoleController@upsert')->name('settings.updateRole');
-                });
-                Route::get('', 'RoleController@index')->name('settings.rolesList');
-                Route::post('', 'RoleController@upsert')->name('settings.createRole');
-                Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
-                Route::post('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
+        Route::prefix('roles')->group(function () {
+            Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'RoleController@detail')->name('settings.roleDetail');
+                Route::put('', 'RoleController@upsert')->name('settings.updateRole');
             });
+            Route::get('', 'RoleController@index')->name('settings.rolesList');
+            Route::post('', 'RoleController@upsert')->name('settings.createRole');
+            Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
+            Route::post('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
+        });
 
-            Route::prefix('organization-card')->group(function () {
-                Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
-                Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
-            });
+        Route::prefix('organization-card')->group(function () {
+            Route::get('', 'OrganizationCardController@index')->name('settings.organizationCard');
+            Route::put('', 'OrganizationCardController@update')->name('settings.organizationCard.update');
+        });
 
-            Route::prefix('marketing')->group(function () {
-                Route::get('', 'MarketingController@index')->name('settings.marketing');
-                Route::put('', 'MarketingController@update')->name('settings.marketing.update');
-            });
+        Route::prefix('marketing')->group(function () {
+            Route::get('', 'MarketingController@index')->name('settings.marketing');
+            Route::put('', 'MarketingController@update')->name('settings.marketing.update');
+        });
 
-            Route::prefix('packages')->group(function () {
-                Route::get('', 'PackagesController@list')->name('settings.packages.list');
-            });
+        Route::prefix('packages')->group(function () {
+            Route::get('', 'PackagesController@list')->name('settings.packages.list');
         });
     });
 

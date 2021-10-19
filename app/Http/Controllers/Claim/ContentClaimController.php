@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Claim;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
+use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -39,13 +40,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ContentClaimController extends Controller
 {
-    private RequestInitiator $requestInitiator;
-
-    public function __construct(RequestInitiator $requestInitiator)
-    {
-        $this->requestInitiator = $requestInitiator;
-    }
-
     /**
      * @return mixed
      */
@@ -55,8 +49,7 @@ class ContentClaimController extends Controller
         UserService $userService,
         MerchantService $merchantService
     ) {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $this->title = 'Заявки на производство контента';
 
@@ -100,8 +93,7 @@ class ContentClaimController extends Controller
      */
     public function create(ContentClaimService $claimService, MerchantService $merchantService)
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $this->title = 'Создание заявки на производство контента';
 
@@ -137,8 +129,7 @@ class ContentClaimController extends Controller
         RequestInitiator $user,
         ContentClaimService $contentClaimService
     ): JsonResponse {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $data = $this->validate($request, [
             'merchant_id' => 'required|integer',
@@ -160,8 +151,7 @@ class ContentClaimController extends Controller
         UserService $userService,
         MerchantService $merchantService
     ): JsonResponse {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $this->prepareQuery($request, $claimService, $userService);
         $result = $query ? [
@@ -183,8 +173,7 @@ class ContentClaimController extends Controller
         MerchantService $merchantService,
         ProductService $productService
     ) {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
 //        $this->title = 'Заявка на производство контента';
 
@@ -237,8 +226,7 @@ class ContentClaimController extends Controller
 
     public function update(int $id, Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $data = $this->validate($request, [
             'service_message' => 'sometimes|required|string',
@@ -256,8 +244,7 @@ class ContentClaimController extends Controller
      */
     public function changeStatuses(Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
@@ -270,8 +257,7 @@ class ContentClaimController extends Controller
 
     public function deleteClaims(Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
@@ -286,8 +272,7 @@ class ContentClaimController extends Controller
      */
     public function loadProductsByMerchantId(Request $request, OfferService $offerService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $data = $this->validate($request, [
             'id' => 'required|integer',
@@ -306,8 +291,7 @@ class ContentClaimController extends Controller
 
     public function acceptanceAct(int $id, ContentClaimService $contentClaimService): StreamedResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_UPDATE, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         return $this->getDocumentResponse($contentClaimService->claimAcceptanceAct($id));
     }
@@ -350,9 +334,6 @@ class ContentClaimController extends Controller
         ContentClaimService $claimService,
         UserService $userService
     ): ?DataQuery {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
-
         $page = $request->get('page', 1);
         $filters = array_filter($request->get('filter', []), function ($v, $k) {
             return $v || ($k == 'unpack');
@@ -410,8 +391,7 @@ class ContentClaimController extends Controller
         UserService $userService,
         MerchantService $merchantService
     ): Collection {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         /** @var Collection|ContentClaimDto[] $claims */
         $claims = $query->claims();
@@ -438,8 +418,7 @@ class ContentClaimController extends Controller
 
     protected function loadClaimHistory(RestQuery $query, UserService $userService)
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->checkPermission(PermissionDto::PERMISSION_VIEW, BlockDto::ADMIN_BLOCK_CLAIMS);
 
         /** @var Collection|ClaimHistoryDto[] $history */
         $history = $query->claimHistory();
