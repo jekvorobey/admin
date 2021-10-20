@@ -10,15 +10,13 @@
                         <thead>
                         <tr>
                             <th>Роль</th>
-                            <th>Активна</th>
-                            <th></th>
+                            <th>Опции</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="role in roles">
-                            <td>{{roleName(role.id)}}</td>
-                            <td>{{role.expires ? 'до ' + role.expires : 'Да'}}</td>
-                            <td><fa-icon v-if="role.id !== 2" @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
+                            <td>{{role.name}}</td>
+                            <td><fa-icon @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
                         </tr>
                         </tbody>
                     </table>
@@ -88,7 +86,8 @@
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
             roleName(id) {
-                return this.options.roles.hasOwnProperty(id) ? this.options.roles[id] : 'N/A';
+                let rolesList = Object.values(this.options.roles).filter(role => role.id === id);
+                return rolesList.length > 0 ? rolesList[0].name : 'N/A';
             },
             addRole() {
                 Services.net().post(this.getRoute('user.addRole', {id: this.user.id}), {}, {
