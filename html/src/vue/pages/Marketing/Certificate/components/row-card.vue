@@ -8,6 +8,7 @@
         <td>{{ card.created_at | datetime }}</td>
         <td>{{ card.notified_at | datetime }}</td>
         <td>{{ card.activated_at | datetime }}</td>
+        <td>{{ card.expire_at | datetime }}</td>
         <td><card-status :status="card.status"/></td>
         <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
@@ -21,7 +22,7 @@
         <td>{{request.to_email}}</td>
         <td>{{request.to_phone}}</td>
         <td>
-            <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
+            <b-button class="btn btn-info btn-sm m-1" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
             <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">
@@ -34,7 +35,27 @@
                 </div>
             </b-popover>
 
-            <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" :id="'btn-notify-' + card.id">
+            <b-button
+                class="btn btn-info btn-sm m-1"
+                @click="togglePopover"
+                :id="`popover-id-${card.id}`"
+                :disabled="!([302, 303, 304].includes(card.status))"
+            >
+                <fa-icon icon="redo-alt"
+                         class="float-right media-btn"
+                         v-b-popover.hover="'Деактивировать сертификат'">
+                </fa-icon>
+            </b-button>
+
+            <b-popover placement="auto" ref="popover" :target="`popover-id-${card.id}`">
+                <template slot="title">Деактивировать сертификат</template>
+                <div>
+                    <button @click="togglePopover" class="btn btn-sm btn-secondary">Отмена</button>
+                    <button @click="deactivateCertificate" class="btn btn-sm btn-success">Деактивировать</button>
+                </div>
+            </b-popover>
+
+            <a v-if="!!card.pin" :href="sendLink" class="btn btn-info btn-sm m-1" :id="'btn-notify-' + card.id">
                 <fa-icon icon="paper-plane" class="float-right media-btn" v-b-popover.hover="'Отправить сертификат Получателю'"></fa-icon>
             </a>
             <b-popover :show.sync="notificationPopoverShow" placement="auto" ref="popover" :target="'btn-notify-' + card.id">
@@ -45,7 +66,7 @@
                 </div>
             </b-popover>
 
-            <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
+            <a :href="editLink" class="btn btn-info btn-sm m-1">
                 <fa-icon icon="pencil-alt" class="float-right media-btn" v-b-popover.hover="'Редактировать'"></fa-icon>
             </a>
         </td>
@@ -118,6 +139,32 @@ export default {
                     this.$emit('update')
                 })
         },
+
+        togglePopover() {
+          this.$root.$emit('bv::hide::popover')
+          this.$root.$emit('bv::show::popover', `popover-id-${this.card.id}`)
+        },
+
+        deactivateCertificate(e) {
+            const newStatus = e.target.checked;
+            const id = this.card.id
+
+            e.preventDefault();
+            Services.showLoader();
+
+            Services.net().put(this.getRoute('certificate.card_deactivate', {id})).then(() => {
+                e.target.checked = newStatus;
+                this.$emit('update')
+            })
+            .catch(() => {
+                e.target.checked = !newStatus;
+            })
+            .finally(() => {
+                Services.hideLoader();
+                this.$root.$emit('bv::hide::popover')
+            })
+        },
+
         sendNotification() {
             this.notificationPopoverShow = false
             Services.showLoader();

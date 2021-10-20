@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\Certificate\CertificateRequestDto;
@@ -11,7 +12,7 @@ use Pim\Services\CertificateService\CertificateService;
 
 class CertificateCardController extends Controller
 {
-    private function setActiveMenu()
+    private function setActiveMenu(): void
     {
         Menu::setActiveUrl(route('certificate.index'));
     }
@@ -40,6 +41,30 @@ class CertificateCardController extends Controller
     {
         $this->service()->updateExpireAt($id, (int) $request->get('days'));
         return response()->json(['status' => 'ok']);
+    }
+
+    public function activate(Request $request): JsonResponse
+    {
+        $result = $this->service()->activate((string) $request->get('pin'), (int) $request->get('customer_id'));
+        $response = ['status' => 'ok'];
+        $statusCode = 200;
+        if (!$result->success) {
+            $response = ['message' => $result->message];
+            $statusCode = 400;
+        }
+        return response()->json($response, $statusCode);
+    }
+
+    public function deactivate($id, RequestInitiator $user): JsonResponse
+    {
+        $result = $this->service()->deactivate((int) $id, $user->userId());
+        $response = ['status' => 'ok'];
+        $statusCode = 200;
+        if (!$result->success) {
+            $response = ['message' => $result->message];
+            $statusCode = 400;
+        }
+        return response()->json($response, $statusCode);
     }
 
     public function sendNotification($id): JsonResponse
