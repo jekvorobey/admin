@@ -69,7 +69,7 @@
                     <shipment-status :status='shipment.status'/>
                     {{ shipment.status_at }}
                     <p v-if="shipment.is_problem">
-                        <span class="badge badge-danger">Проблемное</span>
+                        <span class="badge badge-danger cursor-default" v-b-popover.hover="shipment.assembly_problem_comment">Проблемное</span>
                         {{ shipment.is_problem_at }}
                     </p>
                     <p v-if="shipment.is_canceled">
