@@ -490,18 +490,15 @@ class Menu
      * @param $items
      * @return array
      */
-    private static function checkPermission($items): array
+    private static function filterAllowMenuItems($items): array
     {
         $allowMenu = [];
-        $blockPermissions = resolve(RequestInitiator::class)->blockPermissions()->pluck('block_id')->toArray();
+        $allowBlockIds = resolve(RequestInitiator::class)->blockPermissions()->pluck('block_id')->toArray();
         if (empty($blockPermissions)) {
             return [];
         }
         foreach ($items as $item) {
-            if (!isset($item['id'])) {
-                continue;
-            }
-            if (in_array($item['id'], $blockPermissions)) {
+            if (!isset($item['id']) || in_array($item['id'], $allowBlockIds)) {
                 $allowMenu[] = $item;
             }
         }
@@ -526,7 +523,7 @@ class Menu
 //            }
 //        }
 
-        return self::checkPermission($menuItems);
+        return self::filterAllowMenuItems($menuItems);
     }
 
     /**

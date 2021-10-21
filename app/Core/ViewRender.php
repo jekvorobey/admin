@@ -109,22 +109,25 @@ class ViewRender
         return $this;
     }
 
+    /** TODO изменить на роли из базы */
     public function loadUserRoles($load = false): self
     {
-        $roles = resolve(RoleService::class)->roles();
+        //$roles = resolve(RoleService::class)->roles();
         if ($load) {
             $this->userRoles = [
                 'admin' => [
-                    $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
+                    //$roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
                 ],
                 'mas' => [
-                    $roles->where('front', Front::FRONT_MAS)->pluck('id')->toArray(),
+                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
+                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
                 ],
                 'i_commerce_ml' => [
-                    $roles->where('front', Front::FRONT_I_COMMERCE_ML)->pluck('id')->toArray(),
+                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
                 ],
                 'showcase' => [
-                    $roles->where('front', Front::FRONT_SHOWCASE)->pluck('id')->toArray(),
+                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
+                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
                 ],
             ];
         }
