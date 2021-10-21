@@ -94,7 +94,7 @@ class ViewRender
     private array $offerAllSaleStatuses = [];
     private array $offerCountdownSaleStatuses = [];
 
-    private $propertyTypes = [];
+    private array $propertyTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -112,11 +112,11 @@ class ViewRender
     /** TODO изменить на роли из базы */
     public function loadUserRoles($load = false): self
     {
-        //$roles = resolve(RoleService::class)->roles();
+        $roles = resolve(RoleService::class)->roles();
         if ($load) {
             $this->userRoles = [
                 'admin' => [
-                    //$roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
+                    $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
                 ],
                 'mas' => [
                     'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
