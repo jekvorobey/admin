@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Illuminate\Http\JsonResponse;
 use Pim\Dto\PublicEvent\TicketDto;
 use Pim\Dto\PublicEvent\TicketStatus;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -16,8 +18,10 @@ use Pim\Services\PublicEventTicketService\PublicEventTicketService;
 
 class PublicEventTicketsController extends Controller
 {
-    public function getList(Request $request, int $eventId)
+    public function getList(Request $request, int $eventId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprints = $request->input('sprint_id')
             ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
@@ -118,6 +122,8 @@ class PublicEventTicketsController extends Controller
 
     public function getFile(Request $request, int $eventId)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprints = $request->input('sprint_id')
             ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();

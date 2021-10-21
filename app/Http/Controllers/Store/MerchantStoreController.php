@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Store;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\CourierCallTime\B2CplCourierCallTime;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -27,6 +28,8 @@ class MerchantStoreController extends Controller
 {
     public function index(Request $request, StoreService $storeService, MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_STORES);
+
         $this->title = 'Склады мерчантов';
 
         $page = $request->get('page', 1);
@@ -48,6 +51,8 @@ class MerchantStoreController extends Controller
 
     public function page(Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_STORES);
+
         $page = $request->get('page', 1);
 
         $restQuery = new RestQuery();
@@ -76,6 +81,8 @@ class MerchantStoreController extends Controller
      */
     public function createPage(MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_STORES);
+
         $this->title = 'Добавление склада мерчанта';
 
         return $this->render('Store/MerchantStore/Create', [
@@ -85,6 +92,8 @@ class MerchantStoreController extends Controller
 
     public function detailPage(int $id, StoreService $storeService, MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_STORES);
+
         $this->title = 'Редактирование склада мерчанта';
         $this->loadDeliveryServices = true;
 
@@ -105,6 +114,7 @@ class MerchantStoreController extends Controller
         if (!$store['cdek_address']) {
             $store['cdek_address'] = ['address_string' => ''];
         }
+
         return $store;
     }
 
@@ -117,6 +127,8 @@ class MerchantStoreController extends Controller
 
     public function create(Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'merchant_id' => 'integer|required',
@@ -132,6 +144,8 @@ class MerchantStoreController extends Controller
 
     public function update(int $id, Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $addressValidate = $this->getAddressValidate();
         $validate = array_merge([
             'id' => 'integer|required',
@@ -144,6 +158,7 @@ class MerchantStoreController extends Controller
 
         $validatedData['id'] = $id;
         $storeService->updateStore($validatedData['id'], new StoreDto($validatedData));
+
         return response()->json([]);
     }
 
@@ -181,31 +196,33 @@ class MerchantStoreController extends Controller
         ];
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function delete(int $id, StoreService $storeService)
+    public function delete(int $id, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $storeService->deleteStore($id);
+
         return response()->json([]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function deleteArray(Request $request, StoreService $storeService)
+    public function deleteArray(Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $data = $request->validate([
             'ids' => 'array|required',
             'ids.*' => 'integer',
         ]);
 
         $storeService->deleteStores($data['ids']);
+
         return response()->json([]);
     }
 
     public function updateWorking(int $id, Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'day' => 'integer|required',
@@ -224,6 +241,8 @@ class MerchantStoreController extends Controller
 
     public function pickupTime(Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_STORES);
+
         $validatedData = $request->validate([
             'store_id' => 'integer|required',
         ]);
@@ -235,6 +254,8 @@ class MerchantStoreController extends Controller
 
     public function savePickupTime(Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $validatedData = $request->validate([
             'id' => 'integer|nullable',
             'day' => 'integer|required',
@@ -256,11 +277,10 @@ class MerchantStoreController extends Controller
         return response()->json([]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function createContact(int $id, Request $request, StoreService $storeService)
+    public function createContact(int $id, Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $validatedData = $request->validate([
             'store_id' => 'integer|required',
             'name' => 'string|nullable',
@@ -275,6 +295,8 @@ class MerchantStoreController extends Controller
 
     public function updateContact(int $id, Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
@@ -285,15 +307,16 @@ class MerchantStoreController extends Controller
         $validatedData['id'] = $id;
 
         $storeService->updateContact($validatedData['id'], new StoreContactDto($validatedData));
+
         return response()->json([]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function deleteContact(int $id, StoreService $storeService)
+    public function deleteContact(int $id, StoreService $storeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_STORES);
+
         $storeService->deleteContact($id);
+
         return response()->json([]);
     }
 
@@ -332,7 +355,7 @@ class MerchantStoreController extends Controller
         $merchantIds = $stores->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantIds);
 
-        $stores = $stores->map(function (StoreDto $store) use ($merchants) {
+        return $stores->map(function (StoreDto $store) use ($merchants) {
             $data = $store->toArray();
 
             $data['merchant'] = $merchants->has($store->merchant_id) ? $merchants[$store->merchant_id] : [];
@@ -382,7 +405,5 @@ class MerchantStoreController extends Controller
 
             return $data;
         });
-
-        return $stores;
     }
 }

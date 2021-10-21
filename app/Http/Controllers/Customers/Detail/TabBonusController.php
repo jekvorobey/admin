@@ -3,22 +3,23 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabBonusController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function load(int $id)
+    public function load(int $id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         /** @var CustomerService $customerService */
         $customerService = resolve(CustomerService::class);
         $searchBonuses = $customerService->getBonuses($id);
@@ -46,11 +47,10 @@ class TabBonusController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function add(int $id, Request $request, RequestInitiator $user)
+    public function add(int $id, Request $request, RequestInitiator $user): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $request->validate([
             'name' => 'string|required',
             'status' => [

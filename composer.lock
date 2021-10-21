@@ -1165,7 +1165,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "69c9f7f0734ec95eed9d74b100632486d74819a3"
+                "reference": "5eddbf088807fc76821a6031131f3aadd3a917f4"
             },
             "require": {
                 "ext-json": "*",
@@ -1208,7 +1208,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2021-10-11T18:28:02+00:00"
+            "time": "2021-10-19T10:21:19+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",

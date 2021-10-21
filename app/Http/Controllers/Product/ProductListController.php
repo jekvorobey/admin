@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Dto\Product\ProductApprovalStatus;
@@ -24,6 +26,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ProductListController extends Controller
 {
+    /**
+     * @throws \Pim\Core\PimException
+     */
     public function index(
         Request $request,
         SearchService $searchService,
@@ -33,6 +38,8 @@ class ProductListController extends Controller
         ContentBadgesService $badgesService,
         OfferService $offerService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->title = 'Товары';
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
@@ -78,8 +85,13 @@ class ProductListController extends Controller
         ]);
     }
 
-    public function page(Request $request, SearchService $searchService, ShoppilotService $shoppilotService)
-    {
+    public function page(
+        Request $request,
+        SearchService $searchService,
+        ShoppilotService $shoppilotService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
 
@@ -100,8 +112,10 @@ class ProductListController extends Controller
         return response()->json($data);
     }
 
-    public function updateApprovalStatus(Request $request, ProductService $productService)
+    public function updateApprovalStatus(Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $ids = $request->get('productIds');
         $status = $request->get('status');
         $comment = $request->get('comment');
@@ -125,8 +139,10 @@ class ProductListController extends Controller
         return response()->json();
     }
 
-    public function updateProductionStatus(Request $request, ProductService $productService)
+    public function updateProductionStatus(Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $ids = $request->get('productIds');
         $status = $request->get('status');
         $comment = $request->get('comment');
@@ -139,8 +155,10 @@ class ProductListController extends Controller
         return response()->json();
     }
 
-    public function updateArchiveStatus(Request $request, ProductService $productService)
+    public function updateArchiveStatus(Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $ids = $request->get('productIds');
         $status = $request->get('status');
         $comment = $request->get('comment');
@@ -159,6 +177,8 @@ class ProductListController extends Controller
      */
     public function attachBadges(ProductService $productService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate(request(), [
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',
@@ -220,6 +240,7 @@ class ProductListController extends Controller
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
+
         return $query;
     }
 }

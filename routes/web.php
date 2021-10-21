@@ -280,7 +280,6 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-
     Route::prefix('settings')->namespace('Settings')->group(function () {
         Route::prefix('payment-methods')->group(function () {
             Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');

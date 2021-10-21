@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\SprintDto;
 use Pim\Services\PublicEventSprintService\PublicEventSprintService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PublicEventSprintController extends Controller
 {
-    public function list(Request $request, PublicEventSprintService $publicEventPublicEventSprintService)
+    public function list(Request $request, PublicEventSprintService $publicEventPublicEventSprintService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprints = collect($publicEventPublicEventSprintService->getByEvent($request->input('event_id')))->flatten(1);
 
         return response()->json([
@@ -20,8 +23,10 @@ class PublicEventSprintController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventSprintService $publicEventPublicEventSprintService)
+    public function page(Request $request, PublicEventSprintService $publicEventPublicEventSprintService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $publicEventSprints] = $this->loadPublicEventSprints($publicEventPublicEventSprintService, $page);
 
@@ -31,8 +36,10 @@ class PublicEventSprintController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventSprintService $publicEventPublicEventSprintService)
+    public function save(Request $request, PublicEventSprintService $publicEventPublicEventSprintService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $publicEventSprint = $request->get('sprint');
 
@@ -51,8 +58,12 @@ class PublicEventSprintController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventSprintService $publicEventPublicEventSprintService)
-    {
+    public function delete(
+        Request $request,
+        PublicEventSprintService $publicEventPublicEventSprintService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -66,17 +77,13 @@ class PublicEventSprintController extends Controller
         return response()->json();
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPublicEventSprints(PublicEventSprintService $publicEventPublicEventSprintService, $page): array
     {
         $query = $publicEventPublicEventSprintService->query()->pageNumber($page, 10);
 
         $total = $publicEventPublicEventSprintService->count($query);
         $publicEventSprints = $publicEventPublicEventSprintService->find($query);
+
         return [$total, $publicEventSprints];
     }
 }

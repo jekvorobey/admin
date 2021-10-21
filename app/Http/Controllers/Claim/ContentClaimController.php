@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\Message\Core\MessageException;
 use Greensight\Message\Dto\Claim\ContentClaimDto;
 use Greensight\Message\Dto\Claim\History\ClaimHistoryDto;
 use Greensight\Message\Dto\Claim\History\ClaimHistoryTypeDto;
 use Greensight\Message\Services\ClaimService\ContentClaimService;
 use Greensight\Message\Dto\Document\DocumentDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -18,6 +21,7 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Offer\OfferDto;
@@ -43,9 +47,11 @@ class ContentClaimController extends Controller
         UserService $userService,
         MerchantService $merchantService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $this->title = 'Заявки на производство контента';
 
-        /** @var Collection|ContentClaimMetaDto[] $claimMeta */
+        /** @var Collection|ContentClaimDto[] $claimMeta */
         $claimMeta = $claimService->newQuery()
             ->include('typeNames')
             ->include('unpackNames')
@@ -85,6 +91,8 @@ class ContentClaimController extends Controller
      */
     public function create(ContentClaimService $claimService, MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $this->title = 'Создание заявки на производство контента';
 
         $claimMeta = $claimService->newQuery()
@@ -114,11 +122,13 @@ class ContentClaimController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function saveClaim(Request $request, RequestInitiator $user, ContentClaimService $contentClaimService)
-    {
+    public function saveClaim(
+        Request $request,
+        RequestInitiator $user,
+        ContentClaimService $contentClaimService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $data = $this->validate($request, [
             'merchant_id' => 'required|integer',
             'type' => 'required|integer',
@@ -128,20 +138,19 @@ class ContentClaimController extends Controller
         $data['user_id'] = $user->userId();
 
         $contentClaim = new ContentClaimDto($data);
-
         $id = $contentClaimService->createClaim($contentClaim);
+
         return response()->json($id);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function page(
         Request $request,
         ContentClaimService $claimService,
         UserService $userService,
         MerchantService $merchantService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $query = $this->prepareQuery($request, $claimService, $userService);
         $result = $query ? [
             'items' => $this->loadClaims($query, $userService, $merchantService),
@@ -149,6 +158,7 @@ class ContentClaimController extends Controller
         if ($query && $request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
         }
+
         return response()->json($result);
     }
 
@@ -162,6 +172,8 @@ class ContentClaimController extends Controller
         MerchantService $merchantService,
         ProductService $productService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
 //        $this->title = 'Заявка на производство контента';
 
         $query = $claimService->newQuery()->setFilter('id', $id);
@@ -172,7 +184,7 @@ class ContentClaimController extends Controller
             throw new NotFoundHttpException();
         }
 
-        /** @var Collection|ContentClaimMetaDto[] $claimMeta */
+        /** @var Collection|ContentClaimDto[] $claimMeta */
         $claimMeta = $claimService->newQuery()
             ->include('typeNames')
             ->include('unpackNames')
@@ -211,8 +223,10 @@ class ContentClaimController extends Controller
         ]);
     }
 
-    public function update(int $id, Request $request, ContentClaimService $contentClaimService)
+    public function update(int $id, Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $data = $this->validate($request, [
             'service_message' => 'sometimes|required|string',
             'status' => 'sometimes|required|integer',
@@ -225,37 +239,40 @@ class ContentClaimController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @throws MessageException
      */
-    public function changeStatuses(Request $request, ContentClaimService $contentClaimService)
+    public function changeStatuses(Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
             'status' => 'required|integer',
         ]);
-
         $contentClaimService->updateClaims($data['claim_ids'], $data['status']);
+
         return response()->json(['status' => 'ok']);
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @throws MessageException
      */
-    public function deleteClaims(Request $request, ContentClaimService $contentClaimService)
+    public function deleteClaims(Request $request, ContentClaimService $contentClaimService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $data = $this->validate($request, [
             'claim_ids' => 'required|array',
         ]);
-
         $contentClaimService->deleteClaims($data['claim_ids']);
+
         return response()->json(['status' => 'ok']);
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
-    public function loadProductsByMerchantId(Request $request, OfferService $offerService)
+    public function loadProductsByMerchantId(Request $request, OfferService $offerService): JsonResponse
     {
         $data = $this->validate($request, [
             'id' => 'required|integer',
@@ -274,6 +291,7 @@ class ContentClaimController extends Controller
 
     public function acceptanceAct(int $id, ContentClaimService $contentClaimService): StreamedResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         return $this->getDocumentResponse($contentClaimService->claimAcceptanceAct($id));
     }
@@ -311,11 +329,11 @@ class ContentClaimController extends Controller
 //        return response()->json();
 //    }
 
-    /**
-     * @return \Greensight\CommonMsa\Dto\DataQuery|null
-     */
-    protected function prepareQuery(Request $request, ContentClaimService $claimService, UserService $userService)
-    {
+    protected function prepareQuery(
+        Request $request,
+        ContentClaimService $claimService,
+        UserService $userService
+    ): ?RestQuery {
         $page = $request->get('page', 1);
         $filters = array_filter($request->get('filter', []), function ($v, $k) {
             return $v || ($k == 'unpack');
@@ -368,11 +386,11 @@ class ContentClaimController extends Controller
         return $restQuery;
     }
 
-    /**
-     * @return Collection
-     */
-    protected function loadClaims(RestQuery $query, UserService $userService, MerchantService $merchantService)
-    {
+    protected function loadClaims(
+        RestQuery $query,
+        UserService $userService,
+        MerchantService $merchantService
+    ): Collection {
         /** @var Collection|ContentClaimDto[] $claims */
         $claims = $query->claims();
 
@@ -398,11 +416,11 @@ class ContentClaimController extends Controller
 
     protected function loadClaimHistory(RestQuery $query, UserService $userService)
     {
-
         /** @var Collection|ClaimHistoryDto[] $history */
         $history = $query->claimHistory();
         $userIds = $history->pluck('user_id')->unique()->all();
 
+        /** TODO изменить на несколько ролей */
         $usersRoles = [];
         foreach ($userIds as $id) {
             $usersRoles[$id] = $userService->userRoles($id)->first();

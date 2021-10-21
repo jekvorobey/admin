@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\PlaceDto;
 use Pim\Services\PublicEventPlaceService\PublicEventPlaceService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -13,6 +14,8 @@ class PlaceController extends Controller
 {
     public function list(Request $request, PublicEventPlaceService $publicEventPlaceService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $places] = $this->loadPlaces($publicEventPlaceService, $page);
 
@@ -23,8 +26,10 @@ class PlaceController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventPlaceService $publicEventPlaceService)
+    public function page(Request $request, PublicEventPlaceService $publicEventPlaceService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $places] = $this->loadPlaces($publicEventPlaceService, $page);
 
@@ -34,8 +39,10 @@ class PlaceController extends Controller
         ]);
     }
 
-    public function fullList(PublicEventPlaceService $publicEventPlaceService)
+    public function fullList(PublicEventPlaceService $publicEventPlaceService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $query = $publicEventPlaceService->query();
 
         return response()->json([
@@ -43,8 +50,10 @@ class PlaceController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventPlaceService $publicEventPlaceService)
+    public function save(Request $request, PublicEventPlaceService $publicEventPlaceService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $place = $request->get('place');
 
@@ -63,8 +72,10 @@ class PlaceController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventPlaceService $publicEventPlaceService)
+    public function delete(Request $request, PublicEventPlaceService $publicEventPlaceService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -78,8 +89,10 @@ class PlaceController extends Controller
         return response()->json();
     }
 
-    public function media(Request $request, PublicEventPlaceService $publicEventPlaceService)
+    public function media(Request $request, PublicEventPlaceService $publicEventPlaceService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $file_id = $request->get('file_id');
 
@@ -92,11 +105,6 @@ class PlaceController extends Controller
         ]);
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPlaces(PublicEventPlaceService $publicEventPlaceService, $page): array
     {
         $query = $publicEventPlaceService->query()->pageNumber($page, 10);

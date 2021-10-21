@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\AbstractDto;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -30,6 +32,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
 
@@ -41,7 +44,7 @@ class OrderListController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(
         Request $request,
@@ -49,6 +52,8 @@ class OrderListController extends Controller
         BrandService $brandService,
         StoreService $storeService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->title = 'Список заказов';
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
@@ -76,8 +81,10 @@ class OrderListController extends Controller
         ]);
     }
 
-    public function byOffers(OrderService $orderService, Request $request)
+    public function byOffers(OrderService $orderService, Request $request): array
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $orderService->ordersByOffers(['offersIds' => $request->input('offersIds'), 'page' => $request->input('page')]);
     }
 
@@ -87,10 +94,12 @@ class OrderListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(OrderService $orderService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $restQuery = $this->makeRestQuery($orderService);
         $orders = $this->loadOrders($restQuery);
         $result = [
@@ -104,8 +113,7 @@ class OrderListController extends Controller
     }
 
     /**
-     * @return array
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -297,7 +305,7 @@ class OrderListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(OrderService $orderService, bool $withDefaultFilter = false): DataQuery
     {

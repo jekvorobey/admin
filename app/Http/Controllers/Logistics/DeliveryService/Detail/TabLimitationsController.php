@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Logistics\DeliveryService\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 
 /**
@@ -14,11 +16,12 @@ use Illuminate\Http\Response;
 class TabLimitationsController extends Controller
 {
     /**
-     * @param $id
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return ResponseFactory|Response
      */
     public function save($id, ListsService $listsService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'do_dangerous_products_delivery' => ['required', 'boolean'],
             'max_shipments_per_day' => ['nullable', 'integer', 'min:0'],

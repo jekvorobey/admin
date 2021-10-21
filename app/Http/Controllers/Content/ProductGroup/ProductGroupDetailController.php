@@ -9,9 +9,11 @@ use Cms\Dto\ProductGroupFilterDto;
 use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
 use Cms\Services\ProductGroupTypeService\ProductGroupTypeService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
@@ -35,6 +37,8 @@ class ProductGroupDetailController extends Controller
         PropertyDirectoryValueService $propertyDirectoryValueService,
         BrandService $brandService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $productGroup = $this->getProductGroup($id, $productGroupService, $propertyDirectoryValueService, $brandService);
         $productGroupImages = $this->getProductGroupImages([$productGroup['preview_photo_id']], $fileService);
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
@@ -53,6 +57,8 @@ class ProductGroupDetailController extends Controller
 
     public function createPage(ProductGroupTypeService $productGroupTypeService, CategoryService $categoryService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $productGroupTypes = $this->getProductGroupTypes($productGroupTypeService);
         $categories = $this->getCategories($categoryService);
 
@@ -67,8 +73,13 @@ class ProductGroupDetailController extends Controller
         ]);
     }
 
-    public function create(Request $request, ProductGroupService $productGroupService)
+    /**
+     * @throws CmsException
+     */
+    public function create(Request $request, ProductGroupService $productGroupService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'name' => 'string|required',
             'code' => 'string|required',
@@ -97,8 +108,13 @@ class ProductGroupDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function update(int $id, Request $request, ProductGroupService $productGroupService)
+    /**
+     * @throws CmsException
+     */
+    public function update(int $id, Request $request, ProductGroupService $productGroupService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
@@ -129,15 +145,22 @@ class ProductGroupDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function delete(int $id, ProductGroupService $productGroupService)
+    /**
+     * @throws CmsException
+     */
+    public function delete(int $id, ProductGroupService $productGroupService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $productGroupService->deleteProductGroup($id);
 
         return response()->json([], 204);
     }
 
-    public function getFilters(BrandService $brandService, ProductService $productService)
+    public function getFilters(BrandService $brandService, ProductService $productService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $brandsFilter = $brandService->filters();
         $appliedFilters = [
             'brand' => $brandsFilter->pluck('code'),
@@ -146,10 +169,11 @@ class ProductGroupDetailController extends Controller
         $filters = $productService->filters($appliedFilters, $excludedFilters)->all();
 
         $result = array_merge($brandsFilter->all(), $filters);
+
         return response()->json($result);
     }
 
-    public function getFiltersByCategory(Request $request, ProductService $productService)
+    public function getFiltersByCategory(Request $request, ProductService $productService): JsonResponse
     {
         $appliedFilters = [
             'category' => $request->get('category', ''),
@@ -159,8 +183,13 @@ class ProductGroupDetailController extends Controller
         return response()->json($filters);
     }
 
-    public function getProducts(Request $request, ProductService $productService)
+    /**
+     * @throws PimException
+     */
+    public function getProducts(Request $request, ProductService $productService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'array',
             'vendor_code' => 'string',
@@ -269,7 +298,6 @@ class ProductGroupDetailController extends Controller
     }
 
     /**
-     * @param array $ids
      * @return Collection|FileDto[]
      */
     protected function getProductGroupImages(array $ids, FileService $fileService)
@@ -287,7 +315,6 @@ class ProductGroupDetailController extends Controller
 
     /**
      * Дополнить объекты фильтров их названиями
-     * @param array $target
      */
     protected function injectNames(array &$target, Collection $source)
     {

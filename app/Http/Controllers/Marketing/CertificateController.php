@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\Request;
 use Pim\Services\CertificateService\CertificateService;
 
@@ -17,6 +18,8 @@ class CertificateController extends Controller
 
     public function index(Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
 //        $query = $this->service()->transactionItemQuery()
 //            ->withUser()
 //            ->type(1,2)
@@ -44,6 +47,8 @@ class CertificateController extends Controller
 
     public function getTab(string $tab, Request $request): array
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         switch ($tab) {
             case 'nominals':
                 return $this->getTabNominals($request);
@@ -174,6 +179,8 @@ class CertificateController extends Controller
 
     public function storeContent(Request $request)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->service()->updateOptions($request->all());
 
         return response('', 204);

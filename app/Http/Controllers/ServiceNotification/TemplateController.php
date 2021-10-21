@@ -5,12 +5,13 @@ namespace App\Http\Controllers\ServiceNotification;
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\ServiceNotification\TemplateDto;
 use Greensight\Message\Services\TemplateService\TemplateService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TemplateController extends Controller
 {
-    public function list(Request $request, TemplateService $templateService)
+    public function list(Request $request, TemplateService $templateService): JsonResponse
     {
         $page = $request->input('page') ?? 1;
 
@@ -30,7 +31,7 @@ class TemplateController extends Controller
         ]);
     }
 
-    public function pageNotification(int $id, TemplateService $templateService)
+    public function pageNotification(int $id, TemplateService $templateService): JsonResponse
     {
         return response()->json([
             'templates' => $templateService->templates(
@@ -41,7 +42,7 @@ class TemplateController extends Controller
         ]);
     }
 
-    public function save(Request $request, TemplateService $templateService)
+    public function save(Request $request, TemplateService $templateService): JsonResponse
     {
         $id = $request->get('id');
         $template = $request->get('template');
@@ -61,7 +62,7 @@ class TemplateController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, TemplateService $templateService)
+    public function delete(Request $request, TemplateService $templateService): JsonResponse
     {
         $ids = $request->get('ids');
 

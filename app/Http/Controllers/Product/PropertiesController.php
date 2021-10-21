@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
@@ -25,6 +26,8 @@ class PropertiesController extends Controller
      */
     public function list(ProductService $productService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $restQuery = $productService->newQuery()
             ->addFields(
                 PropertyDto::entity(),
@@ -35,6 +38,7 @@ class PropertiesController extends Controller
             );
 
         $this->title = 'Справочник товарных атрибутов';
+
         return $this->render('Product/PropertiesList', [
             'iProperties' => $productService->getProperties($restQuery),
         ]);
@@ -47,9 +51,12 @@ class PropertiesController extends Controller
      */
     public function detail(string $propCode)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $productProperty = $this->getPropData($propCode);
 
         $this->title = 'Редактирование товарного атрибута';
+
         return $this->render('Product/PropertyDetail', [
             'iProperty' => $productProperty,
             'iCategories' => $this->getCategoriesData(),
@@ -64,7 +71,10 @@ class PropertiesController extends Controller
      */
     public function create()
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->title = 'Создание товарного атрибута';
+
         return $this->render('Product/PropertyDetail', [
             'iCategories' => $this->getCategoriesData(),
             'property_types' => PropertyDto::getTypes(),
@@ -77,6 +87,8 @@ class PropertiesController extends Controller
      */
     public function update(ProductService $productService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate(request(), [
             'id' => 'present|nullable|integer',
             'name' => 'required|string',
@@ -106,6 +118,8 @@ class PropertiesController extends Controller
      */
     public function delete(int $propertyId, ProductService $productService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $productService->deleteProperty($propertyId);
 
         return response('', 204);
@@ -113,11 +127,12 @@ class PropertiesController extends Controller
 
     /**
      * Подгрузить детальную информацию о товарном атрибуте
-     * @return mixed
      * @throws PimException
      */
-    protected function getPropData(string $code)
+    protected function getPropData(string $code): PropertyDto
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $productService = resolve(ProductService::class);
         $valuesService = resolve(PropertyDirectoryValueService::class);
 
@@ -171,6 +186,8 @@ class PropertiesController extends Controller
      */
     public function getCategoriesData()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $categoryService = resolve(CategoryService::class);
         $categoriesQuery = $categoryService->newQuery()
             ->addFields(
@@ -187,7 +204,6 @@ class PropertiesController extends Controller
 
     /**
      * Заполнить DTO
-     * @param array $data
      */
     private function fulfillDto(array $data): PropertyDto
     {

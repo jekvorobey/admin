@@ -22,6 +22,8 @@ class RoleController extends Controller
      */
     public function index(Request $request, RoleService $roleService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $this->title = 'Список ролей';
 
         $query = $this->makeQuery($request);
@@ -38,6 +40,8 @@ class RoleController extends Controller
 
     public function page(Request $request, RoleService $roleService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $query = $this->makeQuery($request);
         $data = [
             'items' => $this->loadItems($query, $roleService),
@@ -54,6 +58,8 @@ class RoleController extends Controller
      */
     public function detail(int $id, RoleService $roleService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $roleQuery = new RestQuery();
         $roleQuery->setFilter('id', $id);
         /** @var RoleDto $role */
@@ -81,6 +87,8 @@ class RoleController extends Controller
      */
     public function upsert(RoleRequest $request, RoleService $roleService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $newRole = new RoleDto($data);
         if (isset($data['id'])) {
@@ -97,6 +105,8 @@ class RoleController extends Controller
      */
     public function deleteRole(int $id, RoleService $roleService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $roleService->delete($id);
 
         return response()->json(['status' => 'ok']);
@@ -107,6 +117,8 @@ class RoleController extends Controller
      */
     public function addBlock(BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $roleService->addBlock($request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
@@ -119,6 +131,8 @@ class RoleController extends Controller
      */
     public function updateBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $roleService->updateBlock($id, $request->role_id, $request->block_id, $request->permission_id);
 
         return response()->json([
@@ -131,6 +145,8 @@ class RoleController extends Controller
      */
     public function deleteBlock(int $blockId, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $roleService->deleteBlock($blockId);
 
         return response()->json([

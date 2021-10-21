@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Services\MerchantService\Dto\GetCommissionDto;
 use MerchantManagement\Services\MerchantService\Dto\SaveCommissionDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
@@ -17,8 +20,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabCommissionController extends Controller
 {
-    public function load(int $id)
+    public function load(int $id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         [$productCommissions, $merchantCommission, $brands, $categories, $products] = $this->loadCommissions($id);
 
         return response()->json([
@@ -30,8 +35,10 @@ class TabCommissionController extends Controller
         ]);
     }
 
-    public function saveCommission(int $id, MerchantService $merchantService)
+    public function saveCommission(int $id, MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $types = [CommissionDto::TYPE_MERCHANT, CommissionDto::TYPE_BRAND, CommissionDto::TYPE_CATEGORY, CommissionDto::TYPE_SKU];
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
@@ -91,8 +98,10 @@ class TabCommissionController extends Controller
         ]);
     }
 
-    public function removeCommission(int $id, MerchantService $merchantService)
+    public function removeCommission(int $id, MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'id' => 'required',
         ]);
@@ -110,7 +119,10 @@ class TabCommissionController extends Controller
         ]);
     }
 
-    protected function loadCommissions(int $id)
+    /**
+     * @throws PimException
+     */
+    protected function loadCommissions(int $id): array
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);

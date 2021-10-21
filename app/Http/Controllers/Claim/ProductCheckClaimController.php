@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -37,6 +38,8 @@ class ProductCheckClaimController extends Controller
         MerchantService $merchantService,
         UserService $userService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $this->title = 'Заявки на проверку товаров';
 
         /** @var Collection|ClaimTypeDto[] $claimTypes */
@@ -60,11 +63,10 @@ class ProductCheckClaimController extends Controller
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function page(Request $request, ClaimService $claimService, UserService $userService)
+    public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $query = $this->prepareQuery($request, $claimService);
         $result = [
             'items' => $this->loadClaims($query, $userService),
@@ -72,6 +74,7 @@ class ProductCheckClaimController extends Controller
         if ($request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
         }
+
         return response()->json($result);
     }
 
@@ -80,6 +83,8 @@ class ProductCheckClaimController extends Controller
      */
     public function detail(int $id, ClaimService $claimService, UserService $userService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
         $claim = $this->loadClaims($query, $userService, true)->first();
@@ -143,6 +148,8 @@ class ProductCheckClaimController extends Controller
         UserService $userService,
         ProductService $productService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $result = 'ok';
         $claim = [];
         $error = '';

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Services\MerchantService\Dto\GetVatDto;
@@ -16,8 +18,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabVatController extends Controller
 {
-    public function load(int $id)
+    public function load(int $id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         [$productVats, $merchantVat, $brands, $categories, $products] = $this->loadVat($id);
 
         return response()->json([
@@ -29,8 +33,10 @@ class TabVatController extends Controller
         ]);
     }
 
-    public function saveVat(int $id, MerchantService $merchantService)
+    public function saveVat(int $id, MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $types = [VatDto::TYPE_MERCHANT, VatDto::TYPE_BRAND, VatDto::TYPE_CATEGORY, VatDto::TYPE_SKU];
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
@@ -80,8 +86,10 @@ class TabVatController extends Controller
         ]);
     }
 
-    public function removeVat(int $id, MerchantService $merchantService)
+    public function removeVat(int $id, MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'id' => 'required',
         ]);
@@ -99,7 +107,7 @@ class TabVatController extends Controller
         ]);
     }
 
-    protected function loadVat(int $id)
+    protected function loadVat(int $id): array
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);

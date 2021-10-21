@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\StageDto;
 use Pim\Services\PublicEventSprintStageService\PublicEventSprintStageService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PublicEventSprintStageController extends Controller
 {
-    public function list(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function list(
+        Request $request,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprintStages = $publicEventPublicEventSprintStageService->getBySprint($request->input('sprint_id'));
 
         return response()->json([
@@ -31,8 +36,12 @@ class PublicEventSprintStageController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function save(
+        Request $request,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $publicEventSprintStage = $request->get('sprintStage');
 
@@ -51,8 +60,12 @@ class PublicEventSprintStageController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function delete(
+        Request $request,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -68,6 +81,8 @@ class PublicEventSprintStageController extends Controller
 
     public function getBySprint(int $sprint_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprintStages = $publicEventPublicEventSprintStageService->getBySprint($sprint_id);
 
         return response()->json([
@@ -79,7 +94,9 @@ class PublicEventSprintStageController extends Controller
         int $sprint_id,
         Request $request,
         PublicEventSprintStageService $publicEventPublicEventSprintStageService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventSprintStage = $request->get('publicEventSprintStage');
 
         if (!$publicEventSprintStage) {
@@ -97,7 +114,9 @@ class PublicEventSprintStageController extends Controller
         Request $request,
         int $type_id,
         PublicEventSprintStageService $publicEventPublicEventSprintStageService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -111,7 +130,9 @@ class PublicEventSprintStageController extends Controller
         Request $request,
         int $type_id,
         PublicEventSprintStageService $publicEventPublicEventSprintStageService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -121,11 +142,6 @@ class PublicEventSprintStageController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPublicEventSprintStages(
         PublicEventSprintStageService $publicEventPublicEventSprintStageService,
         $page
@@ -134,6 +150,7 @@ class PublicEventSprintStageController extends Controller
 
         $total = $publicEventPublicEventSprintStageService->count($query);
         $publicEventSprintStages = $publicEventPublicEventSprintStageService->find($query);
+
         return [$total, $publicEventSprintStages];
     }
 }
