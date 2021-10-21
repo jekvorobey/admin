@@ -6,6 +6,7 @@ use App\Core\DiscountHelper;
 use App\Core\PromoCodeHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -21,15 +22,15 @@ class TabMarketingController extends Controller
 {
     /**
      * AJAX подгрузка информации для фильтрации скидок
-     *
-     * @return JsonResponse
      */
     public function loadDiscountsData(
         int $merchantId,
         Request $request,
         DiscountService $discountService,
         RequestInitiator $user
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $userId = $user->userId();
         $discountUserInfo = DiscountHelper::getDiscountUsersInfo($discountService, $userId, $merchantId);
 
@@ -46,15 +47,15 @@ class TabMarketingController extends Controller
 
     /**
      * AJAX пагинация слайдера со скидками на странице мерчанта
-     *
-     * @return JsonResponse
      */
     public function pageDiscounts(
         int $merchantId,
         Request $request,
         DiscountService $discountService,
         RequestInitiator $user
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request, 10);
         $params = DiscountHelper::getParams($request, $userId, $pager, $merchantId);
@@ -69,11 +70,12 @@ class TabMarketingController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации промокодов
      *
-     * @return JsonResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function loadPromoCodesData(int $merchantId)
+    public function loadPromoCodesData(int $merchantId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         return response()->json([
             'types' => PromoCodeOutDto::allTypes(),
             'statuses' => PromoCodeOutDto::allStatuses(),
@@ -82,8 +84,6 @@ class TabMarketingController extends Controller
 
     /**
      * AJAX получение промокодов для слайдера промокодов
-     *
-     * @return JsonResponse
      */
     public function loadPromoCodes(
         int $merchantId,
@@ -91,7 +91,9 @@ class TabMarketingController extends Controller
         DiscountService $discountService,
         CustomerService $customerService,
         UserService $userService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $discountPromoCodes = PromoCodeHelper::getDiscountPromoCodes($discountService, $promoCodeService, $merchantId);
         $merchantPromoCodes = PromoCodeHelper::getPromoCodes($promoCodeService, $merchantId);
         $promoCodes = $discountPromoCodes

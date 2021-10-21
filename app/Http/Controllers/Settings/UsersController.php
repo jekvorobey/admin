@@ -21,17 +21,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
-    private RequestInitiator $requestInitiator;
-
-    public function __construct(RequestInitiator $requestInitiator)
-    {
-        $this->requestInitiator = $requestInitiator;
-    }
-
     public function index(Request $request, UserService $userService)
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $this->title = 'Список пользователей';
 
@@ -47,10 +39,9 @@ class UsersController extends Controller
         ]);
     }
 
-    public function page(Request $request, UserService $userService)
+    public function page(Request $request, UserService $userService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $query = $this->makeQuery($request);
         $data = [
@@ -62,10 +53,12 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * @return mixed
+     */
     public function detail(int $id, UserService $userService, RoleService $roleService)
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
@@ -91,10 +84,9 @@ class UsersController extends Controller
         ]);
     }
 
-    public function saveUser(Request $request, UserService $userService)
+    public function saveUser(Request $request, UserService $userService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -117,10 +109,9 @@ class UsersController extends Controller
         return response()->json([]);
     }
 
-    public function addRole(int $id, Request $request, UserService $userService)
+    public function addRole(int $id, Request $request, UserService $userService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -132,14 +123,16 @@ class UsersController extends Controller
         }
 
         $userService->addRoles($id, [$data['role']], $data['expires'] ?? null);
+
         return response()->json([
             'roles' => $userService->userRoles($id),
         ]);
     }
 
-    public function deleteRole(int $id, Request $request, UserService $userService)
+    public function deleteRole(int $id, Request $request, UserService $userService): JsonResponse
     {
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
@@ -149,6 +142,7 @@ class UsersController extends Controller
         }
 
         $userService->deleteRole($id, $data['role']);
+
         return response()->json([
             'roles' => $userService->userRoles($id),
         ]);
@@ -156,13 +150,13 @@ class UsersController extends Controller
 
     /**
      * Получение пользователей по массиву ролей
-     *
-     * @return JsonResponse
      */
-    public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
-    {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+    public function usersByRoles(
+        UserService $userService,
+        OperatorService $operatorService,
+        RequestInitiator $user
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
@@ -218,6 +212,7 @@ class UsersController extends Controller
     {
         $restQuery = new RestQuery();
         $restQuery->pageNumber($request->get('page', 1), 10);
+
         return $restQuery;
     }
 

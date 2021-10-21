@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\Certificate\CertificateDesignDto;
@@ -23,6 +24,8 @@ class CertificateDesignController extends Controller
 
     public function index(Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Справочник дизайнов';
         $this->setActiveMenu();
 
@@ -33,6 +36,8 @@ class CertificateDesignController extends Controller
 
     public function createPage()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Создание дизайна сертификатов';
         $this->setActiveMenu();
 
@@ -45,6 +50,8 @@ class CertificateDesignController extends Controller
 
     public function editPage($id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Редактирование дизайна сертификатов';
         $this->setActiveMenu();
 
@@ -55,12 +62,17 @@ class CertificateDesignController extends Controller
 
     public function delete($id)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->service()->deleteDesign($id);
+
         return response('', 204);
     }
 
     public function create(Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $id = $this->service()->createDesign(new CertificateDesignDto($request->all()));
 
         return response()->json(['status' => 'ok', 'id' => $id]);
@@ -68,6 +80,8 @@ class CertificateDesignController extends Controller
 
     public function update($id, Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->service()->updateDesign($id, new CertificateDesignDto($request->all()));
 
         return response()->json(['status' => 'ok']);

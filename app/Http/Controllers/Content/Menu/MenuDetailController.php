@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\MenuDto;
 use Cms\Services\MenuService\MenuService;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MenuDetailController extends Controller
@@ -17,6 +19,8 @@ class MenuDetailController extends Controller
      */
     public function index($id, MenuService $menuService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $menu = $this->getMenu($id, $menuService);
 
         return $this->render('Content/MenuDetail', [
@@ -25,8 +29,13 @@ class MenuDetailController extends Controller
         ]);
     }
 
-    public function update($id, Request $request, MenuService $menuService)
+    /**
+     * @throws CmsException
+     */
+    public function update($id, Request $request, MenuService $menuService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'items' => 'array|required',

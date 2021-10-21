@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Pim\Dto\Offer\OfferDto;
@@ -22,12 +23,13 @@ class TabProductController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации оферов
      *
-     * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function loadProductsData(int $merchantId)
+    public function loadProductsData(int $merchantId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         return response()->json([
             'offerSaleStatuses' => OfferSaleStatus::allStatuses(),
         ]);
@@ -36,10 +38,12 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(int $merchantId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var OfferService $offerService */
         $offerService = resolve(OfferService::class);
 
@@ -58,10 +62,9 @@ class TabProductController extends Controller
     /**
      * AJAX пагинация списка офферов
      *
-     * @return RestQuery
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function makeQuery(int $merchantId)
+    protected function makeQuery(int $merchantId): RestQuery
     {
         $page = request('page', 1);
 
@@ -112,10 +115,9 @@ class TabProductController extends Controller
     }
 
     /**
-     * @return Collection
      * @throws PimException
      */
-    protected function loadItems(RestQuery $query)
+    protected function loadItems(RestQuery $query): array
     {
         /** @var OfferService $offerService */
         $offerService = resolve(OfferService::class);
@@ -139,7 +141,7 @@ class TabProductController extends Controller
 
         $qtys = $offerIds ? $stockService->qtyByOffers($offerIds) : [];
 
-        $offers = $offers->map(function (OfferDto $offer) use ($prices, $qtys) {
+        return $offers->map(function (OfferDto $offer) use ($prices, $qtys) {
             return [
                 'id' => $offer->id,
                 'product' => [
@@ -152,7 +154,5 @@ class TabProductController extends Controller
                 'created_at' => $offer->created_at,
             ];
         })->all();
-
-        return $offers;
     }
 }

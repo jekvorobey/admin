@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Order\Detail;
 
 use App\Http\Controllers\Order\OrderDetailController;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Dto\Lists\TariffDto;
@@ -22,11 +24,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabDeliveriesController extends OrderDetailController
 {
     /**
-     * @return JsonResponse
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function load(int $orderId, int $deliveryId, DeliveryService $deliveryService, ListsService $listsService)
-    {
+    public function load(
+        int $orderId,
+        int $deliveryId,
+        DeliveryService $deliveryService,
+        ListsService $listsService
+    ): JsonResponse {
         $delivery = $deliveryService->delivery($deliveryId);
         if (!$delivery) {
             throw new NotFoundHttpException();
@@ -69,10 +74,12 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Обновить доставку
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $requiredIfDeliveryAddressExist = function () {
             return count(array_filter(request()->get('delivery_address'))) > 0;
         };
@@ -140,10 +147,12 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Создать/обновить заказ на доставку у службы доставки
-     * @throws \Exception
+     * @throws Exception
      */
     public function saveDeliveryOrder(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $deliveryService->saveDeliveryOrder($deliveryId);
 
         return response()->json([
@@ -153,10 +162,12 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить заказ на доставку у службы доставки
-     * @throws \Exception
+     * @throws Exception
      */
     public function cancelDeliveryOrder(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $deliveryService->cancelDeliveryOrder($deliveryId);
 
         return response()->json([
@@ -166,7 +177,7 @@ class TabDeliveriesController extends OrderDetailController
 
     /**
      * Отменить доставку
-     * @throws \Exception
+     * @throws Exception
      */
     public function cancelDelivery(
         int $orderId,
@@ -174,6 +185,8 @@ class TabDeliveriesController extends OrderDetailController
         Request $request,
         DeliveryService $deliveryService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
         ]);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\PopularProductDto;
 use Cms\Services\PopularProductService\PopularProductService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -24,6 +25,8 @@ class PopularProductController extends Controller
      */
     public function list(PopularProductService $popularProductService, ProductService $productService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $popularProducts = $popularProductService->popularProducts(
             (new RestQuery())
                 ->addSort('weight', 'desc')
@@ -55,10 +58,12 @@ class PopularProductController extends Controller
 
     /**
      * Добавить новый популярный товар
-     * @return JsonResponse
+     * @throws PimException
      */
-    public function create(PopularProductService $popularProductService, ProductService $productService)
+    public function create(PopularProductService $popularProductService, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'product_id' => [
                 'required',
@@ -141,6 +146,8 @@ class PopularProductController extends Controller
      */
     public function delete(PopularProductService $popularProductService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'ids' => 'required|array',
             'ids.*' => 'required|integer',
@@ -153,10 +160,11 @@ class PopularProductController extends Controller
 
     /**
      * Изменить порядок популярных товаров
-     * @return Response
      */
-    public function reorder(PopularProductService $popularProductService)
+    public function reorder(PopularProductService $popularProductService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'items' => 'required|array',
             'items.*.id' => 'required|integer',

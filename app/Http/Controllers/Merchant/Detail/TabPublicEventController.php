@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Core\PublicEventBillingReport;
 use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -21,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService;
 use Pim\Services\PublicEventService\PublicEventService;
 
@@ -35,6 +37,8 @@ class TabPublicEventController extends Controller
      */
     public function eventBillingList(int $merchantId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $organizersIds = $this->loadOrganizers($merchantId);
         $events = $this->loadEvents($organizersIds);
 
@@ -72,7 +76,7 @@ class TabPublicEventController extends Controller
 
     /**
      * @param $organizersIds
-     * @return \Illuminate\Support\Collection|\Pim\Dto\PublicEvent\PublicEventDto[]
+     * @return Collection|PublicEventDto[]
      * @throws Exception
      */
     private function loadEvents($organizersIds)
@@ -168,10 +172,12 @@ class TabPublicEventController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function downloadEventBillingList(int $merchantId, Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $organizersIds = $this->loadOrganizers($merchantId);
         $events = $this->loadEvents($organizersIds);
         $sprints = [];

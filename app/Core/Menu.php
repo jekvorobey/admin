@@ -3,8 +3,7 @@
 namespace App\Core;
 
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Services\TokenBuilder\TokenBuilder;
-use Greensight\CommonMsa\Services\TokenStore\TokenStore;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 
 class Menu
@@ -15,6 +14,7 @@ class Menu
     {
         return [
             [
+                'id' => BlockDto::ADMIN_BLOCK_PRODUCTS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_PRODUCTS)->name,
                 'items' => [
                     [
@@ -74,6 +74,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_ORDERS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_ORDERS)->name,
                 'items' => [
                     [
@@ -93,9 +94,9 @@ class Menu
                         'route' => route('cargo.list'),
                     ],
                     /* @link https://redmine.greensight.ru/issues/57841 [
-                        'title' => 'Отправления',
-                        'route' => route('shipment.list')
-                    ],*/
+                     * 'title' => 'Отправления',
+                     * 'route' => route('shipment.list')
+                     * ],*/
                     [
                         'title' => 'Справочники',
                         'items' => [
@@ -112,6 +113,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_CLAIMS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CLAIMS)->name,
                 'items' => [
                     ['title' => 'Проверка товаров', 'route' => route('productCheckClaims.list')],
@@ -120,6 +122,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_CONTENT,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CONTENT)->name,
                 'items' => [
                     [
@@ -185,6 +188,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_LOGISTICS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_LOGISTICS)->name,
                 'items' => [
                     [
@@ -210,6 +214,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_STORES,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_STORES)->name,
                 'items' => [
 //                    [
@@ -231,6 +236,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_CLIENTS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CLIENTS)->name,
                 'items' => [
                     [
@@ -257,6 +263,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_REFERRALS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_REFERRALS)->name,
                 'items' => [
                     [
@@ -278,6 +285,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_MERCHANTS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_MERCHANTS)->name,
                 'items' => [
                     [
@@ -299,6 +307,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_MARKETING,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_MARKETING)->name,
                 'items' => [
 //                    [
@@ -362,6 +371,7 @@ class Menu
 //                ],
 //            ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_COMMUNICATIONS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_COMMUNICATIONS)->name,
                 'items' => [
                     [
@@ -395,6 +405,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS)->name,
                 'items' => [
                     [
@@ -425,6 +436,7 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_SETTINGS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_SETTINGS)->name,
                 'active' => false,
                 'items' => [
@@ -481,22 +493,16 @@ class Menu
     private static function checkPermission($items): array
     {
         $allowMenu = [];
-        $token = resolve(TokenStore::class)->token();
-        if (!$token) {
-            return $allowMenu;
+        $blockPermissions = resolve(RequestInitiator::class)->blockPermissions()->pluck('block_id')->toArray();
+        if (empty($blockPermissions)) {
+            return [];
         }
-        $blockPermissions = collect(resolve(TokenBuilder::class)->decodeJwt($token)->blockPermissions);
-        if (!empty($blockPermissions)) {
-            $allBlockPermissions = BlockDto::allBlocks();
-            foreach ($items as $item) {
-                if (isset($item['title'])) {
-                    foreach ($blockPermissions as $blockPermission) {
-                        $blockName = $allBlockPermissions[$blockPermission->block_id]->name;
-                        if ($item['title'] === $blockName) {
-                            $allowMenu[] = $item;
-                        }
-                    }
-                }
+        foreach ($items as $item) {
+            if (!isset($item['id'])) {
+                continue;
+            }
+            if (in_array($item['id'], $blockPermissions)) {
+                $allowMenu[] = $item;
             }
         }
 

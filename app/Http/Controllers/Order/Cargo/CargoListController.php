@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Order\Cargo;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -28,10 +30,12 @@ class CargoListController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(Request $request, CargoService $cargoService, MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->title = 'Грузы';
         $this->loadCargoStatuses = true;
         $this->loadDeliveryServices = true;
@@ -51,10 +55,12 @@ class CargoListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(Request $request, CargoService $cargoService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $restQuery = $this->makeRestQuery($cargoService, $request);
         $cargos = $this->loadCargos($restQuery, $cargoService);
         $result = [
@@ -67,9 +73,6 @@ class CargoListController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * @return array
-     */
     protected function getFilter(bool $withDefault = false): array
     {
         return Validator::make(
@@ -132,7 +135,7 @@ class CargoListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(
         CargoService $cargoService,
@@ -167,6 +170,7 @@ class CargoListController extends Controller
     }
 
     /**
+     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
     public function loadStores(): Collection

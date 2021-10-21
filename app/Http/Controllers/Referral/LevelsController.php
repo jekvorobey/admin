@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -14,11 +15,15 @@ use Greensight\Customer\Services\ReferralService\Dto\PutSpecialCommissionDto;
 use Greensight\Customer\Services\ReferralService\Dto\RemoveCommissionDto;
 use Greensight\Customer\Services\ReferralService\Dto\RemoveSpecialCommissionDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
+use Illuminate\Http\JsonResponse;
+use Greensight\Customer\Dto\ReferralLevelDto;
 
 class LevelsController extends Controller
 {
     public function list(ReferralService $referralService, CustomerService $customerService, UserService $userService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $this->title = 'Вознаграждения';
 
         $levels = $referralService->getLevels()->sortBy('sort')->values();
@@ -42,15 +47,19 @@ class LevelsController extends Controller
         ]);
     }
 
-    public function detail($level_id)
+    public function detail($level_id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         return response()->json([
             'level' => $this->loadLevel($level_id),
         ]);
     }
 
-    public function putLevel($level_id, ReferralService $referralService)
+    public function putLevel($level_id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'sort' => 'required|integer',
             'name' => 'required',
@@ -76,8 +85,10 @@ class LevelsController extends Controller
         ]);
     }
 
-    public function putCommission($level_id, ReferralService $referralService)
+    public function putCommission($level_id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $isGlobal = !(bool) request('customer_id');
         $percent_rule = ($isGlobal ? 'required' : 'nullable') . '|numeric|min:0|max:100';
         $data = $this->validate(request(), [
@@ -112,8 +123,10 @@ class LevelsController extends Controller
         ]);
     }
 
-    public function removeCommission($level_id, ReferralService $referralService)
+    public function removeCommission($level_id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'customer_id' => 'required|integer',
         ], [
@@ -131,8 +144,10 @@ class LevelsController extends Controller
         ]);
     }
 
-    public function putSpecialCommission($level_id, ReferralService $referralService)
+    public function putSpecialCommission($level_id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'is_sum' => 'required|boolean',
             'coefficient' => 'required|numeric|min:0|max:100',
@@ -159,8 +174,10 @@ class LevelsController extends Controller
         ]);
     }
 
-    public function removeSpecialCommission($level_id, ReferralService $referralService)
+    public function removeSpecialCommission($level_id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'product_id' => 'nullable|numeric|required_without:brand_id',
             'brand_id' => 'nullable|numeric|required_without:product_id',
@@ -181,7 +198,7 @@ class LevelsController extends Controller
         ]);
     }
 
-    protected function loadLevel($level_id)
+    protected function loadLevel($level_id): ReferralLevelDto
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);

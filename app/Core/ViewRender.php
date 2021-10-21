@@ -2,8 +2,12 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
@@ -45,48 +49,50 @@ class ViewRender
     private $props;
     private $title;
 
-    private $userRoles = [];
+    private array $userRoles = [];
+    private array $blocks = [];
+    private array $blockPermissions = [];
 
-    private $customerStatus = [];
-    private $customerStatusName = [];
-    private $customerStatusByRole = [];
+    private array $customerStatus = [];
+    private array $customerStatusName = [];
+    private array $customerStatusByRole = [];
 
-    private $communicationChannelTypes = [];
-    private $communicationChannels = [];
-    private $communicationThemes = [];
-    private $communicationStatuses = [];
-    private $communicationTypes = [];
+    private array $communicationChannelTypes = [];
+    private array $communicationChannels = [];
+    private array $communicationThemes = [];
+    private array $communicationStatuses = [];
+    private array $communicationTypes = [];
 
-    private $merchantStatuses = [];
-    private $merchantCommissionTypes = [];
-    private $merchantVatTypes = [];
+    private array $merchantStatuses = [];
+    private array $merchantCommissionTypes = [];
+    private array $merchantVatTypes = [];
 
-    private $publicEventTypes = [];
-    private $publicEventMediaTypes = [];
-    private $publicEventMediaCollections = [];
-    private $publicEventStatus = [];
-    private $publicEventSprintStatus = [];
+    private array $publicEventTypes = [];
+    private array $publicEventMediaTypes = [];
+    private array $publicEventMediaCollections = [];
+    private array $publicEventStatus = [];
+    private array $publicEventSprintStatus = [];
 
-    private $discountTypes = [];
-    private $promoCodeTypes = [];
-    private $promoCodeStatus = [];
-    private $bonusValueTypes = [];
-    private $bonusTypes = [];
-    private $customerBonusStatus = [];
+    private array $discountTypes = [];
+    private array $promoCodeTypes = [];
+    private array $promoCodeStatus = [];
+    private array $bonusValueTypes = [];
+    private array $bonusTypes = [];
+    private array $customerBonusStatus = [];
 
-    private $orderStatuses = [];
-    private $basketTypes = [];
-    private $paymentStatuses = [];
-    private $paymentMethods = [];
-    private $deliveryStatuses = [];
-    private $shipmentStatuses = [];
-    private $cargoStatuses = [];
-    private $deliveryTypes = [];
-    private $deliveryMethods = [];
-    private $deliveryServices = [];
+    private array $orderStatuses = [];
+    private array $basketTypes = [];
+    private array $paymentStatuses = [];
+    private array $paymentMethods = [];
+    private array $deliveryStatuses = [];
+    private array $shipmentStatuses = [];
+    private array $cargoStatuses = [];
+    private array $deliveryTypes = [];
+    private array $deliveryMethods = [];
+    private array $deliveryServices = [];
 
-    private $offerAllSaleStatuses = [];
-    private $offerCountdownSaleStatuses = [];
+    private array $offerAllSaleStatuses = [];
+    private array $offerCountdownSaleStatuses = [];
 
     private $propertyTypes = [];
 
@@ -105,25 +111,45 @@ class ViewRender
 
     public function loadUserRoles($load = false): self
     {
+        $roles = resolve(RoleService::class)->roles();
         if ($load) {
             $this->userRoles = [
                 'admin' => [
-                    'super' => UserDto::ADMIN__SUPER,
-                    'admin' => UserDto::ADMIN__ADMIN,
-                    'manager_merchant' => UserDto::ADMIN__MANAGER_MERCHANT,
-                    'manager_client' => UserDto::ADMIN__MANAGER_CLIENT,
+                    $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
                 ],
                 'mas' => [
-                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
-                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
+                    $roles->where('front', Front::FRONT_MAS)->pluck('id')->toArray(),
                 ],
                 'i_commerce_ml' => [
-                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
+                    $roles->where('front', Front::FRONT_I_COMMERCE_ML)->pluck('id')->toArray(),
                 ],
                 'showcase' => [
-                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
-                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
+                    $roles->where('front', Front::FRONT_SHOWCASE)->pluck('id')->toArray(),
                 ],
+            ];
+        }
+
+        return $this;
+    }
+
+    public function loadBlocks($load = false): self
+    {
+        if ($load) {
+            $this->blocks = BlockDto::allBlocks();
+        }
+
+        return $this;
+    }
+
+    public function loadBlockPermissions($load = false): self
+    {
+        $view = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_VIEW);
+        $update = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_UPDATE);
+
+        if ($load) {
+            $this->blockPermissions = [
+                'view' => array_merge($view, $update),
+                'update' => $update,
             ];
         }
 
@@ -725,12 +751,15 @@ class ViewRender
             $this->props,
             [
                 'menu' => Menu::getMenuItems(),
+                /** TODO брать роли из базы */
                 'user' => [
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
                 ],
 
                 'userRoles' => $this->userRoles,
+                'blocks' => $this->blocks,
+                'blockPermissions' => $this->blockPermissions,
 
                 'customerStatusByRole' => $this->customerStatusByRole,
                 'customerStatusName' => $this->customerStatusName,
@@ -783,7 +812,7 @@ class ViewRender
         );
     }
 
-    private function getAssets()
+    private function getAssets(): array
     {
         if (frontend()->isInDevMode()) {
             return [
@@ -805,6 +834,7 @@ class ViewRender
                     $css = array_filter((array) $webPack[$this->componentName]['css']);
                 }
             }
+
             return [
                 'js' => $js,
                 'css' => $css,

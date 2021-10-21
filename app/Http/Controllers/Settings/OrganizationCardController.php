@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\OptionDto;
 use Cms\Services\OptionService\OptionService;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 
 class OrganizationCardController extends Controller
 {
@@ -51,6 +53,8 @@ class OrganizationCardController extends Controller
      */
     public function index(OptionService $optionService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $this->title = 'Карточка организации iBT.Studio';
 
         $organizationCardKeys = array_values(self::MAPPING_KEYS);
@@ -64,8 +68,13 @@ class OrganizationCardController extends Controller
         return $this->render('Settings/OrganizationCard', $data);
     }
 
-    public function update(OptionService $optionService)
+    /**
+     * @throws CmsException
+     */
+    public function update(OptionService $optionService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $this->validate(request(), [
             'short_name' => 'string',
             'full_name' => 'string',

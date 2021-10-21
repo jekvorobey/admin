@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Order\Detail;
 use App\Http\Controllers\Order\OrderDetailController;
 use Closure;
 use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
@@ -28,10 +29,12 @@ class TabShipmentsController extends OrderDetailController
 {
     /**
      * Обновить отправление
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $this->validate(request(), [
             'delivery_service_zero_mile' => Rule::in(array_keys(DeliveryService::allServices())),
             'psd' => ['required', 'date'],
@@ -53,10 +56,12 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Изменить статус отправления
-     * @throws \Exception
+     * @throws Exception
      */
     public function changeShipmentStatus(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $this->validate(request(), [
             'status' => ['required', Rule::in(array_keys(ShipmentStatus::allStatuses()))],
         ]);
@@ -76,6 +81,8 @@ class TabShipmentsController extends OrderDetailController
      */
     public function barcodes(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $barcodes = $shipmentService->shipmentBarcodes($shipmentId);
 
         return response()->streamDownload(function () use ($barcodes) {
@@ -89,6 +96,8 @@ class TabShipmentsController extends OrderDetailController
      */
     public function cdekReceipt(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $cdekReceipt = $shipmentService->shipmentCdekReceipt($shipmentId);
 
         return response()->streamDownload(function () use ($cdekReceipt) {
@@ -102,6 +111,8 @@ class TabShipmentsController extends OrderDetailController
      */
     public function acceptanceAct(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->getDocumentResponse($shipmentService->shipmentAcceptanceAct($shipmentId));
     }
 
@@ -111,6 +122,8 @@ class TabShipmentsController extends OrderDetailController
      */
     public function assemblingCard(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->getDocumentResponse($shipmentService->shipmentAssemblingCard($shipmentId));
     }
 
@@ -120,6 +133,8 @@ class TabShipmentsController extends OrderDetailController
      */
     public function inventory(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->getDocumentResponse($shipmentService->shipmentInventory($shipmentId));
     }
 
@@ -132,13 +147,15 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Пометить отправление как непроблемное
-     * @throws \Exception
+     * @throws Exception
      */
     public function markAsNonProblemShipment(
         int $orderId,
         int $shipmentId,
         ShipmentService $shipmentService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $shipmentService->markAsNonProblemShipment($shipmentId);
 
         return response()->json([
@@ -148,7 +165,7 @@ class TabShipmentsController extends OrderDetailController
 
     /**
      * Отменить отправление
-     * @throws \Exception
+     * @throws Exception
      */
     public function cancelShipment(
         int $orderId,
@@ -156,6 +173,8 @@ class TabShipmentsController extends OrderDetailController
         Request $request,
         ShipmentService $shipmentService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
         ]);
@@ -178,6 +197,8 @@ class TabShipmentsController extends OrderDetailController
         ShipmentPackageService $shipmentPackageService,
         PackageService $packageService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($orderId, function () use ($shipmentId, $request, $shipmentPackageService, $packageService) {
             $data = $this->validate($request, [
                 'package_id' => ['required', 'integer'],
@@ -209,6 +230,8 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         ShipmentPackageService $shipmentPackageService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $shipmentPackageService) {
             $shipmentPackageService->deleteShipmentPackage($shipmentPackageId);
         });
@@ -225,6 +248,8 @@ class TabShipmentsController extends OrderDetailController
         int $shipmentPackageId,
         Request $request
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);
@@ -268,6 +293,8 @@ class TabShipmentsController extends OrderDetailController
         int $basketItemId,
         Request $request
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($orderId, function () use ($shipmentPackageId, $basketItemId, $request) {
             $shipmentPackageService = resolve(ShipmentPackageService::class);
             $requestInitiator = resolve(RequestInitiator::class);

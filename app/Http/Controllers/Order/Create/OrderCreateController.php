@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order\Create;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -13,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -29,6 +31,8 @@ class OrderCreateController extends Controller
      */
     public function create()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->title = 'Создание заказа';
 
         return $this->render('Order/Create', [
@@ -43,6 +47,8 @@ class OrderCreateController extends Controller
         UserService $userService,
         CustomerService $customerService
     ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $request->all();
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($data, [
@@ -85,7 +91,7 @@ class OrderCreateController extends Controller
     }
 
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function searchProducts(
         Request $request,
@@ -155,6 +161,8 @@ class OrderCreateController extends Controller
 
     public function createOrder(Request $request, BasketService $basketService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         /** @var \Illuminate\Validation\Validator $validator */
         $validator = Validator::make($request->all(), [
             'customer_id' => 'required|integer',

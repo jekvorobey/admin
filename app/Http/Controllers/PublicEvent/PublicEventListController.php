@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
 use Pim\Dto\PublicEvent\PublicEventStatus;
@@ -13,6 +15,8 @@ class PublicEventListController extends Controller
 {
     public function list(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $this->loadPublicEventStatus = true;
         $this->loadPublicEventSprintStatus = true;
 
@@ -42,8 +46,13 @@ class PublicEventListController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
-    {
+    public function page(
+        Request $request,
+        PublicEventService $publicEventService,
+        ShoppilotService $shoppilotService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         $publicEvents = $this->loadPublicEvents($publicEventService, $page);
 
@@ -65,8 +74,10 @@ class PublicEventListController extends Controller
         ]);
     }
 
-    public function load(PublicEventService $publicEventService)
+    public function load(PublicEventService $publicEventService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         return response()->json([
             'events' => $publicEventService->query()->get(),
         ]);
@@ -89,6 +100,7 @@ class PublicEventListController extends Controller
         $result = $publicEventService
             ->query()
             ->count();
+
         return $result['total'] ?? 0;
     }
 }

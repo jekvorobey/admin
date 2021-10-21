@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order\Shipment;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -36,6 +37,8 @@ class ShipmentListController extends Controller
      */
     public function index(ShipmentService $shipmentService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->loadShipmentStatuses = true;
         $this->loadDeliveryMethods = true;
         $this->loadDeliveryTypes = true;
@@ -64,6 +67,8 @@ class ShipmentListController extends Controller
      */
     public function page(ShipmentService $shipmentService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $restQuery = $this->createQuery($shipmentService, /** todo */true);
         [
             $this->shipments,
@@ -133,7 +138,6 @@ class ShipmentListController extends Controller
 
     /**
      * Прочитать и проверить переданные правила фильтрации
-     * @return array
      * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -178,7 +182,6 @@ class ShipmentListController extends Controller
 
     /**
      * Получить порцию данных, соответствующую запросу
-     * @return array
      */
     protected function loadData(DataQuery $restQuery): array
     {

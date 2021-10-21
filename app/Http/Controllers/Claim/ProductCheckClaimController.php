@@ -7,7 +7,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\ProductCheckClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
@@ -30,13 +29,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class ProductCheckClaimController extends Controller
 {
-    private RequestInitiator $requestInitiator;
-
-    public function __construct(RequestInitiator $requestInitiator)
-    {
-        $this->requestInitiator = $requestInitiator;
-    }
-
     /**
      * @return mixed
      */
@@ -46,8 +38,7 @@ class ProductCheckClaimController extends Controller
         MerchantService $merchantService,
         UserService $userService
     ) {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $this->title = 'Заявки на проверку товаров';
 
@@ -74,8 +65,7 @@ class ProductCheckClaimController extends Controller
 
     public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $this->prepareQuery($request, $claimService);
         $result = [
@@ -84,6 +74,7 @@ class ProductCheckClaimController extends Controller
         if ($request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
         }
+
         return response()->json($result);
     }
 
@@ -92,8 +83,7 @@ class ProductCheckClaimController extends Controller
      */
     public function detail(int $id, ClaimService $claimService, UserService $userService)
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
@@ -158,8 +148,7 @@ class ProductCheckClaimController extends Controller
         UserService $userService,
         ProductService $productService
     ): JsonResponse {
-        /** Проверка разрешения */
-        $this->requestInitiator->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $result = 'ok';
         $claim = [];
@@ -238,9 +227,6 @@ class ProductCheckClaimController extends Controller
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
     {
-        /** Проверка разрешения */
-        $this->requestInitiator->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
-
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();
 

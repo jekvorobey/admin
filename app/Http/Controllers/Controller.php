@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Core\ViewRender;
-use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -49,13 +48,6 @@ class Controller extends BaseController
     protected bool $loadDeliveryServices = false;
     protected bool $loadOfferSaleStatuses = false;
     protected bool $loadPropertyTypes = false;
-
-    private RequestInitiator $requestInitiator;
-
-    private function __construct(RequestInitiator $requestInitiator)
-    {
-        $this->requestInitiator = $requestInitiator;
-    }
 
     public function render($componentName, $props = [])
     {
@@ -129,18 +121,19 @@ class Controller extends BaseController
         return $merchants;
     }
 
-    protected function checkPermission(int $permission, int $block): bool
+    protected function canView(int $block): bool
     {
-        $state = true;
-        switch ($permission) {
-            case PermissionDto::PERMISSION_VIEW:
-                $state = $this->requestInitiator->canView($block);
-                break;
-            case PermissionDto::PERMISSION_UPDATE:
-                $state = $this->requestInitiator->canUpdate($block);
-                break;
+        $state = resolve(RequestInitiator::class)->canView($block);
+        if ($state === false) {
+            abort(403, 'Недостаточно прав');
         }
 
+        return true;
+    }
+
+    protected function canUpdate(int $block): bool
+    {
+        $state = resolve(RequestInitiator::class)->canUpdate($block);
         if ($state === false) {
             abort(403, 'Недостаточно прав');
         }

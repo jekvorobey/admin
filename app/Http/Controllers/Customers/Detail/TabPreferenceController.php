@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -24,8 +25,6 @@ use Pim\Services\SearchService\SearchService;
 class TabPreferenceController extends Controller
 {
     /**
-     * @param $id
-     * @return JsonResponse
      * @throws PimException
      */
     public function load(
@@ -35,7 +34,9 @@ class TabPreferenceController extends Controller
         CustomerService $customerService,
         ProductService $productService,
         Request $request
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $brands = $brandService->brands((new RestQuery())->addFields(BrandDto::entity(), 'id', 'name'));
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
@@ -58,7 +59,10 @@ class TabPreferenceController extends Controller
         ]);
     }
 
-    protected function loadFavoriteItems(RestQuery $query, ProductService $productService)
+    /**
+     * @throws PimException
+     */
+    protected function loadFavoriteItems(RestQuery $query, ProductService $productService): Collection
     {
         /** @var Collection $products */
         $products = $productService->products($query);
@@ -67,7 +71,8 @@ class TabPreferenceController extends Controller
         if ($productIds) {
             $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
         }
-        $products = $products->map(function (ProductDto $product) use ($images) {
+
+        return $products->map(function (ProductDto $product) use ($images) {
             $data = $product->toArray();
             $data['approvalStatusName'] = $product->approvalStatus()->name;
             $data['updated_at'] = (new Carbon($product->updated_at))->toISOString();
@@ -75,10 +80,9 @@ class TabPreferenceController extends Controller
 
             return $data;
         });
-        return $products;
     }
 
-    protected function makeFavoriteProductQuery(Request $request, $favoriteItems)
+    protected function makeFavoriteProductQuery(Request $request, $favoriteItems): RestQuery
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);
@@ -98,6 +102,8 @@ class TabPreferenceController extends Controller
      */
     public function putBrands(int $id, int $prefType, CustomerService $customerService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'brands' => 'array',
             'brands.*' => 'integer',
@@ -113,6 +119,8 @@ class TabPreferenceController extends Controller
      */
     public function putCategories(int $id, int $prefType, CustomerService $customerService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'categories' => 'array',
             'categories.*' => 'integer',
@@ -125,24 +133,33 @@ class TabPreferenceController extends Controller
 
     public function addFavoriteItem(CustomerService $customerService, $id, $product_id)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $customerService->addToFavorites($id, $product_id);
+
         return response('', 204);
     }
 
     public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $customerService->deleteFromFavorites($id, $product_id);
+
         return response('', 204);
     }
 
-    public function searchItem(Request $request, SearchService $searchService)
+    public function searchItem(Request $request, SearchService $searchService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $query = $this->makeFavoriteProductQuery($request);
         $productSearchResult = $searchService->products($query);
         $data = [
             'products' => $productSearchResult->products,
             'total' => $productSearchResult->total,
         ];
+
         return response()->json($data);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -31,11 +33,12 @@ class TabOrderController extends Controller
     /**
      * AJAX подгрузка информации для фильтрации отправлений
      *
-     * @return JsonResponse
-     * @throws \Exception
+     * @throws Exception
      */
-    public function loadOrdersData(int $merchantId, Request $request)
+    public function loadOrdersData(int $merchantId, Request $request): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $this->makeRestQuery($request, $merchantId);
 
         return response()->json([
@@ -51,10 +54,12 @@ class TabOrderController extends Controller
     /**
      * AJAX пагинация списка заказов
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(int $merchantId, Request $request, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $this->makeRestQuery($request, $merchantId);
         $shipments = $this->loadShipments($restQuery);
         $result = [
@@ -67,9 +72,6 @@ class TabOrderController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * @return array
-     */
     protected function getCustomersNames(DataQuery $restQuery): array
     {
         /** @var ShipmentService $shipmentService */
@@ -116,10 +118,13 @@ class TabOrderController extends Controller
     }
 
     /**
+     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
     public function loadStores(int $merchantId): Collection
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var Collection|StoreDto[] $stores */
         static $stores = null;
 
@@ -137,7 +142,7 @@ class TabOrderController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(Request $request, int $merchantId): DataQuery
     {
@@ -327,7 +332,7 @@ class TabOrderController extends Controller
         $customers = $customers->all();
         $users = $users->all();
 
-        $shipments = $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores) {
+        return $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores) {
             $delivery = $shipment->delivery();
 
             $data['order'] = [
@@ -401,7 +406,5 @@ class TabOrderController extends Controller
 
             return $data;
         });
-
-        return $shipments;
     }
 }

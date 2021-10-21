@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Product\VariantGroup\Detail;
 
 use App\Http\Controllers\Product\VariantGroup\VariantGroupDetailController;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Pim\Core\PimException;
 use Pim\Dto\Product\VariantGroupDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\ProductService\ProductService;
@@ -35,10 +38,12 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function load(int $variantGroupId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $propertiesQuery = $this->productService->newQuery()
             ->addFields(PropertyDto::entity(), 'id', 'name');
         $properties = $this->productService->getProperties($propertiesQuery);
@@ -122,20 +127,24 @@ class TabPropertiesController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function add(int $variantGroupId, int $propertyId): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->variantGroupService->addProperty($variantGroupId, $propertyId);
 
         return $this->load($variantGroupId);
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(int $variantGroupId, Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'propertyIds' => ['array', 'required'],
             'propertyIds.*' => ['integer'],
