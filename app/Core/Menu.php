@@ -494,7 +494,7 @@ class Menu
     {
         $allowMenu = [];
         $allowBlockIds = resolve(RequestInitiator::class)->blockPermissions()->pluck('block_id')->toArray();
-        if (empty($blockPermissions)) {
+        if (empty($allowBlockIds)) {
             return [];
         }
         foreach ($items as $item) {
