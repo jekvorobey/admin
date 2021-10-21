@@ -135,26 +135,36 @@ class ViewRender
         return $this;
     }
 
-    public function loadBlocks($load = false): self
+    public function loadBlocks(): self
     {
-        if ($load) {
-            $this->blocks = BlockDto::allBlocks();
-        }
+        $this->blocks = [
+            'products' => BlockDto::ADMIN_BLOCK_PRODUCTS,
+            'orders' => BlockDto::ADMIN_BLOCK_ORDERS,
+            'claims' => BlockDto::ADMIN_BLOCK_CLAIMS,
+            'content' => BlockDto::ADMIN_BLOCK_CONTENT,
+            'logistics' => BlockDto::ADMIN_BLOCK_LOGISTICS,
+            'stores' => BlockDto::ADMIN_BLOCK_STORES,
+            'clients' => BlockDto::ADMIN_BLOCK_CLIENTS,
+            'referrals' => BlockDto::ADMIN_BLOCK_REFERRALS,
+            'merchants' => BlockDto::ADMIN_BLOCK_MERCHANTS,
+            'marketing' => BlockDto::ADMIN_BLOCK_MARKETING,
+            'communications' => BlockDto::ADMIN_BLOCK_COMMUNICATIONS,
+            'events' => BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS,
+            'settings' => BlockDto::ADMIN_BLOCK_SETTINGS,
+        ];
 
         return $this;
     }
 
-    public function loadBlockPermissions($load = false): self
+    public function loadBlockPermissions(): self
     {
         $view = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_VIEW);
         $update = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_UPDATE);
 
-        if ($load) {
-            $this->blockPermissions = [
-                'view' => array_merge($view, $update),
-                'update' => $update,
-            ];
-        }
+        $this->blockPermissions = [
+            'view' => array_merge($view, $update),
+            'update' => $update,
+        ];
 
         return $this;
     }

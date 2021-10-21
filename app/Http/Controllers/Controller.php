@@ -54,6 +54,8 @@ class Controller extends BaseController
         return (new ViewRender($componentName, $props))
             ->setTitle($this->title)
             ->loadUserRoles($this->loadUserRoles)
+            ->loadBlocks()
+            ->loadBlockPermissions()
             ->loadCustomerStatus($this->loadCustomerStatus)
             ->loadCommunicationChannelTypes($this->loadCommunicationChannelTypes)
             ->loadCommunicationChannels($this->loadCommunicationChannels)

@@ -219,6 +219,7 @@ class ContentClaimController extends Controller
             'products' => $products,
             'history' => $history,
             'historyMeta' => ClaimHistoryTypeDto::claimHistoryMeta(),
+            /** TODO изменить на роли из базы */
             'roleNames' => UserDto::roles(),
         ]);
     }
@@ -429,6 +430,7 @@ class ContentClaimController extends Controller
         $userNames = $userService->users($usersQuery)->keyBy('id');
 
         return $history->map(function (ClaimHistoryDto $event) use ($userNames, $usersRoles) {
+            /** TODO ошибка Trying to access array offset on value of type null */
             $event['userRoleId'] = $usersRoles[$event->user_id]['id'];
             $event['userName'] = $userNames->has($event->user_id) ? $userNames->get($event->user_id)->short_name : 'N/A';
             return $event;

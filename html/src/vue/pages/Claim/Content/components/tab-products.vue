@@ -13,10 +13,13 @@
             <tbody>
             <tr v-for="item in products">
                 <td>{{ item.id }}</td>
-                <td>
+                <td v-if="canView(blocks.products)">
                     <a :href="getRoute('products.detail', {id: item.id})">
                         {{ item.name }}
                     </a>
+                </td>
+                <td v-else>
+                    {{ item.name }}
                 </td>
                 <td>{{ item.vendor_code ? item.vendor_code : 'N/A' }}</td>
                 <td>{{ item.brand ? item.brand.name : 'N/A' }}</td>
