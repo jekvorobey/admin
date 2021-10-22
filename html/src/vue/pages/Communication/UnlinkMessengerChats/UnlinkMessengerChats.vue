@@ -7,7 +7,7 @@
                 <th>Тема</th>
                 <th>Канал</th>
                 <th>Последнее сообщение</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.communications)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -19,7 +19,7 @@
                     <td @click="openChat(chat)">
                         {{ datePrint(chat.messages[chat.messages.length-1].created_at) }}
                     </td>
-                    <td>
+                    <td v-if="canUpdate(blocks.communications)">
                         <b-button
                                 class="btn btn-info btn-sm"
                                 v-b-modal.modal-select-user

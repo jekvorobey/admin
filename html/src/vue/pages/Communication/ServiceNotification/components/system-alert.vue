@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.communications)">
             <button class="btn btn-success" @click="createAlert" v-if="!alertExists">Добавить предупреждение</button>
         </div>
         <table class="table" v-if="alertExists">
@@ -11,7 +11,7 @@
                     <th>Тело</th>
                     <th>Ссылка</th>
                     <th>Тип</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.communications)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,7 +21,7 @@
                     <td>{{alert.body}}</td>
                     <td>{{alert.url}}</td>
                     <td>{{typeName(alert.type)}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.communications)">
                         <v-delete-button @delete="() => onDeleteAlert([alert.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editAlert(alert)">
                             <fa-icon icon="edit"></fa-icon>

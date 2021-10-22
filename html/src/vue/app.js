@@ -86,9 +86,6 @@ Vue.mixin({
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
         },
-        getBlockName(block) {
-            return !!this.blockPermissions.view.includes(block);
-        },
         canView(block) {
             return !!this.blockPermissions.view.includes(block);
         },

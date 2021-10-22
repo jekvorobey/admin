@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <b-row class="mb-2">
+        <b-row class="mb-2" v-if="canUpdate(blocks.communications)">
             <b-col>
                 <button class="btn btn-success btn-sm" @click="createStatus()"><fa-icon icon="plus"/></button>
             </b-col>
@@ -12,7 +12,7 @@
                 <th>Активность</th>
                 <th>По умолчанию</th>
                 <th>Канал</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.communications)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -21,7 +21,7 @@
                 <td>{{ status.active ? 'да' : 'нет' }}</td>
                 <td>{{ status.default ? 'да' : 'нет' }}</td>
                 <td>{{ status.channel_id ? channels[status.channel_id].name : '-' }}</td>
-                <td>
+                <td v-if="canUpdate(blocks.communications)">
                     <button class="btn btn-warning btn-sm" @click="editStatus(status)"><fa-icon icon="edit"/></button>
                     <v-delete-button @delete="deleteStatus(status.id)" btn-class="btn-danger btn-sm"/>
                 </td>
