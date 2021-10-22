@@ -15,8 +15,11 @@
                 <tr v-for="menu in menus">
                     <td>{{menu.id}}</td>
                     <td>{{menu.code}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.content)">
                         <a :href="getRoute('menu.detail', {id: menu.id})">{{menu.name}}</a>
+                    </td>
+                    <td v-else>
+                        {{menu.name}}
                     </td>
                 </tr>
             </tbody>

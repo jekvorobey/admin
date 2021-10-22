@@ -49,52 +49,52 @@ class ViewRender
     private $props;
     private $title;
 
-    private array $userRoles = [];
-    private array $blocks = [];
-    private array $blockPermissions = [];
+    private $userRoles = [];
+    private $blocks = [];
+    private $blockPermissions = [];
 
-    private array $customerStatus = [];
-    private array $customerStatusName = [];
-    private array $customerStatusByRole = [];
+    private $customerStatus = [];
+    private $customerStatusName = [];
+    private $customerStatusByRole = [];
 
-    private array $communicationChannelTypes = [];
-    private array $communicationChannels = [];
-    private array $communicationThemes = [];
-    private array $communicationStatuses = [];
-    private array $communicationTypes = [];
+    private $communicationChannelTypes = [];
+    private $communicationChannels = [];
+    private $communicationThemes = [];
+    private $communicationStatuses = [];
+    private $communicationTypes = [];
 
-    private array $merchantStatuses = [];
-    private array $merchantCommissionTypes = [];
-    private array $merchantVatTypes = [];
+    private $merchantStatuses = [];
+    private $merchantCommissionTypes = [];
+    private $merchantVatTypes = [];
 
-    private array $publicEventTypes = [];
-    private array $publicEventMediaTypes = [];
-    private array $publicEventMediaCollections = [];
-    private array $publicEventStatus = [];
-    private array $publicEventSprintStatus = [];
+    private $publicEventTypes = [];
+    private $publicEventMediaTypes = [];
+    private $publicEventMediaCollections = [];
+    private $publicEventStatus = [];
+    private $publicEventSprintStatus = [];
 
-    private array $discountTypes = [];
-    private array $promoCodeTypes = [];
-    private array $promoCodeStatus = [];
-    private array $bonusValueTypes = [];
-    private array $bonusTypes = [];
-    private array $customerBonusStatus = [];
+    private $discountTypes = [];
+    private $promoCodeTypes = [];
+    private $promoCodeStatus = [];
+    private $bonusValueTypes = [];
+    private $bonusTypes = [];
+    private $customerBonusStatus = [];
 
-    private array $orderStatuses = [];
-    private array $basketTypes = [];
-    private array $paymentStatuses = [];
-    private array $paymentMethods = [];
-    private array $deliveryStatuses = [];
-    private array $shipmentStatuses = [];
-    private array $cargoStatuses = [];
-    private array $deliveryTypes = [];
-    private array $deliveryMethods = [];
-    private array $deliveryServices = [];
+    private $orderStatuses = [];
+    private $basketTypes = [];
+    private $paymentStatuses = [];
+    private $paymentMethods = [];
+    private $deliveryStatuses = [];
+    private $shipmentStatuses = [];
+    private $cargoStatuses = [];
+    private $deliveryTypes = [];
+    private $deliveryMethods = [];
+    private $deliveryServices = [];
 
-    private array $offerAllSaleStatuses = [];
-    private array $offerCountdownSaleStatuses = [];
+    private $offerAllSaleStatuses = [];
+    private $offerCountdownSaleStatuses = [];
 
-    private array $propertyTypes = [];
+    private $propertyTypes = [];
 
     public function __construct($componentName, $props)
     {

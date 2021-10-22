@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <div class="row mb-3">
-            <div class="col-6" style="text-align: left">
+            <div class="col-6" style="text-align: left" v-if="canUpdate(blocks.content)">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalEdit(null)">
                     Добавить запрос
@@ -12,7 +12,7 @@
                     Удалить запросы
                 </button>
             </div>
-            <div class="col-6" style="text-align: right">
+            <div class="col-6" style="text-align: right" v-if="canUpdate(blocks.content)">
                 <button v-if="itemsOrder.length > 0"
                         class="btn btn-dark"
                         @click="reorderItems">
@@ -41,7 +41,7 @@
             <tr>
                 <td></td>
                 <th>Текст запроса</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.content)">Действия</th>
             </tr>
             </thead>
                 <draggable v-model="searchRequests"
@@ -56,7 +56,7 @@
                                    @change="e => massCheckbox(e, massSearchRequestType, searchRequest.id)"/>
                         </td>
                         <td>{{searchRequest.text}}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.content)">
                             <button class="btn btn-info btn-md"
                                     @click="onShowModalEdit(searchRequest)">
                                 <fa-icon icon="pencil-alt"/>

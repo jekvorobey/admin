@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <b-row class="mb-2">
+        <b-row class="mb-2" v-if="canUpdate(blocks.communications)">
             <b-col>
                 <button class="btn btn-success btn-sm" @click="createTheme()"><fa-icon icon="plus"/></button>
             </b-col>

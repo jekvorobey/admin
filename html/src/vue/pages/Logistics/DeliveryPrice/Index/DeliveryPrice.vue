@@ -2,12 +2,12 @@
     <layout-main back>
         <div>
             <button class="btn btn-primary mb-3"
-                    v-if="!isEdit"
+                    v-if="!isEdit && canUpdate(blocks.logistics)"
                     @click="edit()">
                 <fa-icon icon="edit"></fa-icon> Редактировать
             </button>
             <button class="btn btn-primary mb-3"
-                    v-if="isEdit"
+                    v-if="isEdit && canUpdate(blocks.logistics)"
                     @click="edit(false)">
                 <fa-icon icon="save"></fa-icon> Сохранить
             </button>

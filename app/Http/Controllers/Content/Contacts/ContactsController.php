@@ -19,14 +19,16 @@ class ContactsController extends Controller
 {
     /**
      * Список всех контактов и соц. сетей
+     * @return mixed
      */
-    public function list(ContactsService $contactsService): JsonResponse
+    public function list(ContactsService $contactsService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $contacts = $contactsService->getContacts()->keyBy('id');
 
         $this->title = 'Управление соц. сетями и контактами';
+
         return $this->render('Content/Contacts', [
             'iContacts' => $contacts,
             'iContactTypes' => ContactDto::contactTypes(),

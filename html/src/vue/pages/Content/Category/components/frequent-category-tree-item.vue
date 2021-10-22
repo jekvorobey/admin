@@ -34,6 +34,7 @@
                 <div v-if="item.image" class="mb-2">
                     <img :data-src="item.image.url" class="lazyload" style="max-width: 75px;"/>
                     <v-delete-button
+                            v-if="canUpdate(blocks.content)"
                             btn-class="btn-danger btn-sm"
                             @delete="onDeleteImage"/>
                 </div>
