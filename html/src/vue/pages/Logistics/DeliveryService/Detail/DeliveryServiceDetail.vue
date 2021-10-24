@@ -9,7 +9,7 @@
             </b-col>
         </b-row>
 
-        <b-card no-body>
+        <b-card no-body v-if="canUpdate(blocks.logistics)">
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-settings v-if="key === 'settings'" :model.sync="deliveryService"/>

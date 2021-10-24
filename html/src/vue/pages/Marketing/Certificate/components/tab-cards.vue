@@ -82,7 +82,7 @@
         <th>Сообщение</th>
         <th>Email</th>
         <th>Телефон</th>
-        <th>Консоль</th>
+        <th v-if="canUpdate(blocks.marketing)">Консоль</th>
       </tr>
       </thead>
 

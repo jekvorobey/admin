@@ -1,5 +1,5 @@
 <template>
-    <transition name="modal">
+    <transition name="modal" v-if="canUpdate(blocks.settings)">
         <modal :close="closeModal" v-if="isModalOpen('userAdd')">
             <div slot="header">
                 {{source ? 'Редактирование пользователя' : 'Добавление пользователя'}}

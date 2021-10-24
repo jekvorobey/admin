@@ -28,6 +28,8 @@ class OptionsController extends Controller
      */
     public function save(OptionService $optionService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $optionService->put(OptionDto::KEY_SHOWCASE_LK_RP_LEVEL_SHOW, (bool) request('rp', 0));
         $optionService->put(OptionDto::KEY_SHOWCASE_LK_ORDER_LEVEL_SHOW, (bool) request('order', 0));
 

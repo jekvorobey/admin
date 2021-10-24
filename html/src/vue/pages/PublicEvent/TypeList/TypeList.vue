@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="createType">Создать тип события</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано типов события: {{massAll(massSelectionType).length}}</span>
@@ -28,7 +28,7 @@
                     <td>{{type.name}}</td>
                     <td>{{type.code}}</td>
                     
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => deleteTypes([type.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editType(type)">
                             <fa-icon icon="edit"></fa-icon>

@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="createSpeaker">Добавить спикера</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано спикеров: {{massAll(massSelectionType).length}}</span>
@@ -21,7 +21,7 @@
                     <th>Instagram</th>
                     <th>Facebook</th>
                     <th>LinkedIn</th>
-                    <th class="text-right">Действия</th>
+                    <th v-if="canUpdate(blocks.events)" class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
                     <td>{{speaker.instagram}}</td>
                     <td>{{speaker.facebook}}</td>
                     <td>{{speaker.linkedin}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => deleteSpeakers([speaker.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editSpeaker(speaker)">
                             <fa-icon icon="edit"></fa-icon>

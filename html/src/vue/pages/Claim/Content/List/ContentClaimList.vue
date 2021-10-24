@@ -93,7 +93,7 @@
                     <td><a :href="getRoute('contentClaims.detail', {id: claim.id})">{{ claim.id }}</a></td>
                     <td>{{ typeName(claim.type) }}</td>
                     <td><span class="badge" :class="statusClass(claim.status)">{{ statusName(claim.status) }}</span></td>
-                    <td v-if="canView(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: claim.merchantId})">{{ claim.merchantName }}</a></td>
+                    <td v-if="canUpdate(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: claim.merchantId})">{{ claim.merchantName }}</a></td>
                     <td v-else>{{ claim.merchantName }}</td>
                     <td>{{ claim.product_ids.length }}</td>
                     <td>{{ unpackName(claim.unpacking) }}</td>

@@ -4,7 +4,7 @@
             <b-col>
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
-            <b-col>
+            <b-col v-if="canUpdate(blocks.logistics)">
                 <div class="float-right">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
