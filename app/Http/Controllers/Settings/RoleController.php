@@ -58,7 +58,7 @@ class RoleController extends Controller
      */
     public function detail(int $id, RoleService $roleService)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $roleQuery = new RestQuery();
         $roleQuery->setFilter('id', $id);

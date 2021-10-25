@@ -300,7 +300,7 @@ class CustomerDetailController extends Controller
 
     public function referral($id, ReferralService $referralService): JsonResponse
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
         $referralService->makeReferral($id);
 
@@ -314,6 +314,8 @@ class CustomerDetailController extends Controller
 
     public function professional($id, ReferralService $referralService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $referralService->makeProfessional($id);
 
         return response('', 204);

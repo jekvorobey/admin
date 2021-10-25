@@ -73,7 +73,7 @@
                 <span class="float-right">Всего товарных групп: {{ pager.total }}.</span>
             </template>
         </b-card>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.products)">
             <div>
                 <button class="btn btn-success" v-b-modal.modal-add-variant-group>
                     <fa-icon icon="plus"></fa-icon> Создать товарную группу
@@ -93,7 +93,7 @@
                             <fa-icon v-if="column.description" icon="question-circle"
                                      v-b-popover.hover="column.description"></fa-icon>
                         </th>
-                        <th>
+                        <th v-if="canUpdate(blocks.products)">
                             <button class="btn btn-light float-right" @click="showChangeColumns">
                                 <fa-icon icon="cog"></fa-icon>
                             </button>
@@ -107,21 +107,39 @@
                                 :value="variantGroup.id"></td>
                         <td v-for="column in columns" v-if="column.isShown">
                             <template v-if="column.code === 'id'">
-                                <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
-                                    {{variantGroup.id}}
-                                </a>
+                                <div v-if="canUpdate(blocks.products)">
+                                    <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
+                                        {{ variantGroup.id }}
+                                    </a>
+                                </div>
+                                <div v-if="!canUpdate(blocks.products)">
+                                    {{ variantGroup.id }}
+                                </div>
                             </template>
                             <template v-else-if="column.code === 'name'">
-                                <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
-                                    {{variantGroup.name}}
-                                </a>
-                                <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
+                                <div v-if="canUpdate(blocks.products)">
+                                  <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
+                                      {{variantGroup.name}}
+                                  </a>
+                                  <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
+                                </div>
+                                <div v-if="!canUpdate(blocks.products)">
+                                  {{variantGroup.name}}
+                                  <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
+                                </div>
                             </template>
                             <template v-else-if="column.code === 'merchant'">
-                                <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant">
+                                <div v-if="variantGroup.merchant && canUpdate(blocks.products)">
+                                  <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})">
                                     {{variantGroup.merchant.legal_name}}
-                                </a>
-                                <template v-else>N/A</template>
+                                  </a>
+                                </div>
+                                <div v-if="variantGroup.merchant && !canUpdate(blocks.products)">
+                                  {{variantGroup.merchant.legal_name}}
+                                </div>
+                                <div v-if="!variantGroup.merchant">
+                                  <template>N/A</template>
+                                </div>
                             </template>
                             <template v-else-if="column.code === 'properties'">
                                 <p v-for="property in variantGroup.properties">{{property.name}}</p>
@@ -148,7 +166,7 @@
                             </template>
                             <div v-else v-html="column.value(variantGroup)"></div>
                         </td>
-                        <td>
+                        <td v-if="canUpdate(blocks.products)">
                             <v-delete-button @delete="deleteVariantGroups([variantGroup.id])" btn-class="btn-danger"/>
                         </td>
                     </tr>

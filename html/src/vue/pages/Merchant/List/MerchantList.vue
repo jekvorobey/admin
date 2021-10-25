@@ -33,7 +33,7 @@
             Всего: {{ pager.total }}. <span v-if="selectedMerchantIds.length">Выбрано: {{selectedMerchantIds.length}}</span>
         </div>
 
-        <div class="btn-toolbar mb-3">
+        <div class="btn-toolbar mb-3" v-if="canUpdate(blocks.merchants)">
             <div class="input-group">
                 <select class="custom-select" v-model="newStatus">
                     <option :value="null">Выбрать статус</option>
@@ -72,7 +72,8 @@
                 </td>
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.created_at }}</td>
-                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
+                <td v-if="canUpdate(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
+                <td v-else>{{ merchant.legal_name }}</td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.email : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.phone : '' }}</td>

@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <div class="row mb-3">
-            <div class="col-6" style="text-align: left">
+            <div class="col-6" style="text-align: left" v-if="canUpdate(blocks.content)">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalEdit(null)">
                     Добавить бренд
@@ -13,7 +13,7 @@
                 </button>
             </div>
             <div class="col-6" style="text-align: right">
-                <button v-if="itemsOrder.length > 0"
+                <button v-if="itemsOrder.length > 0 && canUpdate(blocks.content)"
                         class="btn btn-dark"
                         @click="reorderItems">
                     <template v-if="!isReordering">
@@ -43,7 +43,7 @@
                 <th>Логотип</th>
                 <th>Название</th>
                 <th>Показывать логотип</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.content)">Действия</th>
             </tr>
             </thead>
                 <draggable v-model="popularBrands"
@@ -62,7 +62,7 @@
                         <td>
                             {{ popularBrand.show_logo ? "Да" : "Нет" }}
                         </td>
-                        <td>
+                        <td v-if="canUpdate(blocks.content)">
                             <button class="btn btn-info btn-md"
                                     @click="onShowModalEdit(popularBrand)">
                                 <fa-icon icon="pencil-alt"/>

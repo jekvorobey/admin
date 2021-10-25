@@ -6,7 +6,7 @@
                 Мерчант
             </th>
             <th>PPT (мин) <fa-icon icon="question-circle" v-b-popover.hover="helpPpt"></fa-icon></th>
-            <th></th>
+            <th v-if="canUpdate(blocks.logistics)"></th>
         </tr>
         </thead>
         <tbody>
@@ -17,7 +17,7 @@
             <td>
                 <v-input type="number" v-model.number="$v.form[deliveryKpiPpt.merchant_id].ppt.$model" :error="errorPpt(deliveryKpiPpt.merchant_id)"></v-input>
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.logistics)">
                 <button class="btn btn-success btn-sm" @click="save(deliveryKpiPpt.merchant_id)" :disabled="!$v.form[deliveryKpiPpt.merchant_id].$anyDirty" title="Сохранить">
                     <fa-icon icon="save"/>
                 </button>

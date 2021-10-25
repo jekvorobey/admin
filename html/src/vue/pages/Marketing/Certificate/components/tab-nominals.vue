@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a class="btn btn-success" :href="createLink">Создать номинал</a>
             </div>
@@ -16,7 +16,7 @@
                 <th>Период активации (дни)</th>
                 <th>Доступные дизайны</th>
                 <th>Доступно (шт)</th>
-                <th></th>
+                <th v-if="canUpdate(blocks.marketing)"><!--кнопки действий--></th>
             </tr>
             </thead>
 

@@ -14,7 +14,7 @@
                 </template>
             </div>
         </div>
-        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
+        <v-tabs v-if="canUpdate(blocks.events)" :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
         <main-tab
                 v-if="nav.currentTab === 'main'"
                 :public-event="publicEvent"

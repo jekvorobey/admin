@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="mb-3">
+        <div class="mb-3" v-if="canUpdate(blocks.settings)">
             <button @click="openModal('roleAdd')" class="btn btn-success"><fa-icon icon="plus"/> Добавить роль</button>
             <span class="float-right">Всего ролей: {{ pager.total }}. <span v-if="selectedItems.length">Выбрано: {{selectedItems.length}}</span></span>
         </div>
@@ -20,8 +20,9 @@
                            @change="e => selectItem(e, role.id)">
                 </td>
                 <td>{{ role.id }}</td>
-                <td><a :href="getRoute('settings.roleDetail', {id: role.id})">{{ role.name }}</a></td>
-                <td>{{ frontName(role.front) }}</td>
+                <td v-if="canUpdate(blocks.settings)"><a :href="getRoute('settings.roleDetail', {id: role.id})">{{ role.name }}</a></td>
+                <td v-else>{{ role.name }}</td>
+              <td>{{ frontName(role.front) }}</td>
             </tr>
             </tbody>
         </table>

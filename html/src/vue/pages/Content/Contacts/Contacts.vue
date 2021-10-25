@@ -2,7 +2,7 @@
     <layout-main>
         <table class="table">
             <thead>
-            <tr class="table-secondary">
+            <tr class="table-secondary" v-if="canUpdate(blocks.content)">
                 <th colspan="5" style="text-align: right">
                     <button class="btn btn-success btn-bg"
                             @click="openContactEditModal(null)">
@@ -15,7 +15,7 @@
                 <th>Адрес / Телефон</th>
                 <th>Иконка</th>
                 <th>Тип</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.content)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
                         {{ contact_types[contact.type] || 'Другое' }}
                     </span>
                 </td>
-                <td>
+                <td v-if="canUpdate(blocks.content)">
                     <button class="btn btn-sm btn-success"
                             @click="openContactEditModal(contact.id)">
                         <fa-icon icon="pencil-alt"/>

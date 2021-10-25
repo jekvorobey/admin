@@ -49,52 +49,52 @@ class ViewRender
     private $props;
     private $title;
 
-    private array $userRoles = [];
-    private array $blocks = [];
-    private array $blockPermissions = [];
+    private $userRoles = [];
+    private $blocks = [];
+    private $blockPermissions = [];
 
-    private array $customerStatus = [];
-    private array $customerStatusName = [];
-    private array $customerStatusByRole = [];
+    private $customerStatus = [];
+    private $customerStatusName = [];
+    private $customerStatusByRole = [];
 
-    private array $communicationChannelTypes = [];
-    private array $communicationChannels = [];
-    private array $communicationThemes = [];
-    private array $communicationStatuses = [];
-    private array $communicationTypes = [];
+    private $communicationChannelTypes = [];
+    private $communicationChannels = [];
+    private $communicationThemes = [];
+    private $communicationStatuses = [];
+    private $communicationTypes = [];
 
-    private array $merchantStatuses = [];
-    private array $merchantCommissionTypes = [];
-    private array $merchantVatTypes = [];
+    private $merchantStatuses = [];
+    private $merchantCommissionTypes = [];
+    private $merchantVatTypes = [];
 
-    private array $publicEventTypes = [];
-    private array $publicEventMediaTypes = [];
-    private array $publicEventMediaCollections = [];
-    private array $publicEventStatus = [];
-    private array $publicEventSprintStatus = [];
+    private $publicEventTypes = [];
+    private $publicEventMediaTypes = [];
+    private $publicEventMediaCollections = [];
+    private $publicEventStatus = [];
+    private $publicEventSprintStatus = [];
 
-    private array $discountTypes = [];
-    private array $promoCodeTypes = [];
-    private array $promoCodeStatus = [];
-    private array $bonusValueTypes = [];
-    private array $bonusTypes = [];
-    private array $customerBonusStatus = [];
+    private $discountTypes = [];
+    private $promoCodeTypes = [];
+    private $promoCodeStatus = [];
+    private $bonusValueTypes = [];
+    private $bonusTypes = [];
+    private $customerBonusStatus = [];
 
-    private array $orderStatuses = [];
-    private array $basketTypes = [];
-    private array $paymentStatuses = [];
-    private array $paymentMethods = [];
-    private array $deliveryStatuses = [];
-    private array $shipmentStatuses = [];
-    private array $cargoStatuses = [];
-    private array $deliveryTypes = [];
-    private array $deliveryMethods = [];
-    private array $deliveryServices = [];
+    private $orderStatuses = [];
+    private $basketTypes = [];
+    private $paymentStatuses = [];
+    private $paymentMethods = [];
+    private $deliveryStatuses = [];
+    private $shipmentStatuses = [];
+    private $cargoStatuses = [];
+    private $deliveryTypes = [];
+    private $deliveryMethods = [];
+    private $deliveryServices = [];
 
-    private array $offerAllSaleStatuses = [];
-    private array $offerCountdownSaleStatuses = [];
+    private $offerAllSaleStatuses = [];
+    private $offerCountdownSaleStatuses = [];
 
-    private array $propertyTypes = [];
+    private $propertyTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -135,26 +135,36 @@ class ViewRender
         return $this;
     }
 
-    public function loadBlocks($load = false): self
+    public function loadBlocks(): self
     {
-        if ($load) {
-            $this->blocks = BlockDto::allBlocks();
-        }
+        $this->blocks = [
+            'products' => BlockDto::ADMIN_BLOCK_PRODUCTS,
+            'orders' => BlockDto::ADMIN_BLOCK_ORDERS,
+            'claims' => BlockDto::ADMIN_BLOCK_CLAIMS,
+            'content' => BlockDto::ADMIN_BLOCK_CONTENT,
+            'logistics' => BlockDto::ADMIN_BLOCK_LOGISTICS,
+            'stores' => BlockDto::ADMIN_BLOCK_STORES,
+            'clients' => BlockDto::ADMIN_BLOCK_CLIENTS,
+            'referrals' => BlockDto::ADMIN_BLOCK_REFERRALS,
+            'merchants' => BlockDto::ADMIN_BLOCK_MERCHANTS,
+            'marketing' => BlockDto::ADMIN_BLOCK_MARKETING,
+            'communications' => BlockDto::ADMIN_BLOCK_COMMUNICATIONS,
+            'events' => BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS,
+            'settings' => BlockDto::ADMIN_BLOCK_SETTINGS,
+        ];
 
         return $this;
     }
 
-    public function loadBlockPermissions($load = false): self
+    public function loadBlockPermissions(): self
     {
         $view = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_VIEW);
         $update = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_UPDATE);
 
-        if ($load) {
-            $this->blockPermissions = [
-                'view' => array_merge($view, $update),
-                'update' => $update,
-            ];
-        }
+        $this->blockPermissions = [
+            'view' => array_merge($view, $update),
+            'update' => $update,
+        ];
 
         return $this;
     }

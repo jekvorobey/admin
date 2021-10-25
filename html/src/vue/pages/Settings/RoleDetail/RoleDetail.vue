@@ -11,7 +11,7 @@
                         <tr>
                             <th>Блок</th>
                             <th>Разрешение</th>
-                            <th></th>
+                            <th>Действия</th>
                         </tr>
                         </thead>
                         <tbody>

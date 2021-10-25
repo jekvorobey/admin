@@ -2,7 +2,7 @@
     <layout-main>
         <div class="mt-5 mb-4">
             <span class="ml-1">Выбрано категорий: {{ countSelected }}</span>
-            <button class="btn-success btn float-right" @click="save()" :disabled="saveBtnDisabled">Сохранить</button>
+            <button v-if="canUpdate(blocks.content)" class="btn-success btn float-right" @click="save()" :disabled="saveBtnDisabled">Сохранить</button>
         </div>
         <table class="table mb-0">
             <thead>

@@ -5,7 +5,7 @@
             <tr v-for="f in form">
                 <td>{{ f.name }}</td>
                 <td><input class="form-control form-control-sm" v-model="f.value"/></td>
-                <td>
+                <td v-if="canUpdate(blocks.merchants)">
                     <button class="btn btn-success btn-sm" @click="saveCommission(f)"><fa-icon icon="save"/></button>
                 </td>
             </tr>

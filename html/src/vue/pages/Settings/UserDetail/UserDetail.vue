@@ -10,20 +10,20 @@
                         <thead>
                         <tr>
                             <th>Роль</th>
-                            <th>Опции</th>
+                            <th v-if="canUpdate(blocks.settings)">Действия</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="role in roles">
                             <td>{{role.name}}</td>
-                            <td><fa-icon @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
+                            <td v-if="canUpdate(blocks.settings)"><fa-icon @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
                         </tr>
                         </tbody>
                     </table>
                 </shadow-card>
             </div>
         </div>
-        <transition name="modal">
+        <transition name="modal" v-if="canUpdate(blocks.settings)">
             <modal :close="closeModal" v-if="isModalOpen('add-user-role')">
                 <div slot="header">
                     Добавление роли

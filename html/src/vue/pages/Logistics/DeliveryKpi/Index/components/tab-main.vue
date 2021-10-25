@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row">
+        <div class="row" v-if="canUpdate(blocks.logistics)">
             <div class="col">
                 <div class="float-right">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">

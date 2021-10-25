@@ -11,13 +11,13 @@
                         <th>Старая цена предложения мерчанта</th>
                         <th>Новая цена предложения мерчанта</th>
                         <th>Статус изменения цены</th>
-                        <th>Комментарий по изменению цены</th>
+                        <th v-if="canUpdate(blocks.claims)">Комментарий по изменению цены</th>
                         <th>
                             <template v-if="!claim.isProcessed">
-                                <button class="btn btn-primary" v-if="isWorkStatus"
+                                <button class="btn btn-primary" v-if="isWorkStatus && canUpdate(blocks.claims)"
                                         @click="changePrice('accept')"
                                         title="Принять все необработанные изменения">Принять все</button><br>
-                                <button class="btn btn-primary mt-1" v-if="isWorkStatus"
+                                <button class="btn btn-primary mt-1" v-if="isWorkStatus && canUpdate(blocks.claims)"
                                         @click="rejectPrice()"
                                         title="Отклонить все необработанные изменения">Отклонить все</button>
                             </template>
@@ -28,10 +28,13 @@
                     <tr v-for="offer in claim.payload.offers">
                         <td>{{ offer.offerId }}</td>
                         <td>{{ product(offer.offerId).id }}</td>
-                        <td>
+                        <td v-if="canView(blocks.products)">
                             <a :href="getRoute('products.detail', {id: product(offer.offerId).id})" target="_blank">
                                 {{ product(offer.offerId).name }}
                             </a>
+                        </td>
+                        <td v-else>
+                            {{ product(offer.offerId).name }}
                         </td>
                         <td>{{ product(offer.offerId).vendor_code }}</td>
                         <td>{{ offer.oldPrice }} руб</td>
@@ -42,7 +45,7 @@
                             </span>
                         </td>
                         <td>{{ offer.comment }}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.claims)">
                             <template v-if="!offer.status">
                                 <button class="btn btn-primary" v-if="isWorkStatus"
                                         @click="changePrice('accept', offer.offerId)">Принять</button><br>

@@ -51,7 +51,7 @@ class PropertiesController extends Controller
      */
     public function detail(string $propCode)
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $productProperty = $this->getPropData($propCode);
 
