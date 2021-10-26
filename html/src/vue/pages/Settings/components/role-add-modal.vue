@@ -73,8 +73,8 @@
                 if (this.source) {
                     formData.id = this.source.id;
                 }
-                Services.net().post(this.getRoute('settings.createRole'), {}, formData).then(() => {
-                    this.$emit('onSave', {name: this.form.name, front: this.form.front});
+                Services.net().post(this.getRoute('settings.createRole'), {}, formData).then(data => {
+                    this.$emit('onSave', data);
                 });
             },
         },

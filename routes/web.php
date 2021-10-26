@@ -302,6 +302,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'RoleController@detail')->name('settings.roleDetail');
                 Route::put('', 'RoleController@upsert')->name('settings.updateRole');
+                Route::delete('', 'RoleController@deleteRole')->name('settings.deleteRole');
             });
             Route::get('', 'RoleController@index')->name('settings.rolesList');
             Route::post('', 'RoleController@upsert')->name('settings.createRole');

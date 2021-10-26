@@ -97,7 +97,7 @@ class RoleController extends Controller
             $roleService->create($newRole);
         }
 
-        return response()->json([]);
+        return response()->json(['iRoles' => $roleService->roles(), 'iPager' => $roleService->count()]);
     }
 
     /**
@@ -109,7 +109,7 @@ class RoleController extends Controller
 
         $roleService->delete($id);
 
-        return response()->json(['status' => 'ok']);
+        return response()->json(['status' => 'ok', 'iRoles' => $roleService->roles(), 'iPager' => $roleService->count()]);
     }
 
     /**

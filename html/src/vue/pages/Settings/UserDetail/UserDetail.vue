@@ -120,14 +120,11 @@
                     front: this.frontName(this.user.front),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
                     infinity_sip_extension: this.user.infinity_sip_extension,
-                    created_at: this.user.created_at
+                    created_at: this.datePrint(this.user.created_at),
                 };
             },
             roleOptions() {
-                const usedIds = this.roles.map(role => role.id);
-                return this.options.roles
-                    .map(role => ({value: role.id, text: role.name}))
-                    .filter(item => usedIds.indexOf(item.value) === -1 && item.value !== 1);
+                return this.options.roles.map(role => ({value: role.id, text: role.name}));
             }
         }
     };

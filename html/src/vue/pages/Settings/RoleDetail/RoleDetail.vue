@@ -15,7 +15,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="blockPermission in allBlockPermissions">
+                            <tr v-for="blockPermission in selfBlockPermissions">
                                 <td>{{blockName(blockPermission.block_id)}}</td>
                                 <td>{{permissionName(blockPermission.permission_id)}}</td>
                                 <td><fa-icon @click="deleteBlock(blockPermission.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <role-edit-modal :source="role" :fronts="options.fronts" @onSave="updateRole"></role-edit-modal>
-        <add-role-block-modal :source="role" :allBlocks="options.blocks" :allPermissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
+        <add-role-block-modal :selfBlockPermissions.sync="selfBlockPermissions" :source="role" :allBlocks="options.blocks" :allPermissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
     </layout-main>
 </template>
 
@@ -62,7 +62,7 @@
         data() {
             return {
                 role: this.iRole,
-                allBlockPermissions: this.iBlockPermissions,
+                selfBlockPermissions: this.iBlockPermissions,
                 roleValuesNames: {
                     name: 'Наименование',
                     front: 'Система',
@@ -90,16 +90,19 @@
                   role_id: this.role.id
                 },{})
                     .then(data => {
-                        this.allBlockPermissions = data.blockPermissions;
+                        this.selfBlockPermissions = data.blockPermissions;
+                        this.showMessageBox({text: 'Блок удален'});
                     });
             },
             updateRole(newData) {
                 Object.assign(this.role, newData);
                 this.closeModal();
+                this.showMessageBox({text: 'Блок обновлен'});
             },
             onBlockCreated(newData) {
-              Object.assign(this.allBlockPermissions, newData);
+              this.selfBlockPermissions = newData;
               this.closeModal();
+              this.showMessageBox({text: 'Блок добавлен'});
             }
         },
         computed: {
@@ -112,10 +115,7 @@
                 };
             },
             blockOptions() {
-                const blockIds = this.blocks.map(block => block.id);
-                return this.options.blocks
-                    .map(block => ({value: block.id, text: block.name}))
-                    .filter(item => blockIds.indexOf(item.value) === -1 && item.value !== 1);
+                return this.options.blocks.map(block => ({value: block.id, text: block.name}))
             }
         }
     };

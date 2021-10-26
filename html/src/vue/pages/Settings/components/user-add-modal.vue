@@ -97,7 +97,7 @@
                 if (this.form.infinity_sip_extension) {
                     formData.infinity_sip_extension = this.form.infinity_sip_extension;
                 }
-                Services.net().post(this.getRoute('settings.createUser'), {}, formData).then(() => {
+                Services.net().post(this.getRoute('settings.createUser'), {}, formData).then(data => {
                     this.$emit('onSave', {login: this.form.login, front: this.form.front, infinity_sip_extension: this.form.infinity_sip_extension});
                 });
             },
