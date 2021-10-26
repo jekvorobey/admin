@@ -34,8 +34,8 @@
         },
         props: {
             source: Object,
-            blocks: Object,
-            permissions: Object,
+            allBlocks: Object,
+            allPermissions: Object,
         },
         data() {
             return {
@@ -73,16 +73,16 @@
                     formData.role_id = this.source.id;
                 }
                 Services.net().post(this.getRoute('settings.addBlock'), {}, formData).then(data => {
-                    this.$emit('onSave', {blockPermissions: data.blockPermissions});
+                    this.$emit('onSave', {allBlockPermissions: data.blockPermissions});
                 });
             },
         },
         computed: {
             blockOptions() {
-                return Object.values(this.blocks).map(block => ({value: block.id, text: block.name}));
+                return Object.values(this.allBlocks).map(block => ({value: block.id, text: block.name}));
             },
             permissionOptions() {
-              return Object.values(this.permissions).map(permission => ({value: permission.id, text: permission.name}));
+              return Object.values(this.allPermissions).map(permission => ({value: permission.id, text: permission.name}));
             },
             // =========================================================================================================
             errorBlock() {

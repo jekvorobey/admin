@@ -15,7 +15,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="blockPermission in blockPermissions">
+                            <tr v-for="blockPermission in allBlockPermissions">
                                 <td>{{blockName(blockPermission.block_id)}}</td>
                                 <td>{{permissionName(blockPermission.permission_id)}}</td>
                                 <td><fa-icon @click="deleteBlock(blockPermission.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <role-edit-modal :source="role" :fronts="options.fronts" @onSave="updateRole"></role-edit-modal>
-        <add-role-block-modal :source="role" :blocks="options.blocks" :permissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
+        <add-role-block-modal :source="role" :allBlocks="options.blocks" :allPermissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
     </layout-main>
 </template>
 
@@ -62,7 +62,7 @@
         data() {
             return {
                 role: this.iRole,
-                blockPermissions: this.iBlockPermissions,
+                allBlockPermissions: this.iBlockPermissions,
                 roleValuesNames: {
                     name: 'Наименование',
                     front: 'Система',
@@ -78,8 +78,8 @@
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
             blockName(id) {
-                let blocks = Object.values(this.options.blocks).filter(block => block.id === id);
-                return blocks.length > 0 ? blocks[0].name : 'N/A';
+                let allBlocks = Object.values(this.options.blocks).filter(block => block.id === id);
+                return allBlocks.length > 0 ? allBlocks[0].name : 'N/A';
             },
             permissionName(id) {
                 let permissions = Object.values(this.options.permissions).filter(permission => permission.id === id);
@@ -90,7 +90,7 @@
                   role_id: this.role.id
                 },{})
                     .then(data => {
-                        this.blockPermissions = data.blockPermissions;
+                        this.allBlockPermissions = data.blockPermissions;
                     });
             },
             updateRole(newData) {
@@ -98,7 +98,7 @@
                 this.closeModal();
             },
             onBlockCreated(newData) {
-              Object.assign(this.blockPermissions, newData);
+              Object.assign(this.allBlockPermissions, newData);
               this.closeModal();
             }
         },
@@ -107,8 +107,8 @@
                 return {
                     name: this.role.name,
                     front: this.frontName(this.role.front),
-                    created_at: this.role.created_at,
-                    updated_at: this.role.updated_at
+                    created_at: this.datePrint(this.role.created_at),
+                    updated_at: this.datePrint(this.role.updated_at)
                 };
             },
             blockOptions() {
