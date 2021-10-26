@@ -95,9 +95,9 @@
                     });
             },
             updateRole(newData) {
-                Object.assign(this.role, newData);
+                Object.assign(this.role, newData.role);
                 this.closeModal();
-                this.showMessageBox({text: 'Блок обновлен'});
+                this.showMessageBox({text: 'Роль обновлена'});
             },
             onBlockCreated(newData) {
               this.selfBlockPermissions = newData;

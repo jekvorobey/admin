@@ -41,7 +41,7 @@
     </table>
     <div>
       <b-pagination
-          v-if="pager.pages !== 1"
+          v-if="pager.pages > 1"
           v-model="currentPage"
           :total-rows="pager.total"
           :per-page="pager.pageSize"
@@ -77,7 +77,7 @@ export default {
     return {
       roles: this.iRoles,
       pager: this.iPager,
-      currentPage: this.iCurrentPage || 1,
+      currentPage: this.iCurrentPage,
       selectedItems: []
     };
   },
@@ -85,20 +85,21 @@ export default {
     changePage(newPage) {
       history.pushState(null, null, location.origin + location.pathname + withQuery('', {
         page: newPage,
-        filter: this.filter,
-        //sort: this.sort
       }));
     },
     loadPage() {
-      Services.net().get(this.route('settings.rolesListPagination'), {
+      Services.showLoader();
+      Services.net().get(this.route('settings.roleListPagination'), {
         page: this.currentPage,
-        filter: this.filter,
-        //sort: this.sort,
+        filter: this.appliedFilter,
+        sort: this.sort,
       }).then(data => {
-        this.users = data.items;
+        this.roles = data.items;
         if (data.pager) {
           this.pager = data.pager
         }
+      }).finally(() => {
+        Services.hideLoader();
       });
     },
     itemSelected(id) {

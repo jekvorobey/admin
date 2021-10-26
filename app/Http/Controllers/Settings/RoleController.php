@@ -97,7 +97,7 @@ class RoleController extends Controller
             $roleService->create($newRole);
         }
 
-        return response()->json(['iRoles' => $roleService->roles(), 'iPager' => $roleService->count()]);
+        return response()->json(['role' => $newRole, 'iRoles' => $roleService->roles(), 'iPager' => $roleService->count()]);
     }
 
     /**
