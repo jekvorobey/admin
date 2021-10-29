@@ -5,12 +5,13 @@ namespace App\Http\Controllers\ServiceNotification;
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\ServiceNotification\SystemAlertDto;
 use Greensight\Message\Services\SystemAlertService\SystemAlertService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SystemAlertController extends Controller
 {
-    public function pageNotification(int $service_notification_id, SystemAlertService $templateService)
+    public function pageNotification(int $service_notification_id, SystemAlertService $templateService): JsonResponse
     {
         return response()->json([
             'alert' => $templateService->systemAlerts(
@@ -34,7 +35,7 @@ class SystemAlertController extends Controller
         ]);
     }
 
-    public function save(Request $request, SystemAlertService $systemAlertService)
+    public function save(Request $request, SystemAlertService $systemAlertService): JsonResponse
     {
         $id = $request->get('id');
         $systemAlert = $request->get('alert');
@@ -54,7 +55,7 @@ class SystemAlertController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, SystemAlertService $systemAlertService)
+    public function delete(Request $request, SystemAlertService $systemAlertService): JsonResponse
     {
         $ids = $request->get('ids');
 

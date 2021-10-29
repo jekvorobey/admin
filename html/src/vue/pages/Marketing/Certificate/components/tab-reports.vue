@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a href="#" class="btn btn-success" @click.prevent="createReport">Сформировать отчет</a>
             </div>

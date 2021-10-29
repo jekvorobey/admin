@@ -3,16 +3,25 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\PropertyDto;
 use Pim\Services\CategoryService\CategoryService;
 
 class CategoryController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function index(CategoryService $categoryService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->title = 'Категории';
 
         return $this->render('Product/CategoryList', [
@@ -20,8 +29,10 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function create(Request $request, CategoryService $categoryService)
+    public function create(Request $request, CategoryService $categoryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'name' => 'string',
             'code' => 'string|nullable',
@@ -35,6 +46,8 @@ class CategoryController extends Controller
 
     public function update(Request $request, CategoryService $categoryService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
@@ -48,7 +61,7 @@ class CategoryController extends Controller
 
     /**
      * @return Collection|CategoryDto[]
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     protected function loadCategories(CategoryService $categoryService)
     {

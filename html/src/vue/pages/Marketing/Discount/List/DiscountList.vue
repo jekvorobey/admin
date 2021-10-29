@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a v-if="!ifBundle()" :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
                 <a v-if="ifBundle()" :href="getRoute('bundle.create')" class="btn btn-success">Создать бандл</a>
@@ -143,7 +143,7 @@
                 <th>Инициатор</th>
                 <th>Автор</th>
                 <th>Статус</th>
-                <td><fa-icon icon="cog"/></td>
+                <td v-if="canUpdate(blocks.marketing)"><fa-icon icon="cog"/></td>
             </tr>
             </thead>
             <tbody>
@@ -154,7 +154,8 @@
                 <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
-                <td><a :href="link(discount.id)">{{ discount.name }}</a></td>
+                <td v-if="canUpdate(blocks.marketing)"><a :href="link(discount.id)">{{ discount.name }}</a></td>
+                <td v-else>{{ discount.name }}</td>
                 <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? '₽' : '%' }} на<br/>
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>
@@ -164,7 +165,7 @@
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
                 </td>
-                <td>
+                <td v-if="canUpdate(blocks.marketing)">
                     <a :href="getRoute('discount.detail', {id: discount.id})"
                        class="btn btn-info btn-sm">
                         <fa-icon icon="eye"/>

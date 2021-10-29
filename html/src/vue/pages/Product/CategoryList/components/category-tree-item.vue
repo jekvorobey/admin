@@ -20,7 +20,7 @@
                     {{ category.active ? 'Да' : 'Нет' }}
                 </span>
             </div>
-            <div class="col-sm-1 mb-2 d-flex justify-items-center">
+            <div class="col-sm-1 mb-2 d-flex justify-items-center" v-if="canUpdate(blocks.products)">
                 <button class="btn btn-warning float-right" @click="editCategory">
                     <fa-icon icon="edit"></fa-icon>
                 </button>

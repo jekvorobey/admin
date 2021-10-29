@@ -11,7 +11,7 @@
       <textarea rows="8" class="form-control" v-model="form.description" id="desc"/>
     </div>
 
-    <button type="button" class="btn btn-success" @click="save">Сохранить изменения</button>
+    <button v-if="canUpdate(blocks.marketing)" type="button" class="btn btn-success" @click="save">Сохранить изменения</button>
 
   </div>
 </template>

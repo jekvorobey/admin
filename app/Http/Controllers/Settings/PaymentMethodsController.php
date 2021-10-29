@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\RegionDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -19,6 +20,8 @@ class PaymentMethodsController extends Controller
      */
     public function list(PaymentService $paymentService, ListsService $listsService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         // Способы оплаты //
         $paymentMethods = $paymentService->getPaymentMethods()->keyBy('id');
 
@@ -46,10 +49,11 @@ class PaymentMethodsController extends Controller
 
     /**
      * Изменить параметры способа оплаты
-     * @return JsonResponse
      */
-    public function edit(int $id, PaymentService $paymentService)
+    public function edit(int $id, PaymentService $paymentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $this->validate(request(), [
             'name' => 'required|string',
             'accept_prepaid' => 'required|boolean',
@@ -75,7 +79,6 @@ class PaymentMethodsController extends Controller
 
     /**
      * Вспомогательный метод, заполняющий Dto полями из Request
-     * @param array $data
      */
     private function fulfillDto(array $data): PaymentMethod
     {

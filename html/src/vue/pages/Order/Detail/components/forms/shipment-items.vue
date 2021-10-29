@@ -33,7 +33,7 @@
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
                     <b-th class="with-small">Количество <small>Вес 1 шт</small><small>ДxШxВ 1 шт</small></b-th>
-                    <b-th>Сумма за единицу без скидки
+                    <b-th>Цена за единицу без скидки
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipUnitCostHelp"></fa-icon>
                     </b-th>
@@ -52,7 +52,7 @@
                     <b-th>Скидка
                         <fa-icon icon="question-circle" v-b-popover.hover="tooltipDiscountHelp"></fa-icon>
                     </b-th>
-                    <b-th>Цена со скидкой
+                    <b-th>Сумма со скидкой
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipPriceHelp"></fa-icon>
                     </b-th>
@@ -87,10 +87,10 @@
                                 {{ basketItem.product.height }} мм</small>
                         </b-td>
                         <b-td>{{ preparePrice(basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice((basketItem.discount) / basketItem.qty_original) }} руб</b-td>
+                        <b-td>{{ preparePrice((basketItem.cost - basketItem.price) / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice(basketItem.qty * basketItem.discount / basketItem.qty_original) }} руб
+                        <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб
                         </b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td v-if="canEdit"></b-td>
@@ -175,10 +175,10 @@
                                     {{ item.basketItem.product.height }} мм</small>
                             </b-td>
                             <b-td>{{ preparePrice(item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
-                            <b-td>{{ preparePrice(item.basketItem.discount / item.basketItem.qty) }} руб</b-td>
+                            <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price) / item.basketItem.qty) }} руб</b-td>
                             <b-td>{{ preparePrice(item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
-                            <b-td>{{ preparePrice(item.qty * item.basketItem.discount / item.basketItem.qty) }} руб
+                            <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price)) }} руб
                             </b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">

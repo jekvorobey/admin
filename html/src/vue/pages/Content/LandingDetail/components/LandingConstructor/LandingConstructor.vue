@@ -19,7 +19,7 @@
                         </ul>
                     </div>
                     <div class="col-md-3 pr-0">
-                        <button v-if="isEditMode" type="button" class="btn btn-danger" @click="deleteLanding" style="float:right">Удалить</button>
+                        <button v-if="isEditMode && canUpdate(blocks.content)" type="button" class="btn btn-danger" @click="deleteLanding" style="float:right">Удалить</button>
                         <button type="button" class="btn btn-link" @click="clickPreviewLandingButton" style="float:right; margin-right:10px">Превью</button>
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-success">Сохранить</button>
+                <button v-if="canUpdate(blocks.content)" type="submit" class="btn btn-success">Сохранить</button>
                 <button type="button" class="btn" @click="cancel">Отменить</button>
             </form>
         </div>

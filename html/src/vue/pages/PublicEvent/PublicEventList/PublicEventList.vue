@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <h2>Мероприятия</h2>
-        <button class="btn btn-sm btn-success" @click="createEvent">Создать</button>
+        <button v-if="canUpdate(blocks.events)" class="btn btn-sm btn-success" @click="createEvent">Создать</button>
         <table class="table mt-3">
             <thead>
                 <tr>
@@ -15,7 +15,7 @@
                     <th>Билеты</th>
                     <th>Статус</th>
                     <th>Отгружен в Shoppilot</th>
-                    <th>Действия</th>
+                    <th v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +39,7 @@
                         </span>
                             <template v-else>Информация временно недоступна</template>
                         </td>
-                        <td>
+                        <td v-if="canUpdate(blocks.events)">
                             <button class="btn btn-warning float-right" @click="editEvent(publicEvent)">
                                 <fa-icon icon="edit"></fa-icon>
                             </button>

@@ -86,6 +86,12 @@ Vue.mixin({
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
         },
+        canView(block) {
+            return !!this.blockPermissions.view.includes(block);
+        },
+        canUpdate(block) {
+            return !!this.blockPermissions.update.includes(block);
+        },
     },
     computed: {
         ...mapGetters(['getRoute']),
@@ -99,6 +105,14 @@ Vue.mixin({
         /** @return {UserRoles} */
         userRoles() {
             return this.$store.state.layout.userRoles;
+        },
+        /** @return {Blocks} */
+        blocks() {
+            return this.$store.state.layout.blocks;
+        },
+        /** @return {BlockPermissions} */
+        blockPermissions() {
+            return this.$store.state.layout.blockPermissions;
         },
         customerStatusByRole() {
             return this.$store.state.layout.customerStatusByRole;
@@ -271,6 +285,39 @@ Vue.mixin({
  @property {ICommerceMlUserRoles} i_commerce_ml
  @property {MasUserRoles} mas
  @property {AdminUserRoles} admin
+ */
+/**
+ @typedef Blocks
+ @type {Object}
+ @property {number} products
+ @property {number} orders
+ @property {number} claims
+ @property {number} content
+ @property {number} logistics
+ @property {number} stores
+ @property {number} clients
+ @property {number} referrals
+ @property {number} merchants
+ @property {number} marketing
+ @property {number} communications
+ @property {number} events
+ @property {number} settings
+ */
+/**
+ @typedef BlockPermissions
+ @type {Object}
+ @property {ViewBlockPermissions} view
+ @property {UpdateBlockPermissions} update
+ */
+/**
+ @typedef ViewBlockPermissions
+ @type {Array}
+ @property {number}
+ */
+/**
+ @typedef UpdateBlockPermissions
+ @type {Array}
+ @property {number}
  */
 /**
  @typedef ShowcaseUserRoles
@@ -475,7 +522,7 @@ Vue.mixin({
  @property {integer} gift
  @property {integer} bonus
  */
- /**
+/**
  @typedef BonusValueTypes
  @type {Object}
  @property {integer} percent

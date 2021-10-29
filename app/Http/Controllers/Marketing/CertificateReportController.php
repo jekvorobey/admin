@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Pim\Dto\Certificate\CertificateReportDto;
 use Pim\Services\CertificateService\CertificateService;
@@ -16,12 +17,17 @@ class CertificateReportController extends Controller
 
     public function create(): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $id = $this->service()->createReport();
+
         return response()->json(['status' => 'ok', 'id' => $id]);
     }
 
     public function download($id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         /** @var CertificateReportDto $report */
         $report = $this->service()->reportQuery()->id($id)->reports()->first();
 

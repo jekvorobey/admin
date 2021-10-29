@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Services\MerchantService\Dto\GetCommissionDto;
@@ -13,6 +15,8 @@ class MerchantCommissionController extends Controller
 {
     public function index()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $this->title = 'Комиссия';
 
         return $this->render('Merchant/Commission', [
@@ -20,8 +24,10 @@ class MerchantCommissionController extends Controller
         ]);
     }
 
-    public function save(MerchantService $merchantService)
+    public function save(MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'id' => 'nullable|integer',
             'type' => ['required', Rule::in([CommissionDto::TYPE_GLOBAL, CommissionDto::TYPE_RATING])],
@@ -42,7 +48,7 @@ class MerchantCommissionController extends Controller
         ]);
     }
 
-    protected function getForm()
+    protected function getForm(): array
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);

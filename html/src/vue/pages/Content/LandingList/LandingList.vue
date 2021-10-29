@@ -7,7 +7,7 @@
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" v-if="canUpdate(blocks.content)">
             <button @click="goToCreatePage" class="btn btn-success">Создать</button>
         </div>
         <div class="mb-3">
@@ -19,7 +19,7 @@
                 <th>ID</th>
                 <th>Видимость</th>
                 <th>Название</th>
-                <th><!-- Кнопки --></th>
+                <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
             </tr>
             </thead>
             <tbody>
@@ -34,10 +34,13 @@
                     </b-badge>
                     <br>
                 </td>
-                <td class="with-small">
+                <td v-if="canUpdate(blocks.content)" class="with-small">
                     <a :href="getRoute('landing.updatePage', {id: landing.id})">{{landing.name}}</a>
                 </td>
-                <td>
+                <td v-else class="with-small">
+                    {{landing.name}}
+                </td>
+                <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
                         <fa-icon icon="trash-alt"
                                  @click="removeItem(landing.id)"/>

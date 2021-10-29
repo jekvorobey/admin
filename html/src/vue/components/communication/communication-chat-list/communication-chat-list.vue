@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.communications)">
             <div class="col-12 mt-3">
                 <button class="btn btn-success" @click="onShowModalCreate()">Создать чат</button>
             </div>
@@ -45,7 +45,7 @@
                     <th>Последнее сообщение</th>
                     <th>Статус</th>
                     <th>Тип</th>
-                    <th>Действия</th>
+                    <th v-if="canUpdate(blocks.communications)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,7 +68,7 @@
                         </td>
                         <td @click="openChat(chat)">{{ communicationStatuses[chat.status_id].name }}</td>
                         <td @click="openChat(chat)">{{ chat.type_id ? communicationTypes[chat.type_id].name : '-' }}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.communications)">
                             <b-button
                                     class="btn btn-info btn-sm"
                                     v-b-modal.modal-edit

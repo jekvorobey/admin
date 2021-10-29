@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -20,6 +21,7 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
 use Greensight\Marketing\Services\BonusService\BonusService;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
@@ -33,7 +35,6 @@ class PromoCodeController extends Controller
 {
     /**
      * Список промокодов
-     * @param MerchantService $merchantService
      * @return mixed
      */
     public function index(
@@ -42,6 +43,8 @@ class PromoCodeController extends Controller
         CustomerService $customerService,
         CommunicationService $communicationService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Промокоды';
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
@@ -133,6 +136,8 @@ class PromoCodeController extends Controller
 
     public function status(PromoCodeService $promoCodeService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $ids = request('ids');
         $status = request('status');
 
@@ -145,6 +150,8 @@ class PromoCodeController extends Controller
 
     public function delete(PromoCodeService $promoCodeService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $ids = request('ids');
 
         foreach ($ids as $id) {
@@ -161,6 +168,8 @@ class PromoCodeController extends Controller
      */
     public function createPage(Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Создание промокода';
         $promoCodeTypes = PromoCodeOutDto::allTypes();
         $promoCodeStatuses = PromoCodeOutDto::allStatuses();
@@ -201,11 +210,13 @@ class PromoCodeController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function create(Request $request, PromoCodeService $promoCodeService, RequestInitiator $requestInitiator)
-    {
+    public function create(
+        Request $request,
+        PromoCodeService $promoCodeService,
+        RequestInitiator $requestInitiator
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->validate([
             'owner_id' => 'numeric|nullable',
             'merchant_id' => 'numeric|nullable',
@@ -243,26 +254,26 @@ class PromoCodeController extends Controller
 
         $builder = new PromoCodeBuilder($data);
         $result = $promoCodeService->create($builder);
+
         return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function generate(PromoCodeService $promoCodeService)
+    public function generate(PromoCodeService $promoCodeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $r = $promoCodeService->generate();
+
         return response()->json($r);
     }
 
     /**
      * Проверка промокода на уникальность
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function checkUnique(PromoCodeService $promoCodeService)
+    public function checkUnique(PromoCodeService $promoCodeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $this->validate(request(), [
             'code' => 'required|string|max:32',
         ]);

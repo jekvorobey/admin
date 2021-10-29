@@ -282,7 +282,6 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-
     Route::prefix('settings')->namespace('Settings')->group(function () {
         Route::prefix('payment-methods')->group(function () {
             Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
@@ -298,6 +297,19 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
+        });
+
+        Route::prefix('roles')->group(function () {
+            Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'RoleController@detail')->name('settings.roleDetail');
+                Route::put('', 'RoleController@upsert')->name('settings.updateRole');
+                Route::delete('', 'RoleController@deleteRole')->name('settings.deleteRole');
+            });
+            Route::get('', 'RoleController@index')->name('settings.rolesList');
+            Route::post('', 'RoleController@upsert')->name('settings.createRole');
+            Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
+            Route::post('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
         });
 
         Route::prefix('organization-card')->group(function () {

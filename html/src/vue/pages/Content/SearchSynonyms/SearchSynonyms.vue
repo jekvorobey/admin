@@ -1,7 +1,7 @@
 <template>
     <layout-main>
         <div class="row mb-3">
-            <div class="col" style="text-align: left">
+            <div class="col" style="text-align: left" v-if="canUpdate(blocks.content)">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalEdit(null)">
                     Добавить группу синонимов
@@ -20,7 +20,7 @@
             <tr>
                 <td v-if="searchSynonyms.length"></td>
                 <th>Синонимы</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.content)">Действия</th>
             </tr>
             </thead>
             <tr v-for="searchSynonym in searchSynonyms">
@@ -30,7 +30,7 @@
                             @change="e => massCheckbox(e, massSearchSynonymType, searchSynonym.id)"/>
                 </td>
                 <td>{{searchSynonym.synonyms}}</td>
-                <td>
+                <td v-if="canUpdate(blocks.content)">
                     <button class="btn btn-info btn-md"
                             @click="onShowModalEdit(searchSynonym)">
                         <fa-icon icon="pencil-alt"/>

@@ -150,7 +150,7 @@
                 </div>
             </div>
 
-            <div class="form-group mt-3">
+            <div class="form-group mt-3" v-if="canUpdate(blocks.settings)">
                 <button type="submit"
                         :disabled="anyDirty"
                         class="btn btn-primary">

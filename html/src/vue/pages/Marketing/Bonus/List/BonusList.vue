@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a :href="getRoute('bonus.create')" class="btn btn-success">Создать новое правило</a>
             </div>

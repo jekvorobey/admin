@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
 use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -20,13 +21,13 @@ use Illuminate\Support\Carbon;
 
 class TabBillingController extends Controller
 {
-    /**
-     * @return JsonResponse
-     */
-    public function load(int $merchantId, MerchantService $merchantService)
+    public function load(int $merchantId, MerchantService $merchantService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $settings = $merchantService->getSetting($merchantId, MerchantSettingDto::BILLING_CYCLE)->first();
         $billingCycle = $settings ? $settings->value : null;
+
         return response()->json([
             'billing_cycle' => (int) $billingCycle,
         ]);
@@ -38,42 +39,55 @@ class TabBillingController extends Controller
      */
     public function billingCycle(int $merchantId, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'billing_cycle' => 'integer',
         ]);
         $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
+
         return response('', 204);
     }
 
     /**
+     * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
      * @return Application|ResponseFactory|Response
      */
     public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $merchantService->addReturn($merchantId, $operationId);
+
         return response('', 204);
     }
 
     /**
+     * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
      * @return Application|ResponseFactory|Response
      */
     public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $merchantService->deleteOperation($merchantId, $operationId);
+
         return response('', 204);
     }
 
     /**
      * Получить биллинговые отчеты
-     * @return JsonResponse
      * @throws Exception
      */
-    public function billingReports(Request $request, int $merchantId, MerchantService $merchantService)
+    public function billingReports(Request $request, int $merchantId, MerchantService $merchantService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $this->makeRestQuery($request, $merchantId);
         $billingReports = $merchantService->merchantBillingReports($restQuery, $merchantId);
+
         return response()->json([
             'billing_reports' => $billingReports,
         ]);
@@ -85,13 +99,16 @@ class TabBillingController extends Controller
      */
     public function deleteBillingReport(int $merchantId, int $reportId, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $merchantService->deleteBillingReport($merchantId, $reportId);
+
         return response('', 204);
     }
 
     /**
      * Обновить статус у биллингового отчета
-     * @return Application|ResponseFactory|JsonResponse|Response
+     * @return Application|Response|ResponseFactory
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function billingReportStatusUpdate(
@@ -100,18 +117,22 @@ class TabBillingController extends Controller
         Request $request,
         MerchantService $merchantService
     ) {
-        $status = $request->status;
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
+        $status = $request->status;
         $merchantService->billingReportStatusUpdate($reportId, $status);
+
         return response('', 204);
     }
 
     /**
      * Создать биллинговый отчет
-     * @return Application|ResponseFactory|JsonResponse|Response
+     * @return Application|Response|ResponseFactory
      */
     public function billingReportCreate(int $merchantId, Request $request)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $dates = [
             'date_from' => $request->date_from,
             'date_to' => $request->date_to,
@@ -119,8 +140,8 @@ class TabBillingController extends Controller
 
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
-
         $merchantService->billingReportCreate($merchantId, $dates);
+
         return response('', 204);
     }
 
@@ -133,6 +154,8 @@ class TabBillingController extends Controller
         FileService $fileService,
         MerchantService $merchantService
     ): ?StreamedResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $report = $merchantService->getBillingReport($merchantId, $reportId);
 
         if (!$report || !isset($report['file'])) {
@@ -146,6 +169,7 @@ class TabBillingController extends Controller
         }
 
         $domain = config('common-lib.showcaseHost');
+
         return response()->streamDownload(function () use ($reportDto, $domain) {
             echo file_get_contents($domain . $reportDto->url);
         }, $reportDto->original_name);
@@ -157,6 +181,8 @@ class TabBillingController extends Controller
      */
     public function correctionDownload(int $merchantId, int $fileId, FileService $fileService): ?StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $reportDto = $fileService->getFiles([$fileId])->first();
         $domain = config('common-lib.showcaseHost');
 
@@ -168,7 +194,7 @@ class TabBillingController extends Controller
     /**
      * AJAX добавление корректировки биллинга
      *
-     * @return Application|ResponseFactory|JsonResponse|Response
+     * @return Application|Response|ResponseFactory
      */
     public function addCorrection(int $merchantId, Request $request)
     {
@@ -191,6 +217,8 @@ class TabBillingController extends Controller
      */
     public function billingList(int $merchantId, Request $request, MerchantService $merchantService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $this->makeRestQuery($request, $merchantId);
         $billingList = $this->loadBillingList($merchantId, $restQuery);
         $result = [
@@ -203,10 +231,6 @@ class TabBillingController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * @param $merchantId
-     * @return array
-     */
     protected function loadBillingList($merchantId, DataQuery $restQuery): array
     {
         /** @var MerchantService $merchantService */

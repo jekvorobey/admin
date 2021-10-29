@@ -25,7 +25,7 @@
                 <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
             </div>
         </div>
-        <div>
+        <div v-if="canUpdate(blocks.stores)">
             <a :href="getRoute('merchantStore.add')" class="btn btn-success mt-3">Добавить склад</a>
         </div>
         <table class="table table-condensed mt-3">
@@ -35,7 +35,7 @@
                 <th>Мерчант</th>
                 <th>Название</th>
                 <th>Населенный пункт</th>
-                <th></th>
+                <th v-if="canUpdate(blocks.stores)"></th>
             </tr>
             </thead>
             <tbody>
@@ -45,11 +45,14 @@
             <tr v-if="stores" v-for="(store, index) in stores">
                 <td>{{ store.id }}</td>
                 <td>{{ store.merchant ? store.merchant.legal_name : '' }}</td>
-                <td>
+                <td v-if="canUpdate(blocks.merchants)">
                     <a :href="getRoute('merchantStore.edit', {id: store.id})">{{ store.name }}</a>
                 </td>
+                <td v-else>
+                   {{ store.name }}
+                </td>
                 <td>{{ store.address ? store.address.city : '' }}</td>
-                <td>
+                <td v-if="canUpdate(blocks.stores)">
                     <fa-icon icon="trash-alt" @click="deleteStore(index)"></fa-icon>
                 </td>
             </tr>

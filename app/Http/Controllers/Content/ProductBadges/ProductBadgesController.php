@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content\ProductBadges;
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
@@ -13,7 +14,7 @@ use Pim\Services\ProductService\ProductService;
 
 class ProductBadgesController extends Controller
 {
-    private $replacements = [
+    private array $replacements = [
         '{plus}' => '+',
         '{equal}' => '=',
     ];
@@ -24,6 +25,8 @@ class ProductBadgesController extends Controller
      */
     public function list(ContentBadgesService $badgesService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $badges = $badgesService->productBadges();
 
         $this->title = 'Справочник товарных шильдиков';
@@ -35,10 +38,11 @@ class ProductBadgesController extends Controller
 
     /**
      * Добавить новый продуктовый ярлык
-     * @return JsonResponse
      */
-    public function add(ContentBadgesService $badgesService)
+    public function add(ContentBadgesService $badgesService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'text' => 'required|string',
         ]);
@@ -61,10 +65,11 @@ class ProductBadgesController extends Controller
 
     /**
      * Редактировать продуктовый ярлык
-     * @return JsonResponse
      */
-    public function edit(ContentBadgesService $badgesService)
+    public function edit(ContentBadgesService $badgesService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
             'text' => 'required|string',
@@ -92,6 +97,8 @@ class ProductBadgesController extends Controller
      */
     public function reorder(ContentBadgesService $badgesService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'items' => 'required|json',
         ]);
@@ -107,6 +114,8 @@ class ProductBadgesController extends Controller
      */
     public function remove(ContentBadgesService $badgesService, ProductService $productService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
         ]);

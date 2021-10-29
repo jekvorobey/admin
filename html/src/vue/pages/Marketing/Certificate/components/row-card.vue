@@ -1,6 +1,7 @@
 <template>
     <tr>
-        <td><a :href="getRoute('orders.detail', {id: request.order_id})">{{ request.order_number }}</a></td>
+        <td v-if="canUpdate(blocks.orders)"><a :href="getRoute('orders.detail', {id: request.order_id})">{{ request.order_number }}</a></td>
+        <td v-else>{{ request.order_number }}</td>
         <td>{{ card.id }}</td>
         <td>{{ card.pin }}</td>
         <td>{{ card.price.toLocaleString() }}</td>
@@ -10,19 +11,26 @@
         <td>{{ card.activated_at | datetime }}</td>
         <td>{{ card.expire_at | datetime }}</td>
         <td><card-status :status="card.status"/></td>
-        <td><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
-        <td><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
-        <td>
+        <td v-if="canUpdate(blocks.orders)"><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
+        <td v-else>{{ customer.name }}</td>
+        <td v-if="canUpdate(blocks.clients)"><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
+        <td v-else>{{ recipient.name }}</td>
+        <td v-if="canUpdate(blocks.orders)">
             <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
                v-for="orderPayTransaction in orderPayTransactions">
                 {{ orderPayTransaction.order_number }}
             </a>
         </td>
+        <td v-else>
+            <span v-for="orderPayTransaction in orderPayTransactions">
+              {{ orderPayTransaction.order_number }}
+            </span>
+        </td>
         <td>{{request.comment}}</td>
         <td>{{request.to_email}}</td>
         <td>{{request.to_phone}}</td>
-        <td>
-            <b-button class="btn btn-info btn-sm m-1" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
+        <td v-if="canUpdate(blocks.marketing)">
+            <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
             <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">

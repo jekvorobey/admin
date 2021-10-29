@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order\Directory;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Illuminate\Http\JsonResponse;
 
@@ -19,6 +20,8 @@ class OrderStatusListController extends Controller
      */
     public function index()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->title = 'Статусы заказа';
         $this->loadBasketTypes = true;
 
@@ -31,6 +34,8 @@ class OrderStatusListController extends Controller
 
     public function page(): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $result = [
             'orderStatuses' => $this->getOrderStatuses(),
         ];

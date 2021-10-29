@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -38,6 +39,8 @@ class PriceChangeClaimController extends Controller
         MerchantService $merchantService,
         UserService $userService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $this->title = 'Заявки на изменение цен';
 
         /** @var Collection|ClaimTypeDto[] $claimTypes */
@@ -61,11 +64,10 @@ class PriceChangeClaimController extends Controller
         ]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function page(Request $request, ClaimService $claimService, UserService $userService)
+    public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $query = $this->prepareQuery($request, $claimService);
         $result = [
             'items' => $this->loadClaims($query, $userService),
@@ -81,6 +83,8 @@ class PriceChangeClaimController extends Controller
      */
     public function detail(int $id, ClaimService $claimService, UserService $userService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var PriceChangeClaimDto $claim */
         $claim = $this->loadClaims($query, $userService, true)->first();
@@ -141,6 +145,8 @@ class PriceChangeClaimController extends Controller
         ClaimService $claimService,
         UserService $userService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -167,7 +173,7 @@ class PriceChangeClaimController extends Controller
     }
 
     /**
-     * Изменить ценц
+     * Изменить цену
      */
     public function changePrice(
         int $id,
@@ -175,6 +181,8 @@ class PriceChangeClaimController extends Controller
         ClaimService $claimService,
         UserService $userService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         $result = 'ok';
         $claim = [];
         $error = '';
@@ -270,6 +278,8 @@ class PriceChangeClaimController extends Controller
      */
     protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
+
         /** @var Collection|PriceChangeClaimDto[] $claims */
         $claims = $query->claims();
 

@@ -10,6 +10,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
@@ -17,10 +18,12 @@ use Greensight\Store\Dto\StockDto;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StockService\StockService;
 use Greensight\Store\Services\StoreService\StoreService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductDto;
@@ -37,6 +40,8 @@ class OfferListController extends Controller
         PriceService $priceService,
         StockService $stockService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->title = 'Предложения мерчантов';
         $this->loadOfferSaleStatuses = true;
 
@@ -59,7 +64,9 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $query = $this->makeQuery($request);
         $data = [
             'offers' => $this->loadItems($query, $offerService, $merchantService, $priceService, $stockService),
@@ -76,6 +83,8 @@ class OfferListController extends Controller
         PriceService $priceService,
         StockService $stockService
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'product_id' => 'integer|required',
             'merchant_id' => 'integer|required',
@@ -130,6 +139,8 @@ class OfferListController extends Controller
         PriceService $priceService,
         StockService $stockService
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'product_id' => 'integer|required',
             'price' => 'sometimes|numeric|required',
@@ -180,6 +191,8 @@ class OfferListController extends Controller
 
     public function changeSaleStatus(Request $request, OfferService $offerService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'offer_ids' => 'array|required',
             'offer_ids.*' => 'integer',
@@ -241,8 +254,13 @@ class OfferListController extends Controller
 //        return response('', 204);
 //    }
 
-    public function loadStoreAndQty(Request $request, StoreService $storeService, StockService $stockService)
-    {
+    public function loadStoreAndQty(
+        Request $request,
+        StoreService $storeService,
+        StockService $stockService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'merchant_id' => 'integer|required',
             'offer_id' => 'sometimes|integer|required',
@@ -266,8 +284,13 @@ class OfferListController extends Controller
         return response()->json($data);
     }
 
-    public function validateOffer(Request $request, ProductService $productService, OfferService $offerService)
-    {
+    public function validateOffer(
+        Request $request,
+        ProductService $productService,
+        OfferService $offerService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $request->validate([
             'product_id' => 'integer|required',
             'merchant_id' => 'integer|required',
@@ -301,7 +324,7 @@ class OfferListController extends Controller
         ]);
     }
 
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): RestQuery
     {
         $query = (new RestQuery())
             ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
@@ -330,6 +353,9 @@ class OfferListController extends Controller
         return $query;
     }
 
+    /**
+     * @throws PimException
+     */
     protected function loadItems(
         RestQuery $query,
         OfferService $offerService,

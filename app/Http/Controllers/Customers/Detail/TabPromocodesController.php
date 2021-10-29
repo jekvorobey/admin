@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers\Customers\Detail;
 
+use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeInDto;
 use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Marketing\Services\PromoCodeService\PromoCodeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class TabPromocodesController
+class TabPromocodesController extends Controller
 {
-    public function load($id, Request $request, PromoCodeService $promoCodeService)
+    public function load($id, Request $request, PromoCodeService $promoCodeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $promoCodeQuery = new PromoCodeInDto();
         $promoCodeQuery->ownerId([$id]);
         if ($request->get('mode') == 'archive') {

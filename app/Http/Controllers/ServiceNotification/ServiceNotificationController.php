@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ServiceNotification;
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\ServiceNotification\ServiceNotificationDto;
 use Greensight\Message\Services\ServiceNotificationService\ServiceNotificationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,7 +29,7 @@ class ServiceNotificationController extends Controller
         ]);
     }
 
-    public function list(Request $request, ServiceNotificationService $serviceNotificationService)
+    public function list(Request $request, ServiceNotificationService $serviceNotificationService): JsonResponse
     {
         $page = $request->input('page') ?? 1;
 
@@ -45,7 +46,7 @@ class ServiceNotificationController extends Controller
         ]);
     }
 
-    public function save(Request $request, ServiceNotificationService $serviceNotificationService)
+    public function save(Request $request, ServiceNotificationService $serviceNotificationService): JsonResponse
     {
         $id = $request->get('id');
         $notification = $request->get('notification');
@@ -65,7 +66,7 @@ class ServiceNotificationController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, ServiceNotificationService $serviceNotificationService)
+    public function delete(Request $request, ServiceNotificationService $serviceNotificationService): JsonResponse
     {
         $ids = $request->get('ids');
 
@@ -80,7 +81,7 @@ class ServiceNotificationController extends Controller
         return response()->json();
     }
 
-    public function send(Request $request, ServiceNotificationService $serviceNotificationService)
+    public function send(Request $request, ServiceNotificationService $serviceNotificationService): JsonResponse
     {
         $user_id = $request->get('user_id');
         $type = $request->get('type');

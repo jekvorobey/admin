@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\DeliveryStatus;
@@ -29,6 +30,8 @@ class FlowDeliveryController extends Controller
      */
     public function detail(int $orderId, int $deliveryId)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $delivery = $this->loadDelivery($deliveryId);
         $shipments = $this->loadShipments($deliveryId);
 
@@ -56,6 +59,8 @@ class FlowDeliveryController extends Controller
     /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter */
     public function editDelivery(int $deliveryId, Request $request, DeliveryService $deliveryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'order_id' => 'integer|required',
@@ -99,6 +104,8 @@ class FlowDeliveryController extends Controller
     /** @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter */
     public function editShipment(int $deliveryId, Request $request, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'delivery_id' => 'integer|nullable',
@@ -170,7 +177,6 @@ class FlowDeliveryController extends Controller
 
     /**
      * Получить мерчантов
-     * @param array $merchantIds
      */
     protected function loadMerchants(array $merchantIds): ?Collection
     {

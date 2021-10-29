@@ -5,8 +5,11 @@
         <td>
           <a :href="downloadLink">Скачать отчет</a>
         </td>
-        <td>
+        <td v-if="canUpdate(blocks.settings)">
             <a :href="creatorLink" target="_blank">{{creatorName}}</a>
+        </td>
+        <td v-else>
+            {{ creatorName }}
         </td>
     </tr>
 </template>

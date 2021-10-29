@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -20,6 +23,8 @@ class UsersController extends Controller
 {
     public function index(Request $request, UserService $userService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $this->title = 'Список пользователей';
 
         $query = $this->makeQuery($request);
@@ -34,8 +39,10 @@ class UsersController extends Controller
         ]);
     }
 
-    public function page(Request $request, UserService $userService)
+    public function page(Request $request, UserService $userService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $query = $this->makeQuery($request);
         $data = [
             'items' => $this->loadItems($query, $userService),
@@ -46,8 +53,13 @@ class UsersController extends Controller
         return response()->json($data);
     }
 
-    public function detail(int $id, UserService $userService)
+    /**
+     * @return mixed
+     */
+    public function detail(int $id, UserService $userService, RoleService $roleService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
         /** @var UserDto $user */
@@ -60,19 +72,22 @@ class UsersController extends Controller
         $this->title = "Пользователь № {$user->id}";
 
         $userRoles = $userService->userRoles($id);
+        $roles = $roleService->roles();
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
-                'roles' => UserDto::roles(),
+                'roles' => $roles,
             ],
         ]);
     }
 
-    public function saveUser(Request $request, UserService $userService)
+    public function saveUser(Request $request, UserService $userService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'id' => 'nullable|integer',
@@ -94,8 +109,10 @@ class UsersController extends Controller
         return response()->json([]);
     }
 
-    public function addRole(int $id, Request $request, UserService $userService)
+    public function addRole(int $id, Request $request, UserService $userService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
@@ -106,13 +123,16 @@ class UsersController extends Controller
         }
 
         $userService->addRoles($id, [$data['role']], $data['expires'] ?? null);
+
         return response()->json([
             'roles' => $userService->userRoles($id),
         ]);
     }
 
-    public function deleteRole(int $id, Request $request, UserService $userService)
+    public function deleteRole(int $id, Request $request, UserService $userService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $request->all();
         $validator = Validator::make($data, [
             'role' => 'required|integer',
@@ -122,6 +142,7 @@ class UsersController extends Controller
         }
 
         $userService->deleteRole($id, $data['role']);
+
         return response()->json([
             'roles' => $userService->userRoles($id),
         ]);
@@ -129,11 +150,14 @@ class UsersController extends Controller
 
     /**
      * Получение пользователей по массиву ролей
-     *
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function usersByRoles(UserService $userService, OperatorService $operatorService, RequestInitiator $user)
-    {
+    public function usersByRoles(
+        UserService $userService,
+        OperatorService $operatorService,
+        RequestInitiator $user
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',
             'role_ids.' => 'integer',
@@ -188,6 +212,7 @@ class UsersController extends Controller
     {
         $restQuery = new RestQuery();
         $restQuery->pageNumber($request->get('page', 1), 10);
+
         return $restQuery;
     }
 

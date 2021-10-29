@@ -134,7 +134,7 @@
                 <span class="float-right">Всего заказов: {{ pager.total }}.</span>
             </template>
         </b-card>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.orders)">
             <div>
                 <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
             </div>

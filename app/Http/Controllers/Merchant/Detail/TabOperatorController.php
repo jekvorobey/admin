@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -18,11 +19,11 @@ class TabOperatorController extends Controller
 {
     /**
      * AJAX подгрузка информации для фильтрации отправлений
-     *
-     * @return JsonResponse
      */
-    public function loadData()
+    public function loadData(): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         return response()->json([
             'communication_methods' => OperatorCommunicationMethod::allMethods(),
             'roles' => UserDto::rolesByFrontIds([Front::FRONT_MAS]),
@@ -32,7 +33,6 @@ class TabOperatorController extends Controller
     /**
      * AJAX пагинация списка операторов
      *
-     * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
     public function loadOperators(
@@ -40,7 +40,9 @@ class TabOperatorController extends Controller
         Request $request,
         OperatorService $operatorService,
         UserService $userService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $page = $request->get('page', 1);
         $restQuery = (new RestQuery())->pageNumber($page, 10)
             ->setFilter('merchant_id', $merchantId);

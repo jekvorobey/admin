@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Marketing;
 
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,8 @@ class CertificateNominalController extends Controller
 
     public function index(Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Конструктор сертификатов (номиналы)';
         $this->setActiveMenu();
 
@@ -35,6 +38,8 @@ class CertificateNominalController extends Controller
 
     public function createPage()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Создание номинала';
         $this->setActiveMenu();
 
@@ -48,8 +53,11 @@ class CertificateNominalController extends Controller
 
     public function editPage($id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Редактирование номинала';
         $this->setActiveMenu();
+
         return $this->render('Marketing/Certificate/Nominals/Edit', [
             'nominal' => $this->service()->nominalQuery()->withDesigns()->id($id)->nominals()->first() ?? [],
             'all_designs' => $this->designDictionary(),
@@ -63,12 +71,17 @@ class CertificateNominalController extends Controller
 
     public function delete($id)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->service()->deleteNominal($id);
+
         return response('', 204);
     }
 
     public function create(Request $request, RequestInitiator $requestInitiator): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->all() + ['creator_id' => $requestInitiator->userId()];
 
         $id = $this->service()->createNominal(new CertificateNominalDto($data));
@@ -78,7 +91,10 @@ class CertificateNominalController extends Controller
 
     public function update($id, Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->service()->updateNominal($id, new CertificateNominalDto($request->all()));
+
         return response()->json(['status' => 'ok']);
     }
 }

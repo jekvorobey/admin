@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <b-row class="mb-2">
+        <b-row class="mb-2" v-if="canUpdate(blocks.clients)">
             <b-col>
                 <button class="btn btn-success btn-sm" @click="openActivity()"><fa-icon icon="plus"/></button>
             </b-col>
@@ -11,7 +11,7 @@
                     <th>ID</th>
                     <th>Название</th>
                     <th>Активность</th>
-                    <th></th>
+                    <th v-if="canUpdate(blocks.clients)"></th>
                 </tr>
             </thead>
             <tbody>
@@ -19,7 +19,7 @@
                     <td>{{ activity.id }}</td>
                     <td>{{ activity.name }}</td>
                     <td>{{ activity.active ? 'Да' : 'Нет' }}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.clients)">
                         <button class="btn btn-warning btn-sm" @click="openActivity(activity)"><fa-icon icon="edit"/></button>
                     </td>
                 </tr>

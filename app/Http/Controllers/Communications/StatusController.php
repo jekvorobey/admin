@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Communications;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Message\Dto\Communication\CommunicationStatusDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationStatusService;
+use Illuminate\Http\JsonResponse;
 
 class StatusController extends Controller
 {
@@ -13,6 +15,8 @@ class StatusController extends Controller
         CommunicationService $communicationService,
         CommunicationStatusService $communicationStatusService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $this->title = 'Статусы';
         $channels = $communicationService->channels()->keyBy('id');
         $statuses = $communicationStatusService->statuses()->keyBy('id');
@@ -23,8 +27,10 @@ class StatusController extends Controller
         ]);
     }
 
-    public function save(CommunicationStatusService $communicationStatusService)
+    public function save(CommunicationStatusService $communicationStatusService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $rStatus = request('status');
         $status = new CommunicationStatusDto();
         $status->name = $rStatus['name'];
@@ -38,18 +44,20 @@ class StatusController extends Controller
         } else {
             $communicationStatusService->create($status);
         }
-
         $statuses = $communicationStatusService->statuses()->keyBy('id');
+
         return response()->json([
             'statuses' => $statuses,
         ]);
     }
 
-    public function delete($id, CommunicationStatusService $communicationStatusService)
+    public function delete($id, CommunicationStatusService $communicationStatusService): JsonResponse
     {
-        $communicationStatusService->delete($id);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
 
+        $communicationStatusService->delete($id);
         $statuses = $communicationStatusService->statuses()->keyBy('id');
+
         return response()->json([
             'statuses' => $statuses,
         ]);

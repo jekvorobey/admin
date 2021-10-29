@@ -6,14 +6,18 @@ use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\LandingDto;
 use Cms\Services\LandingService\LandingService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Http\JsonResponse;
 
 class LandingListController extends Controller
 {
     public function listPage(Request $request, LandingService $landingService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $this->title = 'Страницы';
         $query = $this->makeQuery($request);
 
@@ -27,8 +31,10 @@ class LandingListController extends Controller
         ]);
     }
 
-    public function page(Request $request, LandingService $landingService)
+    public function page(Request $request, LandingService $landingService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $query = $this->makeQuery($request);
         $data = [
             'landings' => $this->loadItems($query, $landingService),
@@ -40,10 +46,7 @@ class LandingListController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * @return RestQuery
-     */
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): RestQuery
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);
