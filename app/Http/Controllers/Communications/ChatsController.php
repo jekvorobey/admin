@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Communications;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestClientException;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -15,6 +17,7 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
+use Illuminate\Http\JsonResponse;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
@@ -23,6 +26,8 @@ class ChatsController extends Controller
 {
     public function unread(MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
         $this->loadCommunicationThemes = true;
@@ -43,6 +48,8 @@ class ChatsController extends Controller
 
     public function broadcast(MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
         $this->loadCommunicationThemes = true;
@@ -60,7 +67,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function filter(CommunicationService $communicationService)
+    public function filter(CommunicationService $communicationService): JsonResponse
     {
         $listConstructor = $communicationService->chats();
         if (request('user_ids')) {
@@ -93,26 +100,29 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function unreadCount(CommunicationService $communicationService)
+    public function unreadCount(CommunicationService $communicationService): JsonResponse
     {
         $count = $communicationService->unreadCount();
+
         return response()->json([
             'count' => $count,
         ]);
     }
 
-    public function read(CommunicationService $communicationService)
+    public function read(CommunicationService $communicationService): JsonResponse
     {
         $communicationService->readChat(request('id'), 0);
+
         return response()->json([], 204);
     }
 
-    public function send(CommunicationService $communicationService, RequestInitiator $user)
+    public function send(CommunicationService $communicationService, RequestInitiator $user): JsonResponse
     {
         $chatIds = request('chat_ids');
         $communicationService->createMessage($chatIds, $user->userId(), request('message'), request('files'));
 
         [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+
         return response()->json([
             'chats' => $chats,
             'users' => $users,
@@ -122,7 +132,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function create(CommunicationService $communicationService, RequestInitiator $user)
+    public function create(CommunicationService $communicationService, RequestInitiator $user): JsonResponse
     {
         $userIds = request('user_ids');
         $chatIds = $communicationService->createChat(
@@ -142,6 +152,7 @@ class ChatsController extends Controller
         }
 
         [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds($chatIds));
+
         return response()->json([
             'chats' => $chats,
             'users' => $users,
@@ -151,7 +162,7 @@ class ChatsController extends Controller
         ]);
     }
 
-    public function update(CommunicationService $communicationService)
+    public function update(CommunicationService $communicationService): JsonResponse
     {
         $chatId = request('chat_id');
 
@@ -163,6 +174,7 @@ class ChatsController extends Controller
         );
 
         [$chats, $users, $files, $customers, $operators] = $this->loadChats($communicationService->chats()->setIds([$chatId]));
+
         return response()->json([
             'chats' => $chats,
             'users' => $users,
@@ -174,8 +186,9 @@ class ChatsController extends Controller
 
     /**
      * Привязываем пользователя к чату (LiveTex)
+     * @throws RestClientException
      */
-    public function updateChatUser(CommunicationService $communicationService)
+    public function updateChatUser(CommunicationService $communicationService): JsonResponse
     {
         $data = $this->validate(request(), [
             'chat_id' => 'required|integer',
@@ -196,7 +209,8 @@ class ChatsController extends Controller
     /**
      * Список чатов из мессенджеров (LiveTex), которые не привязаны к пользователям
      *
-     * @param RequestInitiator $user
+     * @return mixed
+     * @throws RestClientException
      */
     public function unlinkMessengerChats(CommunicationService $communicationService, UserService $userService)
     {
@@ -204,6 +218,7 @@ class ChatsController extends Controller
         $listConstructor->setUserIds('null');
         $chats = $listConstructor->load();
 
+        /** TODO изменить метод под роли из базы */
         $roles = UserDto::rolesGroupByFront();
         $users = $userService
             ->users(
@@ -217,15 +232,18 @@ class ChatsController extends Controller
                         'name' => $user->getTitle(),
                     ];
                 });
-
         $this->title = 'Неперсонифицированные чаты';
+
         return $this->render('Communication/UnlinkMessengerChats', [
             'iChats' => $chats,
             'iUsers' => $users,
         ]);
     }
 
-    protected function loadChats(ListConstructor $constructor)
+    /**
+     * @throws RestClientException
+     */
+    protected function loadChats(ListConstructor $constructor): array
     {
         $userService = resolve(UserService::class);
         $fileService = resolve(FileService::class);

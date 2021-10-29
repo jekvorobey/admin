@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -24,6 +25,8 @@ class MerchantSettlementsController extends Controller
 
     protected function list()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
 
@@ -45,6 +48,8 @@ class MerchantSettlementsController extends Controller
 
     public function page(MerchantService $merchantService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $query = $this->makeRestQuery();
         $data = [
             'items' => $this->loadItems(),
@@ -114,6 +119,8 @@ class MerchantSettlementsController extends Controller
      */
     public function getPayRegistry(): array
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
         $restQuery = $this->makeQuery();
@@ -137,6 +144,7 @@ class MerchantSettlementsController extends Controller
     protected function makeQuery(): DataQuery
     {
         $page = request()->get('payRegistersPage', 1);
+
         return (new RestQuery())
             ->pageNumber($page, 30)
             ->addSort('id', 'desc');
@@ -147,9 +155,12 @@ class MerchantSettlementsController extends Controller
      */
     public function createPayRegistry(Request $request, RequestInitiator $user): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
         $merchantService->createPayRegistry($request->ids, $user->userId());
+
         return response('', 204);
     }
 
@@ -158,10 +169,12 @@ class MerchantSettlementsController extends Controller
      */
     public function deletePayRegistry(int $payRegistryId): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
-
         $merchantService->deletePayRegistry($payRegistryId);
+
         return response('', 204);
     }
 
@@ -170,6 +183,8 @@ class MerchantSettlementsController extends Controller
      */
     public function downloadPayRegistry(int $registryFileId, FileService $fileService): ?StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $registryDto = $fileService->getFiles([$registryFileId])->first();
         if (!$registryDto) {
             return null;

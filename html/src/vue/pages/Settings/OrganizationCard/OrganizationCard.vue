@@ -197,7 +197,7 @@
             >E-mail для заявок</v-input>
 
 
-            <div class="form-group mt-3">
+            <div class="form-group mt-3" v-if="canUpdate(blocks.settings)">
                 <button type="submit" class="btn btn-primary">Сохранить</button>
             </div>
         </form>

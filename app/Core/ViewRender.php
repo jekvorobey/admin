@@ -2,8 +2,12 @@
 
 namespace App\Core;
 
+use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
@@ -46,6 +50,8 @@ class ViewRender
     private $title;
 
     private $userRoles = [];
+    private $blocks = [];
+    private $blockPermissions = [];
 
     private $customerStatus = [];
     private $customerStatusName = [];
@@ -103,15 +109,14 @@ class ViewRender
         return $this;
     }
 
+    /** TODO изменить на роли из базы */
     public function loadUserRoles($load = false): self
     {
+        $roles = resolve(RoleService::class)->roles();
         if ($load) {
             $this->userRoles = [
                 'admin' => [
-                    'super' => UserDto::ADMIN__SUPER,
-                    'admin' => UserDto::ADMIN__ADMIN,
-                    'manager_merchant' => UserDto::ADMIN__MANAGER_MERCHANT,
-                    'manager_client' => UserDto::ADMIN__MANAGER_CLIENT,
+                    $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
                 ],
                 'mas' => [
                     'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
@@ -126,6 +131,40 @@ class ViewRender
                 ],
             ];
         }
+
+        return $this;
+    }
+
+    public function loadBlocks(): self
+    {
+        $this->blocks = [
+            'products' => BlockDto::ADMIN_BLOCK_PRODUCTS,
+            'orders' => BlockDto::ADMIN_BLOCK_ORDERS,
+            'claims' => BlockDto::ADMIN_BLOCK_CLAIMS,
+            'content' => BlockDto::ADMIN_BLOCK_CONTENT,
+            'logistics' => BlockDto::ADMIN_BLOCK_LOGISTICS,
+            'stores' => BlockDto::ADMIN_BLOCK_STORES,
+            'clients' => BlockDto::ADMIN_BLOCK_CLIENTS,
+            'referrals' => BlockDto::ADMIN_BLOCK_REFERRALS,
+            'merchants' => BlockDto::ADMIN_BLOCK_MERCHANTS,
+            'marketing' => BlockDto::ADMIN_BLOCK_MARKETING,
+            'communications' => BlockDto::ADMIN_BLOCK_COMMUNICATIONS,
+            'events' => BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS,
+            'settings' => BlockDto::ADMIN_BLOCK_SETTINGS,
+        ];
+
+        return $this;
+    }
+
+    public function loadBlockPermissions(): self
+    {
+        $view = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_VIEW);
+        $update = resolve(RequestInitiator::class)->blocksByPermission(PermissionDto::PERMISSION_UPDATE);
+
+        $this->blockPermissions = [
+            'view' => array_merge($view, $update),
+            'update' => $update,
+        ];
 
         return $this;
     }
@@ -725,12 +764,15 @@ class ViewRender
             $this->props,
             [
                 'menu' => Menu::getMenuItems(),
+                /** TODO брать роли из базы */
                 'user' => [
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
                 ],
 
                 'userRoles' => $this->userRoles,
+                'blocks' => $this->blocks,
+                'blockPermissions' => $this->blockPermissions,
 
                 'customerStatusByRole' => $this->customerStatusByRole,
                 'customerStatusName' => $this->customerStatusName,
@@ -783,7 +825,7 @@ class ViewRender
         );
     }
 
-    private function getAssets()
+    private function getAssets(): array
     {
         if (frontend()->isInDevMode()) {
             return [
@@ -805,6 +847,7 @@ class ViewRender
                     $css = array_filter((array) $webPack[$this->componentName]['css']);
                 }
             }
+
             return [
                 'js' => $js,
                 'css' => $css,

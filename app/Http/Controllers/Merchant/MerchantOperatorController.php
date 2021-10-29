@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -19,6 +20,8 @@ class MerchantOperatorController extends Controller
 {
     public function indexCreate(Request $request, MerchantService $merchantService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $request->validate([
             'merchant_id' => 'integer|sometimes',
         ]);
@@ -35,6 +38,7 @@ class MerchantOperatorController extends Controller
         }
         $props['communicationMethods'] = OperatorCommunicationMethod::allMethods();
         $props['roles'] = UserDto::rolesByFrontIds([Front::FRONT_MAS]);
+
         return $this->render('Merchant/Operator/CreateEdit', $props);
     }
 
@@ -44,6 +48,8 @@ class MerchantOperatorController extends Controller
         UserService $userService,
         MerchantService $merchantService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         /** @var OperatorDto $operator */
         $operator = $operatorService->operators((new RestQuery())->setFilter('id', $operatorId))
             ->first();
@@ -75,6 +81,7 @@ class MerchantOperatorController extends Controller
         )->all();
 
         $this->title = 'Редактирование менеджера';
+
         return $this->render('Merchant/Operator/CreateEdit', [
             'operatorProp' => $operator,
             'merchants' => $merchants,
@@ -85,6 +92,8 @@ class MerchantOperatorController extends Controller
 
     public function save(Request $request, UserService $userService, OperatorService $operatorService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $userData = $request->validate([
             'last_name' => 'string|required',
             'first_name' => 'string|required',
@@ -124,6 +133,8 @@ class MerchantOperatorController extends Controller
         OperatorService $operatorService,
         UserService $userService
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $userData = $request->validate([
             'last_name' => 'string',
             'first_name' => 'string',
@@ -175,6 +186,8 @@ class MerchantOperatorController extends Controller
 
     public function delete(Request $request, OperatorService $operatorService, UserService $userService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $request->validate([
             'operator_ids' => 'required|array',
         ]);
@@ -189,8 +202,11 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
+    /** TODO изменить на выбор ролей из базы */
     public function changeRoles(Request $request, UserService $userService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $userRolesData = $request->validate([
             'user_id' => 'integer',
             'roles' => 'array',

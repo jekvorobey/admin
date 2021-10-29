@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -15,6 +16,7 @@ use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Dto\RatingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -25,7 +27,7 @@ class MerchantDetailController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function index(
         int $id,
@@ -37,6 +39,8 @@ class MerchantDetailController extends Controller
         CategoryService $categoryService,
         OfferService $offerService
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;
         $this->loadMerchantVatTypes = true;
@@ -213,6 +217,8 @@ class MerchantDetailController extends Controller
 
     public function updateMerchant(int $id, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'merchant.legal_name' => 'nullable',
             'merchant.status' => ['nullable', Rule::in(array_keys(MerchantStatus::allStatuses()))],

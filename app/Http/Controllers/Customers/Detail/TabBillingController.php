@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Dto\ReferralBillOperationDto;
@@ -10,19 +11,25 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\Dto\CorrectReferralBillOperationDto;
 use Greensight\Customer\Services\ReferralService\Dto\GetReferralBillOperationDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 
 class TabBillingController extends Controller
 {
-    public function load($id)
+    public function load($id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return response()->json([
             'operations' => $this->loadOperations($id),
             'types' => ReferralBillOperationDto::getTypes(),
         ]);
     }
 
-    public function correct($id, ReferralService $referralService, CustomerService $customerService)
+    public function correct($id, ReferralService $referralService, CustomerService $customerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'comment' => 'required',
             'value' => 'numeric',
@@ -40,13 +47,14 @@ class TabBillingController extends Controller
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
+
         return response()->json([
             'operations' => $this->loadOperations($id),
             'referral_bill' => $customer->referral_bill,
         ]);
     }
 
-    protected function loadOperations($id)
+    protected function loadOperations($id): Collection
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);

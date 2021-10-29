@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Logistics\DeliveryService;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\AbstractDto;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryServiceStatus;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,11 +22,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class DeliveryServiceDetailController extends Controller
 {
     /**
-     * @param $id
      * @return mixed
      */
     public function index($id, ListsService $listsService, ShipmentService $shipmentService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $deliveryServiceQuery = $listsService->newQuery();
         $deliveryService = $listsService->deliveryService($id, $deliveryServiceQuery);
         if (!$deliveryService) {
@@ -72,11 +75,12 @@ class DeliveryServiceDetailController extends Controller
     }
 
     /**
-     * @param $id
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return ResponseFactory|Response
      */
-    public function save($id, ListsService $listsService): Response
+    public function save(int $id, ListsService $listsService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'name' => ['required', 'string'],
             'registered_at' => ['required', 'date'],

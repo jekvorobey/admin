@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Content\Category;
 
 use App\Http\Controllers\Controller;
+use Cms\Core\CmsException;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Cms\Dto\FrequentCategoryDto;
 use Cms\Services\FrequentCategoryService\FrequentCategoryService;
+use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
 use Pim\Services\CategoryService\CategoryService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,14 +23,16 @@ class FrequentCategoryController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Cms\Core\CmsException
-     * @throws \Pim\Core\PimException
+     * @throws CmsException
+     * @throws PimException
      */
     public function index(
         CategoryService $categoryService,
         FrequentCategoryService $frequentCategoryService,
         FileService $fileService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $this->title = 'Управление категориями';
 
         return $this->render('Content/Category', [
@@ -36,10 +42,12 @@ class FrequentCategoryController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|Response
+     * @return ResponseFactory|Response
      */
     public function editCategories(Request $request, FrequentCategoryService $frequentCategoryService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $request->validate([
             'items' => 'array|required',
             'items.*.id' => 'integer|required',
@@ -58,19 +66,22 @@ class FrequentCategoryController extends Controller
             $editedCategories->push(new FrequentCategoryDto($item));
         }
         $frequentCategoryService->upsertCategories($editedCategories);
+
         return response('', 204);
     }
 
     /**
      * @return Collection|CategoryDto[]
-     * @throws \Cms\Core\CmsException
-     * @throws \Pim\Core\PimException
+     * @throws CmsException
+     * @throws PimException
      */
     protected function loadCategories(
         CategoryService $categoryService,
         FrequentCategoryService $frequentCategoryService,
         FileService $fileService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $categories = $categoryService->categories((new RestQuery())
             ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active')
             ->include(CategoryService::PRODUCTS_COUNT));
@@ -98,11 +109,12 @@ class FrequentCategoryController extends Controller
         });
     }
 
-    protected function injectFiles(FileService $fileService, Collection $frequentCategories)
+    protected function injectFiles(FileService $fileService, Collection $frequentCategories): Collection
     {
         $fileIds = $frequentCategories->pluck('file_id')->all();
         /** @var Collection|FileDto[] $files */
         $files = $fileService->getFiles($fileIds)->keyBy('id');
+
         return $frequentCategories->map(function (FrequentCategoryDto $frequentCategory) use ($files) {
             $frequentCategory['file'] = $files->has($frequentCategory->file_id) ? [
                 'id' => $files->get($frequentCategory->file_id)->id,
@@ -114,10 +126,8 @@ class FrequentCategoryController extends Controller
 
     /**
      * Валидация кол-ва категорий, выбранных для отображения на главной (должно быть не более 8)
-     * @param $items
-     * @return bool
      */
-    protected function validateSelectedCount($items)
+    protected function validateSelectedCount($items): bool
     {
         return count($items) <= FrequentCategoryDto::FREQUENT_CATEGORY_MAX_COUNT;
     }

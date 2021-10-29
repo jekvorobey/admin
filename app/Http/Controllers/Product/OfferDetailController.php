@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Dto\StockDto;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StockService\StockService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -25,6 +27,8 @@ class OfferDetailController extends Controller
         StockService $stockService,
         MerchantService $merchantService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->loadOfferSaleStatuses = true;
         $offerInfo = $this->loadOfferInfo($id, $offerService, $priceService, $stockService, $merchantService);
 
@@ -33,8 +37,10 @@ class OfferDetailController extends Controller
         ]);
     }
 
-    public function loadStocks(int $id, Request $request, StockService $stockService)
+    public function loadStocks(int $id, Request $request, StockService $stockService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $query = (new RestQuery())
             ->setFilter('offer_id', $id)
             ->include(StoreDto::entity())
@@ -77,6 +83,7 @@ class OfferDetailController extends Controller
                 'contacts' => $stock->store->storeContact->first() ?? null,
             ];
         });
+
         return response()->json([
             'stocks' => $stocks,
         ]);
@@ -88,7 +95,7 @@ class OfferDetailController extends Controller
         PriceService $priceService,
         StockService $stockService,
         MerchantService $merchantService
-    ) {
+    ): array {
         $offer = $offerService->newQuery()
             ->setFilter('id', $id)
             ->include(ProductDto::entity())

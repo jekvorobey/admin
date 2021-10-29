@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\PublicEvent\MediaDto;
 use Pim\Services\PublicEventMediaService\PublicEventMediaService;
@@ -10,8 +12,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MediaController extends Controller
 {
-    public function fullList(PublicEventMediaService $publicEventMediaService)
+    public function fullList(PublicEventMediaService $publicEventMediaService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $query = $publicEventMediaService->query();
 
         return response()->json([
@@ -19,8 +23,10 @@ class MediaController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventMediaService $publicEventMediaService)
+    public function save(Request $request, PublicEventMediaService $publicEventMediaService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $media = $request->get('media');
 
@@ -39,8 +45,10 @@ class MediaController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventMediaService $publicEventMediaService)
+    public function delete(Request $request, PublicEventMediaService $publicEventMediaService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
 
         if (!$id) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customers;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -21,6 +22,10 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Pim\Services\CertificateService\CertificateService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -30,7 +35,6 @@ use Illuminate\Http\Request;
 class CustomerDetailController extends Controller
 {
     /**
-     * @param $id
      * @return mixed
      */
     public function detail(
@@ -42,6 +46,8 @@ class CustomerDetailController extends Controller
         ReferralService $referralService,
         CommunicationService $communicationService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadCommunicationChannelTypes = true;
@@ -182,12 +188,17 @@ class CustomerDetailController extends Controller
         ]);
     }
 
+    /**
+     * @return Application|ResponseFactory|Response
+     */
     public function save(
-        $id,
+        int $id,
         CustomerService $customerService,
         UserService $userService,
         RequestInitiator $requestInitiator
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->validate(request(), [
             'customer' => 'nullable|array',
             'customer.avatar' => 'nullable',
@@ -228,6 +239,7 @@ class CustomerDetailController extends Controller
         $activities = request('activities');
         $passport = request('customer.passport');
 
+        /** TODO заменить на роль из базы */
         // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
         if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
             unset($user['phone']);
@@ -282,11 +294,14 @@ class CustomerDetailController extends Controller
         if ($passport) {
             $customerService->savePassport($id, new CustomerPassportDto($passport));
         }
+
         return response('', 204);
     }
 
-    public function referral($id, ReferralService $referralService)
+    public function referral($id, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $referralService->makeReferral($id);
 
         $referralLevels = $referralService->getLevels();
@@ -299,6 +314,8 @@ class CustomerDetailController extends Controller
 
     public function professional($id, ReferralService $referralService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $referralService->makeProfessional($id);
 
         return response('', 204);
@@ -306,6 +323,8 @@ class CustomerDetailController extends Controller
 
     public function putPortfolios(int $id, CustomerService $customerService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $portfolios = request('portfolios');
         $portfolioDtos = collect();
         foreach ($portfolios as $portfolio) {
@@ -324,7 +343,9 @@ class CustomerDetailController extends Controller
         Request $request,
         CustomerService $customerService,
         RequestInitiator $requestInitiator
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $customerService->dial($id, $requestInitiator->userId(), $request->input('provider'));
 
         return response()->json([

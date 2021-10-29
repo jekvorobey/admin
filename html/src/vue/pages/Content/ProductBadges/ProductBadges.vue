@@ -2,7 +2,7 @@
     <layout-main>
             <div class="row mb-3">
                 <div class="col-6" style="text-align: left">
-                    <button v-if="itemsOrder.length > 0"
+                    <button v-if="itemsOrder.length > 0 && canUpdate(blocks.content)"
                             class="btn btn-dark btn-lg"
                             @click="reorderItems">
                         <template v-if="!isReordering">
@@ -24,7 +24,7 @@
                         <fa-icon icon="check"/> Порядок сохранён
                     </button>
                 </div>
-                <div class="col-6" style="text-align: right">
+                <div v-if="canUpdate(blocks.content)" class="col-6" style="text-align: right">
                     <button class="btn btn-success btn-lg"
                             @click="openBadgesEditModal(null)">
                         Добавить шильдик <fa-icon icon="plus"/>
@@ -39,7 +39,7 @@
                 <div class="col-5">
                     <h5>Текст шильдика</h5>
                 </div>
-                <div class="col-5" style="text-align: center">
+                <div v-if="canUpdate(blocks.content)" class="col-5" style="text-align: center">
                     <h5>Действия</h5>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                         </span>
                     </h5>
                 </div>
-                <div class="col-5">
+                <div v-if="canUpdate(blocks.content)" class="col-5">
                     <div class="row">
                         <div class="col-6 pr-0" style="text-align: right">
                             <button @click="openBadgesEditModal(index)"

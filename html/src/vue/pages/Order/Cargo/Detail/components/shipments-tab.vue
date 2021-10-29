@@ -12,7 +12,7 @@
                         Распечатать документы
                     </dropdown>
                 </div>
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end" v-if="canUpdate(blocks.orders)">
                     <div>
                         <button class="btn btn-primary" v-if="isCreatedStatus && !isCancel"
                                 @click="openModal('addShipment2Cargo')">
@@ -29,7 +29,7 @@
                         <th>Сумма</th>
                         <th>Требуемая дата отгрузки</th>
                         <th>Кол-во коробок</th>
-                        <th></th>
+                        <th v-if="canUpdate(blocks.orders)"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -41,7 +41,7 @@
                         <td>{{ preparePrice(shipment.cost) }} руб.</td>
                         <td>{{ shipment.required_shipping_at }}</td>
                         <td>{{ shipment.packages.length }}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.orders)">
                             <fa-icon icon="times" title="Удалить из груза" class="cursor-pointer"
                                     @click="deleteShipmentFromCargo(shipment.id)"
                                     v-if="isCreatedStatus && !isCancel"></fa-icon>

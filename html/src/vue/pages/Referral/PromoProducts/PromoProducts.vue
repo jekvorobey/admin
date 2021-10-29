@@ -2,7 +2,7 @@
     <layout-main>
         <table class="table">
             <thead>
-            <tr class="table-secondary">
+            <tr class="table-secondary" v-if="canUpdate(blocks.referrals)">
                 <th colspan="5" style="text-align: right">
                     <button class="btn btn-info btn-bg"
                             @click="openAttachModal"
@@ -16,7 +16,7 @@
                 <th>Товар</th>
                 <th>Описание</th>
                 <th>Файлы</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.referrals)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -47,7 +47,7 @@
 
                     <file-input @uploaded="(data) => $set(newPromoProduct.files, newPromoProduct.files.length, data.id)" class="mb-3"></file-input>
                 </td>
-                <td>
+                <td v-if="canUpdate(blocks.referrals)">
                     <button class="btn btn-success btn-sm"
                             :disabled="this.$v.newPromoProduct.$invalid"
                             @click="savePromoProduct(newPromoProduct, 'create')">
@@ -72,10 +72,13 @@
                     </div>
                 </td>
                 <td>
-                    <div>
+                    <div v-if="canView(blocks.products)">
                         <a :href="getRoute('products.detail', {id: promoProduct.$model.product_id})">
                             {{ promoProduct.$model.product_name }}
                         </a>
+                    </div>
+                    <div v-else>
+                        {{ promoProduct.$model.product_name }}
                     </div>
                     <div v-if="promoProduct.$model.product_id">ID товара: {{ promoProduct.$model.product_id }}</div>
                     <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
@@ -118,7 +121,7 @@
                                     $delete(promoProduct.files.$model, i);
                                     promoProduct.files.$touch();
                                 }"
-                                v-if="!!promoProduct.$model.active"/>
+                                v-if="!!promoProduct.$model.active && canUpdate(blocks.referrals)"/>
                     </div>
 
                     <file-input
@@ -129,7 +132,7 @@
                             class="mb-3"
                             v-if="!!promoProduct.$model.active"></file-input>
                 </td>
-                <td>
+                <td v-if="canUpdate(blocks.referrals)">
                     <template >
                         <button class="btn btn-success btn-sm"
                                 @click="savePromoProduct(promoProduct.$model, 'update')"

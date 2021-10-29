@@ -1,6 +1,6 @@
 <template>
   <layout-main>
-    <div class="d-flex justify-content-between mt-3 mb-3">
+    <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.orders)">
       <button class="btn btn-success" @click="createReason">Создать причину отмены</button>
     </div>
     <table class="table">

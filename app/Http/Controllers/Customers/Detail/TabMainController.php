@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -11,6 +12,7 @@ use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Marketing\Services\MarketingService\MarketingService;
+use Illuminate\Http\JsonResponse;
 
 class TabMainController extends Controller
 {
@@ -20,7 +22,9 @@ class TabMainController extends Controller
         FileService $fileService,
         UserService $userService,
         MarketingService $marketingService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $certificates = $customerService->certificates($id);
         $files = [];
         if ($certificates) {
@@ -66,8 +70,10 @@ class TabMainController extends Controller
         ]);
     }
 
-    public function createCertificate(int $id, int $file_id, CustomerService $customerService)
+    public function createCertificate(int $id, int $file_id, CustomerService $customerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $certificateDto = new CustomerCertificateDto();
         $certificateDto->file_id = $file_id;
         $id = $customerService->createCertificate($id, $certificateDto);
@@ -79,6 +85,8 @@ class TabMainController extends Controller
 
     public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $customerService->deleteCertificate($id, $certificate_id);
 
         return response('', 204);

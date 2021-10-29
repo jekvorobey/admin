@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
@@ -28,6 +29,8 @@ class BundleController extends Controller
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
         $params = DiscountHelper::getParams($request, $userId, $pager, null, [
@@ -44,6 +47,7 @@ class BundleController extends Controller
 
         $this->title = 'Бандлы';
         $this->loadDiscountTypes = true;
+
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => $pager['page'],
@@ -63,11 +67,11 @@ class BundleController extends Controller
 
     /**
      * AJAX пагинация страниц с бандлами
-     *
-     * @return JsonResponse
      */
-    public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
+    public function page(Request $request, DiscountService $discountService, RequestInitiator $user): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
         $params = DiscountHelper::getParams($request, $userId, $pager, null, [
@@ -79,6 +83,7 @@ class BundleController extends Controller
             DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS,
         ]);
         $discounts = DiscountHelper::load($params, $discountService);
+
         return response()->json([
             'iDiscounts' => $discounts,
             'total' => DiscountHelper::count($countParams, $discountService),
@@ -94,10 +99,13 @@ class BundleController extends Controller
      */
     public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = DiscountHelper::loadData();
         $this->loadDiscountTypes = true;
 
         $this->title = 'Создание бандла';
+
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
             'optionDiscountTypes' => $data['optionDiscountTypes']->keys()->filter(function ($key) {

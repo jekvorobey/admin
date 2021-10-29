@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiCtDto;
 use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiDto;
 use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiPptDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryServiceStatus;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -26,11 +28,15 @@ class DeliveryKpiController extends Controller
      */
     public function index()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         return $this->render('Logistics/DeliveryKpi/Index');
     }
 
     public function getMain(ListsService $listsService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $deliveryKpiDto = $listsService->getDeliveryKpi();
 
         return response()->json([
@@ -43,10 +49,12 @@ class DeliveryKpiController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return ResponseFactory|Response
      */
     public function setMain(ListsService $listsService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'rtg' => ['required', 'integer', 'min:0'],
             'ct' => ['required', 'integer', 'min:0'],
@@ -65,6 +73,8 @@ class DeliveryKpiController extends Controller
 
     public function getCt(ListsService $listsService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $deliveryKpiCts = $listsService->getDeliveryKpiCt();
         $merchantIds = [];
         foreach ($deliveryKpiCts as $deliveryKpiCtDto) {
@@ -95,6 +105,8 @@ class DeliveryKpiController extends Controller
 
     public function setCt(ListsService $listsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'merchant_id' => ['required', 'integer'],
             'ct' => ['required', 'integer', 'min:0'],
@@ -111,6 +123,8 @@ class DeliveryKpiController extends Controller
 
     public function getPpt(ListsService $listsService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $deliveryKpiPpts = $listsService->getDeliveryKpiPpt();
         $merchantIds = [];
         foreach ($deliveryKpiPpts as $deliveryKpiPptDto) {
@@ -141,6 +155,8 @@ class DeliveryKpiController extends Controller
 
     public function setPpt(ListsService $listsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'merchant_id' => ['required', 'integer'],
             'ppt' => ['required', 'integer', 'min:0'],
@@ -188,6 +204,8 @@ class DeliveryKpiController extends Controller
 
     public function setPct(ListsService $listsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $data = $this->validate(request(), [
             'delivery_service_id' => ['required', 'integer'],
             'pct' => ['required', 'integer', 'min:0'],

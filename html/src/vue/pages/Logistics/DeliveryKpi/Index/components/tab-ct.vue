@@ -6,7 +6,7 @@
                 Мерчант
             </th>
             <th>CT (мин) <fa-icon icon="question-circle" v-b-popover.hover="helpCt"></fa-icon></th>
-            <th></th>
+            <th v-if="canUpdate(blocks.logistics)"></th>
         </tr>
         </thead>
         <tbody>
@@ -17,7 +17,7 @@
             <td>
                 <v-input type="number" v-model.number="$v.form[deliveryKpiCt.merchant_id].ct.$model" :error="errorCt(deliveryKpiCt.merchant_id)"></v-input>
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.logistics)">
                 <button class="btn btn-success btn-sm" @click="save(deliveryKpiCt.merchant_id)" :disabled="!$v.form[deliveryKpiCt.merchant_id].$anyDirty" title="Сохранить">
                     <fa-icon icon="save"/>
                 </button>

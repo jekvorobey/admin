@@ -22,7 +22,7 @@
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" v-if="canUpdate(blocks.content)">
             <button @click="goToCreatePage" class="btn btn-success">Создать</button>
         </div>
         <div class="mb-3">
@@ -36,7 +36,7 @@
                 <th>Изображение</th>
                 <th>Название</th>
                 <th>Тип</th>
-                <th><!-- Кнопки --></th>
+                <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
             </tr>
             </thead>
             <tbody>
@@ -56,11 +56,14 @@
                 </td>
                 <td><img :src="productGroup.photo ? productGroup.photo : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
-                <td class="with-small">
+                <td v-if="canUpdate(blocks.content)" class="with-small">
                     <a :href="getRoute('productGroup.updatePage', {id: productGroup.id})">{{productGroup.name}}</a>
                 </td>
+                <td v-else class="with-small">
+                    {{productGroup.name}}
+                </td>
                 <td>{{productGroup.type.name}}</td>
-                <td>
+                <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
                         <fa-icon icon="trash-alt"
                                  @click="removeItem(productGroup.id)"/>

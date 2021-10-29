@@ -3,21 +3,28 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Dto\ActivityDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Http\JsonResponse;
 
 class ActivitiesController extends Controller
 {
     public function list(CustomerService $customerService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->title = 'Виды деятельности';
+
         return $this->render('Customer/Activity/List', [
             'iActivities' => $customerService->activities()->load(),
         ]);
     }
 
-    public function save(CustomerService $customerService)
+    public function save(CustomerService $customerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'id' => 'nullable',
             'name' => 'required',

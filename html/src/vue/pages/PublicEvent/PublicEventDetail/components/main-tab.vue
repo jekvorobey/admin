@@ -49,7 +49,7 @@
             </table>
         </shadow-card>
 
-        <transition name="modal">
+        <transition name="modal" v-if="canUpdate(blocks.events)">
             <modal :close="closeModal" v-if="isModalOpen('eventMainEdit')">
                 <div slot="header">
                     Редактирование события
@@ -60,7 +60,7 @@
             </modal>
         </transition>
 
-        <transition name="modal">
+        <transition name="modal" v-if="canUpdate(blocks.events)">
             <modal :close="closeModal" v-if="isModalOpen('eventOrganizerEdit')">
                 <div slot="header">
                     Редактирование организатора

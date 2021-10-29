@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
@@ -12,6 +13,7 @@ use Greensight\Oms\Services\DeliveryService\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
 class TabOrderController extends Controller
@@ -21,7 +23,9 @@ class TabOrderController extends Controller
         OrderService $orderService,
         PaymentService $paymentService,
         DeliveryService $deliveryService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
         if ($orders->count()) {
             $orderIds = $orders->pluck('id')->all();
@@ -56,6 +60,7 @@ class TabOrderController extends Controller
                 return $ar;
             });
         }
+
         return response()->json([
             'orders' => $orders,
         ]);

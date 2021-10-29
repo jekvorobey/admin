@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
@@ -23,6 +25,8 @@ class MerchantListController extends Controller
 {
     public function registration()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $this->title = 'Заявки на регистрацию';
 
         return $this->list(false);
@@ -30,6 +34,8 @@ class MerchantListController extends Controller
 
     public function active()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $this->title = 'Список мерчантов';
 
         return $this->list(true);
@@ -69,8 +75,10 @@ class MerchantListController extends Controller
         ]);
     }
 
-    public function page(MerchantService $merchantService)
+    public function page(MerchantService $merchantService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $query = $this->makeQuery(request('done'));
         $data = [
             'items' => $this->loadItems($query),
@@ -84,6 +92,8 @@ class MerchantListController extends Controller
 
     public function status(MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'ids' => 'array',
             'ids.' => 'numeric',
@@ -100,7 +110,7 @@ class MerchantListController extends Controller
         return response('', 204);
     }
 
-    protected function loadItems(?RestQuery $query)
+    protected function loadItems(?RestQuery $query): Collection
     {
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
@@ -149,7 +159,7 @@ class MerchantListController extends Controller
         });
     }
 
-    protected function makeQuery($done)
+    protected function makeQuery($done): ?RestQuery
     {
         $query = new RestQuery();
         $page = request()->get('page', 1);
@@ -226,10 +236,11 @@ class MerchantListController extends Controller
 
     /**
      * Создать нового мерчанта
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function createMerchant(MerchantService $merchantService)
+    public function createMerchant(MerchantService $merchantService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
             'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],
@@ -291,7 +302,7 @@ class MerchantListController extends Controller
         ]);
     }
 
-    public function checkEmailExists(Request $request, UserService $userService)
+    public function checkEmailExists(Request $request, UserService $userService): JsonResponse
     {
         $email = $request->get('email', false);
         if (!$email) {

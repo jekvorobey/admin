@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ServiceNotification;
 use App\Http\Controllers\Controller;
 use Greensight\Message\Dto\ServiceNotification\VariableDto;
 use Greensight\Message\Services\VariableService\VariableService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,7 +29,7 @@ class VariableController extends Controller
         ]);
     }
 
-    public function list(Request $request, VariableService $VariableService)
+    public function list(Request $request, VariableService $VariableService): JsonResponse
     {
         $page = $request->input('page') ?? 1;
 
@@ -45,7 +46,7 @@ class VariableController extends Controller
         ]);
     }
 
-    public function save(Request $request, VariableService $VariableService)
+    public function save(Request $request, VariableService $VariableService): JsonResponse
     {
         $id = $request->get('id');
         $variable = $request->get('variable');
@@ -65,7 +66,7 @@ class VariableController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, VariableService $VariableService)
+    public function delete(Request $request, VariableService $VariableService): JsonResponse
     {
         $ids = $request->get('ids');
 

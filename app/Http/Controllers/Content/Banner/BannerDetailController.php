@@ -10,24 +10,27 @@ use Cms\Dto\BannerDto;
 use Cms\Dto\BannerTypeDto;
 use Cms\Services\BannerService\BannerService;
 use Cms\Services\BannerTypeService\BannerTypeService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class BannerDetailController extends Controller
 {
     /**
-     * @param int $id
      * @return mixed
      * @throws CmsException
      */
     public function updatePage(
-        $id,
+        int $id,
         BannerService $bannerService,
         BannerTypeService $bannerTypeService,
         FileService $fileService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $banner = $this->getBanner($id, $bannerService);
         $bannerImages = $this->getBannerImages([
             $banner['desktop_image_id'],
@@ -54,6 +57,8 @@ class BannerDetailController extends Controller
      */
     public function createPage(BannerTypeService $bannerTypeService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
         $bannerButtonTypes = $this->getBannerButtonTypes();
         $bannerButtonLocations = $this->getBannerButtonLocations();
@@ -69,7 +74,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @return mixed
      * @throws CmsException
      */
     public function bannerInitialDate(
@@ -77,7 +81,9 @@ class BannerDetailController extends Controller
         BannerService $bannerService,
         BannerTypeService $bannerTypeService,
         FileService $fileService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'integer|nullable',
         ]);
@@ -108,11 +114,12 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
-    public function create(Request $request, BannerService $bannerService)
+    public function create(Request $request, BannerService $bannerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'name' => 'string|required',
             'url' => 'string|required',
@@ -131,11 +138,12 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
-    public function update(int $id, Request $request, BannerService $bannerService)
+    public function update(int $id, Request $request, BannerService $bannerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
@@ -156,18 +164,19 @@ class BannerDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function delete(int $id, BannerService $bannerService)
+    public function delete(int $id, BannerService $bannerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $bannerService->deleteBanner($id);
 
         return response()->json([], 204);
     }
 
     /**
-     * @return BannerDto|null
      * @throws CmsException
      */
-    private function getBanner(int $id, BannerService $bannerService)
+    private function getBanner(int $id, BannerService $bannerService): ?BannerDto
     {
         $query = $bannerService->newQuery();
         $query->setFilter('id', $id);
@@ -187,7 +196,6 @@ class BannerDetailController extends Controller
     }
 
     /**
-     * @param array $ids
      * @return Collection|FileDto[]
      */
     private function getBannerImages(array $ids, FileService $fileService)
@@ -203,18 +211,12 @@ class BannerDetailController extends Controller
             ->keyBy('id');
     }
 
-    /**
-     * @return BannerButtonLocationDto[]|Collection
-     */
-    private function getBannerButtonLocations()
+    private function getBannerButtonLocations(): Collection
     {
         return new Collection(BannerButtonLocationDto::all());
     }
 
-    /**
-     * @return BannerButtonTypeDto[]|Collection
-     */
-    private function getBannerButtonTypes()
+    private function getBannerButtonTypes(): Collection
     {
         return new Collection(BannerButtonTypeDto::all());
     }

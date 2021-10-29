@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Marketing\Core\MarketingException;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
@@ -37,6 +39,8 @@ class DiscountController extends Controller
      */
     public function index(Request $request, DiscountService $discountService, RequestInitiator $user)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Скидки';
         $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
@@ -47,6 +51,7 @@ class DiscountController extends Controller
         $pager['total'] = DiscountHelper::count($countParams, $discountService);
 
         $this->loadDiscountTypes = true;
+
         return $this->render('Marketing/Discount/List', [
             'iDiscounts' => $discounts,
             'iCurrentPage' => $pager['page'],
@@ -64,16 +69,17 @@ class DiscountController extends Controller
 
     /**
      * AJAX пагинация страниц со скидками
-     *
-     * @return JsonResponse
      */
-    public function page(Request $request, DiscountService $discountService, RequestInitiator $user)
+    public function page(Request $request, DiscountService $discountService, RequestInitiator $user): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $userId = $user->userId();
         $pager = DiscountHelper::getDefaultPager($request);
         $params = DiscountHelper::getParams($request, $userId, $pager);
         $countParams = DiscountHelper::getParams($request, $userId);
         $discounts = DiscountHelper::load($params, $discountService);
+
         return response()->json([
             'iDiscounts' => $discounts,
             'total' => DiscountHelper::count($countParams, $discountService),
@@ -83,16 +89,18 @@ class DiscountController extends Controller
     /**
      * Страница для создания скидки
      *
-     *
      * @return mixed
      * @throws PimException
      */
     public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Создание скидки';
         $this->loadDiscountTypes = true;
 
         $data = DiscountHelper::loadData();
+
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
             'optionDiscountTypes' => $data['optionDiscountTypes'],
@@ -109,11 +117,11 @@ class DiscountController extends Controller
 
     /**
      * Запрос на создание заявки на скидки
-     *
-     * @return JsonResponse
      */
-    public function create(Request $request, DiscountService $discountService)
+    public function create(Request $request, DiscountService $discountService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         try {
             $discount = DiscountHelper::validate($request);
             $result = $discountService->create($discount);
@@ -124,11 +132,10 @@ class DiscountController extends Controller
         return response()->json(['status' => $result ? 'ok' : 'fail']);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function update(int $id, Request $request, DiscountService $discountService)
+    public function update(int $id, Request $request, DiscountService $discountService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         try {
             $discount = DiscountHelper::validate($request);
             $discountService->update($id, $discount);
@@ -176,6 +183,8 @@ class DiscountController extends Controller
      */
     public function detail(int $id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->loadDiscountTypes = true;
         $this->loadDeliveryMethods = true;
         $this->loadPaymentMethods = true;
@@ -184,14 +193,14 @@ class DiscountController extends Controller
         $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
 
         $this->title = $data['title'];
+
         return $this->render('Marketing/Discount/Detail', $data);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function discountOrdersDetail(int $id, Request $request)
+    public function discountOrdersDetail(int $id, Request $request): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         // Orders
         $data = DiscountHelper::getOrdersByDiscount($id, $request);
 
@@ -218,11 +227,10 @@ class DiscountController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    public function status(Request $request, DiscountService $discountService)
+    public function status(Request $request, DiscountService $discountService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->validate([
             'ids' => 'array|required',
             'ids.*' => 'integer|required',
@@ -235,10 +243,12 @@ class DiscountController extends Controller
     }
 
     /**
-     * @return JsonResponse
+     * @throws MarketingException
      */
-    public function delete(Request $request, DiscountService $discountService)
+    public function delete(Request $request, DiscountService $discountService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->validate([
             'ids' => 'array|required',
             'ids.*' => 'integer|required',

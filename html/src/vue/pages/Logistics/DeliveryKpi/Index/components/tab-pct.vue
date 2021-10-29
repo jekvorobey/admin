@@ -6,7 +6,7 @@
                 Служба доставки
             </th>
             <th>PCT (мин) <fa-icon icon="question-circle" v-b-popover.hover="helpPct"></fa-icon></th>
-            <th></th>
+            <th v-if="canUpdate(blocks.logistics)"></th>
         </tr>
         </thead>
         <tbody>
@@ -17,13 +17,13 @@
             <td>
                 <v-input type="number" v-model.number="$v.form[deliveryKpiPct.delivery_service_id].pct.$model" :error="errorPct(deliveryKpiPct.delivery_service_id)"></v-input>
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.logistics)">
                 <button class="btn btn-success btn-sm" @click="save(deliveryKpiPct.delivery_service_id)" :disabled="!$v.form[deliveryKpiPct.delivery_service_id].$anyDirty" title="Сохранить">
                     <fa-icon icon="save"/>
                 </button>
             </td>
         </tr>
-        <tr v-if="deliveryServiceOptions.length > 0">
+        <tr v-if="deliveryServiceOptions.length > 0 && canUpdate(blocks.logistics)">
             <td>
                 <v-select v-model="$v.form['new'].delivery_service_id.$model" :options="deliveryServiceOptions" :error="errorDeliveryServiceId('new')"></v-select>
             </td>

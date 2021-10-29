@@ -6,7 +6,7 @@
             <tr>
                 <th colspan="4">
                     Инфопанель
-                    <button
+                    <button v-if="canUpdate(blocks.products)"
                             @click="openStatusEditModal()"
                             class="btn btn-sm btn-secondary float-right"
                             :disabled="countedQty < 1"
