@@ -811,6 +811,8 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabMainController@load')->name('customers.detail.main');
                         Route::delete('certificate/{certificate_id}', 'TabMainController@deleteCertificate')->name('customers.detail.main.certificate.delete');
                         Route::post('certificate/{file_id}', 'TabMainController@createCertificate')->name('customers.detail.main.certificate.create');
+                        Route::delete('referralContract/{referral_contract_id}', 'TabMainController@deleteReferralContract')->name('customers.detail.main.referralContract.delete');
+                        Route::post('referralContract/{file_id}', 'TabMainController@createReferralContract')->name('customers.detail.main.referralContract.create');
                     });
                     Route::prefix('preference')->group(function () {
                         Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');

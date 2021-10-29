@@ -227,6 +227,47 @@
                     <input class="form-control form-control-sm" v-model="form.legal_info_company_address"/>
                 </td>
             </tr>
+
+            <tr class="table-secondary">
+                <th colspan="2">Договор реферального партнера</th>
+            </tr>
+            <tr>
+                <th>Номер договора</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.referral_contract_number"/>
+                </td>
+            </tr>
+            <tr>
+                <th>Дата договора</th>
+                <td>
+                    <date-picker
+                        class="w-100"
+                        v-model="form.referral_contract_at"
+                        value-type="YYYY-MM-DD"
+                        format="DD.MM.YYYY"
+                        input-class="form-control form-control-sm"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <th>Документы</th>
+                <td>
+                    <div v-for="(document, i) in referralContracts" class="mb-1">
+                        <a :href="document.url" target="_blank">{{ document.name }}</a>
+                        <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteReferralContract(document.id, i)"/>
+                    </div>
+                    <div v-if="!referralContracts.length">-</div>
+
+                    <div>
+                        <file-input destination="referralContract" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                        <div v-else class="alert alert-success py-1 px-3" role="alert">
+                            Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
+                            <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
+                            <button class="btn btn-success btn-sm" @click="createReferralContract"><fa-icon icon="plus"/></button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
         </template>
         </tbody>
     </table>
@@ -247,6 +288,7 @@ export default {
     data() {
         return {
             certificates: [],
+            referralContracts: [],
             managers: [],
             activitiesAll: [],
             savedActivities: [],
@@ -269,6 +311,8 @@ export default {
                 legal_info_bank_correspondent_account: this.model.legal_info_bank_correspondent_account,
                 legal_info_bank_city: this.model.legal_info_bank_city,
                 referral_code: this.model.referral_code,
+                referral_contract_number: this.model.referral_contract_number,
+                referral_contract_at: this.model.referral_contract_at,
                 pdr_lastName: this.model.passport.surname,
                 pdr_firstName: this.model.passport.name,
                 pdr_middleName: this.model.passport.patronymic,
@@ -310,6 +354,8 @@ export default {
                 (this.customer.passport.serial || '') !== (this.form.pdr_docSerial || '') ||
                 (this.customer.passport.issue_date || '') !== (this.form.pdr_docIssueDate || '') ||
                 (this.customer.referral_code || '') !== (this.form.referral_code || '') ||
+                (this.customer.referral_contract_number || '') !== (this.form.referral_contract_number || '') ||
+                (this.customer.referral_contract_at || '') !== (this.form.referral_contract_at || '') ||
                 JSON.stringify(this.savedActivities) !== JSON.stringify(this.form.activities) ||
                 (this.customer.birthday || '') !== (this.form.birthday || '');
         },
@@ -333,6 +379,8 @@ export default {
                     legal_info_bank_correspondent_account: this.form.legal_info_bank_correspondent_account,
                     legal_info_bank_city: this.form.legal_info_bank_city,
                     referral_code: this.form.referral_code,
+                    referral_contract_number: this.form.referral_contract_number,
+                    referral_contract_at: this.form.referral_contract_at,
                     passport: {
                         surname: this.form.pdr_lastName,
                         name: this.form.pdr_firstName,
@@ -359,6 +407,8 @@ export default {
                 this.customer.legal_info_bank_correspondent_account = this.form.legal_info_bank_correspondent_account;
                 this.customer.legal_info_bank_city = this.form.legal_info_bank_city;
                 this.customer.referral_code = this.form.referral_code;
+                this.customer.referral_contract_number = this.form.referral_contract_number;
+                this.customer.referral_contract_at = this.form.referral_contract_at;
                 this.savedActivities = this.form.activities;
                 this.customer.passport.surname = this.form.pdr_lastName;
                 this.customer.passport.name = this.form.pdr_firstName;
@@ -387,6 +437,8 @@ export default {
             this.form.legal_info_bank_correspondent_account = this.customer.legal_info_bank_correspondent_account;
             this.form.legal_info_bank_city = this.customer.legal_info_bank_city;
             this.form.referral_code = this.customer.referral_code;
+            this.form.referral_contract_number = this.customer.referral_contract_number;
+            this.form.referral_contract_at = this.customer.referral_contract_at;
             this.form.activities = this.savedActivities;
             this.form.pdr_lastName = this.customer.passport.surname;
             this.form.pdr_firstName = this.customer.passport.name;
@@ -424,6 +476,35 @@ export default {
                 Services.hideLoader();
             })
         },
+        deleteReferralContract(contract_id, index) {
+            Services.showLoader();
+            Services.net().delete(this.getRoute('customers.detail.main.referralContract.delete', {
+                id: this.customer.id,
+                referral_contract_id: contract_id
+            })).then(data => {
+                this.$delete(this.referralContracts, index);
+                Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
+            })
+        },
+        createReferralContract() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('customers.detail.main.referralContract.create', {
+                id: this.customer.id,
+                file_id: this.form.file.id,
+            })).then(data => {
+                this.$set(this.referralContracts, this.referralContracts.length, {
+                    id: data.id,
+                    name: this.form.file.name,
+                    url: this.form.file.url,
+                });
+                this.form.file = null;
+                Services.msg("Изменения сохранены");
+            }).finally(() => {
+                Services.hideLoader();
+            })
+        },
         openOrder() {
             Services.event().$emit('showTab', 'order');
         }
@@ -436,6 +517,7 @@ export default {
         }).then(data => {
             this.managers = data.managers;
             this.certificates = data.certificates;
+            this.referralContracts = data.referralContracts;
             this.activitiesAll = data.activitiesAll;
             this.form.activities = data.activities;
             this.savedActivities = data.activities;
