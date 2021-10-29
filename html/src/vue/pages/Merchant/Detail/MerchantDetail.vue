@@ -143,8 +143,6 @@ export default {
             tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
             tabs.marketing = {i: i++, title: 'Маркетинг'};
             tabs.bill = {i: i++, title: 'Биллинг'};
-            tabs.report = {i: i++, title: 'Отчеты'};
-            tabs.eDocument = {i: i++, title: 'Электронный документооборот'};
             tabs.log = {i: i++, title: 'Логи'};
             tabs.extSystems = {i: i++, title: 'Интеграция'};
 

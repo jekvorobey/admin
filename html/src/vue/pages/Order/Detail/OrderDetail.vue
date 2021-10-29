@@ -69,6 +69,7 @@
         methods: {
 
         },
+
         computed: {
             tabs() {
                 let tabs = {};
@@ -78,8 +79,6 @@
                 tabs.composition = {i: i++, title: 'Состав заказа'};
                 tabs.deliveries = {i: i++, title: 'Доставки'};
                 tabs.shipments = {i: i++, title: 'Отправления'};
-                tabs.payments = {i: i++, title: 'Оплаты'};
-                tabs.documents = {i: i++, title: 'Документы по заказу'};
                 tabs.returns = {i: i++, title: 'Возвраты'};
                 tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
                 tabs.logs = {i: i++, title: 'Логи'};
