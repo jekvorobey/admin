@@ -47,7 +47,7 @@
                 class="btn btn-info btn-sm m-1"
                 @click="togglePopover"
                 :id="`popover-id-${card.id}`"
-                v-if="!([300, 301, 302, 303].includes(card.status))"
+                v-if="([300, 301, 302, 303].includes(card.status))"
             >
                 <fa-icon icon="trash-alt"
                          class="float-right media-btn"
