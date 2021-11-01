@@ -47,9 +47,9 @@
                 class="btn btn-info btn-sm m-1"
                 @click="togglePopover"
                 :id="`popover-id-${card.id}`"
-                :disabled="!([302, 303, 304].includes(card.status))"
+                v-if="!([302, 303, 304].includes(card.status))"
             >
-                <fa-icon icon="redo-alt"
+                <fa-icon icon="trash-alt"
                          class="float-right media-btn"
                          v-b-popover.hover="'Деактивировать сертификат'">
                 </fa-icon>

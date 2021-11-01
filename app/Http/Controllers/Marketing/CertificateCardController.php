@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\Menu;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\Certificate\CertificateRequestDto;
