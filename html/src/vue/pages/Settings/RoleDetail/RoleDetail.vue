@@ -114,8 +114,8 @@ export default {
       return {
         name: this.role.name,
         front: this.frontName(this.role.front),
-        created_at: this.datePrint(this.role.created_at),
-        updated_at: this.datePrint(this.role.updated_at)
+        created_at: this.datetimePrint(this.role.created_at),
+        updated_at: this.datetimePrint(this.role.updated_at)
       };
     },
     blockOptions() {
