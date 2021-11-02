@@ -4,8 +4,8 @@
             <b-col>
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
-            <b-col>
-                <button v-if="canUpdate(blocks.orders)" @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
+            <b-col v-if="canUpdate(blocks.orders)">
+                <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || (this.order.status &&
                 this.order.status.id < orderStatuses.done.id)) && !isCancel">
                     <b-dropdown-item-button>
@@ -69,7 +69,7 @@
         <b-row>
             <div class="col-sm-6">
                 <span class="font-weight-bold">Покупатель:</span>
-                <span v-if="order.customer && order.customer.user && canUpdate(blocks.clients)">
+                <span v-if="order.customer && order.customer.user && canView(blocks.clients)">
                   <a :href="getRoute('customers.detail', {id: order.customer_id})" target="_blank">
                       {{ order.customer.user.full_name ? order.customer.user.full_name : order.customer.user.login }}
                   </a>
