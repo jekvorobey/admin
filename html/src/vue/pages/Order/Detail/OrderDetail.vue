@@ -22,11 +22,6 @@
                       Заглушка
                     </template>
                 </b-tab>
-                <template v-slot:tabs-end>
-                    <b-nav-item @click.prevent="showAllTabs = !showAllTabs" href="#">
-                        <b>{{ showAllTabs ? '-' : '+' }}</b>
-                    </b-nav-item>
-                </template>
             </b-tabs>
         </b-card>
     </layout-main>
