@@ -16,7 +16,7 @@
                     <th>Сумма заказа</th>
                     <th>Покупателя</th>
                     <th>Статус</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,7 +44,7 @@
                             <br><span class="badge badge-danger">Требует проверки</span>
                         </template>
                     </td>
-                    <td></td>
+                    <td v-if="canUpdate(blocks.events)"></td>
                 </tr>
             </tbody>
         </table>
@@ -66,7 +66,7 @@
         ACT_LOAD_SPRINT_ORDERS,
         NAMESPACE
     } from '../../../../store/modules/public-events';
-    
+
     import modalMixin from '../../../../mixins/modal';
     import mediaMixin from '../../../../mixins/media';
     import Helpers from "../../../../../scripts/helpers";

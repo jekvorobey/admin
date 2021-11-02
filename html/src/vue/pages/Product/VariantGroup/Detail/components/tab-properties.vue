@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-row class="d-flex justify-content-between mt-3 mb-3">
+        <b-row class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.products)">
             <b-col class="col-md-3">
                 <v-select2 v-model.number="newPropertyId" class="form-control form-control-sm">
                     <option v-for="property in allProperties" :value="property.id">{{ property.name }}</option>
@@ -22,7 +22,7 @@
                         <fa-icon icon="list-ul"></fa-icon> {{property.name}} (ID: {{property.id}})
                     </h4>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6" v-if="canUpdate(blocks.products)">
                     <div class="float-right">
                         <v-delete-button @delete="deleteProperties([property.id])" btn-class="btn-danger"/>
                     </div>

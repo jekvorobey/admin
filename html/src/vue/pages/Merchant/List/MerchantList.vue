@@ -72,8 +72,7 @@
                 </td>
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.created_at }}</td>
-                <td v-if="canUpdate(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
-                <td v-else>{{ merchant.legal_name }}</td>
+                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.email : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.phone : '' }}</td>

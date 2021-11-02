@@ -1,7 +1,7 @@
 <template>
     <layout-main>
-        <div class="row mb-3">
-            <div class="col-6" style="text-align: left" v-if="canUpdate(blocks.content)">
+        <div class="row mb-3" v-if="canUpdate(blocks.content)">
+            <div class="col-6" style="text-align: left">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalEdit(null)">
                     Добавить бренд
@@ -13,7 +13,7 @@
                 </button>
             </div>
             <div class="col-6" style="text-align: right">
-                <button v-if="itemsOrder.length > 0 && canUpdate(blocks.content)"
+                <button v-if="itemsOrder.length > 0"
                         class="btn btn-dark"
                         @click="reorderItems">
                     <template v-if="!isReordering">

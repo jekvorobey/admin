@@ -1,7 +1,7 @@
 <template>
     <layout-main>
-        <div class="row mb-3">
-            <div class="col-6" style="text-align: left" v-if="canUpdate(blocks.content)">
+        <div class="row mb-3" v-if="canUpdate(blocks.content)">
+            <div class="col-6" style="text-align: left">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalCreate()">
                     Добавить популярный товар

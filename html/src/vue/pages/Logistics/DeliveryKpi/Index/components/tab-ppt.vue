@@ -23,7 +23,7 @@
                 </button>
             </td>
         </tr>
-        <tr v-if="merchantOptions.length > 0">
+        <tr v-if="merchantOptions.length > 0 && canUpdate(blocks.logistics)">
             <td>
                 <v-select v-model="$v.form['new'].merchant_id.$model" :options="merchantOptions" :error="errorMerchantId('new')"></v-select>
             </td>

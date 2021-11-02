@@ -73,8 +73,6 @@ class TabProductsController extends VariantGroupDetailController
      */
     protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
-
         $gluedPropertiesIds = $variantGroupDto->properties->pluck('id');
         if ($variantGroupDto->products->isNotEmpty()) {
             $offerIds = [];

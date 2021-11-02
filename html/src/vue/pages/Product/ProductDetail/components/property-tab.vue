@@ -3,11 +3,11 @@
         <div class="d-flex flex-column left-side">
             <shadow-card>
                 <p v-if="product.archive" class="text-danger">{{ product.archive_comment }}</p>
-                <button @click="openModal('ArchiveEdit')" class="btn btn-outline-warning btn-block mt-3">
+                <button @click="openModal('ArchiveEdit')" class="btn btn-outline-warning btn-block mt-3" v-if="canUpdate(blocks.products)">
                     {{ product.archive ? 'Вернуть из архива' : 'Убрать в архив' }}
                 </button>
             </shadow-card>
-            <shadow-card title="Свойства товара" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productValuesEdit')">
+            <shadow-card title="Свойства товара" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal('productValuesEdit')">
                 <table class="values-table">
                     <tbody>
                         <tr>
@@ -22,7 +22,7 @@
                 </table>
             </shadow-card>
             <shadow-card title="Шильдики на товаре"
-                         :buttons="{onEdit:'pencil-alt'}"
+                         :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}"
                          @onEdit="openBadgesEditModal">
                 <ul v-if="product_badges.length > 0">
                     <li v-for="badge in product_badges" v-if="options.availableBadges[badge]">
@@ -33,13 +33,13 @@
                         </h5>
                     </li>
                 </ul>
-                <button v-else @click="openBadgesEditModal"
+                <button v-else-if="canUpdate(blocks.products)" @click="openBadgesEditModal"
                         class="btn btn-outline-dark btn-block mt-3">
                     Назначить шильдики
                 </button>
             </shadow-card>
         </div>
-        <shadow-card title="Характеристики" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('productPropsEdit')" class="flex-grow-1">
+        <shadow-card title="Характеристики" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal('productPropsEdit')" class="flex-grow-1">
             <table class="table table-striped table-bordered table-sm">
                 <tbody>
                 <tr v-for="property in options.availableProperties">
@@ -57,7 +57,7 @@
         </shadow-card>
 
         <shadow-card title="Состав"
-                     :buttons="{onEdit:'pencil-alt'}"
+                     :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}"
                      @onEdit="openModal('productIngredientsEdit')"
                      class="flex-grow-1">
             <p v-if="product_ingredients">

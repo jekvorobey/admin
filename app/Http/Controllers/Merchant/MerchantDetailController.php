@@ -39,7 +39,7 @@ class MerchantDetailController extends Controller
         CategoryService $categoryService,
         OfferService $offerService
     ) {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $this->loadMerchantStatuses = true;
         $this->loadMerchantCommissionTypes = true;

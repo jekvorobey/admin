@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button v-if="!extSystem" @click="create()" class="btn btn-success btn-md">
+        <button v-if="!extSystem && canUpdate(blocks.merchants)" @click="create()" class="btn btn-success btn-md">
             Создать интеграцию c 1С
         </button>
 

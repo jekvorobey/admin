@@ -3,7 +3,7 @@
         <span>Спринт</span>
         <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" :disabled="sprints.length == 0" @click="createResult">Добавить документ</button>
         </div>
         <table class="table">
@@ -12,7 +12,7 @@
                     <th>ID</th>
                     <th>Название</th>
                     <th>Описание</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,7 +20,7 @@
                     <td>{{result.id}}</td>
                     <td>{{result.name}}</td>
                     <td>{{result.description}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDeleteResult([result.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editResult(result)">
                             <fa-icon icon="edit"></fa-icon>
@@ -58,7 +58,7 @@
         ACT_LOAD_SPRINT_RESULTS,
         NAMESPACE
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import mediaMixin from '../../../../mixins/media';

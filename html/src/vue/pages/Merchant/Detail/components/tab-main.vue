@@ -4,8 +4,10 @@
         <tr>
             <th colspan="2">
                 Основная информация
-                <button @click="saveMerchant" class="btn btn-success" :disabled="!$v.form.$anyDirty">Сохранить</button>
-                <button @click="cancel" class="btn btn-outline-danger" :disabled="!$v.form.$anyDirty">Отмена</button>
+                <template v-if="canUpdate(blocks.merchants)">
+                    <button @click="saveMerchant" class="btn btn-success" :disabled="!$v.form.$anyDirty">Сохранить</button>
+                    <button @click="cancel" class="btn btn-outline-danger" :disabled="!$v.form.$anyDirty">Отмена</button>
+                </template>
             </th>
         </tr>
         </thead>

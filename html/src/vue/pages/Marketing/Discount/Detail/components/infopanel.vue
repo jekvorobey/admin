@@ -4,10 +4,12 @@
         <tr>
             <th colspan="4">
                 Инфопанель
-                <button class="btn btn-success btn-sm" @click="save">
-                    Сохранить
-                </button>
-                <button @click="cancel" class="btn btn-outline-danger btn-sm">Отмена</button>
+                <template v-if="canUpdate(blocks.marketing)">
+                    <button class="btn btn-success btn-sm" @click="save">
+                        Сохранить
+                    </button>
+                    <button @click="cancel" class="btn btn-outline-danger btn-sm">Отмена</button>
+                </template>
             </th>
         </tr>
         </thead>

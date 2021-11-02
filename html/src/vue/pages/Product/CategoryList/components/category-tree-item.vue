@@ -15,7 +15,7 @@
             <div class="col-sm-4">
                 {{ category.code }}
             </div>
-            <div class="col-sm-1">
+            <div :class="canUpdate(blocks.products) ? 'col-sm-1' : 'col-sm-2'">
                 <span class="badge" :class="getBadgeClass(category.active)">
                     {{ category.active ? 'Да' : 'Нет' }}
                 </span>

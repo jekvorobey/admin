@@ -4,16 +4,10 @@
     <td>{{ item.price }}</td>
     <td>{{ item.is_active ? 'Активный' : 'Не активный' }}</td>
     <td>{{ item.activation_period }}</td>
-    <td v-if="canUpdate(blocks.marketing)">
+    <td>
       <span v-for="(design, index) in item.designs" :key="'nd' + design.id">
         <span v-if="index > 0">, </span>
         <a :href="designLink(design.id)" :class="'certificate_nominal_design_active_' + design.is_active">{{ design.name }}</a>
-      </span>
-    </td>
-    <td v-else>
-      <span v-for="(design, index) in item.designs" :key="'nd' + design.id">
-        <span v-if="index > 0">, </span>
-          {{ design.name }}
       </span>
     </td>
     <td>{{ item.qty }}</td>

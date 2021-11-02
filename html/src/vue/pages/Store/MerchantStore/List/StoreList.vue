@@ -45,11 +45,8 @@
             <tr v-if="stores" v-for="(store, index) in stores">
                 <td>{{ store.id }}</td>
                 <td>{{ store.merchant ? store.merchant.legal_name : '' }}</td>
-                <td v-if="canUpdate(blocks.merchants)">
+                <td>
                     <a :href="getRoute('merchantStore.edit', {id: store.id})">{{ store.name }}</a>
-                </td>
-                <td v-else>
-                   {{ store.name }}
                 </td>
                 <td>{{ store.address ? store.address.city : '' }}</td>
                 <td v-if="canUpdate(blocks.stores)">

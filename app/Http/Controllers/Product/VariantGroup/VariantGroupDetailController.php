@@ -60,8 +60,6 @@ class VariantGroupDetailController extends Controller
      */
     protected function getVariantGroup(int $id): VariantGroupDto
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
-
         $restQuery = $this->variantGroupService
         ->newQuery()
         ->addFields(
@@ -90,8 +88,6 @@ class VariantGroupDetailController extends Controller
      */
     protected function addVariantGroupCommonInfo(VariantGroupDto $variantGroupDto): void
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
-
         $variantGroupDto->created_at = date_time2str(new Carbon($variantGroupDto->created_at));
         $variantGroupDto->updated_at = date_time2str(new Carbon($variantGroupDto->updated_at));
         /** @var MerchantDto $merchant */

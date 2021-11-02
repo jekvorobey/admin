@@ -1,6 +1,6 @@
 <template>
     <tr>
-        <td v-if="canUpdate(blocks.orders)"><a :href="getRoute('orders.detail', {id: request.order_id})">{{ request.order_number }}</a></td>
+        <td v-if="canView(blocks.orders)"><a :href="getRoute('orders.detail', {id: request.order_id})">{{ request.order_number }}</a></td>
         <td v-else>{{ request.order_number }}</td>
         <td>{{ card.id }}</td>
         <td>{{ card.pin }}</td>
@@ -11,11 +11,11 @@
         <td>{{ card.activated_at | datetime }}</td>
         <td>{{ card.expire_at | datetime }}</td>
         <td><card-status :status="card.status"/></td>
-        <td v-if="canUpdate(blocks.orders)"><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
+        <td v-if="canView(blocks.clients)"><a v-if="customer" :href="customer.url">{{ customer.name }}</a></td>
         <td v-else>{{ customer.name }}</td>
-        <td v-if="canUpdate(blocks.clients)"><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
+        <td v-if="canView(blocks.clients)"><a v-if="recipient" :href="recipient.url">{{ recipient.name }}</a></td>
         <td v-else>{{ recipient.name }}</td>
-        <td v-if="canUpdate(blocks.orders)">
+        <td v-if="canView(blocks.orders)">
             <a :href="getRoute('orders.detail', {id: orderPayTransaction.order_id})" :key="orderPayTransaction.id"
                v-for="orderPayTransaction in orderPayTransactions">
                 {{ orderPayTransaction.order_number }}

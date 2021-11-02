@@ -1,6 +1,5 @@
 <template>
   <layout-main>
-    <div v-if="canUpdate(blocks.referrals)">
       <div class="form-group">
         <label for="level">Уровень</label>
         <select v-model="level_id" @change="loadLevel" class="form-control" id="level">
@@ -38,7 +37,7 @@
             <input class="form-control" id="order_referral_sum" v-model="level.order_referral_sum">
           </div>
         </div>
-        <button class="btn btn-success" @click="putLevel">Сохранить</button>
+        <button class="btn btn-success" @click="putLevel" v-if="canUpdate(blocks.referrals)">Сохранить</button>
 
         <hr/>
 
@@ -51,7 +50,7 @@
             <th>Promo-business - 1</th>
             <th>Promo-business - 2</th>
             <th>Promo-business - 3</th>
-            <th></th>
+            <th v-if="canUpdate(blocks.referrals)"></th>
           </tr>
           </thead>
           <tbody>
@@ -74,7 +73,7 @@
             <td>
               <input class="form-control form-control-sm" v-model="commission.percent_z">
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.referrals)">
               <button class="btn btn-success btn-sm" @click="putCommission(commission)">
                 <fa-icon icon="save"/>
               </button>
@@ -82,7 +81,7 @@
                                v-if="commission.customer_id"/>
             </td>
           </tr>
-          <tr>
+          <tr v-if="canUpdate(blocks.referrals)">
             <td>
               <v-select2 v-model.number="newCommission.customer_id" class="form-control form-control-sm">
                 <option v-for="customer in customers" :value="customer.id">{{ customer.title }}</option>
@@ -121,7 +120,7 @@
             <th>Коэффициент</th>
             <th>Товар</th>
             <th>Бренд</th>
-            <th></th>
+            <th v-if="canUpdate(blocks.referrals)"></th>
           </tr>
           </thead>
           <tbody>
@@ -138,14 +137,14 @@
             <td>
               <input class="form-control form-control-sm" v-model="commission.brand_id">
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.referrals)">
               <button class="btn btn-success btn-sm" @click="putSpecialCommission(commission)">
                 <fa-icon icon="save"/>
               </button>
               <v-delete-button btn-class="btn-danger btn-sm" @delete="removeSpecialCommission(commission)"/>
             </td>
           </tr>
-          <tr>
+          <tr v-if="canUpdate(blocks.referrals)">
             <td>
               <input type="checkbox" v-model="newSpecialCommission.is_sum">
             </td>
@@ -167,7 +166,6 @@
           </tbody>
         </table>
       </div>
-    </div>
   </layout-main>
 </template>
 

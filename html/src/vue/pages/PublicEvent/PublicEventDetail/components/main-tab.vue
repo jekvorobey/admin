@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex justify-content-start align-items-start">
-        <shadow-card title="Свойства события" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('eventMainEdit')">
+        <shadow-card title="Свойства события" :buttons="canUpdate(blocks.events) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal('eventMainEdit')">
             <table class="values-table">
                 <tbody>
                     <tr>
@@ -22,7 +22,7 @@
                 </tbody>
             </table>
         </shadow-card>
-        <shadow-card title="Организатор" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('eventOrganizerEdit')">
+        <shadow-card title="Организатор" :buttons="canUpdate(blocks.events) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal('eventOrganizerEdit')">
             <table v-if="publicEvent.organizer" class="values-table">
                 <tbody>
                     <tr>
