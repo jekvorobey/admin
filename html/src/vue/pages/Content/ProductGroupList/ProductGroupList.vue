@@ -56,11 +56,8 @@
                 </td>
                 <td><img :src="productGroup.photo ? productGroup.photo : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
-                <td v-if="canUpdate(blocks.content)" class="with-small">
+                <td class="with-small">
                     <a :href="getRoute('productGroup.updatePage', {id: productGroup.id})">{{productGroup.name}}</a>
-                </td>
-                <td v-else class="with-small">
-                    {{productGroup.name}}
                 </td>
                 <td>{{productGroup.type.name}}</td>
                 <td v-if="canUpdate(blocks.content)">

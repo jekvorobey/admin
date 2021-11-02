@@ -66,7 +66,7 @@
 
 
 
-    <div class="form-group" v-show="getCustomerId">
+    <div class="form-group" v-show="getCustomerId" v-if="canUpdate(blocks.clients)">
       <div class="input-group m-0 p-0 col-3">
         <input type="text"
                class="form-control"

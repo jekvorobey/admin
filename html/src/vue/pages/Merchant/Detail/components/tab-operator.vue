@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.merchants)">
             <div class="col-12 mt-3">
                 <a :href="getRoute('merchant.operator.indexCreate') + '?merchant_id=' + id"
                    class="btn btn-success"

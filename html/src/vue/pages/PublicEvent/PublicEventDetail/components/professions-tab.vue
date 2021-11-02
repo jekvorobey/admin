@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="openModal('eventProfessionsModalForm')">Добавить профессию</button>
         </div>
         <table class="table">
@@ -8,14 +8,14 @@
                 <tr>
                     <th>ID</th>
                     <th>Название</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="publicEventProfession in publicEventProfessions" :key="publicEventProfession.id">
                     <td>{{publicEventProfession.profession_id}}</td>
                     <td>{{publicEventProfession.name}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDelete([publicEventProfession.id])" class="float-right ml-1"/>
                     </td>
                 </tr>
@@ -42,7 +42,7 @@
         ACT_DELETE_EVENT_PROFESSION,
         NAMESPACE
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import {validationMixin} from 'vuelidate';
@@ -79,7 +79,7 @@
                 loadPublicEventProfessions: ACT_LOAD_EVENT_PROFESSIONS,
                 deletePublicEventProfession: ACT_DELETE_EVENT_PROFESSION
             }),
-            reload() { 
+            reload() {
                 this.loadPublicEventProfessions({publicEventId: this.publicEvent.id})
                     .then(data => {
                         this.publicEventProfessions = data.professions;

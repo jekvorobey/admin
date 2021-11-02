@@ -10,7 +10,7 @@
                 <th class="col-sm-4">
                     Код
                 </th>
-                <th class="col-sm-1">
+                <th :class="canUpdate(blocks.products) ? 'col-sm-1' : 'col-sm-2'">
                     Активна
                 </th>
                 <th v-if="canUpdate(blocks.products)" class="col-sm-1">Действия</th>

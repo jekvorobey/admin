@@ -9,7 +9,7 @@
                     </h4>
                 </div>
                 <div class="col-sm-6">
-                    <div class="float-right">
+                    <div class="float-right" v-if="canUpdate(blocks.orders)">
                         <b-dropdown text="Действия" size="sm"
                                     v-if="canSaveDeliveryOrder(delivery) || canCancelDeliveryOrder(delivery) || canCancelDelivery(delivery)">
                             <b-dropdown-item-button v-if="canSaveDeliveryOrder(delivery)"

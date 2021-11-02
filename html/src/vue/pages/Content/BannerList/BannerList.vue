@@ -45,11 +45,8 @@
                 </td>
                 <td><img :src="banner.desktop_image ? banner.desktop_image : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
-                <td v-if="canUpdate(blocks.content)" class="with-small">
+                <td class="with-small">
                     <a :href="getRoute('banner.updatePage', {id: banner.id})">{{banner.name}}</a>
-                </td>
-                <td v-else class="with-small">
-                    {{banner.name}}
                 </td>
                 <td>{{banner.type.name}}</td>
                 <td v-if="canUpdate(blocks.content)">

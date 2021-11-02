@@ -3,7 +3,7 @@
         <span>Спринт</span>
         <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" :disabled="sprints.length == 0" @click="createSprintStage">Добавить этап программы</button>
         </div>
         <table class="table">
@@ -18,7 +18,7 @@
                     <th>Площадка</th>
                     <th>Что взять с собой</th>
                     <th>Результат</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -28,11 +28,11 @@
                     <td>{{sprintStage.description}}</td>
                     <td>{{date(sprintStage.date)}}</td>
                     <td>{{sprintStage.time_from}}</td>
-                    <td>{{sprintStage.time_to}}</td>      
+                    <td>{{sprintStage.time_to}}</td>
                     <td>{{place(sprintStage.place_id)}}</td>
                     <td>{{sprintStage.raider}}</td>
                     <td>{{sprintStage.result}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDeleteSprintStage([sprintStage.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editSprintStage(sprintStage)">
                             <fa-icon icon="edit"></fa-icon>
@@ -41,46 +41,47 @@
                 </tr>
             </tbody>
         </table>
-            <modal :close="closeModal" v-if="isModalOpen('SprintStageFormModal')">
-                <div slot="header">
-                    Программа
-                </div>
-                <div slot="body">
+
+        <modal :close="closeModal" v-if="isModalOpen('SprintStageFormModal')">
+            <div slot="header">
+                Программа
+            </div>
+            <div slot="body">
+                <div class="form-group">
+                    <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
                     <div class="form-group">
-                        <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
-                        <div class="form-group">
-                            <label for="description">Описание</label>
-                            <ckeditor id="description" type="classic" v-model="$v.form.description.$model" :error="errorDescription" />
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="date">Дата</label>
-                            <date-picker id="date" input-class="form-control" v-model="$v.form.date.$model" value-type="format" format="YYYY-MM-DD"/>
-                        </div>
-
-                        <label for="timeTo">Начало</label>
-                        <vue-timepicker id="timeFrom" v-model="$v.form.time_from.$model" format="HH:mm:ss" :error="errorTimeFrom" />
-                    
-                        <label for="timeTo">Конец</label>
-                        <vue-timepicker id="timeTo"  v-model="$v.form.time_to.$model" format="HH:mm:ss" :error="errorTimeTo" />
-                    
-                        <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
-                        
-                        <div class="form-group">
-                            <label for="raider">Что взять с собой</label>
-                            <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="result">Результат</label>
-                            <ckeditor id="result" type="classic" v-model="$v.form.result.$model" />
-                        </div>
-                        
-                        <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
-                        <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+                        <label for="description">Описание</label>
+                        <ckeditor id="description" type="classic" v-model="$v.form.description.$model" :error="errorDescription" />
                     </div>
+
+                    <div class="form-group">
+                        <label for="date">Дата</label>
+                        <date-picker id="date" input-class="form-control" v-model="$v.form.date.$model" value-type="format" format="YYYY-MM-DD"/>
+                    </div>
+
+                    <label for="timeTo">Начало</label>
+                    <vue-timepicker id="timeFrom" v-model="$v.form.time_from.$model" format="HH:mm:ss" :error="errorTimeFrom" />
+
+                    <label for="timeTo">Конец</label>
+                    <vue-timepicker id="timeTo"  v-model="$v.form.time_to.$model" format="HH:mm:ss" :error="errorTimeTo" />
+
+                    <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
+
+                    <div class="form-group">
+                        <label for="raider">Что взять с собой</label>
+                        <ckeditor id="raider" type="classic" v-model="$v.form.raider.$model" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="result">Результат</label>
+                        <ckeditor id="result" type="classic" v-model="$v.form.result.$model" />
+                    </div>
+
+                    <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+                    <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
                 </div>
-            </modal>
+            </div>
+        </modal>
     </div>
 </template>
 
@@ -94,7 +95,7 @@
         NAMESPACE,
         ACT_LOAD_PLACES
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import {validationMixin} from 'vuelidate';
@@ -147,7 +148,7 @@
                     time_from: '00:00:00',
                     time_to: '00:00:00'
                 },
-                
+
             };
         },
         validations: {
@@ -175,7 +176,7 @@
                     .then(response => {
                         this.places = response.places;
                     });
-                
+
                     this.loadSprints({publicEventId: this.publicEvent.id})
                         .then(response => {
                             this.sprints = response.sprints;
@@ -186,7 +187,7 @@
                                 const sprintId = this.sprintId != null ? this.sprintId : this.sprints[0].id;
                                 this.onChangeSprint(sprintId);
                             }
-                        });         
+                        });
             },
             interval(dateStartString, dateEndString) {
                 return Helpers.onlyDate(dateStartString) + ' - ' + Helpers.onlyDate(dateEndString);

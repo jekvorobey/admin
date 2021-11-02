@@ -408,7 +408,8 @@
             },
             canEdit() {
                 return this.order.status && this.order.status.id < this.orderStatuses.transferredToDelivery.id &&
-                !this.order.is_canceled;
+                !this.order.is_canceled &&
+                this.canUpdate(this.blocks.orders)
             },
             pointOptions() {
                 return Object.values(this.points).map(point => ({

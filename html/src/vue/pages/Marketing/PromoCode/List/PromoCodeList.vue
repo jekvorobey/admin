@@ -136,16 +136,13 @@
                     <td>{{ promoCode.code }}</td>
                     <td>
                         {{ promoCodeTypeName(promoCode.type) }}
-                        <span v-if="promoCode.discount_id && canUpdate(blocks.marketing)">
+                        <span v-if="promoCode.discount_id">
                             (<a :href="getRoute('discount.detail', {id: promoCode.discount_id})">{{ promoCode.discount_id }}</a>)
-                        </span>
-                        <span v-else-if="promoCode.discount_id">
-                            ({{ promoCode.discount_id }})
                         </span>
                     </td>
                     <td>{{ promoCode.validityPeriod }}</td>
                     <td>
-                        <a v-if="promoCode.merchant_id && canUpdate(blocks.merchants)"
+                        <a v-if="promoCode.merchant_id && canView(blocks.merchants)"
                            title="Мерчант"
                            :href="getRoute('merchant.detail', {id: promoCode.merchant_id})">
                             {{ getMerchantName(promoCode.merchant_id) }}
@@ -156,7 +153,7 @@
                         <template v-else>Маркетплейс</template>
                     </td>
                     <td>
-                        <a v-if="promoCode.creator && canUpdate(blocks.settings)" :href="getRoute('settings.userDetail', {id: promoCode.creator.id})">
+                        <a v-if="promoCode.creator && canView(blocks.settings)" :href="getRoute('settings.userDetail', {id: promoCode.creator.id})">
                             {{ promoCode.creator.title }}
                         </a>
                         <span v-else-if="promoCode.creator">
@@ -165,7 +162,7 @@
                         <template v-else>-</template>
                     </td>
                     <td>
-                        <a v-if="promoCode.owner && canUpdate(blocks.clients)" :href="getRoute('customers.detail', {id: promoCode.owner.id})">
+                        <a v-if="promoCode.owner && canView(blocks.clients)" :href="getRoute('customers.detail', {id: promoCode.owner.id})">
                             {{ promoCode.owner.id }}: {{ promoCode.owner.title }}
                         </a>
                         <span v-else-if="promoCode.owner">

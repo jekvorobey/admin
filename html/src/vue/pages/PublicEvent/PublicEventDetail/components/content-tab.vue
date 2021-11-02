@@ -6,13 +6,13 @@
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <v-media
                             :media-object="mainMedia"
-                            @onEdit="() => startUploadMedia(mainMedia.id, mainMedia.collection)"
-                            @onDelete="() => onDeleteMedia(mainMedia.id)"
+                            @onEdit="() => canUpdate(blocks.events) && startUploadMedia(mainMedia.id, mainMedia.collection)"
+                            @onDelete="() => canUpdate(blocks.events) && onDeleteMedia(mainMedia.id)"
                     >Основное изображение</v-media>
                     <v-media
                             :media-object="catalogMedia"
-                            @onEdit="() => startUploadMedia(catalogMedia.id, catalogMedia.collection)"
-                            @onDelete="() => onDeleteMedia(catalogMedia.id)"
+                            @onEdit="() => canUpdate(blocks.events) && startUploadMedia(catalogMedia.id, catalogMedia.collection)"
+                            @onDelete="() => canUpdate(blocks.events) && onDeleteMedia(catalogMedia.id)"
                     >Изображение для каталога</v-media>
                 </div>
             </div>
@@ -22,7 +22,7 @@
         <h3 class="mt-3">Описание</h3>
         <div class="row">
             <div class="col-lg-8 col-sm-12">
-                <shadow-card title="Описание" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal($const.descriptionModal)">
+                <shadow-card title="Описание" :buttons="canUpdate(blocks.events) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal($const.descriptionModal)">
                     {{ publicEvent.description }}
                 </shadow-card>
             </div>
@@ -30,8 +30,8 @@
                 <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
                     <v-media
                             :media-object="descriptionMedia"
-                            @onEdit="() => startUploadMedia(descriptionMedia.id, descriptionMedia.collection)"
-                            @onDelete="() => onDeleteMedia(descriptionMedia.id)"
+                            @onEdit="() => canUpdate(blocks.events) && startUploadMedia(descriptionMedia.id, descriptionMedia.collection)"
+                            @onDelete="() => canUpdate(blocks.events) && onDeleteMedia(descriptionMedia.id)"
                     >Изображение для описания</v-media>
                 </div>
             </div>
@@ -46,11 +46,11 @@
                              v-for="media in galleryMedia"
                              :key="media.id"
                              :media-object="media"
-                             @onEdit="() => startUploadMedia(media.id, media.collection)"
-                             @onDelete="() => onDeleteMedia(media.id)"
+                             @onEdit="() => canUpdate(blocks.events) && startUploadMedia(media.id, media.collection)"
+                             @onDelete="() => canUpdate(blocks.events) && onDeleteMedia(media.id)"
                     />
 
-                    <div class="align-self-center">
+                    <div class="align-self-center" v-if="canUpdate(blocks.events)">
                         <button
                                 @click="() => startUploadMedia(null, publicEventMediaCollections.gallery)"
                                 class="btn btn-light"
@@ -69,11 +69,11 @@
                              v-for="media in historyMedia"
                              :key="media.id"
                              :media-object="media"
-                             @onEdit="() => startUploadMedia(media.id, media.collection)"
-                             @onDelete="() => onDeleteMedia(media.id)"
+                             @onEdit="() => canUpdate(blocks.events) && startUploadMedia(media.id, media.collection)"
+                             @onDelete="() => canUpdate(blocks.events) && onDeleteMedia(media.id)"
                     />
 
-                    <div class="align-self-center">
+                    <div class="align-self-center" v-if="canUpdate(blocks.events)">
                         <button
                                 @click="() => startUploadMedia(null, publicEventMediaCollections.history)"
                                 class="btn btn-light"

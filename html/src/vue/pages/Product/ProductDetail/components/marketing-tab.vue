@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <button @click="save" class="btn btn-dark mt-3">Сохранить</button>
+        <button @click="save" class="btn btn-dark mt-3" v-if="canUpdate(blocks.products)">Сохранить</button>
     </div>
 </template>
 

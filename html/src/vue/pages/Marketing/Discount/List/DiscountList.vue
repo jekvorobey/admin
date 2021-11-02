@@ -118,7 +118,7 @@
             <div class="col-12 mt-3">
                 <a v-if="!ifBundle()" :href="getRoute('discount.create')" class="btn btn-success">Создать скидку</a>
                 <a v-if="ifBundle()" :href="getRoute('bundle.create')" class="btn btn-success">Создать бандл</a>
-                
+
                 <button class="btn btn-danger" :disabled="countSelected < 1" @click="deleteDiscount()">Удалить
                     <template v-if="countSelected <= 1">скидку</template>
                     <template v-else>скидки</template>
@@ -154,8 +154,7 @@
                 <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
-                <td v-if="canUpdate(blocks.marketing)"><a :href="link(discount.id)">{{ discount.name }}</a></td>
-                <td v-else>{{ discount.name }}</td>
+                <td><a :href="link(discount.id)">{{ discount.name }}</a></td>
                 <td>{{ discount.value }}{{ discount.value_type === DISCOUNT_VALUE_TYPE_RUB ? '₽' : '%' }} на<br/>
                     <b>{{ discountTypeName(discount.type) }}</b>
                 </td>

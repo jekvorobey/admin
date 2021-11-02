@@ -107,34 +107,23 @@
                                 :value="variantGroup.id"></td>
                         <td v-for="column in columns" v-if="column.isShown">
                             <template v-if="column.code === 'id'">
-                                <div v-if="canUpdate(blocks.products)">
-                                    <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
-                                        {{ variantGroup.id }}
-                                    </a>
-                                </div>
-                                <div v-if="!canUpdate(blocks.products)">
+                                <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
                                     {{ variantGroup.id }}
-                                </div>
+                                </a>
                             </template>
                             <template v-else-if="column.code === 'name'">
-                                <div v-if="canUpdate(blocks.products)">
-                                  <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
-                                      {{variantGroup.name}}
-                                  </a>
-                                  <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
-                                </div>
-                                <div v-if="!canUpdate(blocks.products)">
+                              <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
                                   {{variantGroup.name}}
-                                  <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
-                                </div>
+                              </a>
+                              <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
                             </template>
                             <template v-else-if="column.code === 'merchant'">
-                                <div v-if="variantGroup.merchant && canUpdate(blocks.products)">
+                                <div v-if="variantGroup.merchant && canView(blocks.merchants)">
                                   <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})">
                                     {{variantGroup.merchant.legal_name}}
                                   </a>
                                 </div>
-                                <div v-if="variantGroup.merchant && !canUpdate(blocks.products)">
+                                <div v-if="variantGroup.merchant && !canView(blocks.merchants)">
                                   {{variantGroup.merchant.legal_name}}
                                 </div>
                                 <div v-if="!variantGroup.merchant">

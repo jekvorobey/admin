@@ -33,7 +33,7 @@
             </b-col>
         </b-row>
 
-        <b-card no-body v-if="canUpdate(blocks.clients)">
+        <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="customer" :order="order"/>

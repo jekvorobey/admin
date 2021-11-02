@@ -14,7 +14,7 @@
                 </template>
             </div>
         </div>
-        <v-tabs v-if="canUpdate(blocks.events)" :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
+        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"/>
         <main-tab
                 v-if="nav.currentTab === 'main'"
                 :public-event="publicEvent"
@@ -153,7 +153,7 @@
             reload: ACT_LOAD_PUBLIC_EVENT
         }),
         onTabChange() {
-            this.reload({id: this.publicEvent.id});        
+            this.reload({id: this.publicEvent.id});
         },
         updateSprintId(sprintId) {
             this.sprintId = sprintId;

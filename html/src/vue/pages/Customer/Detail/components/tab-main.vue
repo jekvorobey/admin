@@ -4,8 +4,10 @@
         <tr>
             <th colspan="2">
                 Основная информация
-                <button @click="save" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
-                <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+                <template v-if="canUpdate(blocks.clients)">
+                    <button @click="save" class="btn btn-success" :disabled="!showBtn">Сохранить</button>
+                    <button @click="cancel" class="btn btn-outline-danger" :disabled="!showBtn">Отмена</button>
+                </template>
             </th>
         </tr>
         </thead>

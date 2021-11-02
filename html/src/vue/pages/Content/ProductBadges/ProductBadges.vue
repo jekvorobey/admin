@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-            <div class="row mb-3">
+            <div class="row mb-3" v-if="canUpdate(blocks.content)" >
                 <div class="col-6" style="text-align: left">
                     <button v-if="itemsOrder.length > 0 && canUpdate(blocks.content)"
                             class="btn btn-dark btn-lg"
@@ -24,7 +24,7 @@
                         <fa-icon icon="check"/> Порядок сохранён
                     </button>
                 </div>
-                <div v-if="canUpdate(blocks.content)" class="col-6" style="text-align: right">
+                <div class="col-6" style="text-align: right">
                     <button class="btn btn-success btn-lg"
                             @click="openBadgesEditModal(null)">
                         Добавить шильдик <fa-icon icon="plus"/>

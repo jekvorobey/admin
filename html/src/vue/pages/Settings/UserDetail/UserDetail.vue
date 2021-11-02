@@ -2,10 +2,10 @@
     <layout-main>
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
-                <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}" @onEdit="openModal('userAdd')">
+                <shadow-card title="Основная информация" :buttons="canUpdate(blocks.settings) ? {onEdit: 'pencil-alt'} : {}" @onEdit="openModal('userAdd')">
                     <values-table :values="userInfo" :names="userValuesNames"/>
                 </shadow-card>
-                <shadow-card title="Роли пользователя" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('add-user-role')">
+                <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="openModal('add-user-role')">
                     <table class="table table-sm">
                         <thead>
                         <tr>

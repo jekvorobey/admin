@@ -137,7 +137,7 @@
             >
             </select-products>
 
-            <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
+            <b-button type="submit" class="mt-3" variant="dark" v-if="canUpdate(blocks.content)">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
 
         <banner-modal modal-name="FormTheme" @accept="onModalAccept" :id="productGroup.banner_id"/>

@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a :href="getRoute('promo-code.create')" class="btn btn-success">Создать промокод</a>
             </div>
