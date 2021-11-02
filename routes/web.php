@@ -305,11 +305,10 @@ Route::middleware('auth')->group(function () {
                 Route::get('', 'RoleController@detail')->name('settings.roleDetail');
                 Route::put('', 'RoleController@upsert')->name('settings.updateRole');
                 Route::delete('', 'RoleController@deleteRole')->name('settings.deleteRole');
+                Route::put('updateBlockPermissions', 'RoleController@updateBlockPermissions')->name('settings.updateBlockPermissions');
             });
             Route::get('', 'RoleController@index')->name('settings.rolesList');
             Route::post('', 'RoleController@upsert')->name('settings.createRole');
-            Route::post('addBlock', 'RoleController@addBlock')->name('settings.addBlock');
-            Route::post('deleteBlock/{blockId}', 'RoleController@deleteBlock')->name('settings.deleteBlock');
         });
 
         Route::prefix('organization-card')->group(function () {

@@ -1,37 +1,35 @@
 <template>
-  <layout-main>
-    <div class="d-flex justify-content-start align-items-start">
-      <div class="d-flex flex-column">
-        <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}" @onEdit="openModal('roleAdd')">
-          <values-table :values="roleInfo" :names="roleValuesNames"/>
-        </shadow-card>
-        <shadow-card title="Блоки роли" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('roleBlockAdd')">
-          <table class="table table-sm">
-            <thead>
-            <tr>
-              <th>Блок</th>
-              <th>Разрешение</th>
-              <th>Действия</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="blockPermission in selfBlockPermissions">
-              <td>{{ blockName(blockPermission.block_id) }}</td>
-              <td>{{ permissionName(blockPermission.permission_id) }}</td>
-              <td>
-                <fa-icon @click="deleteBlock(blockPermission.id)" icon="trash-alt"
-                         class="icon-btn icon-btn--red"></fa-icon>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </shadow-card>
-      </div>
-    </div>
-    <role-edit-modal :source="role" :fronts="options.fronts" @onSave="updateRole"></role-edit-modal>
-    <add-role-block-modal :selfBlockPermissions.sync="selfBlockPermissions" :source="role" :allBlocks="options.blocks"
-                          :allPermissions="options.permissions" @onSave="onBlockCreated"></add-role-block-modal>
-  </layout-main>
+    <layout-main>
+        <div class="d-flex justify-content-start align-items-start">
+            <div class="d-flex flex-column">
+                <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}"
+                             @onEdit="openModal('roleAdd')">
+                    <values-table :values="roleInfo" :names="roleValuesNames"/>
+                </shadow-card>
+                <shadow-card title="Разрешения" padding="3">
+                    <button class="btn btn-success mb-2" @click="updateBlockPermissions()" v-if="canUpdate(blocks.settings)">Сохранить</button>
+
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th>Блок</th>
+                            <th>Разрешение</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="blockPermission in roleBlockPermissions">
+                            <td>{{ blockName(blockPermission.block_id) }}</td>
+                            <td>
+                                <v-select :options="permissionsOptions" v-model="blockPermission.permission_id"></v-select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </shadow-card>
+            </div>
+        </div>
+        <role-edit-modal :source="role" :fronts="options.fronts" @onSave="updateRole"></role-edit-modal>
+    </layout-main>
 </template>
 
 <script>
@@ -49,93 +47,97 @@ import RoleEditModal from '../components/role-add-modal.vue';
 import AddRoleBlockModal from '../components/add-role-block-modal.vue';
 
 export default {
-  mixins: [modalMixin],
-  components: {
-    ShadowCard,
-    ValuesTable,
-    modal,
-    VSelect,
-    RoleEditModal,
-    AddRoleBlockModal
-  },
-  props: {
-    iRole: {},
-    iBlockPermissions: {},
-    options: {},
-  },
-  data() {
-    return {
-      role: this.iRole,
-      selfBlockPermissions: this.iBlockPermissions,
-      roleValuesNames: {
-        name: 'Наименование',
-        front: 'Система',
-        created_at: 'Дата добавления',
-        updated_at: 'Дата обновления',
-      },
-      newBlock: ''
-    };
-  },
-  methods: {
-    frontName(id) {
-      let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
-      return fronts.length > 0 ? fronts[0].name : 'N/A';
+    mixins: [modalMixin],
+    components: {
+        ShadowCard,
+        ValuesTable,
+        modal,
+        VSelect,
+        RoleEditModal,
+        AddRoleBlockModal
     },
-    blockName(id) {
-      let allBlocks = Object.values(this.options.blocks).filter(block => block.id === id);
-      return allBlocks.length > 0 ? allBlocks[0].name : 'N/A';
+    props: {
+        iRole: {},
+        iBlockPermissions: {},
+        options: {
+            fronts: [],
+            blocks: [],
+            permissions: [],
+        },
     },
-    permissionName(id) {
-      let permissions = Object.values(this.options.permissions).filter(permission => permission.id === id);
-      return permissions.length > 0 ? permissions[0].name : 'N/A';
+    data() {
+        return {
+            role: this.iRole,
+            roleValuesNames: {
+                name: 'Наименование',
+                front: 'Система',
+                created_at: 'Дата добавления',
+                updated_at: 'Дата обновления',
+            },
+            roleBlockPermissions: [],
+        };
     },
-    deleteBlock(id) {
-      Services.net().post(this.getRoute('settings.deleteBlock', {blockId: id}), {}, {
-        role_id: this.role.id
-      }, {})
-          .then(data => {
-            this.selfBlockPermissions = data.blockPermissions;
-            this.showMessageBox({text: 'Блок удален'});
-          });
+    methods: {
+        frontName(id) {
+            let front = Object.values(this.options.fronts).find(front => front.id === id);
+            return front ? front.name : 'N/A';
+        },
+        updateRole(newData) {
+            Object.assign(this.role, newData.role);
+            this.closeModal();
+            this.showMessageBox({text: 'Роль обновлена'});
+        },
+        blockName(id) {
+            let block = Object.values(this.options.blocks).find(block => block.id === id);
+            return block ? block.name : 'N/A';
+        },
+        rolePermissionIdByBlock(blockId) {
+            let blockPermission = this.iBlockPermissions.find(permission => permission.block_id === blockId);
+
+            return blockPermission ? blockPermission.permission_id : null;
+        },
+        updateBlockPermissions() {
+            Services.showLoader();
+
+            Services.net().put(this.getRoute('settings.updateBlockPermissions', {id: this.iRole.id}), {}, {
+                blockPermissions: this.roleBlockPermissions
+            })
+                .then(() => {
+                    this.showMessageBox({text: 'Разрешения обновлены'});
+                })
+                .finally(() => {
+                    Services.hideLoader();
+                })
+        },
     },
-    updateRole(newData) {
-      Object.assign(this.role, newData.role);
-      this.closeModal();
-      this.showMessageBox({text: 'Роль обновлена'});
+    computed: {
+        roleInfo() {
+            return {
+                name: this.role.name,
+                front: this.frontName(this.role.front),
+                created_at: this.datetimePrint(this.role.created_at),
+                updated_at: this.datetimePrint(this.role.updated_at)
+            };
+        },
+        permissionsOptions() {
+            let options = Object.values(this.options.permissions)
+                .map(permission => ({ value: permission.id, text: permission.name }));
+
+            options.unshift({ value: null, text: '-' });
+
+            return options;
+        },
     },
-    onBlockCreated(newData) {
-      this.selfBlockPermissions = newData;
-      this.closeModal();
-      this.showMessageBox({text: 'Блок добавлен'});
+    created() {
+        this.roleBlockPermissions = Object.values(this.options.blocks).map(block => {
+            return {
+                block_id: block.id,
+                permission_id: this.rolePermissionIdByBlock(block.id)
+            }
+        });
     }
-  },
-  computed: {
-    roleInfo() {
-      return {
-        name: this.role.name,
-        front: this.frontName(this.role.front),
-        created_at: this.datetimePrint(this.role.created_at),
-        updated_at: this.datetimePrint(this.role.updated_at)
-      };
-    },
-    blockOptions() {
-      return this.options.blocks.map(block => ({value: block.id, text: block.name}))
-    }
-  }
 };
 </script>
 
 <style scoped>
-.icon-btn {
-  cursor: pointer;
-  transition: 0.3s all;
-}
-
-.icon-btn--red {
-  color: var(--red);
-}
-
-.icon-btn--red:hover {
-  color: var(--pink);
-}
 </style>

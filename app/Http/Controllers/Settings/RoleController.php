@@ -113,44 +113,19 @@ class RoleController extends Controller
     }
 
     /**
-     * Добавить блок у роли.
-     */
-    public function addBlock(BlockPermissionRequest $request, RoleService $roleService): JsonResponse
-    {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
-
-        $roleService->addBlock($request->role_id, $request->block_id, $request->permission_id);
-
-        return response()->json([
-            'blockPermissions' => $roleService->roleBlocks($request->role_id),
-        ]);
-    }
-
-    /**
      * Обновить блок у роли.
      */
-    public function updateBlock(int $id, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
-    {
+    public function updateBlockPermissions(
+        int $id,
+        BlockPermissionRequest $request,
+        RoleService $roleService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $roleService->updateBlock($id, $request->role_id, $request->block_id, $request->permission_id);
+        $roleService->updateRoleBlocksPermissions($id, $request->blockPermissions);
 
         return response()->json([
             'blockPermissions' => $roleService->roleBlocks($id),
-        ]);
-    }
-
-    /**
-     * Удалить блок у роли.
-     */
-    public function deleteBlock(int $blockId, BlockPermissionRequest $request, RoleService $roleService): JsonResponse
-    {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
-
-        $roleService->deleteBlock($blockId);
-
-        return response()->json([
-            'blockPermissions' => $roleService->roleBlocks($request->role_id),
         ]);
     }
 

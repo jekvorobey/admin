@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "def5fa7797d714fb3a53de2843103367",
+    "content-hash": "4ea62da3036f9e7d3e4e0f6e2a1958db",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1165,7 +1165,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "cc5f61aa4881df224dd39d6a141510c3a2419359"
+                "reference": "97d938581087e9fb73aabaf58cabb1a51092fbe9"
             },
             "require": {
                 "ext-json": "*",
@@ -1208,7 +1208,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2021-10-29T12:53:20+00:00"
+            "time": "2021-11-02T14:29:33+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -10682,8 +10682,8 @@
         {
             "package": "iwengo/ibt-common-lib",
             "version": "dev-master-ylab",
-            "alias": "dev-master-ylab",
-            "alias_normalized": "dev-master-ylab"
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
         },
         {
             "package": "iwengo/ibt-logistics-lib",
