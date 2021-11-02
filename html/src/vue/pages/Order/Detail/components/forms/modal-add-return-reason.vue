@@ -3,7 +3,11 @@
         <template v-slot:default="{close}">
             <b-form-row>
                 <div class="col-sm-4">
-                    <v-select v-model="$v.returnReason.$model" :options="orderReturnReasonsOptions">
+                    <v-select
+                        v-model="$v.returnReason.$model"
+                        :options="orderReturnReasonsOptions"
+                        :nullable-value="0"
+                    >
                         Причина отмены*
                     </v-select>
                 </div>
