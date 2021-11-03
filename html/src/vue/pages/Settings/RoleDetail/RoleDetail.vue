@@ -2,12 +2,12 @@
     <layout-main>
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
-                <shadow-card title="Основная информация" :buttons="canUpdate ? {onEdit: 'pencil-alt'} : {}"
+                <shadow-card title="Основная информация" :buttons="canEdit ? {onEdit: 'pencil-alt'} : {}"
                              @onEdit="openModal('roleAdd')">
                     <values-table :values="roleInfo" :names="roleValuesNames"/>
                 </shadow-card>
                 <shadow-card title="Разрешения" padding="3">
-                    <button class="btn btn-success mb-2" @click="updateBlockPermissions()" v-if="canUpdate">Сохранить</button>
+                    <button class="btn btn-success mb-2" @click="updateBlockPermissions()" v-if="canEdit">Сохранить</button>
 
                     <table class="table table-sm">
                         <thead>
@@ -127,7 +127,7 @@ export default {
 
             return options;
         },
-        canUpdate() {
+        canEdit() {
             return this.role.can_edit && this.canUpdate(this.blocks.settings);
         }
     },
