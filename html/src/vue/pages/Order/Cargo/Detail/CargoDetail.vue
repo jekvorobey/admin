@@ -8,14 +8,14 @@
                         <cargo-status :status='cargo.status'/>
                         <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
-                        <template v-if="isCreatedStatus && !isCancel">
+                        <template v-if="isCreatedStatus && !isCancel && canUpdate(blocks.orders)">
                             <button class="btn btn-primary" v-if="isRequestSend"
                                     @click="changeCargoStatus(cargoStatuses.shipped.id)">Груз передан курьеру</button>
                             <button class="btn btn-warning" v-else
                                     title="Задание на забор груза не создано">Груз передан курьеру</button>
                         </template>
 
-                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel">
+                        <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel && canUpdate(blocks.orders)">
                             <template v-if="isCreatedStatus">
                                 <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
                                     Отменить задание на забор груза
@@ -98,7 +98,12 @@
                     </p>
                     <p class="text-secondary mt-3">
                         Склад отгрузки:
-                        <span class="float-right"><a :href="getRoute('merchantStore.edit', {id: cargo.store.id})">{{cargo.store.name}}</a></span>
+                        <span class="float-right" v-if="canUpdate(blocks.orders)">
+                          <a :href="getRoute('merchantStore.edit', {id: cargo.store.id})">{{cargo.store.name}}</a>
+                        </span>
+                        <span class="float-right" v-else>
+                          {{ cargo.store.name }}
+                        </span>
                     </p>
                 </div>
             </div>

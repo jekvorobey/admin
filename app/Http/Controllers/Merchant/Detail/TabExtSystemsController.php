@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use MerchantManagement\Dto\Integration\ExtSystemDriver;
@@ -14,6 +15,8 @@ class TabExtSystemsController extends Controller
 {
     public function load(int $merchantId, MerchantIntegrationService $merchantIntegrationService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $merchantIntegrationService->newQuery()
             ->setFilter('merchant_id', $merchantId)
             ->setFilter('driver', ExtSystemDriver::DRIVER_1C);
@@ -31,6 +34,8 @@ class TabExtSystemsController extends Controller
         MerchantService $merchantService,
         MerchantIntegrationService $merchantIntegrationService
     ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $merchant = $merchantService->merchant($merchantId);
 
         $extSystem = new ExtSystemDto([

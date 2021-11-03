@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\PublicEventSprintDocumentDto;
 use Pim\Services\PublicEventSprintDocumentService\PublicEventSprintDocumentService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -14,7 +15,9 @@ class PublicEventSprintDocumentController extends Controller
     public function list(
         Request $request,
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprintDocuments = $publicEventPublicEventSprintDocumentService->getBySprint($request->input('sprint_id'));
 
         return response()->json([
@@ -38,7 +41,9 @@ class PublicEventSprintDocumentController extends Controller
     public function save(
         Request $request,
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $publicEventSprintDocument = $request->get('sprintDocument');
 
@@ -60,7 +65,9 @@ class PublicEventSprintDocumentController extends Controller
     public function delete(
         Request $request,
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -77,7 +84,9 @@ class PublicEventSprintDocumentController extends Controller
     public function getBySprint(
         int $sprint_id,
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprintDocuments = $publicEventPublicEventSprintDocumentService->getBySprint($sprint_id);
 
         return response()->json([
@@ -85,11 +94,6 @@ class PublicEventSprintDocumentController extends Controller
         ]);
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPublicEventSprintDocuments(
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService,
         $page

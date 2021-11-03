@@ -3,17 +3,22 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use GuzzleHttp\Client;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\PublicEventProfessionDto;
 use Pim\Services\PublicEventProfessionService\PublicEventProfessionService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PublicEventProfessionController extends Controller
 {
-    public function list(PublicEventProfessionService $publicEventPublicEventProfessionService, Client $client)
-    {
+    public function list(
+        PublicEventProfessionService $publicEventPublicEventProfessionService,
+        Client $client
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
         $response = collect(json_decode($response->getBody()->getContents(), true)['items'])->keyBy('id');
 
@@ -27,8 +32,10 @@ class PublicEventProfessionController extends Controller
         ]);
     }
 
-    public function names(Client $client)
+    public function names(Client $client): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
 
         return response()->json([
@@ -36,8 +43,12 @@ class PublicEventProfessionController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventProfessionService $publicEventPublicEventProfessionService)
-    {
+    public function page(
+        Request $request,
+        PublicEventProfessionService $publicEventPublicEventProfessionService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $publicEventProfessions] = $this->loadPublicEventProfessions($publicEventPublicEventProfessionService, $page);
 
@@ -47,8 +58,12 @@ class PublicEventProfessionController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventProfessionService $publicEventPublicEventProfessionService)
-    {
+    public function save(
+        Request $request,
+        PublicEventProfessionService $publicEventPublicEventProfessionService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $publicEventProfession = $request->get('publicEventProfession');
 
@@ -76,8 +91,12 @@ class PublicEventProfessionController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventProfessionService $publicEventPublicEventProfessionService)
-    {
+    public function delete(
+        Request $request,
+        PublicEventProfessionService $publicEventPublicEventProfessionService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -95,7 +114,9 @@ class PublicEventProfessionController extends Controller
         int $event_id,
         PublicEventProfessionService $publicEventPublicEventProfessionService,
         Client $client
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $response = $client->get(config('customer-lib.customerHost') . '/api/v1/activities');
         $response = collect(json_decode($response->getBody()->getContents(), true)['items'])->keyBy('id');
 
@@ -113,7 +134,9 @@ class PublicEventProfessionController extends Controller
         int $event_id,
         Request $request,
         PublicEventProfessionService $publicEventPublicEventProfessionService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventProfession = $request->get('publicEventProfession');
 
         if (!$publicEventProfession) {
@@ -127,11 +150,6 @@ class PublicEventProfessionController extends Controller
         return response()->json();
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPublicEventProfessions(
         PublicEventProfessionService $publicEventPublicEventProfessionService,
         $page
@@ -140,6 +158,7 @@ class PublicEventProfessionController extends Controller
 
         $total = $publicEventPublicEventProfessionService->count($query);
         $publicEventProfessions = $publicEventPublicEventProfessionService->find($query);
+
         return [$total, $publicEventProfessions];
     }
 }

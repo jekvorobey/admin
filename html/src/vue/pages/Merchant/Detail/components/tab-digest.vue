@@ -9,7 +9,7 @@
                 <a href="#" class="btn btn-warning btn-md">
                     Войти под мерчантом <fa-icon icon="eye"/>
                 </a>
-                <button @click="save()" class="btn btn-success btn-md">
+                <button @click="save()" class="btn btn-success btn-md" v-if="canUpdate(blocks.merchants)">
                     Сохранить изменения <fa-icon icon="check"/>
                 </button>
                 <button v-if="!inputMode"

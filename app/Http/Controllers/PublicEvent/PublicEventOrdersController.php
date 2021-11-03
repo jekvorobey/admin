@@ -4,8 +4,10 @@ namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Illuminate\Http\JsonResponse;
 use Pim\Services\PublicEventService\PublicEventService;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Dto\DataQuery;
@@ -20,8 +22,10 @@ class PublicEventOrdersController extends Controller
 {
     public const PER_PAGE = 15;
 
-    public function getList(Request $request, int $eventId)
+    public function getList(Request $request, int $eventId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprints = $request->input('sprint_id')
             ? [(int) $request->input('sprint_id')]
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();

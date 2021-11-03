@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\JsonResponse;
 use MerchantManagement\Dto\MerchantDocumentDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 
 class TabMainController extends Controller
 {
-    public function load(int $id, MerchantService $merchantService, FileService $fileService)
+    public function load(int $id, MerchantService $merchantService, FileService $fileService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $documents = $merchantService->documents($id);
         $files = collect();
         if ($documents->isNotEmpty()) {

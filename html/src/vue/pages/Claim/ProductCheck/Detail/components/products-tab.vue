@@ -8,8 +8,8 @@
                         <th>Название</th>
                         <th>Артикул</th>
                         <th>Статус согласования</th>
-                        <th>Комментарий по статусу согласования</th>
-                        <th>
+                        <th v-if="canUpdate(blocks.claims)">Комментарий по статусу согласования</th>
+                        <th v-if="canUpdate(blocks.claims)">
                             <template v-if="isWorkStatus">
                                 <button class="btn btn-primary"
                                         @click="doForAll('accept')"
@@ -24,15 +24,18 @@
                 <tbody>
                     <tr v-for="product in claim.products">
                         <td>{{ product.id }}</td>
-                        <td>
+                        <td v-if="canView(blocks.products)">
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
                                 {{ product.name }}
                             </a>
                         </td>
+                        <td v-else>
+                            {{ product.name }}
+                        </td>
                         <td>{{ product.vendor_code }}</td>
                         <td>{{ product.approval_status.name }}</td>
                         <td>{{ product.approval_status_comment }}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.claims)">
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank"
                                     v-if="isWorkStatus && !isProductChecked(product.approval_status.id)">
                                 <button class="btn btn-primary">Проверить...</button>

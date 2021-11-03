@@ -24,38 +24,40 @@
                                 {{ document.text }}
                             </b-dropdown-item-button>
                         </b-dropdown>
-                        <b-dropdown text="Действия" size="sm"
-                                    v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
-                            <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)"
-                                                    @click="markAsNonProblem(shipment)">
-                                Пометить как непроблемное
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button :disabled="!canGetBarcodes(shipment)">
-                                <a :href="barcodes ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : ''"
+                        <template v-if="canUpdate(blocks.orders)">
+                            <b-dropdown text="Действия" size="sm"
+                                        v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
+                                <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)"
+                                                        @click="markAsNonProblem(shipment)">
+                                    Пометить как непроблемное
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button :disabled="!canGetBarcodes(shipment)">
+                                    <a :href="barcodes ? getRoute('orders.detail.shipments.barcodes', {id: order.id, shipmentId: shipment.id}) : ''"
 
-                                   :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
-                                   :title="getBarcodesTitle(shipment)">
-                                    <fa-icon icon="barcode"></fa-icon>
-                                    Получить штрихкоды
-                                </a>
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="isAssembledStatus(shipment) && canGetCdekReceipt(shipment)">
-                                <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})"
-                                   class="text-dark">
-                                    <fa-icon icon="file-invoice"></fa-icon>
-                                    Получить квитанцию
-                                </a>
-                            </b-dropdown-item-button>
-                            <b-dropdown-item-button v-if="canCancelShipment(shipment)"
-                                                    @click="showOrderReturnModal(shipment)">
-                                <fa-icon icon="times"></fa-icon>
-                                Отменить отправление
-                            </b-dropdown-item-button>
-                        </b-dropdown>
-                        <button class="btn btn-light btn-sm" @click="editShipment(shipment)"
-                                v-if="canEditShipment(shipment)">
-                            <fa-icon icon="pencil-alt" title="Изменить"/>
-                        </button>
+                                       :class="canGetBarcodes(shipment) ? 'text-dark' : 'text-danger'"
+                                       :title="getBarcodesTitle(shipment)">
+                                        <fa-icon icon="barcode"></fa-icon>
+                                        Получить штрихкоды
+                                    </a>
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button v-if="isAssembledStatus(shipment) && canGetCdekReceipt(shipment)">
+                                    <a :href="getRoute('orders.detail.shipments.cdekReceipt', {id: order.id, shipmentId: shipment.id})"
+                                       class="text-dark">
+                                        <fa-icon icon="file-invoice"></fa-icon>
+                                        Получить квитанцию
+                                    </a>
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button v-if="canCancelShipment(shipment)"
+                                                        @click="showOrderReturnModal(shipment)">
+                                    <fa-icon icon="times"></fa-icon>
+                                    Отменить отправление
+                                </b-dropdown-item-button>
+                            </b-dropdown>
+                            <button class="btn btn-light btn-sm" @click="editShipment(shipment)"
+                                    v-if="canEditShipment(shipment)">
+                                <fa-icon icon="pencil-alt" title="Изменить"/>
+                            </button>
+                        </template>
                     </div>
                 </div>
             </b-row>
@@ -69,7 +71,7 @@
                     <shipment-status :status='shipment.status'/>
                     {{ shipment.status_at }}
                     <p v-if="shipment.is_problem">
-                        <span class="badge badge-danger">Проблемное</span>
+                        <span class="badge badge-danger" v-b-popover.hover="shipment.assembly_problem_comment">Проблемное</span>
                         {{ shipment.is_problem_at }}
                     </p>
                     <p v-if="shipment.is_canceled">

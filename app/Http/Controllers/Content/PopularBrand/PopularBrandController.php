@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Cms\Core\CmsException;
 use Cms\Dto\PopularBrandDto;
 use Cms\Services\PopularBrandService\PopularBrandService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -24,6 +25,8 @@ class PopularBrandController extends Controller
      */
     public function list(PopularBrandService $popularBrandService, BrandService $brandService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $popularBrands = $popularBrandService->popularBrands(
             (new RestQuery())
                 ->addSort('order_num')
@@ -43,6 +46,7 @@ class PopularBrandController extends Controller
         $otherBrands = $groupedBrands['other'] ?? [];
 
         $this->title = 'Популярные бренды';
+
         return $this->render('Content/PopularBrands', [
             'iPopularBrands' => $popularBrands->map(function (PopularBrandDto $popularBrand) use ($brandsForPopularBrands) {
                 return [
@@ -60,11 +64,12 @@ class PopularBrandController extends Controller
 
     /**
      * Добавить новый популярный бренд
-     * @return JsonResponse
      * @throws CmsException
      */
-    public function create(PopularBrandService $popularBrandService)
+    public function create(PopularBrandService $popularBrandService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'brand_id' => 'required|integer',
             'show_logo' => 'required|boolean',
@@ -83,11 +88,13 @@ class PopularBrandController extends Controller
 
     /**
      * Редактировать популярный бренд
-     * @return Response|JsonResponse
+     * @return Application|Response|ResponseFactory
      * @throws CmsException
      */
     public function update(PopularBrandService $popularBrandService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
             'brand_id' => 'required|integer',
@@ -111,6 +118,8 @@ class PopularBrandController extends Controller
      */
     public function delete(PopularBrandService $popularBrandService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'ids' => 'required|array',
             'ids.*' => 'required|integer',
@@ -123,10 +132,11 @@ class PopularBrandController extends Controller
 
     /**
      * Изменить порядок популярных брендов
-     * @return Response
      */
-    public function reorder(PopularBrandService $popularBrandService)
+    public function reorder(PopularBrandService $popularBrandService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'items' => 'required|array',
             'items.*.id' => 'required|integer',

@@ -64,6 +64,22 @@
       </div>
     </div>
 
+
+
+    <div class="form-group" v-show="getCustomerId" v-if="canUpdate(blocks.clients)">
+      <div class="input-group m-0 p-0 col-3">
+        <input type="text"
+               class="form-control"
+               v-model="pin"
+               placeholder="Введите PIN сертификата"
+        />
+        <button @click="activate" type="button"  class="btn btn-sm btn-success">Активировать</button>
+
+      </div>
+
+    </div>
+
+
     <table class="table table-condensed">
       <thead>
       <tr>
@@ -75,6 +91,7 @@
         <th>Дата покупки</th>
         <th>Дата отправки</th>
         <th>Дата активации</th>
+        <th>Срок активации</th>
         <th>Статус</th>
         <th>Покупатель</th>
         <th>Получатель</th>
@@ -82,7 +99,7 @@
         <th>Сообщение</th>
         <th>Email</th>
         <th>Телефон</th>
-        <th>Консоль</th>
+        <th v-if="canUpdate(blocks.marketing)">Консоль</th>
       </tr>
       </thead>
 
@@ -127,6 +144,7 @@ import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
 import RowCard from './row-card.vue'
 import TabList from '../mixins/TabList.js'
+import Services from "../../../../../scripts/services/services";
 
 export default {
   components: {
@@ -144,24 +162,60 @@ export default {
         type: Object
     }
   },
+
   data() {
     return {
+      pin: null,
       tabName: 'cards'
     };
   },
+
   methods: {
     clearFilter() {
       this.loadPage(1);
     },
+
+    activate() {
+      if (!this.pin || this.pin.trim() === '' ){
+        return;
+      }
+
+      const customer_id = this.getCustomerId;
+
+      if (!customer_id) {
+        return;
+      }
+
+      let route = 'card_activate';
+
+      Services.showLoader();
+
+      Services.net()
+          .post(this.getRoute(`certificate.${route}`), {pin: this.pin, customer_id})
+          .then(() => {
+            Services.msg('Сертификат активирован', 'success');
+            this.loadPage()
+          })
+          .finally(() => Services.hideLoader())
+
+    }
   },
+
   computed: {
     booleanOptions() {
       return [{value: 0, text: 'Не активен'}, {value: 1, text: 'Активен'}];
     },
+
     showFilter() {
         return (this.externalFilter) ? false : false;
-    }
+    },
+
+    getCustomerId() {
+      const filter = this.getFilter();
+      return filter.customer_or_recipient_id || null;
+    },
   },
+
   created() {
       if (this.externalFilter) {
           this.filter = this.externalFilter

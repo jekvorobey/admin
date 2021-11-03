@@ -7,6 +7,8 @@ use Cms\Core\CmsException;
 use Cms\Dto\LandingDto;
 use Cms\Dto\LandingWidgetDto;
 use Cms\Services\LandingService\LandingService;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -19,6 +21,8 @@ class LandingDetailController extends Controller
      */
     public function updatePage($id, LandingService $landingService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $landing = $this->getLanding($id, $landingService);
         $widgets = $this->getWidgets($landingService);
 
@@ -36,6 +40,8 @@ class LandingDetailController extends Controller
      */
     public function createPage(LandingService $landingService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $widgets = $this->getWidgets($landingService);
 
         return $this->render('Content/LandingDetail', [
@@ -47,11 +53,12 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
-    public function create(Request $request, LandingService $landingService)
+    public function create(Request $request, LandingService $landingService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'active' => 'integer|required',
             'code' => 'string|required',
@@ -65,11 +72,12 @@ class LandingDetailController extends Controller
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
      * @throws CmsException
      */
-    public function update(int $id, Request $request, LandingService $landingService)
+    public function update(int $id, Request $request, LandingService $landingService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'active' => 'integer|required',
@@ -85,18 +93,22 @@ class LandingDetailController extends Controller
         return response()->json([], 204);
     }
 
-    public function delete(int $id, LandingService $landingService)
+    /**
+     * @throws CmsException
+     */
+    public function delete(int $id, LandingService $landingService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $landingService->deleteLanding($id);
 
         return response()->json([], 204);
     }
 
     /**
-     * @return LandingDto|null
      * @throws CmsException
      */
-    private function getLanding(int $id, LandingService $landingService)
+    private function getLanding(int $id, LandingService $landingService): ?LandingDto
     {
         $query = $landingService->newQuery()->setFilter('id', $id);
         return $landingService->landings($query)->first();

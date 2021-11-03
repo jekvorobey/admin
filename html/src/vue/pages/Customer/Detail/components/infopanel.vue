@@ -4,13 +4,13 @@
         <tr>
             <th colspan="4">
                 Инфопанель
-                <button class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
+                <button v-if="canUpdate(blocks.clients)" class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
                     Сохранить
                 </button>
-                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
+                <button @click="cancel" v-if="canUpdate(blocks.clients)" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
 
-                <button @click="makeDial" class="btn btn-info btn-sm">Позвонить</button>
-                <b-dropdown text="Изменить статус" class="float-right" size="sm">
+                <button v-if="canUpdate(blocks.clients)" @click="makeDial" class="btn btn-info btn-sm">Позвонить</button>
+                <b-dropdown text="Изменить статус" class="float-right" size="sm" v-if="canUpdate(blocks.clients)">
                     <template v-if="!customer.referral">
                         <b-dropdown-item-button v-if="customer.status != customerStatus.created " @click="openModal('modal-mark-status-created')">
                             Создан профиль
@@ -166,7 +166,7 @@
                     </b-tooltip>
                 </div>
                 <div v-if="!customer.portfolios.length">-</div>
-                <button class="btn btn-info btn-sm" v-b-modal.modal-portfolios><fa-icon icon="pencil-alt"/></button>
+                <button v-if="canUpdate(blocks.clients)" class="btn btn-info btn-sm" v-b-modal.modal-portfolios><fa-icon icon="pencil-alt"/></button>
             </td>
         </tr>
         </tbody>

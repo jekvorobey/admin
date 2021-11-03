@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.products)">
             <div class="col-12 mt-3">
                 <button class="btn btn-warning" @click="openStocksEditModal">Редактировать остатки</button>
             </div>

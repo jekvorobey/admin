@@ -3,7 +3,7 @@
         <span>Спринт</span>
         <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" :disabled="sprints.length == 0 || sprintStages.length == 0" @click="createTicketType">Добавить тип билета</button>
         </div>
         <table class="table">
@@ -15,7 +15,7 @@
                     <th>Количество</th>
                     <th>Цена</th>
                     <th>Программы</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +26,7 @@
                     <td>{{ticketType.qty}}</td>
                     <td>{{ticketType.price}}</td>
                     <td>{{sprintStagesList(ticketType.sprintStages)}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDeleteTicketType([ticketType.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editTicketType(ticketType)">
                             <fa-icon icon="edit"></fa-icon>
@@ -78,7 +78,7 @@
         ACT_SAVE_TICKET_TYPE_STAGE,
         ACT_DELETE_TICKET_TYPE_STAGE
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import {validationMixin} from 'vuelidate';
@@ -137,7 +137,7 @@
                 detachTicketTypeStage: ACT_DELETE_TICKET_TYPE_STAGE
             }),
             reload() {
-                
+
                 this.loadSprints({publicEventId: this.publicEvent.id})
                     .then(response => {
                         this.sprints = response.sprints;

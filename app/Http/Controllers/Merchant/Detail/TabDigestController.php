@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
@@ -17,7 +18,6 @@ class TabDigestController extends Controller
 {
     /**
      * Загрузить основную информацию
-     * @return JsonResponse
      */
     public function load(
         int $merchantId,
@@ -25,7 +25,9 @@ class TabDigestController extends Controller
         MerchantService $merchantService,
         OfferService $offerService,
         ShipmentService $shipmentService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $period = $this->getPeriod();
 
         // Товаров на витрине //
@@ -75,6 +77,8 @@ class TabDigestController extends Controller
      */
     public function comment(int $merchantId, MerchantService $merchantService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $data = $this->validate(request(), [
             'comment' => 'nullable|string|max:1500',
         ]);

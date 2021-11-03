@@ -218,9 +218,11 @@ Route::middleware('auth')->group(function () {
             });
 
             Route::prefix('card')->group(function () {
+                Route::post('activate', 'CertificateCardController@activate')->name('certificate.card_activate');
                 Route::prefix('{id}')->group(function () {
                     Route::get('', 'CertificateCardController@editPage')->name('certificate.card_edit');
                     Route::put('', 'CertificateCardController@update')->name('certificate.card_update');
+                    Route::put('deactivate', 'CertificateCardController@deactivate')->name('certificate.card_deactivate');
                     Route::post('update/expired', 'CertificateCardController@updateExpireAt')->name('certificate.update_activation_period');
                     Route::post('notify', 'CertificateCardController@sendNotification')->name('certificate.send_notification');
                 });
@@ -280,7 +282,6 @@ Route::middleware('auth')->group(function () {
             });
         });
     });
-
     Route::prefix('settings')->namespace('Settings')->group(function () {
         Route::prefix('payment-methods')->group(function () {
             Route::get('', 'PaymentMethodsController@list')->name('settings.paymentMethods');
@@ -296,6 +297,18 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.createUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
+        });
+
+        Route::prefix('roles')->group(function () {
+            Route::get('page', 'RoleController@page')->name('settings.roleListPagination');
+            Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+                Route::get('', 'RoleController@detail')->name('settings.roleDetail');
+                Route::put('', 'RoleController@upsert')->name('settings.updateRole');
+                Route::delete('', 'RoleController@deleteRole')->name('settings.deleteRole');
+                Route::put('updateBlockPermissions', 'RoleController@updateBlockPermissions')->name('settings.updateBlockPermissions');
+            });
+            Route::get('', 'RoleController@index')->name('settings.rolesList');
+            Route::post('', 'RoleController@upsert')->name('settings.createRole');
         });
 
         Route::prefix('organization-card')->group(function () {

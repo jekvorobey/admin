@@ -9,7 +9,7 @@
     </td>
     <td>{{ !!item.is_active ? 'Активен' : 'Не активен' }}</td>
     <td>{{ item.created_at | datetime }}</td>
-    <td>
+    <td v-if="canUpdate(blocks.marketing)">
       <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
         <fa-icon icon="pencil-alt" class="float-right media-btn"></fa-icon>
       </a>

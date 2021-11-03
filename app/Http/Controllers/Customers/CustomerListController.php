@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
@@ -21,6 +23,8 @@ class CustomerListController extends Controller
      */
     public function listProfessional()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return $this->list('Клиентская база');
     }
 
@@ -30,12 +34,17 @@ class CustomerListController extends Controller
      */
     public function listReferralPartner()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return $this->list('Список реферальных партнеров', true);
     }
 
     protected function list($title, $isReferral = null)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->title = $title;
+
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
@@ -44,8 +53,10 @@ class CustomerListController extends Controller
         ]);
     }
 
-    public function filter(UserService $userService, CustomerService $customerService)
+    public function filter(UserService $userService, CustomerService $customerService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $filter = request()->validate([
             'status' => 'nullable',
             'phone' => 'nullable',
@@ -140,8 +151,10 @@ class CustomerListController extends Controller
         ]);
     }
 
-    public function create(UserService $userService, CustomerService $customerService)
+    public function create(UserService $userService, CustomerService $customerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'phone' => 'required|regex:/^\+7\d{10}$/',
             'password' => 'required|confirmed',
@@ -159,8 +172,8 @@ class CustomerListController extends Controller
         $user->password = $data['password'];
         $user->front = Front::FRONT_SHOWCASE;
 
-
         $id = $userService->create($user);
+        /** TODO заменить ролью из базы */
         if ($id) {
             $userService->addRoles($id, [UserDto::SHOWCASE__PROFESSIONAL]);
 
@@ -178,10 +191,10 @@ class CustomerListController extends Controller
 
     /**
      * @param $isReferral
-     *
+     * TODO заменить ролями из базы
      * @return string[]|null
      */
-    protected function getRoles($isReferral)
+    protected function getRoles($isReferral): ?array
     {
         return $isReferral === null ? [
             0 => 'Все',

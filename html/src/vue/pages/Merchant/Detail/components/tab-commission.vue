@@ -11,7 +11,7 @@
           </div>
         </div>
       </td>
-      <td>
+      <td v-if="canUpdate(blocks.merchants)">
         <button class="btn btn-sm btn-success" @click="saveMerchantCommission">
           <fa-icon icon="save"/>
         </button>
@@ -24,7 +24,7 @@
       <th style="width: 10%">Комиссия</th>
       <th style="width: 35%">Бренд/Категория/Товар</th>
       <th>Даты активности</th>
-      <th></th>
+      <th v-if="canUpdate(blocks.merchants)"></th>
     </tr>
     <tr v-for="commission in commissions">
       <td>{{ typeName(commission.type) }}</td>
@@ -50,14 +50,14 @@
             input-class="form-control form-control-sm"
         />
       </td>
-      <td>
+      <td v-if="canUpdate(blocks.merchants)">
         <button class="btn btn-sm btn-success" @click="saveCommission(commission)">
           <fa-icon icon="save"/>
         </button>
         <v-delete-button @delete="removeCommission(commission.id)" btn-class="btn-danger btn-sm"/>
       </td>
     </tr>
-    <tr>
+    <tr v-if="canUpdate(blocks.merchants)">
       <td>
         <select v-model="newCommission.type" class="form-control form-control-sm"
                 @change="newCommission.related_id = null">

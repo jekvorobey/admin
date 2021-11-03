@@ -4,7 +4,7 @@
         <thead>
         <tr>
             <th colspan="4">Документы
-                <button class="btn btn-success btn-sm" @click="createNewDocument">
+                <button class="btn btn-success btn-sm" @click="createNewDocument" v-if="canUpdate(blocks.clients)">
                     Добавить новый <fa-icon icon="plus"/>
                 </button>
             </th>
@@ -31,7 +31,7 @@
             <th>Сумма вознаграждения</th>
             <th>Статус</th>
             <th>Файл</th>
-            <th>Действия</th>
+            <th v-if="canUpdate(blocks.clients)">Действия</th>
         </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
             <td>
                 <a :href="document.url" target="_blank">{{ document.name }}</a>
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.clients)">
                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.id, i)"/>
                 <button class="btn btn-info btn-sm" title="Отправить пользователю на Email" @click="sendEmail(document.id)">
                     <fa-icon icon="envelope"/>

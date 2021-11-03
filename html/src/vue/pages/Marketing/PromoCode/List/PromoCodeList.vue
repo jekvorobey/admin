@@ -59,8 +59,11 @@
                     </div>
                 </div>
                 <div class="form-group col-lg-3 col-md-6 mt-4">
-                    <div class="input-group input-group-sm mt-2">
+                    <div class="input-group input-group-sm mt-2" v-if="canView(blocks.communications)">
                         Запросы: <a :href="getRoute('communications.chats.unread') + '?theme=Запрос промокода'">{{ this.promoRequestsCount }}</a>
+                    </div>
+                    <div class="input-group input-group-sm mt-2" v-else>
+                        Запросы: {{ this.promoRequestsCount }}
                     </div>
                 </div>
             </div>
@@ -73,7 +76,7 @@
                 </button>
             </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.marketing)">
             <div class="col-12 mt-3">
                 <a :href="getRoute('promo-code.create')" class="btn btn-success">Создать промокод</a>
             </div>
@@ -139,23 +142,32 @@
                     </td>
                     <td>{{ promoCode.validityPeriod }}</td>
                     <td>
-                        <a v-if="promoCode.merchant_id"
+                        <a v-if="promoCode.merchant_id && canView(blocks.merchants)"
                            title="Мерчант"
                            :href="getRoute('merchant.detail', {id: promoCode.merchant_id})">
                             {{ getMerchantName(promoCode.merchant_id) }}
                         </a>
+                        <span v-else-if="promoCode.merchant_id">
+                            {{ getMerchantName(promoCode.merchant_id) }}
+                        </span>
                         <template v-else>Маркетплейс</template>
                     </td>
                     <td>
-                        <a v-if="promoCode.creator" :href="getRoute('settings.userDetail', {id: promoCode.creator.id})">
+                        <a v-if="promoCode.creator && canView(blocks.settings)" :href="getRoute('settings.userDetail', {id: promoCode.creator.id})">
                             {{ promoCode.creator.title }}
                         </a>
+                        <span v-else-if="promoCode.creator">
+                            {{ promoCode.creator.title }}
+                        </span>
                         <template v-else>-</template>
                     </td>
                     <td>
-                        <a v-if="promoCode.owner" :href="getRoute('customers.detail', {id: promoCode.owner.id})">
+                        <a v-if="promoCode.owner && canView(blocks.clients)" :href="getRoute('customers.detail', {id: promoCode.owner.id})">
                             {{ promoCode.owner.id }}: {{ promoCode.owner.title }}
                         </a>
+                        <span v-else-if="promoCode.owner">
+                            {{ promoCode.owner.title }}
+                        </span>
                         <template v-else>Нет</template>
                     </td>
                     <td>{{ promoCodeStatusName(promoCode.status) }}</td>

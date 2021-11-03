@@ -8,7 +8,7 @@
                     <th>#</th>
                     <th>Условие</th>
                     <th>Значение</th>
-                    <th>Действие</th>
+                    <th v-if="canUpdate(blocks.marketing)">Действие</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -98,7 +98,7 @@
                             </template>
                         </template>
                     </td>
-                    <td>
+                    <td v-if="canUpdate(blocks.marketing)">
                         <button class="btn btn-warning" type="button" @click="editCondition(condition.type)">Редактировать</button><br/>
                         <button class="btn btn-danger mt-3" type="button" @click="deleteCondition(condition.type)">Удалить</button>
                     </td>
@@ -114,7 +114,7 @@
                       :error="conditionError"
                       @change="selectCondition"
             >Условия предоставления скидки</v-select>
-            <div class="col-3 mt-3">
+            <div class="col-3 mt-3" v-if="canUpdate(blocks.marketing)">
                 <label class="row">&nbsp;</label>
                 <button type="button" class="btn"
                         :class="'btn-warning'"

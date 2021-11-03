@@ -8,20 +8,27 @@ use Cms\Dto\ProductGroupDto;
 use Cms\Dto\ProductGroupTypeDto;
 use Cms\Services\ProductGroupService\ProductGroupService;
 use Cms\Services\ProductGroupTypeService\ProductGroupTypeService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ProductGroupListController extends Controller
 {
+    /**
+     * @throws CmsException
+     */
     public function indexPage(
         Request $request,
         ProductGroupService $productGroupService,
         ProductGroupTypeService $productGroupTypeService,
         FileService $fileService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $this->title = 'Подборки';
         $query = $this->makeQuery($request);
 
@@ -36,8 +43,13 @@ class ProductGroupListController extends Controller
         ]);
     }
 
-    public function page(Request $request, ProductGroupService $productGroupService, FileService $fileService)
-    {
+    public function page(
+        Request $request,
+        ProductGroupService $productGroupService,
+        FileService $fileService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $query = $this->makeQuery($request);
         $data = [
             'productGroups' => $this->loadItems($query, $productGroupService, $fileService),
@@ -48,10 +60,7 @@ class ProductGroupListController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * @return RestQuery
-     */
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): RestQuery
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);

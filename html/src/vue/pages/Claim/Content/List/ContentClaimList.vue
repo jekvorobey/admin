@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.claims)">
             <div class="col-12 mt-3">
                 <a :href="getRoute('contentClaims.create')" class="btn btn-success">Создать заявку</a>
                 <button class="btn btn-warning" :disabled="countSelected < 1" @click="changeClaimStatus()">Изменить статус
@@ -93,7 +93,8 @@
                     <td><a :href="getRoute('contentClaims.detail', {id: claim.id})">{{ claim.id }}</a></td>
                     <td>{{ typeName(claim.type) }}</td>
                     <td><span class="badge" :class="statusClass(claim.status)">{{ statusName(claim.status) }}</span></td>
-                    <td><a :href="getRoute('merchant.detail', {id: claim.merchantId})">{{ claim.merchantName }}</a></td>
+                    <td v-if="canUpdate(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: claim.merchantId})">{{ claim.merchantName }}</a></td>
+                    <td v-else>{{ claim.merchantName }}</td>
                     <td>{{ claim.product_ids.length }}</td>
                     <td>{{ unpackName(claim.unpacking) }}</td>
                     <td class="with-small">{{ claim.userName }}<small>{{ claim.userLogin }}</small></td>

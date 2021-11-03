@@ -153,7 +153,7 @@
             reload: ACT_LOAD_PUBLIC_EVENT
         }),
         onTabChange() {
-            this.reload({id: this.publicEvent.id});        
+            this.reload({id: this.publicEvent.id});
         },
         updateSprintId(sprintId) {
             this.sprintId = sprintId;

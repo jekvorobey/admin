@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Product\ImportExport;
 
 use App\Http\Controllers\Controller;
 use Greensight\CatalogImport\Services\ProductsImportService\ProductsImportService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
@@ -16,11 +17,11 @@ class ProductsExportController extends Controller
 {
     /**
      * Экспорт выбранных товаров в файлы Excel
-     *
-     * @return JsonResponse
      */
-    public function exportByProductIds(Request $request, ProductsImportService $productsImportService)
+    public function exportByProductIds(Request $request, ProductsImportService $productsImportService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',
@@ -38,14 +39,14 @@ class ProductsExportController extends Controller
 
     /**
      * Экспорт отфильтрованных товаров в файлы Excel
-     *
-     * @return JsonResponse
      */
     public function exportByFilters(
         Request $request,
         SearchService $searchService,
         ProductsImportService $productsImportService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'filters' => 'required|array',
         ]);
@@ -73,10 +74,8 @@ class ProductsExportController extends Controller
 
     /**
      * Получить оригинальный путь к файлу и его имя по id-шнику
-     *
-     * @return array
      */
-    protected static function getOriginalFileUrlAndName(int $fileId)
+    protected static function getOriginalFileUrlAndName(int $fileId): array
     {
         /** @var FileService $fileService */
         $fileService = resolve(FileService::class);

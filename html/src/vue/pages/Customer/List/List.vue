@@ -53,7 +53,7 @@
                     </div>
 
                     <b-button type="submit" variant="dark">Искать</b-button>
-                    <b-button type="button" variant="outline-dark" v-if="!isReferral" v-b-modal="modalIdCreateUser">Создать</b-button>
+                    <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser">Создать</b-button>
                     <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
                 </b-form>
             </div>
@@ -95,7 +95,7 @@
                 class="mt-3 float-right"
         />
 
-        <modal-create-user v-if="!isReferral" :id="modalIdCreateUser"/>
+        <modal-create-user v-if="!isReferral && canUpdate(blocks.clients)" :id="modalIdCreateUser"/>
     </layout-main>
 </template>
 

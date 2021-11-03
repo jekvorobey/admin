@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.products)">
             <button class="btn btn-success" @click="createBrand">Создать бренд</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано брендов: {{massAll(massSelectionType).length}}</span>
@@ -15,7 +15,7 @@
                     <th>Логотип</th>
                     <th>Название</th>
                     <th>Код</th>
-                    <th class="text-right">Действия</th>
+                    <th v-if="canUpdate(blocks.products)" class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
                     <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
                     <td>{{brand.name}}</td>
                     <td>{{brand.code}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.products)">
                         <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editBrand(brand)">
                             <fa-icon icon="edit"></fa-icon>

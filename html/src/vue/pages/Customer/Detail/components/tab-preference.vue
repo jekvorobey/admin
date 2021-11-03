@@ -11,7 +11,7 @@
         <tr>
             <th>
                 Бренды
-                <button class="btn btn-success btn-sm" @click="editBrands(1)"><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editBrands(1)" v-if="canUpdate(blocks.clients)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
                 <div v-for="brand_id in pref_personal.brands">{{ brands[brand_id].name }}</div>
@@ -23,7 +23,7 @@
         <tr>
             <th>
                 Категории
-                <button class="btn btn-success btn-sm" @click="editCategories(1)"><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editCategories(1)" v-if="canUpdate(blocks.clients)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
                 <div v-for="category_id in pref_personal.categories">{{ categoryName(category_id) }}</div>
@@ -39,7 +39,7 @@
         <tr>
             <th>
                 Бренды
-                <button class="btn btn-success btn-sm" @click="editBrands(2)"><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editBrands(2)" v-if="canUpdate(blocks.clients)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
                 <div v-for="brand_id in pref_referral.brands">{{ brands[brand_id].name }}</div>
@@ -51,7 +51,7 @@
         <tr>
             <th>
                 Категории
-                <button class="btn btn-success btn-sm" @click="editCategories(2)"><fa-icon icon="pencil-alt"/></button>
+                <button class="btn btn-success btn-sm" @click="editCategories(2)" v-if="canUpdate(blocks.clients)"><fa-icon icon="pencil-alt"/></button>
             </th>
             <td>
                 <div v-for="category_id in pref_referral.categories">{{ categoryName(category_id) }}</div>
@@ -67,7 +67,7 @@
         <tr>
             <th>
                 Избранное
-                <button class="btn btn-success btn-sm" v-b-modal.modal-find-product><fa-icon icon="plus"/></button>
+                <button class="btn btn-success btn-sm" v-b-modal.modal-find-product v-if="canUpdate(blocks.clients)"><fa-icon icon="plus"/></button>
                 <modal-find-product v-bind:id="id"/>
             </th>
             <td>
@@ -75,7 +75,7 @@
                     <a :href="'/products/' + favorite_item.id">
                         {{ favorite_item.name }}
                     </a>
-                    <span @click="removeFavItem(id, favorite_item.id, index)">
+                    <span @click="removeFavItem(id, favorite_item.id, index)" v-if="canUpdate(blocks.clients)">
                         <fa-icon icon="times"/>
                     </span>
                 </div>

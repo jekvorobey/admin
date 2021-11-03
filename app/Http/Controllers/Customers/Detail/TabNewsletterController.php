@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customers\Detail;
 use App\Http\Controllers\Controller;
 use Cms\Dto\ContentNewsletterDto;
 use Cms\Services\ContentNewsletterService\ContentNewsletterService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Dto\CustomerNewsletterDto;
 use Greensight\Customer\Services\CustomerNewsletterService\CustomerNewsletterService;
 use Illuminate\Contracts\Foundation\Application;
@@ -21,14 +22,14 @@ class TabNewsletterController extends Controller
 {
     /**
      * Получить информацию о новостных подписках пользователя
-     * @param $customerId
-     * @return JsonResponse
      */
     public function load(
         $customerId,
         ContentNewsletterService $contentNewsletterService,
         CustomerNewsletterService $customerNewsletterService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         /** @var ContentNewsletterDto $topics */
         $topics = $contentNewsletterService->getTopics();
         /** @var CustomerNewsletterDto $subscriptions */
@@ -52,7 +53,6 @@ class TabNewsletterController extends Controller
 
     /**
      * Редактировать параметры новостной подписки у пользователя
-     * @param $customerId
      * @return Application|ResponseFactory|Response
      */
     public function edit(
@@ -60,6 +60,8 @@ class TabNewsletterController extends Controller
         CustomerNewsletterService $customerNewsletterService,
         ContentNewsletterService $contentNewsletterService
     ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $topics = $contentNewsletterService->getTopics()
             ->keyBy('id')
             ->keys()

@@ -10,7 +10,7 @@
                   </v-select>
                 </div>
             </td>
-            <td>
+            <td v-if="canUpdate(blocks.merchants)">
                 <button class="btn btn-sm btn-success" @click="saveMerchantVat"><fa-icon icon="save"/></button>
                 <v-delete-button @delete="removeVat(merchantVat.id)" btn-class="btn-danger btn-sm" v-if="merchantVat.id"/>
             </td>
@@ -35,12 +35,12 @@
                 {{ relatedValueByType(vat.type, vat.related_id) }}
             </td>
 
-            <td>
+            <td v-if="canUpdate(blocks.merchants)">
                 <button class="btn btn-sm btn-success" @click="saveVat(vat)"><fa-icon icon="save"/></button>
                 <v-delete-button @delete="removeVat(vat.id)" btn-class="btn-danger btn-sm"/>
             </td>
         </tr>
-        <tr>
+        <tr v-if="canUpdate(blocks.merchants)">
             <td>
                 <select v-model="newVat.type" class="form-control form-control-sm" @change="newVat.related_id = null">
                     <option :value="null">Выберите тип</option>

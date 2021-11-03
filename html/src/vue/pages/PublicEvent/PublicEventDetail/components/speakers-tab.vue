@@ -6,7 +6,7 @@
         <span>Этап</span>
         <b-form-select v-model="sprintStageId" text-field="name" value-field="id" :options="sprintStages" @change="onChangeSprintStage(sprintStageId)" />
 
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" :disabled="sprints.length == 0 || sprintStages.length == 0" @click="openModal('eventSpeakersModalForm')">Добавить спикера</button>
         </div>
         <table class="table">
@@ -22,7 +22,7 @@
                     <th>Instagram</th>
                     <th>Facebook</th>
                     <th>LinkedIn</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,7 +37,7 @@
                     <td>{{speaker.instagram}}</td>
                     <td>{{speaker.facebook}}</td>
                     <td>{{speaker.linkedin}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDeleteSpeaker(speaker.id)" class="float-right ml-1"/>
                     </td>
                 </tr>
@@ -65,7 +65,7 @@
         ACT_LOAD_EVENT_SPEAKERS,
         ACT_DELETE_EVENT_SPEAKER
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
 
@@ -105,7 +105,7 @@
                 deleteEventSpeaker: ACT_DELETE_EVENT_SPEAKER
             }),
             reload() {
-                
+
                     this.loadSprints({publicEventId: this.publicEvent.id})
                         .then(response => {
                             this.sprints = response.sprints;

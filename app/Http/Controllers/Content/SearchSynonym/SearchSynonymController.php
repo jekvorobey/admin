@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Content\SearchSynonym;
 use App\Http\Controllers\Controller;
 use Cms\Dto\SearchSynonymDto;
 use Cms\Services\SearchSynonymService\SearchSynonymService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 
@@ -25,6 +25,8 @@ class SearchSynonymController extends Controller
      */
     public function list(SearchSynonymService $searchSynonymService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $query = $this->makeQuery();
         $this->title = 'Поисковые синонимы';
 
@@ -35,12 +37,10 @@ class SearchSynonymController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function page(SearchSynonymService $searchSynonymService)
+    public function page(SearchSynonymService $searchSynonymService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $query = $this->makeQuery();
         $data = [
             'searchSynonyms' => $this->loadItems($query, $searchSynonymService),
@@ -57,10 +57,7 @@ class SearchSynonymController extends Controller
         return request()->get('page', 1);
     }
 
-    /**
-     * @return RestQuery
-     */
-    protected function makeQuery()
+    protected function makeQuery(): RestQuery
     {
         $query = new RestQuery();
         $page = $this->getPage();
@@ -85,11 +82,12 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @return JsonResponse
      * @throws \Exception
      */
-    public function create(SearchSynonymService $searchSynonymService)
+    public function create(SearchSynonymService $searchSynonymService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'synonyms' => 'required|string',
         ]);
@@ -105,11 +103,13 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @return Application|ResponseFactory|JsonResponse|Response
+     * @return Application|Response|ResponseFactory
      * @throws \Exception
      */
     public function update(SearchSynonymService $searchSynonymService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
             'synonyms' => 'required|string',
@@ -129,6 +129,8 @@ class SearchSynonymController extends Controller
      */
     public function delete(SearchSynonymService $searchSynonymService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'ids' => 'required|array',
             'ids.*' => 'required|integer',

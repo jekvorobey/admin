@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Services\ReferralService\Dto\GetPromotionDto;
@@ -13,7 +17,9 @@ use Greensight\Customer\Services\ReferralService\Dto\PutPromotionDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -25,11 +31,12 @@ class TabPromoProductController extends Controller
 {
     /**
      * Возвращает список промо-товаров
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
-    public function load(?int $merchantId = null)
+    public function load(?int $merchantId = null): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return response()->json([
             'promoProducts' => $this->loadPromotionProducts($merchantId),
         ]);
@@ -37,15 +44,16 @@ class TabPromoProductController extends Controller
 
     /**
      * Обновить/Добавить промо-товар
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function save(
         ?int $merchantId,
         Request $request,
         ProductService $productService,
         ReferralService $referralService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate($request, [
             'product_id' => 'required|integer',
             'mass' => 'required|integer',
@@ -81,8 +89,16 @@ class TabPromoProductController extends Controller
         ]);
     }
 
+    /**
+     * @throws UnsupportedTypeException
+     * @throws WriterNotOpenedException
+     * @throws IOException
+     * @throws PimException
+     */
     public function export($id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $writer = WriterFactory::createFromType(Type::XLSX);
 
         $writer->openToBrowser("Товары для продвижения {$id}.xlsx");
@@ -120,11 +136,12 @@ class TabPromoProductController extends Controller
 
     /**
      * Подгрузить информацию о промо-товарах
-     * @return array
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
-    public function loadPromotionProducts(?int $merchantId = null)
+    public function loadPromotionProducts(?int $merchantId = null): array
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
         /** @var ProductService $productService */
@@ -174,7 +191,6 @@ class TabPromoProductController extends Controller
                 }
             }
         }
-
 
         return $result;
     }

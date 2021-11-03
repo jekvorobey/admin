@@ -46,8 +46,10 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-success">Сохранить</button>
-            <button type="button" class="btn" @click="cancel">Отменить</button>
+            <template v-if="canUpdate(blocks.marketing)">
+                <button type="submit" class="btn btn-success">Сохранить</button>
+                <button type="button" class="btn" @click="cancel">Отменить</button>
+            </template>
 
         </form>
 

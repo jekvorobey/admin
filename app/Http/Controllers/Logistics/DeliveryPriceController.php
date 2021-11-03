@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Logistics;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryPriceDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -24,6 +25,8 @@ class DeliveryPriceController extends Controller
      */
     public function index(ListsService $listsService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $this->title = 'Стоимость доставки по регионам';
         $this->loadDeliveryServices = true;
         $this->loadDeliveryMethods = true;
@@ -35,6 +38,8 @@ class DeliveryPriceController extends Controller
 
     public function save(Request $request, ListsService $listsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $validatedData = $request->validate([
             'id' => 'integer|nullable',
             'federal_district_id' => 'integer|required',
@@ -83,7 +88,7 @@ class DeliveryPriceController extends Controller
             ->include('regions');
         $federalDistricts = $listsService->federalDistricts($federalDistrictsQuery);
 
-        $federalDistricts = $federalDistricts->map(
+        return $federalDistricts->map(
             function (FederalDistrictDto $federalDistrict) use ($deliveryPricesByFederalDistrict, $deliveryPricesByRegions) {
                 $data = $federalDistrict->toArray();
                 foreach (DeliveryService::allServices() as $deliveryService) {
@@ -119,7 +124,5 @@ class DeliveryPriceController extends Controller
                 return $data;
             }
         );
-
-        return $federalDistricts;
     }
 }

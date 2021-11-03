@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <b-row class="mb-2">
+        <b-row class="mb-2" v-if="canUpdate(blocks.communications)">
             <b-col>
                 <button class="btn btn-success btn-sm" @click="createTheme()"><fa-icon icon="plus"/></button>
             </b-col>
@@ -12,7 +12,7 @@
                 <th>Активность</th>
                 <th>Тип</th>
                 <th>Канал</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.communications)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -21,7 +21,7 @@
                 <td>{{ theme.active ? 'да' : 'нет' }}</td>
                 <td>{{ theme.type ? iTypes[theme.type].name : '-' }}</td>
                 <td>{{ theme.channel_id ? channels[theme.channel_id].name : '-' }}</td>
-                <td>
+                <td v-if="canUpdate(blocks.communications)">
                     <button class="btn btn-warning btn-sm" @click="editTheme(theme)"><fa-icon icon="edit"/></button>
                     <v-delete-button @delete="deleteTheme(theme.id)" btn-class="btn-danger btn-sm"/>
                 </td>

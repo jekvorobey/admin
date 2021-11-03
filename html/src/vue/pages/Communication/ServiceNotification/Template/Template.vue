@@ -7,7 +7,7 @@
         <!-- <span>Системные предупреждения</span>
         <system-alert :serviceNotificationId="service_notification_id"></system-alert> -->
         <span>Шаблоны</span>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.communications)">
             <button class="btn btn-success" @click="createTemplate">Добавить шаблон</button>
         </div>
         <table class="table">
@@ -16,7 +16,7 @@
                     <th>ID</th>
                     <th>Канал</th>
                     <th>Текст</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.communications)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,7 +24,7 @@
                     <td>{{template.id}}</td>
                     <td>{{channel(template.channel_id)}}</td>
                     <td>{{template.body}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.communications)">
                         <v-delete-button @delete="() => onDelete([template.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editTemplate(template)">
                             <fa-icon icon="edit"></fa-icon>

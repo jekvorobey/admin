@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Communications;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Message\Dto\Communication\CommunicationThemeDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\CommunicationThemeService;
+use Illuminate\Http\JsonResponse;
 
 class ThemeController extends Controller
 {
@@ -13,6 +15,8 @@ class ThemeController extends Controller
         CommunicationService $communicationService,
         CommunicationThemeService $communicationThemeService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $this->title = 'Темы';
         $channels = $communicationService->channels()->keyBy('id');
         $themes = $communicationThemeService->themes()->keyBy('id');
@@ -24,8 +28,10 @@ class ThemeController extends Controller
         ]);
     }
 
-    public function save(CommunicationThemeService $communicationThemeService)
+    public function save(CommunicationThemeService $communicationThemeService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
+
         $rTheme = request('theme');
         $theme = new CommunicationThemeDto();
         $theme->name = $rTheme['name'];
@@ -39,18 +45,20 @@ class ThemeController extends Controller
         } else {
             $communicationThemeService->create($theme);
         }
-
         $themes = $communicationThemeService->themes()->keyBy('id');
+
         return response()->json([
             'themes' => $themes,
         ]);
     }
 
-    public function delete($id, CommunicationThemeService $communicationThemeService)
+    public function delete($id, CommunicationThemeService $communicationThemeService): JsonResponse
     {
-        $communicationThemeService->delete($id);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
 
+        $communicationThemeService->delete($id);
         $themes = $communicationThemeService->themes()->keyBy('id');
+
         return response()->json([
             'themes' => $themes,
         ]);

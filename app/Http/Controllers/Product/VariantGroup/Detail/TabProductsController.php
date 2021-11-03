@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Product\VariantGroup\Detail;
 
 use App\Http\Controllers\Product\VariantGroup\VariantGroupDetailController;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Dto\Price\PriceOutDto;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Pim\Core\PimException;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\VariantGroupDto;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,10 +23,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class TabProductsController extends VariantGroupDetailController
 {
     /**
-     * @throws \Pim\Core\PimException|\Exception
+     * @throws Exception
      */
     public function load(int $variantGroupId): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $restQuery = $this->variantGroupService
             ->newQuery()
             ->addFields(
@@ -64,7 +69,7 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function addVariantGroupProductInfo(VariantGroupDto $variantGroupDto): void
     {
@@ -105,10 +110,12 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function add(int $variantGroupId, Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'productIds' => ['array', 'required'],
             'productIds.*' => ['integer'],
@@ -119,10 +126,12 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(int $variantGroupId, Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'productIds' => ['array', 'required'],
             'productIds.*' => ['integer'],
@@ -133,10 +142,13 @@ class TabProductsController extends VariantGroupDetailController
     }
 
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
+     * @throws Exception
      */
     public function setMain(int $variantGroupId, int $productId): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $variantGroupDto = new VariantGroupDto();
         $variantGroupDto->main_product_id = $productId;
         $this->variantGroupService->updateVariantGroup($variantGroupId, $variantGroupDto);

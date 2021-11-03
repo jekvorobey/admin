@@ -21,7 +21,9 @@
                         <button @click="save"
                                 class="btn btn-md btn-success mt-3"
                                 :title="customer.periodicity === null ? 'Не указана периодичность уведомлений':''"
-                                :disabled="customer.periodicity === null">
+                                :disabled="customer.periodicity === null"
+                                v-if="canUpdate(blocks.clients)"
+                        >
                             Сохранить изменения
                         </button>
                     </div>
@@ -45,22 +47,22 @@
                     </div>
                 </div>
 
-                    <div class="card p-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Предпочитаемый способ связи</h5>
-                            <div v-for="(channel, index) in channels" class="custom-control custom-checkbox">
-                                <input type="checkbox"
-                                       v-model="customer.channels"
-                                       :value="index"
-                                       :id="'channel'+index"
-                                       class="custom-control-input"
-                                       :disabled="customer.periodicity === 0">
-                                <label class="custom-control-label" :for="'channel'+index">
-                                    {{channel}}
-                                </label>
-                            </div>
+                <div class="card p-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Предпочитаемый способ связи</h5>
+                        <div v-for="(channel, index) in channels" class="custom-control custom-checkbox">
+                            <input type="checkbox"
+                                   v-model="customer.channels"
+                                   :value="index"
+                                   :id="'channel'+index"
+                                   class="custom-control-input"
+                                   :disabled="customer.periodicity === 0">
+                            <label class="custom-control-label" :for="'channel'+index">
+                                {{channel}}
+                            </label>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>

@@ -2,30 +2,28 @@
     <layout-main>
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
-                <shadow-card title="Основная информация" :buttons="{onEdit: 'pencil-alt'}" @onEdit="openModal('userAdd')">
+                <shadow-card title="Основная информация" :buttons="canUpdate(blocks.settings) ? {onEdit: 'pencil-alt'} : {}" @onEdit="openModal('userAdd')">
                     <values-table :values="userInfo" :names="userValuesNames"/>
                 </shadow-card>
-                <shadow-card title="Роли пользователя" padding="3" :buttons="{onAdd: 'plus'}" @onAdd="openModal('add-user-role')">
+                <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="openModal('add-user-role')">
                     <table class="table table-sm">
                         <thead>
                         <tr>
                             <th>Роль</th>
-                            <th>Активна</th>
-                            <th></th>
+                            <th v-if="canUpdate(blocks.settings)">Действия</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr v-for="role in roles">
-                            <td>{{roleName(role.id)}}</td>
-                            <td>{{role.expires ? 'до ' + role.expires : 'Да'}}</td>
-                            <td><fa-icon v-if="role.id !== 2" @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
+                            <td>{{role.name}}</td>
+                            <td v-if="canUpdate(blocks.settings)"><fa-icon @click="deleteRole(role.id)" icon="trash-alt" class="icon-btn icon-btn--red"></fa-icon></td>
                         </tr>
                         </tbody>
                     </table>
                 </shadow-card>
             </div>
         </div>
-        <transition name="modal">
+        <transition name="modal" v-if="canUpdate(blocks.settings)">
             <modal :close="closeModal" v-if="isModalOpen('add-user-role')">
                 <div slot="header">
                     Добавление роли
@@ -88,7 +86,8 @@
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
             roleName(id) {
-                return this.options.roles.hasOwnProperty(id) ? this.options.roles[id] : 'N/A';
+                let rolesList = Object.values(this.options.roles).filter(role => role.id === id);
+                return rolesList.length > 0 ? rolesList[0].name : 'N/A';
             },
             addRole() {
                 Services.net().post(this.getRoute('user.addRole', {id: this.user.id}), {}, {
@@ -121,14 +120,11 @@
                     front: this.frontName(this.user.front),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
                     infinity_sip_extension: this.user.infinity_sip_extension,
-                    created_at: this.user.created_at
+                    created_at: this.datePrint(this.user.created_at),
                 };
             },
             roleOptions() {
-                const usedIds = this.roles.map(role => role.id);
-                return this.options.roles
-                    .map(role => ({value: role.id, text: role.name}))
-                    .filter(item => usedIds.indexOf(item.value) === -1 && item.value !== 1);
+                return this.options.roles.map(role => ({value: role.id, text: role.name}));
             }
         }
     };

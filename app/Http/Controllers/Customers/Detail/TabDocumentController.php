@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\WriterFactory;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -15,6 +19,9 @@ use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Message\Dto\Mail\SendReferralDocumentMailDto;
 use Greensight\Message\Services\MailService;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -24,11 +31,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class TabDocumentController extends Controller
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function load(int $customerId, CustomerService $customerService, FileService $fileService)
+    public function load(int $customerId, CustomerService $customerService, FileService $fileService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $documentDto = new CustomerDocumentDto();
         $documents = $customerService->documents($customerId);
         $files = [];
@@ -61,12 +67,14 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @throws IOException
+     * @throws UnsupportedTypeException
+     * @throws WriterNotOpenedException
      */
     public function export(int $customerId, CustomerService $customerService, FileService $fileService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->validate(request(), [
             'format' => [
                 'required',
@@ -114,9 +122,6 @@ class TabDocumentController extends Controller
         $writer->close();
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function sendEmail(
         int $customerId,
         int $documentId,
@@ -124,7 +129,9 @@ class TabDocumentController extends Controller
         CustomerService $customerService,
         UserService $userService,
         FileService $fileService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $customerId))->first();
         $userId = $customer->user_id;
@@ -163,11 +170,10 @@ class TabDocumentController extends Controller
         ], 200);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function createDocument(int $customerId, CustomerService $customerService)
+    public function createDocument(int $customerId, CustomerService $customerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->validate(request(), [
             'type' => 'required|integer',
             'file' => 'required|max:4000',
@@ -202,10 +208,12 @@ class TabDocumentController extends Controller
     }
 
     /**
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @return ResponseFactory|Response
      */
     public function deleteDocument(int $customerId, int $document_id, CustomerService $customerService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $customerService->deleteDocument($customerId, $document_id);
 
         return response('', 204);

@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\PublicEventSpeakerDto;
 use Pim\Services\PublicEventSpeakerService\PublicEventSpeakerService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -13,6 +14,8 @@ class SpeakerController extends Controller
 {
     public function list(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $speakers] = $this->loadSpeakers($publicEventSpeakerService, $page);
 
@@ -23,8 +26,10 @@ class SpeakerController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
+    public function page(Request $request, PublicEventSpeakerService $publicEventSpeakerService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $speakers] = $this->loadSpeakers($publicEventSpeakerService, $page);
 
@@ -34,8 +39,10 @@ class SpeakerController extends Controller
         ]);
     }
 
-    public function fullPage(PublicEventSpeakerService $publicEventSpeakerService)
+    public function fullPage(PublicEventSpeakerService $publicEventSpeakerService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $query = $publicEventSpeakerService->query();
 
         return response()->json([
@@ -43,8 +50,10 @@ class SpeakerController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
+    public function save(Request $request, PublicEventSpeakerService $publicEventSpeakerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $speaker = $request->get('speaker');
 
@@ -63,8 +72,10 @@ class SpeakerController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventSpeakerService $publicEventSpeakerService)
+    public function delete(Request $request, PublicEventSpeakerService $publicEventSpeakerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -78,8 +89,10 @@ class SpeakerController extends Controller
         return response()->json();
     }
 
-    public function getByStage(int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
+    public function getByStage(int $stage_id, PublicEventSpeakerService $publicEventSpeakerService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $speakers = $publicEventSpeakerService->getByStage($stage_id);
 
         return response()->json([
@@ -87,8 +100,13 @@ class SpeakerController extends Controller
         ]);
     }
 
-    public function attachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
-    {
+    public function attachStage(
+        Request $request,
+        int $stage_id,
+        PublicEventSpeakerService $publicEventSpeakerService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -98,8 +116,13 @@ class SpeakerController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function detachStage(Request $request, int $stage_id, PublicEventSpeakerService $publicEventSpeakerService)
-    {
+    public function detachStage(
+        Request $request,
+        int $stage_id,
+        PublicEventSpeakerService $publicEventSpeakerService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -109,17 +132,13 @@ class SpeakerController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadSpeakers(PublicEventSpeakerService $publicEventSpeakerService, $page): array
     {
         $query = $publicEventSpeakerService->query()->pageNumber($page, 10);
 
         $total = $publicEventSpeakerService->count($query);
         $speakers = $publicEventSpeakerService->find($query);
+
         return [$total, $speakers];
     }
 }

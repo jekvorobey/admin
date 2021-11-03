@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Order\Detail;
 
 use App\Http\Controllers\Order\OrderDetailController;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -21,11 +23,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class TabMainController extends OrderDetailController
 {
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function load(int $id, OrderService $orderService, ListsService $listsService)
+    public function load(int $id, OrderService $orderService, ListsService $listsService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $restQuery = $orderService
             ->newQuery()
             ->setFilter('id', $id)
@@ -72,10 +73,12 @@ class TabMainController extends OrderDetailController
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function save(int $id, OrderService $orderService, DeliveryService $deliveryService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $requiredIfDeliveryAddressExist = function () {
             return count(array_filter(request()->get('delivery_address'))) > 0;
         };

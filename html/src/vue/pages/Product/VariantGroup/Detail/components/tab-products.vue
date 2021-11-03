@@ -9,7 +9,7 @@
                             :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
                     ></products-search>
                 </b-col>
-                <b-col>
+                <b-col v-if="canUpdate(blocks.products)">
                     <button
                             class="btn btn-success"
                             @click="addProducts"
@@ -40,7 +40,7 @@
                     <b-th class="with-small">Количество<br><small>Вес 1 шт</small><small>ДxШxВ 1 шт</small></b-th>
                     <b-th>Цена</b-th>
                     <b-th>Статус товара</b-th>
-                    <b-th></b-th>
+                    <b-th v-if="canUpdate(blocks.products)"></b-th>
                 </b-tr>
             </b-thead>
             <b-tbody>
@@ -86,7 +86,7 @@
                     </b-td>
                     <b-td>{{ preparePrice(product.price) }} руб</b-td>
                     <b-td>{{ product.approval_status ? product.approval_status.name : '' }}</b-td>
-                    <b-td>
+                    <b-td v-if="canUpdate(blocks.products)">
                         <button
                                 class="btn btn-primary"
                                 title="Сделать основным товаром"

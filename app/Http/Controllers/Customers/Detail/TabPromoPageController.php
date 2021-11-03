@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Services\ReferralService\Dto\GetPromoPageProductsDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
+use Illuminate\Http\JsonResponse;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -18,15 +20,19 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoPageController extends Controller
 {
-    public function load($id)
+    public function load($id): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return response()->json(array_merge($this->loadPromPageProducts($id), [
             'url' => url_showcase('/referrer/{code}'),
         ]));
     }
 
-    public function add($id, ProductService $productService, ReferralService $referralService)
+    public function add($id, ProductService $productService, ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'product_id' => 'integer',
         ]);
@@ -43,8 +49,10 @@ class TabPromoPageController extends Controller
         return response()->json($this->loadPromPageProducts($id));
     }
 
-    public function delete($id, ReferralService $referralService)
+    public function delete($id, ReferralService $referralService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'product_id' => 'numeric',
         ]);
@@ -53,7 +61,7 @@ class TabPromoPageController extends Controller
         return response()->json($this->loadPromPageProducts($id));
     }
 
-    protected function loadPromPageProducts($id)
+    protected function loadPromPageProducts($id): array
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
@@ -116,7 +124,6 @@ class TabPromoPageController extends Controller
                 }
             }
         }
-
 
         return [
             'products' => $result,

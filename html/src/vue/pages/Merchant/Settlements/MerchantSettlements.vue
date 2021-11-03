@@ -7,7 +7,7 @@
         <th>ID</th>
         <th>Дата создания</th>
         <th>Документ</th>
-        <th>Действия</th>
+        <th v-if="canUpdate(blocks.merchants)">Действия</th>
       </tr>
       </thead>
       <tbody>
@@ -19,7 +19,7 @@
           <a target="_blank" :href="$store.getters.getRoute('merchant.settlements.downloadPayRegistry',
           {registryFileId:registry.file})">Скачать</a>
         </td>
-        <td>
+        <td v-if="canUpdate(blocks.merchants)">
           <b-button class="btn btn-danger btn-sm" @click="removeRegistry(registry.id)">
             Удалить <fa-icon icon="trash-alt"/>
           </b-button>
@@ -49,7 +49,7 @@
       Всего: {{ pager.total }}. <span v-if="selectedReportsIds.length">Выбрано: {{selectedReportsIds.length}}</span>
     </div>
 
-    <div class="btn-toolbar mb-3">
+    <div class="btn-toolbar mb-3" v-if="canUpdate(blocks.merchants)">
       <div class="input-group">
         <div class="input-group-append">
           <button class="btn btn-outline-success" type="button" :disabled="!selectedReportsIds.length" @click="toPay">
@@ -89,7 +89,8 @@
         <td>{{ report.id }}</td>
         <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
         <td>{{ report.updated_at }}</td>
-        <td><a :href="$store.getters.getRoute('merchant.detail', {id: report.merchant_id})">{{ report.merchant.legal_name }}</a></td>
+        <td v-if="canUpdate(blocks.merchants)"><a :href="$store.getters.getRoute('merchant.detail', {id: report.merchant_id})">{{ report.merchant.legal_name }}</a></td>
+        <td v-else>{{ report.merchant.legal_name }}</td>
         <td>{{ report.sum.toLocaleString() }}</td>
         <td>
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',

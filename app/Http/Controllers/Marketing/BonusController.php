@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Marketing;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Builder\Bonus\BonusBuilder;
 use Greensight\Marketing\Core\MarketingException;
 use Greensight\Marketing\Dto\Bonus\BonusDto;
@@ -10,9 +11,14 @@ use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Services\BonusService\BonusService;
 use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
+use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 
@@ -24,6 +30,8 @@ class BonusController extends Controller
 {
     public function index()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Правила начисления бонусов';
         $bonusService = resolve(BonusService::class);
         $params = new BonusInDto();
@@ -39,11 +47,10 @@ class BonusController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->validate([
             'name' => 'string|required',
             'start_date' => 'date|nullable',
@@ -79,9 +86,12 @@ class BonusController extends Controller
 
     /**
      * @return mixed
+     * @throws PimException
      */
     public function createPage()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $this->title = 'Создание правила начисления бонуса';
         $this->loadBonusValueTypes = true;
         $this->loadBonusTypes = true;
@@ -101,11 +111,10 @@ class BonusController extends Controller
         ]);
     }
 
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function status()
+    public function status(): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         /** @var BonusService $bonusService */
         $bonusService = resolve(BonusService::class);
 
@@ -119,8 +128,13 @@ class BonusController extends Controller
         return response('', 204);
     }
 
+    /**
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
     public function delete()
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         /** @var BonusService $bonusService */
         $bonusService = resolve(BonusService::class);
         $ids = request('ids');
@@ -152,11 +166,10 @@ class BonusController extends Controller
         ], BonusService::FAILED_DEPENDENCY_CODE);
     }
 
-    /**
-     * @return \Illuminate\Http\Response
-     */
-    public function changeProductLimit(Request $request)
+    public function changeProductLimit(Request $request): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+
         $data = $request->validate([
             'product_id' => 'integer|required',
             'value' => 'integer|nullable',

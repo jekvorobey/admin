@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Dto\FileDto;
@@ -14,6 +15,8 @@ class CustomerWhitelistController extends Controller
 {
     protected function index()
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $this->title = 'Вайтлист';
 
         return $this->render('Customer/Whitelist', []);
@@ -21,6 +24,8 @@ class CustomerWhitelistController extends Controller
 
     protected function import(Request $request, CustomerService $customerService): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $request->validate([
             'file_id' => 'required|integer',
         ]);
@@ -32,6 +37,8 @@ class CustomerWhitelistController extends Controller
 
     protected function export(CustomerService $customerService, FileService $fileService): StreamedResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $fileId = $customerService->exportWhitelist();
         /** @var FileDto $file */
         $file = $fileService->getFiles([$fileId])->first();

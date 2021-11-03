@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="mb-3">
+        <div class="mb-3" v-if="canUpdate(blocks.settings)">
             <button @click="openModal('userAdd')" class="btn btn-success"><fa-icon icon="plus"/> Добавить пользователя</button>
             <span class="float-right">Всего пользователей: {{ pager.total }}. <span v-if="selectedItems.length">Выбрано: {{selectedItems.length}}</span></span>
         </div>
@@ -106,7 +106,8 @@
                 let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
                 return fronts.length > 0 ? fronts[0].name : 'N/A';
             },
-            onUserCreated() {
+            onUserCreated(newData) {
+                Object.assign(this.users, newData);
                 this.showMessageBox({text: "Пользователь создан!"});
             }
         },

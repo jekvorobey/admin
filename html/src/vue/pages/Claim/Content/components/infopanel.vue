@@ -12,7 +12,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card border-0 shadow w-100 mt-4">
+                <div class="card border-0 shadow w-100 mt-4" v-if="canUpdate(blocks.claims)">
                     <div class="card-header">
                         Служебный комментарий
                     </div>

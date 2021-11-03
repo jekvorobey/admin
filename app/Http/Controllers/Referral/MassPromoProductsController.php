@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customers\Detail\TabPromoProductController;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
@@ -25,6 +26,8 @@ class MassPromoProductsController extends Controller
      */
     public function list(CustomerService $customerService, ReferralService $referralService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         // Получить список массовых промо-товаров //
         $helper = resolve(TabPromoProductController::class);
         $promoProducts = $helper->loadPromotionProducts(null);
@@ -45,23 +48,29 @@ class MassPromoProductsController extends Controller
 
     /**
      * Обновить/Добавить промо-товар для массового назначения
-     * @return JsonResponse
      * @throws PimException
      */
-    public function editProduct(Request $request, ProductService $productService, ReferralService $referralService)
-    {
+    public function editProduct(
+        Request $request,
+        ProductService $productService,
+        ReferralService $referralService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $helper = resolve(TabPromoProductController::class);
+
         return $helper
             ->save(null, $request, $productService, $referralService);
     }
 
     /**
      * Назначить промо-товар реф. партнерам по критериям
-     * @return JsonResponse
      * @throws PimException
      */
-    public function attachProduct(ReferralService $referralService)
+    public function attachProduct(ReferralService $referralService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'promo_products' => 'required|json',
             'segments' => 'nullable|array',
@@ -78,6 +87,7 @@ class MassPromoProductsController extends Controller
 
         $helper = resolve(TabPromoProductController::class);
         $promoProducts = $helper->loadPromotionProducts(null);
+
         return response()->json([
             'promoProducts' => $promoProducts,
         ]);
@@ -89,11 +99,14 @@ class MassPromoProductsController extends Controller
      */
     public function removeProduct(ReferralService $referralService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+
         $data = $this->validate(request(), [
             'promo_id' => 'required|integer',
         ]);
 
         $referralService->deletePromoProduct($data['promo_id']);
+
         return response('', 204);
     }
 }
