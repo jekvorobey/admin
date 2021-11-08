@@ -17,7 +17,8 @@ class PackagesController extends Controller
 {
     public function list(PackageService $packageService): JsonResponse
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        // Нужен доступ при редактировании заказа
+        // $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         return response()->json([
             'packages' => $packageService->packages($packageService->newQuery()
