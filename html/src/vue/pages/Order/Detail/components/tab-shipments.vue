@@ -178,7 +178,7 @@
                 </b-col>
             </b-row>
 
-            <shipment-items :model-order.sync="order" :model-shipment.sync="shipment" :can-edit="true" class="mt-4"/>
+            <shipment-items :model-order.sync="order" :model-shipment.sync="shipment" :with-edit="true" class="mt-4"/>
         </b-card>
 
         <modal-shipment-edit :model-shipment.sync="selectedShipment" :model-order.sync="order"
