@@ -2,7 +2,7 @@
     <b-card>
         <b-row class="mb-3">
             <b-col>
-                <div class="float-right">
+                <div class="float-right" v-if="canUpdate(blocks.orders)">
                     <button class="btn btn-primary" v-if="isAwaitingConfirmationStatus && !isCancel && !isProblem"
                             @click="changeShipmentStatus(shipmentStatuses.assembling.id)">
                         Все товары в наличии
@@ -113,7 +113,7 @@
                                             {{ shipmentPackage.package.name }}, вес брутто {{ shipmentPackage.weight }}
                                             г, вес пустой коробки {{ shipmentPackage.wrapper_weight }} г)</b>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-3" v-if="canUpdate(blocks.orders)">
                                         <button class="btn btn-secondary"
                                                 v-if="!shipment.is_problem && isAssemblingStatus && selectedBasketItemIds.length"
                                                 @click="addShipmentPackageItems(shipmentPackage)">
@@ -232,7 +232,7 @@ export default {
         modelOrder: {
             type: Object,
         },
-        canEdit: {
+        withEdit: {
             type: Boolean,
             default: false,
         }
@@ -413,6 +413,9 @@ export default {
         tooltipPriceHelp() {
             return 'Цена товара со всеми скидками с учётом количества';
         },
+        canEdit() {
+            return this.withEdit && this.canUpdate(this.blocks.orders);
+        }
     }
 }
 </script>
