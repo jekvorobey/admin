@@ -5,6 +5,7 @@ namespace App\Core;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
@@ -767,7 +768,7 @@ class ViewRender
                 /** TODO брать роли из базы */
                 'user' => [
                     'isGuest' => resolve(TokenStore::class)->token() == null,
-                    'isSuper' => resolve(RequestInitiator::class)->hasRole(UserDto::ADMIN__SUPER),
+                    'isSuper' => resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR),
                 ],
 
                 'userRoles' => $this->userRoles,
