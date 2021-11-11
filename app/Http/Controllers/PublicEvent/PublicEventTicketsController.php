@@ -99,7 +99,7 @@ class PublicEventTicketsController extends Controller
     protected function getCsvContent($tickets, $separator = ';'): string
     {
         $content = "\xEF\xBB\xBF"; // UTF-8 BOM
-        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус'];
+        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Уникальный код', 'Статус'];
         foreach ($columns as $column) {
             $content .= "{$column}{$separator}";
         }
@@ -114,6 +114,7 @@ class PublicEventTicketsController extends Controller
                 $ticket['profession'],
                 $ticket['type']['name'],
                 $ticket['order']['count_tickets'],
+                $ticket['code'],
                 $ticket['status']['name'],
             ]) . "\n";
         }

@@ -55,8 +55,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="date">Дата</label>
-                        <date-picker id="date" input-class="form-control" v-model="$v.form.date.$model" value-type="format" format="YYYY-MM-DD"/>
+                        <f-date v-if="!$v.form.use_period.$model"
+                                v-model="$v.form.date.$model"
+                                @change="$v.form.date_between.$model = []">
+                          <div class="custom-control custom-switch">
+                            <input type="checkbox"
+                                   v-model="$v.form.use_period.$model"
+                                   class="custom-control-input"
+                                   id="date">
+                            <label class="custom-control-label" for="date">Дата</label>
+                          </div>
+                        </f-date>
+                        <f-date v-else
+                                v-model="$v.form.date_between.$model"
+                                @change="$v.form.date.$model = []"
+                                range confirm>
+                          <div class="custom-control custom-switch">
+                            <input type="checkbox"
+                                   v-model="$v.form.use_period.$model"
+                                   class="custom-control-input"
+                                   id="date_between">
+                            <label class="custom-control-label" for="date_between">Период дат</label>
+                          </div>
+                        </f-date>
                     </div>
 
                     <label for="timeTo">Начало</label>
@@ -65,7 +86,7 @@
                     <label for="timeTo">Конец</label>
                     <vue-timepicker id="timeTo"  v-model="$v.form.time_to.$model" format="HH:mm:ss" :error="errorTimeTo" />
 
-                    <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
+                    <v-select v-model="$v.form.place_id.$model" :options="placesOptions">Площадка</v-select>
 
                     <div class="form-group">
                         <label for="raider">Что взять с собой</label>
@@ -113,6 +134,7 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 
     import VueCkeditor from '../../../../plugins/VueCkeditor';
+    import FDate from "../../../../components/filter/f-date.vue";
 
     export default {
         mixins: [
@@ -120,6 +142,7 @@
             validationMixin,
         ],
         components: {
+            FDate,
             Modal,
             VInput,
             VDeleteButton,
@@ -142,6 +165,8 @@
                     name: null,
                     description: null,
                     date: null,
+                    date_between: [],
+                    use_period: false,
                     place_id: null,
                     raider: null,
                     result: null,
@@ -156,9 +181,11 @@
                 name: {required},
                 description: {required},
                 date: {required},
+                date_between: {required},
                 time_from: {required},
                 time_to: {required},
                 place_id: {required},
+                use_period: {},
                 raider: {},
                 result: {},
             }
@@ -213,6 +240,8 @@
                 this.form.name = null;
                 this.form.description = null;
                 this.form.date = null;
+                this.form.date_between = [];
+                this.form.use_period = false;
                 this.form.time_from = '00:00:00';
                 this.form.time_to = '00:00:00';
                 this.form.place_id = null;
@@ -227,6 +256,8 @@
                 this.form.name = sprintStage.name;
                 this.form.description = sprintStage.description;
                 this.form.date = sprintStage.date;
+                this.form.date_between = [];
+                this.form.use_period = false;
                 this.form.time_from = sprintStage.time_from;
                 this.form.time_to = sprintStage.time_to;
                 this.form.place_id = sprintStage.place_id;
@@ -267,6 +298,12 @@
             },
         },
         computed: {
+            placesOptions() {
+                return Object.values(this.places).map(place => ({
+                  value: place.id,
+                  text: place.name
+                }));
+            },
             sprintIdModel: {
                 get () { return this.sprintId },
                 set (value) { this.$emit('updateSprintId', value) },
@@ -285,6 +322,11 @@
                 if (this.$v.form.date.$dirty) {
                     if (!this.$v.form.date.required) return "Обязательное поле!";
                 }
+            },
+            errorDateBetween() {
+              if (this.$v.form.date_between.$dirty) {
+                if (!this.$v.form.date_between.required) return "Обязательное поле!";
+              }
             },
             errorTimeFrom() {
                 if (this.$v.form.time_from.$dirty) {
