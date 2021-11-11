@@ -21,6 +21,8 @@ use Throwable;
 
 class PublicEventListController extends Controller
 {
+    public const ITEM_PER_PAGE = 20;
+
     /**
      * @throws ValidationException
      * @throws Exception
@@ -114,7 +116,7 @@ class PublicEventListController extends Controller
     private function loadPublicEvents(PublicEventService $publicEventService, $page)
     {
         return $this->makeRestQuery($publicEventService)
-            ->pageNumber($page, 10)
+            ->pageNumber($page, self::ITEM_PER_PAGE)
             ->withActualSprint()
             ->withPlace()
             ->withSprintTicketsCount()
@@ -171,6 +173,7 @@ class PublicEventListController extends Controller
                 }
             }
         }
+        $restQuery->addSort('created_at', 'desc');
 
         return $restQuery;
     }

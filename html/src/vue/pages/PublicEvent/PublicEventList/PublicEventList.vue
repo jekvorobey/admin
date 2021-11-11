@@ -70,12 +70,13 @@
     </table>
     <div>
       <b-pagination
-          v-if="numPages !== 1"
-          v-model="page"
-          :total-rows="total"
-          :per-page="pageSize"
-          :hide-goto-end-buttons="numPages < 10"
-          class="mt-3 float-right"
+          v-if="pager.pages > 1"
+          v-model="currentPage"
+          :total-rows="pager.total"
+          :per-page="pager.pageSize"
+          @change="changePage"
+          :hide-goto-end-buttons="pager.pages < 10"
+          class="float-right"
       ></b-pagination>
     </div>
     <transition name="modal">
@@ -86,7 +87,7 @@
         <div slot="body">
           <div class="form-group">
             <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
-            <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statusOptions"
+            <v-select v-model="$v.form.status_id.$model" :options="statusOptions"
                       :error="errorStatusId">Статус
             </v-select>
             <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -103,15 +104,9 @@ import withQuery from 'with-query';
 
 import {
   NAMESPACE,
-  GET_PAGE_NUMBER,
-  GET_TOTAL,
   GET_PAGE_SIZE,
   GET_NUM_PAGES,
-  ACT_LOAD_PAGE,
-  SET_PAGE,
-  GET_LIST,
   ACT_SAVE_PUBLIC_EVENT,
-  ACT_LOAD_EVENT_STATUSES
 } from "../../../store/modules/public-events";
 
 import {mapGetters, mapActions} from "vuex";
@@ -126,6 +121,7 @@ import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 import FInput from '../../../components/filter/f-input.vue';
 import FSelect from '../../../components/filter/f-select.vue';
 import Dropdown from '../../../components/dropdown/dropdown.vue';
+import qs from "qs";
 
 const cleanFilter = {
   name: '',
@@ -157,21 +153,16 @@ export default {
     iFilter: {},
     iPager: {},
     options: {},
+    eventStatuses: Object,
   },
   data() {
     let filter = Object.assign({}, cleanFilter, this.iFilter);
-    this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
-      list: this.iPublicEvents,
-      total: this.iTotal,
-      page: this.iCurrentPage,
-    });
     return {
       editEventId: null,
-      eventStatuses: [],
       filter,
       publicEvents: this.iPublicEvents,
+      currentPage: this.iCurrentPage,
       total: this.iTotal,
-      page: this.iCurrentPage,
       appliedFilter: {},
       pager: this.iPager,
       form: {
@@ -189,13 +180,17 @@ export default {
   methods: {
     ...mapActions(NAMESPACE, {
       savePublicEvent: ACT_SAVE_PUBLIC_EVENT,
-      loadEventStatuses: ACT_LOAD_EVENT_STATUSES,
-      actLoadPage: ACT_LOAD_PAGE
     }),
     changePage(newPage) {
+      history.pushState(null, null, location.origin + location.pathname + withQuery('', {
+        currentPage: newPage,
+        filter: this.appliedFilter,
+      }));
+    },
+    loadPage() {
       Services.showLoader();
       Services.net().get(this.route('public-event.list.page'), {
-        page: this.currentPage,
+        currentPage: this.currentPage,
         filter: this.appliedFilter,
       }).then(data => {
         this.publicEvents = data.publicEvents;
@@ -206,13 +201,6 @@ export default {
       }).finally(() => {
         Services.hideLoader();
       });
-    },
-    loadPage(page) {
-      history.pushState(null, null, location.origin + location.pathname + withQuery('', {
-        page: page,
-        filter: this.appliedFilter,
-      }));
-      return this.actLoadPage({page});
     },
     reload() {
       location.reload();
@@ -227,6 +215,7 @@ export default {
       this.appliedFilter = tmpFilter;
       this.currentPage = 1;
       this.changePage(1);
+      this.loadPage();
     },
     clearFilter() {
       for (let entry of Object.entries(cleanFilter)) {
@@ -335,20 +324,9 @@ export default {
   },
   computed: {
     ...mapGetters(NAMESPACE, {
-      GET_PAGE_NUMBER,
-      total: GET_TOTAL,
       pageSize: GET_PAGE_SIZE,
       numPages: GET_NUM_PAGES,
-      publicEvents: GET_LIST
     }),
-    page: {
-      get: function () {
-        return this.GET_PAGE_NUMBER;
-      },
-      set: function (page) {
-        this.loadPage(page);
-      }
-    },
     statusOptions() {
       return Object.values(this.options.eventStatuses).map(status => ({
         value: status.id,
@@ -370,13 +348,14 @@ export default {
     window.onpopstate = () => {
       let query = qs.parse(document.location.search.substr(1));
       if (query.page) {
-        this.page = query.page;
+        this.currentPage = query.page;
       }
     };
-    this.loadEventStatuses()
-        .then(response => {
-          this.eventStatuses = response.statuses;
-        });
+  },
+  watch: {
+    currentPage() {
+      this.loadPage();
+    }
   }
 };
 </script>

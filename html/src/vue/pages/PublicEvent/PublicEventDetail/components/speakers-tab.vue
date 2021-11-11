@@ -29,10 +29,10 @@
                 <tr v-for="speaker in speakers" :key="speaker.id">
                     <td>{{speaker.id}}</td>
                     <td>{{speaker.first_name}}</td>
-                    <td>{{speaker.middle_name}}</td>
+                    <td v-if="speaker.middle_name">{{speaker.middle_name}}</td>
                     <td>{{speaker.last_name}}</td>
-                    <td>{{speaker.phone}}</td>
-                    <td>{{speaker.email}}</td>
+                    <td v-if="speaker.phone">{{speaker.phone}}</td>
+                    <td v-if="speaker.email">{{speaker.email}}</td>
                     <td>{{speaker.description}}</td>
                     <td>{{speaker.instagram}}</td>
                     <td>{{speaker.facebook}}</td>

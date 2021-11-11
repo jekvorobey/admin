@@ -69,9 +69,9 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.first_name.$model" :error="errorFirstName">Имя*</v-input>
                         <v-input v-model="$v.form.last_name.$model" :error="errorLastName">Фамилия*</v-input>
-                        <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName">Отчество*</v-input>
-                        <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
-                        <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email*</v-input>
+                        <v-input v-model="$v.form.middle_name.$model">Отчество</v-input>
+                        <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" v-mask="telMask" autocomplete="off">Телефон</v-input>
+                        <v-input v-model="$v.form.email.$model" :placeholder="emailPlaceholder" :error="errorEmail" autocomplete="off" >Email</v-input>
                         <v-input v-model="$v.form.description.$model" :error="errorDescription">Описание*</v-input>
                         <v-input v-model="$v.form.instagram.$model">Instagram</v-input>
                         <v-input v-model="$v.form.facebook.$model">Facebook</v-input>
@@ -176,10 +176,10 @@
         validations: {
             form: {
                 first_name: {required},
-                middle_name: {required},
+                middle_name: {},
                 last_name: {required},
-                email: {required, email},
-                phone: {required},
+                email: {email},
+                phone: {},
                 description: {required},
                 file_id: {required},
                 global: {required},
@@ -333,7 +333,6 @@
             },
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
-                    if (!this.$v.form.email.required) return "Обязательное поле!";
                     if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 }
             },
