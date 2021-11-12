@@ -7,11 +7,9 @@ use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventQuery;
 use Pim\Dto\PublicEvent\PublicEventSprintStatus;
 use Pim\Dto\PublicEvent\PublicEventStatus;
@@ -27,7 +25,7 @@ class PublicEventListController extends Controller
      * @throws ValidationException
      * @throws Exception
      */
-    public function list(Request $request, PublicEventService $publicEventService, ShoppilotService $shoppilotService)
+    public function list(Request $request, PublicEventService $publicEventService, ShoppilotService $shopPilotService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
@@ -35,22 +33,9 @@ class PublicEventListController extends Controller
         $this->loadPublicEventSprintStatus = true;
 
         $this->title = 'Мероприятия';
-
-        $page = $request->get('page', 1);
+        $page = $this->getPage($request);
         $pager = $publicEventService->countPublicEvents($this->makeRestQuery($publicEventService));
-        $publicEvents = $this->loadPublicEvents($publicEventService, $page);
-
-        $publicEventIds = $publicEvents->pluck('id')->all();
-        if ($publicEventIds) {
-            try {
-                $shoppilotPublicEventsExist = $shoppilotService->groupsExist($publicEventIds);
-                $publicEvents->transform(function ($publicEvent) use ($shoppilotPublicEventsExist) {
-                    $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
-                    return $publicEvent;
-                });
-            } catch (Throwable $e) {
-            }
-        }
+        $publicEvents = $this->loadPublicEvents($publicEventService, $request, $shopPilotService);
 
         return $this->render('PublicEvent/PublicEventList', [
             'iPublicEvents' => $publicEvents,
@@ -71,29 +56,17 @@ class PublicEventListController extends Controller
     public function page(
         Request $request,
         PublicEventService $publicEventService,
-        ShoppilotService $shoppilotService
+        ShoppilotService $shopPilotService
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
-        $page = $request->get('page', 1);
-        $publicEvents = $this->loadPublicEvents($publicEventService, $page);
-
-        $publicEventIds = $publicEvents->pluck('id')->all();
-        if ($publicEventIds) {
-            try {
-                $shoppilotPublicEventsExist = $shoppilotService->groupsExist($publicEventIds);
-                $publicEvents->transform(function ($publicEvent) use ($shoppilotPublicEventsExist) {
-                    $publicEvent['shoppilotExist'] = $shoppilotPublicEventsExist[$publicEvent['id']];
-                    return $publicEvent;
-                });
-            } catch (Throwable $e) {
-            }
-        }
+        $publicEvents = $this->loadPublicEvents($publicEventService, $request, $shopPilotService);
+        $pager = $publicEventService->countPublicEvents($this->makeRestQuery($publicEventService));
 
         return response()->json([
             'publicEvents' => $publicEvents,
             'total' => $this->loadTotalCount($publicEventService),
-            'pager' => $publicEventService->countPublicEvents($this->makeRestQuery($publicEventService)),
+            'pager' => $pager,
         ]);
     }
 
@@ -110,18 +83,34 @@ class PublicEventListController extends Controller
     }
 
     /**
-     * @return Collection|PublicEventDto[]
      * @throws Exception
      */
-    private function loadPublicEvents(PublicEventService $publicEventService, $page)
-    {
-        return $this->makeRestQuery($publicEventService)
+    private function loadPublicEvents(
+        PublicEventService $publicEventService,
+        Request $request,
+        ShoppilotService $shopPilotService
+    ) {
+        $page = $this->getPage($request);
+        $publicEvents = $this->makeRestQuery($publicEventService)
             ->pageNumber($page, self::ITEM_PER_PAGE)
             ->withActualSprint()
             ->withPlace()
             ->withSprintTicketsCount()
-            ->get()
-            ->sortByDesc('created_at');
+            ->get();
+
+        $publicEventIds = $publicEvents->pluck('id')->all();
+        if ($publicEventIds) {
+            try {
+                $shopPilotPublicEventsExist = $shopPilotService->groupsExist($publicEventIds);
+                $publicEvents->transform(function ($publicEvent) use ($shopPilotPublicEventsExist) {
+                    $publicEvent['shoppilotExist'] = $shopPilotPublicEventsExist[$publicEvent['id']];
+                    return $publicEvent;
+                });
+            } catch (Throwable $e) {
+            }
+        }
+
+        return $publicEvents;
     }
 
     private function loadTotalCount(PublicEventService $publicEventService): int
@@ -148,6 +137,11 @@ class PublicEventListController extends Controller
         );
     }
 
+    protected function getPage($request): int
+    {
+        return $request->get('page', 1);
+    }
+
     /**
      * @throws Exception
      */
@@ -159,18 +153,16 @@ class PublicEventListController extends Controller
 
         $filter = $this->getFilter($withDefaultFilter);
 
-        if ($filter) {
-            foreach ($filter as $key => $value) {
-                switch ($key) {
-                    case 'name':
-                        if ($value) {
-                            $restQuery->setFilter($key, 'like', "{$value}%");
-                        }
-                        break;
-                    case 'status_id':
-                        $restQuery->setFilter('status_id', $value);
-                        break;
-                }
+        foreach ($filter as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    if ($value) {
+                        $restQuery->setFilter($key, 'like', "{$value}%");
+                    }
+                    break;
+                case 'status_id':
+                    $restQuery->setFilter('status_id', $value);
+                    break;
             }
         }
         $restQuery->addSort('created_at', 'desc');
