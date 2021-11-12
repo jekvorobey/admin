@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div class="form-group v-dadata">
         <label :for="inputId" v-if="this.$slots.default">
             <slot />
             <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
@@ -36,18 +36,26 @@
         mixins: [inputMixin],
         props: {
             value: {},
+
             type: {
                 type: String,
                 default: 'ADDRESS',
             },
+
             bounds: {
                 type: String,
                 default: '',
             },
+
             placeholder: {
                 type: String,
                 default: 'Начните вводить',
             },
+
+            filter: {
+                type: Function,
+                default: () => true
+            }
         },
         data() {
             let self = this;
@@ -56,7 +64,7 @@
                 inputId: `v-input-id-${this._uid}`,
                 suggestionOptions: {
                     // @see https://confluence.hflabs.ru/pages/viewpage.action?pageId=207454318
-                    token: 'bb3fff1d45a8efed30a90f600fbfd3dd4320dfaa', //todo Вынести ключ
+                    token: 'da59412ce148bdc0aeab7650887c30e19919b891', //todo Вынести ключ
                     type: this.type,
                     bounds: this.bounds,
                     scrollOnFocus: false,
@@ -64,6 +72,11 @@
                     triggerSelectOnEnter: false,
                     addon: 'none',
                     // @see https://confluence.hflabs.ru/pages/viewpage.action?pageId=207454320
+                    onSuggestionsFetch: (suggestions) => {
+                        return suggestions.filter((suggestion) => {
+                            return this.filter(suggestion) === true;
+                        });
+                    },
                     onSelect (suggestion) {
                         self.model = suggestion.unrestricted_value;
 
@@ -85,6 +98,14 @@
     };
 </script>
 <style>
+    .v-dadata {
+        position: relative;
+    }
+
+    .v-dadata .suggestions-wrapper {
+        position: absolute;
+    }
+
     .suggestions-nowrap {
         white-space: nowrap;
     }
