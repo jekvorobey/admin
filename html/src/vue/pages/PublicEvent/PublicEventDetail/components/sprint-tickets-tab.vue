@@ -22,6 +22,7 @@
                     <th>Профессия</th>
                     <th>Тип билета</th>
                     <th>Кол-во билетов в заказе</th>
+                    <th>Уникальный код</th>
                     <th>Статус</th>
                 </tr>
             </thead>
@@ -37,6 +38,7 @@
                     <td>{{ticket.profession}}</td>
                     <td>{{ticket.type.name}}</td>
                     <td>{{ticket.order.count_tickets}}</td>
+                    <td>{{ticket.code}}</td>
                     <td><span class="badge" :class="statusClass(ticket.status.id)">{{ ticket.status.name }}</span></td>
                 </tr>
             </tbody>

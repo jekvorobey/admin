@@ -32,7 +32,7 @@
                 @onChange="onTabChange"
         />
         <sprint-stages-tab
-                v-if="nav.currentTab === 'spritnStages'"
+                v-if="nav.currentTab === 'sprintStages'"
                 :sprint-id.sync="sprintId"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
@@ -135,7 +135,7 @@
                     {value: 'main', text: 'Основное'},
                     {value: 'content', text: 'Контент'},
                     {value: 'sprints', text: 'Спринты'},
-                    {value: 'spritnStages', text: 'Программа'},
+                    {value: 'sprintStages', text: 'Программа'},
                     {value: 'sprintResults', text: 'Результаты'},
                     {value: 'orders', text: 'Заказы'},
                     {value: 'tickets', text: 'Участники'},
