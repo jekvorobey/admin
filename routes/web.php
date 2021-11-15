@@ -1045,6 +1045,7 @@ Route::middleware('auth')->group(function () {
             Route::get('orders', 'PublicEventOrdersController@getList')->name('public-event.orders.list');
             Route::get('tickets', 'PublicEventTicketsController@getList')->name('public-event.tickets.list');
             Route::get('tickets/file', 'PublicEventTicketsController@getFile')->name('public-event.tickets.file');
+            Route::post('tickets/comment', 'PublicEventTicketsController@editComment')->name('public-event.tickets.editComment');
 
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');

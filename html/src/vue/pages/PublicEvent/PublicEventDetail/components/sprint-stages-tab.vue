@@ -125,7 +125,6 @@
             validationMixin,
         ],
         components: {
-            FDate,
             Modal,
             VInput,
             VDeleteButton,

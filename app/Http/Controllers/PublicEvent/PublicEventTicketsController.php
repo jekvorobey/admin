@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
+use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\TicketDto;
 use Pim\Dto\PublicEvent\TicketStatus;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -138,5 +139,20 @@ class PublicEventTicketsController extends Controller
 
         echo $this->getCsvContent($tickets);
         exit(0);
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function editComment(Request $request, PublicEventTicketService $publicEventTicketService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        $ticketId = $request->get('ticketId');
+        $comment = $request->get('comment');
+
+        $publicEventTicketService->editComment($ticketId, $comment);
+
+        return response()->json();
     }
 }
