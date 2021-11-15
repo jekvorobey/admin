@@ -42,13 +42,30 @@
                     <td>{{ticket.code}}</td>
                     <td><span class="badge" :class="statusClass(ticket.status.id)">{{ ticket.status.name }}</span></td>
                     <td>
-                        <button class="btn btn-warning float-right" @click="editComment(ticket)">
-                            <fa-icon icon="comment"></fa-icon>
+                        <button class="btn" @click="editComment(ticket)">
+                            <i class="fas fa-comment"></i> Like
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('TicketCommentFormModal')">
+                <div slot="header">
+                    Событие
+                </div>
+                <div slot="body">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="description">Комментарий</label>
+                            <ckeditor class="custom-width" id="comment" type="classic" v-model="$v.form.comment.$model" />
+                        </div>
+                        <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+                        <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+                    </div>
+                </div>
+            </modal>
+        </transition>
     </div>
 </template>
 
@@ -62,13 +79,22 @@
     
     import modalMixin from '../../../../mixins/modal';
     import mediaMixin from '../../../../mixins/media';
+    import {validationMixin} from 'vuelidate';
     import Helpers from "../../../../../scripts/helpers";
+    import Services from "../../../../../scripts/services/services";
+    import Modal from '../../../../components/controls/modal/modal.vue';
+    import VueCkeditor from '../../../../plugins/VueCkeditor';
 
     export default {
         mixins: [
             modalMixin,
-            mediaMixin
+            mediaMixin,
+            validationMixin,
+            VueCkeditor
         ],
+        components: {
+            Modal,
+        },
         props: {
             publicEvent: {},
             sprintId: null,
@@ -78,7 +104,15 @@
                 sprintIdModel: this.sprintId,
                 sprints: [],
                 tickets: [],
+                form: {
+                    comment: null,
+                },
             };
+        },
+        validations: {
+            form: {
+                comment: {},
+            }
         },
         methods: {
             ...mapActions(NAMESPACE, {
@@ -125,10 +159,22 @@
             },
             onSave() {
                 this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
                 Services.showLoader();
-                this.reload();
+                Services.net().post(this.getRoute('public-event.tickets.editComment', {event_id: this.publicEvent.id}), {}, {
+                    ticketId: this.ticketId,
+                    comment: this.form.comment,
+                }).then(() => {
+                    this.reload()
+                }).finally(() => {
+                    this.closeModal();
+                    Services.hideLoader();
+                });
+            },
+            onCancel() {
                 this.closeModal();
-                Services.hideLoader();
             },
         },
         created() {
