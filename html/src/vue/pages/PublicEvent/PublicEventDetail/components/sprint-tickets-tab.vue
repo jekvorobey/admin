@@ -22,6 +22,7 @@
                     <th>Профессия</th>
                     <th>Тип билета</th>
                     <th>Кол-во билетов в заказе</th>
+                    <th>Уникальный код</th>
                     <th>Статус</th>
                     <th>Комментарий</th>
                 </tr>
@@ -38,6 +39,7 @@
                     <td>{{ticket.profession}}</td>
                     <td>{{ticket.type.name}}</td>
                     <td>{{ticket.order.count_tickets}}</td>
+                    <td>{{ticket.code}}</td>
                     <td><span class="badge" :class="statusClass(ticket.status.id)">{{ ticket.status.name }}</span></td>
                     <td>
                         <button class="btn btn-warning float-right" @click="editComment(ticket)">
@@ -61,12 +63,8 @@
     import modalMixin from '../../../../mixins/modal';
     import mediaMixin from '../../../../mixins/media';
     import Helpers from "../../../../../scripts/helpers";
-    import Services from "../../../../../scripts/services/services";
-    import Modal from "../../../../components/controls/modal/modal.vue";
-    import VInput from "../../../../components/controls/VInput/VInputMask.vue";
 
     export default {
-        components: {VInput, Modal},
         mixins: [
             modalMixin,
             mediaMixin

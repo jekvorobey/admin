@@ -2,7 +2,7 @@
     <div>
         <div class="form-group">
             <label for="description">Комментарий</label>
-            <vue-ckeditor class="custom-width" id="comment" type="classic" v-model="$v.form.comment.$model" />
+            <ckeditor class="custom-width" id="comment" type="classic" v-model="$v.form.comment.$model" />
         </div>
         <div class="form-group mt-3">
             <button @click="save" class="btn btn-dark" :disabled="!$v.$anyDirty">Сохранить</button>
