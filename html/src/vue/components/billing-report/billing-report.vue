@@ -2,9 +2,9 @@
     <div>
         <h4>Биллинговый период</h4>
         <span class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="monthly-merchant_cycle" key="monthly" v-model="monthly">
-        <label class="custom-control-label" for="monthly-merchant_cycle"></label>
-        <label for="monthly-merchant_cycle">Календарный месяц</label>
+        <input type="checkbox" class="custom-control-input" id="monthly-billing_cycle" key="monthly" v-model="monthly">
+        <label class="custom-control-label" for="monthly-billing_cycle"></label>
+        <label for="monthly-billing_cycle">Календарный месяц</label>
     </span>
         <div v-if="!monthly">
             <div class="row">
@@ -17,7 +17,7 @@
                     help="период указывается в днях">Произвольный период
                 </v-input>
 
-                <div class="col-12" v-if="canUpdate(blocks.merchants)">
+                <div class="col-12" v-if="checkRights">
                     <button class="btn btn-sm btn-success" :disabled="form.billing_cycle <= 0" @click="saveBillingCycle">
                         Сохранить
                     </button>
@@ -49,7 +49,7 @@
         </table>
 
         <hr>
-        <h4 class="mt-4">Отчеты комиссионера</h4>
+        <h4 class="mt-4">{{ title }}</h4>
         <table class="table mt-2">
             <tr>
                 <td>Период</td>
@@ -58,7 +58,7 @@
                 <td>Документ</td>
                 <td>Создан</td>
                 <td>Изменен</td>
-                <td v-if="canUpdate(blocks.merchants)">Действия</td>
+                <td v-if="checkRights">Действия</td>
             </tr>
             <tr v-for="report in billingReports">
                 <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
@@ -67,20 +67,20 @@
                         {{ getStatus(report.status) }}
                     </b-badge>
                 </td>
-                <td>{{ report.sum.toLocaleString() }}</td>
+                <td>{{ report.total_sum.toLocaleString() }}</td>
                 <td>
-                    <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
-          {id:getMerchantId, reportId:report.id})">Скачать</a>
+                    <a target="_blank" :href="$store.getters.getRoute('billing.detail.billingReport.download',
+          {entityId:getEntityId, reportId:report.id, type: type})">Скачать</a>
                 </td>
                 <td>{{ report.created_at }}</td>
                 <td>{{ report.updated_at }}</td>
-                <td v-if="canUpdate(blocks.merchants)">
-                    <b-button v-if="report.status === 0" class="btn btn-warning btn-sm" @click="updateStatus(report.id, 4)">
+                <td v-if="checkRights">
+                    <b-button v-if="report.status === 'NEW'" class="btn btn-warning btn-sm" @click="updateStatus(report.id, 'WAITING')">
                         Отправить
                         <fa-icon icon="check"/>
                     </b-button>
-                    <b-button v-else-if="report.status !== 2 && report.status !== 0" class="btn btn-success btn-sm"
-                              @click="updateStatus(report.id, 2)">
+                    <b-button v-else-if="report.status !== 'ACCEPTED' && report.status !== 'NEW'" class="btn btn-success btn-sm"
+                              @click="updateStatus(report.id, 'ACCEPTED')">
                         Подтвердить
                         <fa-icon icon="check"/>
                     </b-button>
@@ -102,7 +102,16 @@ import {mapActions} from "vuex";
 
 export default {
     name: 'billing-report',
-    props: ['model'],
+    props: {
+        model: Object,
+        type: {
+            type: String,
+            required: true,
+            validator: function (value) {
+                return ['BILLING', 'REFERRAL_PARTNER', 'PUBLIC_EVENTS'].indexOf(value) !== -1
+            }
+        }
+    },
     components: {
         VInput,
         DatePicker
@@ -118,19 +127,31 @@ export default {
             },
             billingList: {},
             billingReports: {},
-            statuses: [
-                {text:'модерация', badge:'light'},
-                {text:'просмотрен', badge:'primary'},
-                {text:'подтвержден', badge:'success'},
-                {text:'отклонен', badge:'danger'},
-                {text:'отправлен', badge:'warning'},
-                {text:'оплачен', badge:'success'},
-            ],
+            statuses: {
+                'NEW': {text:'модерация', badge:'light'},
+                'VIEWED': {text:'просмотрен', badge:'primary'},
+                'ACCEPTED': {text:'подтвержден', badge:'success'},
+                'REJECTED': {text:'отклонен', badge:'danger'},
+                'WAITING': {text:'отправлен', badge:'warning'},
+                'PAYED': {text:'оплачен', badge:'success'},
+            },
             newReportDates: {
                 dateFrom:null,
                 dateTo:null,
             },
             billingOperation: {},
+        }
+    },
+    computed: {
+        title() {
+            switch (this.type) {
+                case 'BILLING':
+                    return 'Отчеты комиссионера';
+                case 'REFERRAL_PARTNER':
+                    return 'Отчеты реферального партнера';
+                case 'PUBLIC_EVENTS':
+                    return 'Отчеты агента';
+            }
         }
     },
     methods: {
@@ -146,8 +167,8 @@ export default {
         },
         saveBillingCycle() {
             Services.showLoader();
-            Services.net().put(this.getRoute('merchant.detail.billing.billing_cycle',
-                    {id: this.model.id}),
+            Services.net().put(this.getRoute('billing.detail.billing.billing_cycle',
+                    {entityId: this.model.id}),
                 {
                     billing_cycle: this.form.billing_cycle
                 }).then(data => {
@@ -174,8 +195,8 @@ export default {
             if (!this.newReportDates) { return false; }
             Services.showLoader();
             Services.net()
-                .post(this.getRoute('merchant.detail.billingReport.create', {id: this.model.id,}), {},
-                    { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
+                .post(this.getRoute('billing.detail.billingReport.create', {entityId: this.model.id}), {},
+                    { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo, type: this.type})
                 .then(() => {
                     this.loadReports();
                     this.newReportDates = {dateFrom: null, dateTo: null};
@@ -191,7 +212,7 @@ export default {
         removeItem(id) {
             Services.showLoader();
             Services.net()
-                .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
+                .delete(this.getRoute('billing.detail.billingReport.delete', {entityId: this.model.id, reportId: id}), {type: this.type})
                 .then(() => {
                     this.loadReports();
                 })
@@ -205,7 +226,11 @@ export default {
         updateStatus(id, status) {
             Services.showLoader();
             Services.net()
-                .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: status})
+                .put(
+                    this.getRoute('billing.detail.billingReport.updateStatus', {entityId: this.model.id, reportId: id,}),
+                    {},
+                    {status: status, type: this.type}
+                )
                 .then(() => {
                     this.loadReports();
                 })
@@ -218,14 +243,23 @@ export default {
         },
         loadReports() {
             Services.showLoader();
-            Services.net().get(this.getRoute('merchant.detail.billingReport', {id: this.model.id}))
+            Services.net().get(this.getRoute('billing.detail.billingReport', {entityId: this.model.id}), {type: this.type})
                 .then(data => {
                     this.billingReports = data.billing_reports;
                 }).finally(() => {
                 Services.hideLoader();
             });
         },
-        getMerchantId() {
+        checkRights() {
+            switch (this.type) {
+                case 'BILLING':
+                case 'PUBLIC_EVENTS':
+                    return this.canUpdate(this.blocks.merchants);
+                case 'REFERRAL_PARTNER':
+                    return this.canUpdate(this.blocks.referrals);
+            }
+        },
+        getEntityId() {
             return this.model.id;
         },
         getStatus(id) {
@@ -236,7 +270,7 @@ export default {
         },
     },
     created() {
-        Services.net().get(this.getRoute('merchant.detail.billing', {id: this.model.id}))
+        Services.net().get(this.getRoute('billing.detail.billing', {entityId: this.model.id}), {type: this.type})
             .then(data => {
                 if (data.billing_cycle) {
                     this.form.billing_cycle = data.billing_cycle;

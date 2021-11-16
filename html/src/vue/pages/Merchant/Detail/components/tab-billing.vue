@@ -1,6 +1,6 @@
 <template>
   <div>
-    <billing-report :model.sync="model"></billing-report>
+    <billing-report :model.sync="model" :type="'BILLING'"></billing-report>
     <hr>
     <div class="card">
       <div class="card-header">
@@ -381,20 +381,6 @@ export default {
           }).finally(() => {
         Services.hideLoader();
         this.showMessageBox({title: 'Отчет удалён'});
-      });
-    },
-    updateStatus(id, status) {
-      Services.showLoader();
-      Services.net()
-          .put(this.getRoute('merchant.detail.billingReport.updateStatus', {id: this.model.id, reportId: id,}), {},{status: status})
-          .then(() => {
-            this.loadReports();
-          })
-          .catch(() => {
-            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-          }).finally(() => {
-        Services.hideLoader();
-        this.showMessageBox({title: 'Статус Обновлен'});
       });
     },
     addReturn(id) {

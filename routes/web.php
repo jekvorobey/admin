@@ -78,21 +78,6 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('store')->group(function () {
                     Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
                 });
-                Route::prefix('billing')->group(function () {
-                    Route::get('', 'TabBillingController@load')->name('merchant.detail.billing');
-                    Route::put('billing_cycle', 'TabBillingController@billingCycle')->name('merchant.detail.billing.billing_cycle');
-                    Route::get('billing-reports', 'TabBillingController@billingReports')->name('merchant.detail.billingReport');
-                    Route::delete('billing-reports/{reportId}', 'TabBillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
-                        'merchant.detail.billingReport.delete'
-                    );
-                    Route::put('billing-reports/{reportId}', 'TabBillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
-                        'merchant.detail.billingReport.updateStatus'
-                    );
-                    Route::post('billing-reports/create', 'TabBillingController@billingReportCreate')->name('merchant.detail.billingReport.create');
-                    Route::get('billing-reports/download/{reportId}', 'TabBillingController@billingReportDownload')->name(
-                        'merchant.detail.billingReport.download'
-                    );
-                });
                 Route::prefix('billingList')->group(function () {
                     Route::get('', 'TabBillingController@billingList')->name('merchant.detail.billingList');
                     Route::post('add-correction', 'TabBillingController@addCorrection')->name('merchant.detail.billingList.addCorrection');
@@ -145,6 +130,24 @@ Route::middleware('auth')->group(function () {
             Route::post('save', 'MerchantOperatorController@save')->name('merchant.operator.save');
             Route::put('change-roles', 'MerchantOperatorController@changeRoles')->name('merchant.operator.changeRoles');
             Route::delete('', 'MerchantOperatorController@delete')->name('merchant.operator.delete');
+        });
+    });
+
+    Route::prefix('billing')->namespace('Billing')->group(function () {
+        Route::prefix('{entityId}')->group(function () {
+            Route::get('', 'BillingController@load')->name('billing.detail.billing');
+            Route::get('billing-reports', 'BillingController@billingReports')->name('billing.detail.billingReport');
+            Route::get('download/{reportId}', 'BillingController@billingReportDownload')->name(
+                'billing.detail.billingReport.download'
+            );
+            Route::put('billing_cycle', 'BillingController@billingCycle')->name('billing.detail.billing.billing_cycle');
+            Route::post('billing-reports/create', 'BillingController@billingReportCreate')->name('billing.detail.billingReport.create');
+            Route::delete('billing-reports/{reportId}', 'BillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
+                'billing.detail.billingReport.delete'
+            );
+            Route::put('billing-reports/{reportId}', 'BillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
+                'billing.detail.billingReport.updateStatus'
+            );
         });
     });
 
