@@ -106,24 +106,22 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
-    public function availableOrganizers(
-        PublicEventOrganizerService $publicEventOrganizerService,
-        RequestInitiator $requestInitiator
-    ): JsonResponse {
+    public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
         /** @var Collection|OrganizerDto[] $organizers */
         $organizers = $publicEventOrganizerService->query()
-            ->setFilter('owner_id', 0)
-            ->addSort('name', 'asc')
+//            ->setFilter('owner_id', 0)
+            ->addSort('name')
             ->get();
 
-        $userOrganizers = $publicEventOrganizerService->query()
-            ->setFilter('owner_id', $requestInitiator->userId())
-            ->addSort('name', 'asc')
-            ->get();
+//        $userOrganizers = $publicEventOrganizerService->query()
+//            ->setFilter('owner_id', $requestInitiator->userId())
+//            ->addSort('name')
+//            ->get();
 
-        $organizers = $organizers->merge($userOrganizers)->unique('id');
+//        $organizers = $organizers->merge($userOrganizers)->unique('id');
 
         return response()->json($organizers);
     }
