@@ -59,7 +59,7 @@
                                 Комментарий
                             </v-input>
                         </div>
-                        <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+                        <button v-if="canUpdate(blocks.events)" @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
                         <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
                     </div>
                 </div>
