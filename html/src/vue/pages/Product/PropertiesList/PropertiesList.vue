@@ -30,14 +30,11 @@
                     <ul class="list-unstyled">
                         <li v-for="prop in properties"
                             v-if="prop.name[0].toUpperCase() === character">
-                            <small v-if="canUpdate(blocks.products)">-
+                            <small>-
                                 <a :href="getRoute('products.properties.detail', {id: prop.code})"
                                    class="text-dark">
                                     {{ prop.name }}
                                 </a>
-                            </small>
-                            <small v-else>-
-                                {{ prop.name }}
                             </small>
                         </li>
                     </ul>

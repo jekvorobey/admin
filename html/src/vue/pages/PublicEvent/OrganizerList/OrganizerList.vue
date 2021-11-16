@@ -41,7 +41,7 @@
                     <td>{{organizer.description}}</td>
                     <td>{{organizer.messenger_phone}}</td>
                     <td>{{organizer.site}}</td>
-                    <td v-if="canUpdate(blocks.orders)">
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => deleteOrganizers([organizer.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editOrganizers(organizer)">
                             <fa-icon icon="edit"></fa-icon>
@@ -227,7 +227,7 @@
                 if (this.socialName && this.socialLink) {
                     this.form.social_links.push(obj);
                 }
-                
+
                 this.socialName = null;
                 this.socialLink = null;
             },
