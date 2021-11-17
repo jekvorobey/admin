@@ -936,6 +936,13 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'OrganizerController@delete')->name('public-event.organizers.delete');
         });
 
+        Route::prefix('specialties')->group(function () {
+            Route::get('', 'SpecialtyController@list')->name('public-event.specialties.list');
+            Route::get('page', 'SpecialtyController@page')->name('public-event.specialties.page');
+            Route::post('save', 'SpecialtyController@save')->name('public-event.specialties.save');
+            Route::post('delete', 'SpecialtyController@delete')->name('public-event.specialties.delete');
+        });
+
         Route::prefix('types')->group(function () {
             Route::get('', 'EventTypeController@list')->name('public-event.types.list');
             Route::get('page', 'EventTypeController@page')->name('public-event.types.page');

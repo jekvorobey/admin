@@ -2,16 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Greensight\CommonMsa\Dto\Front;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
  * @property int $id
  * @property string $name
- * @property int $front
+ * @property int $active
  */
-class RoleRequest extends FormRequest
+class SpecialtyRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -25,12 +23,8 @@ class RoleRequest extends FormRequest
     {
         return [
             'id' => 'nullable|integer',
-            'name' => 'required|string|max:255',
-            'front' => [
-                'required',
-                'integer',
-                Rule::in(array_keys(Front::allFronts())),
-            ],
+            'name' => 'required|string',
+            'active' => 'required|bool',
         ];
     }
 }

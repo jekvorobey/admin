@@ -3,69 +3,71 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SpecialtyRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Dto\PublicEvent\PublicEventTypeDto;
-use Pim\Services\PublicEventTypeService\PublicEventTypeService;
+use Pim\Dto\PublicEvent\SpecialtyDto;
+use Pim\Services\PublicEventSpecialtyService\PublicEventSpecialtyService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class EventTypeController extends Controller
+class SpecialtyController extends Controller
 {
-    public function list(Request $request, PublicEventTypeService $publicEventTypeService)
+    public function list(Request $request, PublicEventSpecialtyService $publicEventSpecialtyService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
-        $page = $request->get('page', 1);
-        [$total, $types] = $this->loadTypes($publicEventTypeService, $page);
+        $this->title = 'Направления';
 
-        return $this->render('PublicEvent/TypeList', [
-            'iTypes' => $types,
+        $page = $request->get('page', 1);
+        [$total, $specialties] = $this->loadSpecialties($publicEventSpecialtyService, $page);
+
+        return $this->render('PublicEvent/SpecialtyList', [
+            'iSpecialties' => $specialties,
             'iTotal' => $total['total'],
             'iCurrentPage' => $page,
         ]);
     }
 
-    public function page(Request $request, PublicEventTypeService $publicEventTypeService): JsonResponse
+    public function page(Request $request, PublicEventSpecialtyService $publicEventSpecialtyService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
         $page = $request->get('page', 1);
-        [$total, $types] = $this->loadTypes($publicEventTypeService, $page);
+        [$total, $specialties] = $this->loadSpecialties($publicEventSpecialtyService, $page);
 
         return response()->json([
-            'types' => $types,
+            'specialties' => $specialties,
             'total' => $total['total'],
         ]);
     }
 
-    public function save(Request $request, PublicEventTypeService $publicEventTypeService): JsonResponse
-    {
+    public function save(
+        SpecialtyRequest $request,
+        PublicEventSpecialtyService $publicEventSpecialtyService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
-        $id = $request->get('id');
-        $type = $request->get('type');
+        $data = $request->all();
 
-        if (!$type) {
-            throw new BadRequestHttpException('type required');
-        }
+        $specialty = new SpecialtyDto($data);
 
-        $type = new PublicEventTypeDto($type);
-
-        if ($id) {
-            $publicEventTypeService->update($id, $type);
+        if (isset($data['id'])) {
+            $publicEventSpecialtyService->update($data['id'], $specialty);
         } else {
-            if ($publicEventTypeService->checkExistence($type->code)['existence']) {
-                throw new BadRequestHttpException('Provided type already exists.');
-            }
-
-            $publicEventTypeService->create($type);
+            $publicEventSpecialtyService->create($specialty);
         }
+        $page = $request->get('page', 1);
+        [$total, $specialties] = $this->loadSpecialties($publicEventSpecialtyService, $page);
 
-        return response()->json();
+        return response()->json([
+            'specialties' => $specialties,
+            'iTotal' => $total['total'],
+            'iCurrentPage' => $page,
+        ]);
     }
 
-    public function delete(Request $request, PublicEventTypeService $publicEventTypeService): JsonResponse
+    public function delete(Request $request, PublicEventSpecialtyService $publicEventSpecialtyService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
@@ -76,19 +78,19 @@ class EventTypeController extends Controller
         }
 
         foreach ($ids as $id) {
-            $publicEventTypeService->delete($id);
+            $publicEventSpecialtyService->delete($id);
         }
 
         return response()->json();
     }
 
-    private function loadTypes(PublicEventTypeService $publicEventTypeService, $page): array
+    private function loadSpecialties(PublicEventSpecialtyService $publicEventSpecialtyService, $page): array
     {
-        $query = $publicEventTypeService->query()->pageNumber($page, 10);
+        $query = $publicEventSpecialtyService->query()->pageNumber($page, 10);
 
-        $total = $publicEventTypeService->count($query);
-        $types = $publicEventTypeService->find($query);
+        $total = $publicEventSpecialtyService->count($query);
+        $specialties = $publicEventSpecialtyService->find($query);
 
-        return [$total, $types];
+        return [$total, $specialties];
     }
 }
