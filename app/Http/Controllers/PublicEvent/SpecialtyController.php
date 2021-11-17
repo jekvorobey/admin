@@ -71,22 +71,26 @@ class SpecialtyController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
-        $ids = $request->get('ids');
+        $id = $request->get('id');
 
-        if (!$ids || !is_array($ids)) {
+        if (!$id) {
             throw new BadRequestHttpException('ids required');
         }
+        $publicEventSpecialtyService->delete($id);
 
-        foreach ($ids as $id) {
-            $publicEventSpecialtyService->delete($id);
-        }
+        $page = $request->get('page', 1);
+        [$total, $specialties] = $this->loadSpecialties($publicEventSpecialtyService, $page);
 
-        return response()->json();
+        return response()->json([
+            'specialties' => $specialties,
+            'iTotal' => $total['total'],
+            'iCurrentPage' => $page,
+        ]);
     }
 
     private function loadSpecialties(PublicEventSpecialtyService $publicEventSpecialtyService, $page): array
     {
-        $query = $publicEventSpecialtyService->query()->pageNumber($page, 10);
+        $query = $publicEventSpecialtyService->query()->pageNumber($page, 20);
 
         $total = $publicEventSpecialtyService->count($query);
         $specialties = $publicEventSpecialtyService->find($query);

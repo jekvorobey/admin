@@ -23,6 +23,7 @@
                     <td>{{ specialty.active ? 'Да' : 'Нет' }}</td>
                     <td v-if="canUpdate(blocks.events)">
                         <button class="btn btn-warning btn-sm" @click="openSpecialty(specialty)"><fa-icon icon="edit"/></button>
+                        <button class="btn btn-danger btn-sm" @click="deleteSpecialty(specialty.id)"><fa-icon icon="delete"/></button>
                     </td>
                 </tr>
             </tbody>
@@ -70,7 +71,14 @@ export default {
                 });
                 this.status = null;
             });
-        }
+        },
+        deleteSpecialty(id) {
+            Services.net().delete(this.getRoute('public-event.specialties.delete', {id: id}), {}, {}, {})
+                .then(data => {
+                    this.specialties = data.specialties;
+                    this.showMessageBox({text: 'Направление удалено'});
+                });
+        },
     },
 };
 </script>
