@@ -1,6 +1,6 @@
 <template>
     <div>
-        <billing-report :model.sync="model" :type="'REFERRAL_PARTNER'"></billing-report>
+        <billing-report :model.sync="model" :type="billingReportType.referral_partner"></billing-report>
         <table class="table">
         <thead>
             <tr>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <billing-report :model.sync="model" :type="'PUBLIC_EVENTS'"></billing-report>
+        <billing-report :model.sync="model" :type="billingReportType.public_events"></billing-report>
         <h4>Отчеты</h4>
         <table>
             <tr>

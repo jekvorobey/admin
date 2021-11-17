@@ -29,6 +29,8 @@ use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
+use IBT\Reports\Dto\Enum\ReportStatusDto;
+use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
@@ -95,6 +97,8 @@ class ViewRender
     private $offerCountdownSaleStatuses = [];
 
     private $propertyTypes = [];
+    private $billingReportStatus = [];
+    private $billingReportType = [];
 
     public function __construct($componentName, $props)
     {
@@ -757,6 +761,41 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function loadBillingReportStatus(bool $load = false): self
+    {
+        if ($load) {
+            $this->billingReportStatus = [
+                'new' => ReportStatusDto::NEW,
+                'waiting' => ReportStatusDto::WAITING,
+                'viewed' => ReportStatusDto::VIEWED,
+                'accepted' => ReportStatusDto::ACCEPTED,
+                'rejected' => ReportStatusDto::REJECTED,
+                'payed' => ReportStatusDto::PAYED,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function loadBillingReportType(bool $load = false): self
+    {
+        if ($load) {
+            $this->billingReportType = [
+                'billing' => ReportTypeDto::BILLING,
+                'public_events' => ReportTypeDto::PUBLIC_EVENTS,
+                'referral_partner' => ReportTypeDto::REFERRAL_PARTNER,
+            ];
+        }
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -815,6 +854,8 @@ class ViewRender
 
                 'offerAllSaleStatuses' => $this->offerAllSaleStatuses,
                 'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
+                'billingReportStatus' => $this->billingReportStatus,
+                'billingReportType' => $this->billingReportType,
 
                 'propertyTypes' => $this->propertyTypes,
             ],

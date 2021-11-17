@@ -59,6 +59,8 @@ class CustomerDetailController extends Controller
         $this->loadPromoCodeStatus = true;
         $this->loadCustomerBonusStatus = true;
         $this->loadOrderStatuses = true;
+        $this->loadBillingReportType = true;
+        $this->loadBillingReportStatus = true;
 
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();

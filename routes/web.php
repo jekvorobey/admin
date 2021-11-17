@@ -133,20 +133,20 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('billing')->namespace('Billing')->group(function () {
+    Route::prefix('billingReport')->namespace('BillingReport')->group(function () {
         Route::prefix('{entityId}')->group(function () {
-            Route::get('', 'BillingController@load')->name('billing.detail.billing');
-            Route::get('billing-reports', 'BillingController@billingReports')->name('billing.detail.billingReport');
-            Route::get('download/{reportId}', 'BillingController@billingReportDownload')->name(
-                'billing.detail.billingReport.download'
+            Route::get('', 'BillingReportController@load')->name('billingReport.detail.billing');
+            Route::get('billing-reports', 'BillingReportController@billingReports')->name('billingReport.detail.reports');
+            Route::get('download/{type}/{reportId}', 'BillingReportController@billingReportDownload')->name(
+                'billingReport.detail.download'
             );
-            Route::put('billing_cycle', 'BillingController@billingCycle')->name('billing.detail.billing.billing_cycle');
-            Route::post('billing-reports/create', 'BillingController@billingReportCreate')->name('billing.detail.billingReport.create');
-            Route::delete('billing-reports/{reportId}', 'BillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
-                'billing.detail.billingReport.delete'
+            Route::put('billing_cycle', 'BillingReportController@billingCycle')->name('billingReport.detail.billing_cycle');
+            Route::post('billing-reports/create', 'BillingReportController@billingReportCreate')->name('billingReport.detail.create');
+            Route::delete('billing-reports/{reportId}', 'BillingReportController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
+                'billingReport.detail.delete'
             );
-            Route::put('billing-reports/{reportId}', 'BillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
-                'billing.detail.billingReport.updateStatus'
+            Route::put('billing-reports/{reportId}', 'BillingReportController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
+                'billingReport.detail.updateStatus'
             );
         });
     });

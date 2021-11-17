@@ -1,6 +1,6 @@
 <template>
   <div>
-    <billing-report :model.sync="model" :type="'BILLING'"></billing-report>
+    <billing-report :model.sync="model" :type="billingReportType.billing"></billing-report>
     <hr>
     <div class="card">
       <div class="card-header">
