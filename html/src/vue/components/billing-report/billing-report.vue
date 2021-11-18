@@ -61,7 +61,7 @@
                 <td v-if="checkRights">Действия</td>
             </tr>
             <tr v-for="report in billingReports">
-                <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
+                <td>{{ datePrint(report.date_from) }} &ndash; {{ datePrint(report.date_to) }}</td>
                 <td>
                     <b-badge :variant="getBadge(report.status)">
                         {{ getStatus(report.status) }}
@@ -70,16 +70,16 @@
                 <td>{{ report.total_sum.toLocaleString() }}</td>
                 <td>
                     <a target="_blank" :href="$store.getters.getRoute('billingReport.detail.download',
-          {entityId:getEntityId, reportId:report.id}, {type: getType})">Скачать</a>
+          {entityId:getEntityId, reportId:report.id, type: getType})">Скачать</a>
                 </td>
-                <td>{{ report.created_at }}</td>
-                <td>{{ report.updated_at }}</td>
+                <td>{{ datetimePrint(report.created_at) }}</td>
+                <td>{{ datetimePrint(report.updated_at) }}</td>
                 <td v-if="checkRights">
                     <b-button v-if="report.status === billingReportStatus.new" class="btn btn-warning btn-sm" @click="updateStatus(report.id, billingReportStatus.waiting)">
                         Отправить
                         <fa-icon icon="check"/>
                     </b-button>
-                    <b-button v-else-if="report.status !== billingReportStatus.accepted && report.status !== billingReportStatus.new" class="btn btn-success btn-sm"
+                    <b-button v-else-if="report.status !== billingReportStatus.accepted" class="btn btn-success btn-sm"
                               @click="updateStatus(report.id, billingReportStatus.accepted)">
                         Подтвердить
                         <fa-icon icon="check"/>
@@ -107,7 +107,9 @@ export default {
         type: {
             type: String,
             required: true,
-        }
+        },
+        title: String,
+        rightsBlock: Number,
     },
     components: {
         VInput,
@@ -132,16 +134,6 @@ export default {
         }
     },
     computed: {
-        title() {
-            switch (this.type) {
-                case this.billingReportType.billing:
-                    return 'Отчеты комиссионера';
-                case this.billingReportType.referral_partner:
-                    return 'Отчеты реферального партнера';
-                case this.billingReportType.public_events:
-                    return 'Отчеты агента';
-            }
-        },
         statuses() {
             let billingReportStatuses = this.billingReportStatus;
             let statuses = {};
@@ -196,8 +188,8 @@ export default {
             if (!this.newReportDates) { return false; }
             Services.showLoader();
             Services.net()
-                .post(this.getRoute('billingReport.detail.create', {entityId: this.model.id}), {},
-                    { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo, type: this.type})
+                .post(this.getRoute('billingReport.detail.create', {type: this.type, entityId: this.model.id}), {},
+                    { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
                 .then(() => {
                     this.loadReports();
                     this.newReportDates = {dateFrom: null, dateTo: null};
@@ -213,7 +205,7 @@ export default {
         removeItem(id) {
             Services.showLoader();
             Services.net()
-                .delete(this.getRoute('billingReport.detail.delete', {entityId: this.model.id, reportId: id}), {type: this.type})
+                .delete(this.getRoute('billingReport.detail.delete', {entityId: this.model.id, reportId: id, type: this.type}))
                 .then(() => {
                     this.loadReports();
                 })
@@ -228,9 +220,9 @@ export default {
             Services.showLoader();
             Services.net()
                 .put(
-                    this.getRoute('billingReport.detail.updateStatus', {entityId: this.model.id, reportId: id,}),
+                    this.getRoute('billingReport.detail.updateStatus', {entityId: this.model.id, reportId: id, type: this.type}),
                     {},
-                    {status: status, type: this.type}
+                    {status: status}
                 )
                 .then(() => {
                     this.loadReports();
@@ -244,7 +236,7 @@ export default {
         },
         loadReports() {
             Services.showLoader();
-            Services.net().get(this.getRoute('billingReport.detail.reports', {entityId: this.model.id}), {type: this.type})
+            Services.net().get(this.getRoute('billingReport.detail.reports', {entityId: this.model.id, type: this.type}))
                 .then(data => {
                     this.billingReports = data.billing_reports;
                 }).finally(() => {
@@ -252,13 +244,7 @@ export default {
             });
         },
         checkRights() {
-            switch (this.type) {
-                case this.billingReportType.billing:
-                case this.billingReportType.public_events:
-                    return this.canUpdate(this.blocks.merchants);
-                case this.billingReportType.referral_partner:
-                    return this.canUpdate(this.blocks.referrals);
-            }
+            return this.canUpdate(this.rightsBlock);
         },
         getEntityId() {
             return this.model.id;
@@ -274,7 +260,7 @@ export default {
         },
     },
     created() {
-        Services.net().get(this.getRoute('billingReport.detail.billing', {entityId: this.model.id}), {type: this.type})
+        Services.net().get(this.getRoute('billingReport.detail.billing', {entityId: this.model.id, type: this.type}))
             .then(data => {
                 if (data.billing_cycle) {
                     this.form.billing_cycle = data.billing_cycle;

@@ -1,6 +1,11 @@
 <template>
     <div>
-        <billing-report :model.sync="model" :type="billingReportType.public_events"></billing-report>
+        <billing-report
+            :model.sync="model"
+            :type="billingReportType.public_events"
+            :title="'Отчеты агента'"
+            :rightsBlock="blocks.merchants"
+        ></billing-report>
         <h4>Отчеты</h4>
         <table>
             <tr>

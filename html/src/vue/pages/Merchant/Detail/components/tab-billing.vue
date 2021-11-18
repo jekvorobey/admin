@@ -1,6 +1,11 @@
 <template>
   <div>
-    <billing-report :model.sync="model" :type="billingReportType.billing"></billing-report>
+    <billing-report
+        :model.sync="model"
+        :type="billingReportType.billing"
+        :title="'Отчеты комиссионера'"
+        :rightsBlock="blocks.merchants"
+    ></billing-report>
     <hr>
     <div class="card">
       <div class="card-header">

@@ -134,10 +134,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('billingReport')->namespace('BillingReport')->group(function () {
-        Route::prefix('{entityId}')->group(function () {
+        Route::prefix('{type}/{entityId}')->group(function () {
             Route::get('', 'BillingReportController@load')->name('billingReport.detail.billing');
             Route::get('billing-reports', 'BillingReportController@billingReports')->name('billingReport.detail.reports');
-            Route::get('download/{type}/{reportId}', 'BillingReportController@billingReportDownload')->name(
+            Route::get('download/{reportId}', 'BillingReportController@billingReportDownload')->name(
                 'billingReport.detail.download'
             );
             Route::put('billing_cycle', 'BillingReportController@billingCycle')->name('billingReport.detail.billing_cycle');

@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\BillingReport;
 
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use IBT\Reports\Dto\GenerateReportForm;
-use IBT\Reports\Dto\ReportDto;
 use IBT\Reports\Services\ReportService\ReportService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -29,13 +28,13 @@ class BillingReportController extends Controller
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function billingReportDownload(
-        int $entityId,
         string $type,
+        int $entityId,
         int $reportId,
         FileService $fileService,
         ReportService $reportService
     ): ?StreamedResponse {
-        $this->checkViewRights($type);
+        $this->canView($this->getPermissionBlockByType($type));
 
         $report = $reportService->report($reportId);
 
@@ -58,17 +57,20 @@ class BillingReportController extends Controller
     /**
      * Сохранить биллинговый период
      */
-    public function billingCycle(int $entityId, Request $request, MerchantService $merchantService): Response
-    {
-        $data = $this->validate(request(), [
+    public function billingCycle(
+        string $type,
+        int $entityId,
+        Request $request,
+        MerchantService $merchantService
+    ): Response {
+        $data = $this->validate($request, [
             'billing_cycle' => ['integer'],
-            'type' => ['string', 'required', Rule::in(ReportTypeDto::getAll())],
         ]);
 
-        if ($data['type'] === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
+        if ($type === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
             return response('', 204);
         }
-        $this->checkUpdateRights($data['type']);
+        $this->canUpdate($this->getPermissionBlockByType($type));
         $merchantService->setSetting($entityId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
 
         return response('', 204);
@@ -77,17 +79,20 @@ class BillingReportController extends Controller
     /**
      * Создать биллинговый отчет
      */
-    public function billingReportCreate(int $entityId, Request $request, ReportService $reportService): Response
-    {
+    public function billingReportCreate(
+        string $type,
+        int $entityId,
+        Request $request,
+        ReportService $reportService
+    ): Response {
         $data = $this->validate($request, [
-            'type' => ['string', 'required', Rule::in(ReportTypeDto::getAll())],
             'date_from' => ['date'],
             'date_to' => ['date'],
         ]);
-        $this->checkUpdateRights($data['type']);
+        $this->canUpdate($this->getPermissionBlockByType($type));
 
         $reportFormParams = [
-            'type' => $data['type'],
+            'type' => $type,
             'entity_id' => $entityId,
             'date_from' => $data['date_from'],
             'date_to' => $data['date_to'],
@@ -105,10 +110,9 @@ class BillingReportController extends Controller
      * @return Application|ResponseFactory|JsonResponse|Response
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function deleteBillingReport(int $entityId, int $reportId, Request $request, ReportService $reportService)
+    public function deleteBillingReport(string $type, int $entityId, int $reportId, ReportService $reportService)
     {
-        $this->validateType($request);
-        $this->checkUpdateRights($request->type);
+        $this->canUpdate($this->getPermissionBlockByType($type));
 
         $reportService->delete($reportId);
 
@@ -121,16 +125,16 @@ class BillingReportController extends Controller
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function billingReportStatusUpdate(
+        string $type,
         int $entityId,
         int $reportId,
         Request $request,
         ReportService $reportService
     ) {
         $data = $this->validate($request, [
-            'type' => ['string', 'required', Rule::in(ReportTypeDto::getAll())],
             'status' => ['string', 'required', Rule::in(ReportStatusDto::getAll())],
         ]);
-        $this->checkUpdateRights($data['type']);
+        $this->canUpdate($this->getPermissionBlockByType($type));
 
         $reportService->updateStatus($reportId, $data['status']);
 
@@ -139,36 +143,29 @@ class BillingReportController extends Controller
 
     /**
      * Получить биллинговые отчеты
-     * @throws \Exception
+     * @throws Exception
      */
-    public function billingReports(Request $request, int $entityId, ReportService $reportService): JsonResponse
-    {
-        $this->validateType($request);
-        $this->checkViewRights($request->type);
+    public function billingReports(
+        string $type,
+        int $entityId,
+        Request $request,
+        ReportService $reportService
+    ): JsonResponse {
+        $this->canView($this->getPermissionBlockByType($type));
 
-        $restQuery = $this->makeRestQuery($request, $entityId);
+        $restQuery = $this->makeRestQuery($type, $request, $entityId);
         $billingReports = $reportService->reports($restQuery);
-        $billingReports->transform(static function (ReportDto $report): ReportDto {
-            $reportUpdated = clone $report;
-            $reportUpdated->date_from = Carbon::parse($report->date_from)->format('d.m.Y');
-            $reportUpdated->date_to = Carbon::parse($report->date_to)->format('d.m.Y');
-            $reportUpdated->created_at = Carbon::parse($report->created_at)->format('d.m.Y H:i:s');
-            $reportUpdated->updated_at = Carbon::parse($report->updated_at)->format('d.m.Y H:i:s');
-
-            return $reportUpdated;
-        });
 
         return response()->json([
             'billing_reports' => $billingReports,
         ]);
     }
 
-    public function load(int $entityId, Request $request, MerchantService $merchantService): JsonResponse
+    public function load(string $type, int $entityId, MerchantService $merchantService): JsonResponse
     {
-        $this->validateType($request);
-        $this->checkViewRights($request->type);
+        $this->canView($this->getPermissionBlockByType($type));
 
-        if ($request->type === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
+        if ($type === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
             return response()->json([
                 'billing_cycle' => MerchantSettingDto::DEFAULT_BILLING_CYCLE,
             ]);
@@ -183,13 +180,11 @@ class BillingReportController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    protected function makeRestQuery(Request $request, int $entityId): RestQuery
+    protected function makeRestQuery(string $type, Request $request, int $entityId): RestQuery
     {
-        $this->validateType($request);
         $page = $request->get('page', 1);
-        $type = $request->type;
 
         return (new RestQuery())
             ->pageNumber($page, 15)
@@ -198,34 +193,14 @@ class BillingReportController extends Controller
             ->addSort('id', 'desc');
     }
 
-    private function validateType(Request $request): void
-    {
-        $this->validate($request, [
-            'type' => ['string', 'required', Rule::in(ReportTypeDto::getAll())],
-        ]);
-    }
-
-    private function checkViewRights(string $type): bool
+    private function getPermissionBlockByType(string $type): int
     {
         switch ($type) {
             case ReportTypeDto::BILLING:
             case ReportTypeDto::PUBLIC_EVENTS:
-                return $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+                return BlockDto::ADMIN_BLOCK_MERCHANTS;
             case ReportTypeDto::REFERRAL_PARTNER:
-                return $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
-            default:
-                abort(403, 'Недостаточно прав');
-        }
-    }
-
-    private function checkUpdateRights(string $type): bool
-    {
-        switch ($type) {
-            case ReportTypeDto::BILLING:
-            case ReportTypeDto::PUBLIC_EVENTS:
-                return $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
-            case ReportTypeDto::REFERRAL_PARTNER:
-                return $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
+                return BlockDto::ADMIN_BLOCK_REFERRALS;
             default:
                 abort(403, 'Недостаточно прав');
         }
