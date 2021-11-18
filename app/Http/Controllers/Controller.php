@@ -47,6 +47,8 @@ class Controller extends BaseController
     protected bool $loadDeliveryMethods = false;
     protected bool $loadDeliveryServices = false;
     protected bool $loadOfferSaleStatuses = false;
+    protected bool $loadBillingReportType = false;
+    protected bool $loadBillingReportStatus = false;
     protected bool $loadPropertyTypes = false;
 
     public function render($componentName, $props = [])
@@ -87,6 +89,8 @@ class Controller extends BaseController
             ->loadDeliveryServices($this->loadDeliveryServices)
             ->loadPaymentMethods($this->loadPaymentMethods)
             ->loadOfferSaleStatuses($this->loadOfferSaleStatuses)
+            ->loadBillingReportStatus($this->loadBillingReportStatus)
+            ->loadBillingReportType($this->loadBillingReportType)
             ->loadPropertyTypes($this->loadPropertyTypes)
             ->render();
     }
