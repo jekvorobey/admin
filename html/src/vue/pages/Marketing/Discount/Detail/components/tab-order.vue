@@ -70,6 +70,7 @@
     import FDate from '../../../../../components/filter/f-date.vue';
     import FSelect from '../../../../../components/filter/f-select.vue';
     import Services from "../../../../../../scripts/services/services";
+    import moment from 'moment';
 
     export default {
         name: 'tab-order',
@@ -178,12 +179,7 @@
                     return '–';
                 }
 
-                let date = new Date(str);
-                return date.toLocaleString('ru', {
-                    day: 'numeric',
-                    month: 'numeric',
-                    year: 'numeric'
-                });
+                return moment(str).format('DD.MM.YYYY');
             },
         },
         mounted() {
