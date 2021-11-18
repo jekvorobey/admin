@@ -55,10 +55,6 @@
         {
             "type": "vcs",
             "url": "git@git.yiilab.com:ibt.studio/ibt-catalog-import-lib"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib"
         }
     ],
     "require": {
@@ -77,7 +73,6 @@
         "iwengo/ibt-message-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-oms-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-pim-lib": "dev-master-ylab as dev-master",
-        "ibt/reports-lib": "dev-feature/IBT-495-reports-refactoring",
         "iwengo/ibt-store-lib": "dev-master-ylab as dev-master",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
