@@ -1,5 +1,11 @@
 <template>
     <div>
+        <billing-report
+            :model.sync="model"
+            :type="billingReportType.referral_partner"
+            :title="'Отчеты реферального партнера'"
+            :rightsBlock="blocks.referrals"
+        ></billing-report>
         <table class="table">
         <thead>
             <tr>
@@ -47,10 +53,14 @@
 import Services from '../../../../../scripts/services/services.js';
 import ModalBillCorrect from './modal-bill-correct.vue';
 import Helpers from "../../../../../scripts/helpers.js";
+import BillingReport from "../../../../components/billing-report/billing-report.vue";
 
 export default {
     name: 'tab-billing',
-    components: {ModalBillCorrect},
+    components: {
+        ModalBillCorrect,
+        BillingReport,
+    },
     props: ['model'],
     data() {
         return {

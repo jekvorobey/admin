@@ -1,5 +1,11 @@
 <template>
     <div>
+        <billing-report
+            :model.sync="model"
+            :type="billingReportType.public_events"
+            :title="'Отчеты агента'"
+            :rightsBlock="blocks.merchants"
+        ></billing-report>
         <h4>Отчеты</h4>
         <table>
             <tr>
@@ -81,12 +87,14 @@ import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import Services from "../../../../../scripts/services/services";
+import BillingReport from "../../../../components/billing-report/billing-report.vue";
 
 export default {
     name: 'tab-public-event',
     props: ['model'],
     components: {
         DatePicker,
+        BillingReport,
     },
     data() {
         return {

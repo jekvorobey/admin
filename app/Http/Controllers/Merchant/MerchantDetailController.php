@@ -51,6 +51,8 @@ class MerchantDetailController extends Controller
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
         $this->loadCommunicationTypes = true;
+        $this->loadBillingReportType = true;
+        $this->loadBillingReportStatus = true;
 
         /** @var MerchantDto $merchant */
         $merchant = $merchantService->merchants((new RestQuery())->setFilter('id', $id))->first();
