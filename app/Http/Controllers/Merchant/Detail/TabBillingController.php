@@ -14,12 +14,41 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use MerchantManagement\Dto\MerchantSettingDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Carbon;
 
 class TabBillingController extends Controller
 {
+    public function load(int $merchantId, MerchantService $merchantService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $settings = $merchantService->getSetting($merchantId, MerchantSettingDto::BILLING_CYCLE)->first();
+        $billingCycle = $settings ? $settings->value : null;
+
+        return response()->json([
+            'billing_cycle' => (int) $billingCycle,
+        ]);
+    }
+
+    /**
+     * Сохранить биллинговый период
+     * @return Application|ResponseFactory|Response
+     */
+    public function billingCycle(int $merchantId, MerchantService $merchantService)
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $data = $this->validate(request(), [
+            'billing_cycle' => 'integer',
+        ]);
+        $merchantService->setSetting($merchantId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
+
+        return response('', 204);
+    }
+
     /**
      * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
@@ -46,6 +75,104 @@ class TabBillingController extends Controller
         $merchantService->deleteOperation($merchantId, $operationId);
 
         return response('', 204);
+    }
+
+    /**
+     * Получить биллинговые отчеты
+     * @throws Exception
+     */
+    public function billingReports(Request $request, int $merchantId, MerchantService $merchantService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $restQuery = $this->makeRestQuery($request, $merchantId);
+        $billingReports = $merchantService->merchantBillingReports($restQuery, $merchantId);
+
+        return response()->json([
+            'billing_reports' => $billingReports,
+        ]);
+    }
+
+    /**
+     * Удалить биллинговый отчет
+     * @return Application|ResponseFactory|JsonResponse|Response
+     */
+    public function deleteBillingReport(int $merchantId, int $reportId, MerchantService $merchantService)
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $merchantService->deleteBillingReport($merchantId, $reportId);
+
+        return response('', 204);
+    }
+
+    /**
+     * Обновить статус у биллингового отчета
+     * @return Application|Response|ResponseFactory
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    public function billingReportStatusUpdate(
+        int $merchantId,
+        int $reportId,
+        Request $request,
+        MerchantService $merchantService
+    ) {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $status = $request->status;
+        $merchantService->billingReportStatusUpdate($reportId, $status);
+
+        return response('', 204);
+    }
+
+    /**
+     * Создать биллинговый отчет
+     * @return Application|Response|ResponseFactory
+     */
+    public function billingReportCreate(int $merchantId, Request $request)
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $dates = [
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to,
+        ];
+
+        /** @var MerchantService $merchantService */
+        $merchantService = resolve(MerchantService::class);
+        $merchantService->billingReportCreate($merchantId, $dates);
+
+        return response('', 204);
+    }
+
+    /**
+     * Скачать биллинговый отчет
+     */
+    public function billingReportDownload(
+        int $merchantId,
+        int $reportId,
+        FileService $fileService,
+        MerchantService $merchantService
+    ): ?StreamedResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $report = $merchantService->getBillingReport($merchantId, $reportId);
+
+        if (!$report || !isset($report['file'])) {
+            return null;
+        }
+        $reportFileId = $report['file'];
+
+        $reportDto = $fileService->getFiles([$reportFileId])->first();
+        if (!$reportDto) {
+            return null;
+        }
+
+        $domain = config('common-lib.showcaseHost');
+
+        return response()->streamDownload(function () use ($reportDto, $domain) {
+            echo file_get_contents($domain . $reportDto->url);
+        }, $reportDto->original_name);
     }
 
     /**
