@@ -111,4 +111,52 @@ class SpecialtyController extends Controller
     {
         return $publicEventSpecialtyService->specialties($query);
     }
+
+    /**
+     * @throws PimException
+     */
+    public function getByEvent(int $event_id, PublicEventSpecialtyService $publicEventSpecialtyService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        $specialties = $publicEventSpecialtyService->getByEvent($event_id);
+        $query = (new RestQuery())->setFilter('active', '=', true);
+
+        return response()->json([
+            'specialties' => $specialties['items'],
+            'allSpecialties' => $this->loadItems($query, $publicEventSpecialtyService),
+        ]);
+    }
+
+    public function attachEvent(
+        Request $request,
+        int $event_id,
+        PublicEventSpecialtyService $publicEventSpecialtyService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        if (!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventSpecialtyService->attachEvent($request->input('id'), $event_id);
+
+        return response()->json();
+    }
+
+    public function detachEvent(
+        Request $request,
+        int $event_id,
+        PublicEventSpecialtyService $publicEventSpecialtyService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        if (!$request->has('id')) {
+            throw new BadRequestHttpException('id is required');
+        }
+
+        $publicEventSpecialtyService->detachEvent($request->input('id'), $event_id);
+
+        return response()->json();
+    }
 }

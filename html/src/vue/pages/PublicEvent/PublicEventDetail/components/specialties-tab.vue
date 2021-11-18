@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
-            <button class="btn btn-success" @click="openModal('eventProfessionsModalForm')">Добавить профессию</button>
+            <button class="btn btn-success" @click="openModal('eventSpecialtiesModalForm')">Добавить направление</button>
         </div>
         <table class="table">
             <thead>
@@ -12,22 +12,22 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="publicEventProfession in publicEventProfessions" :key="publicEventProfession.id">
-                    <td>{{publicEventProfession.profession_id}}</td>
-                    <td>{{publicEventProfession.name}}</td>
+                <tr v-for="specialty in specialties" :key="specialty.id">
+                    <td>{{specialty.id}}</td>
+                    <td>{{specialty.name}}</td>
                     <td v-if="canUpdate(blocks.events)">
-                        <v-delete-button @delete="() => onDelete([publicEventProfession.id])" class="float-right ml-1"/>
+                        <v-delete-button @delete="() => onDelete(specialty.id)" class="float-right ml-1"/>
                     </td>
                 </tr>
             </tbody>
         </table>
         <transition name="modal">
-            <modal :close="closeModal" v-if="isModalOpen('eventProfessionsModalForm')">
+            <modal :close="closeModal" v-if="isModalOpen('eventSpecialtiesModalForm')">
                 <div slot="header">
-                    Професии
+                    Направления
                 </div>
                 <div slot="body">
-                    <profession-form :publicEvent="publicEvent" @onSave="onSave"/>
+                    <specialty-form :publicEvent="publicEvent" :allSpecialtiesList="allSpecialtiesList" @onSave="onSave"/>
                 </div>
             </modal>
         </transition>
@@ -37,9 +37,8 @@
 <script>
     import {mapActions} from "vuex";
     import {
-        ACT_LOAD_PROFESSIONS,
-        ACT_LOAD_EVENT_PROFESSIONS,
-        ACT_DELETE_EVENT_PROFESSION,
+        ACT_LOAD_EVENT_SPECIALTIES,
+        ACT_DELETE_EVENT_SPECIALTY,
         NAMESPACE
     } from '../../../../store/modules/public-events';
 
@@ -52,7 +51,7 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Services from "../../../../../scripts/services/services";
-    import ProfessionForm from './forms/profession-form.vue';
+    import SpecialtyForm from './forms/specialty-form.vue';
 
     export default {
         mixins: [
@@ -63,32 +62,35 @@
             Modal,
             VInput,
             VDeleteButton,
-            ProfessionForm
+            SpecialtyForm
         },
         props: {
             publicEvent: {},
+            allSpecialties: {}
         },
         data() {
             return {
-                publicEventProfessions: []
+                specialties: [],
+                allSpecialtiesList: this.allSpecialties
             };
         },
         methods: {
             ...mapActions(NAMESPACE, {
-                loadProfessions: ACT_LOAD_PROFESSIONS,
-                loadPublicEventProfessions: ACT_LOAD_EVENT_PROFESSIONS,
-                deletePublicEventProfession: ACT_DELETE_EVENT_PROFESSION
+                loadPublicEventSpecialties: ACT_LOAD_EVENT_SPECIALTIES,
+                deletePublicEventSpecialty: ACT_DELETE_EVENT_SPECIALTY
             }),
             reload() {
-                this.loadPublicEventProfessions({publicEventId: this.publicEvent.id})
+                this.loadPublicEventSpecialties({publicEventId: this.publicEvent.id})
                     .then(data => {
-                        this.publicEventProfessions = data.professions;
+                        this.specialties = data.specialties;
+                        this.allSpecialtiesList = data.allSpecialties;
                     });
             },
-            onDelete(ids) {
+            onDelete(id) {
                 Services.showLoader();
-                this.deletePublicEventProfession({
-                    ids
+                this.deletePublicEventSpecialty({
+                    publicEventId: this.publicEvent.id,
+                    id: id
                 }).then(() => {
                     this.reload();
                 }).finally(() => {
@@ -103,8 +105,6 @@
             onCancel() {
                 this.closeModal();
             },
-        },
-        computed: {
         },
         created() {
             this.reload();
