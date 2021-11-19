@@ -8,21 +8,29 @@ use Cms\Dto\BannerDto;
 use Cms\Dto\BannerTypeDto;
 use Cms\Services\BannerService\BannerService;
 use Cms\Services\BannerTypeService\BannerTypeService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BannerListController extends Controller
 {
+    /**
+     * @return mixed
+     * @throws CmsException
+     */
     public function listPage(
         Request $request,
         BannerService $bannerService,
         BannerTypeService $bannerTypeService,
         FileService $fileService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $this->title = 'Баннеры';
         $query = $this->makeQuery($request);
 
@@ -37,7 +45,10 @@ class BannerListController extends Controller
         ]);
     }
 
-    public function page(Request $request, BannerService $bannerService, FileService $fileService)
+    /**
+     * @throws CmsException
+     */
+    public function page(Request $request, BannerService $bannerService, FileService $fileService): JsonResponse
     {
         $query = $this->makeQuery($request);
         $data = [
@@ -50,8 +61,13 @@ class BannerListController extends Controller
         return response()->json($data);
     }
 
-    public function widgetBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
+    /**
+     * @throws CmsException
+     */
+    public function widgetBanners(BannerService $bannerService, BannerTypeService $bannerTypeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::WIDGET_CODE);
@@ -68,8 +84,15 @@ class BannerListController extends Controller
         return response()->json($banners);
     }
 
-    public function productGroupBanners(BannerService $bannerService, BannerTypeService $bannerTypeService)
-    {
+    /**
+     * @throws CmsException
+     */
+    public function productGroupBanners(
+        BannerService $bannerService,
+        BannerTypeService $bannerTypeService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $type = $this->loadTypes($bannerTypeService)
             ->keyBy('code')
             ->get(BannerTypeDto::PRODUCT_GROUP_CODE);
@@ -86,10 +109,7 @@ class BannerListController extends Controller
         return response()->json($banners);
     }
 
-    /**
-     * @return RestQuery
-     */
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): RestQuery
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);

@@ -10,7 +10,7 @@
                                type="text"
                                placeholder="Поиск атрибута...">
                     </div>
-                    <div class="col-lg-4 col-sm-6 ml-auto">
+                    <div class="col-lg-4 col-sm-6 ml-auto" v-if="canUpdate(blocks.products)">
                         <a :href="getRoute('products.properties.create')"
                            class="btn btn-lg btn-dark float-right mr-4">
                             <fa-icon icon="plus"/> Создать атрибут

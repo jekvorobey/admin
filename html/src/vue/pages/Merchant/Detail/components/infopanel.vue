@@ -4,13 +4,15 @@
         <tr>
             <th colspan="4">
                 Инфопанель
-                <button class="btn btn-success btn-sm" @click="saveMerchant" :disabled="!showBtn">
-                    Сохранить
-                </button>
-                <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
-                <button class="btn btn-outline-success btn-sm" @click="activateMerchant" v-if="isRequest">
-                    Активировать
-                </button>
+                <template v-if="canUpdate(blocks.merchants)">
+                    <button class="btn btn-success btn-sm" @click="saveMerchant" :disabled="!showBtn">
+                        Сохранить
+                    </button>
+                    <button @click="cancel" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
+                    <button class="btn btn-outline-success btn-sm" @click="activateMerchant" v-if="isRequest">
+                        Активировать
+                    </button>
+                </template>
             </th>
         </tr>
         </thead>

@@ -6,6 +6,9 @@
                 <draggable
                     v-model="galleryImages"
                     animation="200"
+                    :options="{
+                        disabled: !canUpdate(blocks.products)
+                    }"
                     @start="drag = true"
                     @end="drag = false"
                     @change="onGallerySort"
@@ -19,6 +22,7 @@
                             <img :src="image.url" class="small-image">
 
                             <fa-icon
+                                v-if="canUpdate(blocks.products)"
                                 icon="trash-alt"
                                 class="float-right media-btn"
                                 @click="onDeleteImage(3, image.id)"
@@ -28,7 +32,7 @@
                 </draggable>
             </div>
         </div>
-        <div class="row">
+        <div v-if="canUpdate(blocks.products)" class="row">
             <div class="col p-3">
                 <div class="align-self-center">
                     <button class="btn btn-light" @click="startUploadImage(3)">Добавить</button>
@@ -40,7 +44,7 @@
         <div class="row">
             <div class="col d-flex flex-row justify-content-start align-items-start">
                 <template v-for="tip in product.tips">
-                    <shadow-card :buttons="{onEdit:'pencil-alt', onDeleteTip:'trash-alt'}"
+                    <shadow-card :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDeleteTip:'trash-alt'} : {}"
                                  @onEdit="editTip(tip)"
                                  @onDeleteTip="deleteTip(product.id, tip.id)"
                                 class="tip">
@@ -48,7 +52,7 @@
                         <div class="tip-description">{{tip.description}}</div>
                     </shadow-card>
                 </template>
-                <div class="align-self-center">
+                <div class="align-self-center" v-if="canUpdate(blocks.products)">
                     <button class="btn btn-light" @click="createNewTip">Добавить</button>
                 </div>
             </div>
@@ -58,7 +62,7 @@
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-start align-items-start">
-                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                    <shadow-card title="Текст" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                                  @onEdit="openModal('DescriptionEdit')"
                                  @onDelete="deleteDescriptionText">
                         {{ product.description }}
@@ -67,7 +71,7 @@
             </div>
             <div class="col">
                 <div class="d-flex flex-row justify-content-start align-items-start">
-                    <shadow-card title="Видео" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                    <shadow-card title="Видео" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                                  @onEdit="openModal('DescriptionVideoEdit')"
                                  @onDelete="deleteDescriptionVideo">
                         <div v-if="product.description_video" class="embed-responsive embed-responsive-16by9 ">
@@ -82,7 +86,7 @@
                     </shadow-card>
                     <shadow-card
                             title="Изображение"
-                            :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                            :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                             @onEdit="startUploadImage(4, descriptionImage.id)"
                             @onDelete="onDeleteImage(4, descriptionImage.id)">
                         <img :src="descriptionImage.url" class="big-image">
@@ -95,7 +99,7 @@
         <div class="row">
             <div class="col">
                 <div class="d-flex flex-column justify-content-start align-items-md-stretch">
-                    <shadow-card title="Текст" :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                    <shadow-card title="Текст" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                                  @onEdit="openModal('HowToEdit')" @onDelete="deleteHowToText">
                         <ol v-if="product.how_to">
                             <li v-for="item in howToList">
@@ -109,9 +113,9 @@
                     <shadow-card title="Инструкция">
                         <template v-if="product.instruction_file_id">
                             <a class="btn btn-dark" :href="instructionUrl">Скачать</a>
-                            <button @click="onDeleteInstruction" class="btn btn-danger">Удалить</button>
+                            <button @click="onDeleteInstruction" v-if="canUpdate(blocks.products)" class="btn btn-danger">Удалить</button>
                         </template>
-                        <button @click="openModal('InstructionUpload')" class="btn btn-success">Загрузить новый файл</button>
+                        <button @click="openModal('InstructionUpload')" v-if="canUpdate(blocks.products)" class="btn btn-success">Загрузить новый файл</button>
                     </shadow-card>
                 </div>
             </div>
@@ -119,7 +123,7 @@
                 <div class="d-flex flex-row justify-content-start align-items-start">
                     <shadow-card
                             title="Видео"
-                            :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                            :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                             @onEdit="openModal('HowToVideoEdit')"
                             @onDelete="deleteHowToVideo">
                         <div v-if="product.how_to_video" class="embed-responsive embed-responsive-16by9 ">
@@ -134,7 +138,7 @@
                     </shadow-card>
                     <shadow-card
                             title="Изображение"
-                            :buttons="{onEdit:'pencil-alt', onDelete:'trash-alt'}"
+                            :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt', onDelete:'trash-alt'} : {}"
                             @onEdit="startUploadImage(5, howToImage.id)"
                             @onDelete="onDeleteImage(5, howToImage.id)">
                         <img :src="howToImage.url" class="big-image">
@@ -147,14 +151,14 @@
         <table class="table table-sm">
             <tbody>
                 <tr>
-                    <th>
+                    <th v-if="canUpdate(blocks.products)">
                         Добавить
                         <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
                     </th>
                     <td>
                         <div v-for="(event, index) in product.publicEvents">
                             {{ event.description }}
-                            <span>
+                            <span v-if="canUpdate(blocks.products)">
                                 <fa-icon icon="times"/>
                             </span>
                         </div>

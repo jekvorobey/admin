@@ -5,7 +5,7 @@
                 <p class="font-weight-bold">Инфопанель</p>
             </b-col>
             <b-col>
-                <div class="float-right">
+                <div class="float-right" v-if="canUpdate(blocks.products)">
                     <button class="btn btn-success btn-sm" @click="save" :disabled="!$v.form.$anyDirty">
                         Сохранить
                     </button>
@@ -26,9 +26,12 @@
             <b-col>
                 <span class="font-weight-bold">Мерчант:</span>
                 <span>
-                    <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant">
+                    <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant && canView(blocks.merchants)">
                         {{variantGroup.merchant.legal_name}}
                     </a>
+                    <span v-if="variantGroup.merchant && !canView(blocks.merchants)">
+                        {{variantGroup.merchant.legal_name}}
+                    </span>
                     <template v-else>N/A</template>
                 </span>
             </b-col>

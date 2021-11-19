@@ -3,9 +3,9 @@
         <div class="d-flex flex-wrap align-items-stretch justify-content-start product-header">
             <div class="shadow flex-grow-3 mr-3 mt-3">
                 <h2>{{ product.name }}</h2>
-                <div style="height: 40px">
+                <div style="height: 40px" v-if="canView(blocks.products)">
                     <span class="badge" :class="approvalClass(product.approval_status)">{{ options.approval[product.approval_status] || 'N/A' }}</span>
-                    <template v-if="!isRejectApprovalStatus && !isApprovedApprovalStatus">
+                    <template v-if="!isRejectApprovalStatus && !isApprovedApprovalStatus && canUpdate(blocks.products)">
                         <button class="btn btn-primary" @click="changeProductApproveStatus(5)">Согласовать</button>
                         <button class="btn btn-primary" @click="openModal('productReject')">Отклонить</button>
                     </template>
@@ -17,7 +17,7 @@
                 <p class="text-secondary">Текущий остаток товара на витрине: <span class="float-right">{{ product.currentOffer.qty }} шт.</span></p>
                 <p class="text-secondary">Дата создания товара: <span class="float-right">{{ product.created_at }}</span></p>
                 <p class="text-secondary">Дата последнего обновления товара: <span class="float-right">{{ product.updated_at }}</span></p>
-                <div style="margin-top: 10px">
+                <div style="margin-top: 10px" v-if="canUpdate(blocks.products)">
                     <button @click="openModal('productStatusEdit')" class="btn btn-outline-dark md-3">
                         Изменить статус
                     </button>
@@ -27,9 +27,9 @@
                 <img :src="mainImage.url" :alt="product.name">
             </div>
         </div>
-        <v-tabs :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
+        <v-tabs v-if="canView(blocks.products)" :current="nav.currentTab" :items="nav.tabs" @nav="tab => nav.currentTab = tab"></v-tabs>
         <property-tab
-                v-if="nav.currentTab === 'props'"
+                v-if="nav.currentTab === 'props'&& canView(blocks.products)"
                 :product="product"
                 :propertyValues="this.properties"
                 :badges="badges"

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Product\VariantGroup;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
+use Pim\Core\PimException;
 use Pim\Dto\Product\VariantGroupDto;
 use Pim\Services\VariantGroupService\VariantGroupService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -38,10 +41,12 @@ class VariantGroupDetailController extends Controller
 
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function detail(int $id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $variantGroup = $this->getVariantGroup($id);
         $this->title = 'Товарная группа "' . ($variantGroup->name ? : 'Без названия') . '"';
 
@@ -51,7 +56,7 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getVariantGroup(int $id): VariantGroupDto
     {
@@ -79,7 +84,7 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function addVariantGroupCommonInfo(VariantGroupDto $variantGroupDto): void
     {
@@ -91,10 +96,12 @@ class VariantGroupDetailController extends Controller
     }
 
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function save(int $variantGroupId, Request $request): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'name' => ['nullable', 'string'],
         ]);

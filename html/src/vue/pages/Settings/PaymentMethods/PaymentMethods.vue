@@ -8,7 +8,7 @@
                 <th>Макс. за одну операцию</th>
                 <th>Поддержка банковских карт</th>
                 <th>Ограничения</th>
-                <th>Настройка</th>
+                <th v-if="canUpdate(blocks.settings)">Настройка</th>
             </tr>
             </thead>
             <tbody>
@@ -54,7 +54,7 @@
                         </li>
                     </ul>
                 </td>
-                <td>
+                <td v-if="canUpdate(blocks.settings)">
                     <button @click="openEditModal(payment_method.id)"
                             class="btn btn-light">
                         <fa-icon icon="cog"/>

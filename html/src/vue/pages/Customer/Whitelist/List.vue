@@ -2,7 +2,7 @@
     <layout-main>
         <div class="card">
             <div class="card-body">
-                <file-input @uploaded="(data) => onFileUpload(data)"
+                <file-input v-if="canUpdate(blocks.clients)" @uploaded="(data) => onFileUpload(data)"
                             class="mb-3"
                             destination="whitelist"
                             label="Загрузить вайтлист"

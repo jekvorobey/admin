@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
+use Pim\Core\PimException;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -21,11 +22,11 @@ class TabReviewsController extends Controller
 
     /**
      * AJAX подгрузка информации для вывода списка отзывов
-     *
-     * @return JsonResponse
      */
-    public function load()
+    public function load(): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         return response()->json([
             'perPage' => self::PER_PAGE,
         ]);
@@ -34,10 +35,7 @@ class TabReviewsController extends Controller
     /**
      * Постраничный вывод отзывов
      *
-     * @param $customerId
-     * @param UserService $userService
-     * @return JsonResponse
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function page(
         $customerId,
@@ -46,7 +44,9 @@ class TabReviewsController extends Controller
         ProductService $productService,
         PublicEventService $publicEventService,
         FileService $fileService
-    ) {
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
         $data = $this->validate(request(), [
             'page' => 'required|integer',
         ]);

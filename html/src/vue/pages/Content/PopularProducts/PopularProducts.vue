@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.content)">
             <div class="col-6" style="text-align: left">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalCreate()">
@@ -54,9 +54,14 @@
                                    :checked="massHas({type: massPopularProductType, id: popularProduct.id})"
                                    @change="e => massCheckbox(e, massPopularProductType, popularProduct.id)"/>
                         </td>
-                        <td><a :href="getRoute('products.detail', {id: popularProduct.product_id})">
+                        <td v-if="canView(blocks.products)">
+                            <a :href="getRoute('products.detail', {id: popularProduct.product_id})">
+                              {{ popularProduct.name }}
+                            </a>
+                        </td>
+                        <td v-else>
                             {{ popularProduct.name }}
-                        </a></td>
+                        </td>
                     </tr>
                 </draggable>
         </table>

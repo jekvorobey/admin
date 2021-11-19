@@ -57,7 +57,7 @@
             </template>
         </b-card>
 
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.products)">
             <div class="col-12 mt-3">
                 <button class="btn btn-success" @click="editOffer(null)">Добавить оффер</button>
                 <button class="btn btn-warning" :disabled="countSelected < 1 || isEmptyStockOfferSelected()" @click="editOfferStatus()">Изменить статус

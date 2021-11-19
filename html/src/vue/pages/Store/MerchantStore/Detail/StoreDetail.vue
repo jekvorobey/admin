@@ -230,7 +230,7 @@
             </tr>
             </tbody>
         </table>
-        <div class="col-12 mt-3">
+        <div class="col-12 mt-3" v-if="canUpdate(blocks.stores)">
             <button type="submit"
                     class="btn btn-success"
                     @click="updateStore()">

@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="mt-5 mb-4">
+        <div class="mt-5 mb-4" v-if="canUpdate(blocks.products)">
             <button class="btn-success btn" @click="createCategory">Создать категорию</button>
         </div>
         <table class="table mb-0">
@@ -10,10 +10,10 @@
                 <th class="col-sm-4">
                     Код
                 </th>
-                <th class="col-sm-1">
+                <th :class="canUpdate(blocks.products) ? 'col-sm-1' : 'col-sm-2'">
                     Активна
                 </th>
-                <th class="col-sm-1">Действия</th>
+                <th v-if="canUpdate(blocks.products)" class="col-sm-1">Действия</th>
             </tr>
             </thead>
         </table>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Order\Cargo;
 use App\Http\Controllers\Controller;
 use App\Pages\CargoPage;
 use Closure;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Delivery\CargoDto;
 use Greensight\Oms\Dto\Delivery\CargoStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
@@ -22,10 +24,12 @@ class CargoDetailController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(int $id)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->loadCargoStatuses = true;
         $page = new CargoPage($id);
 
@@ -39,6 +43,8 @@ class CargoDetailController extends Controller
      */
     public function changeStatus(int $id, Request $request, CargoService $cargoService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $result = 'ok';
         $error = '';
         $systemError = '';
@@ -69,6 +75,8 @@ class CargoDetailController extends Controller
      */
     public function createCourierCall(int $id, CargoService $cargoService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($id, function () use ($id, $cargoService) {
             $cargoService->createCourierCall($id);
         });
@@ -79,6 +87,8 @@ class CargoDetailController extends Controller
      */
     public function cancelCourierCall(int $id, CargoService $cargoService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($id, function () use ($id, $cargoService) {
             $cargoService->cancelCourierCall($id);
         });
@@ -99,6 +109,8 @@ class CargoDetailController extends Controller
      */
     public function cancel(int $id, CargoService $cargoService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($id, function () use ($id, $cargoService) {
             $cargoService->cancelCargo($id);
         });
@@ -109,6 +121,8 @@ class CargoDetailController extends Controller
      */
     public function addShipment2Cargo(int $id, Request $request, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($id, function () use ($id, $request, $shipmentService) {
             $data = $this->validate($request, [
                 'shipment_id' => ['required', 'array'],
@@ -129,6 +143,8 @@ class CargoDetailController extends Controller
      */
     public function deleteShipmentFromCargo(int $id, int $shipmentId, ShipmentService $shipmentService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         return $this->abstractAction($id, function () use ($shipmentId, $shipmentService) {
             $shipment = new ShipmentDto();
             $shipment->cargo_id = null;
@@ -137,9 +153,6 @@ class CargoDetailController extends Controller
         });
     }
 
-    /**
-     * @param Request $request
-     */
     protected function abstractAction(int $id, Closure $action): JsonResponse
     {
         $result = 'ok';

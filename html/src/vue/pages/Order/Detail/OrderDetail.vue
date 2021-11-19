@@ -9,7 +9,7 @@
             </b-col>
         </b-row>
 
-        <b-card no-body>
+        <b-card no-body v-if="canView(blocks.orders)">
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="order"/>
@@ -22,11 +22,6 @@
                       Заглушка
                     </template>
                 </b-tab>
-                <template v-slot:tabs-end>
-                    <b-nav-item @click.prevent="showAllTabs = !showAllTabs" href="#">
-                        <b>{{ showAllTabs ? '-' : '+' }}</b>
-                    </b-nav-item>
-                </template>
             </b-tabs>
         </b-card>
     </layout-main>
@@ -69,6 +64,7 @@
         methods: {
 
         },
+
         computed: {
             tabs() {
                 let tabs = {};
@@ -78,8 +74,6 @@
                 tabs.composition = {i: i++, title: 'Состав заказа'};
                 tabs.deliveries = {i: i++, title: 'Доставки'};
                 tabs.shipments = {i: i++, title: 'Отправления'};
-                tabs.payments = {i: i++, title: 'Оплаты'};
-                tabs.documents = {i: i++, title: 'Документы по заказу'};
                 tabs.returns = {i: i++, title: 'Возвраты'};
                 tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
                 tabs.logs = {i: i++, title: 'Логи'};

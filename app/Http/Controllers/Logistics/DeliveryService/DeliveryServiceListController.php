@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Logistics\DeliveryService;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
@@ -22,10 +24,12 @@ class DeliveryServiceListController extends Controller
 {
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(Request $request, ListsService $listsService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $this->title = 'Логистические операторы';
         $restQuery = $this->makeRestQuery($listsService, true);
         $pager = $listsService->deliveryServicesCount($restQuery);
@@ -47,10 +51,12 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(ListsService $listsService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_LOGISTICS);
+
         $restQuery = $this->makeRestQuery($listsService);
         $deliveryServices = $this->loadDeliveryServices($restQuery, $listsService);
         $result = [
@@ -63,9 +69,6 @@ class DeliveryServiceListController extends Controller
         return response()->json($result);
     }
 
-    /**
-     * @return array
-     */
     protected function getFilter(bool $withDefault = false): array
     {
         return Validator::make(
@@ -108,7 +111,7 @@ class DeliveryServiceListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(ListsService $listsService, bool $withDefaultFilter = false): DataQuery
     {

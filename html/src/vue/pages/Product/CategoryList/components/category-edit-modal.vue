@@ -216,7 +216,8 @@
                         return !this.category.descendants.includes(item.id) && this.category.id !== item.id;
                     })
                 }
-                return defaultOptions.concat(options.map((item) => {
+
+                let items = options.map((item) => {
                     let ancestors = item.ancestors;
                     ancestors = ancestors.map(x => options.find(y => y.id === x).name);
                     ancestors.push(item.name);
@@ -224,7 +225,15 @@
                         value: item.id,
                         text: ancestors.join(' >> '),
                     }
-                }));
+                });
+
+                items.sort((a, b) => {
+                    return a.text.localeCompare(b.text, 'ru', {
+                        ignorePunctuation: true
+                    });
+                });
+
+                return defaultOptions.concat(items);
             },
             warningProductsMove() {
                 let parent = this.categories.find((item) => item.id === this.parentId);

@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="row mb-3">
+        <div class="row mb-3" v-if="canUpdate(blocks.content)">
             <div class="col-6" style="text-align: left">
                 <button class="btn btn-success mr-1"
                     @click="onShowModalEdit(null)">
@@ -41,7 +41,7 @@
             <tr>
                 <td></td>
                 <th>Текст запроса</th>
-                <th>Действия</th>
+                <th v-if="canUpdate(blocks.content)">Действия</th>
             </tr>
             </thead>
                 <draggable v-model="searchRequests"
@@ -56,7 +56,7 @@
                                    @change="e => massCheckbox(e, massSearchRequestType, searchRequest.id)"/>
                         </td>
                         <td>{{searchRequest.text}}</td>
-                        <td>
+                        <td v-if="canUpdate(blocks.content)">
                             <button class="btn btn-info btn-md"
                                     @click="onShowModalEdit(searchRequest)">
                                 <fa-icon icon="pencil-alt"/>

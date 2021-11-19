@@ -14,7 +14,7 @@
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" v-if="canUpdate(blocks.content)">
             <button @click="goToCreatePage" class="btn btn-success">Создать</button>
         </div>
         <div class="mb-3">
@@ -28,7 +28,7 @@
                 <th>Изображение</th>
                 <th>Название</th>
                 <th>Тип</th>
-                <th><!-- Кнопки --></th>
+                <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
             </tr>
             </thead>
             <tbody>
@@ -49,7 +49,7 @@
                     <a :href="getRoute('banner.updatePage', {id: banner.id})">{{banner.name}}</a>
                 </td>
                 <td>{{banner.type.name}}</td>
-                <td>
+                <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
                         <fa-icon icon="trash-alt"
                                  @click="removeItem(banner.id)"/>

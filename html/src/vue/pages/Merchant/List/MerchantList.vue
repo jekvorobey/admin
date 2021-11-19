@@ -33,7 +33,7 @@
             Всего: {{ pager.total }}. <span v-if="selectedMerchantIds.length">Выбрано: {{selectedMerchantIds.length}}</span>
         </div>
 
-        <div class="btn-toolbar mb-3">
+        <div class="btn-toolbar mb-3" v-if="canUpdate(blocks.merchants)">
             <div class="input-group">
                 <select class="custom-select" v-model="newStatus">
                     <option :value="null">Выбрать статус</option>

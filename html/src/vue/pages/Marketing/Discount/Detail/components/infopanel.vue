@@ -4,10 +4,12 @@
         <tr>
             <th colspan="4">
                 Инфопанель
-                <button class="btn btn-success btn-sm" @click="save">
-                    Сохранить
-                </button>
-                <button @click="cancel" class="btn btn-outline-danger btn-sm">Отмена</button>
+                <template v-if="canUpdate(blocks.marketing)">
+                    <button class="btn btn-success btn-sm" @click="save">
+                        Сохранить
+                    </button>
+                    <button @click="cancel" class="btn btn-outline-danger btn-sm">Отмена</button>
+                </template>
             </th>
         </tr>
         </thead>
@@ -91,6 +93,15 @@
                     ></v-input>
                 </td>
             </tr>
+            <tr>
+                <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
+                <td colspan="2">
+                    <v-input v-model="discount.product_qty_limit"
+                             :type="'number'"
+                             :min="0"
+                    ></v-input>
+                </td>
+            </tr>
             <tr v-show="showBundle">
                 <th><label for="discount-type-select">{{ bundleTitle }}</label></th>
                 <td colspan="2">
@@ -106,6 +117,15 @@
                     <v-input v-model="$v.discount.bundleItems.$model"
                              :help="'ID мастер-классов через запятую'"
                              :error="errorMasterClasses"
+                    ></v-input>
+                </td>
+            </tr>
+            <tr v-show="showPublicEvents">
+                <th><label for="discount-type-select">Типы билетов</label></th>
+                <td colspan="2">
+                    <v-input v-model="$v.discount.publicEvents.$model"
+                             :help="'ID типов билетов через запятую'"
+                             :error="errorPublicEvents"
                     ></v-input>
                 </td>
             </tr>
@@ -216,19 +236,22 @@
                         return self.merchantBtn;
                     }) },
                     categories: { required: requiredIf(() => {
-                            return self.discount.type === self.discountTypes.category
+                        return self.discount.type === self.discountTypes.category
                     }) },
                     brands: { required: requiredIf(() => {
-                            return self.discount.type === self.discountTypes.brand
-                        }) },
+                        return self.discount.type === self.discountTypes.brand
+                    }) },
                     offers: { required: requiredIf(() => {
-                            return self.discount.type === self.discountTypes.offer
-                        }) },
+                        return self.discount.type === self.discountTypes.offer
+                    }) },
                     bundleItems: { required: requiredIf(() => {
                         return [
                             self.discountTypes.bundleMasterclass,
                             self.discountTypes.bundleOffer,
                         ].includes(self.discount.type);
+                    }) },
+                    publicEvents: { required: requiredIf(() => {
+                        return self.discount.type === self.discountTypes.masterclass
                     }) },
                 }
             };
@@ -250,6 +273,7 @@
                     end_date: discount.end_date,
                     conditions: discount.conditions,
                     status: discount.status,
+                    product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
                 };
@@ -261,6 +285,9 @@
                     case this.discountTypes.bundleOffer:
                     case this.discountTypes.bundleMasterclass:
                         data.bundle_items = this.formatIds(discount.bundleItems);
+                        break;
+                    case this.discountTypes.masterclass:
+                        data.public_events = this.formatIds(discount.publicEvents);
                         break;
                     case this.discountTypes.brand:
                         data.brands = discount.brands;
@@ -298,6 +325,7 @@
                 this.discount.brands = [];
                 this.discount.categories = [];
                 this.discount.bundleItems = [];
+                this.discount.publicEvents = [];
                 this.$v.discount.brands.$model = [];
                 this.$v.discount.categories.$model = [];
             },
@@ -363,6 +391,11 @@
                     this.discountTypes.bundleMasterclass,
                 ].includes(this.discount.type);
             },
+            showPublicEvents() {
+                return [
+                    this.discountTypes.masterclass,
+                ].includes(this.discount.type);
+            },
             showBundle() {
                 return [
                     this.discountTypes.bundleOffer,
@@ -422,11 +455,16 @@
                     if (!this.$v.discount.bundleItems.required) return "Обязательное поле";
                 }
             },
+            errorPublicEvents() {
+                if (this.$v.discount.publicEvents.$dirty) {
+                    if (!this.$v.discount.publicEvents.required) return "Обязательное поле";
+                }
+            },
             errorBundles() {
                 if (this.$v.discount.bundleItems.$dirty) {
                     if (!this.$v.discount.bundleItems.required) return "Обязательное поле";
                 }
-            }
+            },
         },
         watch: {
             'discount.offers': {
@@ -448,6 +486,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.bundleItems = format + separator;
+                    }
+                },
+            },
+            'discount.publicEvents': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.publicEvents).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.publicEvents = format + separator;
                     }
                 },
             },

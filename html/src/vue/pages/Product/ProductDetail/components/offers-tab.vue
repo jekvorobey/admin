@@ -63,7 +63,7 @@
                     <td>{{ offer.saleStatus.name }}</td>
                     <td>{{ offer.manual_sort }}</td>
                     <td>
-                      <button class="btn btn-light btn-sm" @click="editOffer(index)">
+                      <button class="btn btn-light btn-sm" @click="editOffer(index)" v-if="canUpdate(blocks.products)">
                         <fa-icon icon="pencil-alt"></fa-icon>
                       </button>
                     </td>

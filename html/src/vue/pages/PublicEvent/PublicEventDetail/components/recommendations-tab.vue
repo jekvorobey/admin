@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="openModal('eventRecommendationModalForm')">Добавить рекомендацию</button>
         </div>
         <table class="table">
@@ -8,14 +8,14 @@
                 <tr>
                     <th>ID</th>
                     <th>Название</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="eventRecommendation in eventRecommendations" :key="eventRecommendation.id">
                     <td>{{eventRecommendation.id}}</td>
                     <td>{{eventRecommendation.name}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDelete([eventRecommendation.id])" class="float-right ml-1"/>
                     </td>
                 </tr>
@@ -37,12 +37,12 @@
 <script>
     import {mapActions} from "vuex";
     import {
-        NAMESPACE, 
-        ACT_LOAD_EVENT_RECOMMENDATIONS, 
+        NAMESPACE,
+        ACT_LOAD_EVENT_RECOMMENDATIONS,
         ACT_DELETE_EVENT_RECOMMENDATION,
         ACT_LOAD_EVENTS
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import {validationMixin} from 'vuelidate';
@@ -80,7 +80,7 @@
                 loadEventRecommendations: ACT_LOAD_EVENT_RECOMMENDATIONS,
                 deleteEventRecommendation: ACT_DELETE_EVENT_RECOMMENDATION
             }),
-            reload() { 
+            reload() {
                 this.loadEvents()
                     .then(response => {
                         this.events = response.events;

@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.communications)">
             <button class="btn btn-success" @click="createNotification">Создать сервисное уведомление</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано сервисных нотификаций: {{massAll(massSelectionType).length}}</span>
@@ -17,7 +17,7 @@
                     <th>Каналы</th>
                     <th>Тема</th>
                     <th>Отправить от</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.communications)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +35,7 @@
                     <td>{{channels(notification.channels)}}</td>
                     <td>{{notification.subject}}</td>
                     <td>{{notification.sender_id}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.communications)">
                         <v-delete-button @delete="() => deleteNotifications([notification.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editNotification(notification)">
                             <fa-icon icon="edit"></fa-icon>

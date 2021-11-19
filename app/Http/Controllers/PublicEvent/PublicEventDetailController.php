@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
@@ -21,6 +23,8 @@ class PublicEventDetailController extends Controller
 {
     public function index($event_id, PublicEventService $publicEventService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $this->loadPublicEventTypes = true;
         $this->loadPublicEventMediaTypes = true;
         $this->loadPublicEventMediaCollections = true;
@@ -37,8 +41,10 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
-    public function load($event_id, PublicEventService $publicEventService)
+    public function load($event_id, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEvent = $this->loadEvent($event_id, $publicEventService);
         if (!$publicEvent) {
             throw new NotFoundHttpException('public event not found');
@@ -47,8 +53,10 @@ class PublicEventDetailController extends Controller
         return response()->json($publicEvent->toArray());
     }
 
-    public function isCodeUnique(Request $request, PublicEventService $publicEventService)
+    public function isCodeUnique(Request $request, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $code = $request->get('code');
         if (!$code) {
             throw new BadRequestHttpException('code is required');
@@ -68,8 +76,10 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventService $publicEventService)
+    public function save(Request $request, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $data = $request->get('data');
         if (!$data) {
@@ -85,8 +95,10 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
-    public function recommendations($event_id, PublicEventService $publicEventService)
+    public function recommendations($event_id, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $event = $publicEventService->query()->setFilter('id', $event_id)->withRecommendations()->get()->first()->recommendations;
 
         return response()->json([
@@ -94,27 +106,27 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
-    public function availableOrganizers(
-        PublicEventOrganizerService $publicEventOrganizerService,
-        RequestInitiator $requestInitiator
-    ) {
+    public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         /** @var Collection|OrganizerDto[] $organizers */
         $organizers = $publicEventOrganizerService->query()
-            ->setFilter('owner_id', 0)
-            ->addSort('name', 'asc')
+//            ->setFilter('owner_id', 0)
+            ->addSort('name')
             ->get();
 
-        $userOrganizers = $publicEventOrganizerService->query()
-            ->setFilter('owner_id', $requestInitiator->userId())
-            ->addSort('name', 'asc')
-            ->get();
+//        $userOrganizers = $publicEventOrganizerService->query()
+//            ->setFilter('owner_id', $requestInitiator->userId())
+//            ->addSort('name')
+//            ->get();
 
-        $organizers = $organizers->merge($userOrganizers)->unique('id');
+//        $organizers = $organizers->merge($userOrganizers)->unique('id');
 
         return response()->json($organizers);
     }
 
-    public function addOrganizerById($event_id, Request $request, PublicEventService $publicEventService)
+    public function addOrganizerById($event_id, Request $request, PublicEventService $publicEventService): JsonResponse
     {
         $organizerId = $request->get('organizerId');
         $publicEventService->addOrganizerById($event_id, $organizerId);
@@ -126,16 +138,21 @@ class PublicEventDetailController extends Controller
         Request $request,
         PublicEventService $publicEventService,
         RequestInitiator $user
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $organizerData = $request->all();
         $organizerDto = new OrganizerDto($organizerData);
         $organizerDto->owner_id = $user->userId();
         $publicEventService->addOrganizerByValue($event_id, $organizerDto);
+
         return response()->json();
     }
 
-    public function saveMedia(int $event_id, Request $request, PublicEventService $publicEventService)
+    public function saveMedia(int $event_id, Request $request, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $data = $this->validate($request, [
             'type' => [
                 'required',
@@ -168,44 +185,68 @@ class PublicEventDetailController extends Controller
         return response()->json();
     }
 
-    public function deleteMedia(int $event_id, Request $request, PublicEventService $publicEventService)
+    public function deleteMedia(int $event_id, Request $request, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $data = $this->validate($request, [
             'mediaId' => 'required',
         ]);
         $publicEventService->delMedia($event_id, $data['mediaId']);
+
         return response()->json();
     }
 
-    public function getSprints(int $event_id, PublicEventService $publicEventService)
+    public function getSprints(int $event_id, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         /** @var Collection|SprintDto[] $sprints */
         $sprints = $publicEventService->getSprints($event_id);
+
         return response()->json($sprints);
     }
 
-    public function createSprint(int $event_id, PublicEventService $publicEventService)
+    public function createSprint(int $event_id, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventService->createSprint($event_id);
+
         return response()->json();
     }
 
-    public function deleteSprint(int $event_id, Request $request, PublicEventService $publicEventService)
+    public function deleteSprint(int $event_id, Request $request, PublicEventService $publicEventService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $sprintId = $request->get('sprintId');
         $publicEventService->deleteSprint($event_id, $sprintId);
+
         return response()->json();
     }
 
-    public function attachRecommendation(int $event_id, int $recommendation_id, PublicEventService $publicEventService)
-    {
+    public function attachRecommendation(
+        int $event_id,
+        int $recommendation_id,
+        PublicEventService $publicEventService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventService->attachRecommendation($event_id, $recommendation_id);
+
         return response()->json();
     }
 
-    public function detachRecommendation(int $event_id, int $recommendation_id, PublicEventService $publicEventService)
-    {
+    public function detachRecommendation(
+        int $event_id,
+        int $recommendation_id,
+        PublicEventService $publicEventService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventService->detachRecommendation($event_id, $recommendation_id);
+
         return response()->json();
     }
 

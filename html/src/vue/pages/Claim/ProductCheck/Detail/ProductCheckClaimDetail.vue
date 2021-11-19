@@ -8,9 +8,9 @@
                         <span class="badge" :class="statusClass(claim.status)">
                             {{ statusName(claim.status) || 'N/A' }}
                         </span>
-                        <button class="btn btn-primary" v-if="isNewStatus"
+                        <button class="btn btn-primary" v-if="isNewStatus && canUpdate(blocks.claims)"
                                 @click="changeClaimStatus(2)">В работу</button>
-                        <button class="btn btn-primary" v-if="isWorkStatus"
+                        <button class="btn btn-primary" v-if="isWorkStatus && canUpdate(blocks.claims)"
                                 @click="changeClaimStatus(3)">Обработана</button>
                     </div>
 

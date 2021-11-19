@@ -10,7 +10,7 @@
                     :iBannerImages="iBannerImages"
             ></banner-edit-form>
 
-            <b-button type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
+            <b-button v-if="canUpdate(blocks.content)" type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
         </b-form>
     </layout-main>
 </template>

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Product\VariantGroup;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,6 +12,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\Product\VariantGroupDto;
 use Pim\Services\BrandService\BrandService;
@@ -41,11 +45,14 @@ class VariantGroupListController extends Controller
 
     /**
      * @return mixed
-     * @throws \Illuminate\Validation\ValidationException
-     * @throws \Pim\Core\PimException
+     * @throws ValidationException
+     * @throws PimException
+     * @throws Exception
      */
     public function index(Request $request)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $this->title = 'Список товарных групп';
 
         $restQuery = $this->makeRestQuery(true);
@@ -65,10 +72,12 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function create(Request $request): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'name' => ['nullable', 'string'],
             'merchant_id' => ['nullable', 'integer'],
@@ -86,6 +95,8 @@ class VariantGroupListController extends Controller
 
     public function delete(Request $request): Response
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'ids' => ['array', 'required'],
             'ids.*' => ['integer'],
@@ -104,7 +115,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return mixed
      */
     /*public function byOffers(Request $request)
@@ -118,10 +128,12 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $restQuery = $this->makeRestQuery();
         $orders = $this->loadVariantGroups($restQuery);
         $result = [
@@ -135,8 +147,7 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @return array
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -162,14 +173,14 @@ class VariantGroupListController extends Controller
 
     /**
      * @return Collection|VariantGroupDto[]
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     protected function loadVariantGroups(DataQuery $restQuery): Collection
     {
         $variantGroups = $this->variantGroupService->variantGroups($restQuery);
         $merchants = $this->getMerchants($variantGroups->pluck('merchant_id')->all());
 
-        $variantGroups = $variantGroups->map(function (VariantGroupDto $variantGroupDto) use ($merchants) {
+        return $variantGroups->map(function (VariantGroupDto $variantGroupDto) use ($merchants) {
             $variantGroupDto->name = $variantGroupDto->name ? : 'Нет названия';
             $variantGroupDto['merchant'] = $variantGroupDto->merchant_id && $merchants->has($variantGroupDto->merchant_id)
                 ? $merchants[$variantGroupDto->merchant_id] : null;
@@ -178,12 +189,10 @@ class VariantGroupListController extends Controller
 
             return $variantGroupDto;
         });
-
-        return $variantGroups;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(bool $withDefaultFilter = false): DataQuery
     {

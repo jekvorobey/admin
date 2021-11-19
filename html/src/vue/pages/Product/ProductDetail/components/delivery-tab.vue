@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="d-flex justify-content-start align-items-start">
-            <shadow-card title="Хранение и доставка" :buttons="{onEdit:'pencil-alt'}" @onEdit="openModal('DeliveryValuesEdit')">
+            <shadow-card title="Хранение и доставка" :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}" @onEdit="openModal('DeliveryValuesEdit')">
                 <table class="values-table">
                     <tbody>
                     <tr>

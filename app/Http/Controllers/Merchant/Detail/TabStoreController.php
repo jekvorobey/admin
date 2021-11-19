@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\Store\Dto\StoreDto;
@@ -17,10 +19,12 @@ class TabStoreController extends Controller
     /**
      * AJAX пагинация списка складов
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function page(int $merchantId, Request $request, StoreService $storeService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
         $restQuery = $this->makeRestQuery($request, $merchantId);
         $stores = $this->loadStores($restQuery);
         $result = [
@@ -34,7 +38,7 @@ class TabStoreController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function makeRestQuery(Request $request, int $merchantId): DataQuery
     {

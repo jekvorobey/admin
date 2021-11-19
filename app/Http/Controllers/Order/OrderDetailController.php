@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
+use Exception;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
@@ -46,10 +48,12 @@ class OrderDetailController extends Controller
 
     /**
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
-    public function detail(int $id, ShipmentService $shipmentService)
+    public function detail(int $id, ShipmentService $shipmentService, OrderService $orderService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
         $this->loadPaymentStatuses = true;
@@ -63,9 +67,13 @@ class OrderDetailController extends Controller
 
         $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
 
+        $query = $orderService->newQuery();
+        $orderReturnReasons = $orderService->orderReturnReasons($query);
+
         $this->title = 'Заказ ' . $order->number . ' от ' . $order->created_at;
 
         $order['barcodes'] = $barCodes;
+        $order['orderReturnReasons'] = $orderReturnReasons;
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
@@ -75,7 +83,6 @@ class OrderDetailController extends Controller
 
     /**
      * Проверить отправления на сборку
-     * @param array $partsNumber
      */
     private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
     {
@@ -111,10 +118,11 @@ class OrderDetailController extends Controller
 
     /**
      * Изменить статус заказа
-     * @param ShipmentService $shipmentService
      */
     public function changeStatus(int $id, Request $request, OrderService $orderService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
         $data = $this->validate($request, [
             'status' => Rule::in(array_keys(OrderStatus::allStatuses())),
         ]);
@@ -130,8 +138,7 @@ class OrderDetailController extends Controller
     /**
      * Вручную оплатить заказ
      * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
-     * @param ShipmentService $shipmentService
-     * @throws \Exception
+     * @throws Exception
      */
     public function pay(int $id, OrderService $orderService): JsonResponse
     {
@@ -144,12 +151,17 @@ class OrderDetailController extends Controller
 
     /**
      * Отменить заказ
-     * @param ShipmentService $shipmentService
-     * @throws \Exception
+     * @throws Exception
      */
-    public function cancel(int $id, OrderService $orderService): JsonResponse
+    public function cancel(int $id, Request $request, OrderService $orderService): JsonResponse
     {
-        $orderService->cancelOrder($id);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $data = $this->validate($request, [
+            'orderReturnReason' => 'required|int',
+        ]);
+
+        $orderService->cancelOrder($id, $data['orderReturnReason']);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -157,7 +169,7 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getOrder(int $id): OrderDto
     {
@@ -180,6 +192,10 @@ class OrderDetailController extends Controller
         $this->addOrderDeliveryInfo($order);
         $this->addOrderCommonInfo($order);
         $this->addOrderProductInfo($order);
+
+        $orderReturnReasonsquery = $orderService->newQuery();
+        $orderReturnReasons = $orderService->orderReturnReasons($orderReturnReasonsquery);
+        $order['orderReturnReasons'] = $orderReturnReasons;
 
         return $order;
     }
@@ -247,7 +263,7 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function addOrderDeliveryInfo(OrderDto $order): void
     {
@@ -505,7 +521,7 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getKpis(OrderDto $order): Collection
     {

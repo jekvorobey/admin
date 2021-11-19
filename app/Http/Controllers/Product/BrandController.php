@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
@@ -13,6 +15,8 @@ class BrandController extends Controller
 {
     public function list(Request $request, BrandService $brandService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $page = $request->get('page', 1);
         [$total, $brands] = $this->loadBrands($brandService, $page);
 
@@ -23,8 +27,10 @@ class BrandController extends Controller
         ]);
     }
 
-    public function page(Request $request, BrandService $brandService)
+    public function page(Request $request, BrandService $brandService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $page = $request->get('page', 1);
         [$total, $brands] = $this->loadBrands($brandService, $page);
 
@@ -34,8 +40,10 @@ class BrandController extends Controller
         ]);
     }
 
-    public function save(Request $request, BrandService $brandService)
+    public function save(Request $request, BrandService $brandService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $id = $request->get('id');
         $brand = $request->get('brand');
 
@@ -54,8 +62,10 @@ class BrandController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, BrandService $brandService)
+    public function delete(Request $request, BrandService $brandService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -68,8 +78,6 @@ class BrandController extends Controller
     }
 
     /**
-     * @param $page
-     * @return array
      * @throws PimException
      */
     private function loadBrands(BrandService $brandService, $page): array

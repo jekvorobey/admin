@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Content\Menu;
 
 use App\Http\Controllers\Controller;
 use Cms\Services\MenuService\MenuService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,8 @@ class MenuListController extends Controller
 {
     public function index(Request $request, MenuService $menuService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $this->title = 'Меню';
         $query = $this->makeQuery($request);
 
@@ -23,7 +26,7 @@ class MenuListController extends Controller
         ]);
     }
 
-    protected function makeQuery(Request $request)
+    protected function makeQuery(Request $request): RestQuery
     {
         $query = new RestQuery();
         $page = $request->get('page', 1);

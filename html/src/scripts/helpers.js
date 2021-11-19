@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 /**
  * @module Helpers
  */
@@ -35,7 +37,7 @@ export default class Helpers {
     }
 
     static onlyDate(dateString) {
-        return Helpers.dateToString(new Date(dateString));
+        return Helpers.dateToString(new Date(moment(dateString).toString()));
     }
 
     /**

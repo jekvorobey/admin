@@ -12,7 +12,7 @@
     </td>
     <td>{{ item.qty }}</td>
 
-    <td style="white-space: nowrap">
+    <td v-if="canUpdate(blocks.marketing)" style="white-space: nowrap">
       <a :href="editLink" class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;">
         <fa-icon icon="pencil-alt" class="float-right media-btn"></fa-icon>
       </a>

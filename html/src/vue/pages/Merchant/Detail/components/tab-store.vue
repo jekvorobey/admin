@@ -34,7 +34,7 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-12 mt-3">
+            <div class="col-12 mt-3" v-if="canUpdate(blocks.stores)">
                 <a :href="getRoute('merchantStore.add')"
                    class="btn btn-success"
                 >Создать склад</a>

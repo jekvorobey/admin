@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content\Contacts;
 use App\Http\Controllers\Controller;
 use Cms\Dto\ContactDto;
 use Cms\Services\ContactsService\ContactsService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
@@ -18,13 +19,16 @@ class ContactsController extends Controller
 {
     /**
      * Список всех контактов и соц. сетей
-     * @return JsonResponse
+     * @return mixed
      */
     public function list(ContactsService $contactsService)
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $contacts = $contactsService->getContacts()->keyBy('id');
 
         $this->title = 'Управление соц. сетями и контактами';
+
         return $this->render('Content/Contacts', [
             'iContacts' => $contacts,
             'iContactTypes' => ContactDto::contactTypes(),
@@ -33,10 +37,11 @@ class ContactsController extends Controller
 
     /**
      * Добавить контакт или соц. сеть
-     * @return JsonResponse
      */
-    public function add(ContactsService $contactsService)
+    public function add(ContactsService $contactsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'name' => 'required|string',
             'address' => 'nullable|string',
@@ -58,10 +63,11 @@ class ContactsController extends Controller
 
     /**
      * Изменить данные о контакте или соц. сети
-     * @return JsonResponse
      */
-    public function edit(ContactsService $contactsService)
+    public function edit(ContactsService $contactsService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
             'name' => 'required|string',
@@ -88,6 +94,8 @@ class ContactsController extends Controller
      */
     public function remove(ContactsService $contactsService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
         $data = $this->validate(request(), [
             'id' => 'required|integer',
         ]);
@@ -99,10 +107,8 @@ class ContactsController extends Controller
 
     /**
      * Вспомогательная функция, заполняющая Dto полями из Request
-     * @param array $data
-     * @return ContactDto
      */
-    protected function fulfillDto(array $data)
+    protected function fulfillDto(array $data): ContactDto
     {
         $contactDto = new ContactDto();
         $contactDto->id = $data['id'] ?? null;

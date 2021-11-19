@@ -3,16 +3,21 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\PublicEventTicketTypeDto;
 use Pim\Services\PublicEventTicketTypeService\PublicEventTicketTypeService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PublicEventTicketTypeController extends Controller
 {
-    public function list(Request $request, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
-    {
+    public function list(
+        Request $request,
+        PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ticketTypes = $publicEventPublicEventTicketTypeService->getBySprint($request->input('sprint_id'));
 
         return response()->json([
@@ -28,8 +33,12 @@ class PublicEventTicketTypeController extends Controller
         // ]);
     }
 
-    public function page(Request $request, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
-    {
+    public function page(
+        Request $request,
+        PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $page = $request->get('page', 1);
         [$total, $publicEventTicketTypes] = $this->loadPublicEventTicketTypes($publicEventPublicEventTicketTypeService, $page);
 
@@ -39,8 +48,12 @@ class PublicEventTicketTypeController extends Controller
         ]);
     }
 
-    public function save(Request $request, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
-    {
+    public function save(
+        Request $request,
+        PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $id = $request->get('id');
         $publicEventTicketType = $request->get('ticketType');
 
@@ -59,8 +72,12 @@ class PublicEventTicketTypeController extends Controller
         return response()->json();
     }
 
-    public function delete(Request $request, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
-    {
+    public function delete(
+        Request $request,
+        PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ids = $request->get('ids');
 
         if (!$ids || !is_array($ids)) {
@@ -74,8 +91,12 @@ class PublicEventTicketTypeController extends Controller
         return response()->json();
     }
 
-    public function getBySprint(int $sprint_id, PublicEventTicketTypeService $publicEventPublicEventTicketTypeService)
-    {
+    public function getBySprint(
+        int $sprint_id,
+        PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
+    ): JsonResponse {
+        $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $ticketTypes = $publicEventPublicEventTicketTypeService->getBySprint($sprint_id);
 
         return response()->json([
@@ -87,7 +108,9 @@ class PublicEventTicketTypeController extends Controller
         int $sprint_id,
         Request $request,
         PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         $publicEventTicketType = $request->get('publicEventTicketType');
 
         if (!$publicEventTicketType) {
@@ -105,7 +128,9 @@ class PublicEventTicketTypeController extends Controller
         Request $request,
         int $stage_id,
         PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -119,7 +144,9 @@ class PublicEventTicketTypeController extends Controller
         Request $request,
         int $stage_id,
         PublicEventTicketTypeService $publicEventPublicEventTicketTypeService
-    ) {
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
         if (!$request->has('id')) {
             throw new BadRequestHttpException('id is required');
         }
@@ -129,11 +156,6 @@ class PublicEventTicketTypeController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * @param $page
-     * @return array
-     * @throws PimException
-     */
     private function loadPublicEventTicketTypes(
         PublicEventTicketTypeService $publicEventPublicEventTicketTypeService,
         $page

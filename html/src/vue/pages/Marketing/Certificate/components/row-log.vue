@@ -1,9 +1,12 @@
 <template>
     <tr>
         <td>{{ item.transaction_id }}</td>
-        <td>
+        <td v-if="canUpdate(blocks.orders)">
             <a v-if="order" :href="getRoute('orders.detail', {id: order.id})">{{ order.number }}</a>
             <span v-else>-</span>
+        </td>
+        <td v-else>
+            {{ order.number }}
         </td>
         <td>{{ item.certificate_id }}</td>
         <td>
@@ -15,12 +18,20 @@
         <td><card-status :status="item.prev_status"/></td>
         <td><card-status :status="item.new_status"/></td>
 
-        <td>
+        <td v-if="canUpdate(blocks.clients)">
             <a v-if="recipient" :href="recipient.link">{{ recipient.name }}</a>
             <span v-else>-</span>
         </td>
-        <td>
+        <td v-else>
+            <span v-if="recipient">{{ recipient.name }}</span>
+            <span v-else>-</span>
+        </td>
+        <td v-if="canUpdate(blocks.settings)">
             <a v-if="creator" :href="creator.link">{{ creator.name }}</a>
+            <span v-else>-</span>
+        </td>
+        <td v-else>
+            <span v-if="creator">{{ creator.name }}</span>
             <span v-else>-</span>
         </td>
         <td>{{ item.created_at | datetime }}

@@ -119,7 +119,7 @@
                         </b-col>
                     </b-row>
 
-                    <b-row class="mb-2">
+                    <b-row class="mb-2" v-if="canUpdate(blocks.communications)">
                         <b-col>
                             <communication-chat-message kind='createChat' @send="({message, files}) => onCreateChat(message, files)"/>
                         </b-col>

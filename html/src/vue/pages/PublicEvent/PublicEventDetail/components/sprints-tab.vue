@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="createSprint()">Добавить спринт</button>
         </div>
         <table class="table">
@@ -15,7 +15,7 @@
                     <th>Площадка</th>
                     <th>Что взять с собой</th>
                     <th>Статусы продажи</th>
-                    <th class="text-right">Действия</th>
+                    <th class="text-right" v-if="canUpdate(blocks.events)">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
                     <td>{{places(sprint.places)}}</td>
                     <td>{{sprint.raider}}</td>
                     <td>{{statusNames(sprint.sellStatuses)}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => onDeleteSprint([sprint.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editSprint(sprint)">
                             <fa-icon icon="edit"></fa-icon>
@@ -38,48 +38,49 @@
                 </tr>
             </tbody>
         </table>
-            <modal :close="closeModal" v-if="isModalOpen('SprintFormModal')">
-                <div slot="header">
-                    Спринт
-                </div>
-                <div slot="body">
+
+        <modal :close="closeModal" v-if="isModalOpen('SprintFormModal')">
+            <div slot="header">
+                Спринт
+            </div>
+            <div slot="body">
+                <div class="form-group">
+                    <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
                     <div class="form-group">
-                        <v-input v-model="$v.form.name.$model" :error="errorName">Название</v-input>
-                        <div class="form-group">
-                            <label for="date">Начало</label>
-                            <date-picker id="date" input-class="form-control" v-model="$v.form.date_start.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateStart"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="date">Конец</label>
-                            <date-picker id="date" input-class="form-control" v-model="$v.form.date_end.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateEnd"/>
-                        </div>
-                        <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
-                        <b-form-checkbox
-                            v-model="$v.form.hide_ticket_count.$model"
-                            :error="errorHideTicketCount"
-                        >
-                            Скрывать количество оставшихся билетов
-                        </b-form-checkbox>
-                        <div class="form-group">
-                            <label for="description">Что взять с собой</label>
-                            <ckeditor type="classic" v-model="$v.form.raider.$model" />
-                        </div>
-                        <b-form-group label="Билеты продаются при статусах" :disabled="editSprintId === null">
-                            <b-form-checkbox-group
-                                v-model="selectedSprintStatusTypes"
-                                :options="statuses"
-                                value-field="id"
-                                text-field="name"
-                                @change="toggleSprintStatus"
-                            ></b-form-checkbox-group>
-                        </b-form-group>
+                        <label for="date">Начало</label>
+                        <date-picker id="date" input-class="form-control" v-model="$v.form.date_start.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateStart"/>
                     </div>
                     <div class="form-group">
-                        <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
-                        <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+                        <label for="date">Конец</label>
+                        <date-picker id="date" input-class="form-control" v-model="$v.form.date_end.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateEnd"/>
                     </div>
+                    <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
+                    <b-form-checkbox
+                        v-model="$v.form.hide_ticket_count.$model"
+                        :error="errorHideTicketCount"
+                    >
+                        Скрывать количество оставшихся билетов
+                    </b-form-checkbox>
+                    <div class="form-group">
+                        <label for="description">Что взять с собой</label>
+                        <ckeditor type="classic" v-model="$v.form.raider.$model" />
+                    </div>
+                    <b-form-group label="Билеты продаются при статусах" :disabled="editSprintId === null">
+                        <b-form-checkbox-group
+                            v-model="selectedSprintStatusTypes"
+                            :options="statuses"
+                            value-field="id"
+                            text-field="name"
+                            @change="toggleSprintStatus"
+                        ></b-form-checkbox-group>
+                    </b-form-group>
                 </div>
-            </modal>
+                <div class="form-group">
+                    <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
+                    <button @click="onCancel" type="button" class="btn btn-secondary">Отмена</button>
+                </div>
+            </div>
+        </modal>
     </div>
 </template>
 
@@ -94,7 +95,7 @@
         ACT_SAVE_SPRINT_STATUS,
         ACT_DELETE_SPRINT_STATUS
     } from '../../../../store/modules/public-events';
-    
+
     import Helpers from '../../../../../scripts/helpers';
     import modalMixin from '../../../../mixins/modal';
     import {validationMixin} from 'vuelidate';

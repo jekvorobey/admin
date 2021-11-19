@@ -18,7 +18,7 @@
           help="период указывается в днях">Произвольный период
       </v-input>
 
-      <div class="col-12">
+      <div class="col-12" v-if="canUpdate(blocks.merchants)">
         <button class="btn btn-sm btn-success" :disabled="form.billing_cycle <= 0" @click="saveBillingCycle">Сохранить
         </button>
       </div>
@@ -56,8 +56,9 @@
         <td>Статус</td>
         <td>К выплате, р</td>
         <td>Документ</td>
+        <td>Создан</td>
         <td>Изменен</td>
-        <td>Действия</td>
+        <td v-if="canUpdate(blocks.merchants)">Действия</td>
       </tr>
       <tr v-for="report in billingReports">
         <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
@@ -71,8 +72,9 @@
           <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
           {id:getMerchantId, reportId:report.id})">Скачать</a>
         </td>
+        <td>{{ report.created_at }}</td>
         <td>{{ report.updated_at }}</td>
-        <td>
+        <td v-if="canUpdate(blocks.merchants)">
           <b-button v-if="report.status === 0" class="btn btn-warning btn-sm" @click="updateStatus(report.id, 4)">
             Отправить <fa-icon icon="check"/>
           </b-button>
@@ -171,7 +173,7 @@
         <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
       </div>
     </div>
-    <div class="row mb-3">
+    <div class="row mb-3" v-if="canUpdate(blocks.merchants)">
       <div class="col-12 mt-3">
         <b-button class="btn btn-primary btn-sm" @click="openCorrectionModal()">
           Скорректировать биллинг <fa-icon icon="edit"/>
@@ -194,7 +196,7 @@
         <th>Акционная Комиссия Оператора, %</th>
         <th>Вознаграждение Оператора, руб</th>
         <th>Выплата Мерчанту, руб</th>
-        <th>Действия</th>
+        <th v-if="canUpdate(blocks.merchants)">Действия</th>
       </tr>
       </thead>
       <tbody>
@@ -235,7 +237,7 @@
           <td>{{ billingOperation.action_percent ? billingOperation.action_percent : '-' }}</td>
           <td>{{ billingOperation.commission }}</td>
           <td>{{ billingOperation.price - billingOperation.commission }}</td>
-          <td>
+          <td v-if="canUpdate(blocks.merchants)">
             <b-button v-if="billingOperation.shipment_status === 3" class="btn btn-danger btn-sm" @click="deleteOperation(billingOperation.id)">
               Удалить
             </b-button>

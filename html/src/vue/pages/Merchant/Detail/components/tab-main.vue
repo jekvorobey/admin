@@ -1,111 +1,147 @@
 <template>
-    <table class="table table-sm">
-        <thead>
-        <tr>
-            <th colspan="2">
-                Основная информация
-                <button @click="saveMerchant" class="btn btn-success" :disabled="!$v.form.$anyDirty">Сохранить</button>
-                <button @click="cancel" class="btn btn-outline-danger" :disabled="!$v.form.$anyDirty">Отмена</button>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th width="400px">ID</th>
-            <td>{{ merchant.id }}</td>
-        </tr>
-        <tr>
-            <th>Дата регистрации</th>
-            <td>{{ datetimePrint(merchant.created_at) }}</td>
-        </tr>
-        <tr>
-            <th>Коммерческие условия</th>
-            <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
-        <tr>
-            <th>Юридический адрес*</th>
-            <td><v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress"/></td>
-        </tr>
-        <tr>
-            <th>Фактический адрес*</th>
-            <td><v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress"/></td>
-        </tr>
-        <tr>
-            <th>ИНН*</th>
-            <td><v-input v-model="$v.form.inn.$model" :error="errorInn"/></td>
-        </tr>
-        <tr>
-            <th>КПП</th>
-            <td><v-input v-model="$v.form.kpp.$model"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">ФИО генерального</th></tr>
-        <tr>
-            <th>Фамилия</th>
-            <td><v-input v-model="$v.form.ceo_last_name.$model"/></td>
-        </tr>
-        <tr>
-            <th>Имя</th>
-            <td><v-input v-model="$v.form.ceo_first_name.$model"/></td>
-        </tr>
-        <tr>
-            <th>Отчество</th>
-            <td><v-input v-model="$v.form.ceo_middle_name.$model"/></td>
-        </tr>
-
-        <tr class="table-secondary"><th colspan="2">Банковские реквизиты</th></tr>
-        <tr>
-            <th>Номер банковского счета*</th>
-            <td><v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount"/></td>
-        </tr>
-        <tr>
-            <th>Банк*</th>
-            <td><v-input v-model="$v.form.bank.$model" :error="errorBank"/></td>
-        </tr>
-        <tr>
-            <th>Номер корреспондентского счета банка*</th>
-            <td><v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount"/></td>
-        </tr>
-        <tr>
-            <th>Юридический адрес банка*</th>
-            <td><v-input v-model="$v.form.bank_address.$model" :error="errorBankAddress"/></td>
-        </tr>
-        <tr>
-            <th>БИК банка*</th>
-            <td><v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik"/></td>
-        </tr>
-        <tr class="table-secondary"><th colspan="2">Документы</th></tr>
-        <tr>
-            <th>Номер Договора</th>
-            <td><v-input v-model="$v.form.contract_number.$model"/></td>
-        </tr>
-        <tr>
-            <th>Дата договора</th>
-            <td><date-picker v-model="$v.form.contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
-        </tr>
-        <tr>
-            <th>Документы</th>
-            <td>
-                <div v-for="(document, i) in documents" class="mb-1">
-                    <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
-                    <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
-                </div>
-                <div v-if="!documents.length">-</div>
-
-                <div>
-                    <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
-                    <div v-else class="alert alert-success py-1 px-3" role="alert">
-                        Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-                        <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-                        <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+    <div>
+        <div class="row">
+            <div class="col-12 col-md-5">
+                <div class="card mb-3">
+                    <div class="card-header">Загрузить данные организации из DaData</div>
+                    <div class="card-body">
+                        <v-dadata
+                            :value.sync="daDataOrganization"
+                            type="PARTY"
+                            :filter="(suggestion) => suggestion.data.type === 'LEGAL'"
+                            @onSelect="fillOrganizationFromDaData"
+                        />
+                        <p class="small mb-0">
+                            Выберите организацию из выпадающего списка, чтобы актуализировать поля мерчанта
+                        </p>
                     </div>
                 </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th colspan="2">
+                            Основная информация
+                            <template v-if="canUpdate(blocks.merchants)">
+                                <button @click="saveMerchant" class="btn btn-success" :disabled="!$v.form.$anyDirty">Сохранить</button>
+                                <button @click="cancel" class="btn btn-outline-danger" :disabled="!$v.form.$anyDirty">Отмена</button>
+                            </template>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th width="400px">ID</th>
+                        <td>{{ merchant.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Дата регистрации</th>
+                        <td>{{ datetimePrint(merchant.created_at) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Коммерческие условия</th>
+                        <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
+                    </tr>
+
+                    <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
+                    <tr>
+                        <th>Юридический адрес*</th>
+                        <td>
+                            <v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Фактический адрес*</th>
+                        <td><v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress"/></td>
+                    </tr>
+                    <tr>
+                        <th>ИНН*</th>
+                        <td><v-input v-model="$v.form.inn.$model" :error="errorInn"/></td>
+                    </tr>
+                    <tr>
+                        <th>КПП</th>
+                        <td><v-input v-model="$v.form.kpp.$model"/></td>
+                    </tr>
+
+                    <tr class="table-secondary"><th colspan="2">ФИО генерального</th></tr>
+                    <tr>
+                        <th>Фамилия</th>
+                        <td><v-input v-model="$v.form.ceo_last_name.$model"/></td>
+                    </tr>
+                    <tr>
+                        <th>Имя</th>
+                        <td><v-input v-model="$v.form.ceo_first_name.$model"/></td>
+                    </tr>
+                    <tr>
+                        <th>Отчество</th>
+                        <td><v-input v-model="$v.form.ceo_middle_name.$model"/></td>
+                    </tr>
+
+                    <tr class="table-secondary"><th colspan="2">Банковские реквизиты</th></tr>
+                    <tr>
+                        <th>Номер банковского счета*</th>
+                        <td><v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount"/></td>
+                    </tr>
+                    <tr>
+                        <th>Банк*</th>
+                        <td>
+                            <v-dadata
+                                type="BANK"
+                                :value.sync="$v.form.bank.$model"
+                                :error="errorBank"
+                                @onSelect="fillBankDetailsFromDaData"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Номер корреспондентского счета банка*</th>
+                        <td><v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount"/></td>
+                    </tr>
+                    <tr>
+                        <th>Юридический адрес банка*</th>
+                        <td><v-input v-model="$v.form.bank_address.$model" :error="errorBankAddress"/></td>
+                    </tr>
+                    <tr>
+                        <th>БИК банка*</th>
+                        <td><v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik"/></td>
+                    </tr>
+                    <tr class="table-secondary"><th colspan="2">Документы</th></tr>
+                    <tr>
+                        <th>Номер Договора</th>
+                        <td><v-input v-model="$v.form.contract_number.$model"/></td>
+                    </tr>
+                    <tr>
+                        <th>Дата договора</th>
+                        <td><date-picker v-model="$v.form.contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
+                    </tr>
+                    <tr>
+                        <th>Документы</th>
+                        <td>
+                            <div v-for="(document, i) in documents" class="mb-1">
+                                <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
+                                <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
+                            </div>
+                            <div v-if="!documents.length">-</div>
+
+                            <div>
+                                <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                                <div v-else class="alert alert-success py-1 px-3" role="alert">
+                                    Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
+                                    <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
+                                    <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -119,10 +155,11 @@
 
     import {required, requiredIf, minLength} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
+    import VDadata from "../../../../components/controls/VDaData/VDaData.vue";
 
     export default {
     name: 'tab-main',
-    components: {VInput, FileInput, VDeleteButton, DatePicker},
+    components: {VDadata, VInput, FileInput, VDeleteButton, DatePicker},
     props: ['model', 'categoryList', 'brandList'],
     mixins: [
         validationMixin,
@@ -148,6 +185,7 @@
 
                 file: null,
             },
+            daDataOrganization: '',
             documents: [],
             selectedBrand: null,
             selectedCategory: null,
@@ -205,7 +243,8 @@
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
-            })
+                this.daDataOrganization = '';
+            });
         },
         cancel() {
             this.form.legal_address = this.merchant.legal_address;
@@ -265,6 +304,42 @@
             }
             array.$touch();
         },
+
+        fillOrganizationFromDaData(suggestion) {
+            const { data } = suggestion;
+
+            if (typeof data.inn !== 'undefined') {
+                this.$v.form.inn.$model = data.inn;
+            }
+
+            if (typeof data.kpp !== 'undefined') {
+                this.$v.form.kpp.$model = data.kpp;
+            }
+
+            if (typeof data.address !== 'undefined') {
+                this.$v.form.legal_address.$model = data.address.unrestricted_value;
+            }
+        },
+
+        fillBankDetailsFromDaData(suggestion) {
+            const { data } = suggestion;
+
+            if (typeof unrestricted_value !== 'undefined') {
+                this.$v.form.bank.$model = unrestricted_value;
+            }
+
+            if (typeof data.bic !== 'undefined') {
+                this.$v.form.bank_bik.$model = data.bic;
+            }
+
+            if (typeof data.correspondent_account !== 'undefined') {
+                this.$v.form.correspondent_account.$model = data.correspondent_account;
+            }
+
+            if (typeof data.address !== 'undefined') {
+                this.$v.form.bank_address.$model = data.address.unrestricted_value;
+            }
+        }
     },
     computed: {
         merchant: {
@@ -338,3 +413,9 @@
     }
 };
 </script>
+
+<style>
+    .modified-field input {
+        background-color: #fffae0;
+    }
+</style>

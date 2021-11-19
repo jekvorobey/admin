@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="d-flex justify-content-between mt-3 mb-3">
+        <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
             <button class="btn btn-success" @click="createOrganizer">Создать организатора</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
                 <span class="mr-4 align-self-baseline">Выбрано организаторов: {{massAll(massSelectionType).length}}</span>
@@ -21,7 +21,7 @@
                     <th>Описание</th>
                     <th>WhatsApp/Viber/Telegram</th>
                     <th>Сайт</th>
-                    <th class="text-right">Действия</th>
+                    <th v-if="canUpdate(blocks.events)" class="text-right">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,7 +41,7 @@
                     <td>{{organizer.description}}</td>
                     <td>{{organizer.messenger_phone}}</td>
                     <td>{{organizer.site}}</td>
-                    <td>
+                    <td v-if="canUpdate(blocks.events)">
                         <v-delete-button @delete="() => deleteOrganizers([organizer.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editOrganizers(organizer)">
                             <fa-icon icon="edit"></fa-icon>
@@ -227,7 +227,7 @@
                 if (this.socialName && this.socialLink) {
                     this.form.social_links.push(obj);
                 }
-                
+
                 this.socialName = null;
                 this.socialLink = null;
             },

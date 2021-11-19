@@ -33,7 +33,7 @@
     export default {
         props: {
             mediaObject: {},
-            small: Boolean
+            small: Boolean,
         },
         computed: {
             imageUrl() {

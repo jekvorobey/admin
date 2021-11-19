@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
+use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Dto\Price\PriceInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
@@ -20,6 +21,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
+use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductApprovalStatus;
@@ -39,16 +41,17 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ProductDetailController extends Controller
 {
     /**
-     * @param int $id
      * @return mixed
      */
     public function index(
-        $id,
+        int $id,
         ProductService $productService,
         CategoryService $categoryService,
         BrandService $brandService,
         ContentBadgesService $badgesService
     ) {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         [
             $product,
             $images,
@@ -89,8 +92,10 @@ class ProductDetailController extends Controller
         ]);
     }
 
-    public function detailData(int $id, ProductService $productService)
+    public function detailData(int $id, ProductService $productService): JsonResponse
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         [$product, $images, $props, $availableProps, $directoryValues] = $this->getProductData($id, $productService);
         return response()->json([
             'product' => $product,
@@ -101,8 +106,10 @@ class ProductDetailController extends Controller
         ]);
     }
 
-    public function saveProduct(int $id, Request $request, ProductService $productService)
+    public function saveProduct(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'name' => 'string',
             'brand_id' => 'integer',
@@ -121,21 +128,30 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
-    public function saveProps(int $id, Request $request, ProductService $productService)
+    /**
+     * @throws PimException
+     */
+    public function saveProps(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'props' => 'required|array',
         ]);
         $productService->saveProperties($id, $data['props']);
+
         return response()->json();
     }
 
-    public function saveOfferProps(int $id, Request $request, OfferService $offerService)
+    public function saveOfferProps(int $id, Request $request, OfferService $offerService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'props' => 'required',
         ]);
         $offerService->saveProperties($id, $data['props']);
+
         return response()->json();
     }
 
@@ -145,21 +161,27 @@ class ProductDetailController extends Controller
      */
     public function saveIngredients(int $productId, ProductService $productService)
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate(request(), [
             'items' => 'present|nullable|json',
         ]);
 
         $productService->updateIngredients($productId, $data['items']);
+
         return response('', 204);
     }
 
-    public function saveImage(int $id, Request $request, ProductService $productService)
+    public function saveImage(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'id' => 'required|integer',
             'type' => 'required|integer',
         ]);
         $productService->addImage($id, $data['id'], $data['type']);
+
         return response()->json();
     }
 
@@ -174,47 +196,58 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
-    public function deleteImage(int $id, Request $request, ProductService $productService)
+    public function deleteImage(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'id' => 'required|integer',
             'type' => 'required|integer',
         ]);
         $productService->deleteImage($id, $data['id'], $data['type']);
+
         return response()->json();
     }
 
     /**
      * Изменить статус согласования товара
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function changeApproveStatus(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'approval_status' => Rule::in(array_keys(ProductApprovalStatus::allStatuses())),
         ]);
         $product = new ProductDto($data);
         $productService->updateProduct($id, $product);
+
         return response()->json();
     }
 
     /**
      * Изменить статус согласования товара на "Отклонен" с комментарием
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function reject(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'approval_status_comment' => 'required|string',
         ]);
         $product = new ProductDto($data);
         $product->approval_status = ProductApprovalStatus::STATUS_REJECT;
         $productService->updateProduct($id, $product);
+
         return response()->json();
     }
 
     public function addTip(int $id, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $data = $this->validate($request, [
             'description' => 'required',
             'fileId' => 'required',
@@ -229,6 +262,8 @@ class ProductDetailController extends Controller
 
     public function editTip(int $id, int $tipId, Request $request, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $description = $request->get('description');
         $fileId = $request->get('fileId');
 
@@ -237,17 +272,23 @@ class ProductDetailController extends Controller
         $tip->file_id = $fileId;
 
         $productService->updateTip($id, $tipId, $tip);
+
         return response()->json();
     }
 
     public function deleteTip(int $id, int $tipId, ProductService $productService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         $productService->deleteTip($id, $tipId);
+
         return response()->json();
     }
 
-    protected function getProductData(int $id, ProductService $productService)
+    protected function getProductData(int $id, ProductService $productService): array
     {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
         /** @var Collection|ProductDto[] $products */
         $products = $productService
             ->newQuery()
@@ -316,6 +357,7 @@ class ProductDetailController extends Controller
         $product['orders'] = $orders;
         $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
+
         return [
             $product,
             $images,
@@ -326,7 +368,7 @@ class ProductDetailController extends Controller
         ];
     }
 
-    protected function properties(ProductDto $product)
+    protected function properties(ProductDto $product): array
     {
         $categoryService = resolve(CategoryService::class);
         $directoryValueService = resolve(PropertyDirectoryValueService::class);

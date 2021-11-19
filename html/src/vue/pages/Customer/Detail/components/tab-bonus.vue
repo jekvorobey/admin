@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form novalidate v-on:submit.prevent.stop="createBonus">
+        <form novalidate v-on:submit.prevent.stop="createBonus" v-if="canUpdate(blocks.clients)">
             <div class="row">
                 <v-input v-model="$v.bonus.name.$model" class="col-12" :error="errorBonusName">Название</v-input>
 
