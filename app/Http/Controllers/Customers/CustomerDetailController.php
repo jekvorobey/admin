@@ -149,6 +149,8 @@ class CustomerDetailController extends Controller
                 'legal_info_bank_correspondent_account' => $customer->legal_info_bank_correspondent_account,
                 'referral_code' => $customer->referral_code,
                 'referral_bill' => $customer->referral_bill,
+                'referral_contract_number' => $customer->referral_contract_number,
+                'referral_contract_at' => $customer->referral_contract_at,
                 'promo_page_name' => $customer->promo_page_name,
                 'bonus' => Helpers::getPriceFormat($customer->bonus, 0),
                 'birthday' => $birthday ? $birthday->format('Y-m-d') : null,
@@ -222,6 +224,8 @@ class CustomerDetailController extends Controller
             'customer.legal_info_bank_correspondent_account' => 'nullable',
             'customer.referral_code' => 'nullable',
             'customer.promo_page_name' => 'nullable',
+            'customer.referral_contract_number' => 'nullable',
+            'customer.referral_contract_at' => 'nullable|date_format:Y-m-d',
 
             'activities' => 'nullable|array',
             'activities.*' => 'numeric',
