@@ -2,7 +2,7 @@
     <layout-main back="true">
         <div class="container mt-4">
 
-            <div class="row mt-4">
+            <div class="row mt-4" v-if="canUpdate(blocks.products)">
                 <div class="card col-12">
                     <div class="card-body">
                         <template v-if="iProperty">
@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row mt-4" v-if="productProperty.type === 'integer' || productProperty.type === 'double'">
                 <div class="col-6">
                     <v-input v-model="productProperty.measurement_unit">

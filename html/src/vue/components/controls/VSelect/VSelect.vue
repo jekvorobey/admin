@@ -65,10 +65,10 @@
                     options = [ ...this.$attrs.options ];
                 } else {
                     for (const optionKey in this.$attrs.options) {
-                        options.push({
-                            value: optionKey,
-                            text: this.$attrs.options[optionKey]
-                        });
+                        options.push(this.prepareOptionValue(
+                            this.$attrs.options[optionKey],
+                            optionKey
+                        ));
                     }
                 }
 
@@ -88,5 +88,23 @@
                 ];
             }
         },
+
+        methods: {
+            prepareOptionValue(unpreparedOption, unpreparedOptionKey) {
+                let preparedOption = {};
+
+                if (
+                    typeof unpreparedOption === 'object' &&
+                    !Array.isArray(unpreparedOption)
+                ) {
+                    preparedOption = Object.assign(preparedOption, unpreparedOption);
+                } else {
+                    preparedOption.text = unpreparedOption;
+                    preparedOption.value = unpreparedOptionKey;
+                }
+
+                return preparedOption;
+            }
+        }
     }
 </script>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -241,9 +242,8 @@ class CustomerDetailController extends Controller
         $activities = request('activities');
         $passport = request('customer.passport');
 
-        /** TODO заменить на роль из базы */
-        // Если пользователь не суперадмин, то запрещаем изменять телефон и почту
-        if ($user && !$requestInitiator->hasRole(UserDto::ADMIN__SUPER)) {
+        // Если пользователь не администратор, то запрещаем изменять телефон и почту
+        if ($user && !$requestInitiator->hasRole(RoleDto::ROLE_ADMINISTRATOR)) {
             unset($user['phone']);
             unset($user['email']);
         }
