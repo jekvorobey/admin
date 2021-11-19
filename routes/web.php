@@ -133,19 +133,19 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('billingReport')->namespace('BillingReport')->group(function () {
+    Route::prefix('billing-reports')->namespace('BillingReport')->group(function () {
         Route::prefix('{type}/{entityId}')->group(function () {
-            Route::get('', 'BillingReportController@load')->name('billingReport.detail.billing');
-            Route::get('billing-reports', 'BillingReportController@billingReports')->name('billingReport.detail.reports');
+            Route::get('load', 'BillingReportController@load')->name('billingReport.detail.billing');
+            Route::get('list', 'BillingReportController@billingReports')->name('billingReport.detail.reports');
             Route::get('download/{reportId}', 'BillingReportController@billingReportDownload')->name(
                 'billingReport.detail.download'
             );
             Route::put('billing_cycle', 'BillingReportController@billingCycle')->name('billingReport.detail.billing_cycle');
-            Route::post('billing-reports/create', 'BillingReportController@billingReportCreate')->name('billingReport.detail.create');
-            Route::delete('billing-reports/{reportId}', 'BillingReportController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
+            Route::post('create', 'BillingReportController@billingReportCreate')->name('billingReport.detail.create');
+            Route::delete('{reportId}', 'BillingReportController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
                 'billingReport.detail.delete'
             );
-            Route::put('billing-reports/{reportId}', 'BillingReportController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
+            Route::put('{reportId}', 'BillingReportController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
                 'billingReport.detail.updateStatus'
             );
         });
