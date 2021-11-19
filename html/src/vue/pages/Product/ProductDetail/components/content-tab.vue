@@ -25,7 +25,7 @@
                                 v-if="canUpdate(blocks.products)"
                                 icon="trash-alt"
                                 class="float-right media-btn"
-                                @click="onDeleteImage(3, image.id)"
+                                @click="onDeleteImage(productImageType.gallery, image.id)"
                             ></fa-icon>
                         </div>
                     </transition-group>
@@ -35,7 +35,7 @@
         <div v-if="canUpdate(blocks.products)" class="row">
             <div class="col p-3">
                 <div class="align-self-center">
-                    <button class="btn btn-light" @click="startUploadImage(3)">Добавить</button>
+                    <button class="btn btn-light" @click="startUploadImage(productImageType.gallery)">Добавить</button>
                 </div>
             </div>
         </div>
@@ -260,14 +260,14 @@ export default {
             replaceFileId: undefined,
             currentTip: {},
             currentProduct: Object.assign({}, this.product),
-            galleryImages: this.images.filter(image => image.type === 3),
+            galleryImages: this.images.filter(image => image.type === this.$store.state.layout.productImageTypes.gallery),
             drag: false,
         };
     },
 
     watch: {
         images() {
-            this.galleryImages = this.images.filter(image => image.type === 3);
+            this.galleryImages = this.images.filter(image => image.type === this.productImageType.gallery);
         }
     },
 
@@ -276,7 +276,7 @@ export default {
             this.currentType = type;
             this.replaceFileId = replaceFileId;
 
-            if (this.currentType === 3) {
+            if (this.currentType === this.productImageType.gallery) {
                 this.openModal('ImageUpload');
             } else {
                 this.openModal('ImageUploadSingle');
@@ -291,7 +291,7 @@ export default {
                 {},
                 {
                     images_ids: this.galleryImages.map(image => image.productImageId),
-                    type: 3
+                    type: this.productImageType.gallery
                 }
             );
 

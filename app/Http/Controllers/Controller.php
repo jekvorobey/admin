@@ -56,6 +56,7 @@ class Controller extends BaseController
             ->loadUserRoles($this->loadUserRoles)
             ->loadBlocks()
             ->loadBlockPermissions()
+            ->loadProductImagesTypes()
             ->loadCustomerStatus($this->loadCustomerStatus)
             ->loadCommunicationChannelTypes($this->loadCommunicationChannelTypes)
             ->loadCommunicationChannels($this->loadCommunicationChannels)
