@@ -1,8 +1,16 @@
 <template>
-    <b-modal :id="id" title="Создание мерчанта" hide-footer ref="modal">
+    <b-modal :id="id" title="Создание мерчанта 1" hide-footer ref="modal">
         <template v-slot:default="{close}">
             <div class="mb-3">
-                <v-input v-model="$v.form.legal_name.$model" :error="errorLegalName">Юридическое наименование организации</v-input>
+                <v-dadata
+                    :value.sync="$v.form.legal_name.$model"
+                    :filter="(suggestion) => suggestion.data.type === 'LEGAL'"
+                    :error="errorLegalName"
+                    type="PARTY"
+                    @onSelect="fillOrganizationFromDaData"
+                >
+                    Юридическое наименование организации
+                </v-dadata>
             </div>
             <div class="row">
                 <v-input v-model="$v.form.inn.$model" :error="errorInn" class="col-md-6 col-12">ИНН</v-input>
@@ -15,15 +23,25 @@
                 <v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress">Фактический адрес</v-input>
             </div>
 
-
             <hr/>
 
             <div class="mb-3">
                 <v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount">Номер банковского счета</v-input>
             </div>
-            <div class="row">
-                <v-input v-model="$v.form.bank.$model" :error="errorBank" class="col-md-6 col-12">Наименование банка</v-input>
-                <v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik" class="col-md-6 col-12">БИК банка</v-input>
+
+            <div class="mb-3">
+                <v-dadata
+                    :value.sync="$v.form.bank.$model"
+                    :error="errorBank"
+                    type="BANK"
+                    @onSelect="fillBankDetailsFromDaData"
+                >
+                    Наименование банка
+                </v-dadata>
+            </div>
+
+            <div class="mb-3">
+                <v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik">БИК банка</v-input>
             </div>
             <div class="mb-3">
                 <v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount">Номер корреспондентского счета</v-input>
@@ -114,6 +132,7 @@
 
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
 
     const cleanForm = {
         legal_name: '',
@@ -150,7 +169,7 @@
             'id',
             'communicationMethods',
         ],
-        components: {VInput, VSelect},
+        components: {VInput, VSelect, VDadata},
         data() {
             let form = JSON.parse(JSON.stringify(cleanForm));
             return {
@@ -239,10 +258,51 @@
                     Services.hideLoader();
                 });
             },
+
             cancel() {
                 this.$set(this, 'form', JSON.parse(JSON.stringify(cleanForm)));
                 this.$v.$reset();
             },
+
+            fillOrganizationFromDaData(suggestion) {
+                const { data } = suggestion;
+
+                if (typeof data.inn !== 'undefined') {
+                    this.$v.form.inn.$model = data.inn;
+                }
+
+                if (typeof data.kpp !== 'undefined') {
+                    this.$v.form.kpp.$model = data.kpp;
+                }
+
+                if (typeof data.name !== 'undefined') {
+                    this.$v.form.legal_name.$model = data.name.full_with_opf;
+                }
+
+                if (typeof data.address !== 'undefined') {
+                    this.$v.form.legal_address.$model = data.address.unrestricted_value;
+                }
+            },
+
+            fillBankDetailsFromDaData(suggestion) {
+                const { data, unrestricted_value } = suggestion;
+
+                if (typeof unrestricted_value !== 'undefined') {
+                    this.$v.form.bank.$model = unrestricted_value;
+                }
+
+                if (typeof data.bic !== 'undefined') {
+                    this.$v.form.bank_bik.$model = data.bic;
+                }
+
+                if (typeof data.correspondent_account !== 'undefined') {
+                    this.$v.form.correspondent_account.$model = data.correspondent_account;
+                }
+
+                if (typeof data.address !== 'undefined') {
+                    this.$v.form.bank_address.$model = data.address.unrestricted_value;
+                }
+            }
         },
         computed: {
             telMask() {
