@@ -17,7 +17,7 @@
                     help="период указывается в днях">Произвольный период
                 </v-input>
 
-                <div class="col-12" v-if="checkRights">
+                <div class="col-12" v-if="canEdit">
                     <button class="btn btn-sm btn-success" :disabled="form.billing_cycle <= 0" @click="saveBillingCycle">
                         Сохранить
                     </button>
@@ -31,7 +31,7 @@
             <tr>
                 <td>
                     <date-picker
-                        v-model="billing.period"
+                        v-model="newReportDates"
                         value-type="format"
                         format="YYYY-MM-DD"
                         range
@@ -41,8 +41,10 @@
                 <td>
                     <button
                         class="btn btn-success btn-sm"
-                        :disabled="!isPeriod(billing.period)"
-                        @click="createReport">Сделать внеочередной биллинг
+                        :disabled="!isNewReportDatesSelected"
+                        @click="createReport"
+                    >
+                        Сделать внеочередной биллинг
                     </button>
                 </td>
             </tr>
@@ -58,7 +60,7 @@
                 <td>Документ</td>
                 <td>Создан</td>
                 <td>Изменен</td>
-                <td v-if="checkRights">Действия</td>
+                <td v-if="canEdit">Действия</td>
             </tr>
             <tr v-for="report in billingReports">
                 <td>{{ datePrint(report.date_from) }} &ndash; {{ datePrint(report.date_to) }}</td>
@@ -69,21 +71,31 @@
                 </td>
                 <td>{{ report.total_sum.toLocaleString() }}</td>
                 <td>
-                    <a target="_blank" :href="$store.getters.getRoute('billingReport.detail.download',
-          {entityId:getEntityId, reportId:report.id, type: getType})">Скачать</a>
+                    <a target="_blank"
+                       :href="getRoute('billingReport.detail.download', {entityId: model.id, reportId: report.id, type: type})"
+                    >
+                        Скачать
+                    </a>
                 </td>
                 <td>{{ datetimePrint(report.created_at) }}</td>
                 <td>{{ datetimePrint(report.updated_at) }}</td>
-                <td v-if="checkRights">
-                    <b-button v-if="report.status === billingReportStatus.new" class="btn btn-warning btn-sm" @click="updateStatus(report.id, billingReportStatus.waiting)">
-                        Отправить
-                        <fa-icon icon="check"/>
-                    </b-button>
-                    <b-button v-else-if="report.status !== billingReportStatus.accepted" class="btn btn-success btn-sm"
-                              @click="updateStatus(report.id, billingReportStatus.accepted)">
-                        Подтвердить
-                        <fa-icon icon="check"/>
-                    </b-button>
+                <td v-if="canEdit">
+                    <template v-if="withConfirm">
+                        <b-button v-if="report.status === billingReportStatuses.new"
+                                  class="btn btn-warning btn-sm"
+                                  @click="updateStatus(report.id, billingReportStatuses.waiting)"
+                        >
+                            Отправить
+                            <fa-icon icon="check"/>
+                        </b-button>
+                        <b-button v-else-if="report.status !== billingReportStatuses.accepted"
+                                  class="btn btn-success btn-sm"
+                                  @click="updateStatus(report.id, billingReportStatuses.accepted)"
+                        >
+                            Подтвердить
+                            <fa-icon icon="check"/>
+                        </b-button>
+                    </template>
                     <b-button class="btn btn-danger btn-sm" @click="removeItem(report.id)">
                         Удалить
                         <fa-icon icon="trash-alt"/>
@@ -110,6 +122,10 @@ export default {
         },
         title: String,
         rightsBlock: Number,
+        withConfirm: {
+            type: Boolean,
+            default: false
+        }
     },
     components: {
         VInput,
@@ -121,30 +137,10 @@ export default {
                 billing_cycle: null,
             },
             monthly: true,
-            billing: {
-                period: null,
-            },
             billingList: {},
             billingReports: {},
-            newReportDates: {
-                dateFrom:null,
-                dateTo:null,
-            },
+            newReportDates: [],
             billingOperation: {},
-        }
-    },
-    computed: {
-        statuses() {
-            let billingReportStatuses = this.billingReportStatus;
-            let statuses = {};
-            statuses[billingReportStatuses.new] = {text:'модерация', badge:'light'};
-            statuses[billingReportStatuses.viewed] = {text:'просмотрен', badge:'primary'};
-            statuses[billingReportStatuses.accepted] = {text:'подтвержден', badge:'success'};
-            statuses[billingReportStatuses.rejected] = {text:'отклонен', badge:'danger'};
-            statuses[billingReportStatuses.waiting] = {text:'отправлен', badge:'warning'};
-            statuses[billingReportStatuses.payed] = {text:'оплачен', badge:'success'};
-
-            return statuses;
         }
     },
     methods: {
@@ -153,44 +149,36 @@ export default {
         }),
         setMonthlyPeriod() {
             if (this.monthly && this.form.billing_cycle && this.form.billing_cycle !== 0) {
-
                 this.form.billing_cycle = 0;
                 this.saveBillingCycle();
             }
         },
         saveBillingCycle() {
             Services.showLoader();
-            Services.net().put(this.getRoute('billingReport.detail.billing_cycle',
-                    {entityId: this.model.id}),
-                {
+            Services.net().put(this.getRoute('billingReport.detail.billing_cycle', {entityId: this.model.id}), {
                     billing_cycle: this.form.billing_cycle
                 }).then(data => {
-                if (!data) {
-                    Services.msg('Изменения успешно сохранены')
-                }
-            }, () => {
-                Services.msg('Не удалось сохранить изменения', 'danger')
-            }).finally(() => {
-                Services.hideLoader();
-            })
-        },
-        isPeriod(period) {
-            if (!period || period.length !== 2) {
-                return false;
-            }
-            this.newReportDates = {
-                dateFrom: period[0],
-                dateTo: period[1],
-            }
-            return period[0] && period[1];
+                    if (!data) {
+                        Services.msg('Изменения успешно сохранены')
+                    }
+                }, () => {
+                    Services.msg('Не удалось сохранить изменения', 'danger')
+                }).finally(() => {
+                    Services.hideLoader();
+                })
         },
         createReport() {
-            if (!this.newReportDates) { return false; }
+            if (!this.isNewReportDatesSelected) {
+                return false;
+            }
+
             Services.showLoader();
             Services.net()
-                .post(this.getRoute('billingReport.detail.create', {type: this.type, entityId: this.model.id}), {},
-                    { date_from: this.newReportDates.dateFrom,  date_to: this.newReportDates.dateTo})
-                .then(() => {
+                .post(
+                    this.getRoute('billingReport.detail.create', {type: this.type, entityId: this.model.id}),
+                    {},
+                    { date_from: this.newReportDates[0], date_to: this.newReportDates[1]}
+                ).then(() => {
                     this.loadReports();
                     this.newReportDates = {dateFrom: null, dateTo: null};
                     this.billing.period = null;
@@ -198,9 +186,9 @@ export default {
                 .catch(() => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                 }).finally(() => {
-                Services.hideLoader();
-                this.showMessageBox({title: 'Отчет создан'});
-            });
+                    Services.hideLoader();
+                    this.showMessageBox({title: 'Отчет создан'});
+                });
         },
         removeItem(id) {
             Services.showLoader();
@@ -212,9 +200,9 @@ export default {
                 .catch(() => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                 }).finally(() => {
-                Services.hideLoader();
-                this.showMessageBox({title: 'Отчет удалён'});
-            });
+                    Services.hideLoader();
+                    this.showMessageBox({title: 'Отчет удалён'});
+                });
         },
         updateStatus(id, status) {
             Services.showLoader();
@@ -230,9 +218,9 @@ export default {
                 .catch(() => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                 }).finally(() => {
-                Services.hideLoader();
-                this.showMessageBox({title: 'Статус Обновлен'});
-            });
+                    Services.hideLoader();
+                    this.showMessageBox({title: 'Статус Обновлен'});
+                });
         },
         loadReports() {
             Services.showLoader();
@@ -240,14 +228,8 @@ export default {
                 .then(data => {
                     this.billingReports = data.billing_reports;
                 }).finally(() => {
-                Services.hideLoader();
-            });
-        },
-        checkRights() {
-            return this.canUpdate(this.rightsBlock);
-        },
-        getEntityId() {
-            return this.model.id;
+                    Services.hideLoader();
+                });
         },
         getStatus(id) {
             return this.statuses[id].text;
@@ -255,8 +237,26 @@ export default {
         getBadge(id) {
             return this.statuses[id].badge;
         },
-        getType() {
-            return this.type;
+    },
+    computed: {
+        statuses() {
+            return {
+                [this.billingReportStatuses.new]: { text: 'модерация', badge: 'light'},
+                [this.billingReportStatuses.viewed]: { text: 'просмотрен', badge: 'primary'},
+                [this.billingReportStatuses.accepted]: { text: 'подтвержден', badge: 'success'},
+                [this.billingReportStatuses.rejected]: { text: 'отклонен', badge: 'danger'},
+                [this.billingReportStatuses.waiting]: { text: 'отправлен', badge: 'warning'},
+                [this.billingReportStatuses.payed]: { text: 'оплачен', badge: 'success'},
+            }
+        },
+        canEdit() {
+            return this.canUpdate(this.rightsBlock);
+        },
+        isNewReportDatesSelected() {
+            return this.newReportDates
+                && this.newReportDates.length === 2
+                && this.newReportDates[0]
+                && this.newReportDates[1];
         },
     },
     created() {
@@ -270,6 +270,7 @@ export default {
             .finally(() => {
                 Services.hideLoader();
             });
+
         this.loadReports();
     },
     watch: {

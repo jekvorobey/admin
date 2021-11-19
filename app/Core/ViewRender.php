@@ -98,8 +98,8 @@ class ViewRender
     private $offerCountdownSaleStatuses = [];
 
     private $propertyTypes = [];
-    private $billingReportStatus = [];
-    private $billingReportType = [];
+    private $billingReportStatuses = [];
+    private $billingReportTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -765,10 +765,10 @@ class ViewRender
     /**
      * @return $this
      */
-    public function loadBillingReportStatus(bool $load = false): self
+    public function loadBillingReportStatuses(bool $load = false): self
     {
         if ($load) {
-            $this->billingReportStatus = [
+            $this->billingReportStatuses = [
                 'new' => ReportStatusDto::NEW,
                 'waiting' => ReportStatusDto::WAITING,
                 'viewed' => ReportStatusDto::VIEWED,
@@ -784,10 +784,10 @@ class ViewRender
     /**
      * @return $this
      */
-    public function loadBillingReportType(bool $load = false): self
+    public function loadBillingReportTypes(bool $load = false): self
     {
         if ($load) {
-            $this->billingReportType = [
+            $this->billingReportTypes = [
                 'billing' => ReportTypeDto::BILLING,
                 'public_events' => ReportTypeDto::PUBLIC_EVENTS,
                 'referral_partner' => ReportTypeDto::REFERRAL_PARTNER,
@@ -855,8 +855,8 @@ class ViewRender
 
                 'offerAllSaleStatuses' => $this->offerAllSaleStatuses,
                 'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
-                'billingReportStatus' => $this->billingReportStatus,
-                'billingReportType' => $this->billingReportType,
+                'billingReportStatuses' => $this->billingReportStatuses,
+                'billingReportTypes' => $this->billingReportTypes,
 
                 'propertyTypes' => $this->propertyTypes,
             ],

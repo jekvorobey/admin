@@ -2,10 +2,13 @@
     <div>
         <billing-report
             :model.sync="model"
-            :type="billingReportType.referral_partner"
-            :title="'Отчеты реферального партнера'"
+            :type="billingReportTypes.referral_partner"
+            title="Отчеты реферального партнера"
             :rightsBlock="blocks.referrals"
         ></billing-report>
+
+        <hr>
+        <h4>Заказы</h4>
         <table class="table">
         <thead>
             <tr>

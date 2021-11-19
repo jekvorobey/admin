@@ -2,10 +2,12 @@
   <div>
     <billing-report
         :model.sync="model"
-        :type="billingReportType.billing"
-        :title="'Отчеты комиссионера'"
+        :type="billingReportTypes.billing"
+        title="Отчеты комиссионера"
         :rightsBlock="blocks.merchants"
+        with-confirm
     ></billing-report>
+
     <hr>
     <div class="card">
       <div class="card-header">
@@ -364,7 +366,6 @@ export default {
               })
           .then(() => {
             this.loadPage();
-
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
