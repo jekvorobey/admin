@@ -60,7 +60,7 @@
             <th>Роль</th>
             <td colspan="3">
                 {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
-                ({{ datetimePrint(customer.role_date) }})
+                {{ customer.role_date ? `(${formatDate(customer.role_date)})` : '' }}
                 <span v-if="customer.referrer">
                     (РП: <a :href="getRoute('customers.detail', {id: customer.referrer.id})">{{customer.referrer.title}}</a>)
                 </span>
@@ -314,6 +314,10 @@
             }
 
             return `Проф.статус не подтвержден автоматически из-за совпадения с другим клиентом ${customerLink}`;
+        },
+
+        formatDate(str) {
+            return moment(str).format('DD.MM.YYYY');
         }
     }
 };
