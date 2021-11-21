@@ -191,14 +191,14 @@ export default {
         }),
         changePage(newPage) {
             history.pushState(null, null, location.origin + location.pathname + withQuery('', {
-                currentPage: newPage,
+                page: newPage,
                 filter: this.appliedFilter,
             }));
         },
         loadPage() {
             Services.showLoader();
             Services.net().get(this.route('public-event.list.page'), {
-                currentPage: this.currentPage,
+                page: this.currentPage,
                 filter: this.appliedFilter,
             }).then(data => {
                 this.publicEvents = data.publicEvents;

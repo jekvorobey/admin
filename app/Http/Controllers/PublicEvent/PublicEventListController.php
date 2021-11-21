@@ -33,9 +33,9 @@ class PublicEventListController extends Controller
         $this->loadPublicEventSprintStatus = true;
 
         $this->title = 'Мероприятия';
-        $page = $this->getPage($request);
+        $page = $request->get('page', 1);
         $pager = $publicEventService->countPublicEvents($this->makeRestQuery($publicEventService));
-        $publicEvents = $this->loadPublicEvents($publicEventService, $request, $shopPilotService);
+        $publicEvents = $this->loadPublicEvents($page, $publicEventService, $shopPilotService);
 
         return $this->render('PublicEvent/PublicEventList', [
             'iPublicEvents' => $publicEvents,
@@ -60,7 +60,8 @@ class PublicEventListController extends Controller
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
-        $publicEvents = $this->loadPublicEvents($publicEventService, $request, $shopPilotService);
+        $page = $request->get('page', 1);
+        $publicEvents = $this->loadPublicEvents($page, $publicEventService, $shopPilotService);
         $pager = $publicEventService->countPublicEvents($this->makeRestQuery($publicEventService));
 
         return response()->json([
@@ -86,11 +87,10 @@ class PublicEventListController extends Controller
      * @throws Exception
      */
     private function loadPublicEvents(
+        int $page,
         PublicEventService $publicEventService,
-        Request $request,
         ShoppilotService $shopPilotService
     ) {
-        $page = $this->getPage($request);
         $publicEvents = $this->makeRestQuery($publicEventService)
             ->pageNumber($page, self::ITEM_PER_PAGE)
             ->withActualSprint()
@@ -135,11 +135,6 @@ class PublicEventListController extends Controller
                 'status_id' => Rule::in(array_keys(PublicEventStatus::all())),
             ]
         );
-    }
-
-    protected function getPage($request): int
-    {
-        return $request->get('page', 1);
     }
 
     /**
