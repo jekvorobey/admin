@@ -39,10 +39,11 @@ export default {
             savePublicEventSpecialty: ACT_SAVE_EVENT_SPECIALTY
         }),
         getSpecialties() {
-            this.loadPublicEventSpecialties()
-                .then(response => {
-                    this.specialties = response.specialties;
-                });
+            let promise = this.loadPublicEventSpecialties({publicEventId: this.publicEvent.id});
+
+            promise.then(response => {
+                this.specialties = response.specialties;
+            });
         },
         save() {
             let promise = this.savePublicEventSpecialty({

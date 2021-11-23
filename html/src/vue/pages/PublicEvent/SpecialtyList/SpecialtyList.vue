@@ -12,7 +12,6 @@
             <tr>
                 <th>ID</th>
                 <th>Название</th>
-                <th>Название на фронте</th>
                 <th>Активность</th>
                 <th v-if="canUpdate(blocks.events)"></th>
             </tr>
@@ -21,7 +20,6 @@
             <tr v-for="specialty in specialties">
                 <td>{{ specialty.id }}</td>
                 <td>{{ specialty.name }}</td>
-                <td>{{ specialty.display_name }}</td>
                 <td>{{ specialty.active ? 'Да' : 'Нет' }}</td>
                 <td v-if="canUpdate(blocks.events)">
                     <button class="btn btn-warning btn-sm" @click="openSpecialty(specialty)">
