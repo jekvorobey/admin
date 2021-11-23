@@ -14,7 +14,7 @@
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="order"/>
                     <tab-composition v-else-if="key === 'composition'" :model.sync="order"/>
-                    <tab-composition-event v-else-if="key === 'composition_event'" :model.sync="order"/>
+                    <tab-composition-event v-else-if="key === 'composition_event'" :model.sync="orderInfo"/>
                     <tab-deliveries v-else-if="key === 'deliveries'" :model.sync="order"/>
                     <tab-shipments v-else-if="key === 'shipments'" :model.sync="order, barcodes"/>
                     <tab-customer-order-history v-else-if="key === 'customer_order_history'" :model.sync="order.customer_history"/>
@@ -61,6 +61,7 @@
         data() {
             return {
                 order: this.iOrder,
+                orderInfo: this.iOrderInfo,
                 barcodes: this.iOrder.barcodes,
             };
         },

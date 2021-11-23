@@ -6,19 +6,27 @@
             <th>МК</th>
             <th>Количество</th>
             <th>Стоимость</th>
+            <th>Участники</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in order.basket.items">
-            <td>{{ item.product.ticket_type_name }}</td>
+        <tr v-for="event in orderInfo.publicEvents">
+            <td>{{ event.ticketsInfo.ticket_type_name }}</td>
             <td v-if="canView(blocks.events)">
-                <a :href="getRoute('public-event.detail', {event_id: item.id})" target="_blank">
-                    {{item.name}}
+                <a :href="getRoute('public-event.detail', { event_id: event.id })" target="_blank">
+                    {{ event.ticketsInfo.name }}
                 </a>
             </td>
-            <td v-else>{{ item.name }}</td>
-            <td>{{preparePrice(item.qty)}} шт.</td>
-            <td>{{preparePrice(item.price)}} руб.</td>
+            <td v-else>{{ event.ticketsInfo.name }}</td>
+            <td>{{ preparePrice(event.ticketsInfo.tickets_qty) }} шт.</td>
+            <td>{{ preparePrice(event.ticketsInfo.price) }} руб.</td>
+            <td>
+                <ul>
+                    <li v-for="ticket in event.ticketsInfo.tickets">
+                        {{ ticket.first_name }} {{ ticket.middle_name }} {{ ticket.last_name }}
+                    </li>
+                </ul>
+            </td>
         </tr>
         </tbody>
     </table>
@@ -38,7 +46,7 @@
             },
         },
         computed: {
-            order: {
+            orderInfo: {
                 get() {
                     return this.model
                 },
