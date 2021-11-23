@@ -375,20 +375,6 @@ export default {
         this.showMessageBox({title: 'Биллинг скорректирован'});
       });
     },
-    removeItem(id) {
-      Services.showLoader();
-      Services.net()
-          .delete(this.getRoute('merchant.detail.billingReport.delete', {id: this.model.id, reportId: id,}))
-          .then(() => {
-            this.loadReports();
-          })
-          .catch(() => {
-            this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-          }).finally(() => {
-        Services.hideLoader();
-        this.showMessageBox({title: 'Отчет удалён'});
-      });
-    },
     addReturn(id) {
       Services.showLoader();
       Services.net()
