@@ -31,6 +31,8 @@
                 id="banner-date-from"
                 type="datetime"
                 input-class="form-control"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-type="format"
             />
         </b-form-group>
 
@@ -40,7 +42,8 @@
                 id="banner-date-to"
                 type="datetime"
                 input-class="form-control"
-                :input-attr="{ required: true }"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-type="format"
             />
         </b-form-group>
 
