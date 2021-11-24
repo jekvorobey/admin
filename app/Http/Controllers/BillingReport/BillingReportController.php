@@ -58,12 +58,12 @@ class BillingReportController extends Controller
         $this->canView($this->getPermissionBlockByType($type));
 
         $report = $reportService->report($reportId);
-        if (!$report || !isset($report['file_id'])) {
+        if (!$report || !isset($report->file_id)) {
             return null;
         }
 
         /** @var FileDto|null $reportFile */
-        $reportFile = $fileService->getFiles([$report['file_id']])->first();
+        $reportFile = $fileService->getFiles([$report->file_id])->first();
         if (!$reportFile) {
             return null;
         }
@@ -75,6 +75,7 @@ class BillingReportController extends Controller
 
     /**
      * Сохранить биллинговый период
+     * TODO: сделать общую настройку в reports-lib, пока работая только для типа BILLING
      */
     public function billingCycle(
         string $type,
@@ -88,10 +89,9 @@ class BillingReportController extends Controller
             'billing_cycle' => ['integer'],
         ]);
 
-        if ($type === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
-            return response('', 204);
+        if ($type === ReportTypeDto::BILLING) {
+            $merchantService->setSetting($entityId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
         }
-        $merchantService->setSetting($entityId, MerchantSettingDto::BILLING_CYCLE, $data['billing_cycle']);
 
         return response('', 204);
     }
@@ -112,14 +112,11 @@ class BillingReportController extends Controller
             'date_to' => ['date'],
         ]);
 
-        $reportFormParams = [
-            'type' => $type,
-            'entity_id' => $entityId,
-            'date_from' => $data['date_from'],
-            'date_to' => $data['date_to'],
-        ];
-
-        $reportForm = new GenerateReportForm($reportFormParams);
+        $reportForm = new GenerateReportForm();
+        $reportForm->type = $type;
+        $reportForm->entity_id = $entityId;
+        $reportForm->date_from = $data['date_from'];
+        $reportForm->date_to = $data['data_to'];
 
         $reportService->generate($reportForm);
 
@@ -167,13 +164,10 @@ class BillingReportController extends Controller
     {
         $this->canView($this->getPermissionBlockByType($type));
 
-        if ($type === ReportTypeDto::REFERRAL_PARTNER) { //TODO:: Убрать после добавления настройки биллингового периода
-            return response()->json([
-                'billing_cycle' => MerchantSettingDto::DEFAULT_BILLING_CYCLE,
-            ]);
+        if ($type === ReportTypeDto::BILLING) {
+            $settings = $merchantService->getSetting($entityId, MerchantSettingDto::BILLING_CYCLE)->first();
         }
 
-        $settings = $merchantService->getSetting($entityId, MerchantSettingDto::BILLING_CYCLE)->first();
         $billingCycle = $settings->value ?? null;
 
         return response()->json([

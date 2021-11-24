@@ -5,6 +5,7 @@
             :type="billingReportTypes.referral_partner"
             title="Отчеты реферального партнера"
             :rightsBlock="blocks.referrals"
+            :withEditCycle="false"
         ></billing-report>
 
         <hr>

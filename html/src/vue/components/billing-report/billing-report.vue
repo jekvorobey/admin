@@ -1,30 +1,32 @@
 <template>
     <div>
-        <h4>Биллинговый период</h4>
-        <span class="custom-control custom-switch">
-            <input type="checkbox" class="custom-control-input" id="monthly-billing_cycle" key="monthly" v-model="monthly">
-            <label class="custom-control-label" for="monthly-billing_cycle"></label>
-            <label for="monthly-billing_cycle">Календарный месяц</label>
-        </span>
-        <div v-if="!monthly">
-            <div class="row">
-                <v-input
-                    v-model="form.billing_cycle"
-                    class="col-4"
-                    type="number"
-                    min="1"
-                    step="1"
-                    help="период указывается в днях">Произвольный период
-                </v-input>
+        <template v-if="withEditCycle">
+            <h4>Биллинговый период</h4>
+            <span class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="monthly-billing_cycle" key="monthly" v-model="monthly">
+                <label class="custom-control-label" for="monthly-billing_cycle"></label>
+                <label for="monthly-billing_cycle">Календарный месяц</label>
+            </span>
+            <div v-if="!monthly">
+                <div class="row">
+                    <v-input
+                        v-model="form.billing_cycle"
+                        class="col-4"
+                        type="number"
+                        min="1"
+                        step="1"
+                        help="период указывается в днях">Произвольный период
+                    </v-input>
 
-                <div class="col-12" v-if="canEdit">
-                    <button class="btn btn-sm btn-success" :disabled="form.billing_cycle <= 0" @click="saveBillingCycle">
-                        Сохранить
-                    </button>
+                    <div class="col-12" v-if="canEdit">
+                        <button class="btn btn-sm btn-success" :disabled="form.billing_cycle <= 0" @click="saveBillingCycle">
+                            Сохранить
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <hr>
+            <hr>
+        </template>
 
         <h4>Отчеты</h4>
         <table>
@@ -122,6 +124,10 @@ export default {
         },
         title: String,
         rightsBlock: Number,
+        withEditCycle: {
+            type: Boolean,
+            default: true
+        },
         withConfirm: {
             type: Boolean,
             default: false
@@ -155,7 +161,7 @@ export default {
         },
         saveBillingCycle() {
             Services.showLoader();
-            Services.net().put(this.getRoute('billingReport.detail.billing_cycle', {entityId: this.model.id}), {
+            Services.net().put(this.getRoute('billingReport.detail.billing_cycle', {type: this.type, entityId: this.model.id}), {
                     billing_cycle: this.form.billing_cycle
                 }).then(data => {
                     if (!data) {
@@ -231,6 +237,18 @@ export default {
                     Services.hideLoader();
                 });
         },
+        loadBillingCycle() {
+            Services.net().get(this.getRoute('billingReport.detail.billing', {entityId: this.model.id, type: this.type}))
+                .then(data => {
+                    if (data.billing_cycle) {
+                        this.form.billing_cycle = data.billing_cycle;
+                        this.monthly = false;
+                    }
+                })
+                .finally(() => {
+                    Services.hideLoader();
+                });
+        },
         getStatus(id) {
             return this.statuses[id].text;
         },
@@ -260,16 +278,9 @@ export default {
         },
     },
     created() {
-        Services.net().get(this.getRoute('billingReport.detail.billing', {entityId: this.model.id, type: this.type}))
-            .then(data => {
-                if (data.billing_cycle) {
-                    this.form.billing_cycle = data.billing_cycle;
-                    this.monthly = false;
-                }
-            })
-            .finally(() => {
-                Services.hideLoader();
-            });
+        if (this.withEditCycle) {
+            this.loadBillingCycle();
+        }
 
         this.loadReports();
     },

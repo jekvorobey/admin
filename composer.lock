@@ -1050,7 +1050,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib",
-                "reference": "50e26a459546e30e9635b046e3604603bef81b53"
+                "reference": "9f4348083b0072bce40b33a4a9057aa7bc50e125"
             },
             "require": {
                 "ext-json": "*",
@@ -1082,7 +1082,7 @@
                 ]
             },
             "description": "iBT reports client",
-            "time": "2021-11-19T13:50:26+00:00"
+            "time": "2021-11-24T08:47:02+00:00"
         },
         {
             "name": "iwengo/ibt-catalog-import-lib",

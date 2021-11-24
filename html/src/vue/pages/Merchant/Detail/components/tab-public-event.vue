@@ -5,6 +5,7 @@
             :type="billingReportTypes.public_events"
             title="Отчеты агента"
             :rightsBlock="blocks.merchants"
+            :withEditCycle="false"
         ></billing-report>
 
         <hr>
