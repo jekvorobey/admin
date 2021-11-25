@@ -152,7 +152,7 @@ class PublicEventListController extends Controller
             switch ($key) {
                 case 'name':
                     if ($value) {
-                        $restQuery->setFilter($key, 'like', "{$value}%");
+                        $restQuery->setFilter($key, 'like', "%{$value}%");
                     }
                     break;
                 case 'status_id':
