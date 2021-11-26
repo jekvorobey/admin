@@ -165,7 +165,7 @@
                 date_to: {required},
                 time_from: {required},
                 time_to: {required},
-                place_id: {required},
+                place_id: {},
                 use_period: {},
                 raider: {},
                 result: {},
@@ -318,11 +318,6 @@
             errorTimeTo() {
                 if (this.$v.form.time_to.$dirty) {
                     if (!this.$v.form.time_from.required) return "Обязательное поле!";
-                }
-            },
-            errorPlaceId() {
-                if (this.$v.form.place_id.$dirty) {
-                    if (!this.$v.form.place_id.required) return "Обязательное поле!";
                 }
             },
         },
