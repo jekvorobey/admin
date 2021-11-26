@@ -65,7 +65,7 @@
         "fideloper/proxy": "^4.0",
         "iwengo/ibt-catalog-import-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-cm-lib": "dev-master-ylab as dev-master",
-        "iwengo/ibt-cms-lib": "dev-master-ylab as dev-master",
+        "iwengo/ibt-cms-lib": "dev-feature/IBT-633-redirects as dev-master",
         "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-logistics-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-marketing-lib": "dev-master-ylab as dev-master",
