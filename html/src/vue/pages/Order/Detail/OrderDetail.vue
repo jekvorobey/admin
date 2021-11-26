@@ -74,18 +74,17 @@
             tabs() {
                 let tabs = {};
                 let i = 0;
-
-                tabs.main = {i: i++, title: 'Дайджест'};
                 if (this.order.basket.type === this.basketTypes.product) {
+                    tabs.main = {i: i++, title: 'Дайджест'};
                     tabs.composition = {i: i++, title: 'Состав заказа'};
+                    tabs.deliveries = {i: i++, title: 'Доставки'};
+                    tabs.shipments = {i: i++, title: 'Отправления'};
+                    tabs.returns = {i: i++, title: 'Возвраты'};
+                    tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
+                    tabs.logs = {i: i++, title: 'Логи'};
                 } else {
                     tabs.composition_event = {i: i++, title: 'Состав заказа МК'};
                 }
-                tabs.deliveries = {i: i++, title: 'Доставки'};
-                tabs.shipments = {i: i++, title: 'Отправления'};
-                tabs.returns = {i: i++, title: 'Возвраты'};
-                tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
-                tabs.logs = {i: i++, title: 'Логи'};
 
                 return tabs;
             },
