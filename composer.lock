@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d3233a3bf4b8fe0cef4922fbdba4c81",
+    "content-hash": "4ea62da3036f9e7d3e4e0f6e2a1958db",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-pim-lib",
-            "version": "dev-feature/IBT-437-update-public-events",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "da8fb47cbd2b97df46dc1af23597e93d97f2d932"
+                "reference": "9ef9460d38356502c54b995df58f71f6c1d24bb3"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2021-11-25T09:37:58+00:00"
+            "time": "2021-11-29T07:54:21+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
@@ -10717,7 +10717,7 @@
         },
         {
             "package": "iwengo/ibt-pim-lib",
-            "version": "dev-feature/IBT-437-update-public-events",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10750,5 +10750,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
