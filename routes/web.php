@@ -617,6 +617,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
         });
 
+        Route::prefix('redirect')->namespace('Redirect')->group(function () {
+            Route::get('', 'RedirectListController@index')->name('redirect.list');
+            Route::get('/page', 'RedirectListController@page')->name('redirect.page');
+
+            Route::post('/', 'RedirectDetailController@create')->name('redirect.create');
+            Route::put('/{id}', 'RedirectDetailController@update')->where(['id' => '[0-9]+'])->name('redirect.update');
+            Route::delete('/{id}', 'RedirectDetailController@delete')->where(['id' => '[0-9]+'])->name('redirect.delete');
+        });
+
         Route::prefix('contacts')->namespace('Contacts')->group(function () {
             Route::get('', 'ContactsController@list')->name('contacts.list');
             Route::post('add', 'ContactsController@add')->name('contacts.add');

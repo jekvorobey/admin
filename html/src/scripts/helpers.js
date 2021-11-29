@@ -376,4 +376,8 @@ export default class Helpers {
     static roundValue(value) {
         return Math.round(value);
     }
+
+    static addSlash(uri) {
+        return uri.charAt(0) !== '/' ? `/${uri}` : uri;
+    }
 }
