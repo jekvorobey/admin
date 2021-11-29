@@ -13,37 +13,6 @@ use Illuminate\Http\JsonResponse;
 class RedirectDetailController extends Controller
 {
     /**
-     * @param int $id
-     * @return mixed
-     * @throws CmsException
-     */
-    public function updatePage($id, RedirectService $redirectService)
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
-
-        $redirect = $this->getRedirect($id, $redirectService);
-
-        return $this->render('Content/RedirectDetail', [
-            'iRedirect' => $redirect,
-            'options' => [],
-        ]);
-    }
-
-    /**
-     * @return mixed
-     * @throws CmsException
-     */
-    public function createPage()
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
-
-        return $this->render('Content/RedirectDetail', [
-            'iRedirect' => [],
-            'options' => [],
-        ]);
-    }
-
-    /**
      * @throws CmsException
      */
     public function create(RedirectRequest $request, RedirectService $redirectService): JsonResponse
@@ -62,7 +31,7 @@ class RedirectDetailController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $redirectService->updateRedirect($request->get('id'), new RedirectDto($request->validated()));
+        $redirectService->updateRedirect($id, new RedirectDto($request->validated()));
 
         return response()->json([], 204);
     }
@@ -77,14 +46,5 @@ class RedirectDetailController extends Controller
         $redirectService->deleteRedirect($id);
 
         return response()->json([], 204);
-    }
-
-    /**
-     * @throws CmsException
-     */
-    private function getRedirect(int $id, RedirectService $redirectService): ?RedirectDto
-    {
-        $query = $redirectService->newQuery()->setFilter('id', $id);
-        return $redirectService->redirects($query)->first();
     }
 }

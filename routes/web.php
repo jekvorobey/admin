@@ -620,8 +620,6 @@ Route::middleware('auth')->group(function () {
         Route::prefix('redirect')->namespace('Redirect')->group(function () {
             Route::get('', 'RedirectListController@index')->name('redirect.list');
             Route::get('/page', 'RedirectListController@page')->name('redirect.page');
-            Route::get('/{id}', 'RedirectDetailController@updatePage')->where(['id' => '[0-9]+'])->name('redirect.updatePage');
-            Route::get('/create', 'RedirectDetailController@createPage')->name('redirect.createPage');
 
             Route::post('/', 'RedirectDetailController@create')->name('redirect.create');
             Route::put('/{id}', 'RedirectDetailController@update')->where(['id' => '[0-9]+'])->name('redirect.update');
