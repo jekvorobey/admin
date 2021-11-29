@@ -72,6 +72,7 @@ import {mapActions} from "vuex";
 import withQuery from "with-query";
 import Services from "../../../../scripts/services/services";
 import RedirectEditModal from './components/redirect-edit-modal.vue';
+import Helpers from '../../../../scripts/helpers';
 const cleanFilter = {
   uri: ''
 }
@@ -120,6 +121,12 @@ export default {
       }));
     },
     loadPage() {
+
+      ['from', 'to'].forEach(key => {
+        if(this.filter.hasOwnProperty(key)) {
+          this.filter[key] = Helpers.addSlash(this.filter[key])
+        }
+      })
       Services.net().get(this.route('redirect.page'), {
         page: this.currentPage,
         filter: this.filter,
@@ -153,25 +160,12 @@ export default {
     openModal(redirect = null) {
       this.currentRedirect = redirect
       this.$bvModal.show('redirect-edit-modal');
-    }
-  },
-  created() {
-    // window.onpopstate = () => {
-    //   let query = qs.parse(document.location.search.substr(1));
-    //   if (query.page) {
-    //     this.currentPage = query.page;
-    //   }
-    // };
+    },
   },
   watch: {
     currentPage() {
       this.loadPage();
     }
-  },
-  computed: {
-    // typeOptions() {
-    //   return this.options.types.map(type => ({value: type.id, text: type.name}));
-    // },
   }
 };
 </script>

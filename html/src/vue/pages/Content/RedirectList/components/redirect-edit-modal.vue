@@ -8,25 +8,25 @@
       <div class="card-body">
         <b-row class="mb-2">
           <b-col cols="4">
-            <label >Источник</label>
+            <label>Источник</label>
           </b-col>
           <b-col cols="8">
             <v-input
-                     v-model="from"
-                     class="mb-2"
-                     :error="null"
+                v-model="from"
+                class="mb-2"
+                :error="reqErrors.from"
             />
           </b-col>
         </b-row>
         <b-row class="mb-2">
           <b-col cols="4">
-            <label > Результат</label>
+            <label> Результат</label>
           </b-col>
           <b-col cols="8">
             <v-input
-                     v-model="to"
-                     class="mb-2"
-                     :error="null"
+                v-model="to"
+                class="mb-2"
+                :error="reqErrors.to"
             />
           </b-col>
         </b-row>
@@ -49,6 +49,9 @@
 <script>
 import VInput from '../../../../components/controls/VInput/VInput.vue';
 import Services from "../../../../../scripts/services/services";
+import axios from 'axios';
+import Helpers from '../../../../../scripts/helpers';
+
 export default {
   name: "redirect-edit-modal.vue",
   components: {
@@ -63,60 +66,76 @@ export default {
       from: '',
       to: '',
       invalid: false,
-      mode: 'create'
+      mode: 'create',
+      reqErrors: this.emptyErrors()
     }
   },
   methods: {
     save() {
       Services.showLoader();
-      if (this.mode === 'edit') {
-        this.updateRedirect({
-          from: this.from,
-          to: this.to,
-          id: this.id,
-        })
-            .then(data => {
-              console.log(data)
-          // if (data.order) {
-          //   Services.msg("Изменения сохранены");
-          // } else {
-          //   Services.msg(errorMessage, 'danger');
-          // }
-              this.$emit('saved')
-              this.closeModal();
-        }, (data) => {
-              console.log('or', data)
-          // Services.msg(errorMessage, 'danger');
-        }).finally(() => {
-          Services.hideLoader();
-        });
-      } else if (this.mode === 'create') {
-        console.log('create')
+      this.addSlashes()
+      const redirectData = {
+        from: this.from,
+        to: this.to,
       }
+      const savePromise = this.mode === 'edit'
+          ? this.updateRedirect({id: this.id, ...redirectData})
+          : this.createRedirect(redirectData);
+
+      this.reqErrors = this.emptyErrors();
+      savePromise.then(data => {
+        this.$emit('saved');
+        this.closeModal();
+        this.from = ''
+        this.to = ''
+        this.id = ''
+      })
+          .catch(error => {
+            const responseErrors = error.response.data.errors
+            if (responseErrors) {
+              for (let key in responseErrors) {
+                if (responseErrors.hasOwnProperty(key) && this.reqErrors.hasOwnProperty(key)) {
+                  this.reqErrors[key] = responseErrors[key][0]
+                }
+              }
+            }
+          })
+          .finally(() => {
+            Services.hideLoader();
+          });
+    },
+    addSlashes() {
+      this.from = Helpers.addSlash(this.from)
+      this.to = Helpers.addSlash(this.to)
     },
     closeModal() {
       this.$bvModal.hide('redirect-edit-modal');
     },
     createRedirect(data) {
-      return Services.net().post(this.getRoute('redirect.create'), {}, data, {}, true);
+      return axios.post(this.getRoute('redirect.create'), data);
     },
     updateRedirect(data) {
-      return Services.net().put(this.getRoute('redirect.update', {id: data.id}), {}, data, {}, true);
+      return axios.put(this.getRoute('redirect.update', {id: data.id}), data);
     },
+    emptyErrors() {
+      return {
+        from: '',
+        to: ''
+      }
+    }
   },
   watch: {
     redirect(value) {
-        console.log(value)
-        this.mode = value ? 'edit' : 'create'
-        if (value) {
-          this.from = value.from
-          this.to = value.to
-          this.id = +value.id
-        } else {
-          this.from = ''
-          this.to = ''
-          this.id = null
-        }
+      this.mode = value ? 'edit' : 'create'
+      if (value) {
+        this.from = value.from
+        this.to = value.to
+        this.id = +value.id
+      } else {
+        this.from = ''
+        this.to = ''
+        this.id = null
+      }
     }
   }
 }

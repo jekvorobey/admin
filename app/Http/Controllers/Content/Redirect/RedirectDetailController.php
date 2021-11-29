@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Content\Redirect;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RedirectRequest;
 use Cms\Core\CmsException;
 use Cms\Dto\RedirectDto;
 use Cms\Services\RedirectService\RedirectService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class RedirectDetailController extends Controller
 {
@@ -46,16 +46,11 @@ class RedirectDetailController extends Controller
     /**
      * @throws CmsException
      */
-    public function create(Request $request, RedirectService $redirectService): JsonResponse
+    public function create(RedirectRequest $request, RedirectService $redirectService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $validatedData = $request->validate([
-            'from' => 'string|required',
-            'to' => 'string|required',
-        ]);
-
-        $redirectService->createRedirect(new RedirectDto($validatedData));
+        $redirectService->createRedirect(new RedirectDto($request->validated()));
 
         return response()->json([], 204);
     }
@@ -63,18 +58,11 @@ class RedirectDetailController extends Controller
     /**
      * @throws CmsException
      */
-    public function update(int $id, Request $request, RedirectService $redirectService): JsonResponse
+    public function update(int $id, RedirectRequest $request, RedirectService $redirectService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $validatedData = $request->validate([
-            'from' => 'string|required',
-            'to' => 'string|required',
-        ]);
-
-        $validatedData['id'] = $id;
-
-        $redirectService->updateRedirect($validatedData['id'], new RedirectDto($validatedData));
+        $redirectService->updateRedirect($request->get('id'), new RedirectDto($request->validated()));
 
         return response()->json([], 204);
     }
