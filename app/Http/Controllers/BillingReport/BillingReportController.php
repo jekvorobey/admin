@@ -116,7 +116,7 @@ class BillingReportController extends Controller
         $reportForm->type = $type;
         $reportForm->entity_id = $entityId;
         $reportForm->date_from = $data['date_from'];
-        $reportForm->date_to = $data['data_to'];
+        $reportForm->date_to = $data['date_to'];
 
         $reportService->generate($reportForm);
 
