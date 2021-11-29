@@ -54,7 +54,7 @@
                         <label for="date">Конец</label>
                         <date-picker id="date" input-class="form-control" v-model="$v.form.date_end.$model" value-type="format" format="YYYY-MM-DD" :error="errorDateEnd"/>
                     </div>
-                    <v-select v-model="$v.form.status_id.$model" text-field="name" value-field="id" :options="statuses">Статус</v-select>
+                    <v-select v-model="$v.form.status_id.$model" :options="statusOptions">Статус</v-select>
                     <b-form-checkbox
                         v-model="$v.form.hide_ticket_count.$model"
                         :error="errorHideTicketCount"
@@ -282,6 +282,12 @@
             },
         },
         computed: {
+            statusOptions() {
+              return Object.values(this.sprintStatuses).map(status => ({
+                value: status.id,
+                text: status.name
+              }));
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";

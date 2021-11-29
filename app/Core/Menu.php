@@ -431,6 +431,10 @@ class Menu
                                 'title' => 'Типы событий',
                                 'route' => route('public-event.types.list'),
                             ],
+                            [
+                                'title' => 'Направления',
+                                'route' => route('public-event.specialties.list'),
+                            ],
                         ],
                     ],
                 ],

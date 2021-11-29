@@ -14,6 +14,7 @@
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
                     <tab-main v-if="key === 'main'" :model.sync="order"/>
                     <tab-composition v-else-if="key === 'composition'" :model.sync="order"/>
+                    <tab-composition-event v-else-if="key === 'composition_event'" :model.sync="orderInfo"/>
                     <tab-deliveries v-else-if="key === 'deliveries'" :model.sync="order"/>
                     <tab-shipments v-else-if="key === 'shipments'" :model.sync="order, barcodes"/>
                     <tab-customer-order-history v-else-if="key === 'customer_order_history'" :model.sync="order.customer_history"/>
@@ -32,6 +33,7 @@
     import Kpi from './components/kpi.vue';
     import TabMain from './components/tab-main.vue';
     import TabComposition from './components/tab-composition.vue';
+    import TabCompositionEvent from './components/tab-composition-event.vue';
     import TabDeliveries from './components/tab-deliveries.vue';
     import TabShipments from './components/tab-shipments.vue';
     import TabCustomerOrderHistory from './components/tab-customer-order-history.vue';
@@ -45,6 +47,7 @@
             Kpi,
             TabMain,
             TabComposition,
+            TabCompositionEvent,
             TabDeliveries,
             TabShipments,
             TabCustomerOrderHistory,
@@ -52,11 +55,13 @@
         },
         props: {
             iOrder: {},
+            iOrderInfo: {},
             kpis: {},
         },
         data() {
             return {
                 order: this.iOrder,
+                orderInfo: this.iOrderInfo,
                 barcodes: this.iOrder.barcodes,
             };
         },
@@ -69,14 +74,17 @@
             tabs() {
                 let tabs = {};
                 let i = 0;
-
-                tabs.main = {i: i++, title: 'Дайджест'};
-                tabs.composition = {i: i++, title: 'Состав заказа'};
-                tabs.deliveries = {i: i++, title: 'Доставки'};
-                tabs.shipments = {i: i++, title: 'Отправления'};
-                tabs.returns = {i: i++, title: 'Возвраты'};
-                tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
-                tabs.logs = {i: i++, title: 'Логи'};
+                if (this.order.basket.type === this.basketTypes.product) {
+                    tabs.main = {i: i++, title: 'Дайджест'};
+                    tabs.composition = {i: i++, title: 'Состав заказа'};
+                    tabs.deliveries = {i: i++, title: 'Доставки'};
+                    tabs.shipments = {i: i++, title: 'Отправления'};
+                    tabs.returns = {i: i++, title: 'Возвраты'};
+                    tabs.customer_order_history = {i: i++, title: 'История заказов клиента'};
+                    tabs.logs = {i: i++, title: 'Логи'};
+                } else {
+                    tabs.composition_event = {i: i++, title: 'Состав заказа МК'};
+                }
 
                 return tabs;
             },
