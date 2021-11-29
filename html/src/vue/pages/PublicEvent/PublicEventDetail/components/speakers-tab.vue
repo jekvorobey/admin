@@ -7,7 +7,7 @@
         <b-form-select v-model="sprintStageId" text-field="name" value-field="id" :options="sprintStages" @change="onChangeSprintStage(sprintStageId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
-            <button class="btn btn-success" :disabled="sprints.length == 0 || sprintStages.length == 0" @click="openModal('eventSpeakersModalForm')">Добавить спикера</button>
+            <button class="btn btn-success" :disabled="sprints.length === 0 || sprintStages.length === 0" @click="openModal('eventSpeakersModalForm')">Добавить спикера</button>
         </div>
         <table class="table">
             <thead>

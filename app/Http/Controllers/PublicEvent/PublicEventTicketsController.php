@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
+use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\TicketDto;
 use Pim\Dto\PublicEvent\TicketStatus;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -99,7 +100,7 @@ class PublicEventTicketsController extends Controller
     protected function getCsvContent($tickets, $separator = ';'): string
     {
         $content = "\xEF\xBB\xBF"; // UTF-8 BOM
-        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус'];
+        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Уникальный код', 'Статус'];
         foreach ($columns as $column) {
             $content .= "{$column}{$separator}";
         }
@@ -114,6 +115,7 @@ class PublicEventTicketsController extends Controller
                 $ticket['profession'],
                 $ticket['type']['name'],
                 $ticket['order']['count_tickets'],
+                $ticket['code'],
                 $ticket['status']['name'],
             ]) . "\n";
         }
@@ -137,5 +139,20 @@ class PublicEventTicketsController extends Controller
 
         echo $this->getCsvContent($tickets);
         exit(0);
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function editComment(Request $request, PublicEventTicketService $publicEventTicketService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        $ticketId = $request->get('ticketId');
+        $comment = $request->get('comment');
+
+        $publicEventTicketService->editComment($ticketId, $comment);
+
+        return response()->json();
     }
 }
