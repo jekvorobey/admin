@@ -13,7 +13,11 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Dto\ReferralOrderHistoryDto;
 use Greensight\Customer\Services\ReferralService\Dto\GetReferralOrderHistoryDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
+use Greensight\Oms\Dto\OrderDto;
+use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
+use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Services\OfferService\OfferService;
 
 class TabOrderReferrerController extends Controller
 {
@@ -80,6 +84,41 @@ class TabOrderReferrerController extends Controller
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
+        $referralOrderHistories = $referralService->getReferralOrderHistories(
+//            (new GetReferralOrderHistoryDto())->setReferralId($customer_id)
+            (new GetReferralOrderHistoryDto())->setReferralId(7)
+        );
+
+        if ($referralOrderHistories->isNotEmpty()) {
+            $orderService = resolve(OrderService::class);
+            $orderServiceQuery = $orderService->newQuery();
+            $orderServiceQuery
+                ->addFields(OrderDto::entity(), 'id', 'number')
+                ->setFilter('number', $referralOrderHistories->pluck('order_number')->toArray());
+            $orders = $orderService->orders($orderServiceQuery)->keyBy('number');
+
+            $offersService = resolve(OfferService::class);
+            $offersQuery = $offersService->newQuery();
+            $offersQuery->setFilter('id', $referralOrderHistories->pluck('product_id')->toArray());
+            $offers = $offersService->offers($offersQuery)->keyBy('id');
+            $merchantsIds = $offers->map(function ($offer) {
+                return $offer->merchant_id;
+            })->keyBy('id');
+            \Log::debug(json_encode(['orders' => $orders, 'offers' => $offers, 'merchantsIds' => $merchantsIds]));
+        }
+        $ordersWithProducts = [];
+        $referralOrderHistories
+            ->each(function (ReferralOrderHistoryDto $orderHistoryDto) use (&$ordersWithProducts) {
+                $ordersWithProducts[$orderHistoryDto->order_number][] = $orderHistoryDto->product_id;
+            });
+        $merchantService = resolve(MerchantService::class);
+        $merchantsQuery = $merchantService->newQuery();
+        $merchantsQuery
+            ->setFilter('product_id', $referralOrderHistories->pluck('product_id'))
+            ->setFilter('shipment_status', 3);//TODO::Перенести в DTO
+
+//        $bill = $merchantService->merchantBillingList($merchantsQuery);
+        \Log::debug(json_encode($ordersWithProducts));
 
         return $referralService->getReferralOrderHistories(
             (new GetReferralOrderHistoryDto())->setReferralId($customer_id)
