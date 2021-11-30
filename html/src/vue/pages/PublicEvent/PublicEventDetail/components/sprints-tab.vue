@@ -172,10 +172,12 @@
             places(items) {
                 let result = [];
                 items.forEach(item => {
-                    result.push(item.name);
+                    if (item) {
+                        result.push(item.name);
+                    }
                 })
 
-                return result.join(', ');
+                return result ? result.join(', ') : 'N/A';
             },
             statusNames(items) {
                 let result = [];
