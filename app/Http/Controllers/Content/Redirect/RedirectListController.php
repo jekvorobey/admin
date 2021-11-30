@@ -80,4 +80,15 @@ class RedirectListController extends Controller
 
         return $query;
     }
+
+    /**
+     * @throws CmsException
+     */
+    protected function import(RedirectService $redirectService, Request $request): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
+        $redirectService->importRedirects($request->get('file_id'));
+        return response()->json([], 204);
+    }
 }
