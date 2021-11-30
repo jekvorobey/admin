@@ -90,8 +90,6 @@ class RedirectListController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $res = $redirectService->importRedirects($request->get('file_id'));
-
-        Log::info(print_r($res, true));
         return response()->json($res);
     }
 }
