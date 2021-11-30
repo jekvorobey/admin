@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class RedirectListController extends Controller
 {
@@ -88,7 +89,9 @@ class RedirectListController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $redirectService->importRedirects($request->get('file_id'));
-        return response()->json([], 204);
+        $res = $redirectService->importRedirects($request->get('file_id'));
+
+        Log::info(print_r($res, true));
+        return response()->json($res);
     }
 }

@@ -16,7 +16,7 @@
                   label="Загрузить список редиректов"
       ></file-input>
     </div>
-    
+
     <div class="mb-3" v-if="canUpdate(blocks.content)">
       <button @click="openModal()" class="btn btn-success">Создать</button>
     </div>
@@ -35,13 +35,13 @@
       <tbody>
       <tr v-for="redirect in redirects">
         <td>
-          {{redirect.id}}
+          {{ redirect.id }}
         </td>
         <td>
-          {{redirect.from}}
+          {{ redirect.from }}
         </td>
         <td>
-          {{redirect.to}}
+          {{ redirect.to }}
         </td>
 
         <td v-if="canUpdate(blocks.content)">
@@ -72,6 +72,16 @@
         :redirect="currentRedirect"
         @saved="loadPage"
     />
+
+    <b-modal id="import-modal" hide-footer ref="modal" size="md">
+
+      <div slot="modal-title">Ошибки импорта</div>
+      <div class="modal-body import-modal-body">
+        <div v-for="error in importErrors">
+          {{ error.row }}.{{ error.col }} ('{{ error.value }}'): {{ error.msg }}
+        </div>
+      </div>
+    </b-modal>
   </layout-main>
 </template>
 
@@ -83,9 +93,10 @@ import {mapActions} from "vuex";
 import withQuery from "with-query";
 import Services from "../../../../scripts/services/services";
 import Helpers from '../../../../scripts/helpers';
-import axios from 'axios';
+
 const cleanFilter = {
-  uri: ''
+  from: '',
+  to: ''
 }
 
 export default {
@@ -110,6 +121,7 @@ export default {
       currentPage: this.iCurrentPage || 1,
       currentRedirect: null,
       filter,
+      importErrors: []
     };
   },
   methods: {
@@ -135,7 +147,7 @@ export default {
     loadPage() {
 
       ['from', 'to'].forEach(key => {
-        if(this.filter.hasOwnProperty(key)) {
+        if (this.filter.hasOwnProperty(key) && this.filter[key] !== '') {
           this.filter[key] = Helpers.addSlash(this.filter[key])
         }
       })
@@ -152,11 +164,22 @@ export default {
     },
     onFileUpload(data) {
       Services.showLoader();
+      this.importErrors = []
       Services.net().post(this.getRoute('redirect.import'), {}, {file_id: data.id})
-        .then(() => Services.msg('Импорт выполнен успешно'))
+          .then(data => {
+            if (data.rows > 0) {
+              Services.msg(`Импорт редиректов (${data.rows}) выполнен успешно`)
+            }
+            if (data.errors) {
+              this.importErrors = data.errors
+            }
+          })
           .finally(() => {
             Services.hideLoader();
             this.loadPage();
+            if (this.importErrors.length) {
+              this.$bvModal.show('import-modal')
+            }
           })
     },
     applyFilter() {
@@ -172,7 +195,7 @@ export default {
           .delete(this.getRoute('redirect.delete', {id: id,}))
           .then((data) => {
             this.loadPage();
-            this.showMessageBox({title: 'Элемент удалён'});
+            this.showMessageBox({title: 'Элемент удалён', text: 'Попробуйте позже'});
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
@@ -190,3 +213,9 @@ export default {
   }
 };
 </script>
+<style scoped>
+  .import-modal-body {
+    max-height: 400px;
+    overflow: auto;
+  }
+</style>
