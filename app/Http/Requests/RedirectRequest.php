@@ -6,27 +6,25 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RedirectRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize()
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Эти правила дублируются в ibt-cms (RedirectRequest).
+     * Поэтому при добавлении обработки CMS исключений отсюда можно будет удалить.
      *
      * @return array
      */
     public function rules()
     {
+        $regex = '/^([\/\w \.-]*)*\/?$/i';
+        $defaultRules = "string|required|regex:{$regex}";
         return [
             'id' => 'nullable|int',
-            'from' => 'string|required|regex:/^([\/\w \.-]*)*\/?$/i',
-            'to' => 'string|required|regex:/^([\/\w \.-]*)*\/?$/i|different:from',
+            'from' => $defaultRules,
+            'to' => "$defaultRules|different:from",
         ];
     }
 
