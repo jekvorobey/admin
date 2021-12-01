@@ -48,7 +48,17 @@
         </b-form-group>
 
         <b-form-group label="Цвет" label-for="banner-color">
-            <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
+            <div class="d-flex align-items-center">
+                <div>
+                    <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
+                </div>
+                <div class="ml-2">
+                    <b-button size="sm" @click="banner.color = null">Сбросить</b-button>
+                </div>
+            </div>
+            <div>
+                HEX: {{ banner.color ? banner.color : 'Не выбран' }}
+            </div>
         </b-form-group>
 
         <b-form-group label="Страницы" label-for="banner-path-templates">
