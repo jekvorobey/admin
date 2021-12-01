@@ -102,7 +102,7 @@ class TabOrderReferrerController extends Controller
         $merchantService = resolve(MerchantService::class);
         $merchantsQuery = $merchantService->newQuery();
         $merchantsQuery
-            ->setFilter('order_id',  $orders->pluck('id')->toArray())
+            ->setFilter('order_id', $orders->pluck('id')->toArray())
             ->setFilter('product_id', $referralOrderHistories->pluck('product_id')->toArray())
             ->setFilter('shipment_status', ShipmentStatusDto::SHIPMENT_STATUS_RETURN);
 
