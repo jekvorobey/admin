@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ddc0c3ad7d6a6694dd18471c2778457",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1046,11 +1046,11 @@
         },
         {
             "name": "ibt/reports-lib",
-            "version": "dev-feature/IBT-495-reports-refactoring",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib",
-                "reference": "9f4348083b0072bce40b33a4a9057aa7bc50e125"
+                "reference": "ce020605d6978209e934636458257d7e8650cb61"
             },
             "require": {
                 "ext-json": "*",
@@ -1063,6 +1063,7 @@
                 "orchestra/testbench": "^6.0",
                 "phpunit/phpunit": "^9.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1082,7 +1083,7 @@
                 ]
             },
             "description": "iBT reports client",
-            "time": "2021-11-24T08:47:02+00:00"
+            "time": "2021-12-02T10:12:31+00:00"
         },
         {
             "name": "iwengo/ibt-catalog-import-lib",
@@ -1128,15 +1129,15 @@
         },
         {
             "name": "iwengo/ibt-cm-lib",
-            "version": "dev-feature/IBT-495-referal-partner-report",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "3b8a00611e702d2fd3cc11042b525e37e9e4713a"
+                "reference": "a9f776c60a0611fda76f7568c270376799666f5c"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master",
+                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
@@ -1166,7 +1167,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-11-18T09:26:55+00:00"
+            "time": "2021-12-02T10:12:20+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
@@ -1343,15 +1344,15 @@
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/IBT-495-referral-bill-operations-status-returned",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "09905ff335782df9416336f3491ce22ce55f9a83"
+                "reference": "849c26982eda6ba5a2813bf78b8d7b6d9107f1ae"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master",
+                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
@@ -1370,7 +1371,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2021-12-01T07:51:45+00:00"
+            "time": "2021-12-02T10:12:47+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -10716,7 +10717,7 @@
         },
         {
             "package": "iwengo/ibt-cm-lib",
-            "version": "dev-feature/IBT-495-referal-partner-report",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10746,7 +10747,7 @@
         },
         {
             "package": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/IBT-495-referral-bill-operations-status-returned",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
