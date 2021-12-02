@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "56526ee4e981a8b54b5a4d836112028d",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1302,11 +1302,11 @@
         },
         {
             "name": "iwengo/ibt-marketing-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-650-promocode-limit-for-all-users",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "1d7468eeb5005a748e54c67ab127c8c4e1fc1185"
+                "reference": "680e868b35b3bbaeef633edb4ed8c8d1525f6c47"
             },
             "require": {
                 "ext-json": "*",
@@ -1340,7 +1340,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-09-29T14:42:04+00:00"
+            "time": "2021-12-02T14:12:48+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -1421,7 +1421,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "b3440962e0f0578e6f1cff9ab10088ff3cb2be17"
+                "reference": "83367b3651dfdbc262b0bcc9fd11ed831a4b2b65"
             },
             "require": {
                 "ext-json": "*",
@@ -1456,7 +1456,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-09-28T08:01:50+00:00"
+            "time": "2021-11-01T09:13:20+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10741,7 +10741,7 @@
         },
         {
             "package": "iwengo/ibt-marketing-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-650-promocode-limit-for-all-users",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },

@@ -103,7 +103,7 @@ class PromoCodeController extends Controller
             'promoRequestsCount' => $promoRequestsCount,
             'Merchants' => $merchants,
             'statuses' => PromoCodeOutDto::allStatuses(),
-            'types' => PromoCodeOutDto::allTypes(),
+            'typeOfLimit' => PromoCodeOutDto::allTypesOfLimit(),
             'creators' => $creatorIds->map(function ($creatorId) use ($users) {
                 /** @var UserDto $user */
                 $user = $users->get($creatorId);
@@ -199,6 +199,7 @@ class PromoCodeController extends Controller
             'iTypesForMerchant' => PromoCodeOutDto::availableTypesForMerchant(),
             'iTypes' => Helpers::getSelectOptions($promoCodeTypes),
             'iStatuses' => Helpers::getSelectOptions($promoCodeStatuses),
+            'iTypesOfLimit' => PromoCodeOutDto::allTypesOfLimit(),
             'iDiscounts' => $discounts,
             'gifts' => [],
             'bonuses' => Helpers::getSelectOptions($bonuses),
@@ -223,6 +224,7 @@ class PromoCodeController extends Controller
             'name' => 'string|required',
             'code' => 'string|required',
             'counter' => 'numeric|nullable',
+            'type_of_limit' => 'string|nullable',
             'start_date' => 'date|nullable',
             'end_date' => 'date|nullable',
             'status' => 'numeric|required',
