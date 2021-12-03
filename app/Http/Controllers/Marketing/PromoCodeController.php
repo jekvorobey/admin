@@ -26,7 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
-use \Throwable;
+use Throwable;
 
 /**
  * Class PromoCodeController
