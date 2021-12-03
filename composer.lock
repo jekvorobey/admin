@@ -1134,7 +1134,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "5bf700b5b10646626e04cfb424692497fda9c7f9"
+                "reference": "ec8e73c6cbe1ca4f01730db330cee1af8bc273a4"
             },
             "require": {
                 "ext-json": "*",
@@ -1157,7 +1157,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-08-23T08:57:05+00:00"
+            "time": "2021-12-03T08:58:10+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -1416,7 +1416,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "98362a9958b610c2a34aab601493823cec2ca0e9"
+                "reference": "d201b6e694fecce4343c6be7864eeb83b03c27ee"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2021-10-20T08:03:38+00:00"
+            "time": "2021-12-03T12:26:20+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
