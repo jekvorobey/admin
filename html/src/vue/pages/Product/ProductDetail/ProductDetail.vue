@@ -133,7 +133,7 @@
     data() {
         return {
             product: this.iProduct,
-            images: this.iImages,
+            images: this.iImages.filter(image => image.type !== this.$store.state.layout.productImageTypes.catalog),
             badges: this.iBadges,
             properties: this.iProperties,
 
@@ -158,7 +158,7 @@
             Services.showLoader();
             Services.net().get(this.getRoute('products.detailData', {id: this.product.id})).then((data)=> {
                 this.product = data.product;
-                this.images = data.images;
+                this.images = data.images.filter(image => image.type !== this.productImageType.catalog);
                 this.properties = data.properties;
                 this.options.availableProperties = data.availableProperties;
                 this.options.directoryValues = data.directoryValues;
@@ -195,7 +195,8 @@
             return this.$store.state.title;
         },
         mainImage() {
-            let mainImages = this.images.filter(image => image.type === 2);
+            let mainImages = this.images.filter(image => image.type === this.productImageType.gallery);
+
             return mainImages.length > 0 ? mainImages[0] : {
                 id: 0,
                 url: '//placehold.it/150x150?text=No+image'

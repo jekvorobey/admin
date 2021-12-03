@@ -38,6 +38,7 @@ use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\Offer\OfferSaleStatus;
+use Pim\Dto\Product\ProductImageType;
 use Pim\Dto\PropertyDto;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
@@ -100,6 +101,8 @@ class ViewRender
     private $propertyTypes = [];
     private $billingReportStatuses = [];
     private $billingReportTypes = [];
+
+    private $productImageTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -797,6 +800,18 @@ class ViewRender
         return $this;
     }
 
+    public function loadProductImagesTypes(): self
+    {
+        $this->productImageTypes = [
+            'catalog' => ProductImageType::TYPE_CATALOG,
+            'gallery' => ProductImageType::TYPE_GALLERY,
+            'description' => ProductImageType::TYPE_DESCRIPTION,
+            'howto' => ProductImageType::TYPE_HOW_TO,
+        ];
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -859,6 +874,7 @@ class ViewRender
                 'billingReportTypes' => $this->billingReportTypes,
 
                 'propertyTypes' => $this->propertyTypes,
+                'productImageTypes' => $this->productImageTypes,
             ],
             [
                 'title' => $this->title,
