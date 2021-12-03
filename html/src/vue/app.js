@@ -260,6 +260,14 @@ Vue.mixin({
         offerCountdownSaleStatuses() {
             return this.$store.state.layout.offerCountdownSaleStatuses;
         },
+        /** @return {BillingReportTypes} */
+        billingReportTypes() {
+            return this.$store.state.layout.billingReportTypes;
+        },
+        /** @return {BillingReportStatuses} */
+        billingReportStatuses() {
+            return this.$store.state.layout.billingReportStatuses;
+        },
         /** @return {propertyTypes} */
         propertyTypes() {
             return this.$store.state.layout.propertyTypes;
@@ -752,10 +760,27 @@ Vue.mixin({
  * @property {string} directory
  */
 /**
- * @typedef ProductImageType
- * @type {Object}
- * @property {integer} catalog
- * @property {integer} gallery
- * @property {integer} description
- * @property {integer} howto
+ @typedef BillingReportStatuses
+ @type {Object}
+ @property {string} new
+ @property {string} waiting
+ @property {string} viewed
+ @property {string} accepted
+ @property {string} rejected
+ @property {string} payed
+ */
+/**
+ @typedef BillingReportTypes
+ @type {Object}
+ @property {string} billing
+ @property {string} public_events
+ @property {string} referral_partner
+ */
+/**
+ @typedef ProductImageType
+ @type {Object}
+ @property {integer} catalog
+ @property {integer} gallery
+ @property {integer} description
+ @property {integer} howto
  */
