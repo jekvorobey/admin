@@ -1306,7 +1306,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "680e868b35b3bbaeef633edb4ed8c8d1525f6c47"
+                "reference": "594d63449d391c514732f8d4fda0834ba4dbcfa8"
             },
             "require": {
                 "ext-json": "*",
@@ -1340,7 +1340,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-12-02T14:12:48+00:00"
+            "time": "2021-12-03T05:22:34+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",

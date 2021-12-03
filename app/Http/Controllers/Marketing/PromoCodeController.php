@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use \Throwable;
 
 /**
  * Class PromoCodeController
@@ -103,7 +104,7 @@ class PromoCodeController extends Controller
             'promoRequestsCount' => $promoRequestsCount,
             'Merchants' => $merchants,
             'statuses' => PromoCodeOutDto::allStatuses(),
-            'typeOfLimit' => PromoCodeOutDto::allTypesOfLimit(),
+            'types' => PromoCodeOutDto::allTypes(),
             'creators' => $creatorIds->map(function ($creatorId) use ($users) {
                 /** @var UserDto $user */
                 $user = $users->get($creatorId);
@@ -224,7 +225,7 @@ class PromoCodeController extends Controller
             'name' => 'string|required',
             'code' => 'string|required',
             'counter' => 'numeric|nullable',
-            'type_of_limit' => 'string|nullable',
+            'type_of_limit' => 'string|nullable|required_with:counter',
             'start_date' => 'date|nullable',
             'end_date' => 'date|nullable',
             'status' => 'numeric|required',
@@ -250,8 +251,8 @@ class PromoCodeController extends Controller
             $data['end_date'] = $data['end_date']
                 ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
                 : null;
-        } catch (\Throwable $ex) {
-            //
+        } catch (Throwable $ex) {
+            report($ex);
         }
 
         $builder = new PromoCodeBuilder($data);

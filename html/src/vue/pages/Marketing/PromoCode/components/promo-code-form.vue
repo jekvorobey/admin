@@ -90,7 +90,13 @@
                 <v-input v-model="promoCode.counter" min="1" step="1" name="counter" type="number" :help="'Не более N раз'"></v-input>
             </div>
 
-            <v-select v-if="limitedBtn" v-model="promoCode.type_of_limit" :options="iTypesOfLimit" :placeholder="'Тип ограничения'" class="col-3"></v-select>
+            <v-select v-if="limitedBtn"
+                  v-model="promoCode.type_of_limit"
+                  :options="iTypesOfLimit"
+                  :placeholder="'Тип ограничения'"
+                  class="col-3"
+            >
+            </v-select>
 
             <div class="col-12 mt-3">
                 <div class="custom-control custom-switch">
@@ -218,7 +224,7 @@
                 }
                 this.promoCode.owner_id = this.ownerBtn ? this.promoCode.owner_id : null;
                 this.promoCode.counter = this.limitedBtn ? this.promoCode.counter : null;
-                this.promoCode.counter = this.limitedBtn ? this.promoCode.type_of_limit : null;
+                this.promoCode.type_of_limit = this.limitedBtn ? this.promoCode.type_of_limit : null;
                 this.promoCode.merchant_id = this.merchantBtn ? this.promoCode.merchant_id : null;
                 this.action(this.promoCode);
             },
@@ -351,6 +357,17 @@
                 }
                 return res;
             },
+            checkCounter() {
+                if (!this.limitedBtn) {
+                    return true;
+                }
+
+                if (this.promoCode.counter > 0) {
+                    return this.promoCode.type_of_limit !== null;
+                }
+
+                return true;
+            },
             valid() {
                 let required = this.promoCode.name
                     && this.promoCode.type
@@ -362,7 +379,8 @@
                 return required
                     && this.checkType
                     && this.checkRestricts
-                    && this.checkDate;
+                    && this.checkDate
+                    && this.checkCounter;
             },
         },
         watch: {
