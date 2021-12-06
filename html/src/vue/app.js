@@ -24,6 +24,8 @@ import Media from '../scripts/media.js';
 import * as moment from 'moment';
 import {mapGetters} from 'vuex';
 
+import './plugins/VueUploadComponent';
+
 Vue.use(BootstrapVue);
 
 //Font Awesome Icons
@@ -60,6 +62,12 @@ Services.instance().register('event', () => {
 });
 
 moment.locale('ru');
+
+/**
+ * Есть подозрение, что этот подход здесь работает некорректно.
+ * В момент инициализации компонента в data() не всегда есть
+ * доступ к методам и свойствам миксина
+ */
 Vue.mixin({
     methods: {
         preparePrice(number, decimals, dec_point, thousands_sep) {
@@ -252,9 +260,21 @@ Vue.mixin({
         offerCountdownSaleStatuses() {
             return this.$store.state.layout.offerCountdownSaleStatuses;
         },
+        /** @return {BillingReportTypes} */
+        billingReportTypes() {
+            return this.$store.state.layout.billingReportTypes;
+        },
+        /** @return {BillingReportStatuses} */
+        billingReportStatuses() {
+            return this.$store.state.layout.billingReportStatuses;
+        },
         /** @return {propertyTypes} */
         propertyTypes() {
             return this.$store.state.layout.propertyTypes;
+        },
+        /** @return {ProductImageType} */
+        productImageType() {
+            return this.$store.state.layout.productImageTypes;
         },
     },
 });
@@ -738,4 +758,29 @@ Vue.mixin({
  * @property {string} double
  * @property {string} datetime
  * @property {string} directory
+ */
+/**
+ @typedef BillingReportStatuses
+ @type {Object}
+ @property {string} new
+ @property {string} waiting
+ @property {string} viewed
+ @property {string} accepted
+ @property {string} rejected
+ @property {string} payed
+ */
+/**
+ @typedef BillingReportTypes
+ @type {Object}
+ @property {string} billing
+ @property {string} public_events
+ @property {string} referral_partner
+ */
+/**
+ @typedef ProductImageType
+ @type {Object}
+ @property {integer} catalog
+ @property {integer} gallery
+ @property {integer} description
+ @property {integer} howto
  */

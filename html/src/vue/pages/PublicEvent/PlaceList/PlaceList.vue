@@ -58,14 +58,9 @@
                 <div slot="body">
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
-                        <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Как пройти*</v-input>
-                        <v-dadata
-                            :value="$v.form.address.$model"
-                            :error="errorAddress"
-                            @onSelect="onStoreAddressAdd">
-                                Адрес*
-                        </v-dadata>
-                        <b-form-checkbox v-model="$v.form.global.$model" :error="errorGlobal">Глобальное место*</b-form-checkbox>
+                        <v-input v-model="$v.form.description.$model" tag="textarea">Как пройти</v-input>
+                        <v-dadata :value="$v.form.address.$model" @onSelect="onStoreAddressAdd">Адрес</v-dadata>
+                        <b-form-checkbox v-model="$v.form.global.$model">Глобальное место</b-form-checkbox>
                         <v-input v-model="$v.form.city_name.$model" disabled>Город</v-input>
                         <v-input v-model="$v.form.city_id.$model" disabled>ID Места</v-input>
                         <v-input v-model="$v.form.latitude.$model" disabled>Широта</v-input>
@@ -164,13 +159,13 @@
         validations: {
             form: {
                 name: {required},
-                city_name: {required},
-                description: {required},
-                address: {required},
-                global: {required},
-                city_id: {required},
-                longitude: {required},
-                latitude: {required},
+                city_name: {},
+                description: {},
+                address: {},
+                global: {},
+                city_id: {},
+                longitude: {},
+                latitude: {},
                 media: {}
             }
         },

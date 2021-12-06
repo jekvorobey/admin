@@ -8,6 +8,9 @@ use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use IBT\Reports\Dto\Enum\ReportStatusDto;
+use IBT\Reports\Dto\Enum\ReportTypeDto;
+use IBT\Reports\Services\ReportService\ReportService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,15 +30,21 @@ class MerchantSettlementsController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
+        $this->loadBillingReportStatuses = true;
+        $this->loadBillingReportTypes = true;
+
         /** @var MerchantService $merchantService */
         $merchantService = resolve(MerchantService::class);
+
+        /** @var ReportService $reportService */
+        $reportService = resolve(ReportService::class);
 
         $query = $this->makeRestQuery();
         $payQuery = $this->makeQuery();
 
         return $this->render('Merchant/Settlements', [
-            'iBillingReports' => $this->loadItems(),
-            'iPager' => is_null($query) ? 0 : $merchantService->merchantBillingReportsCount($query),
+            'iBillingReports' => $this->loadItems($query),
+            'iPager' => is_null($query) ? 0 : $reportService->count($query),
             'iCurrentPage' => request()->get('page', 1),
             'iFilter' => request()->get('filter', []),
             'merchants' => $this->getMerchants(),
@@ -46,36 +55,36 @@ class MerchantSettlementsController extends Controller
         ]);
     }
 
-    public function page(MerchantService $merchantService): JsonResponse
+    public function page(ReportService $reportService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $query = $this->makeRestQuery();
         $data = [
-            'items' => $this->loadItems(),
+            'items' => $this->loadItems($query),
         ];
         if (request()->get('page', 1) == 1) {
-            $data['pager'] = is_null($query) ? 0 : $merchantService->merchantBillingReportsCount($query);
+            $data['pager'] = is_null($query) ? 0 : $reportService->count($query);
         }
 
         return response()->json($data);
     }
 
-    protected function loadItems(): array
+    protected function loadItems(RestQuery $query): array
     {
-        /** @var MerchantService $merchantService */
-        $merchantService = resolve(MerchantService::class);
+        /** @var ReportService $reportService */
+        $reportService = app(ReportService::class);
 
-        $restQuery = $this->makeRestQuery();
-
-        return $merchantService->merchantBillingReports($restQuery);
+        return $reportService->reports($query)->all();
     }
 
-    protected function makeRestQuery(): DataQuery
+    protected function makeRestQuery(): RestQuery
     {
         $page = request()->get('page', 1);
+
         $restQuery = (new RestQuery())
             ->pageNumber($page, 30)
+            ->setFilter('type', ReportTypeDto::BILLING)
             ->addSort('id', 'desc');
 
         $filter = $this->getFilter();
@@ -88,11 +97,11 @@ class MerchantSettlementsController extends Controller
         if (isset($filter['status'])) {
             $restQuery->setFilter('status', $filter['status']);
         } else {
-            $restQuery->setFilter('status', [2]);
+            $restQuery->setFilter('status', [ReportStatusDto::ACCEPTED]);
         }
 
         if (isset($filter['merchant_id'])) {
-            $restQuery->setFilter('merchant_id', $filter['merchant_id']);
+            $restQuery->setFilter('entity_id', $filter['merchant_id']);
         }
 
         return $restQuery;
@@ -106,7 +115,7 @@ class MerchantSettlementsController extends Controller
         return Validator::make(
             request('filter') ?? [],
             [
-                'status' => 'integer|someone',
+                'status' => 'string|someone',
                 'legal_name' => 'string|someone',
                 'created_at' => 'string|someone',
             ]

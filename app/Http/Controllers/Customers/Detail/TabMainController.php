@@ -10,9 +10,12 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\Customer\Dto\CustomerCertificateDto;
+use Greensight\Customer\Dto\ReferralContractDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Services\MarketingService\MarketingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class TabMainController extends Controller
 {
@@ -21,7 +24,8 @@ class TabMainController extends Controller
         CustomerService $customerService,
         FileService $fileService,
         UserService $userService,
-        MarketingService $marketingService
+        MarketingService $marketingService,
+        ReferralService $referralService
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -29,6 +33,11 @@ class TabMainController extends Controller
         $files = [];
         if ($certificates) {
             $files = $fileService->getFiles($certificates->pluck('file_id')->all())->keyBy('id');
+        }
+
+        $referralContracts = $referralService->referralContracts($id);
+        if ($referralContracts) {
+            $files = $files->merge($fileService->getFiles($referralContracts->pluck('file_id')->all()))->keyBy('id');
         }
 
         $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
@@ -61,6 +70,19 @@ class TabMainController extends Controller
                     'name' => $file->original_name,
                 ];
             })->filter(),
+            'referralContracts' => $referralContracts->map(function (ReferralContractDto $referralContract) use ($files) {
+                /** @var FileDto $file */
+                $file = $files->get($referralContract->file_id);
+                if (!$file) {
+                    return false;
+                }
+
+                return [
+                    'id' => $referralContract->id,
+                    'url' => $file->absoluteUrl(),
+                    'name' => $file->original_name,
+                ];
+            })->filter(),
             'managers' => $managers->mapWithKeys(function (UserDto $user) {
                 return [$user->id => $user->full_name];
             }),
@@ -88,6 +110,24 @@ class TabMainController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $customerService->deleteCertificate($id, $certificate_id);
+
+        return response('', 204);
+    }
+
+    public function createReferralContract(int $id, int $file_id, ReferralService $referralService): JsonResponse
+    {
+        $referralContractDto = new ReferralContractDto();
+        $referralContractDto->file_id = $file_id;
+        $id = $referralService->createReferralContract($id, $referralContractDto);
+
+        return response()->json([
+            'id' => $id,
+        ]);
+    }
+
+    public function deleteReferralContract(int $id, int $referralContractId, ReferralService $referralService): Response
+    {
+        $referralService->deleteReferralContract($id, $referralContractId);
 
         return response('', 204);
     }

@@ -77,6 +77,7 @@ class OrderDetailController extends Controller
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
+            'iOrderInfo' => $orderService->order($id),
             'kpis' => $order ? $this->getKpis($order) : [],
         ]);
     }

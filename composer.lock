@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "980b6fc6b02f8679946b1fdbb5435949",
+    "content-hash": "ec411b98dc3f5dbce288660845879e6a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1113,6 +1113,47 @@
             "time": "2021-07-21T13:50:14+00:00"
         },
         {
+            "name": "ibt/reports-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib",
+                "reference": "ce020605d6978209e934636458257d7e8650cb61"
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/contracts": "^5.8|^6.0|^7.0|^8.0",
+                "illuminate/support": "^5.8|^6.0|^7.0|^8.0",
+                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "php": "^7.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "IBT\\Reports\\ReportsLibServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "IBT\\Reports\\": "src/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "description": "iBT reports client",
+            "time": "2021-12-02T10:12:31+00:00"
+        },
+        {
             "name": "iwengo/ibt-catalog-import-lib",
             "version": "dev-master-ylab",
             "source": {
@@ -1160,7 +1201,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "2b64d9e380790ae3b2f630776d15cfe91a8e13c0"
+                "reference": "a9f776c60a0611fda76f7568c270376799666f5c"
             },
             "require": {
                 "ext-json": "*",
@@ -1194,7 +1235,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-10-11T08:44:12+00:00"
+            "time": "2021-12-02T10:12:20+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
@@ -1375,7 +1416,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "d5d605471a1587a36c9b0b0663d890853f778470"
+                "reference": "849c26982eda6ba5a2813bf78b8d7b6d9107f1ae"
             },
             "require": {
                 "ext-json": "*",
@@ -1398,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2021-12-02T10:12:47+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -10780,6 +10821,7 @@
         "iwengo/ibt-message-lib": 20,
         "iwengo/ibt-oms-lib": 20,
         "iwengo/ibt-pim-lib": 20,
+        "ibt/reports-lib": 20,
         "iwengo/ibt-store-lib": 20,
         "letsgoi/laravel-health-check": 20
     },
