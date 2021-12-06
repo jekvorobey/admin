@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "56526ee4e981a8b54b5a4d836112028d",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1302,11 +1302,11 @@
         },
         {
             "name": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/IBT-650-promocode-limit-for-all-users",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "594d63449d391c514732f8d4fda0834ba4dbcfa8"
+                "reference": "f7bc7f78ff1f42fabd791d0fb2c62fdc67cad15f"
             },
             "require": {
                 "ext-json": "*",
@@ -1340,7 +1340,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-12-03T05:22:34+00:00"
+            "time": "2021-12-06T08:54:55+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -10741,7 +10741,7 @@
         },
         {
             "package": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/IBT-650-promocode-limit-for-all-users",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
