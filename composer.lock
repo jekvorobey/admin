@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74889813b7969fdb56ca32ddd04a3afd",
+    "content-hash": "980b6fc6b02f8679946b1fdbb5435949",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1198,11 +1198,11 @@
         },
         {
             "name": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-633-import-redirects",
+            "version": "dev-feature/IBT-633",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "691412b98aadc6d02d71bc5864cd7311bf9945b8"
+                "reference": "b434ba1992b5decb8a4d578f113ec985a48ac983"
             },
             "require": {
                 "ext-json": "*",
@@ -1225,7 +1225,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-11-30T12:29:10+00:00"
+            "time": "2021-12-01T07:59:51+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -10715,7 +10715,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-633-import-redirects",
+            "version": "dev-feature/IBT-633",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
