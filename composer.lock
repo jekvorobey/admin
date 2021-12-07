@@ -1306,7 +1306,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "1d7468eeb5005a748e54c67ab127c8c4e1fc1185"
+                "reference": "f7bc7f78ff1f42fabd791d0fb2c62fdc67cad15f"
             },
             "require": {
                 "ext-json": "*",
@@ -1340,7 +1340,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-09-29T14:42:04+00:00"
+            "time": "2021-12-06T08:54:55+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -1421,7 +1421,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "b3440962e0f0578e6f1cff9ab10088ff3cb2be17"
+                "reference": "83367b3651dfdbc262b0bcc9fd11ed831a4b2b65"
             },
             "require": {
                 "ext-json": "*",
@@ -1456,7 +1456,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-09-28T08:01:50+00:00"
+            "time": "2021-11-01T09:13:20+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",

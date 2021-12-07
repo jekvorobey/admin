@@ -11,6 +11,7 @@
             :i-promo-codes="iPromoCodes"
             :i-types="iTypes"
             :i-statuses="iStatuses"
+            :i-types-of-limit="iTypesOfLimit"
             :submit-text="'Сохранить'"
             :action="action"
             :processing="processing"
@@ -40,6 +41,7 @@
             iPromoCodes: Array,
             merchants: Array,
             iTypesForMerchant: Array,
+            iTypesOfLimit: Object,
             returnUrl: {},
             referral: {}
         },
