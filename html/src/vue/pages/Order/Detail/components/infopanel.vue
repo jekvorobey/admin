@@ -6,7 +6,7 @@
             </b-col>
             <b-col v-if="canUpdate(blocks.orders)">
                 <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
-                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || (this.order.status &&
+                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid && (this.order.status &&
                 this.order.status.id < orderStatuses.done.id)) && !isCancel">
                     <b-dropdown-item-button>
                         Пометить, как проблемный
@@ -31,6 +31,9 @@
                                             @click="showOrderReturnModal()">
                         Отменить заказ
                     </b-dropdown-item-button>
+                </b-dropdown>
+                <b-dropdown text="Действия" class="float-right" size="sm" v-else-if="(this.order.status && this.order.status.id === orderStatuses.done.id)">
+                  <b-dropdown-item-button @click="returnOrder()">Возврат</b-dropdown-item-button>
                 </b-dropdown>
             </b-col>
         </b-row>
@@ -230,6 +233,23 @@ export default {
                 Services.hideLoader();
             });
         },
+        returnOrder() {
+          Services.showLoader();
+          Services.net().put(this.getRoute('orders.return', {id: this.order.id}), null, {})
+              .then(data => {
+            if (data.order) {
+              this.$set(this, 'order', data.order);
+              this.$set(this.order, 'shipments', data.order.shipments);
+              Services.msg("Изменения сохранены");
+            } else {
+              Services.msg(errorMessage, 'danger');
+            }
+          }, () => {
+            Services.msg(errorMessage, 'danger');
+          }).finally(data => {
+            Services.hideLoader();
+          });
+        },
         isStatus(statusId) {
             return this.order.status && this.order.status.id === statusId;
         },
@@ -284,5 +304,8 @@ export default {
             return returnReason ? returnReason.text : '-';
         },
     },
+    created() {
+      console.log(this.order)
+    }
 };
 </script>

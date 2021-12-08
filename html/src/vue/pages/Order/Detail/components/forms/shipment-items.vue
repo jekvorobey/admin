@@ -29,6 +29,7 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
+                    <b-th v-if="order.status.id === orderStatuses.done.id">Возврат</b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -62,6 +63,10 @@
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
                     <tr v-for="(basketItem, key) in shipment.nonPackedBasketItems">
+                        <b-td class="return-checkbox"
+                              v-if="order.status.id >= orderStatuses.done.id && returnable">
+                          <input type="checkbox" :checked="orderReturned" :disabled="orderReturned">
+                        </b-td>
                         <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds"
@@ -235,7 +240,11 @@ export default {
         withEdit: {
             type: Boolean,
             default: false,
-        }
+        },
+        returnable: {
+          type: Boolean,
+          default: false
+        },
     },
     data() {
         return {
@@ -367,6 +376,9 @@ export default {
                 this.$emit('update:modelShipment', value)
             },
         },
+        orderReturned() {
+          return this.orderStatuses.returned.id === this.order.status.id;
+        },
         selectedBasketItems() {
             let selectedBasketItems = {};
             for (let [id, basketItem] of Object.entries(this.shipment.nonPackedBasketItems)) {
@@ -431,5 +443,12 @@ export default {
 .preview {
     height: 50px;
     border-radius: 5px;
+}
+
+.return-checkbox {
+  text-align: center;
+}
+.return-checkbox input {
+  transform: scale(2);
 }
 </style>
