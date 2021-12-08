@@ -43,7 +43,8 @@
                         "Barryvdh\\Debugbar\\ServiceProvider"
                     ],
                     "aliases": {
-                        "Debugbar": "Barryvdh\\Debugbar\\Facade"
+                        "
+                        Debugbar": "Barryvdh\\Debugbar\\Facade"
                     }
                 }
             },

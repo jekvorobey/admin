@@ -183,6 +183,7 @@ class OrderDetailController extends Controller
             'order' => $this->getOrder($id),
         ]);
     }
+
     /**
      * @throws Exception
      */
