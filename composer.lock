@@ -43,8 +43,7 @@
                         "Barryvdh\\Debugbar\\ServiceProvider"
                     ],
                     "aliases": {
-                        "
-                        Debugbar": "Barryvdh\\Debugbar\\Facade"
+                        "Debugbar": "Barryvdh\\Debugbar\\Facade"
                     }
                 }
             },
@@ -1202,7 +1201,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "a9f776c60a0611fda76f7568c270376799666f5c"
+                "reference": "2fd2d6ad832e1a9773cc14d3c598f2e16b9008df"
             },
             "require": {
                 "ext-json": "*",
@@ -1236,7 +1235,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-12-02T10:12:20+00:00"
+            "time": "2021-12-07T14:15:54+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
@@ -1490,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "b3440962e0f0578e6f1cff9ab10088ff3cb2be17"
+                "reference": "b10b01ea945601637338f3e87d1ff4c87af899ba"
             },
             "require": {
                 "ext-json": "*",
@@ -1525,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-09-28T08:01:50+00:00"
+            "time": "2021-12-07T11:47:48+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -6881,26 +6880,26 @@
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
-            "version": "2.2.3",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
-                "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5"
+                "reference": "da444caae6aca7a19c0c140f68c6182e337d5b1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/b43b05cf43c1b6d849478965062b6ef73e223bb5",
-                "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5",
+                "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/da444caae6aca7a19c0c140f68c6182e337d5b1c",
+                "reference": "da444caae6aca7a19c0c140f68c6182e337d5b1c",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "php": "^5.5 || ^7.0 || ^8.0",
-                "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0"
+                "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5 || ^8.5.21 || ^9.5.10"
             },
             "type": "library",
             "extra": {
@@ -6928,9 +6927,9 @@
             "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
             "support": {
                 "issues": "https://github.com/tijsverkoyen/CssToInlineStyles/issues",
-                "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.3"
+                "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/2.2.4"
             },
-            "time": "2020-07-13T06:12:54+00:00"
+            "time": "2021-12-08T09:12:39+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -10208,16 +10207,16 @@
         },
         {
             "name": "slevomat/coding-standard",
-            "version": "7.0.17",
+            "version": "7.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slevomat/coding-standard.git",
-                "reference": "b574727867bc5bba9d28a2a7093fc8ceeda56350"
+                "reference": "b81ac84f41a4797dc25c8ede1b0718e2a74be0fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/b574727867bc5bba9d28a2a7093fc8ceeda56350",
-                "reference": "b574727867bc5bba9d28a2a7093fc8ceeda56350",
+                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/b81ac84f41a4797dc25c8ede1b0718e2a74be0fc",
+                "reference": "b81ac84f41a4797dc25c8ede1b0718e2a74be0fc",
                 "shasum": ""
             },
             "require": {
@@ -10253,7 +10252,7 @@
             "description": "Slevomat Coding Standard for PHP_CodeSniffer complements Consistence Coding Standard by providing sniffs with additional checks.",
             "support": {
                 "issues": "https://github.com/slevomat/coding-standard/issues",
-                "source": "https://github.com/slevomat/coding-standard/tree/7.0.17"
+                "source": "https://github.com/slevomat/coding-standard/tree/7.0.18"
             },
             "funding": [
                 {
@@ -10265,7 +10264,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-12-06T22:13:58+00:00"
+            "time": "2021-12-07T17:19:06+00:00"
         },
         {
             "name": "spatie/backtrace",
