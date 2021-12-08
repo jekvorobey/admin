@@ -42,7 +42,7 @@ class PublicEventTicketsController extends Controller
         }
 
         $ticketIds = [];
-        $ordersBySprints = $orders->map(function (OrderDto $order) use (&$ticketIds, $sprints) {
+        $orders = $orders->map(function (OrderDto $order) use (&$ticketIds, $sprints) {
             $data['id'] = $order->id;
             $data['number'] = $order->number;
             $data['tickets'] = [];
@@ -66,7 +66,7 @@ class PublicEventTicketsController extends Controller
         }
 
         $orderByTicketId = [];
-        foreach ($ordersBySprints as $order) {
+        foreach ($orders as $order) {
             foreach ($order['tickets'] as $ticketId) {
                 $orderByTicketId[$ticketId] = $order;
             }
