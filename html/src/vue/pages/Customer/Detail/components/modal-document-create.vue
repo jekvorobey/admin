@@ -34,6 +34,12 @@
                             <v-date v-model="newDocument.period_to" :error="errPeriodTo" aria-required="true"/>
                         </td>
                     </tr>
+                    <tr>
+                        <th>Название документа</th>
+                        <td>
+                            <v-input v-model="newDocument.title" :error="errTitle" aria-required="true"/>
+                        </td>
+                    </tr>
                     <tr v-if="newDocument.type !== '1'">
                         <th>Сумма вознаграждения, руб.</th>
                         <td>
@@ -107,6 +113,7 @@
                     amount_reward: '',
                     status: '',
                     file: null,
+                    title: '',
                 },
             };
         },
@@ -118,6 +125,7 @@
                 period_since: {required},
                 amount_reward: {required, decimal, minValue: minValue(0)},
                 status: {required, integer},
+                title: {required},
             },
         },
         methods: {
@@ -146,6 +154,7 @@
                 this.newDocument.period_to = '';
                 this.newDocument.amount_reward = '';
                 this.newDocument.status = '';
+                this.newDocument.title = '';
             },
             nullifyUploaded() {
                 this.newDocument.file = null;
@@ -211,6 +220,13 @@
             errFile() {
                 if (this.$v.newDocument.file.$dirty) {
                     if (!this.$v.newDocument.file.required) {
+                        return "Обязательное поле!";
+                    }
+                }
+            },
+            errTitle() {
+                if (this.$v.newDocument.title.$dirty) {
+                    if (!this.$v.newDocument.title.required) {
                         return "Обязательное поле!";
                     }
                 }

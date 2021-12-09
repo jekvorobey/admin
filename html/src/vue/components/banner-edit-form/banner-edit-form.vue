@@ -25,6 +25,76 @@
             />
         </b-form-group>
 
+        <b-form-group label="Начало" label-for="banner-date-from">
+            <date-picker
+                v-model="banner.date_from"
+                id="banner-date-from"
+                type="datetime"
+                input-class="form-control"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-type="format"
+            />
+        </b-form-group>
+
+        <b-form-group label="Конец" label-for="banner-date-to">
+            <date-picker
+                v-model="banner.date_to"
+                id="banner-date-to"
+                type="datetime"
+                input-class="form-control"
+                format="YYYY-MM-DD HH:mm:ss"
+                value-type="format"
+            />
+        </b-form-group>
+
+        <b-form-group
+            label="Тип*"
+            label-for="banner-group-type"
+        >
+            <b-form-select
+                v-model="banner.type_id"
+                id="banner-group-type"
+                required
+            >
+                <b-form-select-option
+                    :value="type.id"
+                    v-for="type in bannerTypes"
+                    :key="type.id"
+                >
+                    {{ type.name }}
+                </b-form-select-option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group v-if="showColorField" label="Цвет" label-for="banner-color">
+            <div class="d-flex align-items-center">
+                <div>
+                    <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
+                </div>
+                <div class="ml-2">
+                    <b-button size="sm" @click="banner.color = null">Сбросить</b-button>
+                </div>
+            </div>
+            <div>
+                HEX: {{ banner.color ? banner.color : 'Не выбран' }}
+            </div>
+        </b-form-group>
+
+        <b-form-group v-if="showPathTemplatesField" label="Страницы" label-for="banner-path-templates">
+            <b-form-textarea v-model="banner.path_templates" id="banner-path-templates" />
+        </b-form-group>
+
+        <b-form-group label="Сортировка" label-for="banner-sort">
+            <b-form-input
+                v-model="banner.sort"
+                id="banner-sort"
+                step="1"
+                type="number"
+                pattern="[0-9]"
+                @keydown="disallowDecimal"
+            />
+        </b-form-group>
+
         Десктоп изображение*<br>
         <img v-if="desktopImage"
              :src="desktopImage.url"
@@ -57,25 +127,6 @@
         />
 
         <b-form-group
-                label="Тип*"
-                label-for="banner-group-type"
-        >
-            <b-form-select
-                    v-model="banner.type_id"
-                    id="banner-group-type"
-                    required
-            >
-                <b-form-select-option
-                        :value="type.id"
-                        v-for="type in bannerTypes"
-                        :key="type.id"
-                >
-                    {{ type.name }}
-                </b-form-select-option>
-            </b-form-select>
-        </b-form-group>
-
-        <b-form-group
                 label="Ссылка*"
                 label-for="banner-group-url"
         >
@@ -87,74 +138,6 @@
                     placeholder="Введите ссылку"
             />
         </b-form-group>
-
-        <b-form-group
-                label="С кнопкой?"
-                label-for="banner-group-has-button"
-        >
-            <b-form-checkbox
-                    id="banner-group-has-button"
-                    v-model="hasButton"
-                    :value="1"
-                    :unchecked-value="0"
-            />
-        </b-form-group>
-
-        <div v-show="hasButton">
-            Кнопка
-        </div>
-        <div v-show="hasButton" class="border border-dark rounded p-2">
-            <b-form-group
-                    label="Текст*"
-                    label-for="banner-group-button-text"
-            >
-                <b-form-input
-                        id="banner-group-button-text"
-                        v-model="banner.button.text"
-                        type="text"
-                        :required="!!hasButton"
-                        placeholder="Введите текст"
-                />
-            </b-form-group>
-
-            <b-form-group
-                    label="Тип*"
-                    label-for="banner-group-button-type"
-            >
-                <b-form-select
-                        v-model="banner.button.type"
-                        id="banner-group-button-type"
-                        :required="!!hasButton"
-                >
-                    <b-form-select-option
-                            :value="bannerButtonType.code"
-                            v-for="bannerButtonType in bannerButtonTypes"
-                            :key="bannerButtonType.code"
-                    >
-                        {{ bannerButtonType.name }}
-                    </b-form-select-option>
-                </b-form-select>
-            </b-form-group>
-
-            <b-form-group
-                    label="Местоположение*"
-                    label-for="banner-group-button-location"
-            >
-                <b-form-select
-                        v-model="banner.button.location"
-                        id="banner-group-button-location"
-                        :required="!!hasButton"
-                >
-                    <b-form-select-option
-                            :value="bannerButtonLocation.code"
-                            v-for="bannerButtonLocation in bannerButtonLocations"
-                            :key="bannerButtonLocation.code"
-                    >
-                        {{ bannerButtonLocation.name }}
-                    </b-form-select-option>
-                </b-form-select>
-            </b-form-group>
-        </div>
     </div>
 </template>
 
@@ -162,10 +145,27 @@
     import {mapActions} from 'vuex';
     import FileInput from '../controls/FileInput/FileInput.vue';
 
+    import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
+
+    import VueSwatches from 'vue-swatches';
+    import 'vue-swatches/dist/vue-swatches.css';
+
+    const bannerType = Object.freeze({
+        mainTop: 6,
+        mainNew: 7,
+        mainMiddle: 8,
+        mainBest: 9
+    });
+
     export default {
         components: {
-            FileInput
+            FileInput,
+            DatePicker,
+            VueSwatches
         },
+
         props: {
             iBanner: Object,
             iBannerTypes: Array,
@@ -174,6 +174,7 @@
             iBannerImages: [Object, Array],
             options: Object
         },
+
         data() {
             return {
                 banner: this.normalizeBanner(this.iBanner),
@@ -189,6 +190,13 @@
             ...mapActions({
                 showMessageBox: 'modal/showMessageBox',
             }),
+
+            disallowDecimal(event) {
+                if (event.key === '.') {
+                    event.preventDefault();
+                }
+            },
+
             initHasButton() {
                 return this.iBanner.button !== null ? 1 : 0;
             },
@@ -203,6 +211,11 @@
                     tablet_image_id: source.tablet_image_id ? source.tablet_image_id : null,
                     mobile_image_id: source.mobile_image_id ? source.mobile_image_id : null,
                     button: this.normalizeButton(source.button || {}),
+                    date_from: source.date_from ? source.date_from : null,
+                    date_to: source.date_to ? source.date_to : null,
+                    color: source.color ? source.color : null,
+                    path_templates: source.path_templates ? source.path_templates : null,
+                    sort: source.sort ? source.sort : null,
                 };
             },
             normalizeButton(source) {
@@ -226,6 +239,7 @@
                 this.banner.mobile_image_id = file.id;
             },
         },
+
         computed: {
             desktopImage() {
                 const fileId = this.banner.desktop_image_id;
@@ -236,6 +250,7 @@
 
                 return null;
             },
+
             tabletImage() {
                 const fileId = this.banner.tablet_image_id;
 
@@ -245,6 +260,7 @@
 
                 return null;
             },
+
             mobileImage() {
                 const fileId = this.banner.mobile_image_id;
 
@@ -254,9 +270,35 @@
 
                 return null;
             },
+
             isCreatingMode() {
                 return this.banner.id == null;
             },
+
+            showColorField() {
+                if (this.banner && this.banner.type_id === bannerType.mainTop) {
+                    return true;
+                }
+
+                return false;
+            },
+
+            showPathTemplatesField() {
+                if (!this.banner || !this.banner.type_id) {
+                    return false;
+                }
+
+                if (
+                    this.banner.type_id === bannerType.mainTop ||
+                    this.banner.type_id === bannerType.mainNew ||
+                    this.banner.type_id === bannerType.mainMiddle ||
+                    this.banner.type_id === bannerType.mainBest
+                ) {
+                    return false;
+                }
+
+                return true;
+            }
         },
         watch: {
             banner: {

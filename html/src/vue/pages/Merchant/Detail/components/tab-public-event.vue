@@ -1,27 +1,15 @@
 <template>
     <div>
-        <h4>Отчеты</h4>
-        <table>
-            <tr>
-                <td>
-                    <date-picker
-                        v-model="reportPeriod"
-                        value-type="format"
-                        format="YYYY-MM-DD"
-                        range
-                        input-class="form-control form-control-sm"
-                    />
-                </td>
-                <td>
-                    <button
-                        class="btn btn-success btn-sm"
-                        :disabled="!isReportPeriodSelected"
-                        @click="downloadReport">Скачать отчет за период
-                    </button>
-                </td>
-            </tr>
-        </table>
+        <billing-report
+            :model.sync="model"
+            :type="billingReportTypes.public_events"
+            title="Отчеты агента"
+            :rightsBlock="blocks.merchants"
+            :withEditCycle="false"
+        ></billing-report>
+
         <hr>
+        <h4>Заказы</h4>
         <div class="table-responsive">
             <table class="table table-condensed">
                 <thead>
@@ -81,34 +69,23 @@ import DatePicker from 'vue2-datepicker';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import Services from "../../../../../scripts/services/services";
+import BillingReport from "../../../../components/billing-report/billing-report.vue";
 
 export default {
     name: 'tab-public-event',
     props: ['model'],
     components: {
         DatePicker,
+        BillingReport,
     },
     data() {
         return {
-            reportPeriod: [],
             operations: [],
             currentPage: 1,
             pager: {},
         }
     },
     methods: {
-        downloadReport() {
-            Services.showLoader();
-
-            let url = this.getRoute('merchant.detail.eventBillingList.downloadEventBillingList', {id: this.model.id});
-            url += `?date_from=${this.reportPeriod[0]}&date_to=${this.reportPeriod[1]}`;
-
-            window.open(url);
-
-            this.reportPeriod = {dateFrom: null, dateTo: null};
-
-            Services.hideLoader();
-        },
         paginationPromise() {
             return Services.net().get(
                 this.getRoute('merchant.detail.eventBillingList', {id: this.model.id}),
@@ -144,14 +121,6 @@ export default {
     },
     created() {
         this.loadPage();
-    },
-    computed: {
-        isReportPeriodSelected() {
-            return this.reportPeriod
-                && this.reportPeriod.length === 2
-                && this.reportPeriod[0]
-                && this.reportPeriod[1];
-        },
     },
     watch: {
         currentPage() {

@@ -67,6 +67,7 @@
     import FInput from "../../../../components/filter/f-input.vue";
     import FDate from '../../../../components/filter/f-date.vue';
     import Services from "../../../../../scripts/services/services";
+    import moment from 'moment';
 
     export default {
         components:{
@@ -96,12 +97,7 @@
         },
         methods: {
             getDate(str) {
-                let date = new Date(str);
-                return date.toLocaleString('ru', {
-                    day: 'numeric',
-                    month: 'numeric',
-                    year: 'numeric'
-                });
+                return moment(str).format('DD.MM.YYYY');
             },
             getStatusName(id) {
                 return this.allStatuses[id].display_name;

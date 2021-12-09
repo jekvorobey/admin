@@ -32,7 +32,7 @@
                 @onChange="onTabChange"
         />
         <sprint-stages-tab
-                v-if="nav.currentTab === 'spritnStages'"
+                v-if="nav.currentTab === 'sprintStages'"
                 :sprint-id.sync="sprintId"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
@@ -71,8 +71,8 @@
                 @onChange="onTabChange"
                 @updateSprintId="updateSprintId"
         />
-        <professions-tab
-                v-if="nav.currentTab === 'professions'"
+        <specialties-tab
+                v-if="nav.currentTab === 'specialties'"
                 :public-event="publicEvent"
                 @onChange="onTabChange"
         />
@@ -95,7 +95,7 @@
     import SprintStagesTab from './components/sprint-stages-tab.vue';
     import TicketTypesTab from './components/ticket-types-tab.vue';
     import SpeakersTab from './components/speakers-tab.vue';
-    import ProfessionsTab from './components/professions-tab.vue';
+    import SpecialtiesTab from "./components/specialties-tab.vue";
     import RecommendationsTab from './components/recommendations-tab.vue';
     import SprintResultsTab from './components/sprint-results-tab.vue';
     import SprintOrdersTab from './components/sprint-orders-tab.vue';
@@ -113,7 +113,7 @@
         SprintStagesTab,
         TicketTypesTab,
         SpeakersTab,
-        ProfessionsTab,
+        SpecialtiesTab,
         RecommendationsTab,
         SprintResultsTab,
         SprintOrdersTab,
@@ -135,13 +135,13 @@
                     {value: 'main', text: 'Основное'},
                     {value: 'content', text: 'Контент'},
                     {value: 'sprints', text: 'Спринты'},
-                    {value: 'spritnStages', text: 'Программа'},
+                    {value: 'sprintStages', text: 'Программа'},
                     {value: 'sprintResults', text: 'Результаты'},
                     {value: 'orders', text: 'Заказы'},
                     {value: 'tickets', text: 'Участники'},
                     {value: 'ticketTypes', text: 'Типы билетов'},
                     {value: 'speakers', text: 'Спикеры'},
-                    {value: 'professions', text: 'Профессии'},
+                    {value: 'specialties', text: 'Направления'},
                     {value: 'recommendations', text: 'Рекомендации'},
                 ]
             }

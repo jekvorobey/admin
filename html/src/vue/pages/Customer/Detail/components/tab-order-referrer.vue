@@ -19,7 +19,7 @@
         <tbody>
             <tr v-for="order in orders">
                 <td>{{ order.order_number }}</td>
-                <td>{{ order.name }}</td>
+                <td>{{ order.name }} <span class="badge badge-warning" v-if="order.is_returned">Возврат</span></td>
                 <td>{{ order.qty | integer}}</td>
                 <td>{{ cutValue(order.price_commission) }}</td>
                 <td>{{ order.order_date }}</td>

@@ -261,7 +261,7 @@ class PublicEventDetailController extends Controller
                 ->withSprintTicketsCount()
                 ->withPlace()
                 ->withSpeakers()
-                ->withProfessions()
+                ->withSpecialties()
                 ->withRecommendations()
                 ->withType()
                 ->withMedia()

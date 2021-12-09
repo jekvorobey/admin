@@ -130,6 +130,15 @@ class BannerDetailController extends Controller
             'type_id' => 'integer|required',
             'button_id' => 'integer|nullable',
             'button' => 'array|nullable',
+
+            'date_from' => 'string|nullable',
+            'date_to' => 'string|nullable',
+            'color' => 'string|nullable',
+            'path_templates' => 'string|nullable',
+            'sort' => 'integer|nullable',
+            'banner_size' => 'integer|nullable',
+            'banner_page' => 'integer|nullable',
+            'banner_min_products' => 'integer|nullable',
         ]);
 
         $id = $bannerService->createBanner(new BannerDto($validatedData));
@@ -155,6 +164,15 @@ class BannerDetailController extends Controller
             'type_id' => 'integer|required',
             'button_id' => 'integer|nullable',
             'button' => 'array|nullable',
+
+            'date_from' => 'string|nullable',
+            'date_to' => 'string|nullable',
+            'color' => 'string|nullable',
+            'path_templates' => 'string|nullable',
+            'sort' => 'integer|nullable',
+            'banner_size' => 'integer|nullable',
+            'banner_page' => 'integer|nullable',
+            'banner_min_products' => 'integer|nullable',
         ]);
 
         $validatedData['id'] = $id;

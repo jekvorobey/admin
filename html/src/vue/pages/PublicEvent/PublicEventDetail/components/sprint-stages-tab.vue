@@ -4,7 +4,7 @@
         <b-form-select v-model="sprintIdModel" text-field="interval" value-field="id" :options="sprints" @change="onChangeSprint(sprintId)" />
 
         <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.events)">
-            <button class="btn btn-success" :disabled="sprints.length == 0" @click="createSprintStage">Добавить этап программы</button>
+            <button class="btn btn-success" :disabled="sprints.length === 0" @click="createSprintStage">Добавить этап программы</button>
         </div>
         <table class="table">
             <thead>
@@ -26,7 +26,10 @@
                     <td>{{sprintStage.id}}</td>
                     <td>{{sprintStage.name}}</td>
                     <td>{{sprintStage.description}}</td>
-                    <td>{{date(sprintStage.date)}}</td>
+                    <td>
+                        <span>{{date(sprintStage.date_from)}}</span>
+                        <span v-if="sprintStage.date_from !== sprintStage.date_to">- {{date(sprintStage.date_to)}}</span>
+                    </td>
                     <td>{{sprintStage.time_from}}</td>
                     <td>{{sprintStage.time_to}}</td>
                     <td>{{place(sprintStage.place_id)}}</td>
@@ -55,8 +58,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="date">Дата</label>
-                        <date-picker id="date" input-class="form-control" v-model="$v.form.date.$model" value-type="format" format="YYYY-MM-DD"/>
+                        <label for="date_from">Дата начала</label>
+                        <date-picker id="date_from" input-class="form-control" v-model="$v.form.date_from.$model" value-type="format" format="YYYY-MM-DD"/>
+                        <label for="date_to">Дата окончания</label>
+                        <date-picker id="date_to" input-class="form-control" v-model="$v.form.date_to.$model" value-type="format" format="YYYY-MM-DD"/>
                     </div>
 
                     <label for="timeTo">Начало</label>
@@ -65,7 +70,7 @@
                     <label for="timeTo">Конец</label>
                     <vue-timepicker id="timeTo"  v-model="$v.form.time_to.$model" format="HH:mm:ss" :error="errorTimeTo" />
 
-                    <v-select v-model="$v.form.place_id.$model" text-field="name" value-field="id" :options="places">Площадка</v-select>
+                    <v-select v-model="$v.form.place_id.$model" :options="placesOptions">Площадка</v-select>
 
                     <div class="form-group">
                         <label for="raider">Что взять с собой</label>
@@ -141,24 +146,27 @@
                 form: {
                     name: null,
                     description: null,
-                    date: null,
+                    date_from: null,
+                    date_to: null,
+                    use_period: false,
                     place_id: null,
                     raider: null,
                     result: null,
                     time_from: '00:00:00',
                     time_to: '00:00:00'
                 },
-
             };
         },
         validations: {
             form: {
                 name: {required},
                 description: {required},
-                date: {required},
+                date_from: {required},
+                date_to: {required},
                 time_from: {required},
                 time_to: {required},
-                place_id: {required},
+                place_id: {},
+                use_period: {},
                 raider: {},
                 result: {},
             }
@@ -212,7 +220,9 @@
                 this.form.sprint_id = this.sprintId;
                 this.form.name = null;
                 this.form.description = null;
-                this.form.date = null;
+                this.form.date_from = null;
+                this.form.date_to = null;
+                this.form.use_period = false;
                 this.form.time_from = '00:00:00';
                 this.form.time_to = '00:00:00';
                 this.form.place_id = null;
@@ -226,7 +236,9 @@
                 this.form.sprint_id = this.sprintId;
                 this.form.name = sprintStage.name;
                 this.form.description = sprintStage.description;
-                this.form.date = sprintStage.date;
+                this.form.date_from = sprintStage.date_from;
+                this.form.date_to = sprintStage.date_to;
+                this.form.use_period = false;
                 this.form.time_from = sprintStage.time_from;
                 this.form.time_to = sprintStage.time_to;
                 this.form.place_id = sprintStage.place_id;
@@ -247,7 +259,8 @@
             },
             onSave() {
                 this.$v.$touch();
-                this.form.date.toString()
+                this.form.date_from.toString()
+                this.form.date_to.toString()
                 if (this.$v.$invalid) {
                     return;
                 }
@@ -267,6 +280,12 @@
             },
         },
         computed: {
+            placesOptions() {
+                return Object.values(this.places).map(place => ({
+                  value: place.id,
+                  text: place.name
+                }));
+            },
             sprintIdModel: {
                 get () { return this.sprintId },
                 set (value) { this.$emit('updateSprintId', value) },
@@ -281,10 +300,15 @@
                     if (!this.$v.form.description.required) return "Обязательное поле!";
                 }
             },
-            errorDate() {
-                if (this.$v.form.date.$dirty) {
-                    if (!this.$v.form.date.required) return "Обязательное поле!";
+            errorDateFrom() {
+                if (this.$v.form.date_from.$dirty) {
+                    if (!this.$v.form.date_from.required) return "Обязательное поле!";
                 }
+            },
+            errorDateTo() {
+              if (this.$v.form.date_to.$dirty) {
+                if (!this.$v.form.date_to.required) return "Обязательное поле!";
+              }
             },
             errorTimeFrom() {
                 if (this.$v.form.time_from.$dirty) {
@@ -294,11 +318,6 @@
             errorTimeTo() {
                 if (this.$v.form.time_to.$dirty) {
                     if (!this.$v.form.time_from.required) return "Обязательное поле!";
-                }
-            },
-            errorPlaceId() {
-                if (this.$v.form.place_id.$dirty) {
-                    if (!this.$v.form.place_id.required) return "Обязательное поле!";
                 }
             },
         },

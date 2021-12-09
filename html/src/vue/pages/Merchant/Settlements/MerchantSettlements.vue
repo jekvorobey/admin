@@ -87,14 +87,15 @@
           </label>
         </td>
         <td>{{ report.id }}</td>
-        <td>{{ report.date_from }} &ndash; {{ report.date_to }}</td>
-        <td>{{ report.updated_at }}</td>
-        <td v-if="canUpdate(blocks.merchants)"><a :href="$store.getters.getRoute('merchant.detail', {id: report.merchant_id})">{{ report.merchant.legal_name }}</a></td>
-        <td v-else>{{ report.merchant.legal_name }}</td>
-        <td>{{ report.sum.toLocaleString() }}</td>
+        <td>{{ datePrint(report.date_from) }} &ndash; {{ datePrint(report.date_to) }}</td>
+        <td>{{ datetimePrint(report.updated_at) }}</td>
+        <td v-if="canView(blocks.merchants)"><a :href="getRoute('merchant.detail', {id: report.data.merchant_id})">{{ merchantName(report.data.merchant_id) }}</a></td>
+        <td v-else>{{ merchantName(report.data.merchant_id) }}</td>
+        <td>{{ report.total_sum.toLocaleString() }}</td>
         <td>
-          <a target="_blank" :href="$store.getters.getRoute('merchant.detail.billingReport.download',
-          {id:report.merchant_id, reportId:report.id})">Скачать</a>
+          <a target="_blank" :href="getRoute('billingReport.detail.download', { entityId: report.data.merchant_id, reportId: report.id, type: billingReportTypes.billing })">
+              Скачать
+          </a>
         </td>
         <td>
           <span class="badge" :class="statusClass(report.status)">{{ statusName(report.status) }}</span>
@@ -150,7 +151,6 @@ export default {
   data() {
     let filter = Object.assign({}, cleanFilter, this.iFilter);
     filter.merchant_id = filter.merchant_id.map(value => parseInt(value));
-    filter.status = filter.status.map(status => parseInt(status));
 
     return {
       billingReports: this.iBillingReports,
@@ -253,26 +253,17 @@ export default {
       this.loadPage();
     },
     statusName(id) {
-      let status = this.statuses[id];
+      let status = this.statuses.find(status => status.id === id);
       return status ? status.name : 'N/A';
     },
     statusClass(id) {
-      switch (id) {
-        case 0:
-          return 'badge-light';
-        case 1:
-          return 'badge-info';
-        case 2:
-          return 'badge-outline-success';
-        case 3:
-          return 'badge-danger';
-        case 4:
-          return 'badge-warning';
-        case 5:
-          return 'badge-success';
-
-      }
+        let status = this.statuses.find(status => status.id === id);
+        return status ? 'badge-' + status.badge : '';
     },
+      merchantName(id) {
+          let merchant = Object.values(this.merchants).find(merchant => merchant.id === id);
+          return merchant ? merchant.legal_name : 'N/A';
+      },
     reportSelected(id) {
       return this.selectedReportsIds.indexOf(id) !== -1;
     },
@@ -304,14 +295,15 @@ export default {
     },
   },
   created() {
-    this.statuses = [
-      {id:0, name: "модерация"},
-      {id:1, name: "просмотрен"},
-      {id:2, name: "подтвержден"},
-      {id:3, name: "отклонен"},
-      {id:4, name: "отправлен"},
-      {id:5, name: "оплачен"},
-    ];
+      this.statuses = [
+          {id: this.billingReportStatuses.new, name: 'модерация', badge: 'light'},
+          {id: this.billingReportStatuses.viewed, name: 'просмотрен', badge: 'info'},
+          {id: this.billingReportStatuses.accepted, name: 'подтвержден', badge: 'outline-success'},
+          {id: this.billingReportStatuses.rejected, name: 'отклонен', badge: 'danger'},
+          {id: this.billingReportStatuses.waiting, name: 'отправлен', badge: 'warning'},
+          {id: this.billingReportStatuses.payed, name: 'оплачен', badge: 'success'},
+      ];
+      console.log(this.statuses);
   }
 };
 </script>
