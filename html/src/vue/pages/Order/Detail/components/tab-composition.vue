@@ -7,9 +7,11 @@
                 <fa-icon icon="truck-loading"></fa-icon>
                 <button @click="openTab('shipments')" class="btn btn-link">Отправление {{ shipment.number }}</button>
 
-                <shipment-items :model-order.sync="order" :model-shipment.sync="shipment" class="mt-4"/>
+                <shipment-items :returnable="true" :model-order.sync="order" :model-shipment.sync="shipment" class="mt-4"/>
             </b-card>
         </b-card>
+
+      <button @click="" v-if="orderStatuses.done.id === order.status.id" class="btn btn-info float-right">Возврат</button>
     </b-card>
 </template>
 

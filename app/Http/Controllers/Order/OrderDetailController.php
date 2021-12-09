@@ -170,6 +170,21 @@ class OrderDetailController extends Controller
     }
 
     /**
+     * Полный возврат выполненного заказа
+     * @throws Exception
+     */
+    public function returnCompletedOrder(int $id, OrderService $orderService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $orderService->returnCompletedOrder($id);
+
+        return response()->json([
+            'order' => $this->getOrder($id),
+        ]);
+    }
+
+    /**
      * @throws Exception
      */
     protected function getOrder(int $id): OrderDto
