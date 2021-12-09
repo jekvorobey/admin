@@ -47,7 +47,26 @@
             />
         </b-form-group>
 
-        <b-form-group label="Цвет" label-for="banner-color">
+        <b-form-group
+            label="Тип*"
+            label-for="banner-group-type"
+        >
+            <b-form-select
+                v-model="banner.type_id"
+                id="banner-group-type"
+                required
+            >
+                <b-form-select-option
+                    :value="type.id"
+                    v-for="type in bannerTypes"
+                    :key="type.id"
+                >
+                    {{ type.name }}
+                </b-form-select-option>
+            </b-form-select>
+        </b-form-group>
+
+        <b-form-group v-if="showColorField" label="Цвет" label-for="banner-color">
             <div class="d-flex align-items-center">
                 <div>
                     <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
@@ -61,7 +80,7 @@
             </div>
         </b-form-group>
 
-        <b-form-group label="Страницы" label-for="banner-path-templates">
+        <b-form-group v-if="showPathTemplatesField" label="Страницы" label-for="banner-path-templates">
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates" />
         </b-form-group>
 
@@ -69,39 +88,6 @@
             <b-form-input
                 v-model="banner.sort"
                 id="banner-sort"
-                step="1"
-                type="number"
-                pattern="[0-9]"
-                @keydown="disallowDecimal"
-            />
-        </b-form-group>
-
-        <b-form-group label="Сколько мест занимает баннер" label-for="banner-banner_size">
-            <b-form-input
-                v-model="banner.banner_size"
-                id="banner-banner_size"
-                step="1"
-                type="number"
-                pattern="[0-9]"
-                @keydown="disallowDecimal"
-            />
-        </b-form-group>
-
-        <b-form-group label="Страницы с баннерами" label-for="banner-banner_page">
-            <b-form-input
-                v-model="banner.banner_page"
-                id="banner-banner_page"
-                step="1"
-                type="number"
-                pattern="[0-9]"
-                @keydown="disallowDecimal"
-            />
-        </b-form-group>
-
-        <b-form-group label="Минимальное количество элементов" label-for="banner-banner_min_products">
-            <b-form-input
-                v-model="banner.banner_min_products"
-                id="banner-banner_min_products"
                 step="1"
                 type="number"
                 pattern="[0-9]"
@@ -141,25 +127,6 @@
         />
 
         <b-form-group
-                label="Тип*"
-                label-for="banner-group-type"
-        >
-            <b-form-select
-                    v-model="banner.type_id"
-                    id="banner-group-type"
-                    required
-            >
-                <b-form-select-option
-                        :value="type.id"
-                        v-for="type in bannerTypes"
-                        :key="type.id"
-                >
-                    {{ type.name }}
-                </b-form-select-option>
-            </b-form-select>
-        </b-form-group>
-
-        <b-form-group
                 label="Ссылка*"
                 label-for="banner-group-url"
         >
@@ -185,12 +152,20 @@
     import VueSwatches from 'vue-swatches';
     import 'vue-swatches/dist/vue-swatches.css';
 
+    const bannerType = Object.freeze({
+        mainTop: 6,
+        mainNew: 7,
+        mainMiddle: 8,
+        mainBest: 9
+    });
+
     export default {
         components: {
             FileInput,
             DatePicker,
             VueSwatches
         },
+
         props: {
             iBanner: Object,
             iBannerTypes: Array,
@@ -199,6 +174,7 @@
             iBannerImages: [Object, Array],
             options: Object
         },
+
         data() {
             return {
                 banner: this.normalizeBanner(this.iBanner),
@@ -240,9 +216,6 @@
                     color: source.color ? source.color : null,
                     path_templates: source.path_templates ? source.path_templates : null,
                     sort: source.sort ? source.sort : null,
-                    banner_size: source.banner_size ? source.banner_size : null,
-                    banner_page: source.banner_page ? source.banner_page : null,
-                    banner_min_products: source.banner_min_products ? source.banner_min_products : null,
                 };
             },
             normalizeButton(source) {
@@ -266,6 +239,7 @@
                 this.banner.mobile_image_id = file.id;
             },
         },
+
         computed: {
             desktopImage() {
                 const fileId = this.banner.desktop_image_id;
@@ -276,6 +250,7 @@
 
                 return null;
             },
+
             tabletImage() {
                 const fileId = this.banner.tablet_image_id;
 
@@ -285,6 +260,7 @@
 
                 return null;
             },
+
             mobileImage() {
                 const fileId = this.banner.mobile_image_id;
 
@@ -294,9 +270,35 @@
 
                 return null;
             },
+
             isCreatingMode() {
                 return this.banner.id == null;
             },
+
+            showColorField() {
+                if (this.banner && this.banner.type_id === bannerType.mainTop) {
+                    return true;
+                }
+
+                return false;
+            },
+
+            showPathTemplatesField() {
+                if (!this.banner || !this.banner.type_id) {
+                    return false;
+                }
+
+                if (
+                    this.banner.type_id === bannerType.mainTop ||
+                    this.banner.type_id === bannerType.mainNew ||
+                    this.banner.type_id === bannerType.mainMiddle ||
+                    this.banner.type_id === bannerType.mainBest
+                ) {
+                    return false;
+                }
+
+                return true;
+            }
         },
         watch: {
             banner: {
