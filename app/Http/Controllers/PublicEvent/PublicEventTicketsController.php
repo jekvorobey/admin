@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
+use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\TicketDto;
 use Pim\Dto\PublicEvent\TicketStatus;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -99,13 +100,27 @@ class PublicEventTicketsController extends Controller
     protected function getCsvContent($tickets, $separator = ';'): string
     {
         $content = "\xEF\xBB\xBF"; // UTF-8 BOM
-        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Статус'];
+        $columns = [
+            'ID билета',
+            'ID заказа',
+            'ФИО',
+            'Телефон',
+            'Email',
+            'Профессия',
+            'Тип билета',
+            'Кол-во билетов в заказе',
+            'Уникальный код',
+            'Статус',
+            'Комментарий',
+        ];
         foreach ($columns as $column) {
             $content .= "{$column}{$separator}";
         }
+
         $content .= "\n";
+
         foreach ($tickets as $ticket) {
-            $content .= join($separator, [
+            $content .= implode($separator, [
                 $ticket['id'],
                 $ticket['order']['number'],
                 $ticket['last_name'] . ' ' . $ticket['first_name'] . ' ' . $ticket['middle_name'],
@@ -114,9 +129,13 @@ class PublicEventTicketsController extends Controller
                 $ticket['profession'],
                 $ticket['type']['name'],
                 $ticket['order']['count_tickets'],
+                $ticket['code'],
                 $ticket['status']['name'],
-            ]) . "\n";
+                $ticket['comment'],
+            ]);
+            $content .= "\n";
         }
+
         return $content;
     }
 
@@ -137,5 +156,20 @@ class PublicEventTicketsController extends Controller
 
         echo $this->getCsvContent($tickets);
         exit(0);
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function editComment(Request $request, PublicEventTicketService $publicEventTicketService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
+
+        $ticketId = $request->get('ticketId');
+        $comment = $request->get('comment');
+
+        $publicEventTicketService->editComment($ticketId, $comment);
+
+        return response()->json();
     }
 }

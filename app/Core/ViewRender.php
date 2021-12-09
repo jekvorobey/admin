@@ -30,12 +30,15 @@ use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
+use IBT\Reports\Dto\Enum\ReportStatusDto;
+use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\Offer\OfferSaleStatus;
+use Pim\Dto\Product\ProductImageType;
 use Pim\Dto\PropertyDto;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Dto\PublicEvent\PublicEventMediaDto;
@@ -96,6 +99,10 @@ class ViewRender
     private $offerCountdownSaleStatuses = [];
 
     private $propertyTypes = [];
+    private $billingReportStatuses = [];
+    private $billingReportTypes = [];
+
+    private $productImageTypes = [];
 
     public function __construct($componentName, $props)
     {
@@ -758,6 +765,53 @@ class ViewRender
         return $this;
     }
 
+    /**
+     * @return $this
+     */
+    public function loadBillingReportStatuses(bool $load = false): self
+    {
+        if ($load) {
+            $this->billingReportStatuses = [
+                'new' => ReportStatusDto::NEW,
+                'waiting' => ReportStatusDto::WAITING,
+                'viewed' => ReportStatusDto::VIEWED,
+                'accepted' => ReportStatusDto::ACCEPTED,
+                'rejected' => ReportStatusDto::REJECTED,
+                'payed' => ReportStatusDto::PAYED,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function loadBillingReportTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->billingReportTypes = [
+                'billing' => ReportTypeDto::BILLING,
+                'public_events' => ReportTypeDto::PUBLIC_EVENTS,
+                'referral_partner' => ReportTypeDto::REFERRAL_PARTNER,
+            ];
+        }
+
+        return $this;
+    }
+
+    public function loadProductImagesTypes(): self
+    {
+        $this->productImageTypes = [
+            'catalog' => ProductImageType::TYPE_CATALOG,
+            'gallery' => ProductImageType::TYPE_GALLERY,
+            'description' => ProductImageType::TYPE_DESCRIPTION,
+            'howto' => ProductImageType::TYPE_HOW_TO,
+        ];
+
+        return $this;
+    }
+
     public function render()
     {
         return View::component(
@@ -816,8 +870,11 @@ class ViewRender
 
                 'offerAllSaleStatuses' => $this->offerAllSaleStatuses,
                 'offerCountdownSaleStatuses' => $this->offerCountdownSaleStatuses,
+                'billingReportStatuses' => $this->billingReportStatuses,
+                'billingReportTypes' => $this->billingReportTypes,
 
                 'propertyTypes' => $this->propertyTypes,
+                'productImageTypes' => $this->productImageTypes,
             ],
             [
                 'title' => $this->title,

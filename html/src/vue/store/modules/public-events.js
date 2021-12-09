@@ -43,10 +43,9 @@ export const ACT_LOAD_SPRINT_STAGES = 'act_load_sprint_stages';
 export const ACT_SAVE_SPRINT_STAGE = 'act_save_sprint_stage';
 export const ACT_DELETE_SPRINT_STAGE = 'act_delete_sprint_stage';
 
-export const ACT_LOAD_PROFESSIONS = 'act_load_professions';
-export const ACT_LOAD_EVENT_PROFESSIONS = 'act_load_event_professions';
-export const ACT_SAVE_EVENT_PROFESSION = 'act_save_event_profession';
-export const ACT_DELETE_EVENT_PROFESSION = 'act_delete_event_profession';
+export const ACT_LOAD_EVENT_SPECIALTIES = 'act_load_event_specialties';
+export const ACT_SAVE_EVENT_SPECIALTY = 'act_save_event_specialty';
+export const ACT_DELETE_EVENT_SPECIALTY = 'act_delete_event_specialty';
 
 export const ACT_LOAD_PLACES = 'act_load_places';
 
@@ -225,24 +224,19 @@ export default {
             return Services.net().post(rootGetters.getRoute('public-event.sprint-stages.delete'), {}, {ids})
             .finally(() => commit('loaderShow', false, {root:true}));
         },
-        [ACT_LOAD_EVENT_PROFESSIONS]({rootGetters, commit}, {publicEventId}) {
+        [ACT_LOAD_EVENT_SPECIALTIES]({rootGetters, commit}, {publicEventId}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().get(rootGetters.getRoute('public-event.event.getProfessions', {event_id: publicEventId}))
+            return Services.net().get(rootGetters.getRoute('public-event.specialties.getSpecialties', {event_id: publicEventId}))
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
-        [ACT_LOAD_PROFESSIONS]({rootGetters, commit}) {
+        [ACT_SAVE_EVENT_SPECIALTY]({rootGetters, commit}, {publicEventId, id}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().get(rootGetters.getRoute('public-event.professions.names'))
+            return Services.net().post(rootGetters.getRoute('public-event.specialties.attachSpecialty', {event_id: publicEventId}), {},{id})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
-        [ACT_SAVE_EVENT_PROFESSION]({rootGetters, commit}, {publicEventProfession}) {
+        [ACT_DELETE_EVENT_SPECIALTY]({rootGetters, commit}, {publicEventId, id}) {
             commit('loaderShow', true, {root:true});
-            return Services.net().post(rootGetters.getRoute('public-event.professions.save'), {}, {publicEventProfession})
-                .finally(() => commit('loaderShow', false, {root:true}));
-        },
-        [ACT_DELETE_EVENT_PROFESSION]({rootGetters, commit}, {ids}) {
-            commit('loaderShow', true, {root:true});
-            return Services.net().post(rootGetters.getRoute('public-event.professions.delete'), {}, {ids})
+            return Services.net().delete(rootGetters.getRoute('public-event.specialties.detachSpecialty', {event_id: publicEventId}), {id})
                 .finally(() => commit('loaderShow', false, {root:true}));
         },
         [ACT_LOAD_PLACES]({rootGetters, commit}) {

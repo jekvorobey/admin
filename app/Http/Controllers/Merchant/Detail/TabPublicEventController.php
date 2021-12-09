@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use App\Core\PublicEventBillingReport;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -20,8 +18,6 @@ use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
-use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\PublicEvent\PublicEventDto;
 use Pim\Services\PublicEventOrganizerService\PublicEventOrganizerService;
 use Pim\Services\PublicEventService\PublicEventService;
@@ -169,51 +165,5 @@ class TabPublicEventController extends Controller
 
             return $data;
         });
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function downloadEventBillingList(int $merchantId, Request $request)
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
-
-        $organizersIds = $this->loadOrganizers($merchantId);
-        $events = $this->loadEvents($organizersIds);
-        $sprints = [];
-        foreach ($events as $eventId) {
-            $eventSprints = resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
-            $sprints = array_merge($sprints, $eventSprints);
-        }
-
-        $dates = [
-            'date_from' => $request->date_from ?: now()->startOfMonth()->subMonth()->toDateString(),
-            'date_to' => $request->date_to ?: now()->subMonth()->endOfMonth()->toDateString(),
-        ];
-
-        $orderService = resolve(OrderService::class);
-        $query = $this->makeDownloadRestQuery($sprints, $dates);
-        $orders = $this->loadOrders($orderService, $query);
-
-        $merchantService = resolve(MerchantService::class);
-        $merchant = $merchantService->merchants((new RestQuery())->setFilter('id', $merchantId))->first();
-
-        PublicEventBillingReport::makePublicEventReport($orders, $merchant, $dates);
-    }
-
-    protected function makeDownloadRestQuery(array $sprints, array $dates): DataQuery
-    {
-        $orderService = resolve(OrderService::class);
-
-        return $orderService->newQuery()
-            ->include('basketitem', 'promoCodes')
-            ->setFilter('created_at', '>=', Carbon::parse($dates['date_from'])->startOfDay()->toDateTimeString())
-            ->setFilter('created_at', '<=', Carbon::parse($dates['date_to'])->endOfDay()->toDateTimeString())
-            ->setFilter('sprint_id', $sprints)
-            ->setFilter('status', OrderStatus::DONE)
-            ->setFilter('payment_status', PaymentStatus::PAID)
-            ->setFilter('is_canceled', 0)
-            ->setFilter('type', OrderType::PUBLIC_EVENT)
-            ->addSort('created_at', 'desc');
     }
 }

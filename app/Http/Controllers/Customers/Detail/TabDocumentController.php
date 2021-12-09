@@ -59,6 +59,7 @@ class TabDocumentController extends Controller
                     'statusId' => $document->status,
                     'url' => $file->url,
                     'name' => $file->original_name,
+                    'title' => $document->title,
                 ];
             })->filter(),
             'statuses' => $documentDto->statusesNames(),
@@ -89,6 +90,7 @@ class TabDocumentController extends Controller
         $writer->openToBrowser("Документы реферального партнера {$customerId}.{$format}");
         $writer->addRow(WriterEntityFactory::createRowFromArray([
             'Номер документа',
+            'Название документа',
             'Тип документа',
             'Начало периода',
             'Окончание периода',
@@ -109,6 +111,7 @@ class TabDocumentController extends Controller
             $file = $files->get($document->file_id);
                 $writer->addRow(WriterEntityFactory::createRowFromArray([
                     $document->id,
+                    $document->title ?? '-',
                     $document->typeName($document->type),
                     $document->period_since,
                     $document->period_to,
@@ -177,6 +180,7 @@ class TabDocumentController extends Controller
         $this->validate(request(), [
             'type' => 'required|integer',
             'file' => 'required|max:4000',
+            'title' => 'required|string',
             'period_since' => 'nullable|date',
             'period_to' => 'nullable|date',
             'amount_reward' => 'nullable|numeric',
@@ -191,6 +195,7 @@ class TabDocumentController extends Controller
         $documentDto->period_to = request('period_to');
         $documentDto->amount_reward = request('amount_reward');
         $documentDto->status = request('status');
+        $documentDto->title = request('title');
 
         $createdDocumentId = $customerService->createDocument($customerId, $documentDto);
         /** @var CustomerDocumentDto $createdDocument */
@@ -204,6 +209,7 @@ class TabDocumentController extends Controller
             'date' => $createdDocument->updated_at,
             'amount_reward' => $createdDocument->amount_reward,
             'statusId' => $createdDocument->status,
+            'title' => $createdDocument->title,
         ]);
     }
 

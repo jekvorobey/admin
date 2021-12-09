@@ -68,13 +68,15 @@
 
         <b-form-group v-if="showColorField" label="Цвет" label-for="banner-color">
             <div class="d-flex align-items-center">
-                <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
+                <div>
+                    <vue-swatches v-model="banner.color" id="banner-color" show-fallback fallback-input-type="color" />
+                </div>
                 <div class="ml-2">
                     <b-button size="sm" @click="banner.color = null">Сбросить</b-button>
                 </div>
             </div>
             <div>
-                Выбранный цвет: {{ banner.color ? banner.color : 'Не выбран' }}
+                HEX: {{ banner.color ? banner.color : 'Не выбран' }}
             </div>
         </b-form-group>
 

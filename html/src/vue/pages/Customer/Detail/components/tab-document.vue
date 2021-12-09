@@ -25,6 +25,7 @@
         </tr>
         <tr>
             <th>ID</th>
+            <th>Название документа</th>
             <th>Тип документа</th>
             <th>Дата документа</th>
             <th>Период</th>
@@ -37,6 +38,7 @@
         <tbody>
         <tr v-for="(document, i) in documents">
             <td>{{ document.id }}</td>
+            <td>{{ document.title ? document.title : '-' }}</td>
             <td>{{ typeName(document.typeId) }}</td>
             <td>{{ datetimePrint(document.date) }}</td>
             <td>

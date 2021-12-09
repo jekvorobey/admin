@@ -78,21 +78,6 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('store')->group(function () {
                     Route::get('page', 'TabStoreController@page')->name('merchant.detail.store.pagination');
                 });
-                Route::prefix('billing')->group(function () {
-                    Route::get('', 'TabBillingController@load')->name('merchant.detail.billing');
-                    Route::put('billing_cycle', 'TabBillingController@billingCycle')->name('merchant.detail.billing.billing_cycle');
-                    Route::get('billing-reports', 'TabBillingController@billingReports')->name('merchant.detail.billingReport');
-                    Route::delete('billing-reports/{reportId}', 'TabBillingController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
-                        'merchant.detail.billingReport.delete'
-                    );
-                    Route::put('billing-reports/{reportId}', 'TabBillingController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
-                        'merchant.detail.billingReport.updateStatus'
-                    );
-                    Route::post('billing-reports/create', 'TabBillingController@billingReportCreate')->name('merchant.detail.billingReport.create');
-                    Route::get('billing-reports/download/{reportId}', 'TabBillingController@billingReportDownload')->name(
-                        'merchant.detail.billingReport.download'
-                    );
-                });
                 Route::prefix('billingList')->group(function () {
                     Route::get('', 'TabBillingController@billingList')->name('merchant.detail.billingList');
                     Route::post('add-correction', 'TabBillingController@addCorrection')->name('merchant.detail.billingList.addCorrection');
@@ -145,6 +130,24 @@ Route::middleware('auth')->group(function () {
             Route::post('save', 'MerchantOperatorController@save')->name('merchant.operator.save');
             Route::put('change-roles', 'MerchantOperatorController@changeRoles')->name('merchant.operator.changeRoles');
             Route::delete('', 'MerchantOperatorController@delete')->name('merchant.operator.delete');
+        });
+    });
+
+    Route::prefix('billing-reports')->namespace('BillingReport')->group(function () {
+        Route::prefix('{type}/{entityId}')->group(function () {
+            Route::get('load', 'BillingReportController@load')->name('billingReport.detail.billing');
+            Route::get('list', 'BillingReportController@billingReports')->name('billingReport.detail.reports');
+            Route::get('download/{reportId}', 'BillingReportController@billingReportDownload')->name(
+                'billingReport.detail.download'
+            );
+            Route::put('billing_cycle', 'BillingReportController@billingCycle')->name('billingReport.detail.billing_cycle');
+            Route::post('create', 'BillingReportController@billingReportCreate')->name('billingReport.detail.create');
+            Route::delete('{reportId}', 'BillingReportController@deleteBillingReport')->where(['reportId' => '[0-9]+'])->name(
+                'billingReport.detail.delete'
+            );
+            Route::put('{reportId}', 'BillingReportController@billingReportStatusUpdate')->where(['reportId' => '[0-9]+'])->name(
+                'billingReport.detail.updateStatus'
+            );
         });
     });
 
@@ -509,6 +512,7 @@ Route::middleware('auth')->group(function () {
             Route::post('props', 'ProductDetailController@saveProps')->name('products.saveProps');
             Route::post('image', 'ProductDetailController@saveImage')->name('products.saveImage');
             Route::post('imageDelete', 'ProductDetailController@deleteImage')->name('products.deleteImage');
+            Route::post('imagesSort', 'ProductDetailController@sortImages')->name('products.sortImages');
             Route::put('ingredients', 'ProductDetailController@saveIngredients')->name('products.saveIngredients');
             Route::put('changeApproveStatus', 'ProductDetailController@changeApproveStatus')->name('products.changeApproveStatus');
             Route::put('reject', 'ProductDetailController@reject')->name('products.reject');
@@ -822,6 +826,10 @@ Route::middleware('auth')->group(function () {
                         Route::get('', 'TabMainController@load')->name('customers.detail.main');
                         Route::delete('certificate/{certificate_id}', 'TabMainController@deleteCertificate')->name('customers.detail.main.certificate.delete');
                         Route::post('certificate/{file_id}', 'TabMainController@createCertificate')->name('customers.detail.main.certificate.create');
+                        Route::delete('referralContract/{referral_contract_id}', 'TabMainController@deleteReferralContract')
+                            ->name('customers.detail.main.referralContract.delete');
+                        Route::post('referralContract/{file_id}', 'TabMainController@createReferralContract')
+                            ->name('customers.detail.main.referralContract.create');
                     });
                     Route::prefix('preference')->group(function () {
                         Route::get('', 'TabPreferenceController@load')->name('customers.detail.preference');
@@ -936,6 +944,16 @@ Route::middleware('auth')->group(function () {
             Route::post('delete', 'OrganizerController@delete')->name('public-event.organizers.delete');
         });
 
+        Route::prefix('specialties')->group(function () {
+            Route::get('', 'SpecialtyController@list')->name('public-event.specialties.list');
+            Route::get('page', 'SpecialtyController@page')->name('public-event.specialties.page');
+            Route::post('save', 'SpecialtyController@save')->name('public-event.specialties.save');
+            Route::post('delete', 'SpecialtyController@delete')->name('public-event.specialties.delete');
+            Route::get('{event_id}', 'SpecialtyController@getByEvent')->name('public-event.specialties.getSpecialties');
+            Route::post('{event_id}', 'SpecialtyController@attachEvent')->name('public-event.specialties.attachSpecialty');
+            Route::delete('{event_id}', 'SpecialtyController@detachEvent')->name('public-event.specialties.detachSpecialty');
+        });
+
         Route::prefix('types')->group(function () {
             Route::get('', 'EventTypeController@list')->name('public-event.types.list');
             Route::get('page', 'EventTypeController@page')->name('public-event.types.page');
@@ -1045,6 +1063,7 @@ Route::middleware('auth')->group(function () {
             Route::get('orders', 'PublicEventOrdersController@getList')->name('public-event.orders.list');
             Route::get('tickets', 'PublicEventTicketsController@getList')->name('public-event.tickets.list');
             Route::get('tickets/file', 'PublicEventTicketsController@getFile')->name('public-event.tickets.file');
+            Route::post('tickets/comment', 'PublicEventTicketsController@editComment')->name('public-event.tickets.editComment');
 
             Route::get('load', 'PublicEventDetailController@load')->name('public-event.load');
             Route::get('', 'PublicEventDetailController@index')->name('public-event.detail');

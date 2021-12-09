@@ -157,6 +157,7 @@
         "vue-suggestions": "^1.4.0",
         "vue-swatches": "^2.1.1",
         "vue-the-mask": "^0.11.1",
+        "vue-upload-component": "^2.8.22",
         "vue2-datepicker": "^3.4.1",
         "vue2-timepicker": "^1.1.2",
         "vuedraggable": "^2.23.2",

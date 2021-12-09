@@ -3,29 +3,39 @@
         <h3 class="mt-3">Изображения</h3>
         <div class="row">
             <div class="col">
-                <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
-                    <div class="shadow mt-3 mr-3">
-                        <img :src="catalogImage.url" class="big-image">
-                        Фотография для каталога
-                        <template v-if="canUpdate(blocks.products)">
-                            <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(2, catalogImage.id)"></fa-icon>
-                            <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(2, catalogImage.id)"></fa-icon>
-                        </template>
-                    </div>
-                </div>
+                <draggable
+                    v-model="galleryImages"
+                    animation="200"
+                    :options="{
+                        disabled: !canUpdate(blocks.products)
+                    }"
+                    @start="drag = true"
+                    @end="drag = false"
+                    @change="onGallerySort"
+                >
+                    <transition-group
+                        :name="!drag ? 'flip-list' : null"
+                        type="transition"
+                        class="media-container d-flex flex-wrap align-items-stretch justify-content-start"
+                    >
+                        <div v-for="image in galleryImages" :key="image.id" class="shadow mt-3 mr-3">
+                            <img :src="image.url" class="small-image">
+
+                            <fa-icon
+                                v-if="canUpdate(blocks.products)"
+                                icon="trash-alt"
+                                class="float-right media-btn"
+                                @click="onDeleteImage(productImageType.gallery, image.id)"
+                            ></fa-icon>
+                        </div>
+                    </transition-group>
+                </draggable>
             </div>
-            <div class="col">
-                <div class="media-container d-flex flex-wrap align-items-stretch justify-content-start">
-                    <div v-for="image in galleryImages" class="shadow mt-3 mr-3">
-                        <img :src="image.url" class="small-image">
-                        <template v-if="canUpdate(blocks.products)">
-                            <fa-icon icon="trash-alt" class="float-right media-btn" @click="onDeleteImage(3, image.id)"></fa-icon>
-                            <fa-icon icon="pencil-alt" class="float-right media-btn" @click="startUploadImage(3, image.id)"></fa-icon>
-                        </template>
-                    </div>
-                    <div class="align-self-center" v-if="canUpdate(blocks.products)">
-                        <button class="btn btn-light" @click="startUploadImage(3)">Добавить</button>
-                    </div>
+        </div>
+        <div v-if="canUpdate(blocks.products)" class="row">
+            <div class="col p-3">
+                <div class="align-self-center">
+                    <button class="btn btn-light" @click="startUploadImage(productImageType.gallery)">Добавить</button>
                 </div>
             </div>
         </div>
@@ -157,12 +167,19 @@
             </tbody>
         </table>
 
-        <file-upload-modal
+        <images-upload-modal
                 @accept="onAcceptImage"
-                modal-name="ImageUpload"/>
+                modal-name="ImageUpload"
+        />
+
+        <file-upload-modal
+            @accept="onAcceptImage"
+            modal-name="ImageUploadSingle"/>
+
         <file-upload-modal
                 @accept="onAcceptInstruction"
                 modal-name="InstructionUpload"/>
+
         <description-edit-modal
                 :source="currentProduct"
                 text_field="description"
@@ -203,11 +220,14 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 import modalMixin from '../../../../mixins/modal';
 
 import Modal from '../../../../components/controls/modal/modal.vue';
 import ShadowCard from '../../../../components/shadow-card.vue';
 import FileUploadModal from './file-upload-modal.vue';
+import ImagesUploadModal from './images-upload-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
 import TipForm from './tip-form.vue';
@@ -220,42 +240,100 @@ export default {
         Modal,
         ShadowCard,
         FileUploadModal,
+        ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
-        TipForm
+        TipForm,
+        draggable
     },
+
     mixins: [modalMixin],
+
     props: {
         images: {},
         product: {},
     },
+
     data() {
         return {
             currentType: 0,
             replaceFileId: undefined,
             currentTip: {},
             currentProduct: Object.assign({}, this.product),
+            galleryImages: this.images.filter(image => image.type === this.$store.state.layout.productImageTypes.gallery),
+            drag: false,
         };
     },
+
+    watch: {
+        images() {
+            this.galleryImages = this.images.filter(image => image.type === this.productImageType.gallery);
+        }
+    },
+
     methods: {
         startUploadImage(type, replaceFileId) {
             this.currentType = type;
             this.replaceFileId = replaceFileId;
-            this.openModal('ImageUpload');
+
+            if (this.currentType === this.productImageType.gallery) {
+                this.openModal('ImageUpload');
+            } else {
+                this.openModal('ImageUploadSingle');
+            }
         },
-        onAcceptImage(file) {
+
+        async onGallerySort() {
+            Services.showLoader();
+
+            await Services.net().post(
+                this.getRoute('products.sortImages', { id: this.product.id }),
+                {},
+                {
+                    images_ids: this.galleryImages.map(image => image.productImageId),
+                    type: this.productImageType.gallery
+                }
+            );
+
+            Services.hideLoader();
+
+            this.$emit('onSave');
+        },
+
+        async onAcceptImage(files) {
+            Services.showLoader();
+
+            let tFiles = files;
+
+            if (!Array.isArray(tFiles)) {
+                tFiles = [ tFiles ];
+            }
+
             if (this.replaceFileId) {
                 this.onDeleteImage(this.currentType, this.replaceFileId);
             }
-            Services.net().post(this.getRoute('products.saveImage', {id: this.product.id}), {}, {
-                id: file.id,
-                type: this.currentType,
-            })
-                .then(() => {
-                    this.$emit('onSave');
-                    this.closeModal();
-                });
+
+            for (const file of tFiles) {
+                try {
+                    await Services.net().post(
+                        this.getRoute('products.saveImage', { id: this.product.id }),
+                        {},
+                        {
+                            id: file.id,
+                            type: this.currentType
+                        }
+                    );
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            Services.hideLoader();
+
+            this.$emit('onSave');
+            this.closeModal();
         },
+
         onDeleteImage(type, fileId) {
             if (!fileId) {
                 return;
@@ -340,13 +418,6 @@ export default {
         },
     },
     computed: {
-        catalogImage() {
-            let catalogImages = this.images.filter(image => image.type === 2);
-            return catalogImages.length > 0 ? catalogImages[0] : {
-                id: 0,
-                url: Media.empty(150, 150),
-            };
-        },
         descriptionImage() {
             let descriptionImages = this.images.filter(image => image.type === 4);
             return descriptionImages.length > 0 ? descriptionImages[0] : {
@@ -364,9 +435,7 @@ export default {
         howToList() {
             return this.product.how_to.split('|');
         },
-        galleryImages() {
-            return this.images.filter(image => image.type === 3);
-        },
+
         instructionUrl() {
             return Media.file(this.product.instruction_file_id);
         }
@@ -427,5 +496,17 @@ export default {
     }
     .tip-description {
         width: 260px;
+    }
+
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+
+    .no-move {
+        transition: transform 0s;
+    }
+
+    .sortable-ghost {
+        opacity: 0.5;
     }
 </style>
