@@ -1133,7 +1133,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "a9f776c60a0611fda76f7568c270376799666f5c"
+                "reference": "2fd2d6ad832e1a9773cc14d3c598f2e16b9008df"
             },
             "require": {
                 "ext-json": "*",
@@ -1167,7 +1167,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-12-02T10:12:20+00:00"
+            "time": "2021-12-07T14:15:54+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
