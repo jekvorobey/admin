@@ -156,7 +156,7 @@
                             <input type="checkbox" @change="toggleReturned($event, pKey, key, item)"
                                    :checked="!!item.basketItem.is_returned" :disabled="!!item.basketItem.is_returned">
                           </b-td>
-                            <b-td v-if=""><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
+                            <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
                             <b-td class="with-small">
                                 <a :href="getRoute('products.detail', {id: item.basketItem.product.id})"
