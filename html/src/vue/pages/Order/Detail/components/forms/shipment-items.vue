@@ -29,7 +29,7 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
-                    <b-th v-if="order.status.id === orderStatuses.done.id && shipment.packages.length">Возврат</b-th>
+                    <b-th v-if="order.status.id === orderStatuses.done.id && shipment.packages.length && !shipment.is_canceled">Возврат</b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -152,11 +152,11 @@
                                 </div>
                             </b-td>
                           <b-td class="return-checkbox"
-                                v-if="order.status.id >= orderStatuses.done.id && returnable">
+                                v-if="order.status.id >= orderStatuses.done.id && returnable && !shipment.is_canceled">
                             <input type="checkbox" @change="toggleReturned($event, pKey, key, item)"
                                    :checked="!!item.basketItem.is_returned" :disabled="!!item.basketItem.is_returned">
                           </b-td>
-                            <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
+                            <b-td v-if=""><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
                             <b-td class="with-small">
                                 <a :href="getRoute('products.detail', {id: item.basketItem.product.id})"
