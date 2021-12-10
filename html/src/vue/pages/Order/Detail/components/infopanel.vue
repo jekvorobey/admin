@@ -6,8 +6,8 @@
             </b-col>
             <b-col v-if="canUpdate(blocks.orders)">
                 <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
-                <b-dropdown text="Действия" class="float-right" size="sm" >
-                    <template v-if="(isNotPaid && (this.order.status && this.order.status.id < orderStatuses.done.id)) && !isCancel">
+                <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
+                    <template v-if="(isNotPaid || (this.order.status && this.order.status.id < orderStatuses.done.id)) && !isCancel">
                       <b-dropdown-item-button>
                         Пометить, как проблемный
                       </b-dropdown-item-button>
@@ -60,6 +60,9 @@
                 <p v-if="isCancel">
                     <span class="badge badge-danger">Отменен</span>
                     {{ order.is_canceled_at }}
+                </p>
+                <p v-if="isReturned">
+                    <span class="badge badge-secondary">Возвращен</span>
                 </p>
                 <p v-if="isCancel">
                     <span class="font-weight-bold">Причина отмены:</span>
@@ -288,6 +291,9 @@ export default {
         isCancel() {
             return this.order.is_canceled;
         },
+        isReturned() {
+            return this.order.is_returned;
+        },
         isPartiallyCancel() {
             return this.order.is_partially_cancelled;
         },
@@ -305,8 +311,5 @@ export default {
             return returnReason ? returnReason.text : '-';
         },
     },
-    created() {
-      console.log(this.order)
-    }
 };
 </script>
