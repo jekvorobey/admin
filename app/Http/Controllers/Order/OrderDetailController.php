@@ -190,12 +190,12 @@ class OrderDetailController extends Controller
      */
     public function returnItemsInOrder(int $id, Request $request, OrderService $orderService): JsonResponse
     {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
 
         $data = $this->validate($request, [
             'basketItemIds' => 'required|array',
             'basketItemIds.*' => 'int',
         ]);
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
 
         $orderService->returnBasketItemsInOrder($id, $data['basketItemIds']);
 
