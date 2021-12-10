@@ -185,6 +185,26 @@ class OrderDetailController extends Controller
     }
 
     /**
+     * Возврат товаров в выполненном заказа
+     * @throws Exception
+     */
+    public function returnItemsInOrder(int $id, Request $request, OrderService $orderService): JsonResponse
+    {
+
+        $data = $this->validate($request, [
+            'basketItemIds' => 'required|array',
+            'basketItemIds.*' => 'int',
+        ]);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $orderService->returnBasketItemsInOrder($id, $data['basketItemIds']);
+
+        return response()->json([
+            'order' => $this->getOrder($id),
+        ]);
+    }
+
+    /**
      * @throws Exception
      */
     protected function getOrder(int $id): OrderDto

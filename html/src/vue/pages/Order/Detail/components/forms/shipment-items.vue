@@ -29,7 +29,7 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
-                    <b-th v-if="order.status.id === orderStatuses.done.id">Возврат</b-th>
+                    <b-th v-if="order.status.id === orderStatuses.done.id && shipment.packages.length">Возврат</b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -62,11 +62,7 @@
             </b-thead>
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
-                    <tr v-for="(basketItem, key) in shipment.nonPackedBasketItems">
-                        <b-td class="return-checkbox"
-                              v-if="order.status.id >= orderStatuses.done.id && returnable">
-                          <input type="checkbox" :checked="orderReturned" :disabled="orderReturned">
-                        </b-td>
+                    <tr v-for="basketItem in shipment.nonPackedBasketItems">
                         <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds"
@@ -102,7 +98,7 @@
                     </tr>
                 </template>
                 <template v-if="shipment.packages.length > 0">
-                    <template v-for="(shipmentPackage, key) in shipment.packages">
+                    <template v-for="(shipmentPackage, pKey) in shipment.packages">
                         <b-tr>
                             <b-td v-if="canEdit" class="d-lg-none">
                                 <div class="float-left">
@@ -114,7 +110,7 @@
                             <b-td :colspan="canEdit ? 10 : 9">
                                 <b-row>
                                     <div class="col-sm-9">
-                                        <b>Коробка #{{ key + 1 }} (ID: {{ shipmentPackage.id }},
+                                        <b>Коробка #{{ pKey + 1 }} (ID: {{ shipmentPackage.id }},
                                             {{ shipmentPackage.package.name }}, вес брутто {{ shipmentPackage.weight }}
                                             г, вес пустой коробки {{ shipmentPackage.wrapper_weight }} г)</b>
                                     </div>
@@ -128,7 +124,7 @@
                                         <modal-add-shipment-package-items :model-shipment.sync="shipment"
                                                                           :model-order.sync="order"
                                                                           :shipment-package.sync="selectedShipmentPackage"
-                                                                          :shipment-package-num="key+1"
+                                                                          :shipment-package-num="pKey+1"
                                                                           :basket-items.sync="selectedBasketItems"
                                                                           @onSave="onShipmentPackageItemsAdd"
                                                                           v-if="Object.values(selectedShipmentPackage).length > 0 && Object.values(selectedBasketItems).length > 0"/>
@@ -155,6 +151,11 @@
                                     </fa-icon>
                                 </div>
                             </b-td>
+                          <b-td class="return-checkbox"
+                                v-if="order.status.id >= orderStatuses.done.id && returnable">
+                            <input type="checkbox" @change="toggleReturned($event, pKey, key, item)"
+                                   :checked="!!item.basketItem.is_returned" :disabled="!!item.basketItem.is_returned">
+                          </b-td>
                             <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
                             <b-td class="with-small">
@@ -357,6 +358,11 @@ export default {
             this.selectedShipmentPackage = {};
             this.selectedShipmentItem = {};
             this.$bvModal.hide('modal-edit-shipment-package-item');
+        },
+        toggleReturned($event, pKey, bKey, basketItem) {
+            basketItem.to_return = $event.target.checked;
+            this.shipment.packages[pKey].items[bKey] = basketItem;
+            this.$emit('update:modelShipment', {...this.shipment})
         },
     },
     computed: {
