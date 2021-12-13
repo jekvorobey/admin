@@ -29,7 +29,7 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
-                    <b-th v-if="order.status.id === orderStatuses.done.id && shipment.packages.length && !shipment.is_canceled">Возврат</b-th>
+                    <b-th v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled && shipment.packages.length">Возврат</b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -151,10 +151,13 @@
                                     </fa-icon>
                                 </div>
                             </b-td>
-                          <b-td class="return-checkbox"
-                                v-if="order.status.id >= orderStatuses.done.id && returnable && !shipment.is_canceled">
-                            <input type="checkbox" @change="toggleReturned($event, pKey, key, item)"
-                                   :checked="!!item.basketItem.is_returned" :disabled="!!item.basketItem.is_returned">
+                          <b-td v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled">
+                            <input type="checkbox"
+                                   class="shipment-select"
+                                   @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
+                                   :checked="basketItemsToReturn.includes(item.basket_item_id)"
+                                   :disabled="item.basketItem.is_returned"
+                            />
                           </b-td>
                             <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
@@ -245,6 +248,9 @@ export default {
         returnable: {
           type: Boolean,
           default: false
+        },
+        basketItemsToReturn: {
+            type: Array,
         },
     },
     data() {
@@ -358,12 +364,7 @@ export default {
             this.selectedShipmentPackage = {};
             this.selectedShipmentItem = {};
             this.$bvModal.hide('modal-edit-shipment-package-item');
-        },
-        toggleReturned($event, pKey, bKey, basketItem) {
-            basketItem.to_return = $event.target.checked;
-            this.shipment.packages[pKey].items[bKey] = basketItem;
-            this.$emit('update:modelShipment', {...this.shipment})
-        },
+        }
     },
     computed: {
         order: {
@@ -381,9 +382,6 @@ export default {
             set(value) {
                 this.$emit('update:modelShipment', value)
             },
-        },
-        orderReturned() {
-          return this.orderStatuses.returned.id === this.order.status.id;
         },
         selectedBasketItems() {
             let selectedBasketItems = {};
@@ -449,12 +447,5 @@ export default {
 .preview {
     height: 50px;
     border-radius: 5px;
-}
-
-.return-checkbox {
-  text-align: center;
-}
-.return-checkbox input {
-  transform: scale(2);
 }
 </style>

@@ -1,17 +1,25 @@
 <template>
     <b-card>
-        <b-card v-for="(delivery, dKey) in order.deliveries" class="mb-4" v-bind:key="delivery.id">
+        <b-card v-for="delivery in order.deliveries" class="mb-4" v-bind:key="delivery.id">
             <fa-icon icon="truck"></fa-icon>
             <button @click="openTab('deliveries')" class="btn btn-link">Доставка {{ delivery.number }}</button>
-            <b-card v-for="(shipment, sKey) in delivery.shipments" class="mb-4" v-bind:key="shipment.id">
+            <b-card v-for="shipment in delivery.shipments" class="mb-4" v-bind:key="shipment.id">
                 <fa-icon icon="truck-loading"></fa-icon>
                 <button @click="openTab('shipments')" class="btn btn-link">Отправление {{ shipment.number }}</button>
 
-                <shipment-items :returnable="true" :model-order.sync="order" :model-shipment.sync="order.shipments[sKey]" class="mt-4"/>
+                <shipment-items
+                    :model-order.sync="order"
+                    :model-shipment.sync="shipment" class="mt-4"
+                    :returnable="true"
+                    :basketItemsToReturn="basketItemsToReturn"
+                    @toggleBasketItemReturn="toggleBasketItemReturn"
+                />
             </b-card>
         </b-card>
 
-      <button @click="returnItems()" v-if="orderStatuses.done.id === order.status.id && basketItemsToReturn.length" class="btn btn-info float-right">Возврат</button>
+      <button @click="returnBasketItems()" v-if="orderStatuses.done.id === order.status.id && basketItemsToReturn.length" class="btn btn-info float-right">
+          Возврат
+      </button>
     </b-card>
 </template>
 
@@ -25,27 +33,41 @@
         props: [
             'model',
         ],
+        data() {
+            return {
+                basketItemsToReturn: [],
+            };
+        },
         methods: {
             openTab(tab) {
                 Services.event().$emit('showTab', tab);
             },
-            returnItems() {
-              Services.net().put(this.getRoute('orders.returnItems', {id: this.order.id}), null, {
-                basketItemIds: this.basketItemsToReturn.map(el => el.id)
-              })
-                  .then(data => {
-                    if (data.order) {
-                      this.$set(this, 'order', data.order);
-                      this.$set(this.order, 'shipments', data.order.shipments);
-                      Services.msg("Изменения сохранены");
-                    } else {
-                      Services.msg(errorMessage, 'danger');
-                    }
-                  }, () => {
-                    Services.msg(errorMessage, 'danger');
-                  }).finally(data => {
-                Services.hideLoader();
-              });
+            toggleBasketItemReturn(basketItemId) {
+                this.basketItemsToReturn = this.basketItemsToReturn.includes(basketItemId)
+                    ? this.basketItemsToReturn.filter(id => id !== basketItemId)
+                    : [ ...this.basketItemsToReturn, basketItemId ];
+            },
+            returnBasketItems() {
+                if (this.basketItemsToReturn.length <= 0) {
+                    return;
+                }
+
+                Services.net().put(this.getRoute('orders.return', {id: this.order.id}), null, {
+                    basketItemIds: this.basketItemsToReturn
+                })
+                    .then(data => {
+                        if (!data.order) {
+                            Services.msg(errorMessage, 'danger');
+                        }
+
+                        this.$set(this, 'order', data.order);
+                        this.$set(this.order, 'shipments', data.order.shipments);
+                        Services.msg("Изменения сохранены");
+                    }, () => {
+                        Services.msg(errorMessage, 'danger');
+                    }).finally(() => {
+                        Services.hideLoader();
+                    });
             }
         },
         computed: {
@@ -56,19 +78,6 @@
                 set(value) {
                     this.$emit('update:model', value)
                 },
-            },
-            basketItemsToReturn: {
-                get() {
-                    const basketItems = [];
-                    this.order.shipments.map(shipment => {
-                      shipment.packages.forEach(pkg => pkg.items.forEach(packageItem => {
-                        if (packageItem.to_return) {
-                          basketItems.push(packageItem['basketItem']);
-                        }
-                      }))
-                    })
-                    return basketItems;
-              }
             }
         }
     }

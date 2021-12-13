@@ -170,34 +170,19 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Полный возврат выполненного заказа
+     * Возврат выполненного заказа
      * @throws Exception
      */
-    public function returnCompletedOrder(int $id, OrderService $orderService): JsonResponse
+    public function returnCompletedOrder(int $id, Request $request, OrderService $orderService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
 
-        $orderService->returnCompletedOrder($id);
-
-        return response()->json([
-            'order' => $this->getOrder($id),
-        ]);
-    }
-
-    /**
-     * Возврат товаров в выполненном заказа
-     * @throws Exception
-     */
-    public function returnItemsInOrder(int $id, Request $request, OrderService $orderService): JsonResponse
-    {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-
-        $data = $this->validate($request, [
-            'basketItemIds' => 'required|array',
+        $this->validate($request, [
+            'basketItemIds' => 'nullable|array',
             'basketItemIds.*' => 'int',
         ]);
 
-        $orderService->returnBasketItemsInOrder($id, $data['basketItemIds']);
+        $orderService->returnCompletedOrder($id, $request->get('basketItemIds'));
 
         return response()->json([
             'order' => $this->getOrder($id),
