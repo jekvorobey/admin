@@ -28,6 +28,7 @@ class PublicEventTicketsController extends Controller
             : resolve(PublicEventService::class)->getSprints($eventId)->pluck('id')->toArray();
 
         $tickets = $this->getData($sprints);
+
         return response()->json(['tickets' => $tickets]);
     }
 
@@ -39,20 +40,24 @@ class PublicEventTicketsController extends Controller
         if (empty($orders)) {
             return [];
         }
+
         $ticketIds = [];
-        $orders = $orders->map(function (OrderDto $order) use (&$ticketIds) {
+        $orders = $orders->map(function (OrderDto $order) use (&$ticketIds, $sprints) {
             $data['id'] = $order->id;
             $data['number'] = $order->number;
             $data['tickets'] = [];
             $data['count_tickets'] = 0;
             foreach ($order->basket->items as $item) {
-                $data['tickets'] = array_merge($data['tickets'], $item->product['ticket_ids']);
-                $data['count_tickets'] += $item->product && !empty($item->product['ticket_ids'])
-                    ? count($item->product['ticket_ids'])
-                    : 0;
+                if (in_array($item->product['sprint_id'], $sprints)) {
+                    $data['tickets'] = array_merge($data['tickets'], $item->product['ticket_ids']);
+                    $data['count_tickets'] += $item->product && !empty($item->product['ticket_ids'])
+                        ? count($item->product['ticket_ids'])
+                        : 0;
+                }
             }
 
             $ticketIds = array_merge($ticketIds, $data['tickets']);
+
             return $data;
         });
         array_unique($ticketIds);
@@ -84,6 +89,7 @@ class PublicEventTicketsController extends Controller
                     'count_tickets' => $orderByTicketId[$ticket->id]['count_tickets'],
                 ]
                 : null;
+
             return $data;
         });
     }
@@ -91,22 +97,36 @@ class PublicEventTicketsController extends Controller
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
     {
         $restQuery = $orderService->newQuery()->include('basketitem');
-
         $restQuery->setFilter('sprint_id', $sprints);
         $restQuery->setFilter('type', OrderType::PUBLIC_EVENT);
+
         return $restQuery;
     }
 
     protected function getCsvContent($tickets, $separator = ';'): string
     {
         $content = "\xEF\xBB\xBF"; // UTF-8 BOM
-        $columns = ['ID билета', 'ID заказа', 'ФИО', 'Телефон', 'Email', 'Профессия', 'Тип билета', 'Кол-во билетов в заказе', 'Уникальный код', 'Статус'];
+        $columns = [
+            'ID билета',
+            'ID заказа',
+            'ФИО',
+            'Телефон',
+            'Email',
+            'Профессия',
+            'Тип билета',
+            'Кол-во билетов в заказе',
+            'Уникальный код',
+            'Статус',
+            'Комментарий',
+        ];
         foreach ($columns as $column) {
             $content .= "{$column}{$separator}";
         }
+
         $content .= "\n";
+
         foreach ($tickets as $ticket) {
-            $content .= join($separator, [
+            $content .= implode($separator, [
                 $ticket['id'],
                 $ticket['order']['number'],
                 $ticket['last_name'] . ' ' . $ticket['first_name'] . ' ' . $ticket['middle_name'],
@@ -117,8 +137,11 @@ class PublicEventTicketsController extends Controller
                 $ticket['order']['count_tickets'],
                 $ticket['code'],
                 $ticket['status']['name'],
-            ]) . "\n";
+                $ticket['comment'],
+            ]);
+            $content .= "\n";
         }
+
         return $content;
     }
 
