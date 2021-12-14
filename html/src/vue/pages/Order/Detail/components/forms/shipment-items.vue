@@ -156,7 +156,7 @@
                                    class="shipment-select"
                                    @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
                                    :checked="basketItemsToReturn.includes(item.basket_item_id)"
-                                   :disabled="item.basketItem.is_returned"
+                                   :disabled="!!item.basketItem.is_returned"
                             />
                           </b-td>
                             <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
