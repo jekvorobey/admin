@@ -78,6 +78,10 @@ class RedirectListController extends Controller
             $query->setFilter('to', $filter['to']);
         }
 
+        if (isset($filter['product_id']) && $filter['product_id']) {
+            $query->setFilter('product_id', $filter['product_id']);
+        }
+
         return $query;
     }
 

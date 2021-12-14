@@ -4,6 +4,7 @@
       <div class="row">
         <f-input v-model="filter.from" class="col-lg-3 col-md-4 col-sm-12">Источник</f-input>
         <f-input v-model="filter.to" class="col-lg-3 col-md-4 col-sm-12">Результат</f-input>
+        <f-input v-model="filter.product_id" class="col-lg-3 col-md-4 col-sm-12">ID Продукта</f-input>
       </div>
       <button @click="applyFilter" class="btn btn-dark">Применить</button>
       <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
@@ -29,6 +30,7 @@
         <th>ID</th>
         <th>Источник</th>
         <th>Результат</th>
+        <th>ID Продукта</th>
         <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
       </tr>
       </thead>
@@ -42,6 +44,9 @@
         </td>
         <td>
           {{ redirect.to }}
+        </td>
+        <td>
+          <a :href="getRoute('products.detail', {id: redirect.product_id})" target="_blank">{{ redirect.product_id }}</a>
         </td>
 
         <td v-if="canUpdate(blocks.content)">
