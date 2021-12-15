@@ -165,14 +165,18 @@
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Стоимость доставки от ЛО:</span>
                     {{ preparePrice(delivery.cost) }} руб.
-                </div>
-                <div v-if="delivery.delivery_sum" class="col-sm-6">
-                    <span class="font-weight-bold">Фактическая стоимость доставки от ЛО:</span>
-                    {{ preparePrice(delivery.delivery_sum) }} руб.
-                </div>
-                <div v-if="delivery.total_sum" class="col-sm-6">
-                    <span class="font-weight-bold">Фактическая стоимость доставки от ЛО с услугами:</span>
-                    {{ preparePrice(delivery.total_sum) }} руб.
+
+                    <template v-if="delivery.delivery_sum">
+                        <br>
+                        <span class="font-weight-bold">Фактическая стоимость доставки от ЛО:</span>
+                        {{ preparePrice(delivery.delivery_sum) }} руб.
+                    </template>
+
+                    <template v-if="delivery.total_sum">
+                        <br>
+                        <span class="font-weight-bold">Фактическая стоимость доставки от ЛО с услугами:</span>
+                        {{ preparePrice(delivery.total_sum) }} руб.
+                    </template>
                 </div>
             </b-row>
             <b-row class="mt-2 border-top">
@@ -201,12 +205,14 @@
 import Services from '../../../../../scripts/services/services';
 import ModalDeliveryEdit from './forms/modal-delivery-edit.vue';
 import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
+import Template from '../../../Communication/ServiceNotification/Template/Template';
 
 export default {
     props: {
         model: {},
     },
     components: {
+        Template,
         ModalDeliveryEdit,
         ModalAddReturnReason,
     },
