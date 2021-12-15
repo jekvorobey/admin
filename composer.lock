@@ -1201,7 +1201,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "2fd2d6ad832e1a9773cc14d3c598f2e16b9008df"
+                "reference": "ca63f7c32425d94a501ec01bbb53050a77729dde"
             },
             "require": {
                 "ext-json": "*",
@@ -1235,7 +1235,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-12-07T14:15:54+00:00"
+            "time": "2021-12-13T15:20:41+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
@@ -1243,7 +1243,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "b434ba1992b5decb8a4d578f113ec985a48ac983"
+                "reference": "7732de1036af1a92f7afd864dd3e9f6fdef89b7f"
             },
             "require": {
                 "ext-json": "*",
@@ -1266,7 +1266,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-12-01T07:59:51+00:00"
+            "time": "2021-12-15T09:13:07+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -1332,7 +1332,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-logistics-lib",
-                "reference": "04647d6bcb2b19ee942e4596760067b493d6f50e"
+                "reference": "6e814700e14d11cecb20cf65c11d79100e68c9d2"
             },
             "require": {
                 "ext-json": "*",
@@ -1366,7 +1366,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2021-12-03T12:26:15+00:00"
+            "time": "2021-12-14T14:23:09+00:00"
         },
         {
             "name": "iwengo/ibt-marketing-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "d5a7a40d4355f9a9636214c2766734766744005b"
+                "reference": "e382ae685196cbf23bf780571c9d3018f634b8cb"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-12-03T12:26:08+00:00"
+            "time": "2021-12-14T14:17:19+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
