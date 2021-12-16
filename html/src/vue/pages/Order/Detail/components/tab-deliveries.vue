@@ -205,14 +205,12 @@
 import Services from '../../../../../scripts/services/services';
 import ModalDeliveryEdit from './forms/modal-delivery-edit.vue';
 import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
-import Template from '../../../Communication/ServiceNotification/Template/Template';
 
 export default {
     props: {
         model: {},
     },
     components: {
-        Template,
         ModalDeliveryEdit,
         ModalAddReturnReason,
     },

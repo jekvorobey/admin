@@ -151,14 +151,17 @@
                                     </fa-icon>
                                 </div>
                             </b-td>
-                          <b-td v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled">
-                            <input type="checkbox"
+                            <b-td v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled"
+                                class="text-center"
+                            >
+                                <input type="checkbox"
+                                   v-if="!item.basketItem.is_returned"
                                    class="shipment-select"
                                    @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
                                    :checked="basketItemsToReturn.includes(item.basket_item_id)"
-                                   :disabled="!!item.basketItem.is_returned"
-                            />
-                          </b-td>
+                                />
+                                <span v-else class="badge badge-secondary">Возвращен</span>
+                            </b-td>
                             <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
                             <b-td class="with-small">
