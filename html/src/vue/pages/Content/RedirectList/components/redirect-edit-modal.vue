@@ -91,13 +91,17 @@ export default {
         this.id = ''
       })
           .catch(error => {
-            const responseErrors = error.response.data.errors
+            const responseErrors = error.response.data.errors;
             if (responseErrors) {
               for (let key in responseErrors) {
                 if (responseErrors.hasOwnProperty(key) && this.reqErrors.hasOwnProperty(key)) {
                   this.reqErrors[key] = responseErrors[key][0]
                 }
               }
+            }
+
+            if (error.response.data.message) {
+              Services.msg(error.response.data.message, 'danger');
             }
           })
           .finally(() => {
