@@ -49,6 +49,12 @@
 
                     <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
                     <tr>
+                      <th>Название юрлица*</th>
+                      <td>
+                        <v-input v-model="$v.form.legal_name.$model" :error="errorLegalName" />
+                      </td>
+                    </tr>
+                    <tr>
                         <th>Юридический адрес*</th>
                         <td>
                             <v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress" />
@@ -109,14 +115,14 @@
                         <th>БИК банка*</th>
                         <td><v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik"/></td>
                     </tr>
-                    <tr class="table-secondary"><th colspan="2">Документы</th></tr>
+                    <tr class="table-secondary"><th colspan="2">Документы для отчета комиссионера</th></tr>
                     <tr>
                         <th>Номер Договора</th>
-                        <td><v-input v-model="$v.form.contract_number.$model"/></td>
+                        <td><v-input v-model="$v.form.commissionaire_contract_number.$model"/></td>
                     </tr>
                     <tr>
                         <th>Дата договора</th>
-                        <td><date-picker v-model="$v.form.contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
+                        <td><date-picker v-model="$v.form.commissionaire_contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
                     </tr>
                     <tr>
                         <th>Документы</th>
@@ -136,6 +142,35 @@
                                 </div>
                             </div>
                         </td>
+                    </tr>
+
+                    <tr class="table-secondary"><th colspan="2">Агентские документы для МК</th></tr>
+                    <tr>
+                      <th>Номер Договора</th>
+                      <td><v-input v-model="$v.form.agent_contract_number.$model"/></td>
+                    </tr>
+                    <tr>
+                      <th>Дата договора</th>
+                      <td><date-picker v-model="$v.form.agent_contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
+                    </tr>
+                    <tr>
+                      <th>Документы</th>
+                      <td>
+                        <div v-for="(document, i) in documents" class="mb-1">
+                          <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
+                          <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
+                        </div>
+                        <div v-if="!documents.length">-</div>
+
+                        <div>
+                          <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                          <div v-else class="alert alert-success py-1 px-3" role="alert">
+                            Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
+                            <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
+                            <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                          </div>
+                        </div>
+                      </td>
                     </tr>
                     </tbody>
                 </table>
@@ -168,6 +203,7 @@
         return {
             form: {
                 legal_address: this.model.legal_address,
+                legal_name: this.model.legal_name,
                 inn: this.model.inn,
                 kpp: this.model.kpp,
                 fact_address: this.model.fact_address,
@@ -180,8 +216,10 @@
                 bank_address: this.model.bank_address,
                 bank_bik: this.model.bank_bik,
                 commercial_info: this.model.commercial_info,
-                contract_number: this.model.contract_number,
-                contract_at: this.model.contract_at ? this.model.contract_at : '',
+                commissionaire_contract_number: this.model.commissionaire_contract_number,
+                commissionaire_contract_at: this.model.commissionaire_contract_at ? this.model.commissionaire_contract_at : '',
+                agent_contract_number: this.model.agent_contract_number,
+                agent_contract_at: this.model.agent_contract_at ? this.model.agent_contract_at : '',
 
                 file: null,
             },
@@ -197,6 +235,7 @@
         return {
             form: {
                 legal_address: {required},
+                legal_name: {required},
                 inn: {required},
                 kpp: {notRequired},
                 fact_address: {required},
@@ -209,8 +248,10 @@
                 bank_address: {required},
                 bank_bik: {required},
                 commercial_info: {notRequired},
-                contract_number: {notRequired},
-                contract_at: {notRequired},
+                commissionaire_contract_number: {notRequired},
+                commissionaire_contract_at: {notRequired},
+                agent_contract_number: {notRequired},
+                agent_contract_at: {notRequired},
             },
         };
     },
@@ -226,6 +267,7 @@
                 merchant: this.form
             }).then(() => {
                 this.merchant.legal_address = this.form.legal_address;
+                this.merchant.legal_name = this.form.legal_name;
                 this.merchant.inn = this.form.inn;
                 this.merchant.kpp = this.form.kpp;
                 this.merchant.fact_address = this.form.fact_address;
@@ -238,8 +280,10 @@
                 this.merchant.bank_address = this.form.bank_address;
                 this.merchant.bank_bik = this.form.bank_bik;
                 this.merchant.commercial_info = this.form.commercial_info;
-                this.merchant.contract_number = this.form.contract_number;
-                this.merchant.contract_at = this.form.contract_at;
+                this.merchant.commissionaire_contract_number = this.form.commissionaire_contract_number;
+                this.merchant.commissionaire_contract_at = this.form.commissionaire_contract_at;
+                this.merchant.agent_contract_number = this.form.agent_contract_number;
+                this.merchant.agent_contract_at = this.form.agent_contract_at;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
@@ -248,6 +292,7 @@
         },
         cancel() {
             this.form.legal_address = this.merchant.legal_address;
+            this.form.legal_name = this.merchant.legal_name;
             this.form.inn = this.merchant.inn;
             this.form.kpp = this.merchant.kpp;
             this.form.fact_address = this.merchant.fact_address;
@@ -260,8 +305,10 @@
             this.form.bank_address = this.merchant.bank_address;
             this.form.bank_bik = this.merchant.bank_bik;
             this.form.commercial_info = this.merchant.commercial_info;
-            this.form.contract_number = this.merchant.contract_number;
-            this.form.contract_at = this.merchant.contract_at;
+            this.form.commissionaire_contract_number = this.merchant.commissionaire_contract_number;
+            this.form.commissionaire_contract_at = this.merchant.commissionaire_contract_at;
+            this.form.agent_contract_number = this.merchant.agent_contract_number;
+            this.form.agent_contract_at = this.merchant.agent_contract_at;
         },
         deleteDocument(file_id, index) {
             Services.showLoader();
@@ -349,6 +396,13 @@
         errorLegalAddress() {
             if (this.$v.form.legal_address.$dirty) {
                 if (!this.$v.form.legal_address.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+        errorLegalName() {
+            if (this.$v.form.legal_name.$dirty) {
+                if (!this.$v.form.legal_name.required) {
                     return "Обязательное поле";
                 }
             }

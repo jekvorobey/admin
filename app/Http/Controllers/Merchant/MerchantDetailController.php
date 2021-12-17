@@ -60,7 +60,7 @@ class MerchantDetailController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $this->title = $merchant->legal_name;
+        $this->title = $merchant->name;
 
         $isRequest = in_array($merchant->status, array_keys(MerchantStatus::statusesByMode(true)));
 
@@ -148,7 +148,7 @@ class MerchantDetailController extends Controller
             ];
         }
         $categoryList = array_intersect_key($allCategoryList, $categoryIds);
-
+        
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
                 'id' => $merchant->id,
@@ -176,8 +176,10 @@ class MerchantDetailController extends Controller
                 'sale_info_categories' => json_decode($merchant->sale_info, true)['categories'] ?? [],
                 'vat_info' => $merchant->vat_info,
                 'commercial_info' => $merchant->commercial_info,
-                'contract_number' => $merchant->contract_number,
-                'contract_at' => $merchant->contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->contract_at)->format('Y-m-d') : null,
+                'commissionaire_contract_number' => $merchant->commissionaire_contract_number,
+                'commissionaire_contract_at' => $merchant->commissionaire_contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->commissionaire_contract_at)->format('Y-m-d') : null,
+                'agent_contract_number' => $merchant->agent_contract_number,
+                'agent_contract_at' => $merchant->agent_contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->agent_contract_at)->format('Y-m-d') : null,
                 'main_operator' => [
                     'first_name' => $userMain ? $userMain->first_name : '',
                     'last_name' => $userMain ? $userMain->last_name : 'N/A',
@@ -251,8 +253,8 @@ class MerchantDetailController extends Controller
             'merchant.vat_info' => 'nullable|string',
             'merchant.commercial_info' => 'nullable|string',
 
-            'merchant.contract_number' => 'nullable|string',
-            'merchant.contract_at' => 'nullable|date_format:Y-m-d',
+            'merchant.commissionaire_contract_number' => 'nullable|string',
+            'merchant.commissionaire_contract_at' => 'nullable|date_format:Y-m-d',
         ]);
 
         if (isset($data['merchant']['sale_info_brands']) && isset($data['merchant']['sale_info_categories'])) {
