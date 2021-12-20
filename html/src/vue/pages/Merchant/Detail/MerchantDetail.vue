@@ -60,7 +60,6 @@ import TabBilling from "./components/tab-billing.vue";
 import TabTaxes from "./components/tab-taxes.vue";
 import TabExtSystems from "./components/tab-ext-systems.vue";
 import Services from "../../../../scripts/services/services";
-import _ from "lodash";
 
 export default {
     mixins: [tabsMixin],

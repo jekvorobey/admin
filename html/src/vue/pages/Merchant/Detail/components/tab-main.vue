@@ -138,7 +138,7 @@
                                 <div v-else class="alert alert-success py-1 px-3" role="alert">
                                     Файл <a :href="form.commissionaireFile.url" target="_blank" class="alert-link">{{ form.commissionaireFile.name }}</a> загружен
                                     <v-delete-button @delete="form.commissionaireFile = null" btn-class="btn-danger btn-sm"/>
-                                    <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.commissionaire)"><fa-icon icon="plus"/></button>
+                                    <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.commissionaire, 'commissionaireFile')"><fa-icon icon="plus"/></button>
                                 </div>
                             </div>
                         </td>
@@ -167,7 +167,7 @@
                           <div v-else class="alert alert-success py-1 px-3" role="alert">
                             Файл <a :href="form.agentFile.url" target="_blank" class="alert-link">{{ form.agentFile.name }}</a> загружен
                             <v-delete-button @delete="form.agentFile = null" btn-class="btn-danger btn-sm"/>
-                            <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.agent)"><fa-icon icon="plus"/></button>
+                            <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.agent, 'agentFile')"><fa-icon icon="plus"/></button>
                           </div>
                         </div>
                       </td>
@@ -324,19 +324,17 @@
                 Services.hideLoader();
             })
         },
-        createDocument(type) {
-            const invertedDocTypes = _.invert(this.merchantDocumentTypes)
-            const fileType = `${invertedDocTypes[type]}File`
-            Services.showLoader();
+        createDocument(type, fileType) {
+            let file = this.form[fileType]
             Services.net().post(this.getRoute('merchant.detail.main.document.create', {
                 id: this.merchant.id,
             }), {
-                file_id: this.form[fileType].id,
+                file_id: file.id,
                 type
             }).then(data => {
                 this.$set(this.documents, this.documents.length, {
-                    file_id: this.form[fileType].id,
-                    name: this.form[fileType].name,
+                    file_id: file.id,
+                    name: file.name,
                     type
                 });
                 this.form[fileType] = null;
