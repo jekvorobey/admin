@@ -30,7 +30,7 @@ class TabMainController extends Controller
                 return [
                     'file_id' => $document->file_id,
                     'name' => $file->original_name,
-                    'type' => $document->type
+                    'type' => $document->type,
                 ];
             }),
         ]);
@@ -40,7 +40,7 @@ class TabMainController extends Controller
     {
         $data = $this->validate(request(), [
             'file_id' => 'required',
-            'type' => 'required|int'
+            'type' => 'required|int',
         ]);
 
         $merchantService->createDocument($id, $data);

@@ -303,7 +303,8 @@ class ViewRender
         return $this;
     }
 
-    public function loadMerchantDocumentTypes(bool $load = false): self {
+    public function loadMerchantDocumentTypes(bool $load = false): self
+    {
         if ($load) {
             $this->merchantDocumentTypes = [
                 'commissionaire' => MerchantDocumentDto::TYPE_COMMISSIONAIRE,
@@ -524,8 +525,6 @@ class ViewRender
 
         return $this;
     }
-
-
 
     /**
      * @return $this
