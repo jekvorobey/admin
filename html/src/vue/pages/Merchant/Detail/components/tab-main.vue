@@ -127,7 +127,7 @@
                     <tr>
                         <th>Документы</th>
                         <td>
-                            <div v-for="(document, i) in documents" v-if="document.type === merchantDocumentTypes.commissionaire" class="mb-1">
+                            <div v-for="(document, i) in commissionaireDocuments" class="mb-1">
                                 <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                             </div>
@@ -156,7 +156,7 @@
                     <tr>
                       <th>Документы</th>
                       <td>
-                        <div v-for="(document, i) in documents" v-if="document.type === merchantDocumentTypes.agent" class="mb-1">
+                        <div v-for="(document, i) in agentDocuments" class="mb-1">
                           <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                           <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                         </div>
@@ -459,6 +459,12 @@
                 }
             }
         },
+        commissionaireDocuments() {
+          return this.documents.filter(doc => doc.type === this.merchantDocumentTypes.commissionaire)
+        },
+        agentDocuments() {
+          return this.documents.filter(doc => doc.type === this.merchantDocumentTypes.agent)
+        }
     },
     created() {
         Services.showLoader();
