@@ -6,31 +6,35 @@
             </b-col>
             <b-col v-if="canUpdate(blocks.orders)">
                 <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
-                <b-dropdown text="Действия" class="float-right" size="sm" v-if="(isNotPaid || (this.order.status &&
-                this.order.status.id < orderStatuses.done.id)) && !isCancel">
-                    <b-dropdown-item-button>
+                <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
+                    <template v-if="(isNotPaid || (order.status && order.status.id < orderStatuses.done.id)) && !isCancel">
+                      <b-dropdown-item-button>
                         Пометить, как проблемный
-                    </b-dropdown-item-button>
-                    <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
-                        Оплатить
-                    </b-dropdown-item-button>-->
-                    <b-dropdown-item-button v-if="!isNotPaid">
+                      </b-dropdown-item-button>
+                      <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
+                          Оплатить
+                      </b-dropdown-item-button>-->
+                      <b-dropdown-item-button v-if="!isNotPaid">
                         Вернуть деньги
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button>
+                      </b-dropdown-item-button>
+                      <b-dropdown-item-button>
                         Отправить уведомление клиенту
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button>
+                      </b-dropdown-item-button>
+                      <b-dropdown-item-button>
                         Отправить уведомление мерчанту
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
-                                            @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
+                      </b-dropdown-item-button>
+                      <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
+                                              @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
-                    </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="this.order.status && this.order.status.id < 9 && !isCancel"
-                                            @click="showOrderReturnModal()">
+                      </b-dropdown-item-button>
+                      <b-dropdown-item-button v-if="order.status && order.status.id < orderStatuses.done.id && !isCancel"
+                                              @click="showOrderReturnModal()">
                         Отменить заказ
-                    </b-dropdown-item-button>
+                      </b-dropdown-item-button>
+                    </template>
+                    <b-dropdown-item-button
+                        v-else-if="this.order.basket.type === this.basketTypes.product && order.status && order.status.id === orderStatuses.done.id"
+                        @click="returnOrder()">Возврат</b-dropdown-item-button>
                 </b-dropdown>
             </b-col>
         </b-row>
@@ -56,6 +60,9 @@
                 <p v-if="isCancel">
                     <span class="badge badge-danger">Отменен</span>
                     {{ order.is_canceled_at }}
+                </p>
+                <p v-if="isReturned">
+                    <span class="badge badge-secondary">Возвращен</span>
                 </p>
                 <p v-if="isCancel">
                     <span class="font-weight-bold">Причина отмены:</span>
@@ -230,6 +237,23 @@ export default {
                 Services.hideLoader();
             });
         },
+        returnOrder() {
+          Services.showLoader();
+          Services.net().put(this.getRoute('orders.return', {id: this.order.id}), null, {})
+              .then(data => {
+            if (data.order) {
+              this.$set(this, 'order', data.order);
+              this.$set(this.order, 'shipments', data.order.shipments);
+              Services.msg("Изменения сохранены");
+            } else {
+              Services.msg(errorMessage, 'danger');
+            }
+          }, () => {
+            Services.msg(errorMessage, 'danger');
+          }).finally(data => {
+            Services.hideLoader();
+          });
+        },
         isStatus(statusId) {
             return this.order.status && this.order.status.id === statusId;
         },
@@ -266,6 +290,9 @@ export default {
         },
         isCancel() {
             return this.order.is_canceled;
+        },
+        isReturned() {
+            return this.order.is_returned;
         },
         isPartiallyCancel() {
             return this.order.is_partially_cancelled;

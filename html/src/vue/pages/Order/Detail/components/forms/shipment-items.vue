@@ -29,6 +29,7 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
+                    <b-th v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled && shipment.packages.length">Возврат</b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -61,7 +62,7 @@
             </b-thead>
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
-                    <tr v-for="(basketItem, key) in shipment.nonPackedBasketItems">
+                    <tr v-for="basketItem in shipment.nonPackedBasketItems">
                         <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds"
@@ -97,7 +98,7 @@
                     </tr>
                 </template>
                 <template v-if="shipment.packages.length > 0">
-                    <template v-for="(shipmentPackage, key) in shipment.packages">
+                    <template v-for="(shipmentPackage, pKey) in shipment.packages">
                         <b-tr>
                             <b-td v-if="canEdit" class="d-lg-none">
                                 <div class="float-left">
@@ -109,7 +110,7 @@
                             <b-td :colspan="canEdit ? 10 : 9">
                                 <b-row>
                                     <div class="col-sm-9">
-                                        <b>Коробка #{{ key + 1 }} (ID: {{ shipmentPackage.id }},
+                                        <b>Коробка #{{ pKey + 1 }} (ID: {{ shipmentPackage.id }},
                                             {{ shipmentPackage.package.name }}, вес брутто {{ shipmentPackage.weight }}
                                             г, вес пустой коробки {{ shipmentPackage.wrapper_weight }} г)</b>
                                     </div>
@@ -123,7 +124,7 @@
                                         <modal-add-shipment-package-items :model-shipment.sync="shipment"
                                                                           :model-order.sync="order"
                                                                           :shipment-package.sync="selectedShipmentPackage"
-                                                                          :shipment-package-num="key+1"
+                                                                          :shipment-package-num="pKey+1"
                                                                           :basket-items.sync="selectedBasketItems"
                                                                           @onSave="onShipmentPackageItemsAdd"
                                                                           v-if="Object.values(selectedShipmentPackage).length > 0 && Object.values(selectedBasketItems).length > 0"/>
@@ -149,6 +150,17 @@
                                              @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
                                     </fa-icon>
                                 </div>
+                            </b-td>
+                            <b-td v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled"
+                                class="text-center"
+                            >
+                                <input type="checkbox"
+                                   v-if="!item.basketItem.is_returned"
+                                   class="shipment-select"
+                                   @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
+                                   :checked="basketItemsToReturn.includes(item.basket_item_id)"
+                                />
+                                <span v-else class="badge badge-secondary">Возвращен</span>
                             </b-td>
                             <b-td><img :src="productPhoto(item.basketItem.product)" class="preview" :alt="item.name"
                                        v-if="item.basketItem.product.mainImage"></b-td>
@@ -235,7 +247,14 @@ export default {
         withEdit: {
             type: Boolean,
             default: false,
-        }
+        },
+        returnable: {
+          type: Boolean,
+          default: false
+        },
+        basketItemsToReturn: {
+            type: Array,
+        },
     },
     data() {
         return {
@@ -348,7 +367,7 @@ export default {
             this.selectedShipmentPackage = {};
             this.selectedShipmentItem = {};
             this.$bvModal.hide('modal-edit-shipment-package-item');
-        },
+        }
     },
     computed: {
         order: {

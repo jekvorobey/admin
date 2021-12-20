@@ -165,6 +165,18 @@
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Стоимость доставки от ЛО:</span>
                     {{ preparePrice(delivery.cost) }} руб.
+
+                    <template v-if="delivery.delivery_sum">
+                        <br>
+                        <span class="font-weight-bold">Фактическая стоимость доставки от ЛО:</span>
+                        {{ preparePrice(delivery.delivery_sum) }} руб.
+                    </template>
+
+                    <template v-if="delivery.total_sum">
+                        <br>
+                        <span class="font-weight-bold">Фактическая стоимость доставки от ЛО с услугами:</span>
+                        {{ preparePrice(delivery.total_sum) }} руб.
+                    </template>
                 </div>
             </b-row>
             <b-row class="mt-2 border-top">
