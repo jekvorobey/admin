@@ -12,7 +12,7 @@
                     Статус
                 </f-multi-select>
                 <f-input v-model="filter.id" class="col-lg-3 col-md-6">ID</f-input>
-                <f-input v-model="filter.legal_name" class="col-lg-3 col-md-6">Название организации</f-input>
+                <f-input v-model="filter.name" class="col-lg-3 col-md-6">Название организации</f-input>
                 <f-input v-model="filter.operator_full_name" class="col-lg-3 col-md-6">ФИО</f-input>
                 <f-input v-model="filter.operator_email" class="col-lg-3 col-md-6">Email</f-input>
                 <f-input v-model="filter.operator_phone" class="col-lg-3 col-md-6">Телефон</f-input>
@@ -72,7 +72,7 @@
                 </td>
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.created_at }}</td>
-                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.legal_name }}</a></td>
+                <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.name }}</a></td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.email : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.phone : '' }}</td>
@@ -121,7 +121,7 @@
 
     const cleanFilter = {
     id: '',
-    legal_name: '',
+    name: '',
     operator_full_name: '',
     operator_email: '',
     operator_phone: '',

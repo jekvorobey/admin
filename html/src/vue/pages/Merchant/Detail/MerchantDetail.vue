@@ -19,7 +19,7 @@
 
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
-                <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
+                <b-tab v-for='(tab, key) in tabs' :key="key" v-if="filterTab(key)"  :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
                     <tab-public-event v-if="key === 'publicEvent'" :model.sync="merchant"/>
                     <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
@@ -121,6 +121,16 @@ export default {
                 }, location.pathname);
             }
         },
+      filterTab(key) {
+        const commissionaireTabs = ['store', 'product', 'billing', 'extSystems'];
+        const agentTabs = ['publicEvent'];
+        const commissionaireFieldsFilled = this.merchant.commissionaire_contract_number && this.merchant.commissionaire_contract_at;
+        const agentFieldsFilled = this.merchant.agent_contract_number && this.merchant.agent_contract_at;
+
+        return !commissionaireTabs.concat(agentTabs).includes(key)
+            || ( commissionaireTabs.includes(key) && commissionaireFieldsFilled )
+            || ( agentTabs.includes(key) && agentFieldsFilled );
+      }
     },
     computed: {
         tabs() {

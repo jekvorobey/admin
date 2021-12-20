@@ -148,10 +148,11 @@ class MerchantDetailController extends Controller
             ];
         }
         $categoryList = array_intersect_key($allCategoryList, $categoryIds);
-        
+
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
                 'id' => $merchant->id,
+                'name' => $merchant->name,
                 'legal_name' => $merchant->legal_name,
                 'status' => $merchant->status,
                 'status_at' => $merchant->status_at,
@@ -177,9 +178,11 @@ class MerchantDetailController extends Controller
                 'vat_info' => $merchant->vat_info,
                 'commercial_info' => $merchant->commercial_info,
                 'commissionaire_contract_number' => $merchant->commissionaire_contract_number,
-                'commissionaire_contract_at' => $merchant->commissionaire_contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->commissionaire_contract_at)->format('Y-m-d') : null,
+                'commissionaire_contract_at' => $merchant->commissionaire_contract_at
+                    ? Carbon::createFromFormat('Y-m-d', $merchant->commissionaire_contract_at)->format('Y-m-d') : null,
                 'agent_contract_number' => $merchant->agent_contract_number,
-                'agent_contract_at' => $merchant->agent_contract_at ? Carbon::createFromFormat('Y-m-d H:i:s', $merchant->agent_contract_at)->format('Y-m-d') : null,
+                'agent_contract_at' => $merchant->agent_contract_at
+                    ? Carbon::createFromFormat('Y-m-d', $merchant->agent_contract_at)->format('Y-m-d') : null,
                 'main_operator' => [
                     'first_name' => $userMain ? $userMain->first_name : '',
                     'last_name' => $userMain ? $userMain->last_name : 'N/A',
@@ -224,6 +227,7 @@ class MerchantDetailController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $this->validate(request(), [
+            'merchant.name' => 'nullable',
             'merchant.legal_name' => 'nullable',
             'merchant.status' => ['nullable', Rule::in(array_keys(MerchantStatus::allStatuses()))],
             'merchant.city' => 'nullable',
