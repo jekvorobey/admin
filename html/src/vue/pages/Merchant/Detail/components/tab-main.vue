@@ -131,7 +131,7 @@
                                 <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                             </div>
-                            <div v-if="!documents.length">-</div>
+                            <div v-if="!commissionaireDocuments.length">-</div>
 
                             <div>
                                 <file-input destination="merchantDocument" v-if="!form.commissionaireFile" @uploaded="(data) => form.commissionaireFile = data" class="mb-3"></file-input>
@@ -160,7 +160,7 @@
                           <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                           <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                         </div>
-                        <div v-if="!documents.length">-</div>
+                        <div v-if="!agentDocuments.length">-</div>
 
                         <div>
                           <file-input destination="merchantDocument" v-if="!form.agentFile" @uploaded="(data) => form.agentFile = data" class="mb-3"></file-input>
