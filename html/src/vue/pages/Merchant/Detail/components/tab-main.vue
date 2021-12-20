@@ -127,18 +127,18 @@
                     <tr>
                         <th>Документы</th>
                         <td>
-                            <div v-for="(document, i) in documents" class="mb-1">
+                            <div v-for="(document, i) in documents" v-if="document.type === merchantDocumentTypes.commissionaire" class="mb-1">
                                 <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                                 <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                             </div>
                             <div v-if="!documents.length">-</div>
 
                             <div>
-                                <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                                <file-input destination="merchantDocument" v-if="!form.commissionaireFile" @uploaded="(data) => form.commissionaireFile = data" class="mb-3"></file-input>
                                 <div v-else class="alert alert-success py-1 px-3" role="alert">
-                                    Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-                                    <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-                                    <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                                    Файл <a :href="form.commissionaireFile.url" target="_blank" class="alert-link">{{ form.commissionaireFile.name }}</a> загружен
+                                    <v-delete-button @delete="form.commissionaireFile = null" btn-class="btn-danger btn-sm"/>
+                                    <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.commissionaire)"><fa-icon icon="plus"/></button>
                                 </div>
                             </div>
                         </td>
@@ -156,18 +156,18 @@
                     <tr>
                       <th>Документы</th>
                       <td>
-                        <div v-for="(document, i) in documents" class="mb-1">
+                        <div v-for="(document, i) in documents" v-if="document.type === merchantDocumentTypes.agent" class="mb-1">
                           <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
                           <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
                         </div>
                         <div v-if="!documents.length">-</div>
 
                         <div>
-                          <file-input destination="merchantDocument" v-if="!form.file" @uploaded="(data) => form.file = data" class="mb-3"></file-input>
+                          <file-input destination="merchantDocument" v-if="!form.agentFile" @uploaded="(data) => form.agentFile = data" class="mb-3"></file-input>
                           <div v-else class="alert alert-success py-1 px-3" role="alert">
-                            Файл <a :href="form.file.url" target="_blank" class="alert-link">{{ form.file.name }}</a> загружен
-                            <v-delete-button @delete="form.file = null" btn-class="btn-danger btn-sm"/>
-                            <button class="btn btn-success btn-sm" @click="createDocument"><fa-icon icon="plus"/></button>
+                            Файл <a :href="form.agentFile.url" target="_blank" class="alert-link">{{ form.agentFile.name }}</a> загружен
+                            <v-delete-button @delete="form.agentFile = null" btn-class="btn-danger btn-sm"/>
+                            <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.agent)"><fa-icon icon="plus"/></button>
                           </div>
                         </div>
                       </td>
@@ -221,7 +221,8 @@
                 agent_contract_number: this.model.agent_contract_number,
                 agent_contract_at: this.model.agent_contract_at ? this.model.agent_contract_at : '',
 
-                file: null,
+                agentFile: null,
+                commissionaireFile: null,
             },
             daDataOrganization: '',
             documents: [],
@@ -323,18 +324,22 @@
                 Services.hideLoader();
             })
         },
-        createDocument() {
+        createDocument(type) {
+            const invertedDocTypes = _.invert(this.merchantDocumentTypes)
+            const fileType = `${invertedDocTypes[type]}File`
             Services.showLoader();
             Services.net().post(this.getRoute('merchant.detail.main.document.create', {
                 id: this.merchant.id,
             }), {
-                file_id: this.form.file.id,
+                file_id: this.form[fileType].id,
+                type
             }).then(data => {
                 this.$set(this.documents, this.documents.length, {
-                    file_id: this.form.file.id,
-                    name: this.form.file.name,
+                    file_id: this.form[fileType].id,
+                    name: this.form[fileType].name,
+                    type
                 });
-                this.form.file = null;
+                this.form[fileType] = null;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();

@@ -60,6 +60,7 @@ import TabBilling from "./components/tab-billing.vue";
 import TabTaxes from "./components/tab-taxes.vue";
 import TabExtSystems from "./components/tab-ext-systems.vue";
 import Services from "../../../../scripts/services/services";
+import _ from "lodash";
 
 export default {
     mixins: [tabsMixin],
@@ -138,6 +139,8 @@ export default {
             let i = 0;
             let unreadMsgIndicator = this.unreadMsgCount > 0 ?
                 ` (${this.unreadMsgCount})` : '';
+            const commissionaireFieldsFilled = this.merchant.commissionaire_contract_number && this.merchant.commissionaire_contract_at;
+            const agentFieldsFilled = this.merchant.agent_contract_number && this.merchant.agent_contract_at;
 
             tabs.digest = {i: i++, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
