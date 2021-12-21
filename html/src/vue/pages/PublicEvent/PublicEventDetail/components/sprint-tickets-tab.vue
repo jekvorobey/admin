@@ -26,6 +26,7 @@
                 <th>Уникальный код</th>
                 <th>Статус</th>
                 <th>Комментарий</th>
+                <th>Действие</th>
             </tr>
             </thead>
             <tbody>
@@ -43,8 +44,13 @@
                 <td>{{ ticket.code }}</td>
                 <td><span class="badge" :class="statusClass(ticket.status.id)">{{ ticket.status.name }}</span></td>
                 <td>
-                    <button class="btn" @click="editComment(ticket)">
+                    <button v-if="ticket.comment" class="btn" @click="editComment(ticket)">
                         <fa-icon icon="comment-dots"></fa-icon>
+                    </button>
+                </td>
+                <td>
+                    <button class="btn" @click="editComment(ticket)">
+                        <fa-icon icon="cog"></fa-icon>
                     </button>
                 </td>
             </tr>

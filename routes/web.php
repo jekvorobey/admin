@@ -351,6 +351,7 @@ Route::middleware('auth')->group(function () {
             Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
             Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
+            Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
