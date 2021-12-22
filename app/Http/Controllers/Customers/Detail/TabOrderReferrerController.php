@@ -88,17 +88,17 @@ class TabOrderReferrerController extends Controller
             ->setSort('order_date', 'desc')
         );
 
+        [$returnReferralOrderHistories, $referralOrderHistories] =
+            $referralOrderHistories->partition('billOperation.type', ReferralBillOperationDto::TYPE_RETURN);
+
         if ($referralOrderHistories->isEmpty()) {
             return collect();
         }
 
         return $referralOrderHistories
-            ->where('billOperation')
-            ->unique('order_number')
-            ->map(function (ReferralOrderHistoryDto $orderHistoryDto) use ($referralOrderHistories) {
-                $hasReturnedOperation = $referralOrderHistories
+            ->map(function (ReferralOrderHistoryDto $orderHistoryDto) use ($returnReferralOrderHistories) {
+                $hasReturnedOperation = $returnReferralOrderHistories
                     ->where('order_number', $orderHistoryDto->order_number)
-                    ->where('billOperation.type', ReferralBillOperationDto::TYPE_RETURN)
                     ->isNotEmpty();
                 return [
                     'id' => $orderHistoryDto->id,
