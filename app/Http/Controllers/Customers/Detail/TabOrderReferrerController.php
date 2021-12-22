@@ -81,20 +81,25 @@ class TabOrderReferrerController extends Controller
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
-        $referralReturnBillingOperations = $referralService->getReferralBillOperations(
+        $referralBillingOperations = $referralService->getReferralBillOperations(
             (new GetReferralBillOperationDto())
-                ->setReferralId($customer_id)
+                ->setReferralId(7)
                 ->setRelations(['orderHistory'])
         );
 
-        if ($referralReturnBillingOperations->isEmpty()) {
+        if ($referralBillingOperations->isEmpty()) {
             return collect();
         }
 
-        return $referralReturnBillingOperations
+        return $referralBillingOperations
             ->where('orderHistory')
-            ->map(function (ReferralBillOperationDto $billOperationDto) {
+            ->unique('orderHistory.order_number')
+            ->map(function (ReferralBillOperationDto $billOperationDto) use ($referralBillingOperations) {
                 $orderHistoryDto = new ReferralOrderHistoryDto($billOperationDto->orderHistory);
+                $hasReturnedOperation = $referralBillingOperations
+                    ->where('orderHistory.order_number', $orderHistoryDto->order_number)
+                    ->where('type', ReferralBillOperationDto::TYPE_RETURN)
+                    ->isNotEmpty();
                 return [
                     'id' => $orderHistoryDto->id,
                     'order_number' => $orderHistoryDto->order_number,
@@ -105,7 +110,7 @@ class TabOrderReferrerController extends Controller
                     'source' => $orderHistoryDto->source,
                     'source_name' => $orderHistoryDto->getSourceName(),
                     'customer_id' => $orderHistoryDto->customer_id,
-                    'is_returned' => $billOperationDto->type === ReferralBillOperationDto::TYPE_RETURN,
+                    'is_returned' => $hasReturnedOperation,
                 ];
             });
     }
