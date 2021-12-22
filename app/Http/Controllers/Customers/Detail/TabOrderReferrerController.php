@@ -99,6 +99,7 @@ class TabOrderReferrerController extends Controller
             ->map(function (ReferralOrderHistoryDto $orderHistoryDto) use ($returnReferralOrderHistories) {
                 $hasReturnedOperation = $returnReferralOrderHistories
                     ->where('order_number', $orderHistoryDto->order_number)
+                    ->where('product_id', $orderHistoryDto->product_id)
                     ->isNotEmpty();
                 return [
                     'id' => $orderHistoryDto->id,
