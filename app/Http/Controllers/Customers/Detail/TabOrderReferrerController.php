@@ -83,7 +83,7 @@ class TabOrderReferrerController extends Controller
         $referralService = resolve(ReferralService::class);
         $referralBillingOperations = $referralService->getReferralBillOperations(
             (new GetReferralBillOperationDto())
-                ->setReferralId(7)
+                ->setReferralId($customer_id)
                 ->setRelations(['orderHistory'])
         );
 
