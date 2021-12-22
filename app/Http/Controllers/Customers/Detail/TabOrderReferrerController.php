@@ -12,7 +12,7 @@ use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Dto\ReferralBillOperationDto;
 use Greensight\Customer\Dto\ReferralOrderHistoryDto;
-use Greensight\Customer\Services\ReferralService\Dto\GetReferralBillOperationDto;
+use Greensight\Customer\Services\ReferralService\Dto\GetReferralOrderHistoryDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Illuminate\Http\JsonResponse;
 
@@ -81,24 +81,24 @@ class TabOrderReferrerController extends Controller
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
-        $referralBillingOperations = $referralService->getReferralBillOperations(
-            (new GetReferralBillOperationDto())
-                ->setReferralId($customer_id)
-                ->setRelations(['orderHistory'])
+        $referralOrderHistories = $referralService->getReferralOrderHistories(
+            (new GetReferralOrderHistoryDto())
+            ->setReferralId($customer_id)
+            ->setRelations(['billOperation'])
+            ->setSort('order_date', 'desc')
         );
 
-        if ($referralBillingOperations->isEmpty()) {
+        if ($referralOrderHistories->isEmpty()) {
             return collect();
         }
 
-        return $referralBillingOperations
-            ->where('orderHistory')
-            ->unique('orderHistory.order_number')
-            ->map(function (ReferralBillOperationDto $billOperationDto) use ($referralBillingOperations) {
-                $orderHistoryDto = new ReferralOrderHistoryDto($billOperationDto->orderHistory);
-                $hasReturnedOperation = $referralBillingOperations
-                    ->where('orderHistory.order_number', $orderHistoryDto->order_number)
-                    ->where('type', ReferralBillOperationDto::TYPE_RETURN)
+        return $referralOrderHistories
+            ->where('billOperation')
+            ->unique('order_number')
+            ->map(function (ReferralOrderHistoryDto $orderHistoryDto) use ($referralOrderHistories) {
+                $hasReturnedOperation = $referralOrderHistories
+                    ->where('order_number', $orderHistoryDto->order_number)
+                    ->where('billOperation.type', ReferralBillOperationDto::TYPE_RETURN)
                     ->isNotEmpty();
                 return [
                     'id' => $orderHistoryDto->id,

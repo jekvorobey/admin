@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "0a4faa1540ac29c697f277e70ba31c6d",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1197,11 +1197,11 @@
         },
         {
             "name": "iwengo/ibt-cm-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-675-add-return-operations-of-referral",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "ca63f7c32425d94a501ec01bbb53050a77729dde"
+                "reference": "c08ef25188b15034a51cacb5665f36c28a003d27"
             },
             "require": {
                 "ext-json": "*",
@@ -1235,7 +1235,7 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2021-12-13T15:20:41+00:00"
+            "time": "2021-12-22T10:01:04+00:00"
         },
         {
             "name": "iwengo/ibt-cms-lib",
@@ -10828,7 +10828,7 @@
         },
         {
             "package": "iwengo/ibt-cm-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-675-add-return-operations-of-referral",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
