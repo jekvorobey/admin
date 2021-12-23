@@ -26,7 +26,6 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -149,14 +148,6 @@ class DiscountHelper
             'except' => 'array',
             'conditions' => 'array',
         ]);
-
-        $data['start_date'] = $data['start_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['start_date'])->format('Y-m-d')
-            : null;
-
-        $data['end_date'] = $data['end_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['end_date'])->format('Y-m-d')
-            : null;
 
         $data['merchant_id'] ??= null;
 
