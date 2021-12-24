@@ -168,6 +168,10 @@ Vue.mixin({
         merchantVatTypes() {
             return this.$store.state.layout.merchantVatTypes;
         },
+        /** @return {MerchantDocumentTypes} */
+        merchantDocumentTypes() {
+            return this.$store.state.layout.merchantDocumentTypes;
+        },
         /** @return {PublicEventType[]} */
         publicEventTypes() {
             return this.$store.state.layout.publicEventTypes;
@@ -465,6 +469,12 @@ Vue.mixin({
  @property {string} brand
  @property {string} category
  @property {string} sku
+ */
+/**
+ @typedef MerchantDocumentTypes
+ @type {Object}
+ @property {string} commissionaire
+ @property {string} agent
  */
 /**
  @typedef PublicEventType

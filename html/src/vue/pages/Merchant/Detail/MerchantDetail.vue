@@ -19,7 +19,7 @@
 
         <b-card no-body>
             <b-tabs lazy card v-model="tabIndex">
-                <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
+                <b-tab v-for='(tab, key) in tabs' :key="key"  :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
                     <tab-public-event v-if="key === 'publicEvent'" :model.sync="merchant"/>
                     <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
@@ -128,23 +128,25 @@ export default {
             let i = 0;
             let unreadMsgIndicator = this.unreadMsgCount > 0 ?
                 ` (${this.unreadMsgCount})` : '';
+            const commissionaireFieldsFilled = this.merchant.commissionaire_contract_number && this.merchant.commissionaire_contract_at;
+            const agentFieldsFilled = this.merchant.agent_contract_number && this.merchant.agent_contract_at;
 
             tabs.digest = {i: i++, title: 'Дайджест'};
             tabs.main = {i: i++, title: 'Информация'};
-            tabs.store = {i: i++, title: 'Склады'};
+            if (commissionaireFieldsFilled) tabs.store = {i: i++, title: 'Склады'};
             tabs.commission = {i: i++, title: 'Комиссия'};
             tabs.taxes = {i: i++, title: 'Ставка НДС'};
             tabs.operator = {i: i++, title: 'Команда мерчанта'};
-            tabs.product = {i: i++, title: 'Товары'};
+            if (commissionaireFieldsFilled) tabs.product = {i: i++, title: 'Товары'};
             tabs.order = {i: i++, title: 'Заказы'};
             tabs.return = {i: i++, title: 'Возвраты'};
-            tabs.publicEvent = {i: i++, title: 'Мастер-классы'};
+            if (agentFieldsFilled) tabs.publicEvent = {i: i++, title: 'Мастер-классы'};
             tabs.client = {i: i++, title: 'Клиенты'};
             tabs.communication = {i: i++, title: 'Коммуникации'+unreadMsgIndicator};
             tabs.marketing = {i: i++, title: 'Маркетинг'};
-            tabs.bill = {i: i++, title: 'Биллинг'};
+            if (commissionaireFieldsFilled) tabs.bill = {i: i++, title: 'Биллинг'};
             tabs.log = {i: i++, title: 'Логи'};
-            tabs.extSystems = {i: i++, title: 'Интеграция'};
+            if (commissionaireFieldsFilled) tabs.extSystems = {i: i++, title: 'Интеграция'};
 
             return tabs;
         },
