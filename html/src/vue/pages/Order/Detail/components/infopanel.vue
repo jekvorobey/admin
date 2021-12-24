@@ -7,7 +7,7 @@
             <b-col v-if="canUpdate(blocks.orders)">
                 <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
-                    <template v-if="(isNotPaid || (this.order.status && this.order.status.id < orderStatuses.done.id)) && !isCancel">
+                    <template v-if="(isNotPaid || (order.status && order.status.id < orderStatuses.done.id)) && !isCancel">
                       <b-dropdown-item-button>
                         Пометить, как проблемный
                       </b-dropdown-item-button>
@@ -27,13 +27,13 @@
                                               @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
                       </b-dropdown-item-button>
-                      <b-dropdown-item-button v-if="this.order.status && this.order.status.id < 9 && !isCancel"
+                      <b-dropdown-item-button v-if="order.status && order.status.id < orderStatuses.done.id && !isCancel"
                                               @click="showOrderReturnModal()">
                         Отменить заказ
                       </b-dropdown-item-button>
                     </template>
                     <b-dropdown-item-button
-                        v-else-if="this.order.status && this.order.status.id === orderStatuses.done.id"
+                        v-else-if="this.order.basket.type === this.basketTypes.product && order.status && order.status.id === orderStatuses.done.id"
                         @click="returnOrder()">Возврат</b-dropdown-item-button>
                 </b-dropdown>
             </b-col>

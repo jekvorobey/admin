@@ -158,6 +158,10 @@ class Menu
 //                        'route' => '#',
 //                    ],
                     [
+                        'title' => 'Редиректы',
+                        'route' => route('redirect.list'),
+                    ],
+                    [
                         'title' => 'Подборки товаров',
                         'route' => route('productGroup.listPage'),
                     ],

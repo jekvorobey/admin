@@ -58,11 +58,12 @@
                     .then(data => {
                         if (!data.order) {
                             Services.msg(errorMessage, 'danger');
+                            return;
                         }
 
                         this.$set(this, 'order', data.order);
                         this.$set(this.order, 'shipments', data.order.shipments);
-                        Services.msg("Изменения сохранены");
+                        Services.msg('Возврат выполнен');
                     }, () => {
                         Services.msg(errorMessage, 'danger');
                     }).finally(() => {
