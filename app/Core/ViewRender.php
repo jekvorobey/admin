@@ -35,6 +35,7 @@ use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
+use MerchantManagement\Dto\MerchantDocumentDto;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
 use Pim\Dto\Offer\OfferSaleStatus;
@@ -70,6 +71,7 @@ class ViewRender
     private $merchantStatuses = [];
     private $merchantCommissionTypes = [];
     private $merchantVatTypes = [];
+    private $merchantDocumentTypes = [];
 
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
@@ -298,6 +300,17 @@ class ViewRender
             ];
         }
 
+        return $this;
+    }
+
+    public function loadMerchantDocumentTypes(bool $load = false): self
+    {
+        if ($load) {
+            $this->merchantDocumentTypes = [
+                'commissionaire' => MerchantDocumentDto::TYPE_COMMISSIONAIRE,
+                'agent' => MerchantDocumentDto::TYPE_AGENT,
+            ];
+        }
         return $this;
     }
 
@@ -842,6 +855,7 @@ class ViewRender
                 'merchantStatuses' => $this->merchantStatuses,
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
                 'merchantVatTypes' => $this->merchantVatTypes,
+                'merchantDocumentTypes' => $this->merchantDocumentTypes,
 
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
