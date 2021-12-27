@@ -759,9 +759,6 @@
             },
             values: {
                 handler() {
-                    // _.debounce(function() {
-                    //     this.addCondition(); this.initConditionError(); console.log('hey');
-                    // }, 3000);
                     setTimeout(() => {this.addCondition(); this.initConditionError();}, 3000);
                 },
                 deep: true
