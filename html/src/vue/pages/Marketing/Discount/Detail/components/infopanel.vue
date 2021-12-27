@@ -200,6 +200,15 @@
                     </select>
                 </td>
             </tr>
+            <tr v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
+                <th><label for="promo_code_only">Скидка действительна только по промокоду</label></th>
+                <td colspan="2">
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="promo_code_only" v-model="discount.promo_code_only">
+                        <label class="custom-control-label" for="promo_code_only"></label>
+                    </span>
+                </td>
+            </tr>
             <tr>
               <th>Служебный комментарий</th>
               <td class="position-relative" style="height: 100px;">
