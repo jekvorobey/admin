@@ -18,9 +18,9 @@
         </thead>
         <tbody>
         <tr>
-            <th>Название организации</th>
+            <th>Служебное название</th>
             <td colspan="3">
-                <input class="form-control form-control-sm" v-model="form.legal_name"/>
+                <input class="form-control form-control-sm" v-model="form.name"/>
             </td>
         </tr>
         <tr>
@@ -83,7 +83,7 @@ export default {
     data() {
         return {
             form: {
-                legal_name: this.model.legal_name,
+                name: this.model.name,
                 status: this.model.status,
                 city: this.model.city,
                 rating_id: this.model.rating_id,
@@ -97,9 +97,9 @@ export default {
             Services.net().post(this.getRoute('merchant.detail.edit', {id: this.merchant.id}), {
                 merchant: this.form
             }).then(() => {
-                if (this.merchant.legal_name !== this.form.legal_name) {
-                    this.merchant.legal_name = this.form.legal_name;
-                    this.$store.commit('title', this.form.legal_name);
+                if (this.merchant.name !== this.form.name) {
+                    this.merchant.name = this.form.name;
+                    this.$store.commit('title', this.form.name);
                 }
                 if (this.merchant.status !== this.form.status) {
                     this.merchant.status = this.form.status;
@@ -124,7 +124,7 @@ export default {
             });
         },
         cancel() {
-            this.form.legal_name = this.merchant.legal_name;
+            this.form.name = this.merchant.name;
             this.form.status = this.merchant.status;
             this.form.city = this.merchant.city;
             this.form.rating_id = this.merchant.rating_id;
@@ -137,7 +137,7 @@ export default {
             set(value) {this.$emit('update:model', value)},
         },
         showBtn() {
-            return this.merchant.legal_name !== this.form.legal_name ||
+            return this.merchant.name !== this.form.name ||
                 this.merchant.status !== this.form.status ||
                 (this.merchant.city || '') !== (this.form.city || '') ||
                 (this.merchant.rating_id || '') !== (this.form.rating_id || '') ||

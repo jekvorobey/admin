@@ -202,6 +202,14 @@
         ></Conditions>
 
         <div class="row">
+            <div class="col-3">
+                <b-form-group  label="Служебный комментарий" label-for="discount-comment">
+                    <b-form-textarea :no-resize="true" v-model="discount.comment" id="discount-comment" />
+                </b-form-group>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-success">{{ submitText }}</button>
             </div>

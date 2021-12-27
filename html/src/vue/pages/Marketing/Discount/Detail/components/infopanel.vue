@@ -96,7 +96,8 @@
             <tr>
                 <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
-                    <v-input v-model="discount.product_qty_limit"
+                    <v-input id="discount-product_qty_limit-input"
+                            v-model="discount.product_qty_limit"
                              :type="'number'"
                              :min="0"
                     ></v-input>
@@ -208,6 +209,13 @@
                     </span>
                 </td>
             </tr>
+            <tr>
+              <th>Служебный комментарий</th>
+              <td class="position-relative" style="height: 100px;">
+                <textarea class="form-control h-100 w-100" style="resize: none; max-width: 250px;"
+                          v-model="discount.comment"></textarea>
+              </td>
+            </tr>
         </tbody>
     </table>
 </template>
@@ -304,6 +312,7 @@
                     product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
+                    comment: discount.comment,
                 };
 
                 switch (discount.type) {

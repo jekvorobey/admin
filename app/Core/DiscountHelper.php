@@ -147,6 +147,7 @@ class DiscountHelper
             'public_events' => 'array',
             'except' => 'array',
             'conditions' => 'array',
+            'comment' => 'string|nullable',
         ]);
 
         $data['merchant_id'] ??= null;
@@ -163,6 +164,7 @@ class DiscountHelper
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
             'relations' => [],
+            'comment' => $data['comment'],
         ]);
 
         $arRelations = DiscountHelper::getDiscountRelations($data);
@@ -454,6 +456,7 @@ class DiscountHelper
      */
     public static function detail(int $id)
     {
+        /** @var DiscountService $discountService */
         $discountService = resolve(DiscountService::class);
         $categoryService = resolve(CategoryService::class);
         $brandService = resolve(BrandService::class);
