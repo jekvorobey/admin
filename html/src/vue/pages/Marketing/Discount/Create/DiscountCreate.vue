@@ -62,6 +62,7 @@
         },
         methods: {
             add(discount) {
+
                 let data = {
                     name: discount.name,
                     type: discount.type,
@@ -96,9 +97,27 @@
                         break;
                     case this.discountTypes.masterclass:
                         data.public_events = discount.publicEvents ? this.formatIds(discount.publicEvents) : [];
+                        break;
+                    case this.discountTypes.anyOffer:
+                        data.except = {};
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                    case this.discountTypes.anyBrand:
+                        data.except = {};
+                        data.except.brands = discount.brands ? discount.brands : [];
+                        break;
+                    case this.discountTypes.anyCategory:
+                        data.except = {};
+                        data.except.categories = discount.categories ? discount.categories : [];
+                        break;
+                    case this.discountTypes.anyBundle:
+                        data.except = {};
+                        data.except.bundles = discount.bundles ? this.formatIds(discount.bundles) : [];
+                        break;
                 }
 
                 this.processing = true;
+                console.log(data);
                 let err = 'Произошла ошибка при добавлении скидки.';
                 let success = 'Скидка успешно добавлена.';
                 Services.showLoader();
@@ -110,7 +129,7 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('AddDiscount');
                     this.processing = false;
-                    window.location=this.getRedirectRoute(discount.type);
+                    // window.location=this.getRedirectRoute(discount.type);
                 }, () => {
                     this.result = err;
                     this.openModal('AddDiscount');
