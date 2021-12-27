@@ -134,10 +134,26 @@
             <tr>
                 <th>Период действия скидки</th>
                 <td>
-                    <input type="date" v-model="discount.start_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="start_date"
+                        type="datetime"
+                        v-model="discount.start_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
                 <td>
-                    <input type="date" v-model="discount.end_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="end_date"
+                        type="datetime"
+                        v-model="discount.end_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
             </tr>
             <tr>
@@ -203,6 +219,8 @@
     import CategoriesSearch from '../../../components/categories-search.vue';
     import {required,requiredIf,minValue,maxValue} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
+    import DatePicker from 'vue2-datepicker';
+    import moment from "moment";
 
     export default {
         name: 'discount-detail-infopanel',
@@ -210,7 +228,8 @@
             VInput,
             VSelect2,
             BrandsSearch,
-            CategoriesSearch
+            CategoriesSearch,
+            DatePicker,
         },
         mixins: [
             validationMixin,
