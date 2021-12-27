@@ -108,6 +108,12 @@
                     <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением офферов</v-input>
                 </div>
             </template>
+
+            <template v-if="discount.type === discountTypes.anyOffer">
+                <div class="col-9">
+                    <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением</v-input>
+                </div>
+            </template>
         </div>
 
         <div class="row">
@@ -586,6 +592,11 @@
                     }
                 },
             },
+            'discount.type': {
+                handler() {
+                    console.log(this.discountTypes);
+                }
+            }
         },
         mounted() {
             this.initDiscount();
