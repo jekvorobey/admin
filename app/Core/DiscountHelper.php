@@ -481,7 +481,6 @@ class DiscountHelper
 
         /** @var DiscountDto $discount */
         $discount = $discountService->discounts($params)->first();
-        logger($discount->toJson(JSON_PRETTY_PRINT));
         if (!$discount) {
             throw new NotFoundHttpException();
         }
