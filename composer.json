@@ -68,7 +68,7 @@
         "box/spout": "^3.1",
         "fideloper/proxy": "^4.0",
         "iwengo/ibt-catalog-import-lib": "dev-master-ylab as dev-master",
-        "iwengo/ibt-cm-lib": "dev-feature/IBT-675-add-return-operations-of-referral as dev-master",
+        "iwengo/ibt-cm-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-cms-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-logistics-lib": "dev-master-ylab as dev-master",
@@ -100,7 +100,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "extra": {
         "laravel": {
