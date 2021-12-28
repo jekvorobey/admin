@@ -118,7 +118,6 @@
                 }
 
                 this.processing = true;
-                console.log(data);
                 let err = 'Произошла ошибка при добавлении скидки.';
                 let success = 'Скидка успешно добавлена.';
                 Services.showLoader();
@@ -130,7 +129,7 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('AddDiscount');
                     this.processing = false;
-                    // window.location=this.getRedirectRoute(discount.type);
+                    window.location=this.getRedirectRoute(discount.type);
                 }, () => {
                     this.result = err;
                     this.openModal('AddDiscount');

@@ -345,6 +345,22 @@
                         data.except.brands = discount.brands ? discount.brands : [];
                         data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
                         break;
+                    case this.discountTypes.anyOffer:
+                        data.except = {};
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                    case this.discountTypes.anyBrand:
+                        data.except = {};
+                        data.except.brands = discount.brands ? discount.brands : [];
+                        break;
+                    case this.discountTypes.anyCategory:
+                        data.except = {};
+                        data.except.categories = discount.categories ? discount.categories : [];
+                        break;
+                    case this.discountTypes.anyBundle:
+                        data.except = {};
+                        data.except.bundles = discount.bundles ? this.formatIds(discount.bundles) : [];
+                        break;
                 }
 
                 this.processing = true;
