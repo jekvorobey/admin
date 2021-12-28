@@ -314,6 +314,7 @@
                     categories: [],
                     publicEvents: null,
                     conditions: [],
+                    comment: null,
                 },
 
                 discountErrors: {

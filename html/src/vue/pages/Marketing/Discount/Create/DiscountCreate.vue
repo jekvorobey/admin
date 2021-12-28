@@ -129,7 +129,10 @@
                     this.result = (data.status === 'ok') ? success : err;
                     this.openModal('AddDiscount');
                     this.processing = false;
-                    window.location=this.getRedirectRoute(discount.type);
+
+                    if (data.status === 'ok') {
+                        window.location=this.getRedirectRoute(discount.type);
+                    }
                 }, () => {
                     this.result = err;
                     this.openModal('AddDiscount');
