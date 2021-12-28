@@ -74,6 +74,7 @@
                     status: discount.status,
                     product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
+                    comment: discount.comment,
                 };
 
                 switch (discount.type) {

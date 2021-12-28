@@ -27,7 +27,6 @@ use Greensight\Marketing\Services\DiscountService\DiscountService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -149,15 +148,8 @@ class DiscountHelper
             'public_events' => 'array',
             'except' => 'array',
             'conditions' => 'array',
+            'comment' => 'string|nullable',
         ]);
-
-        $data['start_date'] = $data['start_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['start_date'])->format('Y-m-d')
-            : null;
-
-        $data['end_date'] = $data['end_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['end_date'])->format('Y-m-d')
-            : null;
 
         $data['merchant_id'] ??= null;
 
@@ -173,6 +165,7 @@ class DiscountHelper
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
             'relations' => [],
+            'comment' => $data['comment'],
         ]);
 
         $arRelations = DiscountHelper::getDiscountRelations($data);
@@ -501,6 +494,7 @@ class DiscountHelper
      */
     public static function detail(int $id)
     {
+        /** @var DiscountService $discountService */
         $discountService = resolve(DiscountService::class);
         $categoryService = resolve(CategoryService::class);
         $brandService = resolve(BrandService::class);

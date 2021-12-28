@@ -166,11 +166,6 @@
                 </td>
                 <td v-if="canUpdate(blocks.marketing)">
                     <a :href="getRoute('discount.detail', {id: discount.id})"
-                       class="btn btn-info btn-sm">
-                        <fa-icon icon="eye"/>
-                    </a>
-
-                    <a :href="getRoute('discount.edit', {id: discount.id})"
                        class="btn btn-success btn-sm mt-1">
                         <fa-icon icon="edit"/>
                     </a>

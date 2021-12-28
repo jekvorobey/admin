@@ -104,7 +104,8 @@
             <tr>
                 <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
-                    <v-input v-model="discount.product_qty_limit"
+                    <v-input id="discount-product_qty_limit-input"
+                            v-model="discount.product_qty_limit"
                              :type="'number'"
                              :min="0"
                     ></v-input>
@@ -141,10 +142,26 @@
             <tr>
                 <th>Период действия скидки</th>
                 <td>
-                    <input type="date" v-model="discount.start_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="start_date"
+                        type="datetime"
+                        v-model="discount.start_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
                 <td>
-                    <input type="date" v-model="discount.end_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="end_date"
+                        type="datetime"
+                        v-model="discount.end_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
             </tr>
             <tr>
@@ -191,6 +208,22 @@
                     </select>
                 </td>
             </tr>
+            <tr v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
+                <th><label for="promo_code_only">Скидка действительна только по промокоду</label></th>
+                <td colspan="2">
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="promo_code_only" v-model="discount.promo_code_only">
+                        <label class="custom-control-label" for="promo_code_only"></label>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+              <th>Служебный комментарий</th>
+              <td class="position-relative" style="height: 100px;">
+                <textarea class="form-control h-100 w-100" style="resize: none; max-width: 250px;"
+                          v-model="discount.comment"></textarea>
+              </td>
+            </tr>
         </tbody>
     </table>
 </template>
@@ -203,6 +236,8 @@
     import CategoriesSearch from '../../../components/categories-search.vue';
     import {required,requiredIf,minValue,maxValue} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
+    import DatePicker from 'vue2-datepicker';
+    import moment from "moment";
 
     export default {
         name: 'discount-detail-infopanel',
@@ -210,7 +245,8 @@
             VInput,
             VSelect2,
             BrandsSearch,
-            CategoriesSearch
+            CategoriesSearch,
+            DatePicker,
         },
         mixins: [
             validationMixin,
@@ -284,6 +320,7 @@
                     product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
+                    comment: discount.comment,
                 };
 
                 switch (discount.type) {

@@ -168,24 +168,26 @@
 
         <div class="row">
             <div class="col-3 mb-3">
-                <label for="start_date">Дата старта</label>
+                <label for="start_date">Дата и время старта</label>
                 <date-picker
                     class="w-100"
                     id="start_date"
+                    type="datetime"
                     v-model="discount.start_date"
-                    format="DD.MM.YYYY"
-                    value-type="YYYY-MM-DD"
+                    format="YYYY-MM-DD HH:mm"
+                    value-type="format"
                     input-class="form-control form-control-sm"
                 />
             </div>
             <div class="col-3">
-                <label for="end_date">Дата окончания</label>
+                <label for="end_date">Дата и время окончания</label>
                 <date-picker
                     class="w-100"
                     id="end_date"
+                    type="datetime"
                     v-model="discount.end_date"
-                    value-type="YYYY-MM-DD"
-                    format="DD.MM.YYYY"
+                    format="YYYY-MM-DD HH:mm"
+                    value-type="format"
                     :state="checkEndDate"
                     @change="initErrorEndDate"
                     input-class="form-control form-control-sm"
@@ -236,6 +238,14 @@
                 :brands="brands"
                 :categories="categories"
         ></Conditions>
+
+        <div class="row">
+            <div class="col-3">
+                <b-form-group  label="Служебный комментарий" label-for="discount-comment">
+                    <b-form-textarea :no-resize="true" v-model="discount.comment" id="discount-comment" />
+                </b-form-group>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-12 mt-3">
