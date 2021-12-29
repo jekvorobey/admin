@@ -12,6 +12,7 @@ use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Marketing\Dto\Discount\BundleItemDto;
 use Greensight\Marketing\Dto\Discount\DiscountBrandDto;
+use Greensight\Marketing\Dto\Discount\DiscountBundleDto;
 use Greensight\Marketing\Dto\Discount\DiscountCategoryDto;
 use Greensight\Marketing\Dto\Discount\DiscountConditionDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
@@ -197,6 +198,7 @@ class DiscountHelper
             DiscountDto::DISCOUNT_USER_ROLE_RELATION => [],
             DiscountDto::DISCOUNT_BUNDLE_RELATION => [],
             DiscountDto::DISCOUNT_PUBLIC_EVENT_RELATION => [],
+            DiscountDto::DISCOUNT_BUNDLE_ID_RELATION => [],
         ];
 
         switch ($data['type']) {
@@ -258,6 +260,42 @@ class DiscountHelper
                         $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrandDto())
                             ->setExcept(true)
                             ->setBrand($brand);
+                    }
+                }
+                break;
+            case DiscountTypeDto::TYPE_ANY_OFFER:
+                if (isset($data['except']['offers'])) {
+                    foreach ($data['except']['offers'] as $offer) {
+                        $relations[DiscountDto::DISCOUNT_OFFER_RELATION][] = (new DiscountOfferDto())
+                            ->setExcept(true)
+                            ->setOffer($offer);
+                    }
+                }
+                break;
+            case DiscountTypeDto::TYPE_ANY_BRAND:
+                if (isset($data['except']['brands'])) {
+                    foreach ($data['except']['brands'] as $brand) {
+                        $relations[DiscountDto::DISCOUNT_BRAND_RELATION][] = (new DiscountBrandDto())
+                            ->setExcept(true)
+                            ->setBrand($brand);
+                    }
+                }
+                break;
+            case DiscountTypeDto::TYPE_ANY_CATEGORY:
+                if (isset($data['except']['categories'])) {
+                    foreach ($data['except']['categories'] as $category) {
+                        $relations[DiscountDto::DISCOUNT_CATEGORY_RELATION][] = (new DiscountCategoryDto())
+                            ->setExcept(true)
+                            ->setCategory($category);
+                    }
+                }
+                break;
+            case DiscountTypeDto::TYPE_ANY_BUNDLE:
+                if (isset($data['except']['bundles'])) {
+                    foreach ($data['except']['bundles'] as $bundle) {
+                        $relations[DiscountDto::DISCOUNT_BUNDLE_ID_RELATION][] = (new DiscountBundleDto())
+                            ->setExcept(true)
+                            ->setBundle($bundle);
                     }
                 }
                 break;

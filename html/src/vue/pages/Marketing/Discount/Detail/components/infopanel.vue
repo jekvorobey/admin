@@ -93,6 +93,14 @@
                     ></v-input>
                 </td>
             </tr>
+            <tr v-show="showBundleId">
+                <th><label for="discount-type-select">{{ bundleIdTitle }}</label></th>
+                <td colspan="2">
+                    <v-input v-model="discount.bundles"
+                             :help="'ID бандлов через запятую'"
+                    ></v-input>
+                </td>
+            </tr>
             <tr>
                 <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
@@ -337,6 +345,22 @@
                         data.except.brands = discount.brands ? discount.brands : [];
                         data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
                         break;
+                    case this.discountTypes.anyOffer:
+                        data.except = {};
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                    case this.discountTypes.anyBrand:
+                        data.except = {};
+                        data.except.brands = discount.brands ? discount.brands : [];
+                        break;
+                    case this.discountTypes.anyCategory:
+                        data.except = {};
+                        data.except.categories = discount.categories ? discount.categories : [];
+                        break;
+                    case this.discountTypes.anyBundle:
+                        data.except = {};
+                        data.except.bundles = discount.bundles ? this.formatIds(discount.bundles) : [];
+                        break;
                 }
 
                 this.processing = true;
@@ -359,6 +383,7 @@
             },
             onTypeChange() {
                 this.discount.offers = null;
+                this.discount.bundles = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
                 this.discount.bundleItems = [];
@@ -408,12 +433,16 @@
                 ];
             },
             showCategories() {
-                return [this.discountTypes.category].includes(this.discount.type);
+                return [
+                    this.discountTypes.category,
+                    this.discountTypes.anyCategory,
+                ].includes(this.discount.type);
             },
             showBrands() {
                 return [
                     this.discountTypes.category,
-                    this.discountTypes.brand
+                    this.discountTypes.brand,
+                    this.discountTypes.anyBrand,
                 ].includes(this.discount.type);
             },
             showOffers() {
@@ -421,6 +450,7 @@
                     this.discountTypes.category,
                     this.discountTypes.brand,
                     this.discountTypes.offer,
+                    this.discountTypes.anyOffer,
                 ].includes(this.discount.type);
             },
             showMasterClasses() {
@@ -438,8 +468,11 @@
                     this.discountTypes.bundleOffer,
                 ].includes(this.discount.type);
             },
+            showBundleId() {
+                return [this.discountTypes.anyBundle].includes(this.discount.type);
+            },
             categoriesTitle() {
-                return 'Категории';
+                return this.discount.type === this.discountTypes.category ? 'Категории' : 'За исключением категорий';
             },
             brandsTitle() {
                 return this.discount.type === this.discountTypes.brand ? 'Бренды' : 'За исключением брендов';
@@ -449,6 +482,9 @@
             },
             bundleTitle() {
                 return  'Бандл из товаров';
+            },
+            bundleIdTitle() {
+                return 'За исключением бандлов';
             },
             discountMaxValue() {
                 return this.discount.value_type === this.DISCOUNT_VALUE_TYPE_PERCENT ? 100 : Infinity;
@@ -512,6 +548,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.offers = format + separator;
+                    }
+                },
+            },
+            'discount.bundles': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.bundles).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.bundles = format + separator;
                     }
                 },
             },

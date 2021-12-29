@@ -108,6 +108,44 @@
                     <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением офферов</v-input>
                 </div>
             </template>
+
+            <template v-if="discount.type === discountTypes.anyOffer">
+                <div class="col-9">
+                    <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением</v-input>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyBrand">
+                <div class="col-9">
+                    <BrandsSearch
+                        key="brands-search-except"
+                        classes="col-9"
+                        title="За исключением"
+                        :brands="brands"
+                        :i-brands="discount.brands"
+                        @update="updateBrands"
+                    ></BrandsSearch>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyCategory">
+                <div class="col-9">
+                    <CategoriesSearch
+                        classes="col-9"
+                        title="За исключением"
+                        :categories="categories"
+                        :i-categories="discount.categories"
+                        :error="discountErrors.categories"
+                        @update="updateCategories"
+                    ></CategoriesSearch>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyBundle">
+                <div class="col-9">
+                    <v-input v-model="discount.bundles" :help="'ID бандлов через запятую'">За исключением</v-input>
+                </div>
+            </template>
         </div>
 
         <div class="row">
@@ -268,6 +306,7 @@
                     start_date: null,
                     end_date: null,
                     offers: null,
+                    bundles: null,
                     bundle_items: null,
                     status: 1, // STATUS_ACTIVE
                     product_qty_limit: null,
@@ -275,6 +314,7 @@
                     categories: [],
                     publicEvents: null,
                     conditions: [],
+                    comment: null,
                 },
 
                 discountErrors: {
@@ -437,6 +477,7 @@
             },
             onTypeChange() {
                 this.discount.offers = null;
+                this.discount.bundles = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
                 this.discount.publicEvents = null;
@@ -593,6 +634,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.publicEvents = format + separator;
+                    }
+                },
+            },
+            'discount.bundles': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.bundles).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.bundles = format + separator;
                     }
                 },
             },
