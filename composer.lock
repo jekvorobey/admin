@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7a5181cbdef8fed287bd199d218f9ed6",
+    "content-hash": "9cdf2ecf5f0c26f6bf0454b29a02717c",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1370,11 +1370,11 @@
         },
         {
             "name": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/IBT-553-all-brands-add-exceptions",
+            "version": "dev-feature/IBT-553",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "d6d10d9f271c78c3e4ec65f480380f55ae7d5293"
+                "reference": "eec5eb9f97f16f7ef33f2a04be4c21b1195209a7"
             },
             "require": {
                 "ext-json": "*",
@@ -1408,7 +1408,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2021-12-28T08:59:08+00:00"
+            "time": "2021-12-29T07:26:34+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -10853,7 +10853,7 @@
         },
         {
             "package": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/IBT-553-all-brands-add-exceptions",
+            "version": "dev-feature/IBT-553",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
