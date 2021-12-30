@@ -82,21 +82,16 @@ class DiscountHelper
             ->toQuery();
     }
 
-    /**
-     * @param array $params
-     */
     public static function load(array $params, DiscountService $discountService): Collection
     {
-        $discounts = $discountService->discounts($params);
-        $discounts = $discounts->map(function (DiscountDto $discount) {
-            $data = $discount->toArray();
-            $data['statusName'] = $discount->statusDto() ? $discount->statusDto()->name : 'N/A';
-            $data['validityPeriod'] = $discount->validityPeriod();
+        return $discountService->discounts($params)
+            ->map(function (DiscountDto $discount) {
+                $data = $discount->toArray();
+                $data['statusName'] = $discount->statusDto()->name ?? 'N/A';
+                $data['validityPeriod'] = $discount->validityPeriod();
 
-            return $data;
-        });
-
-        return $discounts;
+                return $data;
+            });
     }
 
     public static function getDiscountUsersInfo(DiscountService $discountService, int $userId, $merchantId = null)

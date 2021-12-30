@@ -143,6 +143,7 @@
                 <th>Инициатор</th>
                 <th>Автор</th>
                 <th>Статус</th>
+                <th>Служебный комментарий</th>
                 <td v-if="canUpdate(blocks.marketing)"><fa-icon icon="cog"/></td>
             </tr>
             </thead>
@@ -150,7 +151,7 @@
             <tr v-if="discounts && Object.keys(discounts).length < 1">
                 <td colspan="9" class="text-center">Скидки не найдены!</td>
             </tr>
-            <tr v-if="discounts" v-for="(discount, index) in discounts">
+            <tr v-if="discounts" v-for="discount in discounts">
                 <td><input type="checkbox" v-model="checkboxes[discount.id]"></td>
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
@@ -164,6 +165,7 @@
                 <td :class="statusClass(discount)">
                     <span class="badge">{{ discount.statusName }}</span>
                 </td>
+                <td>{{ discount.comment }}</td>
                 <td v-if="canUpdate(blocks.marketing)">
                     <a :href="getRoute('discount.detail', {id: discount.id})"
                        class="btn btn-success btn-sm mt-1">
