@@ -56,6 +56,7 @@
                 <th>ID</th>
                 <th>Дата регистрации</th>
                 <th>Название организации</th>
+                <th>Юрлицо</th>
                 <th>ФИО контактного лица</th>
                 <th>Email</th>
                 <th>Телефона</th>
@@ -73,6 +74,7 @@
                 <td>{{ merchant.id }}</td>
                 <td>{{ merchant.created_at }}</td>
                 <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.name }}</a></td>
+                <td>{{ merchant.legal_name }}</td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.email : '' }}</td>
                 <td>{{ merchant.user ? merchant.user.phone : '' }}</td>
