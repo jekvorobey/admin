@@ -124,7 +124,12 @@
                 };
             },
             roleOptions() {
-                return this.options.roles.map(role => ({value: role.id, text: role.name}));
+                let options = Object.values(this.options.roles)
+                    .filter(role => role.front === this.user.front)
+                    .map(role => ({value: role.id, text: role.name}));
+                options.unshift({ value: null, text: '-' });
+
+                return options;
             }
         }
     };

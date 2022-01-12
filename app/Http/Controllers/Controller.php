@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Controller extends BaseController
 {
-    protected string $title = '';
+    protected $title = '';
     protected bool $loadUserRoles = false;
     protected bool $loadCustomerStatus = false;
     protected bool $loadCommunicationChannelTypes = false;
