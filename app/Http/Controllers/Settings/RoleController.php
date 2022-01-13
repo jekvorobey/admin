@@ -13,6 +13,9 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RoleController extends Controller
@@ -129,10 +132,41 @@ class RoleController extends Controller
         ]);
     }
 
-    protected function makeQuery(Request $request): RestQuery
+    /**
+     * @throws ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    protected function getFilter(bool $withDefault = false): array
+    {
+        return Validator::validate(
+            request('filter') ?? [],
+            [
+                'name' => 'string',
+                'id' => Rule::in(array_keys(RoleDto::roles())),
+            ]
+        );
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function makeQuery(Request $request, bool $withDefaultFilter = false): RestQuery
     {
         $restQuery = new RestQuery();
         $restQuery->pageNumber($request->get('page', 1), 10);
+        $filter = $this->getFilter($withDefaultFilter);
+        foreach ($filter as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    if ($value) {
+                        $restQuery->setFilter($key, 'like', "%{$value}%");
+                    }
+                    break;
+                case 'id':
+                    $restQuery->setFilter('id', $value);
+                    break;
+            }
+        }
 
         return $restQuery;
     }
