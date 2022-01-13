@@ -19,7 +19,7 @@ class RedirectRequest extends FormRequest
      */
     public function rules()
     {
-        $regex = '/^([\/\w \.-]*)*\/?$/i';
+        $regex = '/^((https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6}))?(([\/\w \.-]*)*)?$/i';
         $defaultRules = "string|required|regex:{$regex}";
         return [
             'id' => 'nullable|int',
