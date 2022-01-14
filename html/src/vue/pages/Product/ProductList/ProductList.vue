@@ -244,8 +244,10 @@
         </transition>
 
         <product-badges-modal
-                :product-id="massAll(this.massProductsType)"
-                :available-badges="options.availableBadges"/>
+            :product-id="massAll(this.massProductsType)"
+            :available-badges="options.availableBadges"
+            @save="() => { massClear(massProductsType); loadPage(iCurrentPage) }"
+        />
     </layout-main>
 </template>
 
@@ -412,10 +414,12 @@
 
             applyFilter() {
                 this.loadPage(1);
+                this.massClear(this.massProductsType);
             },
             clearFilter() {
                 this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
                 this.applyFilter();
+                this.massClear(this.massProductsType);
             },
             toggleHiddenFilter() {
                 this.opened = !this.opened;
