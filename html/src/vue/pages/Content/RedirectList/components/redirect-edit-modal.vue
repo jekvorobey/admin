@@ -73,7 +73,7 @@ export default {
   methods: {
     save() {
       Services.showLoader();
-      this.addSlashes()
+      // this.addSlashes()
       const redirectData = {
         from: this.from,
         to: this.to,
