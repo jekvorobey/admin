@@ -195,7 +195,7 @@ class MerchantDetailController extends Controller
                 'operators' => $operatorUsers->map(function (UserDto $operatorUser) {
                         return [
                             'id' => $operatorUser->id,
-                            'title' => $operatorUser->getTitle() . (array_key_exists(
+                            'title' => $operatorUser->getTitle() . (in_array(
                                 RoleDto::ROLE_MAS_MERCHANT_ADMIN,
                                 /** TODO изменить после добавления всех ролей в базу */
                                 $operatorUser->new_roles
