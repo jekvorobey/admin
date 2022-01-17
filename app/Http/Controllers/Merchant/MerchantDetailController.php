@@ -101,7 +101,7 @@ class MerchantDetailController extends Controller
                 'phone',
                 'email'
             )->include('roles')
-                ->setFilter('users.id', $userOperatorIds)
+                ->setFilter('id', $userOperatorIds)
         )->keyBy('id');
 
         // Счетчик непрочитанных сообщений от пользователя //
