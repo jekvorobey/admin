@@ -45,5 +45,7 @@ module.exports = {
         'prefer-destructuring': ['error', { object: true, array: false }],
         /* Ошибка везде где ++ или -- , кроме for */
         'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+        'prefer-promise-reject-errors': 'off',
+        'consistent-return': 'warn',
     },
 };

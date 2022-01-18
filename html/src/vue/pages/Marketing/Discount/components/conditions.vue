@@ -603,6 +603,9 @@
                     }
                 }
                 this.conditionTypes = conditionTypes;
+
+                let values = {...this.values};
+                values.users = this.formatIds(values.users);
             },
             optionName(id, options) {
                 let option = options.find(o => o.value === id);
@@ -753,6 +756,12 @@
                     paymentMethods: [],
                     users: ''
                 };
+            },
+            values: {
+                handler() {
+                    setTimeout(() => {this.addCondition(); this.initConditionError();}, 3000);
+                },
+                deep: true
             },
             'values.users': {
                 handler(val, oldVal) {

@@ -179,8 +179,8 @@ class MerchantListController extends Controller
         if (isset($filter['status'])) {
             $query->setFilter('status', $filter['status']);
         }
-        if (isset($filter['legal_name'])) {
-            $query->setFilter('legal_name', 'like', "%{$filter['legal_name']}%");
+        if (isset($filter['name'])) {
+            $query->setFilter('name', 'like', "%{$filter['name']}%");
         }
         if (isset($filter['operator_full_name']) || isset($filter['operator_email']) || isset($filter['operator_phone'])) {
             $userQuery = new RestQuery();

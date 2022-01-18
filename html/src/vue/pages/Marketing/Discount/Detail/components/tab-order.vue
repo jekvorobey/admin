@@ -44,7 +44,7 @@
             </thead>
             <tbody>
             <tr v-for="order in orders">
-                <td>{{ order.number }}</td>
+                <td><a :href="getRoute('orders.detail', {id: order.id})">{{ order.number }}</a></td>
                 <td>{{ getDate(order.created_at) }}</td>
                 <td>{{ parseInt(order.cost) }} ₽</td>
                 <td>{{ parseInt(order.cost) - parseInt(order.discount) }} ₽</td>

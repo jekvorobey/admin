@@ -93,10 +93,19 @@
                     ></v-input>
                 </td>
             </tr>
+            <tr v-show="showBundleId">
+                <th><label for="discount-type-select">{{ bundleIdTitle }}</label></th>
+                <td colspan="2">
+                    <v-input v-model="discount.bundles"
+                             :help="'ID бандлов через запятую'"
+                    ></v-input>
+                </td>
+            </tr>
             <tr>
                 <th><label for="discount-product_qty_limit-input">Ограничить кол-во товаров по скидке</label></th>
                 <td colspan="2">
-                    <v-input v-model="discount.product_qty_limit"
+                    <v-input id="discount-product_qty_limit-input"
+                            v-model="discount.product_qty_limit"
                              :type="'number'"
                              :min="0"
                     ></v-input>
@@ -133,10 +142,26 @@
             <tr>
                 <th>Период действия скидки</th>
                 <td>
-                    <input type="date" v-model="discount.start_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="start_date"
+                        type="datetime"
+                        v-model="discount.start_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
                 <td>
-                    <input type="date" v-model="discount.end_date" class="form-control form-control-sm"/>
+                    <date-picker
+                        class="w-100"
+                        id="end_date"
+                        type="datetime"
+                        v-model="discount.end_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </td>
             </tr>
             <tr>
@@ -183,6 +208,22 @@
                     </select>
                 </td>
             </tr>
+            <tr v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
+                <th><label for="promo_code_only">Скидка действительна только по промокоду</label></th>
+                <td colspan="2">
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="promo_code_only" v-model="discount.promo_code_only">
+                        <label class="custom-control-label" for="promo_code_only"></label>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+              <th>Служебный комментарий</th>
+              <td class="position-relative" style="height: 100px;">
+                <textarea class="form-control h-100 w-100" style="resize: none; max-width: 250px;"
+                          v-model="discount.comment"></textarea>
+              </td>
+            </tr>
         </tbody>
     </table>
 </template>
@@ -195,6 +236,8 @@
     import CategoriesSearch from '../../../components/categories-search.vue';
     import {required,requiredIf,minValue,maxValue} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
+    import DatePicker from 'vue2-datepicker';
+    import moment from "moment";
 
     export default {
         name: 'discount-detail-infopanel',
@@ -202,7 +245,8 @@
             VInput,
             VSelect2,
             BrandsSearch,
-            CategoriesSearch
+            CategoriesSearch,
+            DatePicker,
         },
         mixins: [
             validationMixin,
@@ -276,6 +320,7 @@
                     product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
+                    comment: discount.comment,
                 };
 
                 switch (discount.type) {
@@ -300,6 +345,22 @@
                         data.except.brands = discount.brands ? discount.brands : [];
                         data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
                         break;
+                    case this.discountTypes.anyOffer:
+                        data.except = {};
+                        data.except.offers = discount.offers ? this.formatIds(discount.offers) : [];
+                        break;
+                    case this.discountTypes.anyBrand:
+                        data.except = {};
+                        data.except.brands = discount.brands ? discount.brands : [];
+                        break;
+                    case this.discountTypes.anyCategory:
+                        data.except = {};
+                        data.except.categories = discount.categories ? discount.categories : [];
+                        break;
+                    case this.discountTypes.anyBundle:
+                        data.except = {};
+                        data.except.bundles = discount.bundles ? this.formatIds(discount.bundles) : [];
+                        break;
                 }
 
                 this.processing = true;
@@ -322,6 +383,7 @@
             },
             onTypeChange() {
                 this.discount.offers = null;
+                this.discount.bundles = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
                 this.discount.bundleItems = [];
@@ -371,12 +433,16 @@
                 ];
             },
             showCategories() {
-                return [this.discountTypes.category].includes(this.discount.type);
+                return [
+                    this.discountTypes.category,
+                    this.discountTypes.anyCategory,
+                ].includes(this.discount.type);
             },
             showBrands() {
                 return [
                     this.discountTypes.category,
-                    this.discountTypes.brand
+                    this.discountTypes.brand,
+                    this.discountTypes.anyBrand,
                 ].includes(this.discount.type);
             },
             showOffers() {
@@ -384,6 +450,7 @@
                     this.discountTypes.category,
                     this.discountTypes.brand,
                     this.discountTypes.offer,
+                    this.discountTypes.anyOffer,
                 ].includes(this.discount.type);
             },
             showMasterClasses() {
@@ -401,8 +468,11 @@
                     this.discountTypes.bundleOffer,
                 ].includes(this.discount.type);
             },
+            showBundleId() {
+                return [this.discountTypes.anyBundle].includes(this.discount.type);
+            },
             categoriesTitle() {
-                return 'Категории';
+                return this.discount.type === this.discountTypes.category ? 'Категории' : 'За исключением категорий';
             },
             brandsTitle() {
                 return this.discount.type === this.discountTypes.brand ? 'Бренды' : 'За исключением брендов';
@@ -412,6 +482,9 @@
             },
             bundleTitle() {
                 return  'Бандл из товаров';
+            },
+            bundleIdTitle() {
+                return 'За исключением бандлов';
             },
             discountMaxValue() {
                 return this.discount.value_type === this.DISCOUNT_VALUE_TYPE_PERCENT ? 100 : Infinity;
@@ -475,6 +548,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.offers = format + separator;
+                    }
+                },
+            },
+            'discount.bundles': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.bundles).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.bundles = format + separator;
                     }
                 },
             },

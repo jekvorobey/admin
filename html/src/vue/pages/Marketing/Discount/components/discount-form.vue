@@ -108,6 +108,44 @@
                     <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением офферов</v-input>
                 </div>
             </template>
+
+            <template v-if="discount.type === discountTypes.anyOffer">
+                <div class="col-9">
+                    <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением</v-input>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyBrand">
+                <div class="col-9">
+                    <BrandsSearch
+                        key="brands-search-except"
+                        classes="col-9"
+                        title="За исключением"
+                        :brands="brands"
+                        :i-brands="discount.brands"
+                        @update="updateBrands"
+                    ></BrandsSearch>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyCategory">
+                <div class="col-9">
+                    <CategoriesSearch
+                        classes="col-9"
+                        title="За исключением"
+                        :categories="categories"
+                        :i-categories="discount.categories"
+                        :error="discountErrors.categories"
+                        @update="updateCategories"
+                    ></CategoriesSearch>
+                </div>
+            </template>
+
+            <template v-if="discount.type === discountTypes.anyBundle">
+                <div class="col-9">
+                    <v-input v-model="discount.bundles" :help="'ID бандлов через запятую'">За исключением</v-input>
+                </div>
+            </template>
         </div>
 
         <div class="row">
@@ -130,24 +168,26 @@
 
         <div class="row">
             <div class="col-3 mb-3">
-                <label for="start_date">Дата старта</label>
+                <label for="start_date">Дата и время старта</label>
                 <date-picker
                     class="w-100"
                     id="start_date"
+                    type="datetime"
                     v-model="discount.start_date"
-                    format="DD.MM.YYYY"
-                    value-type="YYYY-MM-DD"
+                    format="YYYY-MM-DD HH:mm"
+                    value-type="format"
                     input-class="form-control form-control-sm"
                 />
             </div>
             <div class="col-3">
-                <label for="end_date">Дата окончания</label>
+                <label for="end_date">Дата и время окончания</label>
                 <date-picker
                     class="w-100"
                     id="end_date"
+                    type="datetime"
                     v-model="discount.end_date"
-                    value-type="YYYY-MM-DD"
-                    format="DD.MM.YYYY"
+                    format="YYYY-MM-DD HH:mm"
+                    value-type="format"
                     :state="checkEndDate"
                     @change="initErrorEndDate"
                     input-class="form-control form-control-sm"
@@ -198,6 +238,14 @@
                 :brands="brands"
                 :categories="categories"
         ></Conditions>
+
+        <div class="row">
+            <div class="col-3">
+                <b-form-group  label="Служебный комментарий" label-for="discount-comment">
+                    <b-form-textarea :no-resize="true" v-model="discount.comment" id="discount-comment" />
+                </b-form-group>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-12 mt-3">
@@ -258,6 +306,7 @@
                     start_date: null,
                     end_date: null,
                     offers: null,
+                    bundles: null,
                     bundle_items: null,
                     status: 1, // STATUS_ACTIVE
                     product_qty_limit: null,
@@ -265,6 +314,7 @@
                     categories: [],
                     publicEvents: null,
                     conditions: [],
+                    comment: null,
                 },
 
                 discountErrors: {
@@ -427,6 +477,7 @@
             },
             onTypeChange() {
                 this.discount.offers = null;
+                this.discount.bundles = null;
                 this.discount.brands = [];
                 this.discount.categories = [];
                 this.discount.publicEvents = null;
@@ -583,6 +634,17 @@
                             ? ','
                             : (val.slice(-2) === ', ' ? ', ' : '');
                         this.discount.publicEvents = format + separator;
+                    }
+                },
+            },
+            'discount.bundles': {
+                handler(val, oldVal) {
+                    if (val && val !== oldVal) {
+                        let format = this.formatIds(this.discount.bundles).join(', ');
+                        let separator = val.slice(-1) === ','
+                            ? ','
+                            : (val.slice(-2) === ', ' ? ', ' : '');
+                        this.discount.bundles = format + separator;
                     }
                 },
             },
