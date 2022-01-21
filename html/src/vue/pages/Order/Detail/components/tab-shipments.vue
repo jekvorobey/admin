@@ -340,14 +340,7 @@ export default {
             return shipment.exports.filter(exportError => exportError.err_code).length > 0;
         },
         getExportErrors(shipment) {
-            let result = [];
-            for (let shipmentExport of shipment.exports) {
-                if (shipmentExport.err_code) {
-                    result.push(shipmentExport);
-                }
-            }
-
-            return result;
+            return shipment.exports.filter(exportError => exportError.err_code);
         }
     },
     computed: {
