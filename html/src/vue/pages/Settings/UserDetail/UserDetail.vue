@@ -47,7 +47,7 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :fronts="options.fronts" @onSave="updateUser"></user-edit-modal>
+        <user-edit-modal :source="user" :fronts="options.fronts" :roles="options.roles" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 
@@ -88,15 +88,15 @@ export default {
                     front: 'Система',
                     email_verified: 'E-mail подтверждён',
                     created_at: 'Дата регистрации',
-                    infinity_sip_extension: 'Infinity SIP Extension'
+                    infinity_sip_extension: 'Infinity SIP Extension',
                 },
                 rolesSelect: [],
             };
         },
         methods: {
-            frontName(id) {
-                let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
-                return fronts.length > 0 ? fronts[0].name : 'N/A';
+            frontName(frontValues) {
+                let fronts = Object.values(this.options.fronts).filter(front => frontValues.includes(front.id)).map(front => front.name);
+                return fronts.length > 0 ? fronts.join(', ') : 'N/A';
             },
             roleName(id) {
                 let rolesList = Object.values(this.options.roles).filter(role => role.id === id);
@@ -150,7 +150,7 @@ export default {
                 return {
                     id: this.user.id,
                     login: this.user.login,
-                    front: this.frontName(this.user.front),
+                    front: this.frontName(this.user.fronts),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
                     infinity_sip_extension: this.user.infinity_sip_extension,
                     created_at: this.datePrint(this.user.created_at),
@@ -158,7 +158,7 @@ export default {
             },
             roleOptions() {
                 return Object.values(this.options.roles)
-                    .filter(role => role.front === this.user.front)
+                    .filter(role => this.user.fronts.includes(role.front))
                     .map(role => ({id: role.id, name: role.name}));
             },
             rolesIds() {

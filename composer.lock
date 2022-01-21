@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04e24b4a192242376d359b6e19d4a249",
+    "content-hash": "d1ba6bbc271298402badb661f6f916b2",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1270,11 +1270,11 @@
         },
         {
             "name": "iwengo/ibt-common-lib",
-            "version": "dev-feature/IBT-488-mas-roles-and-blocks",
+            "version": "dev-feature/IBT-489-user-role-refactoring",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "4f071bd6f25025da11b00f12dfe7e546231fce25"
+                "reference": "cdc3d7027180eb57c11b10c2e3f499329dd91938"
             },
             "require": {
                 "ext-json": "*",
@@ -1324,7 +1324,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-01-11T16:27:33+00:00"
+            "time": "2022-01-19T14:58:46+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -10841,7 +10841,7 @@
         },
         {
             "package": "iwengo/ibt-common-lib",
-            "version": "dev-feature/IBT-488-mas-roles-and-blocks",
+            "version": "dev-feature/IBT-489-user-role-refactoring",
             "alias": "dev-master-ylab",
             "alias_normalized": "dev-master-ylab"
         },

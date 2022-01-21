@@ -94,6 +94,8 @@ class UsersController extends Controller
             'id' => 'nullable|integer',
             'login' => 'required',
             'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
+            'fronts' => 'required_without:front|array',
+            'fronts.*' => Rule::in(array_keys(Front::allFronts())),
             'password' => 'required_without:id',
             'infinity_sip_extension' => 'nullable|string',
         ]);
