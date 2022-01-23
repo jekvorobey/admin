@@ -79,17 +79,22 @@ export default {
             options: {}
         },
         data() {
+            let sip = {
+                id: 'ID',
+                login: 'Логин',
+                front: 'Система',
+                email_verified: 'E-mail подтверждён',
+                created_at: 'Дата регистрации',
+                infinity_sip_extension: 'Infinity SIP Extension',
+            };
+            if (!this.iUser.infinity_sip_extension) {
+                this.$delete(sip, 'infinity_sip_extension');
+            }
+
             return {
                 user: this.iUser,
                 roles: this.iRoles,
-                userValuesNames: {
-                    id: 'ID',
-                    login: 'Логин',
-                    front: 'Система',
-                    email_verified: 'E-mail подтверждён',
-                    created_at: 'Дата регистрации',
-                    infinity_sip_extension: 'Infinity SIP Extension',
-                },
+                userValuesNames: sip,
                 rolesSelect: [],
             };
         },
@@ -110,7 +115,7 @@ export default {
                 );
                 let rolesChange = {};
                 rolesChange = this.rolesSelect.filter(role => !cross.includes(role));
-                Services.net().put(this.getRoute('user.addRole', {id: this.user.id}), {}, {
+                Services.net().put(this.getRoute('user.addRoles', {id: this.user.id}), {}, {
                     roles: rolesChange
                 })
                     .then(data => {
@@ -119,8 +124,8 @@ export default {
                     });
             },
             deleteRole(id) {
-                Services.net().post(this.getRoute('user.deleteRole', {id: this.user.id}), {}, {
-                    role: id
+                Services.net().post(this.getRoute('user.deleteRoles', {id: this.user.id}), {}, {
+                    roles: [id]
                 })
                     .then(data => {
                         this.roles = data.roles;
@@ -128,6 +133,7 @@ export default {
             },
             updateUser(newData) {
                 Object.assign(this.user, newData);
+                Object.assign(this.roles, newData.roles);
                 this.closeModal();
             },
             rolesCheckbox(e, id) {
@@ -152,7 +158,7 @@ export default {
                     login: this.user.login,
                     front: this.frontName(this.user.fronts),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
-                    infinity_sip_extension: this.user.infinity_sip_extension,
+                    infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : null,
                     created_at: this.datePrint(this.user.created_at),
                 };
             },

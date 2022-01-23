@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRolesAddRequest;
+use App\Http\Requests\UserRolesDeleteRequest;
+use App\Http\Requests\UserSaveRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -13,11 +16,8 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\OperatorService\OperatorService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
@@ -85,34 +85,23 @@ class UsersController extends Controller
         ]);
     }
 
-    public function saveUser(Request $request, UserService $userService): JsonResponse
+    public function saveUser(UserSaveRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'id' => 'nullable|integer',
-            'login' => 'required',
-            'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
-            'fronts' => 'required_without:front|array',
-            'fronts.*' => Rule::in(array_keys(Front::allFronts())),
-            'password' => 'required_without:id',
-            'infinity_sip_extension' => 'nullable|string',
-        ]);
-        if ($validator->fails()) {
-            throw new BadRequestHttpException($validator->errors()->first());
-        }
-        $newUser = new UserDto($data);
-        if (isset($data['id'])) {
+        $newUser = new UserDto($request->all());
+        $userId = $request->id ?? $newUser->id;
+        if (isset($request->id)) {
             $userService->update($newUser);
         } else {
             $userService->create($newUser);
         }
+        $userService->addRoles($userId, $request->roles);
 
-        return response()->json([]);
+        return response()->json(['roles' => $userService->userRoles($userId)]);
     }
 
-    public function addRole(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
+    public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -123,19 +112,11 @@ class UsersController extends Controller
         ]);
     }
 
-    public function deleteRole(int $id, Request $request, UserService $userService): JsonResponse
+    public function deleteRoles(int $id, UserRolesDeleteRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'role' => 'required|integer',
-        ]);
-        if ($validator->fails()) {
-            throw new BadRequestHttpException($validator->errors()->first());
-        }
-
-        $userService->deleteRole($id, $data['role']);
+        $userService->deleteRoles($id, $request->roles);
 
         return response()->json([
             'roles' => $userService->userRoles($id),
@@ -168,8 +149,8 @@ class UsersController extends Controller
         // У сотрудников мерчанта подгружается информация о доступности SMS-канала //
         $operators = null;
         if (
-            in_array(UserDto::MAS__MERCHANT_OPERATOR, $data['role_ids'])
-            || (in_array(UserDto::MAS__MERCHANT_ADMIN, $data['role_ids']))
+            in_array(RoleDto::ROLE_MAS_MERCHANT_OPERATOR, $data['role_ids'])
+            || (in_array(RoleDto::ROLE_MAS_MERCHANT_ADMIN, $data['role_ids']))
         ) {
             $operators = $operatorService->operators(
                 (new RestQuery())->setFilter('user_id', $user_ids)

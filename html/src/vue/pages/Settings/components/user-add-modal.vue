@@ -2,64 +2,67 @@
     <transition name="modal" v-if="canUpdate(blocks.settings)">
         <modal :close="closeModal" v-if="isModalOpen('userAdd')">
             <div slot="header">
-                {{ source ? 'Редактирование пользователя' : 'Добавление пользователя' }}
+                <h4>{{ source ? 'Редактирование пользователя' : 'Добавление пользователя' }}</h4>
             </div>
             <div slot="body">
-                <v-input v-model="$v.form.login.$model" :error="errorEmail" autocomplete="no">
-                    Логин
+                <v-input v-model="$v.form.login.$model" :error="errorLogin" autocomplete="no">
+                    <h5>Логин</h5>
                 </v-input>
-                <div slot="header">
-                    Система
-                </div>
-                <div slot="body">
-                    <template v-for="front in frontOptions">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   :id="`front-${front.id}`"
-                                   @change="e => frontsCheckbox(e, front.id)"
-                                   :value="front.id"
-                                   :checked="source.fronts.includes(parseInt(front.id))"
-                            >
-                            <label class="form-check-label" :for="`front-${front.id}`">
-                                {{ front.name }}
-                            </label>
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="text-left">
+                                <h5>Система</h5>
+                                <template v-for="front in frontOptions">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               :id="`front-${front.id}`"
+                                               @change="e => frontsCheckbox(e, front.id)"
+                                               :value="front.id"
+                                               :checked="source.fronts.includes(parseInt(front.id))"
+                                        >
+                                        <label class="form-check-label" :for="`front-${front.id}`">
+                                            {{ front.name }}
+                                        </label>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                    </template>
-                </div>
-                <div slot="header">
-                    Роли
-                </div>
-                <div slot="body">
-                    <template v-for="role in roleOptions">
-                        <div class="form-check">
-                            <input class="form-check-input"
-                                   type="checkbox"
-                                   :id="`role-${role.id}`"
-                                   @change="e => rolesCheckbox(e, role.id)"
-                                   :value="role.id"
-                                   :checked="source.roles.includes(parseInt(role.id))"
-                            >
-                            <label class="form-check-label" :for="`role-${role.id}`">
-                                {{ role.name }}
-                            </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="text-left">
+                                <h5>Роли</h5>
+                                <template v-for="role in roleOptions">
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               :id="`role-${role.id}`"
+                                               @change="e => rolesCheckbox(e, role.id)"
+                                               :value="role.id"
+                                               :checked="source.roles.includes(parseInt(role.id))"
+                                        >
+                                        <label class="form-check-label" :for="`role-${role.id}`">
+                                            {{ role.name }}
+                                        </label>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
-                    </template>
+                    </div>
                 </div>
                 <v-input v-if="source" v-model="$v.form.infinity_sip_extension.$model">
-                    Infinity SIP Extension
+                    <h5>Infinity SIP Extension</h5>
                 </v-input>
                 <div v-if="source" class="row">
                     <v-input v-model="$v.form.password.$model" class="col" :error="errorPassword" type="password"
                              autocomplete="new-password">
-                        Пароль
+                        <h5>Пароль</h5>
                     </v-input>
                     <v-input v-model="$v.form.repeat.$model" class="col" :error="errorRepeat" type="password"
                              autocomplete="new-password">
-                        Повтор пароля
+                        <h5>Повтор пароля</h5>
                     </v-input>
                 </div>
-
                 <button @click="save" class="btn btn-dark">Сохранить</button>
             </div>
         </modal>
@@ -92,6 +95,7 @@ export default {
         return {
             form: {
                 login: '',
+                login_email: '',
                 fronts: '',
                 roles: '',
                 password: '',
@@ -118,6 +122,7 @@ export default {
             validations.form.password[minLength] = minLength(8);
         }
         console.log(validations);
+
         return validations;
     },
     methods: {
@@ -128,7 +133,8 @@ export default {
             }
             let formData = {
                 login: this.form.login,
-                front: this.form.front,
+                fronts: this.form.fronts,
+                roles: this.form.roles,
             };
             if (this.source) {
                 formData.id = this.source.id;
@@ -139,10 +145,11 @@ export default {
             if (this.form.infinity_sip_extension) {
                 formData.infinity_sip_extension = this.form.infinity_sip_extension;
             }
-            Services.net().post(this.getRoute('settings.createUser'), {}, formData).then(data => {
+            Services.net().post(this.getRoute('settings.saveUser'), {}, formData).then(data => {
                 this.$emit('onSave', {
                     login: this.form.login,
-                    front: this.form.front,
+                    fronts: this.form.fronts,
+                    roles: data.roles,
                     infinity_sip_extension: this.form.infinity_sip_extension
                 });
             });
@@ -178,7 +185,7 @@ export default {
             return Object.values(this.roles).map(role => ({id: role.id, name: role.name}));
         },
         // =========================================================================================================
-        errorEmail() {
+        errorLogin() {
             if (this.$v.form.login.$dirty) {
                 if (!this.$v.form.login.required) return 'Обязательное поле!';
             }
@@ -206,10 +213,11 @@ export default {
         },
     },
     watch: {
-        '$store.state.modal.currentModal': function (newValue) {
-            if (newValue === 'userAdd' && this.source) {
-                this.form.login = this.source.login;
+        '$store.state.modal.currentModal': function (value) {
+            if (value === 'userAdd' && this.source) {
+                this.form.login = this.source.login_email ? this.source.login_email : this.source.login;
                 this.form.fronts = this.source.fronts;
+                this.form.roles = this.source.roles;
                 this.form.infinity_sip_extension = this.source.infinity_sip_extension;
             }
         }

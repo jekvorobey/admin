@@ -294,11 +294,11 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'UsersController@page')->name('settings.userListPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'UsersController@detail')->name('settings.userDetail');
-                Route::put('addRole', 'UsersController@addRole')->name('user.addRole');
-                Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
+                Route::put('addRoles', 'UsersController@addRoles')->name('user.addRoles');
+                Route::post('deleteRoles', 'UsersController@deleteRoles')->name('user.deleteRoles');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
-            Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+            Route::post('', 'UsersController@saveUser')->name('settings.saveUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
         });
 
