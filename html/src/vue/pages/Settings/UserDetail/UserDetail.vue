@@ -133,7 +133,10 @@ export default {
             },
             updateUser(newData) {
                 Object.assign(this.user, newData);
-                Object.assign(this.roles, newData.roles);
+                let roles = Object.values(this.options.roles)
+                    .filter(role => newData.roles.includes(role.id))
+                    .map(role => ({id: role.id, name: role.name}));
+                Object.assign(this.roles, roles);
                 this.closeModal();
             },
             rolesCheckbox(e, id) {

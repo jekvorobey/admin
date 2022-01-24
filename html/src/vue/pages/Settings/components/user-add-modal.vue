@@ -5,9 +5,11 @@
                 <h4>{{ source ? 'Редактирование пользователя' : 'Добавление пользователя' }}</h4>
             </div>
             <div slot="body">
-                <v-input v-model="$v.form.login.$model" :error="errorLogin" autocomplete="no">
-                    <h5>Логин</h5>
-                </v-input>
+                <div class="row">
+                    <v-input v-model="$v.form.last_name.$model" :error="errorLastName" class="col-md-4 col-12">Фамилия*</v-input>
+                    <v-input v-model="$v.form.first_name.$model" :error="errorFirstName" class="col-md-4 col-12">Имя*</v-input>
+                    <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName" class="col-md-4 col-12">Отчество</v-input>
+                </div>
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 col-xs-12">
@@ -50,6 +52,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <v-input v-model="$v.form.email.$model" class="col-md-6 col-12">E-mail*</v-input>
+                    <v-input v-model="$v.form.phone.$model" v-mask="telMask" class="col-md-6 col-12">Телефон*</v-input>
+                </div>
+                <div class="row mb-3">
+                    <span class="col-md-6 col-12">*Обязательное поле, если система Admin или MAS</span>
+                    <span class="col-md-6 col-12">*Обязательное поле, если система Витрина</span>
+                </div>
                 <v-input v-if="source" v-model="$v.form.infinity_sip_extension.$model">
                     <h5>Infinity SIP Extension</h5>
                 </v-input>
@@ -76,8 +86,9 @@ import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
 import modalMixin from '../../../mixins/modal.js';
 import {validationMixin} from 'vuelidate';
-import {minLength, required} from 'vuelidate/lib/validators';
+import {email, minLength, required} from 'vuelidate/lib/validators';
 import Services from '../../../../scripts/services/services';
+import {telMask} from '../../../../scripts/mask.js';
 
 export default {
     mixins: [modalMixin, validationMixin],
@@ -94,6 +105,11 @@ export default {
     data() {
         return {
             form: {
+                first_name: '',
+                last_name: '',
+                middle_name: '',
+                email: '',
+                phone: '',
                 login: '',
                 login_email: '',
                 fronts: '',
@@ -102,14 +118,20 @@ export default {
                 repeat: '',
                 infinity_sip_extension: '',
             },
-            rolesSelect: [],
-            frontsSelect: [],
+            rolesModalSelect: [],
+            frontsModalSelect: [],
         };
     },
     validations() {
         let validations = {
             form: {
-                login: {required},
+                last_name: {required},
+                first_name: {required},
+                middle_name: {required},
+                email: {email},
+                phone: {},
+                login: {},
+                login_email: {},
                 fronts: {required},
                 roles: {required},
                 password: {},
@@ -132,49 +154,66 @@ export default {
                 return;
             }
             let formData = {
-                login: this.form.login,
+                first_name: this.form.first_name,
+                last_name: this.form.last_name,
                 fronts: this.form.fronts,
                 roles: this.form.roles,
             };
             if (this.source) {
                 formData.id = this.source.id;
             }
+            if (this.form.email) {
+                formData.login_email = this.form.email;
+                formData.email = this.form.email;
+            }
+            if (this.form.phone) {
+                let phone = this.form.phone.replace(/[()]|\s|-/g, '');
+                formData.login = phone;
+                formData.phone = phone;
+            }
             if (this.form.password) {
                 formData.password = this.form.password;
+            }
+            if (this.form.middle_name) {
+                formData.middle_name = this.form.middle_name;
             }
             if (this.form.infinity_sip_extension) {
                 formData.infinity_sip_extension = this.form.infinity_sip_extension;
             }
             Services.net().post(this.getRoute('settings.saveUser'), {}, formData).then(data => {
                 this.$emit('onSave', {
-                    login: this.form.login,
+                    last_name: this.form.last_name,
+                    first_name: this.form.first_name,
+                    middle_name: this.form.middle_name,
+                    email: this.form.email,
+                    phone: this.form.phone,
+                    login: this.form.email ? this.form.email : this.form.phone,
                     fronts: this.form.fronts,
-                    roles: data.roles,
-                    infinity_sip_extension: this.form.infinity_sip_extension
+                    roles: this.form.roles,
                 });
             });
         },
         rolesCheckbox(e, id) {
             id = parseInt(id);
             if (e.target.checked) {
-                this.rolesSelect.push(id);
+                this.rolesModalSelect.push(id);
             } else {
-                this.rolesSelect = this.rolesSelect.filter((roleId) => {
+                this.rolesModalSelect = this.rolesModalSelect.filter((roleId) => {
                     return roleId !== id;
                 });
             }
-            this.form.roles = this.rolesSelect;
+            this.form.roles = this.rolesModalSelect;
         },
         frontsCheckbox(e, id) {
             id = parseInt(id);
             if (e.target.checked) {
-                this.frontsSelect.push(id);
+                this.frontsModalSelect.push(id);
             } else {
-                this.frontsSelect = this.frontsSelect.filter((frontId) => {
+                this.frontsModalSelect = this.frontsModalSelect.filter((frontId) => {
                     return frontId !== id;
                 });
             }
-            this.form.fronts = this.frontsSelect;
+            this.form.fronts = this.frontsModalSelect;
         },
     },
     computed: {
@@ -185,14 +224,27 @@ export default {
             return Object.values(this.roles).map(role => ({id: role.id, name: role.name}));
         },
         // =========================================================================================================
-        errorLogin() {
-            if (this.$v.form.login.$dirty) {
-                if (!this.$v.form.login.required) return 'Обязательное поле!';
+        telMask() {
+            return telMask;
+        },
+        errorLastName() {
+            if (this.$v.form.last_name.$dirty) {
+                if (!this.$v.form.last_name.required) return "Обязательное поле!";
             }
         },
-        errorFront() {
+        errorFirstName() {
+            if (this.$v.form.first_name.$dirty) {
+                if (!this.$v.form.first_name.required) return "Обязательное поле!";
+            }
+        },
+        errorMiddleName() {
+            if (this.$v.form.middle_name.$dirty) {
+                if (!this.$v.form.middle_name.required) return "Обязательное поле!";
+            }
+        },
+        errorFronts() {
             if (this.$v.form.fronts.$dirty) {
-                if (!this.$v.form.fronts.required) return 'Обязательное поле!';
+                if (!this.$v.form.fronts.required) return 'Выберите хотя бы один из пунктов!';
             }
         },
         errorPassword() {
@@ -215,10 +267,16 @@ export default {
     watch: {
         '$store.state.modal.currentModal': function (value) {
             if (value === 'userAdd' && this.source) {
-                this.form.login = this.source.login_email ? this.source.login_email : this.source.login;
+                this.form.first_name = this.source.first_name;
+                this.form.last_name = this.source.last_name;
+                this.form.middle_name = this.source.middle_name;
+                this.form.email = this.source.email;
+                this.form.phone = this.source.phone;
                 this.form.fronts = this.source.fronts;
                 this.form.roles = this.source.roles;
                 this.form.infinity_sip_extension = this.source.infinity_sip_extension;
+                this.frontsModalSelect = this.source.fronts;
+                this.rolesModalSelect = this.source.roles;
             }
         }
     }

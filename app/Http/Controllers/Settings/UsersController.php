@@ -98,7 +98,7 @@ class UsersController extends Controller
         }
         $userService->addRoles($userId, $request->roles);
 
-        return response()->json(['roles' => $userService->userRoles($userId)]);
+        return response()->json([]);
     }
 
     public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse

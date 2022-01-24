@@ -24,12 +24,25 @@ class UserSaveRequest extends FormRequest
     {
         return [
             'id' => 'nullable|integer',
-            'login' => 'required',
-            'front' => ['required_without:fronts', Rule::in(array_keys(Front::allFronts()))],
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'middle_name' => 'nullable|string',
+            'email' => 'required_without:phone|email',
+            'phone' => 'required_without:email|regex:/^\+7\d{10}$/',
+            'login' => 'required_with:phone|regex:/^\+7\d{10}$/',
+            'login_email' => 'required_with:email|email',
             'fronts' => 'required_without:front|array',
-            'fronts.*' => Rule::in(array_keys(Front::allFronts())),
+            'fronts.*' => [
+                'required',
+                'integer',
+                Rule::in(array_keys(Front::allFronts())),
+            ],
             'roles' => 'required|array',
-            'roles.*' => Rule::in(array_keys(RoleDto::roles())),
+            'roles.*' => [
+                'required',
+                'integer',
+                Rule::in(array_keys(RoleDto::roles())),
+            ],
             'password' => 'required_without:id',
             'infinity_sip_extension' => 'nullable|string',
         ];
