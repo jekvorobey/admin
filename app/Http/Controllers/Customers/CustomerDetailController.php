@@ -95,7 +95,7 @@ class CustomerDetailController extends Controller
         $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $customer->id)->addFields(OrderDto::entity(), 'price'));
 
         $this->title = $user->getTitle();
-        $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
+        $referral = $user->hasRole(RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER);
         $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
 
         $avatar = null;
@@ -174,7 +174,7 @@ class CustomerDetailController extends Controller
                     'id' => $referrer->id,
                     'title' => $referrer_user->getTitle(),
                 ] : null,
-                'role_date' => $user->roles[$referral ? UserDto::SHOWCASE__REFERRAL_PARTNER : UserDto::SHOWCASE__PROFESSIONAL]['created_at'] ?? null,
+                //'role_date' => $user->roles[$referral ? RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER : RoleDto::ROLE_SHOWCASE_PROFESSIONAL] ?? null,
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
                 'commission_route' => $commission_route,

@@ -6,7 +6,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
@@ -119,7 +118,6 @@ class ViewRender
         return $this;
     }
 
-    /** TODO изменить на роли из базы */
     public function loadUserRoles($load = false): self
     {
         $roles = resolve(RoleService::class)->roles();
@@ -129,15 +127,12 @@ class ViewRender
                     $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
                 ],
                 'mas' => [
-                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
-                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
-                ],
-                'i_commerce_ml' => [
-                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
+                    'merchant_operator' => RoleDto::ROLE_MAS_MERCHANT_OPERATOR,
+                    'merchant_admin' => RoleDto::ROLE_MAS_MERCHANT_ADMIN,
                 ],
                 'showcase' => [
-                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
-                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
+                    'professional' => RoleDto::ROLE_SHOWCASE_PROFESSIONAL,
+                    'referral_partner' => RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER,
                 ],
             ];
         }

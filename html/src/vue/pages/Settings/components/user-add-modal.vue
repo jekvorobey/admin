@@ -6,9 +6,9 @@
             </div>
             <div slot="body">
                 <div class="row">
-                    <v-input v-model="$v.form.last_name.$model" :error="errorLastName" class="col-md-4 col-12">Фамилия*</v-input>
-                    <v-input v-model="$v.form.first_name.$model" :error="errorFirstName" class="col-md-4 col-12">Имя*</v-input>
-                    <v-input v-model="$v.form.middle_name.$model" :error="errorMiddleName" class="col-md-4 col-12">Отчество</v-input>
+                    <v-input v-model="$v.form.last_name.$model" :error="errorLastName" class="col-md-4 col-12"><h5>Фамилия*</h5></v-input>
+                    <v-input v-model="$v.form.first_name.$model" :error="errorFirstName" class="col-md-4 col-12"><h5>Имя*</h5></v-input>
+                    <v-input v-model="$v.form.middle_name.$model" class="col-md-4 col-12"><h5>Отчество</h5></v-input>
                 </div>
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="row">
@@ -22,7 +22,7 @@
                                                :id="`front-${front.id}`"
                                                @change="e => frontsCheckbox(e, front.id)"
                                                :value="front.id"
-                                               :checked="source.fronts.includes(parseInt(front.id))"
+                                               :checked="source ? source.fronts.includes(parseInt(front.id)) : null"
                                         >
                                         <label class="form-check-label" :for="`front-${front.id}`">
                                             {{ front.name }}
@@ -41,7 +41,7 @@
                                                :id="`role-${role.id}`"
                                                @change="e => rolesCheckbox(e, role.id)"
                                                :value="role.id"
-                                               :checked="source.roles.includes(parseInt(role.id))"
+                                               :checked="source ? source.roles.includes(parseInt(role.id)) : null"
                                         >
                                         <label class="form-check-label" :for="`role-${role.id}`">
                                             {{ role.name }}
@@ -52,13 +52,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <v-input v-model="$v.form.email.$model" class="col-md-6 col-12">E-mail*</v-input>
-                    <v-input v-model="$v.form.phone.$model" v-mask="telMask" class="col-md-6 col-12">Телефон*</v-input>
+                <div class="row mt-3">
+                    <v-input v-model="$v.form.email.$model" :error="errorEmail" class="col-md-6 col-12"><h5>E-mail*</h5></v-input>
+                    <v-input v-model="$v.form.phone.$model" :error="errorPhone" v-mask="telMask" class="col-md-6 col-12"><h5>Телефон*</h5></v-input>
                 </div>
                 <div class="row mb-3">
                     <span class="col-md-6 col-12">*Обязательное поле, если система Admin или MAS</span>
-                    <span class="col-md-6 col-12">*Обязательное поле, если система Витрина</span>
                 </div>
                 <v-input v-if="source" v-model="$v.form.infinity_sip_extension.$model">
                     <h5>Infinity SIP Extension</h5>
@@ -86,7 +85,7 @@ import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
 import modalMixin from '../../../mixins/modal.js';
 import {validationMixin} from 'vuelidate';
-import {email, minLength, required} from 'vuelidate/lib/validators';
+import {email, minLength, required, requiredIf} from 'vuelidate/lib/validators';
 import Services from '../../../../scripts/services/services';
 import {telMask} from '../../../../scripts/mask.js';
 
@@ -127,22 +126,23 @@ export default {
             form: {
                 last_name: {required},
                 first_name: {required},
-                middle_name: {required},
-                email: {email},
-                phone: {},
+                middle_name: {},
+                email: {
+                    required: requiredIf(function() {
+                        return this.form.fronts.includes(1) || this.form.fronts.includes(2);
+                    }),
+                    email
+                },
+                phone: {required},
                 login: {},
                 login_email: {},
                 fronts: {required},
                 roles: {required},
-                password: {},
+                password: {minLength: minLength(8)},
                 repeat: {},
                 infinity_sip_extension: {},
             }
         };
-        if (!this.source) {
-            validations.form.password[required] = required;
-            validations.form.password[minLength] = minLength(8);
-        }
         console.log(validations);
 
         return validations;
@@ -237,14 +237,20 @@ export default {
                 if (!this.$v.form.first_name.required) return "Обязательное поле!";
             }
         },
-        errorMiddleName() {
-            if (this.$v.form.middle_name.$dirty) {
-                if (!this.$v.form.middle_name.required) return "Обязательное поле!";
-            }
-        },
         errorFronts() {
             if (this.$v.form.fronts.$dirty) {
                 if (!this.$v.form.fronts.required) return 'Выберите хотя бы один из пунктов!';
+            }
+        },
+        errorPhone() {
+            if (this.$v.form.phone.$dirty) {
+                if (!this.$v.form.phone.required) return "Обязательное поле!";
+            }
+        },
+        errorEmail() {
+            if (this.$v.form.email.$dirty) {
+                if (!this.$v.form.email.required) return "Обязательное поле!";
+                if (!this.$v.form.email.email) return "Формат E-mail не соответствует требованиям!";
             }
         },
         errorPassword() {

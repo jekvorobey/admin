@@ -9,8 +9,11 @@
             <tr>
                 <th></th>
                 <th>№</th>
-                <th>Login</th>
+                <th>ФИО</th>
+                <th>Логин (Витрина)</th>
+                <th>Логин (ADMIN/MAS)</th>
                 <th>Система</th>
+                <th>Роли</th>
                 <th>E-mail подтверждён</th>
             </tr>
             </thead>
@@ -21,8 +24,15 @@
                            @change="e => selectItem(e, user.id)">
                 </td>
                 <td>{{ user.id }}</td>
-                <td><a :href="getRoute('settings.userDetail', {id: user.id})">{{ user.login }}</a></td>
-                <td>{{ frontName(user.front) }}</td>
+                <td>
+                    <a :href="getRoute('settings.userDetail', {id: user.id})">
+                        {{ user.last_name + ' ' + user.first_name + ' ' + user.middle_name }}
+                    </a>
+                </td>
+                <td>{{ user.login }}</td>
+                <td>{{ user.login_email }}</td>
+                <td v-html="frontsName(user.fronts)"></td>
+                <td v-html="rolesName(user.roles)"></td>
                 <td><span class="badge" :class="{'badge-success': user.email_verified, 'badge-danger': !user.email_verified}">{{ user.email_verified ? 'Да' : 'Нет' }}</span></td>
             </tr>
             </tbody>
@@ -38,7 +48,7 @@
                     class="mt-3 float-right"
             ></b-pagination>
         </div>
-        <user-add-modal :fronts="options.fronts" @onSave="onUserCreated"></user-add-modal>
+        <user-add-modal :fronts="options.fronts" :roles="options.roles" @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
 
@@ -102,9 +112,17 @@
                     }
                 }
             },
-            frontName(id) {
-                let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
-                return fronts.length > 0 ? fronts[0].name : 'N/A';
+            frontsName(frontValues) {
+                let fronts = Object.values(this.options.fronts)
+                    .filter(front => frontValues.includes(front.id))
+                    .map((front) => front.name);
+                return fronts.length > 0 ? fronts.join('<br>') : 'N/A';
+            },
+            rolesName(roleValues) {
+                let roles = this.options.roles
+                    .filter(role => roleValues.includes(role.id))
+                    .map((role) => role.name);
+                return roles.length > 0 ? roles.join('<br>') : 'N/A';
             },
             onUserCreated(newData) {
                 Object.assign(this.users, newData);

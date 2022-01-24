@@ -3,7 +3,12 @@
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
                 <shadow-card title="Основная информация" :buttons="canUpdate(blocks.settings) ? {onEdit: 'pencil-alt'} : {}" @onEdit="openModal('userAdd')">
-                    <values-table :values="userInfo" :names="userValuesNames"/>
+                    <div>
+                        <values-table :values="userInfo" :names="userValuesNames"/>
+                    </div>
+                    <div v-if="user.fronts.includes(4)" class="mt-4">
+                        <span >Профиль в разделе клиенты: <a :href="getRoute('customers.detail', {id: user.id})">{{ user.last_name + ' ' + user.first_name + ' ' + user.middle_name}}</a></span>
+                    </div>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="changeUserRoles()">
                     <table class="table table-sm">

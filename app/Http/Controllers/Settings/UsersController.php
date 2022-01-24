@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
-    public function index(Request $request, UserService $userService)
+    public function index(Request $request, UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -36,6 +36,7 @@ class UsersController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'options' => [
                 'fronts' => Front::allFronts(),
+                'roles' => $roleService->roles(),
             ],
         ]);
     }
@@ -90,11 +91,11 @@ class UsersController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $newUser = new UserDto($request->all());
-        $userId = $request->id ?? $newUser->id;
         if (isset($request->id)) {
+            $userId = $request->id;
             $userService->update($newUser);
         } else {
-            $userService->create($newUser);
+            $userId = $userService->create($newUser);
         }
         $userService->addRoles($userId, $request->roles);
 
