@@ -34,20 +34,24 @@
                         <div class="col-md-6 col-sm-6 col-xs-12">
                             <div class="text-left">
                                 <h5>Роли</h5>
-                                <template v-for="role in roleOptions">
-                                    <div class="form-check">
-                                        <input class="form-check-input"
-                                               type="checkbox"
-                                               :id="`role-${role.id}`"
-                                               @change="e => rolesCheckbox(e, role.id)"
-                                               :value="role.id"
-                                               :checked="source ? source.roles.includes(parseInt(role.id)) : null"
-                                        >
-                                        <label class="form-check-label" :for="`role-${role.id}`">
-                                            {{ role.name }}
-                                        </label>
-                                    </div>
-                                </template>
+                                <h6 v-if="checkFront" class="font-weight-bold">Выберите систему для отображения ролей</h6>
+                                <div v-for="userFront in userFronts">
+                                    <h6 class="mt-2 font-weight-bold">{{ userFront.name }}</h6>
+                                    <template v-for="role in roleOptions">
+                                        <div v-if="role.front === userFront.id" class="form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   :id="`role-${role.id}`"
+                                                   @change="e => rolesCheckbox(e, role.id)"
+                                                   :value="role.id"
+                                                   :checked="source ? source.roles.includes(parseInt(role.id)) : null"
+                                            >
+                                            <label class="form-check-label" :for="`role-${role.id}`">
+                                                {{ role.name }}
+                                            </label>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,11 +226,14 @@ export default {
         },
     },
     computed: {
+        userFronts() {
+            return Object.values(this.fronts).filter(front => this.form.fronts.includes(front.id)).map(front => ({id: front.id, name: front.name}));
+        },
         frontOptions() {
             return Object.values(this.fronts).map(front => ({id: front.id, name: front.name}));
         },
         roleOptions() {
-            return Object.values(this.roles).map(role => ({id: role.id, name: role.name}));
+            return Object.values(this.roles).map(role => ({id: role.id, name: role.name, front: role.front}));
         },
         // =========================================================================================================
         telMask() {
@@ -273,6 +280,9 @@ export default {
             if (this.$v.form.roles.$dirty) {
                 if (!this.$v.form.roles.required) return "Выберите хотя бы один из пунктов!";
             }
+        },
+        checkFront() {
+            return this.form.fronts.length < 1;
         },
     },
     watch: {
