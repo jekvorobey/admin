@@ -174,6 +174,7 @@ class CustomerDetailController extends Controller
                     'id' => $referrer->id,
                     'title' => $referrer_user->getTitle(),
                 ] : null,
+                /** TODO брать дату создания роли из таблицы role_user */
                 //'role_date' => $user->roles[$referral ? RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER : RoleDto::ROLE_SHOWCASE_PROFESSIONAL] ?? null,
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,

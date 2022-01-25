@@ -14,14 +14,21 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
+    /**
+     * @throws ValidationException
+     */
     public function index(Request $request, UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
@@ -41,6 +48,9 @@ class UsersController extends Controller
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function page(Request $request, UserService $userService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
@@ -71,7 +81,7 @@ class UsersController extends Controller
             throw new NotFoundHttpException('user not found');
         }
 
-        $this->title = "Пользователь № {$user->id}";
+        $this->title = "Пользователь: {$user->full_name}";
 
         $userRoles = $userService->userRoles($id);
         $roles = $roleService->roles();
@@ -86,8 +96,11 @@ class UsersController extends Controller
         ]);
     }
 
-    public function saveUser(UserSaveRequest $request, UserService $userService): JsonResponse
-    {
+    public function saveUser(
+        UserSaveRequest $request,
+        UserService $userService,
+        CustomerService $customerService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $newUser = new UserDto($request->all());
@@ -98,6 +111,12 @@ class UsersController extends Controller
             $userId = $userService->create($newUser);
         }
         $userService->addRoles($userId, $request->roles);
+        if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
+            $customer = $customerService->customers((new RestQuery())->setFilter('id', $userId))->first();
+            if ($customer) {
+                $customerService->createCustomer(new CustomerDto(['user_id' => $userId]));
+            }
+        }
 
         return response()->json([]);
     }
@@ -184,10 +203,48 @@ class UsersController extends Controller
         ]);
     }
 
-    protected function makeQuery(Request $request): RestQuery
+    /**
+     * @throws ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    protected function getFilter(bool $withDefault = false): array
+    {
+        return Validator::validate(
+            request('filter') ?? [],
+            [
+                'id' => 'integer',
+                'full_name' => 'string',
+                'email' => 'string',
+                'phone' => 'string',
+                'front' => 'integer',
+                'role' => 'integer',
+            ]
+        );
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function makeQuery(Request $request, bool $withDefaultFilter = false): RestQuery
     {
         $restQuery = new RestQuery();
         $restQuery->pageNumber($request->get('page', 1), 10);
+        $filter = $this->getFilter($withDefaultFilter);
+        foreach ($filter as $key => $value) {
+            switch ($key) {
+                case 'front':
+                    if ($value) {
+                        $restQuery->setFilter('fronts', 'like', "%{$value}%");
+                    }
+                    break;
+                case 'phone':
+                    $value = phone_format($value);
+                    $restQuery->setFilter($key, $value);
+                    break;
+                default:
+                    $restQuery->setFilter($key, $value);
+            }
+        }
 
         return $restQuery;
     }

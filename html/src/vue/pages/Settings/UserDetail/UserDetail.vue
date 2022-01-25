@@ -6,8 +6,8 @@
                     <div>
                         <values-table :values="userInfo" :names="userValuesNames"/>
                     </div>
-                    <div v-if="user.fronts.includes(4)" class="mt-4">
-                        <span >Профиль в разделе клиенты: <a :href="getRoute('customers.detail', {id: user.id})">{{ user.last_name + ' ' + user.first_name + ' ' + user.middle_name}}</a></span>
+                    <div v-if="user.fronts.includes(this.userFronts.showcase)" class="mt-4">
+                        <span >Профиль в разделе клиенты: <a :href="getRoute('customers.detail', { id: user.id })">{{ user.full_name }}</a></span>
                     </div>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="changeUserRoles()">
@@ -86,6 +86,7 @@ export default {
         data() {
             let sip = {
                 id: 'ID',
+                name: 'ФИО',
                 login: 'Логин',
                 front: 'Система',
                 email_verified: 'E-mail подтверждён',
@@ -163,7 +164,8 @@ export default {
             userInfo() {
                 return {
                     id: this.user.id,
-                    login: this.user.login,
+                    name: this.user.full_name,
+                    login: this.user.login_email ? this.user.login_email : this.user.login,
                     front: this.frontName(this.user.fronts),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
                     infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : null,

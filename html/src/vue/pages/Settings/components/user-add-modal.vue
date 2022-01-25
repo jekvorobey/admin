@@ -58,6 +58,7 @@
                 </div>
                 <div class="row mb-3">
                     <span class="col-md-6 col-12">*Обязательное поле, если система Admin или MAS</span>
+                    <span class="col-md-6 col-12">*Обязательное поле, если система Витрина</span>
                 </div>
                 <v-input v-if="source" v-model="$v.form.infinity_sip_extension.$model">
                     <h5>Infinity SIP Extension</h5>
@@ -129,11 +130,15 @@ export default {
                 middle_name: {},
                 email: {
                     required: requiredIf(function() {
-                        return this.form.fronts.includes(1) || this.form.fronts.includes(2);
+                        return this.form.fronts.includes(this.userFronts.admin) || this.form.fronts.includes(this.userFronts.mas);
                     }),
                     email
                 },
-                phone: {required},
+                phone: {
+                    required: requiredIf(function() {
+                        return this.form.fronts.includes(this.userFronts.showcase);
+                    })
+                },
                 login: {},
                 login_email: {},
                 fronts: {required},
