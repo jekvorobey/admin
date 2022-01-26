@@ -131,19 +131,19 @@ export default {
         };
     },
     validations() {
-        let validations = {
+        return {
             form: {
                 last_name: {required},
                 first_name: {required},
                 middle_name: {},
                 email: {
-                    required: requiredIf(function() {
+                    required: requiredIf(function () {
                         return this.form.fronts.includes(this.userFronts.admin) || this.form.fronts.includes(this.userFronts.mas);
                     }),
                     email
                 },
                 phone: {
-                    required: requiredIf(function() {
+                    required: requiredIf(function () {
                         return this.form.fronts.includes(this.userFronts.showcase);
                     })
                 },
@@ -153,33 +153,30 @@ export default {
                 roles: {required},
                 password: {
                     minLength: minLength(8),
-                    valid: function(value) {
+                    valid: function (value) {
+                        if (value === '') {
+                            return true
+                        }
                         const containsUppercase = /[A-Z]/.test(value)
                         const containsLowercase = /[a-z]/.test(value)
                         const containsNumber = /[0-9]/.test(value)
                         //const containsSpecial = /[#?!@$%^&*-]/.test(value)
-                        if (value !== '') {
-                            return containsUppercase && containsLowercase && containsNumber
-                        }
 
-                        return true
+                        return containsUppercase && containsLowercase && containsNumber
                     }
                 },
                 repeat: {
-                    sameAs: function(value) {
-                        if (value !== '') {
-                            return sameAs(this.form.password)
+                    sameAs: function() {
+                        if (this.form.password !== '') {
+                            return true
                         }
 
-                        return true
+                        return sameAs(this.form.password)
                     }
                 },
                 infinity_sip_extension: {},
             }
         };
-        console.log(validations);
-
-        return validations;
     },
     methods: {
         save() {
