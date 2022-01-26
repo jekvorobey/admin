@@ -29,6 +29,9 @@
                                         </label>
                                     </div>
                                 </template>
+                                <div class="error">
+                                    {{ errorFronts }}
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6 col-sm-6 col-xs-12">
@@ -51,6 +54,9 @@
                                             </label>
                                         </div>
                                     </template>
+                                    <div class="error">
+                                        {{ errorRoles }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -68,12 +74,10 @@
                     <h5>Infinity SIP Extension</h5>
                 </v-input>
                 <div v-if="source" class="row">
-                    <v-input v-model="$v.form.password.$model" class="col" :error="errorPassword" type="password"
-                             autocomplete="new-password">
+                    <v-input v-model="$v.form.password.$model" class="col" :error="errorPassword" type="password">
                         <h5>Пароль</h5>
                     </v-input>
-                    <v-input v-model="$v.form.repeat.$model" class="col" :error="errorRepeat" type="password"
-                             autocomplete="new-password">
+                    <v-input v-model="$v.form.repeat.$model" class="col" :error="errorRepeat" type="password">
                         <h5>Повтор пароля</h5>
                     </v-input>
                 </div>
@@ -154,11 +158,22 @@ export default {
                         const containsLowercase = /[a-z]/.test(value)
                         const containsNumber = /[0-9]/.test(value)
                         //const containsSpecial = /[#?!@$%^&*-]/.test(value)
+                        if (value !== '') {
+                            return containsUppercase && containsLowercase && containsNumber
+                        }
 
-                        return containsUppercase && containsLowercase && containsNumber
+                        return true
                     }
                 },
-                repeat: {sameAs: sameAs(this.form.password)},
+                repeat: {
+                    sameAs: function(value) {
+                        if (value !== '') {
+                            return sameAs(this.form.password)
+                        }
+
+                        return true
+                    }
+                },
                 infinity_sip_extension: {},
             }
         };
@@ -313,3 +328,8 @@ export default {
     }
 }
 </script>
+<style>
+.error {
+    color: red;
+}
+</style>
