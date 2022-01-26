@@ -90,7 +90,7 @@ import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
 import modalMixin from '../../../mixins/modal.js';
 import {validationMixin} from 'vuelidate';
-import {email, minLength, required, requiredIf} from 'vuelidate/lib/validators';
+import {email, minLength, required, requiredIf, sameAs} from 'vuelidate/lib/validators';
 import Services from '../../../../scripts/services/services';
 import {telMask} from '../../../../scripts/mask.js';
 
@@ -147,8 +147,18 @@ export default {
                 login_email: {},
                 fronts: {required},
                 roles: {required},
-                password: {minLength: minLength(8)},
-                repeat: {},
+                password: {
+                    minLength: minLength(8),
+                    valid: function(value) {
+                        const containsUppercase = /[A-Z]/.test(value)
+                        const containsLowercase = /[a-z]/.test(value)
+                        const containsNumber = /[0-9]/.test(value)
+                        //const containsSpecial = /[#?!@$%^&*-]/.test(value)
+
+                        return containsUppercase && containsLowercase && containsNumber
+                    }
+                },
+                repeat: {sameAs: sameAs(this.form.password)},
                 infinity_sip_extension: {},
             }
         };
@@ -267,13 +277,13 @@ export default {
         },
         errorPassword() {
             if (this.$v.form.password.$dirty) {
-                if (this.$v.form.password.minLength === false) return 'Минимум 8 символов!';
-                if (!this.$v.form.password.required === false) return 'Обязательное поле!';
+                if (!this.$v.form.password.minLength) return 'Минимум 8 символов!';
+                if (!this.$v.form.password.valid) return 'Пароль должен содержать буквы верхнего и нижнего регистров, а также цифры';
             }
         },
         errorRepeat() {
             if (this.$v.form.repeat.$dirty) {
-                if (!this.$v.form.repeat.sameAs === false) return 'Введите такой же пароль!';
+                if (!this.$v.form.repeat.sameAs) return 'Введите такой же пароль!';
             }
         },
         errorRoles() {
