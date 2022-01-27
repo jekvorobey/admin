@@ -152,7 +152,7 @@ class OrderListController extends Controller
                 'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
                 'manager_comment' => 'string|sometimes',
                 'type.*' => Rule::in(array_keys(OrderType::allTypes())),
-                'track_xml_id' => 'sometimes|string',
+                'delivery_xml_id' => 'string|sometimes',
             ]
         );
     }
@@ -354,9 +354,6 @@ class OrderListController extends Controller
                         $restQuery->setFilter('merchant_id', $value);
                         break;
                     case 'delivery_city_string':
-                        break;
-                    case 'track_xml_id':
-                        $restQuery->setFilter($key, 'like', "{$value}%");
                         break;
 
                     default:
