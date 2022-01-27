@@ -88,8 +88,7 @@ class CustomerListController extends Controller
 
         $restQueryUser = new RestQuery();
 
-        $customerIds = isset($filter['status']) && $filter['status'] ? $customers->pluck('user_id')->all() : [];
-        $restQueryUser->setFilter('id', $customerIds);
+        $restQueryUser->setFilter('id', $customers->pluck('user_id')->toArray());
 
         if (isset($filter['phone']) && $filter['phone']) {
             $restQueryUser->setFilter('phone', phone_format($filter['phone']));
@@ -122,15 +121,15 @@ class CustomerListController extends Controller
 
         $users = $userService->users($restQueryUser)->keyBy('id');
 
-        $result = $customers->map(function (CustomerDto $customer) use ($users, $filter) {
+        $result = $customers->map(function (CustomerDto $customer) use ($users) {
             /** @var UserDto $user */
             $user = $users->get($customer->user_id);
+
             if (!$user) {
                 return false;
             }
-            if (!empty($filter['gender']) && $filter['gender'] != $customer->gender) {
-                return false;
-            }
+
+            $users->forget($user->id);
 
             return [
                 'id' => $customer->id,
