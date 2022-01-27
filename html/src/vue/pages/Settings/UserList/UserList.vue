@@ -48,6 +48,7 @@
                 <th>Система</th>
                 <th>Роли</th>
                 <th>E-mail подтверждён</th>
+                <th v-if="canUpdate(blocks.settings)">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -70,6 +71,13 @@
                           :class="{'badge-success': user.email_verified, 'badge-danger': !user.email_verified}">{{
                         user.email_verified ? 'Да' : 'Нет'
                     }}</span></td>
+                <td v-if="canUpdate(blocks.settings)">
+                    <b-button class="btn btn-sm"
+                              :class="{'btn-danger': !user.banned, 'btn-success': user.banned}"
+                              @click="!user.banned ? banUser(user.id) : unBanUser(user.id)">
+                        {{!user.banned ? 'Заблокировать' : 'Разблокировать' }}
+                    </b-button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -212,7 +220,27 @@ export default {
         onUserCreated(newData) {
             Object.assign(this.users, newData);
             this.showMessageBox({text: "Пользователь создан!"});
-        }
+        },
+        banUser(id) {
+            Services.showLoader();
+            Services.net().put(this.getRoute('user.banUser', {id: id}), {}, {}, {})
+                .then(data => {
+                    this.reload()
+                    this.showMessageBox({text: 'Пользователь заблокирован'});
+                }).finally(() => {
+                Services.hideLoader();
+            });
+        },
+        unBanUser(id) {
+            Services.showLoader();
+            Services.net().put(this.getRoute('user.unBanUser', {id: id}), {}, {}, {})
+                .then(data => {
+                    this.reload()
+                    this.showMessageBox({text: 'Пользователь разблокирован'});
+                }).finally(() => {
+                Services.hideLoader();
+            });
+        },
     },
     computed: {
         roleOptions() {

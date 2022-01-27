@@ -143,6 +143,24 @@ class UsersController extends Controller
         ]);
     }
 
+    public function banUser(int $id, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->ban($id);
+
+        return response()->json([]);
+    }
+
+    public function unBanUser(int $id, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->unban($id);
+
+        return response()->json([]);
+    }
+
     /**
      * Получение пользователей по массиву ролей
      */
