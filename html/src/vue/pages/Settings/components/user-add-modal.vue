@@ -77,7 +77,7 @@
                     <v-input v-model="$v.form.password.$model" class="col" :error="errorPassword" type="password">
                         <h5>Пароль</h5>
                     </v-input>
-                    <v-input v-model="$v.form.repeat.$model" class="col" :error="errorRepeat" type="password">
+                    <v-input v-model="$v.form.repeatPassword.$model" class="col" :error="errorRepeat" type="password">
                         <h5>Повтор пароля</h5>
                     </v-input>
                 </div>
@@ -120,10 +120,10 @@ export default {
                 phone: '',
                 login: '',
                 login_email: '',
-                fronts: '',
-                roles: '',
+                fronts: [],
+                roles: [],
                 password: '',
-                repeat: '',
+                repeatPassword: '',
                 infinity_sip_extension: '',
             },
             rolesModalSelect: [],
@@ -137,15 +137,15 @@ export default {
                 first_name: {required},
                 middle_name: {},
                 email: {
-                    required: requiredIf(function () {
-                        return this.form.fronts.includes(this.userFronts.admin) || this.form.fronts.includes(this.userFronts.mas);
+                    required: requiredIf(function(form){
+                        return form.fronts.includes(1) || form.fronts.includes(2)
                     }),
                     email
                 },
                 phone: {
-                    required: requiredIf(function () {
-                        return this.form.fronts.includes(this.userFronts.showcase);
-                    })
+                    required: requiredIf(function(form){
+                        return form.fronts.includes(4)
+                    }),
                 },
                 login: {},
                 login_email: {},
@@ -165,15 +165,7 @@ export default {
                         return containsUppercase && containsLowercase && containsNumber
                     }
                 },
-                repeat: {
-                    sameAs: function() {
-                        if (this.form.password !== '') {
-                            return true
-                        }
-
-                        return sameAs(this.form.password)
-                    }
-                },
+                repeatPassword: {sameAsPassword: sameAs('password')},
                 infinity_sip_extension: {},
             }
         };
@@ -294,8 +286,8 @@ export default {
             }
         },
         errorRepeat() {
-            if (this.$v.form.repeat.$dirty) {
-                if (!this.$v.form.repeat.sameAs) return 'Введите такой же пароль!';
+            if (this.$v.form.repeatPassword.$dirty) {
+                if (!this.$v.form.repeatPassword.sameAsPassword) return 'Введите такой же пароль!';
             }
         },
         errorRoles() {
