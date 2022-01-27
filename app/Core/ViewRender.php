@@ -7,7 +7,6 @@ use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
