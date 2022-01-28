@@ -301,6 +301,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'UsersController@index')->name('settings.userList');
             Route::post('', 'UsersController@saveUser')->name('settings.saveUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
+            Route::put('banArray', 'UsersController@banArray')->name('settings.banArray');
         });
 
         Route::prefix('roles')->group(function () {

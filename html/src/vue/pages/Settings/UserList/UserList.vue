@@ -36,6 +36,9 @@
                 <fa-icon icon="plus"/>
                 Добавить пользователя
             </button>
+            <b-button v-if="usersSelected" class="btn btn-danger" @click="banUserArray">
+                Заблокировать выбранных
+            </b-button>
         </div>
         <table class="table">
             <thead>
@@ -231,6 +234,16 @@ export default {
                 Services.hideLoader();
             });
         },
+        banUserArray() {
+            Services.showLoader();
+            Services.net().put(this.getRoute('settings.banArray'), {}, {ids: this.selectedItems}, {})
+                .then(data => {
+                    this.reload()
+                    this.showMessageBox({text: 'Выбранные пользователи заблокированы'});
+                }).finally(() => {
+                Services.hideLoader();
+            });
+        },
         unBanUser(id) {
             Services.showLoader();
             Services.net().put(this.getRoute('user.unBanUser', {id: id}), {}, {}, {})
@@ -254,6 +267,9 @@ export default {
                 value: front.id,
                 text: front.name
             }));
+        },
+        usersSelected() {
+            return this.selectedItems.length > 0;
         },
     },
     created() {

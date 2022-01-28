@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BanUsersRequest;
 use App\Http\Requests\UserRolesAddRequest;
 use App\Http\Requests\UserRolesDeleteRequest;
 use App\Http\Requests\UserSaveRequest;
@@ -148,6 +149,15 @@ class UsersController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $userService->ban($id);
+
+        return response()->json([]);
+    }
+
+    public function banArray(BanUsersRequest $request, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->banArray($request->ids);
 
         return response()->json([]);
     }
