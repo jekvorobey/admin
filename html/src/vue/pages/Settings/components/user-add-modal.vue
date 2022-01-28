@@ -38,7 +38,7 @@
                             <div class="text-left">
                                 <h5>Роли</h5>
                                 <h6 v-if="checkFront" class="font-weight-bold">Выберите систему для отображения ролей</h6>
-                                <div v-for="userFront in userFronts">
+                                <div v-for="userFront in userFrontsValues">
                                     <h6 class="mt-2 font-weight-bold">{{ userFront.name }}</h6>
                                     <template v-for="role in roleOptions">
                                         <div v-if="role.front === userFront.id" class="form-check">
@@ -138,14 +138,16 @@ export default {
                 middle_name: {},
                 email: {
                     required: requiredIf(function(form){
-                        return form.fronts.includes(1) || form.fronts.includes(2)
+                        return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
-                    email
+                    email,
+                    $lazy: true
                 },
                 phone: {
                     required: requiredIf(function(form){
-                        return form.fronts.includes(4)
+                        return form.fronts.includes(this.userFronts.showcase)
                     }),
+                    $lazy: true
                 },
                 login: {},
                 login_email: {},
@@ -205,6 +207,7 @@ export default {
             }
             Services.net().post(this.getRoute('settings.saveUser'), {}, formData).then(data => {
                 this.$emit('onSave', {
+                    full_name: this.form.last_name + ' ' + this.form.first_name + ' ' + this.form.middle_name,
                     last_name: this.form.last_name,
                     first_name: this.form.first_name,
                     middle_name: this.form.middle_name,
@@ -240,7 +243,7 @@ export default {
         },
     },
     computed: {
-        userFronts() {
+        userFrontsValues() {
             return Object.values(this.fronts).filter(front => this.form.fronts.includes(front.id)).map(front => ({id: front.id, name: front.name}));
         },
         frontOptions() {
