@@ -42,7 +42,7 @@
             </tr>
             <tr v-for="operation in filterOperations">
                 <td>{{ operation.action_id }}</td>
-                <td>{{ operation.created_at }}</td>
+                <td>{{ datetimePrint(operation.created_at) }}</td>
                 <td>{{ operation.comment }}</td>
                 <td>{{ roundValue(operation.value) }}</td>
                 <td>{{ operation.type_name }}</td>
