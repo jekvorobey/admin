@@ -122,6 +122,9 @@ class CustomerListController extends Controller
             $restQueryUser->setFilter('role', UserDto::SHOWCASE__REFERRAL_PARTNER);
         }
 
+        $usersCount = $userService->count($restQueryUser);
+
+        $restQueryUser->pageNumber(request('page', 1), self::PER_PAGE);
         $users = $userService->users($restQueryUser)->keyBy('id');
 
         $restQueryCustomer->addFields(CustomerDto::entity(), 'id', 'user_id', 'status', 'created_at', 'gender');
@@ -151,8 +154,8 @@ class CustomerListController extends Controller
         })->filter()->sortByDesc('id')->values();
 
         return response()->json([
-            'users' => $result->forPage(request('page', 1), self::PER_PAGE),
-            'count' => $result->count(),
+            'users' => $result,
+            'count' => $usersCount['total'],
         ]);
     }
 
