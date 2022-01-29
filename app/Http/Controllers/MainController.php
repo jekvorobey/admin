@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Routing\Redirector;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -19,7 +24,7 @@ class MainController extends Controller
 {
     /**
      * Вывести домашнюю страницу
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return RedirectResponse|Redirector
      */
     public function home()
     {
@@ -32,9 +37,28 @@ class MainController extends Controller
      */
     public function login(RequestInitiator $user)
     {
+        return !$user->userId() ? $this->render('Login', []) : $this->home();
+    }
 
-        return !$user->userId() ?
-            $this->render('Login', []) : $this->home();
+    /**
+     * Вывести форму смены пароля для нового пользователя
+     * @return mixed
+     * @throws AuthorizationException
+     */
+    public function changePassword(Request $request)
+    {
+        $userId = $request->route('id');
+        $userHash = $request->route('hash');
+
+        $user = app(UserService::class)->users((new RestQuery())->setFilter('id', $userId))->first();
+        if (!$user) {
+            throw new AuthorizationException();
+        }
+        if (!hash_equals((string) $userHash, sha1($user->email . $user->full_name))) {
+            throw new AuthorizationException();
+        }
+
+        return $this->render('PasswordConfirm', ['id' => $userId]);
     }
 
     /**
@@ -56,10 +80,11 @@ class MainController extends Controller
     public function logoutAjax(RequestInitiator $user): JsonResponse
     {
         $user->logout();
+
         return response()->json([]);
     }
 
-    public function uploadFile(Request $request, FileService $fileService)
+    public function uploadFile(Request $request, FileService $fileService): JsonResponse
     {
         $destination = request('destination');
         /** @var UploadedFile $file */

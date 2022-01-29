@@ -17,6 +17,7 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -107,9 +108,9 @@ class UsersController extends Controller
         $newUser = new UserDto($request->all());
         if (isset($request->id)) {
             $userId = $request->id;
-            $userService->update($newUser);
+            $ok = $userService->update($newUser);
         } else {
-            $userId = $userService->create($newUser);
+            $ok = $userId = $userService->create($newUser);
         }
         $userService->addRoles($userId, $request->roles);
         if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
@@ -119,7 +120,7 @@ class UsersController extends Controller
             }
         }
 
-        return response()->json([]);
+        return response()->json([['status' => $ok ? 'ok' : 'fail']]);
     }
 
     public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
