@@ -170,7 +170,9 @@ class DiscountHelper
             }
         }
 
-        $conditions = DiscountHelper::getDiscountCondition($data);
+        $conditions = collect(DiscountHelper::getDiscountCondition($data))
+            ->unique('type')
+            ->all();
         foreach ($conditions as $condition) {
             $discount->addCondition($condition);
         }

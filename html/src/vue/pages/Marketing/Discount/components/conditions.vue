@@ -114,7 +114,7 @@
                       :error="conditionError"
                       @change="selectCondition"
             >Условия предоставления скидки</v-select>
-            <div class="col-3 mt-3" v-if="canUpdate(blocks.marketing)">
+            <div class="col-3 mt-3" v-if="canUpdate(blocks.marketing) && conditionType !== null">
                 <label class="row">&nbsp;</label>
                 <button type="button" class="btn"
                         :class="'btn-warning'"
@@ -756,12 +756,6 @@
                     paymentMethods: [],
                     users: ''
                 };
-            },
-            values: {
-                handler() {
-                    setTimeout(() => {this.addCondition(); this.initConditionError();}, 3000);
-                },
-                deep: true
             },
             'values.users': {
                 handler(val, oldVal) {

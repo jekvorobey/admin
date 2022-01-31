@@ -200,7 +200,7 @@ export default {
           .delete(this.getRoute('redirect.delete', {id: id,}))
           .then((data) => {
             this.loadPage();
-            this.showMessageBox({title: 'Элемент удалён', text: 'Попробуйте позже'});
+            this.showMessageBox({title: 'Элемент удалён'});
           })
           .catch(() => {
             this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
