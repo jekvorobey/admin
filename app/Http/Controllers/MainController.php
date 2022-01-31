@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -38,27 +37,6 @@ class MainController extends Controller
     public function login(RequestInitiator $user)
     {
         return !$user->userId() ? $this->render('Login', []) : $this->home();
-    }
-
-    /**
-     * Вывести форму смены пароля для нового пользователя
-     * @return mixed
-     * @throws AuthorizationException
-     */
-    public function changePassword(Request $request)
-    {
-        $userId = $request->route('id');
-        $userHash = $request->route('hash');
-
-        $user = app(UserService::class)->users((new RestQuery())->setFilter('id', $userId))->first();
-        if (!$user) {
-            throw new AuthorizationException();
-        }
-        if (!hash_equals((string) $userHash, sha1($user->email . $user->full_name))) {
-            throw new AuthorizationException();
-        }
-
-        return $this->render('PasswordConfirm', ['id' => $userId]);
     }
 
     /**

@@ -65,8 +65,7 @@ class TabOperatorController extends Controller
                     'email' => $users[$operator->user_id]->email,
                     'phone' => $users[$operator->user_id]->phone,
                     'communication_method' => OperatorCommunicationMethod::methodById($operator->communication_method)['name'],
-                    /** TODO изменить после добавления всех ролей в базу */
-                    'roles' => collect($users[$operator->user_id]->new_roles)->map(function ($roleId) {
+                    'roles' => collect($users[$operator->user_id]->roles)->map(function ($roleId) {
                         return RoleDto::roles()[$roleId];
                     })->all(),
                     'active' => $users[$operator->user_id]->active,

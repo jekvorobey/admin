@@ -70,7 +70,7 @@ class MerchantOperatorController extends Controller
             'login' => $user->login,
             'position' => $operator->position,
             'communication_method' => $operator->communication_method,
-            'roles' => $user->new_roles,
+            'roles' => $user->roles,
             'active' => $user->active,
         ];
 

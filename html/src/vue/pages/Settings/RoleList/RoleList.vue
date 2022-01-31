@@ -8,8 +8,8 @@
                 <f-input v-model="filter.name" class="col-sm-12 col-md-3 col-xl-2">
                     Название
                 </f-input>
-                <f-select v-model="filter.id" :options="roleOptions" class="col-sm-12 col-md-3 col-xl-2">
-                    Статус
+                <f-select v-model="filter.front_id" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
+                    Система
                 </f-select>
             </div>
             <template v-slot:footer>
@@ -84,12 +84,12 @@ import {required} from "vuelidate/lib/validators";
 
 const cleanFilter = {
     name: '',
-    id: [],
+    front_id: [],
 };
 
 const serverKeys = [
     'name',
-    'id',
+    'front_id',
 ];
 
 export default {
@@ -116,7 +116,7 @@ export default {
             filter,
             form: {
                 name: null,
-                id: null,
+                front_id: null,
             },
             selectedItems: []
         };
@@ -124,7 +124,7 @@ export default {
     validations: {
         form: {
             name: {required},
-            id: {required},
+            front_id: {required},
         }
     },
     methods: {
@@ -202,10 +202,10 @@ export default {
         },
     },
     computed: {
-        roleOptions() {
-            return Object.values(this.iRoles).map(role => ({
-                value: role.id,
-                text: role.name
+        frontOptions() {
+            return Object.values(this.options.fronts).map(front => ({
+                value: front.id,
+                text: front.name
             }));
         },
     },

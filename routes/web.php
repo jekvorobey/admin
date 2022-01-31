@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('user/{id}/change-password/{hash}', 'MainController@changePassword')->name('page.changePassword');
+Route::get('user/{id}/change-password/{signature}', 'UsersController@changePassword')->name('page.changePassword');
 
 Route::prefix('login')->group(function () {
     Route::get('', 'MainController@login')->name('page.login');

@@ -142,7 +142,7 @@ class RoleController extends Controller
             request('filter') ?? [],
             [
                 'name' => 'string',
-                'id' => Rule::in(array_keys(RoleDto::roles())),
+                'front_id' => Rule::in(array_keys(Front::allFronts())),
             ]
         );
     }
@@ -162,8 +162,8 @@ class RoleController extends Controller
                         $restQuery->setFilter($key, 'like', "%{$value}%");
                     }
                     break;
-                case 'id':
-                    $restQuery->setFilter('id', $value);
+                case 'front_id':
+                    $restQuery->setFilter('front', $value);
                     break;
             }
         }

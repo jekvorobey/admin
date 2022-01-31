@@ -115,7 +115,7 @@ class UsersController extends Controller
         $userService->addRoles($userId, $request->roles);
         if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
             $customer = $customerService->customers((new RestQuery())->setFilter('id', $userId))->first();
-            if ($customer) {
+            if (!$customer) {
                 $customerService->createCustomer(new CustomerDto(['user_id' => $userId]));
             }
         }
@@ -233,6 +233,37 @@ class UsersController extends Controller
     }
 
     /**
+     * Вывести форму смены пароля для нового пользователя
+     * @return mixed
+     * @throws AuthorizationException
+     */
+    public function changePassword(Request $request, UserService $userService, RequestInitiator $authUser)
+    {
+        $this->validate($request, [
+            'userId' => 'required|integer',
+            'signature' => 'required|string',
+        ]);
+
+        $userId = $request->route('userId');
+        $signature = $request->route('signature');
+        $authUserId = $authUser->userId();
+
+        if ($authUserId && $authUserId !== (int) $userId) {
+            throw new AuthorizationException(
+                'Ошибка активации пользователя. Авторизован другой пользователь.'
+            );
+        }
+
+        try {
+            $userService->verifyBySignature($userId, $signature);
+        } catch (\Throwable $e) {
+            throw new AuthorizationException();
+        }
+
+        return $this->render('PasswordConfirm', ['id' => $userId]);
+    }
+
+    /**
      * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
@@ -261,11 +292,6 @@ class UsersController extends Controller
         $filter = $this->getFilter($withDefaultFilter);
         foreach ($filter as $key => $value) {
             switch ($key) {
-                case 'front':
-                    if ($value) {
-                        $restQuery->setFilter('fronts', 'like', "%{$value}%");
-                    }
-                    break;
                 case 'phone':
                     $value = phone_format($value);
                     $restQuery->setFilter($key, $value);
