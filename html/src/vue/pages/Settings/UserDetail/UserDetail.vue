@@ -5,7 +5,7 @@
                 <shadow-card title="Основная информация" :buttons="canUpdate(blocks.settings) ? {onEdit: 'pencil-alt'} : {}" @onEdit="openModal('userAdd')">
                     <values-table :values="userInfo" :names="userValuesNames"/>
                 </shadow-card>
-                <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="openModal('add-user-role')">
+                <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="changeUserRoles()">
                     <table class="table table-sm">
                         <thead>
                         <tr>
@@ -26,11 +26,24 @@
         <transition name="modal" v-if="canUpdate(blocks.settings)">
             <modal :close="closeModal" v-if="isModalOpen('add-user-role')">
                 <div slot="header">
-                    Добавление роли
+                    Выбор ролей
                 </div>
                 <div slot="body">
-                    <v-select v-model="newRole" :options="roleOptions"></v-select>
-                    <button @click="addRole" class="btn btn-dark">Сохранить</button>
+                    <template v-for="role in roleOptions">
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   :id="`role-${role.id}`"
+                                   @change="e => rolesCheckbox(e, role.id)"
+                                   :value="role.id"
+                                   :checked="rolesIds.includes(role.id)"
+                            >
+                            <label class="form-check-label" :for="`role-${role.id}`">
+                                {{ role.name }}
+                            </label>
+                        </div>
+                    </template>
+                    <button @click="addRole" class="btn btn-dark mt-3">Сохранить</button>
                 </div>
             </modal>
         </transition>
@@ -40,18 +53,18 @@
 
 <script>
 
-    import Services from '../../../../scripts/services/services';
-    import modalMixin from '../../../mixins/modal.js';
+import Services from '../../../../scripts/services/services';
+import modalMixin from '../../../mixins/modal.js';
 
-    import ShadowCard from '../../../components/shadow-card.vue';
-    import ValuesTable from '../../../components/values-table.vue';
+import ShadowCard from '../../../components/shadow-card.vue';
+import ValuesTable from '../../../components/values-table.vue';
 
-    import modal from '../../../components/controls/modal/modal.vue';
-    import VSelect from '../../../components/controls/VSelect/VSelect.vue';
+import modal from '../../../components/controls/modal/modal.vue';
+import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 
-    import UserEditModal from '../components/user-add-modal.vue';
+import UserEditModal from '../components/user-add-modal.vue';
 
-    export default {
+export default {
         mixins: [modalMixin],
         components: {
             ShadowCard,
@@ -77,7 +90,7 @@
                     created_at: 'Дата регистрации',
                     infinity_sip_extension: 'Infinity SIP Extension'
                 },
-                newRole: ''
+                rolesSelect: [],
             };
         },
         methods: {
@@ -90,13 +103,19 @@
                 return rolesList.length > 0 ? rolesList[0].name : 'N/A';
             },
             addRole() {
-                Services.net().post(this.getRoute('user.addRole', {id: this.user.id}), {}, {
-                    role: this.newRole
+                let cross = this.rolesSelect.filter(
+                    role => Object.keys(this.roles)
+                        .map(roleId => parseInt(roleId))
+                        .includes(role)
+                );
+                let rolesChange = {};
+                rolesChange = this.rolesSelect.filter(role => !cross.includes(role));
+                Services.net().put(this.getRoute('user.addRole', {id: this.user.id}), {}, {
+                    roles: rolesChange
                 })
                     .then(data => {
-                        this.newRole = null;
                         this.roles = data.roles;
-                        this.showMessageBox({text: 'Роль добавлена'});
+                        this.showMessageBox({text: 'Роли добавлены'});
                     });
             },
             deleteRole(id) {
@@ -110,7 +129,21 @@
             updateUser(newData) {
                 Object.assign(this.user, newData);
                 this.closeModal();
-            }
+            },
+            rolesCheckbox(e, id) {
+                id = parseInt(id);
+                if (e.target.checked) {
+                    this.rolesSelect.push(id);
+                } else {
+                    this.rolesSelect = this.rolesSelect.filter((roleId) => {
+                        return roleId !== id;
+                    });
+                }
+            },
+            changeUserRoles() {
+                this.openModal('add-user-role');
+                this.rolesSelect = Object.values(this.roles).map(role => parseInt(role.id));
+            },
         },
         computed: {
             userInfo() {
@@ -124,8 +157,13 @@
                 };
             },
             roleOptions() {
-                return this.options.roles.map(role => ({value: role.id, text: role.name}));
-            }
+                return Object.values(this.options.roles)
+                    .filter(role => role.front === this.user.front)
+                    .map(role => ({id: role.id, name: role.name}));
+            },
+            rolesIds() {
+                return Object.values(this.roles).map(role => parseInt(role.id));
+            },
         }
     };
 </script>

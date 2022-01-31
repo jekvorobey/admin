@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Merchant;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -99,7 +100,7 @@ class MerchantDetailController extends Controller
                 'middle_name',
                 'phone',
                 'email'
-            )->include('roleLinks')
+            )->include('roles')
                 ->setFilter('id', $userOperatorIds)
         )->keyBy('id');
 
@@ -120,7 +121,7 @@ class MerchantDetailController extends Controller
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
         $managers = $userService->users((new RestQuery())
-            ->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
+            ->setFilter('role', RoleDto::ROLE_KAM));
 
         $brandList = $brandIds ? $brandService->brands(
             (new RestQuery())
@@ -194,9 +195,10 @@ class MerchantDetailController extends Controller
                 'operators' => $operatorUsers->map(function (UserDto $operatorUser) {
                         return [
                             'id' => $operatorUser->id,
-                            'title' => $operatorUser->getTitle() . (array_key_exists(
-                                UserDto::MAS__MERCHANT_ADMIN,
-                                $operatorUser->roles
+                            'title' => $operatorUser->getTitle() . (in_array(
+                                RoleDto::ROLE_MAS_MERCHANT_ADMIN,
+                                /** TODO изменить после добавления всех ролей в базу */
+                                $operatorUser->new_roles
                             ) ? ' (Администратор)' : ''),
                             'email' => $operatorUser->email,
                         ];

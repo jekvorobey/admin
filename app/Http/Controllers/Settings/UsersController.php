@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRolesAddRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\UserDto;
@@ -109,20 +110,11 @@ class UsersController extends Controller
         return response()->json([]);
     }
 
-    public function addRole(int $id, Request $request, UserService $userService): JsonResponse
+    public function addRole(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'role' => 'required|integer',
-            'expires' => 'nullable|date',
-        ]);
-        if ($validator->fails()) {
-            throw new BadRequestHttpException($validator->errors()->first());
-        }
-
-        $userService->addRoles($id, [$data['role']], $data['expires'] ?? null);
+        $userService->addRoles($id, $request->roles);
 
         return response()->json([
             'roles' => $userService->userRoles($id),
