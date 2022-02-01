@@ -1,10 +1,9 @@
 <template>
-    <b-modal :id="id" title="Создание мерчанта 1" hide-footer ref="modal">
+    <b-modal :id="id" title="Создание мерчанта" hide-footer ref="modal">
         <template v-slot:default="{close}">
             <div class="mb-3">
                 <v-dadata
                     :value.sync="$v.form.legal_name.$model"
-                    :filter="(suggestion) => suggestion.data.type === 'LEGAL'"
                     :error="errorLegalName"
                     type="PARTY"
                     @onSelect="fillOrganizationFromDaData"
@@ -183,9 +182,15 @@
                     required,
                     minLength: minLength(10),
                     maxLength: maxLength(10),
+                    inn(value) {
+                        if (value.length === 10 || value.length === 12) {
+                            return true;
+                        }
+
+                        return false;
+                    }
                 },
                 kpp: {
-                    required,
                     minLength: minLength(9),
                     maxLength: maxLength(9),
                 },
@@ -213,7 +218,7 @@
 
                 first_name: {required},
                 last_name: {required},
-                middle_name: {required},
+                middle_name: {},
                 email: {
                     required,
                     email,
@@ -328,13 +333,11 @@
             errorInn() {
                 if (this.$v.form.inn.$dirty) {
                     if (!this.$v.form.inn.required) return "Обязательное поле!";
-                    if (!this.$v.form.inn.minLength) return "Должно быть 10 символов!";
-                    if (!this.$v.form.inn.maxLength) return "Должно быть 10 символов!";
+                    if (!this.$v.form.inn.inn) return "Должно быть 10 или 12 символов!";
                 }
             },
             errorKpp() {
                 if (this.$v.form.kpp.$dirty) {
-                    if (!this.$v.form.kpp.required) return "Обязательное поле!";
                     if (!this.$v.form.kpp.minLength) return "Должно быть 9 символов!";
                     if (!this.$v.form.kpp.maxLength) return "Должно быть 9 символов!";
                 }
@@ -390,11 +393,7 @@
                     if (!this.$v.form.last_name.required) return "Обязательное поле!";
                 }
             },
-            errorMiddleName() {
-                if (this.$v.form.middle_name.$dirty) {
-                    if (!this.$v.form.middle_name.required) return "Обязательное поле!";
-                }
-            },
+            errorMiddleName() {},
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
                     if (!this.$v.form.email.required) return "Обязательное поле!";
