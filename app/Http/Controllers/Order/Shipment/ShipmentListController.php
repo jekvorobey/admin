@@ -243,7 +243,7 @@ class ShipmentListController extends Controller
                     $users = $userService
                         ->users((new RestQuery())
                             ->addFields(UserDto::entity(), 'id')
-                            ->setFilter('id',$userIds))
+                            ->setFilter('id', $userIds))
                         ->keyBy('id');
                 }
             }
