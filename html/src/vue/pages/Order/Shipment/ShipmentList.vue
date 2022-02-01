@@ -59,7 +59,7 @@
                         </div>
                         <div class="row">
                             <v-dadata
-                                :value.sync="filter.delivery_city_string"
+                                :value.sync="filter.delivery_address_city"
                                 bounds="city-settlement"
                                 @onSelect="onDeliveryCitySelect"
                                 class="col-sm-12 col-md-4"
@@ -174,7 +174,7 @@ const cleanHiddenFilter = {
     stores: [],
     delivery_type: [],
     delivery_service: [],
-    delivery_city_string: '',
+    delivery_address_city: '',
     cargo_id: '',
     cargo_xml_id: '',
     psd: '',
@@ -201,7 +201,7 @@ const serverKeys = [
     'stores',
     'delivery_type',
     'delivery_service',
-    'delivery_city_string',
+    'delivery_address_city',
     'cargo_id',
     'cargo_xml_id',
     'psd',
@@ -520,7 +520,7 @@ export default {
         onDeliveryCitySelect(suggestion) {
             let address = suggestion.data;
 
-            this.filter.delivery_city = address.settlement_fias_id ? address.settlement_fias_id :
+            this.filter.delivery_address_city = address.settlement_fias_id ? address.settlement_fias_id :
                 address.city_fias_id;
         },
         /**
@@ -530,16 +530,14 @@ export default {
          */
         showCustomer(shipment) {
             // ФИО клиента для отображения
-            let user = this.users[
-                this.customers[this.orders[shipment.delivery.order_id].customer_id].user_id
-                ];
-            if(user) {
+            let name = shipment.delivery.receiver_name
+            if(name) {
               // Ссылка на страницу клиента в системе iBT
               let link = this.getRoute(
                   'customers.detail',
                   {id: this.orders[shipment.delivery.order_id].customer_id});
 
-              return `<a href="${link}">${user.full_name}</a>`
+              return `<a href="${link}">${name}</a>`
             }
 
             return this.invalidData;

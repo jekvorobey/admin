@@ -10,15 +10,11 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\Logistics\Dto\Lists\DeliveryService;
-use Greensight\Oms\Dto\Delivery\ShipmentStatus;
-use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
@@ -121,6 +117,11 @@ class ShipmentListController extends Controller
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
+                    case 'customer':
+                        if ($value) {
+                            $restQuery->setFilter('receiver_name', 'like', "%$value%");
+                        }
+                        break;
                     case 'price_from':
                         if ($value) {
                             $restQuery->setFilter('cost', '>=', $value);
@@ -147,6 +148,12 @@ class ShipmentListController extends Controller
                             $restQuery->setFilter('psd', '<=', $value[1]);
                         }
                         break;
+                    case 'pdd':
+                        if ($value) {
+                            $restQuery->setFilter('pdd', '>=', $value[0]);
+                            $restQuery->setFilter('pdd', '<=', $value[1]);
+                        }
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -169,7 +176,8 @@ class ShipmentListController extends Controller
             [
                 'number' => 'string|sometimes',
                 'customer' => 'string|sometimes',
-                'status.*' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
+                'status' => 'array|sometimes',
+                'status.*' => 'integer',
                 'price_from' => 'numeric|sometimes',
                 'price_to' => 'numeric|sometimes',
                 'product_vendor_code' => 'string|sometimes',
@@ -179,9 +187,11 @@ class ShipmentListController extends Controller
                 'merchants.*' => 'integer',
                 'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
-                'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),
-                'delivery_service.*' => Rule::in(array_keys(DeliveryService::allServices())),
-                'delivery_city_string' => 'string|sometimes',
+                'delivery_type' => 'array|sometimes',
+                'delivery_type.*' => 'integer',
+                'delivery_service' => 'array|sometimes',
+                'delivery_service.*' => 'integer',
+                'delivery_address_city' => 'string|sometimes',
                 'psd' => 'array|sometimes',
                 'psd.*' => 'string|nullable',
                 'pdd' => 'array|sometimes',
@@ -212,22 +222,32 @@ class ShipmentListController extends Controller
             ->stores((new RestQuery())->addFields(StoreDto::entity(), 'id', 'name', 'address'))
             ->keyBy('id');
 
-        $orders = $orderService
-            ->orders((new RestQuery())
-                ->setFilter('id', $shipments->pluck('delivery.order_id')->toArray()))
-            ->keyBy('id');
+        $orders = collect();
+        $customers = collect();
+        $users = collect();
 
-        $customers = $customerService
-            ->customers((new RestQuery())
-                ->addFields(CustomerDto::entity(), 'id', 'user_id')
-                ->setFilter('id', $orders->pluck('customer_id')->toArray()))
-            ->keyBy('id');
+        if ($orderIds = $shipments->pluck('delivery.order_id')->toArray()) {
+            $orders = $orderService
+                ->orders((new RestQuery())
+                    ->setFilter('id', $orderIds))
+                ->keyBy('id');
 
-        $users = $userService
-            ->users((new RestQuery())
-                ->addFields(UserDto::entity(), 'id')
-                ->setFilter('id', $customers->pluck('user_id')->toArray()))
-            ->keyBy('id');
+            if ($customerIds = $orders->pluck('customer_id')->toArray()) {
+                $customers = $customerService
+                    ->customers((new RestQuery())
+                        ->addFields(CustomerDto::entity(), 'id', 'user_id')
+                        ->setFilter('id', $customerIds))
+                    ->keyBy('id');
+
+                if ($userIds = $customers->pluck('user_id')->toArray()) {
+                    $users = $userService
+                        ->users((new RestQuery())
+                            ->addFields(UserDto::entity(), 'id')
+                            ->setFilter('id',$userIds))
+                        ->keyBy('id');
+                }
+            }
+        }
 
         $brands = $brandService->brands((new RestQuery())
             ->addFields(BrandDto::entity(), 'id', 'name'))->keyBy('id');
