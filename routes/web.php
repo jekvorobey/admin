@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Settings\UsersController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('user/{id}/change-password/{signature}', 'UsersController@changePassword')->name('page.changePassword');
+Route::get('user/{id}/change-password/{signature}', [UsersController::class, 'changePassword'])->name('page.changePassword');
 
 Route::prefix('login')->group(function () {
     Route::get('', 'MainController@login')->name('page.login');
@@ -304,6 +305,7 @@ Route::middleware('auth')->group(function () {
             Route::post('', 'UsersController@saveUser')->name('settings.saveUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
             Route::put('banArray', 'UsersController@banArray')->name('settings.banArray');
+            Route::post('updatePassword', 'UsersController@updatePassword')->name('user.updatePassword');
         });
 
         Route::prefix('roles')->group(function () {

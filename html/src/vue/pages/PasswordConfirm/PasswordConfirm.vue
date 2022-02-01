@@ -1,7 +1,7 @@
 <template>
     <layout-main>
-        <div class="password-confirm">
-            <h1>Установка нового пароля</h1>
+        <div class="page-password-confirm">
+            <h3>Установка нового пароля</h3>
             <form v-on:submit.prevent.stop="passwordConfirm">
                 <div class="form-group">
                     <label for="password" class="control-label">Пароль</label>
@@ -55,9 +55,9 @@ export default {
                 if (!result) {
                     return;
                 }
-                Services.net().post(this.getRoute('settings.saveUser'), null, formData).then(data => {
+                Services.net().post(this.getRoute('user.updatePassword'), null, formData).then(data => {
                     if (data.status === 'ok') {
-                        window.location.href = this.route('page.login');
+                        window.location.href = this.route('home');
                     } else {
                         this.showMessageBox({title: 'Ошибка', text: errorMessage});
                     }

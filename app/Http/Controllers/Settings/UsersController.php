@@ -120,7 +120,7 @@ class UsersController extends Controller
             }
         }
 
-        return response()->json([['status' => $ok ? 'ok' : 'fail']]);
+        return response()->json(['status' => $ok ? 'ok' : 'fail']);
     }
 
     public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
@@ -239,28 +239,38 @@ class UsersController extends Controller
      */
     public function changePassword(Request $request, UserService $userService, RequestInitiator $authUser)
     {
+        $request->merge(['userId' => $request->route('id'), 'signature' => $request->route('signature')]);
         $this->validate($request, [
             'userId' => 'required|integer',
             'signature' => 'required|string',
         ]);
-
-        $userId = $request->route('userId');
-        $signature = $request->route('signature');
         $authUserId = $authUser->userId();
 
-        if ($authUserId && $authUserId !== (int) $userId) {
+        if ($authUserId && $authUserId !== (int) $request->userId) {
             throw new AuthorizationException(
                 'Ошибка активации пользователя. Авторизован другой пользователь.'
             );
         }
 
         try {
-            $userService->verifyBySignature($userId, $signature);
+            $userService->verifyBySignature($request->userId, $request->signature);
         } catch (\Throwable $e) {
-            throw new AuthorizationException();
+            throw new AuthorizationException('Не удалось проверить пользователя');
         }
+        $authUser->loginByUserId($request->userId, Front::FRONT_ADMIN);
 
-        return $this->render('PasswordConfirm', ['id' => $userId]);
+        return $this->render('PasswordConfirm', ['id' => $request->userId]);
+    }
+
+    public function updatePassword(Request $request, UserService $userService): JsonResponse
+    {
+        $this->validate($request, [
+            'id' => 'required|integer',
+            'password' => 'required|string',
+        ]);
+        $ok = $userService->update(new UserDto($request->all()));
+
+        return response()->json(['status' => $ok ? 'ok' : 'fail']);
     }
 
     /**
