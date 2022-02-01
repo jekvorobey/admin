@@ -1,7 +1,5 @@
 <template>
     <layout-main>
-        {{shipments}}
-        <!--------------------
         <b-card>
             <template v-slot:header>
                 Фильтр
@@ -11,39 +9,14 @@
                 </button>
             </template>
             <div class="row">
-                <f-input v-model="filter.number" class="col-sm-12 col-md-3 col-xl-2">
-                    № заказа
+                <f-input v-model="filter.number" class="col-sm-12 col-md-4 col-xl-3">
+                    № Отправления
                 </f-input>
-                <f-input v-model="filter.customer" class="col-sm-12 col-md-3 col-xl-5">
+                <f-input v-model="filter.customer" class="col-sm-12 col-md-4 col-xl-5">
                     ФИО, e-mail или телефон покупателя
                 </f-input>
-                <f-date v-if="!filter.use_period"
-                        v-model="filter.created_at"
-                        @change="filter.created_between = []"
-                        class="col-sm-12 col-md-3 col-xl-3">
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox"
-                               v-model="filter.use_period"
-                               class="custom-control-input"
-                               id="created_at">
-                        <label class="custom-control-label" for="created_at">Дата заказа</label>
-                    </div>
-                </f-date>
-                <f-date v-else
-                        v-model="filter.created_between"
-                        @change="filter.created_at = []"
-                        class="col-sm-12 col-md-3 col-xl-3"
-                        range confirm>
-                    <div class="custom-control custom-switch">
-                        <input type="checkbox"
-                               v-model="filter.use_period"
-                               class="custom-control-input"
-                               id="created_between">
-                        <label class="custom-control-label" for="created_between">Период заказа</label>
-                    </div>
-                </f-date>
-                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-3 col-xl-2">
-                    Статус
+                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-4 col-xl-3">
+                    Статус Отправления
                 </f-multi-select>
             </div>
             <transition name="slide">
@@ -51,7 +24,7 @@
                     <div class="additional-filter pt-3 mt-3">
                         <div class="row">
                             <f-input v-model="filter.price_from" type="number" class="col-sm-12 col-md-3">
-                                Сумма заказа
+                                Сумма Отправления
                                 <template #prepend><span class="input-group-text">от</span></template>
                                 <template #append><span class="input-group-text">руб.</span></template>
                             </f-input>
@@ -60,64 +33,50 @@
                                 <template #prepend><span class="input-group-text">до</span></template>
                                 <template #append><span class="input-group-text">руб.</span></template>
                             </f-input>
-                            <f-input v-model="filter.offer_xml_id" type="text" class="col-sm-12 col-md-3">
-                                Код товара из ERP
-                                <template #help>Код из внешней системы, по которому импортируется товар</template>
-                            </f-input>
                             <f-input v-model="filter.product_vendor_code" type="text" class="col-sm-12 col-md-3">
                                 Артикул
                                 <template #help>Артикул товара в системе iBT</template>
                             </f-input>
+                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-3">
+                              Бренд
+                              <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
+                            </f-multi-select>
                         </div>
                         <div class="row">
-                            <f-multi-select v-model="filter.brands" :options="brandOptions" class="col-sm-12 col-md-3">
-                                Бренд
-                                <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
-                            </f-multi-select>
                             <f-multi-select v-model="filter.merchants" :options="merchantOptions" class="col-sm-12 col-md-3">
                                 Мерчант
                                 <template #help>Будут показаны заказы в которых есть товары указанного мерчанта</template>
                             </f-multi-select>
-                            <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-sm-12 col-md-3">
-                                Способ оплаты
-                            </f-multi-select>
-                            <f-multi-select v-model="filter.stores" :options="storeOptions" class="col-sm-12 col-md-3">
+                            <f-multi-select v-model="filter.stores" :options="storeOptions" class="col-sm-12 col-md-4">
                                 Склад отгрузки
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-sm-12 col-md-2">
+                              Тип доставки
+                            </f-multi-select>
+                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-sm-12 col-md-3">
+                              Логистический оператор
                             </f-multi-select>
                         </div>
                         <div class="row">
-                            <f-multi-select v-model="filter.delivery_type" :options="deliveryTypeOptions" class="col-sm-12 col-md-2">
-                                Тип доставки
-                            </f-multi-select>
-                            <f-multi-select v-model="filter.delivery_service" :options="deliveryServiceOptions" class="col-sm-12 col-md-2">
-                                Логистический оператор
-                            </f-multi-select>
                             <v-dadata
                                 :value.sync="filter.delivery_city_string"
                                 bounds="city-settlement"
                                 @onSelect="onDeliveryCitySelect"
                                 class="col-sm-12 col-md-4"
                             >Город доставки</v-dadata>
-                            <f-date v-model="filter.psd" class="col-sm-12 col-md-2" range confirm>
+                            <f-date v-model="filter.psd" class="col-sm-12 col-md-4" range confirm>
                                 PSD
                             </f-date>
-                            <f-date v-model="filter.pdd" class="col-sm-12 col-md-2" range confirm>
+                            <f-date v-model="filter.pdd" class="col-sm-12 col-md-4" range confirm>
                                 PDD
                             </f-date>
                         </div>
                         <div class="row">
-                            <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-sm-12 col-md-2">
-                                Отменен
-                            </f-select>
-                            <f-select v-model="filter.is_problem" :options="booleanOptions" class="col-sm-12 col-md-2">
-                                Проблемный
-                            </f-select>
-                            <f-select v-model="filter.is_require_check" :options="booleanOptions" class="col-sm-12 col-md-2">
-                                Требует проверки
-                            </f-select>
-
-                            <f-input v-model="filter.manager_comment" class="col-sm-12 col-md-4">
-                                Комментарий менеджера
+                            <f-input v-model="filter.cargo_id" type="text" class="col-sm-12 col-md-6">
+                              Номер Груза
+                            </f-input>
+                            <f-input v-model="filter.cargo_xml_id" type="text" class="col-sm-12 col-md-6">
+                              Номер задания на забор груза
                             </f-input>
                         </div>
                     </div>
@@ -130,7 +89,6 @@
                 <span class="float-right">Всего отправлений: {{ pager.total }}.</span>
             </template>
         </b-card>
-        ---------------------------------->
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div>
                 <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
@@ -167,19 +125,6 @@
                             </a>
                             <br>
                             <order-type :type='shipment.id'/>
-                        </template>
-                        <template v-else-if="column.code === 'is_problem'">
-                            <template v-if="shipment.delivery.is_problem">
-                                <span class="badge badge-danger">Проблемное</span><br>
-                            </template>
-                            <template v-if="orders[shipment.delivery.order_id].is_require_check">
-                                <span class="badge badge-warning">Требует проверки</span>
-                            </template>
-                            <template v-if="
-                            !orders[shipment.delivery.order_id].is_require_check
-                            && !shipment.delivery.is_problem">
-                                <span class="badge badge-success">Нет проблем</span>
-                            </template>
                         </template>
                         <div v-else v-html="column.value(shipment)"></div>
                     </td>
@@ -221,48 +166,46 @@ import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
 import modalMixin from '../../../mixins/modal.js';
 
 const cleanHiddenFilter = {
-    merchant_id: '',
-    package_qty: '',
-    weight: '',
-    cost: '',
-    delivery_type: '',
-    delivery_service_last_mile: '',
-    delivery_service_zero_mile: '',
-    store_id: '',
-    delivery_address: '',
+    price_from: '',
+    price_to: '',
+    product_vendor_code: '',
+    brands: [],
+    merchants: [],
+    stores: [],
+    delivery_type: [],
+    delivery_service: [],
+    delivery_city_string: '',
+    cargo_id: '',
+    cargo_xml_id: '',
     psd: '',
     pdd: '',
-    pddd: '',
-    updated_between: [],
     customer_id: [],
 };
 
 const cleanFilter = Object.assign({
     number: '',
-    delivery_xml_id: '',
-    status: '',
-    problems: [],
+    customer: '',
+    status: [],
 }, cleanHiddenFilter);
 
 const serverKeys = [
     'number',
-    'delivery_xml_id',
+    'customer',
     'status',
-    'problems',
 
-    'merchant_id',
-    'package_qty',
-    'weight',
-    'cost',
+    'price_from',
+    'price_to',
+    'product_vendor_code',
+    'brands',
+    'merchants',
+    'stores',
     'delivery_type',
-    'delivery_service_last_mile',
-    'delivery_service_zero_mile',
-    'store_id',
-    'delivery_address',
+    'delivery_service',
+    'delivery_city_string',
+    'cargo_id',
+    'cargo_xml_id',
     'psd',
     'pdd',
-    'pddd',
-    'updated_between',
     'customer_id'
 ];
 
@@ -276,10 +219,10 @@ export default {
         'iMerchants',
         'iCustomers',
         'iUsers',
+        'iBrands',
         'confirmationTypes',
         'iFilter',
         'iSort',
-        'brands',
         'iStores',
     ],
     components: {
@@ -294,14 +237,12 @@ export default {
     data() {
         let self = this;
         let filter = Object.assign({}, cleanFilter, this.iFilter);
-        //filter.status = filter.status.map(value => parseInt(value));
-        //filter.delivery_type = filter.delivery_type.map(value => parseInt(value));
-        //filter.payment_method = filter.payment_method.map(value => parseInt(value));
-        //filter.delivery_service = filter.delivery_service.map(value => parseInt(value));
-        //filter.brands = filter.brands.map(value => parseInt(value));
-        //filter.merchants = filter.merchants.map(value => parseInt(value));
-        //filter.confirmation_type = filter.confirmation_type.map(value => parseInt(value));
-        //filter.stores = filter.stores.map(value => parseInt(value));
+        filter.status = filter.status.map(value => parseInt(value));
+        filter.delivery_type = filter.delivery_type.map(value => parseInt(value));
+        filter.delivery_service = filter.delivery_service.map(value => parseInt(value));
+        filter.brands = filter.brands.map(value => parseInt(value));
+        filter.merchants = filter.merchants.map(value => parseInt(value));
+        filter.stores = filter.stores.map(value => parseInt(value));
         return {
             opened: false,
             currentPage: this.iCurrentPage,
@@ -311,6 +252,7 @@ export default {
             users: this.iUsers,
             stores: this.iStores,
             orders: this.iOrders,
+            brands: this.iBrands,
             filter,
             sort: this.iSort,
             appliedFilter: {},
@@ -318,15 +260,6 @@ export default {
             isSelectAllPageShipments: false,
             invalidData: '<b class="text-warning">N/A</b>',
             columns: [
-                {
-                    name: '№ заказа',
-                    code: 'order_id',
-                    value: (shipment) => {
-                        return shipment.delivery.order_id;
-                    },
-                    isShown: true,
-                    isAlwaysShown: true,
-                },
                 {
                     name: '№ Отправления',
                     code: 'delivery_id',
@@ -337,13 +270,75 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'Мерчант',
-                    code: 'merchant',
-                    value: (shipment) => {
-                        return this.merchants[shipment.merchant_id].legal_name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: true,
+                  name: 'Дата отправления',
+                  code: 'shipment_created_at',
+                  value: (shipment) => {
+                    return this.datetimePrint(shipment.created_at);
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Статус Отправления',
+                  code: 'status',
+                  value: (shipment) => {
+                    return Object.values(this.shipmentStatuses).find(item =>
+                        item.id === shipment.status
+                    ).name;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Сумма Отправления',
+                  code: 'cost',
+                  value: (shipment) => {
+                    return Helpers.roundValue(shipment.delivery.cost) + ' руб.';
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'ЛО',
+                  code: 'delivery_service',
+                  value: (shipment) => {
+                    return Object.values(this.deliveryServices).find(item =>
+                        item.id === shipment.delivery.delivery_service
+                    ).name;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Склад отгрузки',
+                  code: 'store_id',
+                  value: (shipment) => {
+                    return this.stores[shipment.store_id].name;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Тип доставки',
+                  code: 'delivery_type',
+                  value: (shipment) => {
+                    return Object.values(this.deliveryTypes).find(item =>
+                        item.id === this.orders[shipment.delivery.order_id].delivery_type
+                    ).name;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Адрес прибытия',
+                  code: 'delivery_address',
+                  value: (shipment) => {
+                    return shipment.delivery.delivery_address.length !== 0 ?
+                        '<small>' + shipment.delivery.delivery_address.address_string + '</small>'
+                        : this.invalidData
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
                 },
                 {
                     name: 'Клиент',
@@ -355,133 +350,35 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'Трек-номер',
-                    code: 'xml_id',
-                    value: (shipment) => {
-                        return shipment.delivery.xml_id ? shipment.delivery.xml_id : this.invalidData;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
+                  name: 'Статус Оплаты',
+                  code: 'payment_status',
+                  value: (shipment) => {
+                    return Object.values(this.shipmentStatuses).find(item =>
+                        item.id === shipment.payment_status
+                    ).name;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
                 },
                 {
-                    name: 'Статус',
-                    code: 'status',
-                    value: (shipment) => {
-                        return Object.values(this.shipmentStatuses).find(item =>
-                            item.id === shipment.status
-                        ).name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
+                  name: 'Вес',
+                  code: 'weight',
+                  value: (shipment) => {
+                    return shipment.delivery.weight + 'г';
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
                 },
                 {
-                    name: 'Кол-во коробок',
-                    code: 'package_qty',
-                    value: (shipment) => {
-                        return shipment.packages.length;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
+                  name: '№ заказа',
+                  code: 'order_id',
+                  value: (shipment) => {
+                    return shipment.delivery.order_id;
+                  },
+                  isShown: true,
+                  isAlwaysShown: true,
                 },
-                {
-                    name: 'Вес',
-                    code: 'weight',
-                    value: (shipment) => {
-                        return shipment.delivery.weight + 'г';
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Проблемы',
-                    code: 'is_problem',
-                    value: () => {
-                        // Uses vue-if template //
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Сумма товаров',
-                    code: 'cost',
-                    value: (shipment) => {
-                        return Helpers.roundValue(shipment.delivery.cost) + ' руб.';
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Тип доставки',
-                    code: 'delivery_type',
-                    value: (shipment) => {
-                        return Object.values(this.deliveryTypes).find(item =>
-                            item.id === this.orders[shipment.delivery.order_id].delivery_type
-                        ).name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Способ доставки',
-                    code: 'delivery_method',
-                    value: (shipment) => {
-                        return Object.values(this.deliveryMethods).find(item =>
-                            item.id === shipment.delivery.delivery_method
-                        ).name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: true,
-                },
-                {
-                    name: 'ЛО (последняя миля)',
-                    code: 'delivery_service_zero_mile',
-                    value: (shipment) => {
-                        if (shipment.delivery.delivery_service) {
-                            return Object.values(this.deliveryServices).find(item =>
-                                item.id === shipment.delivery.delivery_service
-                            ).name;
-                        } else {
-                            return this.invalidData;
-                        }
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'ЛО (нулевая миля)',
-                    code: 'delivery_service_last_mile',
-                    value: (shipment) => {
-                        if (shipment.delivery_service_zero_mile) {
-                            return Object.values(this.deliveryServices).find(item =>
-                                item.id === shipment.delivery_service_zero_mile
-                            ).name;
-                        } else {
-                            return this.invalidData;
-                        }
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Склад отгрузки',
-                    code: 'store_id',
-                    value: (shipment) => {
-                        return this.stores[shipment.store_id].name;
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
-                {
-                    name: 'Адрес прибытия',
-                    code: 'delivery_address',
-                    value: (shipment) => {
-                        return shipment.delivery.delivery_address.length !== 0 ?
-                            '<small>' + shipment.delivery.delivery_address.address_string + '</small>'
-                            : this.invalidData
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
-                },
+
                 {
                     name: 'PSD',
                     description: 'Дата отгрузки',
@@ -503,23 +400,47 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'PDDD',
-                    description: 'Дата доставки фактическая',
-                    code: 'pddd',
+                    name: 'Номер груза',
+                    code: 'cargo_id',
                     value: (shipment) => {
-                        return shipment.delivery_time_end ? this.datetimePrint(shipment.delivery_time_end) : this.invalidData
+                        return this.showCargo(shipment.cargo_id);
                     },
                     isShown: true,
                     isAlwaysShown: false,
                 },
                 {
-                    name: 'Последнее изменение',
-                    code: 'updated_at',
-                    value: (shipment) => {
-                        return this.datetimePrint(shipment.delivery.updated_at);
-                    },
-                    isShown: true,
-                    isAlwaysShown: false,
+                  name: 'Статус груза',
+                  code: 'cargo_status',
+                  value: (shipment) => {
+                    if(shipment.cargo) {
+                      return Object.values(this.cargoStatuses).find(item =>
+                          item.id === shipment.cargo.status
+                      ).name;
+                    }
+
+                    return this.invalidData;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Номер задания на забор груза',
+                  code: 'cargo_xml_id',
+                  value: (shipment) => {
+                    return shipment.cargo ? shipment.cargo.xml_id : this.invalidData;
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
+                },
+                {
+                  name: 'Фактическая дата доставки',
+                  description: 'Дата доставки фактическая',
+                  code: 'delivery_time_end',
+                  value: (shipment) => {
+                    return shipment.delivery_time_end ? this.datetimePrint(shipment.delivery_time_end) : this.invalidData
+                  },
+                  isShown: true,
+                  isAlwaysShown: false,
                 },
             ],
         };
@@ -609,42 +530,45 @@ export default {
          */
         showCustomer(shipment) {
             // ФИО клиента для отображения
-            let name = this.users[
+            let user = this.users[
                 this.customers[this.orders[shipment.delivery.order_id].customer_id].user_id
-                ].full_name;
-            // Ссылка на страницу клиента в системе iBT
-            let link = this.getRoute(
-                'customers.detail',
-                {id: this.orders[shipment.delivery.order_id].customer_id});
+                ];
+            if(user) {
+              // Ссылка на страницу клиента в системе iBT
+              let link = this.getRoute(
+                  'customers.detail',
+                  {id: this.orders[shipment.delivery.order_id].customer_id});
 
-            return `<a href="${link}">${name}</a>`
+              return `<a href="${link}">${user.full_name}</a>`
+            }
+
+            return this.invalidData;
+        },
+        showCargo(cargoId) {
+          if (cargoId) {
+            let route = this.getRoute('cargo.detail', {id: cargoId});
+
+            return `<a href="${route}">${cargoId}<a/>`
+          }
+          return '';
         }
     },
     computed: {
         ...mapGetters(['getRoute']),
         statusOptions() {
-            return Object.values(this.orderStatuses).map(status => ({
-                value: status.id,
-                text: status.name
-            }));
+            return Object.values(this.shipmentStatuses).map(status => ({value: status.id, text: status.name}));
         },
         deliveryTypeOptions() {
             return Object.values(this.deliveryTypes).map(type => ({value: type.id, text: type.name}));
         },
         brandOptions() {
-            return this.brands.map(brand => ({value: brand.id, text: brand.name}));
-        },
-        paymentMethodOptions() {
-            return Object.values(this.paymentMethods).map(method => ({value: method.id, text: method.name}));
+            return Object.values(this.brands).map(brand => ({value: brand.id, text: brand.name}));
         },
         deliveryServiceOptions() {
             return Object.values(this.deliveryServices).map(service => ({value: service.id, text: service.name}));
         },
         merchantOptions() {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
-        },
-        confirmationTypeOptions() {
-            return Object.values(this.confirmationTypes).map(confirmation_type => ({value: confirmation_type.id, text: confirmation_type.name}));
         },
         storeOptions() {
             return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));
