@@ -427,7 +427,7 @@ export default {
                   name: 'Номер задания на забор груза',
                   code: 'cargo_xml_id',
                   value: (shipment) => {
-                    return shipment.cargo ? shipment.cargo.xml_id : this.invalidData;
+                    return shipment.cargo ? this.cargoTrackNumber(shipment.cargo) : this.invalidData;
                   },
                   isShown: true,
                   isAlwaysShown: false,
@@ -549,6 +549,12 @@ export default {
             return `<a href="${route}">${cargoId}<a/>`
           }
           return '';
+        },
+        cargoTrackNumber(cargo) {
+          if (cargo.cdek_intake_number) {
+            return cargo.cdek_intake_number;
+          }
+          return cargo.xml_id;
         }
     },
     computed: {
