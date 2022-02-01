@@ -10,8 +10,13 @@ use Illuminate\Validation\Rule;
 /**
  * @property int $id
  * @property string $login
+ * @property string $login_email
  * @property string $password
  * @property string $infinity_sip_extension
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $middle_name
+ * @property string $phone
  * @property array[]|array $fronts
  * @property array[]|array $roles
  */
@@ -31,6 +36,7 @@ class UserSaveRequest extends FormRequest
             'phone' => 'required_without:email|regex:/^\+7\d{10}$/',
             'login' => 'required_with:phone|regex:/^\+7\d{10}$/',
             'login_email' => 'required_with:email|email',
+            'password' => 'nullable|string',
             'fronts' => 'required_without:front|array',
             'fronts.*' => [
                 'required',
