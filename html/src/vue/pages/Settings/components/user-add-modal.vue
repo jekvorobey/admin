@@ -47,7 +47,7 @@
                                                    :id="`role-${role.id}`"
                                                    @change="e => rolesCheckbox(e, role.id)"
                                                    :value="role.id"
-                                                   :checked="roles ? rolesCheck(role.id) : null"
+                                                   :checked="userCheckedRoles ? rolesCheck(role.id) : null"
                                             >
                                             <label class="form-check-label" :for="`role-${role.id}`">
                                                 {{ role.name }}

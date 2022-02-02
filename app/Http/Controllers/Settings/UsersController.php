@@ -248,7 +248,7 @@ class UsersController extends Controller
 
         if ($authUserId && $authUserId !== (int) $request->userId) {
             throw new AuthorizationException(
-                'Ошибка активации пользователя. Авторизован другой пользователь.'
+                'Ошибка авторизации пользователя. Авторизован другой пользователь.'
             );
         }
 
