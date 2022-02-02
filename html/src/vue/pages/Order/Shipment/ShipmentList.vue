@@ -119,14 +119,7 @@
                 <tr v-for="shipment in shipments">
                     <td><input type="checkbox" value="true" class="shipment-select" :value="shipment.id"></td>
                     <td v-for="column in columns" v-if="column.isShown">
-                        <template v-if="column.code === 'order_id'">
-                            <a :href="getRoute('orders.detail', {id: shipment.delivery.order_id})">
-                                {{orders[shipment.delivery.order_id].number}}
-                            </a>
-                            <br>
-                            <order-type :type='shipment.id'/>
-                        </template>
-                        <div v-else v-html="column.value(shipment)"></div>
+                        <div v-html="column.value(shipment)"></div>
                     </td>
                     <td></td>
                 </tr>
@@ -262,7 +255,7 @@ export default {
             columns: [
                 {
                     name: '№ Отправления',
-                    code: 'delivery_id',
+                    code: 'number',
                     value: (shipment) => {
                         return shipment.number;
                     },
@@ -270,75 +263,75 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                  name: 'Дата отправления',
-                  code: 'shipment_created_at',
-                  value: (shipment) => {
-                    return this.datetimePrint(shipment.created_at);
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Дата отправления',
+                    code: 'shipment_created_at',
+                    value: (shipment) => {
+                        return this.datetimePrint(shipment.created_at);
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Статус Отправления',
-                  code: 'status',
-                  value: (shipment) => {
-                    return Object.values(this.shipmentStatuses).find(item =>
-                        item.id === shipment.status
-                    ).name;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Статус Отправления',
+                    code: 'status',
+                    value: (shipment) => {
+                        return Object.values(this.shipmentStatuses).find(item =>
+                            item.id === shipment.status
+                        ).name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Сумма Отправления',
-                  code: 'cost',
-                  value: (shipment) => {
-                    return Helpers.roundValue(shipment.delivery.cost) + ' руб.';
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Сумма Отправления',
+                    code: 'cost',
+                    value: (shipment) => {
+                        return Helpers.roundValue(shipment.delivery.cost) + ' руб.';
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'ЛО',
-                  code: 'delivery_service',
-                  value: (shipment) => {
-                    return Object.values(this.deliveryServices).find(item =>
-                        item.id === shipment.delivery.delivery_service
-                    ).name;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'ЛО',
+                    code: 'delivery_service',
+                    value: (shipment) => {
+                        return Object.values(this.deliveryServices).find(item =>
+                            item.id === shipment.delivery.delivery_service
+                        ).name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Склад отгрузки',
-                  code: 'store_id',
-                  value: (shipment) => {
-                    return this.stores[shipment.store_id].name;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Склад отгрузки',
+                    code: 'store_id',
+                    value: (shipment) => {
+                        return this.getStore(this.stores[shipment.store_id]);
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Тип доставки',
-                  code: 'delivery_type',
-                  value: (shipment) => {
-                    return Object.values(this.deliveryTypes).find(item =>
-                        item.id === this.orders[shipment.delivery.order_id].delivery_type
-                    ).name;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Тип доставки',
+                    code: 'delivery_type',
+                    value: (shipment) => {
+                        return Object.values(this.deliveryTypes).find(item =>
+                            item.id === this.orders[shipment.delivery.order_id].delivery_type
+                        ).name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Адрес прибытия',
-                  code: 'delivery_address',
-                  value: (shipment) => {
-                    return shipment.delivery.delivery_address.length !== 0 ?
-                        '<small>' + shipment.delivery.delivery_address.address_string + '</small>'
-                        : this.invalidData
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Адрес прибытия',
+                    code: 'delivery_address',
+                    value: (shipment) => {
+                        return shipment.delivery.delivery_address.length !== 0 ?
+                            '<small>' + shipment.delivery.delivery_address.address_string + '</small>'
+                            : this.invalidData
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
                     name: 'Клиент',
@@ -350,33 +343,33 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                  name: 'Статус Оплаты',
-                  code: 'payment_status',
-                  value: (shipment) => {
-                    return Object.values(this.shipmentStatuses).find(item =>
-                        item.id === shipment.payment_status
-                    ).name;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Статус Оплаты',
+                    code: 'payment_status',
+                    value: (shipment) => {
+                        return Object.values(this.shipmentStatuses).find(item =>
+                            item.id === shipment.payment_status
+                        ).name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Вес',
-                  code: 'weight',
-                  value: (shipment) => {
-                    return shipment.delivery.weight + 'г';
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Вес',
+                    code: 'weight',
+                    value: (shipment) => {
+                        return shipment.delivery.weight + 'г';
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: '№ заказа',
-                  code: 'order_id',
-                  value: (shipment) => {
-                    return shipment.delivery.order_id;
-                  },
-                  isShown: true,
-                  isAlwaysShown: true,
+                    name: '№ заказа',
+                    code: 'order_id',
+                    value: (shipment) => {
+                        return this.getOrder(shipment.delivery);
+                    },
+                    isShown: true,
+                    isAlwaysShown: true,
                 },
 
                 {
@@ -409,38 +402,38 @@ export default {
                     isAlwaysShown: false,
                 },
                 {
-                  name: 'Статус груза',
-                  code: 'cargo_status',
-                  value: (shipment) => {
-                    if(shipment.cargo) {
-                      return Object.values(this.cargoStatuses).find(item =>
-                          item.id === shipment.cargo.status
-                      ).name;
-                    }
+                    name: 'Статус груза',
+                    code: 'cargo_status',
+                    value: (shipment) => {
+                        if(shipment.cargo) {
+                            return Object.values(this.cargoStatuses).find(item =>
+                                item.id === shipment.cargo.status
+                            ).name;
+                        }
 
-                    return this.invalidData;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                        return this.invalidData;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Номер задания на забор груза',
-                  code: 'cargo_xml_id',
-                  value: (shipment) => {
-                    return shipment.cargo ? this.cargoTrackNumber(shipment.cargo) : this.invalidData;
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Номер задания на забор груза',
+                    code: 'cargo_xml_id',
+                    value: (shipment) => {
+                        return shipment.cargo ? this.cargoTrackNumber(shipment.cargo) : this.invalidData;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
                 {
-                  name: 'Фактическая дата доставки',
-                  description: 'Дата доставки фактическая',
-                  code: 'delivery_time_end',
-                  value: (shipment) => {
-                    return shipment.delivery_time_end ? this.datetimePrint(shipment.delivery_time_end) : this.invalidData
-                  },
-                  isShown: true,
-                  isAlwaysShown: false,
+                    name: 'Фактическая дата доставки',
+                    description: 'Дата доставки фактическая',
+                    code: 'delivery_time_end',
+                    value: (shipment) => {
+                        return shipment.delivery_time_end ? this.datetimePrint(shipment.delivery_time_end) : this.invalidData
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
                 },
             ],
         };
@@ -530,31 +523,51 @@ export default {
          */
         showCustomer(shipment) {
             // ФИО клиента для отображения
-            let name = shipment.delivery.receiver_name
-            if(name) {
-              // Ссылка на страницу клиента в системе iBT
-              let link = this.getRoute(
-                  'customers.detail',
-                  {id: this.orders[shipment.delivery.order_id].customer_id});
+            let user = this.users[
+                this.customers[this.orders[shipment.delivery.order_id].customer_id].user_id
+                ];
 
-              return `<a href="${link}">${name}</a>`
+            if (user) {
+              // Ссылка на страницу клиента в системе iBT
+                let link = this.getRoute(
+                    'customers.detail',
+                    {id: this.orders[shipment.delivery.order_id].customer_id});
+
+                return `<a href="${link}">${user.full_name}</a>`
+            }
+            return this.invalidData;
+        },
+        showCargo(cargoId) {
+            if (cargoId) {
+                let route = this.getRoute('cargo.detail', {id: cargoId});
+
+                return `<a href="${route}">${cargoId}<a/>`
+            }
+            return '';
+        },
+        getOrder(delivery) {
+            if (delivery) {
+                let route = this.getRoute('orders.detail', {id: delivery.order_id});
+
+                return `<a href="${route}">${delivery.order_id}<a/>`
             }
 
             return this.invalidData;
         },
-        showCargo(cargoId) {
-          if (cargoId) {
-            let route = this.getRoute('cargo.detail', {id: cargoId});
+        getStore(store) {
+            if (store) {
+                let route = this.getRoute('merchantStore.edit', {id: store.id});
 
-            return `<a href="${route}">${cargoId}<a/>`
-          }
-          return '';
+                return `<a href="${route}">${store.name}<a/>`
+            }
+
+            return this.invalidData;
         },
         cargoTrackNumber(cargo) {
-          if (cargo.cdek_intake_number) {
-            return cargo.cdek_intake_number;
-          }
-          return cargo.xml_id;
+            if (cargo.cdek_intake_number) {
+                return cargo.cdek_intake_number;
+            }
+            return cargo.xml_id;
         }
     },
     computed: {

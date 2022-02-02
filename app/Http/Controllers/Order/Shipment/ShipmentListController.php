@@ -216,7 +216,7 @@ class ShipmentListController extends Controller
 
         $shipments = $shipmentService->shipments($restQuery);
 
-        $merchants = $this->getMerchants($shipments->pluck('merchant_id')->toArray());
+        $merchants = $this->getMerchants();
 
         $stores = $storeService
             ->stores((new RestQuery())->addFields(StoreDto::entity(), 'id', 'name', 'address'))
