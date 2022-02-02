@@ -76,12 +76,12 @@
             <tbody>
                 <tr v-for="user in users">
                     <td><a :href="getRoute('customers.detail', {id: user.id})">{{ user.id }}</a></td>
-                    <td>{{ user.register_date}}</td>
+                    <td>{{ datePrint(user.register_date) }}</td>
                     <td>{{ user.full_name || 'Не задано' }}</td>
                     <td>{{ user.phone }}</td>
                     <td>{{ user.email || '-' }}</td>
-                    <td>{{ user.segment|| '-'  }}</td>
-                    <td>{{ user.last_visit|| '-'  }}</td>
+                    <td>{{ user.segment || '-'  }}</td>
+                    <td>{{ user.last_visit || '-'  }}</td>
                     <td>{{ statuses[user.status] }}</td>
                     <td></td>
                 </tr>

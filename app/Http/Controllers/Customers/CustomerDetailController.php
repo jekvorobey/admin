@@ -96,7 +96,7 @@ class CustomerDetailController extends Controller
 
         $this->title = $user->getTitle();
         $referral = $user->hasRole(UserDto::SHOWCASE__REFERRAL_PARTNER);
-        $birthday = $customer->birthday ? Carbon::createFromFormat('Y-m-d H:i:s', $customer->birthday) : null;
+        $birthday = $customer->birthday ? Carbon::parse($customer->birthday) : null;
 
         $avatar = null;
         if ($customer->avatar) {
