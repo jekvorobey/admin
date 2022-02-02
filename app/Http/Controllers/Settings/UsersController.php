@@ -262,13 +262,13 @@ class UsersController extends Controller
         return $this->render('PasswordConfirm', ['id' => $request->userId]);
     }
 
-    public function updatePassword(Request $request, UserService $userService): JsonResponse
+    public function updatePassword(Request $request, UserService $userService, RequestInitiator $authUser): JsonResponse
     {
-        $this->validate($request, [
-            'id' => 'required|integer',
+        $data = $this->validate($request, [
             'password' => 'required|string',
         ]);
-        $ok = $userService->update(new UserDto($request->all()));
+        $data['id'] = $authUser->userId();
+        $ok = $userService->update(new UserDto($data));
 
         return response()->json(['status' => $ok ? 'ok' : 'fail']);
     }
