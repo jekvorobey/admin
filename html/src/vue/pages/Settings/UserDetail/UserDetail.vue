@@ -52,7 +52,7 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :fronts="options.fronts" :roles="options.roles" @onSave="updateUser"></user-edit-modal>
+        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 
@@ -93,9 +93,6 @@ export default {
                 created_at: 'Дата регистрации',
                 infinity_sip_extension: 'Infinity SIP Extension',
             };
-            if (!this.iUser.infinity_sip_extension) {
-                this.$delete(sip, 'infinity_sip_extension');
-            }
 
             return {
                 user: this.iUser,
@@ -167,7 +164,7 @@ export default {
                     login: this.user.login_email ? this.user.login_email : this.user.login,
                     front: this.frontName(this.user.fronts),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
-                    infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : null,
+                    infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : 'N/A',
                     created_at: this.datePrint(this.user.created_at),
                 };
             },

@@ -47,7 +47,7 @@
                                                    :id="`role-${role.id}`"
                                                    @change="e => rolesCheckbox(e, role.id)"
                                                    :value="role.id"
-                                                   :checked="source ? source.roles.includes(parseInt(role.id)) : null"
+                                                   :checked="roles ? rolesCheck(role.id) : null"
                                             >
                                             <label class="form-check-label" :for="`role-${role.id}`">
                                                 {{ role.name }}
@@ -109,6 +109,7 @@ export default {
         source: Object,
         fronts: {},
         roles: {},
+        userCheckedRoles: {},
     },
     data() {
         return {
@@ -214,6 +215,8 @@ export default {
                     email: this.form.email,
                     phone: this.form.phone,
                     login: this.form.email ? this.form.email : this.form.phone,
+                    login_email: this.form.email,
+                    infinity_sip_extension: this.form.infinity_sip_extension,
                     fronts: this.form.fronts,
                     roles: this.form.roles,
                 });
@@ -240,6 +243,10 @@ export default {
                 });
             }
             this.form.fronts = this.frontsModalSelect;
+        },
+        rolesCheck(id) {
+            let rolesList = Object.values(this.userCheckedRoles).filter(role => role.id === id);
+            return rolesList.length > 0;
         },
     },
     computed: {
