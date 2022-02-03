@@ -168,7 +168,7 @@ class ProductDetailController extends Controller
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
-        $productService->savePublicEvents($id, $request->validated());
+        $productService->savePublicEvents($id, $request->validated()['public_events']);
 
         return response()->json();
     }

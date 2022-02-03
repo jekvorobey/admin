@@ -204,6 +204,7 @@
                 modal-name="HowToVideoEdit"/>
         <product-mk-modal
             :product-id="product.id"
+            :public-events="product.publicEvents"
             @onSave="$emit('onSave')"
             modal-name="AttachMK"/>
 
