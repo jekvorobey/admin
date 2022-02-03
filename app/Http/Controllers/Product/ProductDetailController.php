@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Products\ProductAttachMKRequest;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -51,6 +52,8 @@ class ProductDetailController extends Controller
         ContentBadgesService $badgesService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $this->loadPublicEventTypes = true;
 
         [
             $product,
@@ -151,6 +154,21 @@ class ProductDetailController extends Controller
             'props' => 'required',
         ]);
         $offerService->saveProperties($id, $data['props']);
+
+        return response()->json();
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function savePublicEvents(
+        ProductAttachMKRequest $request,
+        int $id,
+        ProductService $productService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $productService->savePublicEvents($id, $request->validated());
 
         return response()->json();
     }
@@ -297,6 +315,7 @@ class ProductDetailController extends Controller
             ->include('properties')
             ->include('offers')
             ->include('ingredients')
+            ->include('publicEvents')
             ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
@@ -340,14 +359,14 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $product['currentOffer'] = $currentOffer;
-        $product['publicEvents'] = [
-            [
-                'id' => 3,
-                'name' => 'СТАРТ-ВИЗАЖ',
-                'description' => 'Для визажистов начального уровня',
-            ],
-            ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня'],
-        ];
+//        $product['publicEvents'] = [
+//            [
+//                'id' => 3,
+//                'name' => 'СТАРТ-ВИЗАЖ',
+//                'description' => 'Для визажистов начального уровня',
+//            ],
+//            ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня'],
+//        ];
         //После реализации сервиса мастер классов - тут получение привязанных
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);

@@ -128,7 +128,7 @@
         iImages: {},
         iBadges: {},
         iProperties: {},
-        options: {}
+        options: {},
     },
     data() {
         return {

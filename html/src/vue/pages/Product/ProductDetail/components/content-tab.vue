@@ -153,7 +153,7 @@
                 <tr>
                     <th v-if="canUpdate(blocks.products)">
                         Добавить
-                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
+                        <button class="btn btn-success btn-sm" @click="openModal('AttachMK')"><fa-icon icon="plus"/></button>
                     </th>
                     <td>
                         <div v-for="(event, index) in product.publicEvents">
@@ -202,6 +202,10 @@
                 video_field="how_to_video"
                 @onSave="$emit('onSave')"
                 modal-name="HowToVideoEdit"/>
+        <product-mk-modal
+            :product-id="product.id"
+            @onSave="$emit('onSave')"
+            modal-name="AttachMK"/>
 
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('TipForm')">
@@ -230,6 +234,7 @@ import FileUploadModal from './file-upload-modal.vue';
 import ImagesUploadModal from './images-upload-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
+import ProductMkModal from './product-mk-modal.vue';
 import TipForm from './tip-form.vue';
 
 import Services from '../../../../../scripts/services/services';
@@ -243,6 +248,7 @@ export default {
         ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
+        ProductMkModal,
         TipForm,
         draggable
     },
