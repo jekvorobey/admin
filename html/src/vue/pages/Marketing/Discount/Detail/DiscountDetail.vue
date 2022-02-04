@@ -166,6 +166,8 @@
                         segments: (item.type === this.CONDITION_TYPE_USER) ? segments : [],
                         sum: ('minPrice' in cond) ? cond.minPrice : "",
                         synergy: ('synergy' in cond) ? cond.synergy : [],
+                        maxValueType: ('maxValueType' in cond) ? cond.maxValueType : null,
+                        maxValue: ('maxValue' in cond) ? cond.maxValue : null,
                         type: item.type,
                         users: ('customerIds' in cond) ? cond.customerIds : [],
                         count: ('count' in cond) ? cond.count : '',
