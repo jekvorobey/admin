@@ -1,12 +1,12 @@
 <template>
     <transition name="modal">
-        <modal :close="closeModal" v-if="isModalOpen(modalName)">
+        <modal :close="closeModal" v-if="isModalOpen(modalName)" type="visible">
             <div slot="header">
                 Привязать Мастер Классы
             </div>
             <div slot="body">
                 <div class="row">
-                    <f-multi-select :options="publicEventOptions" v-model="existingPublicEvents" class="col-md-6 col-sm-12">
+                    <f-multi-select :options="publicEventOptions" v-model="existingPublicEvents" class="col-md-12 col-sm-12">
                         Мастер класс
                     </f-multi-select>
                 </div>
@@ -36,7 +36,7 @@ export default {
     },
     data() {
         return {
-            existingPublicEvents: this.publicEvents.map(type => ({value: type.id}))
+            existingPublicEvents: this.publicEvents.map(type => type.id)
         }
     },
     methods: {

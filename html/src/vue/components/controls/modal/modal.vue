@@ -6,7 +6,7 @@
                 tabindex="0"
                 @click.stop
                 @keydown="keyDown"
-                :class="{ 'modal-wrapper--fullscreen': type === 'fullscreen' }"
+                :class="{ 'modal-wrapper--fullscreen': type === 'fullscreen', 'modal-wrapper--visible': type === 'visible' }"
         >
             <div
                     class="modal-container popup"
