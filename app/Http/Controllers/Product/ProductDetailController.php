@@ -36,6 +36,7 @@ use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
+use Pim\Services\PublicEventService\PublicEventService;
 use Pim\Services\SearchService\SearchService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -53,8 +54,6 @@ class ProductDetailController extends Controller
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
-        $this->loadPublicEventTypes = true;
-
         [
             $product,
             $images,
@@ -62,6 +61,7 @@ class ProductDetailController extends Controller
             $props,
             $availableProps,
             $directoryValues,
+            $publicEvents,
         ] = $this->getProductData($id, $productService);
 
         $approvalStatuses = collect(ProductApprovalStatus::allStatuses())->pluck('name', 'id')->all();
@@ -77,6 +77,7 @@ class ProductDetailController extends Controller
             'iImages' => $images,
             'iBadges' => $badges,
             'iProperties' => $props,
+            'iPublicEvents' => $publicEvents,
             'options' => [
                 'availableProperties' => $availableProps,
                 'availableBadges' => $availableBadges,
@@ -325,6 +326,7 @@ class ProductDetailController extends Controller
         $stockService = resolve(StockService::class);
         $priceService = resolve(PriceService::class);
         $orderService = resolve(OrderService::class);
+        $publicEventService = resolve(PublicEventService::class);
         $merchantIds = $product->offers->pluck('merchant_id');
         $merchants = $this->getMerchants($merchantIds->unique()->all());
         $product->offers = $product->offers->map(function (OfferDto $item) use ($priceService, $stockService, $merchants) {
@@ -377,6 +379,8 @@ class ProductDetailController extends Controller
         $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
 
+        $publicEvents = $publicEventService->query()->get();
+
         return [
             $product,
             $images,
@@ -384,6 +388,7 @@ class ProductDetailController extends Controller
             $props,
             $availableProps,
             $directoryValues,
+            $publicEvents,
         ];
     }
 

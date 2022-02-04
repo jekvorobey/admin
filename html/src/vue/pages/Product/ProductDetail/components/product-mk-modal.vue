@@ -33,8 +33,10 @@ export default {
         modalName: String,
         productId: Number,
         publicEvents: Array,
+        allPublicEvents: Object,
     },
     data() {
+      console.log(this.allPublicEvents);
         return {
             existingPublicEvents: this.publicEvents.map(type => type.id)
         }
@@ -51,7 +53,7 @@ export default {
     },
     computed: {
         publicEventOptions() {
-            return Object.values(this.publicEventTypes).map(type => ({value: type.id, text: type.name}));
+            return Object.values(this.allPublicEvents).map(type => ({value: type.id, text: type.name}));
         },
     }
 }

@@ -205,6 +205,7 @@
         <product-mk-modal
             :product-id="product.id"
             :public-events="product.publicEvents"
+            :all-public-events="allPublicEvents"
             @onSave="$emit('onSave')"
             modal-name="AttachMK"/>
 
@@ -259,6 +260,7 @@ export default {
     props: {
         images: {},
         product: {},
+        allPublicEvents: Object,
     },
 
     data() {
