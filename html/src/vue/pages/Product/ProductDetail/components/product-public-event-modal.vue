@@ -36,7 +36,6 @@ export default {
         allPublicEvents: Object,
     },
     data() {
-      console.log(this.allPublicEvents);
         return {
             existingPublicEvents: this.publicEvents.map(type => type.id)
         }
