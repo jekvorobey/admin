@@ -152,6 +152,7 @@ class OrderListController extends Controller
                 'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
                 'manager_comment' => 'string|sometimes',
                 'type.*' => Rule::in(array_keys(OrderType::allTypes())),
+                'delivery_xml_id' => 'string|sometimes',
             ]
         );
     }
