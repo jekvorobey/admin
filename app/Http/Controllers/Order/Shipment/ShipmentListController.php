@@ -154,6 +154,11 @@ class ShipmentListController extends Controller
                             $restQuery->setFilter('pdd', '<=', $value[1]);
                         }
                         break;
+                    case 'status':
+                        if ($value) {
+                            $restQuery->setFilter('status', 'in', $value);
+                        }
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
