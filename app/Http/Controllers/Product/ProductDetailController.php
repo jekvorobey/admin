@@ -164,8 +164,8 @@ class ProductDetailController extends Controller
      */
     public function savePublicEvents(
         AttachPublicEventRequest $request,
-        int                      $id,
-        ProductService           $productService
+        int $id,
+        ProductService $productService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
