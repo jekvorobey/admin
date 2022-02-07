@@ -23,7 +23,7 @@ import Services from "../../../../../scripts/services/services";
 import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
 
 export default {
-    name: "product-mk-modal.vue",
+    name: "product-public-event-modal",
     components: {
         FMultiSelect,
         modal
@@ -44,7 +44,7 @@ export default {
     methods: {
         save() {
             Services.net().put(this.getRoute('products.savePublicEvents', {id: this.productId}), null,
-                {'public_events': this.existingPublicEvents.map(value => parseInt(value))})
+                {'public_events': this.formatData(this.existingPublicEvents)})
                 .then(result => {
                   this.$emit('onSave', result);
                   this.closeModal();
@@ -55,10 +55,9 @@ export default {
         publicEventOptions() {
             return Object.values(this.allPublicEvents).map(type => ({value: type.id, text: type.name}));
         },
+        formatData(passingPublicEvents) {
+            return passingPublicEvents.map(value => parseInt(value));
+        }
     }
 }
 </script>
-
-<style scoped>
-
-</style>

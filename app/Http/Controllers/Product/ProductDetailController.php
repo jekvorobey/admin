@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Products\ProductAttachMKRequest;
+use App\Http\Requests\AttachPublicEventRequest;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -163,13 +163,13 @@ class ProductDetailController extends Controller
      * @throws PimException
      */
     public function savePublicEvents(
-        ProductAttachMKRequest $request,
-        int $id,
-        ProductService $productService
+        AttachPublicEventRequest $request,
+        int                      $id,
+        ProductService           $productService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
-        $productService->savePublicEvents($id, $request->validated()['public_events']);
+        $productService->savePublicEvents($id, $request->all()['public_events']);
 
         return response()->json();
     }
@@ -361,15 +361,6 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $product['currentOffer'] = $currentOffer;
-//        $product['publicEvents'] = [
-//            [
-//                'id' => 3,
-//                'name' => 'СТАРТ-ВИЗАЖ',
-//                'description' => 'Для визажистов начального уровня',
-//            ],
-//            ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня'],
-//        ];
-        //После реализации сервиса мастер классов - тут получение привязанных
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);
 

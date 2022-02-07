@@ -153,7 +153,7 @@
                 <tr>
                     <th v-if="canUpdate(blocks.products)">
                         Добавить
-                        <button class="btn btn-success btn-sm" @click="openModal('AttachMK')"><fa-icon icon="plus"/></button>
+                        <button class="btn btn-success btn-sm" @click="openModal('ProductPublicEventModal')"><fa-icon icon="plus"/></button>
                     </th>
                     <td>
                         <div v-for="(event, index) in product.publicEvents">
@@ -202,12 +202,12 @@
                 video_field="how_to_video"
                 @onSave="$emit('onSave')"
                 modal-name="HowToVideoEdit"/>
-        <product-mk-modal
+        <product-public-event-modal
             :product-id="product.id"
             :public-events="product.publicEvents"
             :all-public-events="allPublicEvents"
             @onSave="$emit('onSave')"
-            modal-name="AttachMK"/>
+            modal-name="ProductPublicEventModal"/>
 
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('TipForm')">
@@ -236,7 +236,7 @@ import FileUploadModal from './file-upload-modal.vue';
 import ImagesUploadModal from './images-upload-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
-import ProductMkModal from './product-mk-modal.vue';
+import ProductPublicEventModal from './product-public-event-modal.vue';
 import TipForm from './tip-form.vue';
 
 import Services from '../../../../../scripts/services/services';
@@ -250,7 +250,7 @@ export default {
         ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
-        ProductMkModal,
+        ProductPublicEventModal,
         TipForm,
         draggable
     },
