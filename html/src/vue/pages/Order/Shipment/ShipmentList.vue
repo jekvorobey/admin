@@ -12,29 +12,26 @@
                 <f-input v-model="filter.number" class="col-sm-12 col-md-2">
                     № Отправления
                 </f-input>
-                <f-input v-model="filter.customer" class="col-sm-12 col-md-2">
+                <f-input v-model="filter.customer" class="col-sm-12 col-md-4">
                     ФИО, e-mail или телефон покупателя
                 </f-input>
                 <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-4">
                     Статус Отправления
                 </f-multi-select>
-                <f-input v-model="filter.is_problem" type="checkbox" class="col-sm-12 col-md-2">
-                    Проблемный
-                </f-input>
-                <f-input v-model="filter.is_canceled" type="checkbox" class="col-sm-12 col-md-2">
-                    Отменен
-                </f-input>
+                <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-sm-12 col-md-2">
+                  Отменен
+                </f-select>
             </div>
             <transition name="slide">
                 <div v-if="opened">
                     <div class="additional-filter pt-3 mt-3">
                         <div class="row">
-                            <f-input v-model="filter.price_from" type="number" class="col-sm-12 col-md-3">
+                            <f-input v-model="filter.price_from" type="number" class="col-sm-12 col-md-2">
                                 Сумма Отправления
                                 <template #prepend><span class="input-group-text">от</span></template>
                                 <template #append><span class="input-group-text">руб.</span></template>
                             </f-input>
-                            <f-input v-model="filter.price_to" type="number" class="col-sm-12 col-md-3">
+                            <f-input v-model="filter.price_to" type="number" class="col-sm-12 col-md-2">
                                 &nbsp;
                                 <template #prepend><span class="input-group-text">до</span></template>
                                 <template #append><span class="input-group-text">руб.</span></template>
@@ -47,6 +44,9 @@
                               Бренд
                               <template #help>Будут показаны заказы в которых есть товары указанного бренда</template>
                             </f-multi-select>
+                            <f-select v-model="filter.is_problem" :options="booleanOptions" class="col-sm-12 col-md-2">
+                              Проблемный
+                            </f-select>
                         </div>
                         <div class="row">
                             <f-multi-select v-model="filter.merchants" :options="merchantOptions" class="col-sm-12 col-md-3">
@@ -120,7 +120,16 @@
                 <tr v-for="shipment in shipments">
                     <td><input type="checkbox" value="true" class="shipment-select" :value="shipment.id"></td>
                     <td v-for="column in columns" v-if="column.isShown">
-                        <div v-html="column.value(shipment)"></div>
+                        <template v-if="column.code === 'status'">
+                            <div v-html="column.value(shipment)"></div>
+                            <template v-if="shipment.is_canceled">
+                                <br><span class="badge badge-danger">Отменен</span>
+                            </template>
+                            <template v-if="shipment.is_problem">
+                                <br><span class="badge badge-danger">Проблемный</span>
+                            </template>
+                        </template>
+                        <div v-else v-html="column.value(shipment)"></div>
                     </td>
                     <td></td>
                 </tr>
@@ -331,9 +340,7 @@ export default {
                     name: 'Адрес прибытия',
                     code: 'delivery_address',
                     value: (shipment) => {
-                        return shipment.delivery.delivery_address.length !== 0 ?
-                            '<small>' + shipment.delivery.delivery_address.address_string + '</small>'
-                            : this.invalidData
+                        return this.getDeliveryAddress(shipment.delivery);
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -440,6 +447,15 @@ export default {
                     isShown: true,
                     isAlwaysShown: false,
                 },
+                {
+                    name: 'FSD',
+                    code: 'fsd',
+                    value: (shipment) => {
+                      return shipment.fsd ? this.datetimePrint(shipment.fsd) : this.invalidData
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
             ],
         };
     },
@@ -528,18 +544,29 @@ export default {
          */
         showCustomer(shipment) {
             // ФИО клиента для отображения
-            let user = this.users[
-                this.customers[this.orders[shipment.delivery.order_id].customer_id].user_id
-                ];
+            let orderId = shipment.delivery.order_id;
 
-            if (user) {
-              // Ссылка на страницу клиента в системе iBT
-                let link = this.getRoute(
-                    'customers.detail',
-                    {id: this.orders[shipment.delivery.order_id].customer_id});
+            if (orderId) {
+                let order = this.orders[orderId];
 
-                return `<a href="${link}">${user.full_name}</a>`
+                if (order) {
+                    let customer = this.customers[order.customer_id];
+
+                    if (customer) {
+                        let user = this.users[customer.user_id];
+
+                        if (user) {
+                            // Ссылка на страницу клиента в системе iBT
+                            let link = this.getRoute(
+                                'customers.detail',
+                                {id: this.orders[shipment.delivery.order_id].customer_id});
+
+                            return `<a href="${link}">${user.full_name}</a>`
+                        }
+                    }
+                }
             }
+
             return this.invalidData;
         },
         showCargo(cargoId) {
@@ -573,6 +600,13 @@ export default {
                 return cargo.cdek_intake_number;
             }
             return cargo.xml_id;
+        },
+        getDeliveryAddress(delivery) {
+            if(delivery.delivery_address && (delivery.delivery_address.length !== 0)) {
+                return '<small>' + delivery.delivery_address.address_string + '</small>';
+            }
+
+            return this.invalidData;
         }
     },
     computed: {
