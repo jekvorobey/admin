@@ -198,6 +198,8 @@ class ShipmentListController extends Controller
                 'pdd.*' => 'string|nullable',
                 'cargo_id' => 'string|sometimes',
                 'cargo_xml_id' => 'string|sometimes',
+                'is_canceled' => 'boolean|sometimes',
+                'is_problem' => 'boolean|sometimes',
             ]
         );
     }

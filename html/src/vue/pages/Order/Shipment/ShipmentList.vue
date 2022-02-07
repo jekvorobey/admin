@@ -9,15 +9,21 @@
                 </button>
             </template>
             <div class="row">
-                <f-input v-model="filter.number" class="col-sm-12 col-md-4 col-xl-3">
+                <f-input v-model="filter.number" class="col-sm-12 col-md-2">
                     № Отправления
                 </f-input>
-                <f-input v-model="filter.customer" class="col-sm-12 col-md-4 col-xl-5">
+                <f-input v-model="filter.customer" class="col-sm-12 col-md-2">
                     ФИО, e-mail или телефон покупателя
                 </f-input>
-                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-4 col-xl-3">
+                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-4">
                     Статус Отправления
                 </f-multi-select>
+                <f-input v-model="filter.is_problem" type="checkbox" class="col-sm-12 col-md-2">
+                    Проблемный
+                </f-input>
+                <f-input v-model="filter.is_canceled" type="checkbox" class="col-sm-12 col-md-2">
+                    Отменен
+                </f-input>
             </div>
             <transition name="slide">
                 <div v-if="opened">
@@ -89,11 +95,6 @@
                 <span class="float-right">Всего отправлений: {{ pager.total }}.</span>
             </template>
         </b-card>
-        <div class="d-flex justify-content-between mt-3 mb-3">
-            <div>
-                <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
-            </div>
-        </div>
         <div class="table-responsive">
             <table class="table table-condensed">
                 <thead>
@@ -172,6 +173,8 @@ const cleanHiddenFilter = {
     cargo_xml_id: '',
     psd: '',
     pdd: '',
+    is_problem: 0,
+    is_canceled: 0,
     customer_id: [],
 };
 
@@ -199,6 +202,8 @@ const serverKeys = [
     'cargo_xml_id',
     'psd',
     'pdd',
+    'is_problem',
+    'is_canceled',
     'customer_id'
 ];
 
