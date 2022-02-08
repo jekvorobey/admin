@@ -30,6 +30,7 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
+use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
@@ -370,7 +371,7 @@ class ProductDetailController extends Controller
         $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
 
-        $publicEvents = $publicEventService->query()->setFilter('status_id', '=', 3)->get();
+        $publicEvents = $publicEventService->query()->setFilter('status_id', '=', PublicEventStatus::ACTIVE)->get();
 
         return [
             $product,
