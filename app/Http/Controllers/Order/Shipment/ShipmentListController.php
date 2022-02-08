@@ -143,13 +143,13 @@ class ShipmentListController extends Controller
                         }
                         break;
                     case 'psd':
-                        if ($value) {
+                        if ($value && (empty($value[0] && empty($value[1])))) {
                             $restQuery->setFilter('psd', '>=', $value[0]);
                             $restQuery->setFilter('psd', '<=', $value[1]);
                         }
                         break;
                     case 'pdd':
-                        if ($value) {
+                        if ($value && (empty($value[0] && empty($value[1])))) {
                             $restQuery->setFilter('pdd', '>=', $value[0]);
                             $restQuery->setFilter('pdd', '<=', $value[1]);
                         }

@@ -300,7 +300,7 @@ export default {
                     name: 'Сумма Отправления',
                     code: 'cost',
                     value: (shipment) => {
-                        return Helpers.roundValue(shipment.delivery.cost) + ' руб.';
+                        return Helpers.roundValue(shipment.cost) + ' руб.';
                     },
                     isShown: true,
                     isAlwaysShown: false,
