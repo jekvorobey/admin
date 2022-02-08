@@ -143,15 +143,23 @@ class ShipmentListController extends Controller
                         }
                         break;
                     case 'psd':
-                        if ($value && (empty($value[0] && empty($value[1])))) {
-                            $restQuery->setFilter('psd', '>=', $value[0]);
-                            $restQuery->setFilter('psd', '<=', $value[1]);
+                        if ($value) {
+                            if (!empty($value[0])) {
+                                $restQuery->setFilter('psd', '>=', $value[0]);
+                            }
+                            if (!empty($value[1])) {
+                                $restQuery->setFilter('psd', '<=', $value[1]);
+                            }
                         }
                         break;
                     case 'pdd':
-                        if ($value && (empty($value[0] && empty($value[1])))) {
-                            $restQuery->setFilter('pdd', '>=', $value[0]);
-                            $restQuery->setFilter('pdd', '<=', $value[1]);
+                        if ($value) {
+                            if (!empty($value[0])) {
+                                $restQuery->setFilter('pdd', '>=', $value[0]);
+                            }
+                            if (!empty($value[1])) {
+                                $restQuery->setFilter('pdd', '<=', $value[1]);
+                            }
                         }
                         break;
                     case 'status':
