@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Products\AttachPublicEventRequest;
+use App\Http\Requests\Product\AttachPublicEventRequest;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -370,7 +370,7 @@ class ProductDetailController extends Controller
         $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
 
-        $publicEvents = $publicEventService->query()->get();
+        $publicEvents = $publicEventService->query()->setFilter('status_id', '=', 3)->get();
 
         return [
             $product,
