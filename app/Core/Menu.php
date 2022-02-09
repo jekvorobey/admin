@@ -90,6 +90,10 @@ class Menu
 //                        'route' => '#',
 //                    ],
                     [
+                        'title' => 'Список отправлений',
+                        'route' => route('shipment.list'),
+                    ],
+                    [
                         'title' => 'Грузы',
                         'route' => route('cargo.list'),
                     ],
