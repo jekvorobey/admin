@@ -33,7 +33,7 @@ export default {
         modalName: String,
         productId: Number,
         publicEvents: Array,
-        allPublicEvents: Object,
+        allPublicEvents: Array,
     },
     data() {
         return {
@@ -43,7 +43,7 @@ export default {
     methods: {
         save() {
             Services.net().put(this.getRoute('products.savePublicEvents', {id: this.productId}), null,
-                {'public_events': this.formatData(this.existingPublicEvents)})
+                {'public_events': this.existingPublicEvents.map(value => parseInt(value))})
                 .then(result => {
                   this.$emit('onSave', result);
                   this.closeModal();
@@ -54,9 +54,6 @@ export default {
         publicEventOptions() {
             return Object.values(this.allPublicEvents).map(type => ({value: type.id, text: type.name}));
         },
-        formatData(passingPublicEvents) {
-            return passingPublicEvents.map(value => parseInt(value));
-        }
     }
 }
 </script>

@@ -260,7 +260,7 @@ export default {
     props: {
         images: {},
         product: {},
-        allPublicEvents: Object,
+        allPublicEvents: Array,
     },
 
     data() {
