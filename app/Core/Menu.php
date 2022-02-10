@@ -541,6 +541,6 @@ class Menu
     {
         $communicationService = resolve(CommunicationService::class);
 
-        return ' (' . $communicationService->unreadCount() . ')';
+        return ' ()';
     }
 }
