@@ -93,6 +93,7 @@ class CargoListController extends Controller
                 'shipment_number' => 'integer|someone',
                 'created_at' => 'array|someone',
                 'is_canceled' => 'boolean|someone',
+                'cdek_intake_number' => 'string|sometimes',
             ]
         )->attributes();
     }
@@ -110,7 +111,8 @@ class CargoListController extends Controller
             'delivery_service',
             'package_qty',
             'created_at',
-            'shipping_problem_comment'
+            'shipping_problem_comment',
+            'cdek_intake_number'
         );
         $cargos = $cargoService->cargos($restQuery);
 

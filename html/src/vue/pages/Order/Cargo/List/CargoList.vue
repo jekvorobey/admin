@@ -39,6 +39,9 @@
                             <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-2">
                                 Отменен
                             </f-select>
+                            <f-input v-model="filter.cdek_intake_number" class="col-2">
+                                Номер задания на забор груза
+                            </f-input>
                         </div>
                     </div>
                 </transition>
@@ -124,6 +127,7 @@
     shipment_number: '',
     created_at: [],
     is_canceled: '',
+    cdek_intake_number: '',
 };
 
 const cleanFilter = Object.assign({
@@ -143,6 +147,7 @@ const serverKeys = [
     'shipment_number',
     'created_at',
     'is_canceled',
+    'cdek_intake_number',
 ];
 
 export default {
@@ -181,6 +186,7 @@ export default {
             appliedFilter: {},
             pager: this.iPager,
             isSelectAllPageCargos: false,
+            invalidData: '<b class="text-warning">N/A</b>',
             columns: [
                 {
                     name: 'ID',
@@ -197,6 +203,19 @@ export default {
                     code: 'merchant',
                     value: function(cargo) {
                         return cargo.merchant.legal_name;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Номер задания на забор груза',
+                    code: 'cdek_intake_number',
+                    value: function(cargo) {
+                        if (cargo) {
+                            return this.getIntakeNumber(cargo);
+                        }
+
+                        return this.invalidData;
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -312,6 +331,13 @@ export default {
                 }
             }
             return false;
+        },
+        getIntakeNumber(cargo) {
+            if (cargo.delivery_service.support_courier_check) {
+                return cargo.cdek_intake_number ? cargo.cdek_intake_number : this.invalidData;
+            }
+
+            return cargo.xml_id ? cargo.xml_id : this.invalidData;
         },
         selectAllPageCargos() {
             let checkboxes = document.getElementsByClassName('cargo-select');
