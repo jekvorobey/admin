@@ -157,9 +157,11 @@
                     </th>
                     <td>
                         <div v-for="(event, index) in product.publicEvents">
-                            {{ event.description }}
+                            {{ event.name }}
                             <span v-if="canUpdate(blocks.products)">
-                                <fa-icon icon="times"/>
+                                <button class="btn btn-outline-secondary btn-sm btn-icon" @click="detachPublicEvent(index)">
+                                    <fa-icon icon="times"/>
+                                </button>
                             </span>
                         </div>
                     </td>
@@ -425,6 +427,25 @@ export default {
                     this.$emit('onSave');
                 });
         },
+        detachPublicEvent(index) {
+            this.product.publicEvents.splice(index, 1);
+            let remainingPublicEvents = this.pluck(this.product.publicEvents, 'id');
+
+            Services.net().put(this.getRoute('products.savePublicEvents', {id: this.product.id}), null,
+                {'public_events': remainingPublicEvents.map(value => parseInt(value))})
+                .then(result => {
+                    this.$emit('onSave', result);
+                })
+        },
+        pluck(objects, keyName) {
+            var sol = [];
+            for(var i in objects){
+                if(objects[i].hasOwnProperty(keyName)){
+                    sol.push(objects[i][keyName]);
+                }
+            }
+            return sol;
+        }
     },
     computed: {
         descriptionImage() {
