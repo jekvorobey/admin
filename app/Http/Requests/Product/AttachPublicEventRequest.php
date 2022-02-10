@@ -9,8 +9,7 @@ class AttachPublicEventRequest extends FormRequest
     public function rules()
     {
         return [
-            'public_events' => 'array|required',
-            'public_events.*' => 'integer',
+            'public_events' => 'array|sometimes',
         ];
     }
 }
