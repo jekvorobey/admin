@@ -148,6 +148,7 @@ const serverKeys = [
     'created_at',
     'is_canceled',
     'cdek_intake_number',
+    'intake_date'
 ];
 
 export default {
@@ -212,7 +213,20 @@ export default {
                     code: 'cdek_intake_number',
                     value: function(cargo) {
                         if (cargo) {
-                            return this.getIntakeNumber(cargo);
+                            // return this.getIntakeNumber(cargo);
+                        }
+
+                        return this.invalidData;
+                    },
+                    isShown: true,
+                    isAlwaysShown: false,
+                },
+                {
+                    name: 'Планируемая дата забора груза',
+                    code: 'intake_date',
+                    value: function(cargo) {
+                        if (cargo.intake_date) {
+                            return cargo.intake_date;
                         }
 
                         return this.invalidData;
