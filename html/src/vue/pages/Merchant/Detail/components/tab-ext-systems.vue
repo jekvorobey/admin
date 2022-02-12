@@ -2,24 +2,30 @@
     <div>
         <div v-if="!extSystem && canUpdate(blocks.merchants)">
             <v-select class="col-md-4 col-6" :options="extSystemOptions" v-model="extSystemsSelect.driver_id"><h4>Выберите интеграцию</h4></v-select>
-            <div v-if="extSystemsSelect.driver_id === 1" class="row">
-                <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
-                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
-                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
+            <div v-if="isMoySklad(extSystemsSelect.driver_id)" >
+                <div class="row">
+                    <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
+                    <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
+                    <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
+                </div>
+                <div class="row">
+                    <v-input v-model="$v.form.settingName.$model" :error="errorSettingName" class="col-md-4 col-12"><h5>Наименование настройки</h5></v-input>
+                    <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
+                </div>
             </div>
             <button @click="create()" class="btn btn-success btn-md">
                 Создать интеграцию
             </button>
         </div>
 
-        <template v-if="extSystem && extSystem.driver === '5'">
+        <template v-if="extSystem && is1C(extSystem.driver)">
             <table class="table table-sm">
                 <tbody>
                 <tr>
                     <th width="400px">ID</th>
                     <td>{{ extSystem.id }}</td>
                 </tr>
-                <tr v-if="extSystem.driver === '1'">
+                <tr v-if="isMoySklad(extSystem.driver)">
                     <th width="400px">Токен</th>
                     <td>{{ extSystem.connection_params.token }}</td>
                 </tr>
@@ -52,7 +58,11 @@
                 <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
                 <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
             </div>
-            <button @click="update()" class="btn btn-success btn-md">
+            <div class="row">
+                <v-input v-model="$v.form.settingName.$model" :error="errorSettingName" class="col-md-4 col-12"><h5>Наименование настройки</h5></v-input>
+                <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
+            </div>
+            <button v-if="canUpdate(blocks.merchants)" @click="update()" class="btn btn-success btn-md">
                 Сохранить
             </button>
         </template>
@@ -82,7 +92,9 @@ export default {
                 token: '',
                 login: '',
                 password: '',
-                host: ''
+                host: '',
+                settingName: '',
+                settingValue: '',
             },
             extSystem: {},
             host: '',
@@ -110,7 +122,11 @@ export default {
                         return form.login !== ''
                     }),
                 },
-                host: {
+                host: '',
+                settingName: {
+                    required: required,
+                },
+                settingValue: {
                     required: required,
                 },
             }
@@ -123,13 +139,19 @@ export default {
         loadExtSystem() {
             Services.showLoader();
 
-            Services.net().get(this.getRoute('merchant.detail.extSystems', {id: this.id})).then(data => {
+            Services.net().get(this.getRoute(
+                'merchant.detail.extSystems',
+                {id: this.id, settingName: this.form.settingName}
+            )).then(data => {
                 this.extSystem = data.extSystem;
                 this.extSystemsOptions = data.extSystemsOptions;
                 this.host = data.host;
                 this.form.token = data.extSystem.connection_params.token;
                 this.form.login = data.extSystem.connection_params.login;
                 this.form.password = data.extSystem.connection_params.password;
+                this.form.host = data.host;
+                this.form.settingName = data.merchantSetting.name;
+                this.form.settingValue = data.merchantSetting.value;
             }).finally(() => {
                 Services.hideLoader();
             })
@@ -167,7 +189,12 @@ export default {
             }).finally(() => {
                 Services.hideLoader();
             })
-
+        },
+        is1C(driverId) {
+            return driverId === 5 || driverId === '5'
+        },
+        isMoySklad(driverId) {
+            return driverId === 1 || driverId === '1'
         },
     },
     computed: {
@@ -191,6 +218,16 @@ export default {
         errorPassword() {
             if (this.$v.form.password.$dirty) {
                 if (!this.$v.form.password.required) return "Обязательное поле!";
+            }
+        },
+        errorSettingName() {
+            if (this.$v.form.settingName.$dirty) {
+                if (!this.$v.form.settingName.required) return "Обязательное поле!";
+            }
+        },
+        errorSettingValue() {
+            if (this.$v.form.settingValue.$dirty) {
+                if (!this.$v.form.settingValue.required) return "Обязательное поле!";
             }
         },
     },

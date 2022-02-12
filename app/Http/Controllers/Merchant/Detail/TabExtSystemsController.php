@@ -17,13 +17,17 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 
 class TabExtSystemsController extends Controller
 {
-    public function load(int $merchantId, MerchantIntegrationService $merchantIntegrationService): JsonResponse
-    {
+    public function load(
+        int $merchantId,
+        string $settingName,
+        MerchantService $merchantService,
+        MerchantIntegrationService $merchantIntegrationService
+    ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $restQuery = $merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
-
         $extSystem = $merchantIntegrationService->extSystems($restQuery)->first();
+        $merchantSetting = $merchantService->getSetting($merchantId, $settingName)->first();
         $extSystemsOptions = [
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_1C),
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_MOY_SKLAD),
@@ -42,6 +46,7 @@ class TabExtSystemsController extends Controller
 
         return response()->json([
             'extSystem' => $extSystem,
+            'merchantSetting' => $merchantSetting,
             'extSystemsOptions' => $extSystemsOptions,
             'host' => $host,
         ]);
@@ -69,6 +74,16 @@ class TabExtSystemsController extends Controller
             'password' => [
                 Rule::requiredIf(function () use ($request) {
                     return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && $request->input('login');
+                }),
+            ],
+            'settingName' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
+                }),
+            ],
+            'settingValue' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
                 }),
             ],
             'driver' => [
@@ -117,7 +132,7 @@ class TabExtSystemsController extends Controller
                 $integrationDto = new IntegrationDto($integrationData);
                 $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
             }
-            $merchantService->setSetting($merchantId, 'moy_sklad_import_price_type_name', 'Цена по умолчанию');
+            $merchantService->setSetting($merchantId, $data['settingName'], $data['settingValue']);
         }
 
         return response()->json([]);
@@ -126,27 +141,18 @@ class TabExtSystemsController extends Controller
     public function update(
         int $extSystemId,
         Request $request,
+        MerchantService $merchantService,
         MerchantIntegrationService $merchantIntegrationService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $this->validate($request, [
             'merchantId' => 'required|int',
-            'token' => [
-                Rule::requiredIf(function () use ($request) {
-                    return !$request->input('login');
-                }),
-            ],
-            'login' => [
-                Rule::requiredIf(function () use ($request) {
-                    return !$request->input('token');
-                }),
-            ],
-            'password' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('login');
-                }),
-            ],
+            'token' => 'required_without:login',
+            'login' => 'required_without:token',
+            'password' => 'required_with:login',
+            'settingName' => 'required|string',
+            'settingValue' => 'required|string',
         ]);
         $connectionParams = [
             'token' => $data['token'],
@@ -159,6 +165,7 @@ class TabExtSystemsController extends Controller
         ]);
 
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
+        $merchantService->setSetting($data['merchantId'], $data['settingName'], $data['settingValue']);
 
         return response()->json([]);
     }
