@@ -114,6 +114,8 @@ class CargoListController extends Controller
             'shipping_problem_comment',
             'cdek_intake_number',
             'intake_date',
+            'intake_time_from',
+            'intake_time_to'
         );
         $cargos = $cargoService->cargos($restQuery);
 

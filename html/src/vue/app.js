@@ -92,7 +92,7 @@ Vue.mixin({
             return moment(date, "YYYY-MM-DD").format('L');
         },
         timePrint(date) {
-            return moment(date, "HH:mm:ss").format('LLL');
+            return moment(date, "HH:mm:ss").format('LT');
         },
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
