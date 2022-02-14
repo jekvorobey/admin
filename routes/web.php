@@ -96,7 +96,7 @@ Route::middleware('auth')->group(function () {
                     );
                 });
                 Route::prefix('extSystems')->group(function () {
-                    Route::get('{settingName}', 'TabExtSystemsController@load')->name('merchant.detail.extSystems');
+                    Route::get('', 'TabExtSystemsController@load')->name('merchant.detail.extSystems');
                     Route::post('', 'TabExtSystemsController@create')->name('merchant.detail.extSystems.store');
                     Route::put('', 'TabExtSystemsController@update')->name('merchant.detail.extSystems.update');
                 });

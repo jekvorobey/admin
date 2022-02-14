@@ -5,12 +5,11 @@
             <div v-if="isMoySklad(extSystemsSelect.driver_id)" >
                 <div class="row">
                     <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
-                    <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
-                    <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
+                    <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
                 </div>
                 <div class="row">
-                    <v-input v-model="$v.form.settingName.$model" :error="errorSettingName" class="col-md-4 col-12"><h5>Наименование настройки</h5></v-input>
-                    <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
+                    <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
+                    <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
                 </div>
             </div>
             <button @click="create()" class="btn btn-success btn-md">
@@ -59,7 +58,6 @@
                 <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.settingName.$model" :error="errorSettingName" class="col-md-4 col-12"><h5>Наименование настройки</h5></v-input>
                 <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
             </div>
             <button v-if="canUpdate(blocks.merchants)" @click="update()" class="btn btn-success btn-md">
@@ -93,7 +91,6 @@ export default {
                 login: '',
                 password: '',
                 host: '',
-                settingName: '',
                 settingValue: '',
             },
             extSystem: {},
@@ -124,9 +121,6 @@ export default {
                     }),
                 },
                 host: '',
-                settingName: {
-                    required: required,
-                },
                 settingValue: {
                     required: required,
                 },
@@ -140,10 +134,7 @@ export default {
         loadExtSystem() {
             Services.showLoader();
 
-            Services.net().get(this.getRoute(
-                'merchant.detail.extSystems',
-                {id: this.id, settingName: this.form.settingName ? this.form.settingName : 'nothing'}
-            )).then(data => {
+            Services.net().get(this.getRoute('merchant.detail.extSystems', {id: this.id})).then(data => {
                 this.extSystem = data.extSystem ? data.extSystem : null;
                 this.extSystemsOptions = data.extSystemsOptions;
                 this.host = data.host;
@@ -151,7 +142,6 @@ export default {
                 this.form.login = data.extSystem ? data.extSystem.connection_params.login : null;
                 this.form.password = data.extSystem ? data.extSystem.connection_params.password : null;
                 this.form.host = data.host;
-                this.form.settingName = data.merchantSetting ? data.merchantSetting.name : null;
                 this.form.settingValue = data.merchantSetting ? data.merchantSetting.value : null;
             }).finally(() => {
                 Services.hideLoader();
@@ -164,7 +154,6 @@ export default {
                 login: this.form.login,
                 password: this.form.password,
                 driver: this.extSystemsSelect.driver_id,
-                settingName: this.form.settingName,
                 settingValue: this.form.settingValue,
             };
             Services.net().post(
@@ -183,7 +172,6 @@ export default {
                 token: this.form.token,
                 login: this.form.login,
                 password: this.form.password,
-                settingName: this.form.settingName,
                 settingValue: this.form.settingValue,
             };
             Services.net().put(
@@ -223,11 +211,6 @@ export default {
         errorPassword() {
             if (this.$v.form.password.$dirty) {
                 if (!this.$v.form.password.required) return "Обязательное поле!";
-            }
-        },
-        errorSettingName() {
-            if (this.$v.form.settingName.$dirty) {
-                if (!this.$v.form.settingName.required) return "Обязательное поле!";
             }
         },
         errorSettingValue() {

@@ -19,7 +19,6 @@ class TabExtSystemsController extends Controller
 {
     public function load(
         int $merchantId,
-        string $settingName,
         MerchantService $merchantService,
         MerchantIntegrationService $merchantIntegrationService
     ): JsonResponse {
@@ -27,7 +26,7 @@ class TabExtSystemsController extends Controller
 
         $restQuery = $merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
         $extSystem = $merchantIntegrationService->extSystems($restQuery)->first();
-        $merchantSetting = $merchantService->getSetting($merchantId, $settingName)->first();
+        $merchantSetting = $merchantService->getSetting($merchantId, 'moy_sklad_import_price_type_name')->first();
         $extSystemsOptions = [
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_1C),
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_MOY_SKLAD),
@@ -74,11 +73,6 @@ class TabExtSystemsController extends Controller
             'password' => [
                 Rule::requiredIf(function () use ($request) {
                     return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && $request->input('login');
-                }),
-            ],
-            'settingName' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
                 }),
             ],
             'settingValue' => [
@@ -132,7 +126,7 @@ class TabExtSystemsController extends Controller
                 $integrationDto = new IntegrationDto($integrationData);
                 $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
             }
-            $merchantService->setSetting($merchantId, $data['settingName'], $data['settingValue']);
+            $merchantService->setSetting($merchantId, 'moy_sklad_import_price_type_name', $data['settingValue']);
         }
 
         return response()->json([]);
@@ -151,7 +145,6 @@ class TabExtSystemsController extends Controller
             'token' => 'required_without:login',
             'login' => 'required_without:token',
             'password' => 'required_with:login',
-            'settingName' => 'required|string',
             'settingValue' => 'required|string',
         ]);
         $connectionParams = [
@@ -165,7 +158,7 @@ class TabExtSystemsController extends Controller
         ]);
 
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
-        $merchantService->setSetting($data['merchantId'], $data['settingName'], $data['settingValue']);
+        $merchantService->setSetting($data['merchantId'], 'moy_sklad_import_price_type_name', $data['settingValue']);
 
         return response()->json([]);
     }
