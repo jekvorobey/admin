@@ -17,6 +17,8 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 
 class TabExtSystemsController extends Controller
 {
+    protected const MERCHANT_SETTING_NAME = 'moy_sklad_import_price_type_name';
+
     public function load(
         int $merchantId,
         MerchantService $merchantService,
@@ -26,7 +28,7 @@ class TabExtSystemsController extends Controller
 
         $restQuery = $merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
         $extSystem = $merchantIntegrationService->extSystems($restQuery)->first();
-        $merchantSetting = $merchantService->getSetting($merchantId, 'moy_sklad_import_price_type_name')->first();
+        $merchantSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_NAME)->first();
         $extSystemsOptions = [
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_1C),
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_MOY_SKLAD),
@@ -126,7 +128,7 @@ class TabExtSystemsController extends Controller
                 $integrationDto = new IntegrationDto($integrationData);
                 $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
             }
-            $merchantService->setSetting($merchantId, 'moy_sklad_import_price_type_name', $data['settingValue']);
+            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_NAME, $data['settingValue']);
         }
 
         return response()->json([]);
@@ -158,7 +160,7 @@ class TabExtSystemsController extends Controller
         ]);
 
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
-        $merchantService->setSetting($data['merchantId'], 'moy_sklad_import_price_type_name', $data['settingValue']);
+        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_NAME, $data['settingValue']);
 
         return response()->json([]);
     }
