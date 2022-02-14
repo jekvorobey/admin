@@ -91,6 +91,9 @@ Vue.mixin({
         datePrint(date) {
             return moment(date, "YYYY-MM-DD").format('L');
         },
+        timePrint(date) {
+            return moment(date, "HH:mm:ss").format('LLL');
+        },
         datetimePrint(date) {
             return moment(date, "YYYY-MM-DD HH:mm:ss").format('LLL');
         },

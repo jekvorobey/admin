@@ -211,9 +211,9 @@ export default {
                 {
                     name: 'Номер задания на забор груза',
                     code: 'cdek_intake_number',
-                    value: function(cargo) {
+                    value: (cargo) => {
                         if (cargo) {
-                            // return this.getIntakeNumber(cargo);
+                            return this.getIntakeNumber(cargo);
                         }
 
                         return this.invalidData;
@@ -224,9 +224,9 @@ export default {
                 {
                     name: 'Планируемая дата забора груза',
                     code: 'intake_date',
-                    value: function(cargo) {
+                    value: (cargo) => {
                         if (cargo.intake_date) {
-                            return cargo.intake_date;
+                            return this.displayCargoIntake(cargo);
                         }
 
                         return this.invalidData;
@@ -352,6 +352,11 @@ export default {
             }
 
             return cargo.xml_id ? cargo.xml_id : this.invalidData;
+        },
+        displayCargoIntake(cargo) {
+            return this.datePrint(cargo.intake_date) + ' '
+                + this.timePrint(cargo.intake_time_from) + ' - '
+                + this.timePrint(cargo.intake_time_to);
         },
         selectAllPageCargos() {
             let checkboxes = document.getElementsByClassName('cargo-select');
