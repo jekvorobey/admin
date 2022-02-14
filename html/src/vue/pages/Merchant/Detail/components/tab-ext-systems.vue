@@ -99,6 +99,7 @@ export default {
             extSystem: {},
             host: '',
             extSystemsOptions: [],
+            merchantSetting: {},
             extSystemsSelect: {
                 driver_id: this.extSystem ? this.extSystem.driver : null,
             },
@@ -141,17 +142,17 @@ export default {
 
             Services.net().get(this.getRoute(
                 'merchant.detail.extSystems',
-                {id: this.id, settingName: this.form.settingName}
+                {id: this.id, settingName: this.form.settingName ? this.form.settingName : 'nothing'}
             )).then(data => {
-                this.extSystem = data.extSystem;
+                this.extSystem = data.extSystem ? data.extSystem : null;
                 this.extSystemsOptions = data.extSystemsOptions;
                 this.host = data.host;
-                this.form.token = data.extSystem.connection_params.token;
-                this.form.login = data.extSystem.connection_params.login;
-                this.form.password = data.extSystem.connection_params.password;
+                this.form.token = data.extSystem ? data.extSystem.connection_params.token : null;
+                this.form.login = data.extSystem ? data.extSystem.connection_params.login : null;
+                this.form.password = data.extSystem ? data.extSystem.connection_params.password : null;
                 this.form.host = data.host;
-                this.form.settingName = data.merchantSetting.name;
-                this.form.settingValue = data.merchantSetting.value;
+                this.form.settingName = data.merchantSetting ? data.merchantSetting.name : null;
+                this.form.settingValue = data.merchantSetting ? data.merchantSetting.value : null;
             }).finally(() => {
                 Services.hideLoader();
             })
@@ -163,6 +164,8 @@ export default {
                 login: this.form.login,
                 password: this.form.password,
                 driver: this.extSystemsSelect.driver_id,
+                settingName: this.form.settingName,
+                settingValue: this.form.settingValue,
             };
             Services.net().post(
                 this.getRoute('merchant.detail.extSystems.store', {id: this.id}), {}, formData
@@ -180,6 +183,8 @@ export default {
                 token: this.form.token,
                 login: this.form.login,
                 password: this.form.password,
+                settingName: this.form.settingName,
+                settingValue: this.form.settingValue,
             };
             Services.net().put(
                 this.getRoute('merchant.detail.extSystems.update', {id: this.extSystem.id}), {}, formData
