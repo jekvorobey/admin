@@ -46,6 +46,7 @@ class ShipmentListController extends Controller
         $this->loadDeliveryTypes = true;
         $this->loadDeliveryServices = true;
         $this->loadCargoStatuses = true;
+        $this->loadPaymentStatuses = true;
 
         $restQuery = $this->createQuery($shipmentService, true);
 
