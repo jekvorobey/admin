@@ -5,11 +5,13 @@
             <div v-if="isMoySklad(extSystemsSelect.driver_id)" >
                 <div class="row">
                     <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
-                    <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
-                </div>
-                <div class="row">
                     <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
                     <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
+
+                </div>
+                <div class="row">
+                    <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
+                    <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5>ID организации</h5></v-input>
                 </div>
             </div>
             <button @click="create()" class="btn btn-success btn-md">
@@ -58,7 +60,8 @@
                 <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.settingValue.$model" :error="errorSettingValue" class="col-md-4 col-12"><h5>Значение настройки</h5></v-input>
+                <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
+                <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5></h5>ID организации</v-input>
             </div>
             <button v-if="canUpdate(blocks.merchants)" @click="update()" class="btn btn-success btn-md">
                 Сохранить
@@ -91,7 +94,8 @@ export default {
                 login: '',
                 password: '',
                 host: '',
-                settingValue: '',
+                settingPriceValue: '',
+                settingOrderValue: '',
             },
             extSystem: {},
             host: '',
@@ -121,7 +125,10 @@ export default {
                     }),
                 },
                 host: '',
-                settingValue: {
+                settingPriceValue: {
+                    required: required,
+                },
+                settingOrderValue: {
                     required: required,
                 },
             }
@@ -142,7 +149,8 @@ export default {
                 this.form.login = data.extSystem ? data.extSystem.connection_params.login : null;
                 this.form.password = data.extSystem ? data.extSystem.connection_params.password : null;
                 this.form.host = data.host;
-                this.form.settingValue = data.merchantSetting ? data.merchantSetting.value : null;
+                this.form.settingPriceValue = data.merchantPriceSetting ? data.merchantPriceSetting.value : null;
+                this.form.settingOrderValue = data.merchantOrderSetting ? data.merchantOrderSetting.value : null;
             }).finally(() => {
                 Services.hideLoader();
             })
@@ -154,7 +162,8 @@ export default {
                 login: this.form.login,
                 password: this.form.password,
                 driver: this.extSystemsSelect.driver_id,
-                settingValue: this.form.settingValue,
+                settingPriceValue: this.form.settingPriceValue,
+                settingOrderValue: this.form.settingOrderValue,
             };
             Services.net().post(
                 this.getRoute('merchant.detail.extSystems.store', {id: this.id}), {}, formData
@@ -172,7 +181,8 @@ export default {
                 token: this.form.token,
                 login: this.form.login,
                 password: this.form.password,
-                settingValue: this.form.settingValue,
+                settingPriceValue: this.form.settingPriceValue,
+                settingOrderValue: this.form.settingOrderValue,
             };
             Services.net().put(
                 this.getRoute('merchant.detail.extSystems.update', {id: this.extSystem.id}), {}, formData
@@ -213,9 +223,14 @@ export default {
                 if (!this.$v.form.password.required) return "Обязательное поле!";
             }
         },
-        errorSettingValue() {
-            if (this.$v.form.settingValue.$dirty) {
-                if (!this.$v.form.settingValue.required) return "Обязательное поле!";
+        errorSettingPriceValue() {
+            if (this.$v.form.settingPriceValue.$dirty) {
+                if (!this.$v.form.settingPriceValue.required) return "Обязательное поле!";
+            }
+        },
+        errorSettingOrderValue() {
+            if (this.$v.form.settingOrderValue.$dirty) {
+                if (!this.$v.form.settingOrderValue.required) return "Обязательное поле!";
             }
         },
     },

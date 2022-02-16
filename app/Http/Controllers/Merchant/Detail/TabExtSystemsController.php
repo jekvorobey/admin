@@ -17,7 +17,8 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 
 class TabExtSystemsController extends Controller
 {
-    protected const MERCHANT_SETTING_NAME = 'moy_sklad_import_price_type_name';
+    protected const MERCHANT_SETTING_PRICE_NAME = 'moy_sklad_import_price_type_name';
+    protected const MERCHANT_SETTING_ORDER_NAME = 'moy_sklad_order_organization';
 
     public function load(
         int $merchantId,
@@ -28,7 +29,8 @@ class TabExtSystemsController extends Controller
 
         $restQuery = $merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
         $extSystem = $merchantIntegrationService->extSystems($restQuery)->first();
-        $merchantSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_NAME)->first();
+        $merchantPriceSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_PRICE_NAME)->first();
+        $merchantOrderSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_ORDER_NAME)->first();
         $extSystemsOptions = [
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_1C),
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_MOY_SKLAD),
@@ -47,7 +49,8 @@ class TabExtSystemsController extends Controller
 
         return response()->json([
             'extSystem' => $extSystem,
-            'merchantSetting' => $merchantSetting,
+            'merchantPriceSetting' => $merchantPriceSetting,
+            'merchantOrderSetting' => $merchantOrderSetting,
             'extSystemsOptions' => $extSystemsOptions,
             'host' => $host,
         ]);
@@ -77,7 +80,12 @@ class TabExtSystemsController extends Controller
                     return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && $request->input('login');
                 }),
             ],
-            'settingValue' => [
+            'settingPriceValue' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
+                }),
+            ],
+            'settingOrderValue' => [
                 Rule::requiredIf(function () use ($request) {
                     return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
                 }),
@@ -128,7 +136,8 @@ class TabExtSystemsController extends Controller
                 $integrationDto = new IntegrationDto($integrationData);
                 $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
             }
-            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_NAME, $data['settingValue']);
+            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
+            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_ORDER_NAME, $data['settingOrderValue']);
         }
 
         return response()->json([]);
@@ -147,7 +156,8 @@ class TabExtSystemsController extends Controller
             'token' => 'required_without:login',
             'login' => 'required_without:token',
             'password' => 'required_with:login',
-            'settingValue' => 'required|string',
+            'settingPriceValue' => 'required|string',
+            'settingOrderValue' => 'required|string',
         ]);
         $connectionParams = [
             'token' => $data['token'],
@@ -160,7 +170,8 @@ class TabExtSystemsController extends Controller
         ]);
 
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
-        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_NAME, $data['settingValue']);
+        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
+        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_ORDER_NAME, $data['settingOrderValue']);
 
         return response()->json([]);
     }
