@@ -224,20 +224,51 @@
             </div>
         </div>
 
-        <Conditions
-                v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass && (discountTypes.offer in optionDiscountTypes)"
-                :discount="discount"
-                :discounts="discounts"
-                :conditions="discount.conditions"
-                :iConditionTypes="iConditionTypes"
-                :iPaymentMethods="iPaymentMethods"
-                :iDeliveryMethods="iDeliveryMethods"
-                :regions="discountRegions"
-                :segments="segments"
-                :roles="roles"
-                :brands="brands"
-                :categories="categories"
-        ></Conditions>
+        <div class="mb-3">
+            <template
+                v-if="
+                    discount.type !== discountTypes.bundleOffer &&
+                    discount.type !== discountTypes.bundleMasterclass
+                    && (discountTypes.offer in optionDiscountTypes)
+                "
+                v-for="(condition, i) in discount.conditions"
+            >
+                <condition
+                    ref="conditions"
+                    v-model="discount.conditions[i]"
+                    :key="condition.key"
+                    class="mt-3"
+                    :types="iConditionTypes"
+                    :discount="discount"
+                    :discounts="discounts"
+                    :brands="brands"
+                    :roles="roles"
+                    :categories="categories"
+                    :regions="discountRegions"
+                    :segments="segments"
+                    :i-payment-methods="iPaymentMethods"
+                    :i-delivery-methods="iDeliveryMethods"
+                />
+
+                <div v-if="i > 0">
+                    <b-btn
+                        variant="danger"
+                        size="sm"
+                        @click="discount.conditions.splice(i, 1)"
+                    >
+                        Удалить условие
+                    </b-btn>
+                </div>
+            </template>
+
+            <b-btn
+                size="sm"
+                :class="{
+                    'mt-3': discount.conditions.length > 1
+                }"
+                @click="addDiscountCondition"
+            >Добавить дополнительное условие</b-btn>
+        </div>
 
         <div class="row">
             <div class="col-3">
@@ -267,11 +298,15 @@
     import DatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
+    import Condition from "./condition.vue";
+
+    import { v4 as uuidv4 } from 'uuid';
 
     moment.locale('ru');
 
     export default {
         components: {
+            Condition,
             VInput,
             VSelect,
             BrandsSearch,
@@ -313,7 +348,12 @@
                     brands: [],
                     categories: [],
                     publicEvents: null,
-                    conditions: [],
+                    conditions: [
+                        {
+                            key: uuidv4(),
+                            type: null,
+                        }
+                    ],
                     comment: null,
                 },
 
@@ -444,11 +484,28 @@
                         this.discountErrors.product_qty_limit = "Количество товаров по скидке должно быть больше или равно 0!";
                         bool = false;
                     }
+
+                    if (Array.isArray(this.$refs.conditions)) {
+                        for (const conditionComponent of this.$refs.conditions) {
+                            if (!conditionComponent.validate()) {
+                                bool = false;
+                            }
+                        }
+                    }
+
                     if (bool) {
                         this.action(this.discount);
                     }
                 }
             },
+
+            addDiscountCondition() {
+                this.discount.conditions.push({
+                    key: uuidv4(),
+                    type: null,
+                });
+            },
+
             formatIds(ids) {
                 if (!ids) {
                     return [];
