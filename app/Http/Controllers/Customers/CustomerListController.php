@@ -110,9 +110,16 @@ class CustomerListController extends Controller
             $restQueryUser->setFilter('gender', '=', $filter['gender']);
         }
 
-        $restQueryUser->addSort('id', 'desc')
+        $restQueryUser->setFilter('front', Front::FRONT_SHOWCASE)
+            ->addSort('id', 'desc')
             ->pageNumber(request('page', 1), self::PER_PAGE);
         $users = $userService->users($restQueryUser)->keyBy('id');
+        if ($users->isEmpty()) {
+            return response()->json([
+                'users' => [],
+            ]);
+        }
+
         $usersCount = $userService->count($restQueryUser);
 
         $restQueryCustomer = $customerService->newQuery()
