@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -117,7 +118,7 @@ class CustomerListController extends Controller
         if (!empty($filter['role'])) {
             $restQueryUser->setFilter('role', $filter['role']);
         } elseif (isset($filter['isReferral']) && $filter['isReferral']) {
-            $restQueryUser->setFilter('role', UserDto::SHOWCASE__REFERRAL_PARTNER);
+            $restQueryUser->setFilter('role', RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER);
         }
 
         $users = $userService->users($restQueryUser)->keyBy('id');
@@ -170,12 +171,11 @@ class CustomerListController extends Controller
         $user->login = $data['phone'];
         $user->phone = $data['phone'];
         $user->password = $data['password'];
-        $user->front = Front::FRONT_SHOWCASE;
+        $user->fronts = [Front::FRONT_SHOWCASE];
 
         $id = $userService->create($user);
-        /** TODO заменить ролью из базы */
         if ($id) {
-            $userService->addRoles($id, [UserDto::SHOWCASE__PROFESSIONAL]);
+            $userService->addRoles($id, [RoleDto::ROLE_SHOWCASE_PROFESSIONAL]);
 
             $customerId = $customerService->createCustomer(new CustomerDto(['user_id' => $id]));
         }
@@ -191,15 +191,14 @@ class CustomerListController extends Controller
 
     /**
      * @param $isReferral
-     * TODO заменить ролями из базы
      * @return string[]|null
      */
     protected function getRoles($isReferral): ?array
     {
         return $isReferral === null ? [
             0 => 'Все',
-            UserDto::SHOWCASE__PROFESSIONAL => 'Профессионалы',
-            UserDto::SHOWCASE__REFERRAL_PARTNER => 'Реферальные партнеры',
+            RoleDto::ROLE_SHOWCASE_PROFESSIONAL => 'Профессионалы',
+            RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER => 'Реферальные партнеры',
         ] : null;
     }
 }

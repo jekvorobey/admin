@@ -15,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class Controller extends BaseController
 {
     protected $title = '';
-    protected bool $loadUserRoles = false;
     protected bool $loadCustomerStatus = false;
     protected bool $loadCommunicationChannelTypes = false;
     protected bool $loadCommunicationChannels = false;
@@ -56,7 +55,8 @@ class Controller extends BaseController
     {
         return (new ViewRender($componentName, $props))
             ->setTitle($this->title)
-            ->loadUserRoles($this->loadUserRoles)
+            ->loadUserRoles()
+            ->loadUserFronts()
             ->loadBlocks()
             ->loadBlockPermissions()
             ->loadProductImagesTypes()

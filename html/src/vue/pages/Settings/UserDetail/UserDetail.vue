@@ -3,7 +3,12 @@
         <div class="d-flex justify-content-start align-items-start">
             <div class="d-flex flex-column">
                 <shadow-card title="Основная информация" :buttons="canUpdate(blocks.settings) ? {onEdit: 'pencil-alt'} : {}" @onEdit="openModal('userAdd')">
-                    <values-table :values="userInfo" :names="userValuesNames"/>
+                    <div>
+                        <values-table :values="userInfo" :names="userValuesNames"/>
+                    </div>
+                    <div v-if="user.fronts.includes(this.userFronts.showcase)" class="mt-4">
+                        <span >Профиль в разделе клиенты: <a :href="getRoute('customers.detail', { id: user.id })">{{ user.full_name }}</a></span>
+                    </div>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3" :buttons="canUpdate(blocks.settings) ? {onAdd: 'plus'} : {}" @onAdd="changeUserRoles()">
                     <table class="table table-sm">
@@ -47,7 +52,7 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :fronts="options.fronts" @onSave="updateUser"></user-edit-modal>
+        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 
@@ -79,24 +84,27 @@ export default {
             options: {}
         },
         data() {
+            let sip = {
+                id: 'ID',
+                name: 'ФИО',
+                login: 'Логин',
+                front: 'Система',
+                email_verified: 'E-mail подтверждён',
+                created_at: 'Дата регистрации',
+                infinity_sip_extension: 'Infinity SIP Extension',
+            };
+
             return {
                 user: this.iUser,
                 roles: this.iRoles,
-                userValuesNames: {
-                    id: 'ID',
-                    login: 'Логин',
-                    front: 'Система',
-                    email_verified: 'E-mail подтверждён',
-                    created_at: 'Дата регистрации',
-                    infinity_sip_extension: 'Infinity SIP Extension'
-                },
+                userValuesNames: sip,
                 rolesSelect: [],
             };
         },
         methods: {
-            frontName(id) {
-                let fronts = Object.values(this.options.fronts).filter(front => front.id === id);
-                return fronts.length > 0 ? fronts[0].name : 'N/A';
+            frontName(frontValues) {
+                let fronts = Object.values(this.options.fronts).filter(front => frontValues.includes(front.id)).map(front => front.name);
+                return fronts.length > 0 ? fronts.join(', ') : 'N/A';
             },
             roleName(id) {
                 let rolesList = Object.values(this.options.roles).filter(role => role.id === id);
@@ -110,7 +118,7 @@ export default {
                 );
                 let rolesChange = {};
                 rolesChange = this.rolesSelect.filter(role => !cross.includes(role));
-                Services.net().put(this.getRoute('user.addRole', {id: this.user.id}), {}, {
+                Services.net().put(this.getRoute('user.addRoles', {id: this.user.id}), {}, {
                     roles: rolesChange
                 })
                     .then(data => {
@@ -119,8 +127,8 @@ export default {
                     });
             },
             deleteRole(id) {
-                Services.net().post(this.getRoute('user.deleteRole', {id: this.user.id}), {}, {
-                    role: id
+                Services.net().post(this.getRoute('user.deleteRoles', {id: this.user.id}), {}, {
+                    roles: [id]
                 })
                     .then(data => {
                         this.roles = data.roles;
@@ -128,6 +136,9 @@ export default {
             },
             updateUser(newData) {
                 Object.assign(this.user, newData);
+                this.roles = Object.values(this.options.roles)
+                    .filter(role => newData.roles.includes(role.id))
+                    .map(role => ({id: role.id, name: role.name}));
                 this.closeModal();
             },
             rolesCheckbox(e, id) {
@@ -149,16 +160,17 @@ export default {
             userInfo() {
                 return {
                     id: this.user.id,
-                    login: this.user.login,
-                    front: this.frontName(this.user.front),
+                    name: this.user.full_name,
+                    login: this.user.login_email ? this.user.login_email : this.user.login,
+                    front: this.frontName(this.user.fronts),
                     email_verified: this.user.email_verified ? 'Да' : 'Нет',
-                    infinity_sip_extension: this.user.infinity_sip_extension,
+                    infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : 'N/A',
                     created_at: this.datePrint(this.user.created_at),
                 };
             },
             roleOptions() {
                 return Object.values(this.options.roles)
-                    .filter(role => role.front === this.user.front)
+                    .filter(role => this.user.fronts.includes(role.front))
                     .map(role => ({id: role.id, name: role.name}));
             },
             rolesIds() {

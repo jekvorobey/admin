@@ -197,8 +197,7 @@ class MerchantDetailController extends Controller
                             'id' => $operatorUser->id,
                             'title' => $operatorUser->getTitle() . (in_array(
                                 RoleDto::ROLE_MAS_MERCHANT_ADMIN,
-                                /** TODO изменить после добавления всех ролей в базу */
-                                $operatorUser->new_roles
+                                $operatorUser->roles
                             ) ? ' (Администратор)' : ''),
                             'email' => $operatorUser->email,
                         ];

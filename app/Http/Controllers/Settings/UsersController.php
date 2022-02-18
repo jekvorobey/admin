@@ -3,26 +3,35 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BanUsersRequest;
 use App\Http\Requests\UserRolesAddRequest;
+use App\Http\Requests\UserRolesDeleteRequest;
+use App\Http\Requests\UserSaveRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\RoleService\RoleService;
+use Greensight\Customer\Dto\CustomerDto;
+use Greensight\Customer\Services\CustomerService\CustomerService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\OperatorService\OperatorService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
-    public function index(Request $request, UserService $userService)
+    /**
+     * @throws ValidationException
+     */
+    public function index(Request $request, UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -36,10 +45,14 @@ class UsersController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'options' => [
                 'fronts' => Front::allFronts(),
+                'roles' => $roleService->roles(),
             ],
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function page(Request $request, UserService $userService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
@@ -70,7 +83,7 @@ class UsersController extends Controller
             throw new NotFoundHttpException('user not found');
         }
 
-        $this->title = "Пользователь № {$user->id}";
+        $this->title = "Пользователь: {$user->full_name}";
 
         $userRoles = $userService->userRoles($id);
         $roles = $roleService->roles();
@@ -85,32 +98,32 @@ class UsersController extends Controller
         ]);
     }
 
-    public function saveUser(Request $request, UserService $userService): JsonResponse
-    {
+    public function saveUser(
+        UserSaveRequest $request,
+        UserService $userService,
+        CustomerService $customerService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'id' => 'nullable|integer',
-            'login' => 'required',
-            'front' => ['required', Rule::in(array_keys(Front::allFronts()))],
-            'password' => 'required_without:id',
-            'infinity_sip_extension' => 'nullable|string',
-        ]);
-        if ($validator->fails()) {
-            throw new BadRequestHttpException($validator->errors()->first());
-        }
-        $newUser = new UserDto($data);
-        if (isset($data['id'])) {
-            $userService->update($newUser);
+        $newUser = new UserDto($request->all());
+        if (isset($request->id)) {
+            $userId = $request->id;
+            $ok = $userService->update($newUser);
         } else {
-            $userService->create($newUser);
+            $ok = $userId = $userService->create($newUser);
+        }
+        $userService->addRoles($userId, $request->roles);
+        if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
+            $customer = $customerService->customers((new RestQuery())->setFilter('id', $userId))->first();
+            if (!$customer) {
+                $customerService->createCustomer(new CustomerDto(['user_id' => $userId]));
+            }
         }
 
-        return response()->json([]);
+        return response()->json(['status' => $ok ? 'ok' : 'fail']);
     }
 
-    public function addRole(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
+    public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -121,23 +134,42 @@ class UsersController extends Controller
         ]);
     }
 
-    public function deleteRole(int $id, Request $request, UserService $userService): JsonResponse
+    public function deleteRoles(int $id, UserRolesDeleteRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'role' => 'required|integer',
-        ]);
-        if ($validator->fails()) {
-            throw new BadRequestHttpException($validator->errors()->first());
-        }
-
-        $userService->deleteRole($id, $data['role']);
+        $userService->deleteRoles($id, $request->roles);
 
         return response()->json([
             'roles' => $userService->userRoles($id),
         ]);
+    }
+
+    public function banUser(int $id, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->ban($id);
+
+        return response()->json([]);
+    }
+
+    public function banArray(BanUsersRequest $request, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->banArray($request->ids);
+
+        return response()->json([]);
+    }
+
+    public function unBanUser(int $id, UserService $userService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $userService->unban($id);
+
+        return response()->json([]);
     }
 
     /**
@@ -166,8 +198,8 @@ class UsersController extends Controller
         // У сотрудников мерчанта подгружается информация о доступности SMS-канала //
         $operators = null;
         if (
-            in_array(UserDto::MAS__MERCHANT_OPERATOR, $data['role_ids'])
-            || (in_array(UserDto::MAS__MERCHANT_ADMIN, $data['role_ids']))
+            in_array(RoleDto::ROLE_MAS_MERCHANT_OPERATOR, $data['role_ids'])
+            || (in_array(RoleDto::ROLE_MAS_MERCHANT_ADMIN, $data['role_ids']))
         ) {
             $operators = $operatorService->operators(
                 (new RestQuery())->setFilter('user_id', $user_ids)
@@ -200,10 +232,84 @@ class UsersController extends Controller
         ]);
     }
 
-    protected function makeQuery(Request $request): RestQuery
+    /**
+     * Вывести форму смены пароля для нового пользователя
+     * @return mixed
+     * @throws AuthorizationException
+     */
+    public function changePassword(Request $request, UserService $userService, RequestInitiator $authUser)
+    {
+        $request->merge(['userId' => $request->route('id'), 'signature' => $request->route('signature')]);
+        $this->validate($request, [
+            'userId' => 'required|integer',
+            'signature' => 'required|string',
+        ]);
+        $authUserId = $authUser->userId();
+
+        if ($authUserId && $authUserId !== (int) $request->userId) {
+            throw new AuthorizationException(
+                'Ошибка авторизации пользователя. Авторизован другой пользователь.'
+            );
+        }
+
+        try {
+            $userService->verifyBySignature($request->userId, $request->signature);
+        } catch (\Throwable $e) {
+            throw new AuthorizationException('Не удалось проверить пользователя');
+        }
+        $authUser->loginByUserId($request->userId, Front::FRONT_ADMIN);
+
+        return $this->render('PasswordConfirm', ['id' => $request->userId]);
+    }
+
+    public function updatePassword(Request $request, UserService $userService, RequestInitiator $authUser): JsonResponse
+    {
+        $data = $this->validate($request, [
+            'password' => 'required|string',
+        ]);
+        $data['id'] = $authUser->userId();
+        $ok = $userService->update(new UserDto($data));
+
+        return response()->json(['status' => $ok ? 'ok' : 'fail']);
+    }
+
+    /**
+     * @throws ValidationException
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    protected function getFilter(bool $withDefault = false): array
+    {
+        return Validator::validate(
+            request('filter') ?? [],
+            [
+                'id' => 'integer',
+                'full_name' => 'string',
+                'email' => 'string',
+                'phone' => 'string',
+                'front' => 'integer',
+                'role' => 'integer',
+            ]
+        );
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function makeQuery(Request $request, bool $withDefaultFilter = false): RestQuery
     {
         $restQuery = new RestQuery();
         $restQuery->pageNumber($request->get('page', 1), 10);
+        $filter = $this->getFilter($withDefaultFilter);
+        foreach ($filter as $key => $value) {
+            switch ($key) {
+                case 'phone':
+                    $value = phone_format($value);
+                    $restQuery->setFilter($key, $value);
+                    break;
+                default:
+                    $restQuery->setFilter($key, $value);
+            }
+        }
 
         return $restQuery;
     }
