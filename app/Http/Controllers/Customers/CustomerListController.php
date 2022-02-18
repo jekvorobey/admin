@@ -117,7 +117,7 @@ class CustomerListController extends Controller
 
         $restQueryCustomer = $customerService->newQuery()
             ->addFields(CustomerDto::entity(), 'id', 'user_id', 'status', 'created_at', 'gender')
-            ->setFilter('user_id', $users->keys())
+            ->setFilter('user_id', $users->pluck('id')->toArray())
             ->addSort('id', 'desc');
 
         $customers = $customerService->customers($restQueryCustomer);
