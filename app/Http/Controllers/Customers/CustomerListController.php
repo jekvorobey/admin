@@ -80,8 +80,11 @@ class CustomerListController extends Controller
         if (!empty($filter['gender'])) {
             $restQueryCustomer->setFilter('gender', '=', $filter['gender']);
         }
-        $customers = $customerService->customers($restQueryCustomer);
-        if (!$customers) {
+        $usersId = $customerService->customers($restQueryCustomer->addFields(CustomerDto::entity(), 'user_id'))
+            ->pluck('user_id')
+            ->toArray();
+
+        if (empty($usersId)) {
             return response()->json([
                 'users' => [],
             ]);
@@ -89,8 +92,7 @@ class CustomerListController extends Controller
 
         $restQueryUser = new RestQuery();
 
-        $customerIds = isset($filter['status']) && $filter['status'] ? $customers->pluck('user_id')->all() : [];
-        $restQueryUser->setFilter('id', $customerIds);
+        $restQueryUser->setFilter('id', $usersId);
 
         if (isset($filter['phone']) && $filter['phone']) {
             $restQueryUser->setFilter('phone', phone_format($filter['phone']));
@@ -121,15 +123,21 @@ class CustomerListController extends Controller
             $restQueryUser->setFilter('role', RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER);
         }
 
+        $usersCount = $userService->count($restQueryUser);
+
+        $restQueryUser->pageNumber(request('page', 1), self::PER_PAGE);
         $users = $userService->users($restQueryUser)->keyBy('id');
 
-        $result = $customers->map(function (CustomerDto $customer) use ($users, $filter) {
+        $restQueryCustomer->addFields(CustomerDto::entity(), 'id', 'user_id', 'status', 'created_at', 'gender');
+        $restQueryCustomer->setFilter('user_id', $users->pluck('id')->toArray());
+
+        $customers = $customerService->customers($restQueryCustomer);
+
+        $result = $customers->map(function (CustomerDto $customer) use ($users) {
             /** @var UserDto $user */
             $user = $users->get($customer->user_id);
+
             if (!$user) {
-                return false;
-            }
-            if (!empty($filter['gender']) && $filter['gender'] != $customer->gender) {
                 return false;
             }
 
@@ -147,8 +155,8 @@ class CustomerListController extends Controller
         })->filter()->sortByDesc('id')->values();
 
         return response()->json([
-            'users' => $result->forPage(request('page', 1), self::PER_PAGE),
-            'count' => $result->count(),
+            'users' => $result,
+            'count' => $usersCount['total'],
         ]);
     }
 

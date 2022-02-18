@@ -59,6 +59,14 @@
                             </template>
                         </span>
                     </p>
+                    <p class="text-secondary mt-3">
+                        Планируемая дата забора:
+                        <span class="float-right">
+                            <template>
+                                {{ cargo.intake_date ? cargo.intake_date : 'N/A' }}
+                            </template>
+                        </span>
+                    </p>
                     <p class="mt-3" v-if="cargo.error_xml_id">
                         <b>Последняя ошибка при создании задания на забор груза:</b>
                         <span class="text-danger float-right">{{ cargo.error_xml_id}}</span>
