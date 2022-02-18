@@ -84,6 +84,10 @@
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates" />
         </b-form-group>
 
+        <b-form-group v-if="bannerIsCatalogTop" label="Дополнительный текст" id="additional-text" label-for="banner-additional-text">
+            <b-form-textarea v-model="banner.additional_text" id="banner-additional-text" />
+        </b-form-group>
+
         <b-form-group label="Сортировка" label-for="banner-sort">
             <b-form-input
                 v-model="banner.sort"
@@ -156,7 +160,8 @@
         mainTop: 6,
         mainNew: 7,
         mainMiddle: 8,
-        mainBest: 9
+        mainBest: 9,
+        catalogTop: 2,
     });
 
     export default {
@@ -216,6 +221,7 @@
                     color: source.color ? source.color : null,
                     path_templates: source.path_templates ? source.path_templates : null,
                     sort: source.sort ? source.sort : null,
+                    additional_text: source.additional_text ? source.additional_text : null,
                 };
             },
             normalizeButton(source) {
@@ -298,6 +304,16 @@
                 }
 
                 return true;
+            },
+
+            bannerIsCatalogTop() {
+                if (this.banner) {
+                    if (this.banner.type_id === bannerType.catalogTop) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         },
         watch: {
