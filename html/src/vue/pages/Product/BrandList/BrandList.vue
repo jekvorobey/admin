@@ -142,7 +142,7 @@
             form: {
                 name: {required},
                 code: {
-                    pattern: (value) => /^[a-zA-Z0-9_]*$/.test(value)
+                    pattern: (value) => /^[a-zA-Z0-9-]*$/.test(value)
                 },
                 description: {required},
                 file_id: {required}
