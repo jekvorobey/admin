@@ -58,6 +58,29 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
+                        <label for="meta-title">Мета заголовок</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="meta-title"
+                               v-model="categoryToEdit.metaTitle"
+                               class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="meta-description">Мета описание</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="meta-description"
+                                 tag="textarea"
+                                 v-model="categoryToEdit.metaDescription"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
                         <label for="category-active">Активна</label>
                     </b-col>
                     <b-col cols="8">
@@ -95,6 +118,8 @@
         name: null,
         code: null,
         active: false,
+        metaTitle: null,
+        metaDescription: null
     };
     const defaultOptions = [{ value: null, text: 'Нет' }];
     const categoryCodeValidator = helpers.regex('code', /^[a-z\d_]*$/);
@@ -145,6 +170,8 @@
                     'code': this.categoryToEdit.code,
                     'active': this.categoryToEdit.active,
                     'parent_id': this.parentId,
+                    'meta_title': this.categoryToEdit.metaTitle,
+                    'meta_description': this.categoryToEdit.metaDescription,
                 };
                 Services.showLoader();
                 let savePromise;

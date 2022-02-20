@@ -38,6 +38,8 @@ class CategoryController extends Controller
             'code' => 'string|nullable',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
+            'meta_title' => 'string|nullable',
+            'meta_description' => 'string|nullable',
         ]);
 
         $id = $categoryService->createCategory(new CategoryDto($data));
@@ -54,6 +56,8 @@ class CategoryController extends Controller
             'code' => 'string|required',
             'parent_id' => 'integer|nullable',
             'active' => 'boolean',
+            'meta_title' => 'string|nullable',
+            'meta_description' => 'string|nullable',
         ]);
 
         $categoryService->updateCategory($data['id'], new CategoryDto($data));
@@ -67,7 +71,7 @@ class CategoryController extends Controller
     {
         $categories = $categoryService->categories((new RestQuery())
             ->include('descendants', 'ancestors', 'products', 'properties')
-            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active')
+            ->addFields(CategoryDto::entity(), 'id', 'name', 'code', 'parent_id', 'active', 'meta_title', 'meta_description')
             ->addFields('products', 'id', 'category_id'));
 
         return $categories->map(function (CategoryDto $category) {
@@ -77,6 +81,8 @@ class CategoryController extends Controller
                 'code' => $category->code,
                 'parent_id' => $category->parent_id,
                 'active' => $category->active,
+                'meta_title' => $category->meta_title,
+                'meta_description' => $category->meta_description,
                 'productsCount' => $category->products->count(),
                 'descendants' => $category->descendants()->pluck('id')->all(),
                 'ancestors' => $category->ancestors()->pluck('id')->all(),
