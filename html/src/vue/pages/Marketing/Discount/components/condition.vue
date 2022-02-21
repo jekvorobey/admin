@@ -3,7 +3,7 @@
         <div class="col-4">
             <v-select
                 v-model="conditionType"
-                :options="types"
+                :options="allowedTypes"
                 :error="conditionError"
             >Условия предоставления скидки</v-select>
         </div>
@@ -66,7 +66,7 @@
 
                 <!-- На количество единиц одного товара -->
                 <template v-if="conditionType === CONDITION_TYPE_EVERY_UNIT_PRODUCT">
-                    <div class="col-4">
+                    <div>
                         <v-input
                             v-model="values.count"
                             type="number"
@@ -76,7 +76,7 @@
                         >Количество</v-input>
                     </div>
 
-                    <div class="col-4">
+                    <div>
                         <v-input
                             v-model="values.offer"
                             type="number"
@@ -122,10 +122,11 @@
                     >Регионы</f-multi-select>
                 </div>
 
-                <div class="mb-2 col-12" :class="{ 'error': valuesErrors.user }">
+                <div v-if="false" class="mb-2 col-12" :class="{ 'error': valuesErrors.user }">
                     {{ valuesErrors.user }}
                 </div>
-                <div class="col-4" v-if="conditionType === CONDITION_TYPE_USER">
+
+                <div v-if="conditionType === CONDITION_TYPE_USER">
                     <!-- Для определенных пользователей системы -->
                     <v-input
                         v-model="values.users"
@@ -153,7 +154,7 @@
                 </div>
 
                 <!-- Порядковый номер заказа -->
-                <div class="col-4" v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
+                <div v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
                     <v-input
                         v-model="values.sequenceNumber"
                         type="number"
@@ -164,7 +165,7 @@
                 </div>
 
                 <!-- Суммируется с другими маркетинговыми инструментами -->
-                <div class="col-6" v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
+                <div v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
                     <v-select
                         v-model="values.synergy"
                         :options="discounts"
@@ -322,6 +323,22 @@
                     {text: 'Проценты', value: 1},
                     {text: 'Рубли', value: 2}
                 ];
+            },
+
+            allowedTypes() {
+                const { types } = this;
+
+                let result = {};
+
+                for (const key in types) {
+                    const index = this.discount.conditions.findIndex(condition => condition.type === types[key].value);
+
+                    if (index === -1 || this.values.type === types[key].value) {
+                        result[key] = types[key];
+                    }
+                }
+
+                return result;
             },
 
             valuesUserError() {
