@@ -254,6 +254,7 @@
                     <b-btn
                         variant="danger"
                         size="sm"
+                        class="mb-3"
                         @click="discount.conditions.splice(i, 1)"
                     >
                         Удалить условие
