@@ -120,7 +120,7 @@ class UsersController extends Controller
         }
         $userService->addRoles($userId, $request->roles);
         if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
-            $customer = $customerService->customers((new RestQuery())->setFilter('id', $userId))->first();
+            $customer = $customerService->customers((new RestQuery())->setFilter('user_id', $userId))->first();
             if (!$customer) {
                 $customerService->createCustomer(new CustomerDto(['user_id' => $userId]));
             }
