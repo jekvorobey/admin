@@ -298,6 +298,7 @@ Route::middleware('auth')->group(function () {
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'UsersController@detail')->name('settings.userDetail');
                 Route::put('addRoles', 'UsersController@addRoles')->name('user.addRoles');
+                Route::post('deleteRoles', 'UsersController@deleteRoles')->name('user.deleteRoles');
                 Route::put('banUser', 'UsersController@banUser')->name('user.banUser');
                 Route::put('unBanUser', 'UsersController@unBanUser')->name('user.unBanUser');
             });

@@ -91,6 +91,7 @@ class UsersController extends Controller
 
         $userRoles = $userService->userRoles($id);
         $roles = $roleService->roles();
+        /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('user_id', $id))->first();
 
         return $this->render('Settings/UserDetail', [
