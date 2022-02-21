@@ -97,7 +97,7 @@
         active: false,
     };
     const defaultOptions = [{ value: null, text: 'Нет' }];
-    const categoryCodeValidator = helpers.regex('code', /^[a-z\d_]*$/);
+    const categoryCodeValidator = helpers.regex('code', /^[a-z\d-]*$/);
 
     export default {
         components: {
