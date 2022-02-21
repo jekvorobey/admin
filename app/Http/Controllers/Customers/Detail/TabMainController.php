@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Customers\Detail;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -40,7 +41,7 @@ class TabMainController extends Controller
             $files = $files->merge($fileService->getFiles($referralContracts->pluck('file_id')->all()))->keyBy('id');
         }
 
-        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_CLIENT));
+        $managers = $userService->users((new RestQuery())->setFilter('role', RoleDto::ROLE_MANAGER_KC));
 
         $activities = $customerService->activities()->setCustomerIds([$id])->load();
         $activitiesAll = $customerService->activities()->load();

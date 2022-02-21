@@ -70,8 +70,12 @@ class UsersController extends Controller
     /**
      * @return mixed
      */
-    public function detail(int $id, UserService $userService, RoleService $roleService)
-    {
+    public function detail(
+        int $id,
+        UserService $userService,
+        RoleService $roleService,
+        CustomerService $customerService
+    ) {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $userQuery = new RestQuery();
@@ -87,9 +91,11 @@ class UsersController extends Controller
 
         $userRoles = $userService->userRoles($id);
         $roles = $roleService->roles();
+        $customerId = $customerService->customers((new RestQuery())->setFilter('id', $id))->first()->id;
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
+            'customerId' => $customerId,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
