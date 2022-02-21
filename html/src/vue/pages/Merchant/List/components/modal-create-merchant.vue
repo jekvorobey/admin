@@ -180,8 +180,6 @@
                 legal_name: {required},
                 inn: {
                     required,
-                    minLength: minLength(10),
-                    maxLength: maxLength(10),
                     inn(value) {
                         if (value.length === 10 || value.length === 12) {
                             return true;
