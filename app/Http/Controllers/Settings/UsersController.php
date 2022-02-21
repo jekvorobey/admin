@@ -91,11 +91,11 @@ class UsersController extends Controller
 
         $userRoles = $userService->userRoles($id);
         $roles = $roleService->roles();
-        $customerId = $customerService->customers((new RestQuery())->setFilter('id', $id))->first()->id;
+        $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
-            'customerId' => $customerId,
+            'customerId' => $customer->id,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
