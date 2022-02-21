@@ -122,7 +122,7 @@
                     >Регионы</f-multi-select>
                 </div>
 
-                <div v-if="false" class="mb-2 col-12" :class="{ 'error': valuesErrors.user }">
+                <div v-if="valuesErrors.user" class="mb-2" :class="{ 'error': valuesErrors.user }">
                     {{ valuesErrors.user }}
                 </div>
 
@@ -166,14 +166,27 @@
 
                 <!-- Суммируется с другими маркетинговыми инструментами -->
                 <div v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
-                    <v-select
-                        v-model="values.synergy"
-                        :options="discounts"
-                        :multiple="true"
-                        :selectSize="10"
-                        :error="valuesErrors.synergy"
-                        @change="initSynergyError"
-                    >Суммируется с другими скидками</v-select>
+                    <div class="form-group">
+                        <label for="synergy-select">
+                            Суммируется с другими скидками
+                        </label>
+
+                        <v-select2
+                            v-model="values.synergy"
+                            id="synergy-select"
+                            class="form-control"
+                            multiple
+                            @change="initSynergyError"
+                        >
+                            <option v-for="discount in discounts" :key="discount.value" :value="discount.value">
+                                {{ discount.text }}
+                            </option>
+                        </v-select2>
+
+                        <div v-if="valuesErrors.synergy" class="mb-2 error" role="alert">
+                            {{ valuesErrors.synergy }}
+                        </div>
+                    </div>
 
                     <div v-if="canHasSynergyMax">
                         <p>Суммируется, но максимальный размер:</p>
@@ -204,9 +217,11 @@
     import BrandsSearch from '../../components/brands-search.vue';
     import CategoriesSearch from '../../components/categories-search.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import VSelect2 from "../../../../components/controls/VSelect2/v-select2.vue";
 
     export default {
         components: {
+            VSelect2,
             VInput,
             VSelect,
             FMultiSelect,
