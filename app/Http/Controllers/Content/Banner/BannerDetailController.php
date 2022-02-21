@@ -210,7 +210,30 @@ class BannerDetailController extends Controller
      */
     private function getBannerTypes(BannerTypeService $bannerTypeService)
     {
-        return $bannerTypeService->bannerTypes($bannerTypeService->newQuery());
+        return $bannerTypeService->bannerTypes(
+            $bannerTypeService
+                ->newQuery()
+                ->setFilter(
+                    'code',
+                    '=',
+                    [
+                        // BannerTypeDto::WIDGET_CODE,
+                        BannerTypeDto::CATALOG_TOP_CODE,
+                        BannerTypeDto::CATALOG_ITEM_CODE,
+                        // BannerTypeDto::PRODUCT_GROUP_CODE,
+                        // BannerTypeDto::HEADER_CODE,
+                        BannerTypeDto::MAIN_TOP_CODE,
+                        BannerTypeDto::MAIN_NEW_CODE,
+                        BannerTypeDto::MAIN_MIDDLE_CODE,
+                        BannerTypeDto::MAIN_BEST_CODE,
+                        BannerTypeDto::MENU_CODE,
+                        BannerTypeDto::MK_TOP_CODE,
+                        BannerTypeDto::MK_ITEM_CODE,
+                        BannerTypeDto::MK_TOP_CODE,
+                        BannerTypeDto::MK_ITEM_CODE,
+                    ]
+                )
+        );
     }
 
     /**

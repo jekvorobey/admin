@@ -5,6 +5,7 @@
 /.idea/
 *.komodoproject
 *.vscode
+.valetphprc
 
 # Static content #
 ###################

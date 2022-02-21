@@ -124,6 +124,9 @@
                             <f-multi-select v-model="filter.type" :options="typeOptions" class="col-sm-12 col-md-2">
                                 Тип заказа
                             </f-multi-select>
+                          <f-input v-model="filter.delivery_xml_id" type="text" class="col-sm-12 col-md-3">
+                            Трек номер ЛО
+                          </f-input>
                         </div>
                     </div>
                 </div>
@@ -225,6 +228,7 @@
         price_to: '',
         offer_xml_id: '',
         product_vendor_code: '',
+        delivery_xml_id: '',
         brands: [],
         merchants: [],
         payment_method: [],
@@ -261,6 +265,7 @@
         'price_to',
         'offer_xml_id',
         'product_vendor_code',
+        'delivery_xml_id',
         'brands',
         'merchants',
         'payment_method',

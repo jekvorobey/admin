@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\AttachPublicEventRequest;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -29,12 +30,14 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Dto\Product\ProductTipDto;
 use Pim\Dto\PropertyDirectoryValueDto;
 use Pim\Dto\PropertyDto;
+use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
+use Pim\Services\PublicEventService\PublicEventService;
 use Pim\Services\SearchService\SearchService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -59,6 +62,7 @@ class ProductDetailController extends Controller
             $props,
             $availableProps,
             $directoryValues,
+            $publicEvents,
         ] = $this->getProductData($id, $productService);
 
         $approvalStatuses = collect(ProductApprovalStatus::allStatuses())->pluck('name', 'id')->all();
@@ -74,6 +78,7 @@ class ProductDetailController extends Controller
             'iImages' => $images,
             'iBadges' => $badges,
             'iProperties' => $props,
+            'iPublicEvents' => $publicEvents,
             'options' => [
                 'availableProperties' => $availableProps,
                 'availableBadges' => $availableBadges,
@@ -151,6 +156,21 @@ class ProductDetailController extends Controller
             'props' => 'required',
         ]);
         $offerService->saveProperties($id, $data['props']);
+
+        return response()->json();
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function savePublicEvents(
+        AttachPublicEventRequest $request,
+        int $id,
+        ProductService $productService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $productService->savePublicEvents($id, $request->all()['public_events']);
 
         return response()->json();
     }
@@ -297,6 +317,7 @@ class ProductDetailController extends Controller
             ->include('properties')
             ->include('offers')
             ->include('ingredients')
+            ->include('publicEvents')
             ->products();
         if (!$products->count()) {
             throw new NotFoundHttpException();
@@ -306,6 +327,7 @@ class ProductDetailController extends Controller
         $stockService = resolve(StockService::class);
         $priceService = resolve(PriceService::class);
         $orderService = resolve(OrderService::class);
+        $publicEventService = resolve(PublicEventService::class);
         $merchantIds = $product->offers->pluck('merchant_id');
         $merchants = $this->getMerchants($merchantIds->unique()->all());
         $product->offers = $product->offers->map(function (OfferDto $item) use ($priceService, $stockService, $merchants) {
@@ -340,15 +362,6 @@ class ProductDetailController extends Controller
             $currentOffer['price'] = 0;
         }
         $product['currentOffer'] = $currentOffer;
-        $product['publicEvents'] = [
-            [
-                'id' => 3,
-                'name' => 'СТАРТ-ВИЗАЖ',
-                'description' => 'Для визажистов начального уровня',
-            ],
-            ['id' => 5, 'name' => 'Опытный', 'description' => 'Закрепление проф уровня'],
-        ];
-        //После реализации сервиса мастер классов - тут получение привязанных
         $images = $productService->images($product->id);
         $badges = $productService->badges($product->id);
 
@@ -358,6 +371,8 @@ class ProductDetailController extends Controller
         $product['offersIds'] = $offersIds;
         [$props, $availableProps, $directoryValues] = $this->properties($product);
 
+        $publicEvents = $publicEventService->query()->setFilter('status_id', '=', PublicEventStatus::ACTIVE)->get();
+
         return [
             $product,
             $images,
@@ -365,6 +380,7 @@ class ProductDetailController extends Controller
             $props,
             $availableProps,
             $directoryValues,
+            $publicEvents,
         ];
     }
 
