@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
