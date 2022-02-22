@@ -23,6 +23,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use MerchantManagement\Dto\OperatorDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -31,8 +32,12 @@ class UsersController extends Controller
     /**
      * @throws ValidationException
      */
-    public function index(Request $request, UserService $userService, RoleService $roleService)
-    {
+    public function index(
+        Request $request,
+        UserService $userService,
+        RoleService $roleService,
+        MerchantService $merchantService
+    ) {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $this->title = 'Список пользователей';
@@ -46,6 +51,7 @@ class UsersController extends Controller
             'options' => [
                 'fronts' => Front::allFronts(),
                 'roles' => $roleService->roles(),
+                'merchants' => $merchantService->merchants(),
             ],
         ]);
     }
@@ -108,11 +114,13 @@ class UsersController extends Controller
     public function saveUser(
         UserSaveRequest $request,
         UserService $userService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        OperatorService $operatorService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $newUser = new UserDto($request->all());
+        $data = $request->all();
+        $newUser = new UserDto($data);
         if (isset($request->id)) {
             $userId = $request->id;
             $ok = $userService->update($newUser);
@@ -120,14 +128,32 @@ class UsersController extends Controller
             $ok = $userId = $userService->create($newUser);
         }
         $userService->addRoles($userId, $request->roles);
-        if (in_array(Front::FRONT_SHOWCASE, $request->fronts)) {
+
+        $this->checkUser($userId, $data, $customerService, $operatorService);
+
+        return response()->json(['status' => $ok ? 'ok' : 'fail']);
+    }
+
+    protected function checkUser(
+        int $userId,
+        array $data,
+        CustomerService $customerService,
+        OperatorService $operatorService
+    ): void {
+        if (in_array(Front::FRONT_SHOWCASE, $data['fronts'])) {
             $customer = $customerService->customers((new RestQuery())->setFilter('user_id', $userId))->first();
             if (!$customer) {
                 $customerService->createCustomer(new CustomerDto(['user_id' => $userId]));
             }
         }
 
-        return response()->json(['status' => $ok ? 'ok' : 'fail']);
+        /** @var OperatorDto $operator */
+        $operator = $operatorService->operators((new RestQuery())->setFilter('user_id', $userId))->first();
+        if (in_array(Front::FRONT_MAS, $data['fronts'])) {
+            !$operator ? $operatorService->create(new OperatorDto($data)) : $operatorService->update($operator->id, new OperatorDto($data));
+        } else {
+            !$operator ?: $operatorService->delete($operator->id);
+        }
     }
 
     public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse

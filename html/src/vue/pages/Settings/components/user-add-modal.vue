@@ -62,6 +62,9 @@
                         </div>
                     </div>
                 </div>
+                <v-select v-if="checkMas" v-model="$v.form.merchant_id.$model" :options="merchantOptions" :error="errorMerchant">
+                    Мерчант
+                </v-select>
                 <div class="row mt-3">
                     <v-input v-model="$v.form.email.$model" :error="errorEmail" class="col-md-6 col-12"><h5>E-mail*</h5></v-input>
                     <v-input v-model="$v.form.phone.$model" :error="errorPhone" v-mask="telMask" class="col-md-6 col-12"><h5>Телефон*</h5></v-input>
@@ -109,6 +112,7 @@ export default {
         source: Object,
         fronts: {},
         roles: {},
+        merchants: {},
         userCheckedRoles: {},
     },
     data() {
@@ -123,6 +127,7 @@ export default {
                 login_email: '',
                 fronts: [],
                 roles: [],
+                merchant_id: null,
                 password: '',
                 repeatPassword: '',
                 infinity_sip_extension: '',
@@ -154,6 +159,12 @@ export default {
                 login_email: {},
                 fronts: {required},
                 roles: {required},
+                merchant_id: {
+                    required: requiredIf(function(form){
+                        return form.fronts.includes(this.userFronts.mas)
+                    }),
+                    $lazy: true
+                },
                 password: {
                     minLength: minLength(8),
                     valid: function (value) {
@@ -205,6 +216,9 @@ export default {
             }
             if (this.form.infinity_sip_extension) {
                 formData.infinity_sip_extension = this.form.infinity_sip_extension;
+            }
+            if (this.form.merchant_id) {
+                formData.merchant_id = this.form.merchant_id;
             }
             Services.net().post(this.getRoute('settings.saveUser'), {}, formData).then(data => {
                 this.$emit('onSave', {
@@ -259,6 +273,9 @@ export default {
         roleOptions() {
             return Object.values(this.roles).map(role => ({id: role.id, name: role.name, front: role.front}));
         },
+        merchantOptions() {
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
+        },
         // =========================================================================================================
         telMask() {
             return telMask;
@@ -305,8 +322,16 @@ export default {
                 if (!this.$v.form.roles.required) return "Выберите хотя бы один из пунктов!";
             }
         },
+        errorMerchant() {
+            if (this.$v.form.merchant_id.$dirty) {
+                if (!this.$v.form.merchant_id.required) return "Выберите хотя бы один из пунктов!";
+            }
+        },
         checkFront() {
             return this.form.fronts.length < 1;
+        },
+        checkMas() {
+            return this.form.fronts.includes(this.userFronts.mas);
         },
     },
     watch: {

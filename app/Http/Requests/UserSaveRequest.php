@@ -18,6 +18,7 @@ use Illuminate\Validation\Rule;
  * @property string $phone
  * @property array[]|array $fronts
  * @property array[]|array $roles
+ * @property int $merchant_id
  */
 class UserSaveRequest extends FormRequest
 {
@@ -48,6 +49,7 @@ class UserSaveRequest extends FormRequest
                 'integer',
             ],
             'infinity_sip_extension' => 'nullable|string',
+            'merchant_id' => 'nullable|integer',
         ];
     }
 }

@@ -95,7 +95,7 @@
                 class="mt-3 float-right"
             ></b-pagination>
         </div>
-        <user-add-modal :fronts="options.fronts" :roles="options.roles" @onSave="onUserCreated"></user-add-modal>
+        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants" @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
 
