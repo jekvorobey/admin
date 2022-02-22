@@ -46,6 +46,7 @@
                 v-if="nav.currentTab === 'content'"
                 :images="images"
                 :product="product"
+                :all-public-events="allPublicEvents"
                 @onSave="refresh"
             ></content-tab>
         <categories-tab
@@ -128,7 +129,8 @@
         iImages: {},
         iBadges: {},
         iProperties: {},
-        options: {}
+        options: {},
+        iPublicEvents: {},
     },
     data() {
         return {
@@ -136,6 +138,7 @@
             images: this.iImages.filter(image => image.type !== this.$store.state.layout.productImageTypes.catalog),
             badges: this.iBadges,
             properties: this.iProperties,
+            allPublicEvents: this.iPublicEvents,
 
             nav: {
                 currentTab: 'props',

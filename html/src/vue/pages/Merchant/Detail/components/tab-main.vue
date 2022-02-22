@@ -8,7 +8,6 @@
                         <v-dadata
                             :value.sync="daDataOrganization"
                             type="PARTY"
-                            :filter="(suggestion) => suggestion.data.type === 'LEGAL'"
                             @onSelect="fillOrganizationFromDaData"
                         />
                         <p class="small mb-0">

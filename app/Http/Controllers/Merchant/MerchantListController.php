@@ -244,7 +244,7 @@ class MerchantListController extends Controller
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
             'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],
-            'kpp' => 'required|string|size:9',
+            'kpp' => 'string|size:9|nullable',
             'legal_address' => 'required|string',
             'fact_address' => 'required|string',
 
@@ -256,7 +256,7 @@ class MerchantListController extends Controller
 
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'middle_name' => 'required|string',
+            'middle_name' => 'nullable|string',
             'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
             'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),

@@ -16,6 +16,8 @@ use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use Pim\Dto\BrandDto;
+use Pim\Services\BrandService\BrandService;
 use Validator;
 
 class ShipmentListController extends Controller
@@ -26,6 +28,7 @@ class ShipmentListController extends Controller
     protected $orders;
     protected $customers;
     protected $users;
+    protected $brands;
 
     protected $pager;
     protected $filter;
@@ -40,9 +43,10 @@ class ShipmentListController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
         $this->loadShipmentStatuses = true;
-        $this->loadDeliveryMethods = true;
         $this->loadDeliveryTypes = true;
         $this->loadDeliveryServices = true;
+        $this->loadCargoStatuses = true;
+        $this->loadPaymentStatuses = true;
 
         $restQuery = $this->createQuery($shipmentService, true);
 
@@ -53,6 +57,7 @@ class ShipmentListController extends Controller
             $this->orders,
             $this->customers,
             $this->users,
+            $this->brands,
         ] = $this->loadData($restQuery);
 
         $this->pager = $shipmentService->shipmentsCount($restQuery);
@@ -69,7 +74,7 @@ class ShipmentListController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
-        $restQuery = $this->createQuery($shipmentService, /** todo */true);
+        $restQuery = $this->createQuery($shipmentService, true);
         [
             $this->shipments,
             $this->merchants,
@@ -77,10 +82,11 @@ class ShipmentListController extends Controller
             $this->orders,
             $this->customers,
             $this->users,
+            $this->brands,
         ] = $this->loadData($restQuery);
 
         $result = $this->getOutputData();
-        if ($this->getPage() == 1) {
+        if ($this->getPage() === 1) {
             $result['iPager'] = $shipmentService->shipmentsCount($restQuery);
         }
 
@@ -103,21 +109,7 @@ class ShipmentListController extends Controller
     protected function createQuery(ShipmentService $shipmentService, bool $withDefaultFilter = false): DataQuery
     {
         $restQuery = $shipmentService->newQuery()
-            /*->addFields(ShipmentDto::entity(),
-                'id',
-                'delivery_id',
-                'merchant_id',
-                'psd',
-                'fsd',
-                'store_id',
-                'cargo_id',
-                'status',
-                'number',
-                'required_shipping_at',
-                'assembly_problem_comment',
-                'delivery_service_zero_mile'
-            )*/
-            ->include('delivery', 'packages');
+            ->include('delivery', 'packages', 'cargo');
 
         $page = $this->getPage();
         $restQuery->pageNumber($page, 20);
@@ -126,6 +118,56 @@ class ShipmentListController extends Controller
         if ($filter) {
             foreach ($filter as $key => $value) {
                 switch ($key) {
+                    case 'customer':
+                        if ($value) {
+                            $restQuery->setFilter('receiver_name', 'like', "%$value%");
+                        }
+                        break;
+                    case 'price_from':
+                        if ($value) {
+                            $restQuery->setFilter('cost', '>=', $value);
+                        }
+                        break;
+                    case 'price_to':
+                        if ($value) {
+                            $restQuery->setFilter('cost', '<=', $value);
+                        }
+                        break;
+                    case 'merchants':
+                        if ($value) {
+                            $restQuery->setFilter('merchant_id', $value);
+                        }
+                        break;
+                    case 'stores':
+                        if ($value) {
+                            $restQuery->setFilter('store_id', $value);
+                        }
+                        break;
+                    case 'psd':
+                        if ($value) {
+                            if (!empty($value[0])) {
+                                $restQuery->setFilter('psd', '>=', $value[0]);
+                            }
+                            if (!empty($value[1])) {
+                                $restQuery->setFilter('psd', '<=', $value[1]);
+                            }
+                        }
+                        break;
+                    case 'pdd':
+                        if ($value) {
+                            if (!empty($value[0])) {
+                                $restQuery->setFilter('pdd', '>=', $value[0]);
+                            }
+                            if (!empty($value[1])) {
+                                $restQuery->setFilter('pdd', '<=', $value[1]);
+                            }
+                        }
+                        break;
+                    case 'status':
+                        if ($value) {
+                            $restQuery->setFilter('status', 'in', $value);
+                        }
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -148,34 +190,30 @@ class ShipmentListController extends Controller
             [
                 'number' => 'string|sometimes',
                 'customer' => 'string|sometimes',
-                'created_at' => 'string',
-                'created_between' => 'array|sometimes',
-                'created_between.*' => 'string',
-                //'status.*' => Rule::in(array_keys(OrderStatus::allStatuses())),
+                'status' => 'array|sometimes',
+                'status.*' => 'integer',
                 'price_from' => 'numeric|sometimes',
                 'price_to' => 'numeric|sometimes',
-                'offer_xml_id' => 'string|sometimes',
                 'product_vendor_code' => 'string|sometimes',
                 'brands' => 'array|sometimes',
                 'brands.*' => 'integer',
                 'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
-                //'payment_method.*' => Rule::in(array_keys(PaymentMethod::allMethods())),
                 'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
-                //'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),
-                //'delivery_service.*' => Rule::in(array_keys(DeliveryService::allServices())),
-                'delivery_city' => 'string|sometimes',
-                'delivery_city_string' => 'string|sometimes',
+                'delivery_type' => 'array|sometimes',
+                'delivery_type.*' => 'integer',
+                'delivery_service' => 'array|sometimes',
+                'delivery_service.*' => 'integer',
+                'delivery_address_city' => 'string|sometimes',
                 'psd' => 'array|sometimes',
                 'psd.*' => 'string|nullable',
                 'pdd' => 'array|sometimes',
                 'pdd.*' => 'string|nullable',
+                'cargo_id' => 'string|sometimes',
+                'cargo_xml_id' => 'string|sometimes',
                 'is_canceled' => 'boolean|sometimes',
                 'is_problem' => 'boolean|sometimes',
-                'is_require_check' => 'boolean|sometimes',
-                //'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
-                'manager_comment' => 'string|sometimes',
             ]
         );
     }
@@ -190,33 +228,47 @@ class ShipmentListController extends Controller
         $orderService = resolve(OrderService::class);
         $customerService = resolve(CustomerService::class);
         $userService = resolve(UserService::class);
+        $brandService = resolve(BrandService::class);
 
         $shipments = $shipmentService->shipments($restQuery);
 
-        $merchants = $this->getMerchants($shipments->pluck('merchant_id')->toArray());
+        $merchants = $this->getMerchants();
 
         $stores = $storeService
-            ->stores((new RestQuery())->addFields(StoreDto::entity(), 'id', 'name'))
+            ->stores((new RestQuery())->addFields(StoreDto::entity(), 'id', 'name', 'address'))
             ->keyBy('id');
 
-        $orders = $orderService
-            ->orders((new RestQuery())
-                ->setFilter('id', $shipments->pluck('delivery.order_id')->toArray()))
-            ->keyBy('id');
+        $orders = collect();
+        $customers = collect();
+        $users = collect();
 
-        $customers = $customerService
-            ->customers((new RestQuery())
-                ->addFields(CustomerDto::entity(), 'id', 'user_id')
-                ->setFilter('id', $orders->pluck('customer_id')->toArray()))
-            ->keyBy('id');
+        if ($orderIds = $shipments->pluck('delivery.order_id')->toArray()) {
+            $orders = $orderService
+                ->orders((new RestQuery())
+                    ->setFilter('id', $orderIds))
+                ->keyBy('id');
 
-        $users = $userService
-            ->users((new RestQuery())
-                ->addFields(UserDto::entity(), 'id')
-                ->setFilter('id', $customers->pluck('user_id')->toArray()))
-            ->keyBy('id');
+            if ($customerIds = $orders->pluck('customer_id')->toArray()) {
+                $customers = $customerService
+                    ->customers((new RestQuery())
+                        ->addFields(CustomerDto::entity(), 'id', 'user_id')
+                        ->setFilter('id', $customerIds))
+                    ->keyBy('id');
 
-        return [$shipments, $merchants, $stores, $orders, $customers, $users];
+                if ($userIds = $customers->pluck('user_id')->toArray()) {
+                    $users = $userService
+                        ->users((new RestQuery())
+                            ->addFields(UserDto::entity(), 'id')
+                            ->setFilter('id', $userIds))
+                        ->keyBy('id');
+                }
+            }
+        }
+
+        $brands = $brandService->brands((new RestQuery())
+            ->addFields(BrandDto::entity(), 'id', 'name'))->keyBy('id');
+
+        return [$shipments, $merchants, $stores, $orders, $customers, $users, $brands];
     }
 
     /**
@@ -233,6 +285,7 @@ class ShipmentListController extends Controller
             'iUsers' => $this->users,
             'iStores' => $this->stores,
             'iOrders' => $this->orders,
+            'iBrands' => $this->brands,
             'iPager' => $this->pager,
             'iCurrentPage' => $this->getPage(),
             'iFilter' => $this->getFilter(true),

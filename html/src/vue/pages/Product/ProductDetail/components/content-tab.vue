@@ -153,13 +153,15 @@
                 <tr>
                     <th v-if="canUpdate(blocks.products)">
                         Добавить
-                        <button class="btn btn-success btn-sm" disabled><fa-icon icon="plus"/></button>
+                        <button class="btn btn-success btn-sm" @click="openModal('ProductPublicEventModal')"><fa-icon icon="plus"/></button>
                     </th>
                     <td>
                         <div v-for="(event, index) in product.publicEvents">
-                            {{ event.description }}
+                            {{ event.name }}
                             <span v-if="canUpdate(blocks.products)">
-                                <fa-icon icon="times"/>
+                                <button class="btn btn-outline-secondary btn-sm btn-icon" @click="detachPublicEvent(index)">
+                                    <fa-icon icon="times"/>
+                                </button>
                             </span>
                         </div>
                     </td>
@@ -202,6 +204,12 @@
                 video_field="how_to_video"
                 @onSave="$emit('onSave')"
                 modal-name="HowToVideoEdit"/>
+        <product-public-event-modal
+            :product-id="product.id"
+            :public-events="product.publicEvents"
+            :all-public-events="allPublicEvents"
+            @onSave="$emit('onSave')"
+            modal-name="ProductPublicEventModal"/>
 
         <transition name="modal">
             <modal :close="closeModal" v-if="isModalOpen('TipForm')">
@@ -230,6 +238,7 @@ import FileUploadModal from './file-upload-modal.vue';
 import ImagesUploadModal from './images-upload-modal.vue';
 import DescriptionEditModal from './product-description-modal.vue';
 import VideoEditModal from './product-video-modal.vue';
+import ProductPublicEventModal from './product-public-event-modal.vue';
 import TipForm from './tip-form.vue';
 
 import Services from '../../../../../scripts/services/services';
@@ -243,6 +252,7 @@ export default {
         ImagesUploadModal,
         DescriptionEditModal,
         VideoEditModal,
+        ProductPublicEventModal,
         TipForm,
         draggable
     },
@@ -252,6 +262,7 @@ export default {
     props: {
         images: {},
         product: {},
+        allPublicEvents: Array,
     },
 
     data() {
@@ -416,6 +427,25 @@ export default {
                     this.$emit('onSave');
                 });
         },
+        detachPublicEvent(index) {
+            this.product.publicEvents.splice(index, 1);
+            let remainingPublicEvents = this.pluck(this.product.publicEvents, 'id');
+
+            Services.net().put(this.getRoute('products.savePublicEvents', {id: this.product.id}), null,
+                {'public_events': remainingPublicEvents.map(value => parseInt(value))})
+                .then(result => {
+                    this.$emit('onSave', result);
+                })
+        },
+        pluck(objects, keyName) {
+            var sol = [];
+            for(var i in objects){
+                if(objects[i].hasOwnProperty(keyName)){
+                    sol.push(objects[i][keyName]);
+                }
+            }
+            return sol;
+        }
     },
     computed: {
         descriptionImage() {

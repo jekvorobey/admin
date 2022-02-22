@@ -199,7 +199,7 @@ export default {
                     name: 'Дата создания',
                     code: 'date',
                     value: function(claim) {
-                        return claim.created_at;
+                        return this.datetimePrint(claim.created_at);
                     },
                     isShown: true,
                     isAlwaysShown: false,
