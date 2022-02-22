@@ -52,7 +52,8 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles" @onSave="updateUser"></user-edit-modal>
+        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts"
+                         :roles="options.roles" :merchants="options.merchants" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 

@@ -22,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
@@ -80,7 +81,8 @@ class UsersController extends Controller
         int $id,
         UserService $userService,
         RoleService $roleService,
-        CustomerService $customerService
+        CustomerService $customerService,
+        MerchantService $merchantService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -107,6 +109,7 @@ class UsersController extends Controller
             'options' => [
                 'fronts' => Front::allFronts(),
                 'roles' => $roles,
+                'merchants' => $merchantService->merchants(),
             ],
         ]);
     }
@@ -150,7 +153,14 @@ class UsersController extends Controller
         /** @var OperatorDto $operator */
         $operator = $operatorService->operators((new RestQuery())->setFilter('user_id', $userId))->first();
         if (in_array(Front::FRONT_MAS, $data['fronts'])) {
-            !$operator ? $operatorService->create(new OperatorDto($data)) : $operatorService->update($operator->id, new OperatorDto($data));
+            $operatorData = [
+                'merchant_id' => $data['merchant_id'],
+                'user_id' => $userId,
+                'is_receive_sms ' => false,
+                'status' => in_array(RoleDto::ROLE_MAS_MERCHANT_ADMIN, $data['roles']),
+                'communication_method ' => OperatorCommunicationMethod::METHOD_EMAIL,
+            ];
+            !$operator ? $operatorService->create(new OperatorDto($operatorData)) : $operatorService->update($operator->id, new OperatorDto($operatorData));
         } else {
             !$operator ?: $operatorService->delete($operator->id);
         }
