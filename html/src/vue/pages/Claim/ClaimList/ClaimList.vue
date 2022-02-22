@@ -198,7 +198,7 @@ export default {
                 {
                     name: 'Дата создания',
                     code: 'date',
-                    value: function(claim) {
+                    value: (claim) => {
                         return this.datetimePrint(claim.created_at);
                     },
                     isShown: true,
