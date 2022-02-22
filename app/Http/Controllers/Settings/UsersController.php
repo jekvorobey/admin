@@ -96,7 +96,7 @@ class UsersController extends Controller
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
-            'customerId' => $customer->id,
+            'customerId' => $customer ? $customer->id : null,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),

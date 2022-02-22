@@ -47,7 +47,6 @@ class UserSaveRequest extends FormRequest
             'roles.*' => [
                 'required',
                 'integer',
-                Rule::in(array_keys(RoleDto::roles())),
             ],
             'infinity_sip_extension' => 'nullable|string',
         ];
