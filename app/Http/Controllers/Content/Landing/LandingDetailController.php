@@ -24,31 +24,21 @@ class LandingDetailController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $landing = $this->getLanding($id, $landingService);
-        $widgets = $this->getWidgets($landingService);
 
         return $this->render('Content/LandingDetail', [
             'iLanding' => $landing,
-            'iWidgetsList' => $widgets,
-            'iAllWidgetsNames' => $widgets->pluck('widgetCode')->all(),
-            'options' => [],
         ]);
     }
 
     /**
      * @return mixed
-     * @throws CmsException
      */
-    public function createPage(LandingService $landingService)
+    public function createPage()
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $widgets = $this->getWidgets($landingService);
-
         return $this->render('Content/LandingDetail', [
             'iLanding' => [],
-            'iWidgetsList' => $widgets,
-            'iAllWidgetsNames' => $widgets->pluck('widgetCode')->all(),
-            'options' => [],
         ]);
     }
 
@@ -63,7 +53,9 @@ class LandingDetailController extends Controller
             'active' => 'integer|required',
             'code' => 'string|required',
             'name' => 'string|required',
-            'widgets' => 'array|nullable|required',
+            'widgets' => 'string|nullable|required',
+            'meta_title' => 'string|nullable',
+            'meta_description' => 'string|nullable',
         ]);
 
         $landingService->createLanding(new LandingDto($validatedData));
@@ -83,7 +75,9 @@ class LandingDetailController extends Controller
             'active' => 'integer|required',
             'code' => 'string|required',
             'name' => 'string|required',
-            'widgets' => 'array|nullable|required',
+            'widgets' => 'string|required',
+            'meta_title' => 'string|nullable',
+            'meta_description' => 'string|nullable',
         ]);
 
         $validatedData['id'] = $id;
