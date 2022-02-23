@@ -6,6 +6,7 @@
 *.komodoproject
 *.vscode
 .valetphprc
+.phpstorm.meta.php
 
 # Static content #
 ###################

@@ -32,7 +32,7 @@
         >
             <b-form-input
                 id="landing-group-meta-title"
-                v-model="landing.metaTitle"
+                v-model="landing.meta_title"
                 type="text"
                 placeholder="Введите мета заголовок"
             />
@@ -44,7 +44,7 @@
         >
             <b-form-textarea
                 id="landing-group-meta-description"
-                v-model="landing.metaDescription"
+                v-model="landing.meta_description"
                 type="text"
                 placeholder="Введите мета описание"
             />
@@ -69,17 +69,30 @@
             <vue-editor
                 id="landing-group-meta-description"
                 v-model="landing.widgets"
+                :editorOptions="editorSettings"
                 type="text"
                 tag-name="textarea"
                 placeholder="Введите контент"
             > </vue-editor>
         </b-form-group>
+        <b-button class="btn btn-info" v-b-modal.preview-modal type="button">Предпросмотр</b-button>
+
+        <b-modal size="xl" id="preview-modal" title="Предпросмотр">
+            <div v-html="landing.widgets"></div>
+        </b-modal>
     </div>
 </template>
 
 <script>
   import {mapActions} from 'vuex';
+
   import { VueEditor, Quill } from 'vue2-editor';
+
+  import { ImageDrop } from 'quill-image-drop-module';
+  import ImageResize from 'quill-image-resize-vue';
+
+  Quill.register("modules/imageDrop", ImageDrop);
+  Quill.register("modules/imageResize", ImageResize);
 
   export default {
       components: {
@@ -92,6 +105,20 @@
       data() {
           return {
               landing: this.normalizeLanding(this.iLanding),
+              editorSettings: {
+                  modules: {
+                      imageDrop: true,
+                      imageResize: {
+                        modules: ["Resize", "DisplaySize", "Toolbar"],
+                        handleStyles: {
+                          backgroundColor: "black",
+                          border: "none",
+                          color: "white",
+                          // other camelCase styles for size display
+                        },
+                      },
+                  }
+              }
           };
       },
 
@@ -110,7 +137,7 @@
                   meta_title: source.meta_title ? source.meta_title : null,
                   meta_description: source.meta_description ? source.meta_description : null,
               };
-          }
+          },
       },
       watch: {
           landing: {

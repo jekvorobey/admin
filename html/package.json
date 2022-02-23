@@ -144,7 +144,7 @@
         "moment": "^2.24.0",
         "qs": "^6.9.1",
         "quill-image-drop-module": "^1.0.3",
-        "quill-image-resize-module": "^3.0.0",
+        "quill-image-resize-vue": "^1.0.4",
         "select2": "^4.0.13",
         "select2-bootstrap-theme": "^0.1.0-beta.10",
         "terser-webpack-plugin": "^1.2.3",
