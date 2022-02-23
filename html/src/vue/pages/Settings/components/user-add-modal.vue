@@ -113,6 +113,7 @@ export default {
         fronts: {},
         roles: {},
         merchants: {},
+        merchantId: null,
         userCheckedRoles: {},
     },
     data() {
@@ -347,6 +348,7 @@ export default {
                 this.form.infinity_sip_extension = this.source.infinity_sip_extension;
                 this.frontsModalSelect = this.source.fronts;
                 this.rolesModalSelect = this.source.roles;
+                this.form.merchant_id = this.merchantId;
             }
         }
     }

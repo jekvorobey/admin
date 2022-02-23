@@ -82,7 +82,8 @@ class UsersController extends Controller
         UserService $userService,
         RoleService $roleService,
         CustomerService $customerService,
-        MerchantService $merchantService
+        MerchantService $merchantService,
+        OperatorService $operatorService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -101,10 +102,13 @@ class UsersController extends Controller
         $roles = $roleService->roles();
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('user_id', $id))->first();
+        /** @var OperatorDto $operator */
+        $operator = $operatorService->operators((new RestQuery())->setFilter('user_id', $id))->first();
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
             'customerId' => $customer ? $customer->id : null,
+            'merchantId' => $operator ? $operator->merchant_id : null,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
@@ -156,9 +160,7 @@ class UsersController extends Controller
             $operatorData = [
                 'merchant_id' => $data['merchant_id'],
                 'user_id' => $userId,
-                'is_receive_sms ' => false,
-                'status' => in_array(RoleDto::ROLE_MAS_MERCHANT_ADMIN, $data['roles']),
-                'communication_method ' => OperatorCommunicationMethod::METHOD_EMAIL,
+                'communication_method' => OperatorCommunicationMethod::METHOD_EMAIL,
             ];
             !$operator ? $operatorService->create(new OperatorDto($operatorData)) : $operatorService->update($operator->id, new OperatorDto($operatorData));
         } else {

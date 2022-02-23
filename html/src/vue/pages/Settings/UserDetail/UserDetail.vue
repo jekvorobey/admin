@@ -52,8 +52,8 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts"
-                         :roles="options.roles" :merchants="options.merchants" @onSave="updateUser"></user-edit-modal>
+        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles"
+                         :merchantId="merchantId" :merchants="options.merchants" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
 
@@ -82,6 +82,7 @@ export default {
         props: {
             iUser: {},
             customerId: null,
+            merchantId: null,
             iRoles: {},
             options: {}
         },
