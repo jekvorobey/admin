@@ -161,8 +161,12 @@ class UsersController extends Controller
                 'merchant_id' => $data['merchant_id'],
                 'user_id' => $userId,
                 'communication_method' => OperatorCommunicationMethod::METHOD_EMAIL,
+                'active' => true,
             ];
-            !$operator ? $operatorService->create(new OperatorDto($operatorData)) : $operatorService->update($operator->id, new OperatorDto($operatorData));
+            !$operator ? $operatorService->create(new OperatorDto($operatorData)) : $operatorService->update(
+                $operator->id,
+                new OperatorDto(['merchant_id' => $data['merchant_id']])
+            );
         } else {
             !$operator ?: $operatorService->delete($operator->id);
         }
