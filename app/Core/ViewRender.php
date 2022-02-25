@@ -6,9 +6,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
-use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
 use Greensight\Customer\Dto\CustomerDto;
@@ -55,6 +53,7 @@ class ViewRender
     private $title;
 
     private $userRoles = [];
+    private $userFronts = [];
     private $blocks = [];
     private $blockPermissions = [];
 
@@ -119,28 +118,21 @@ class ViewRender
         return $this;
     }
 
-    /** TODO изменить на роли из базы */
-    public function loadUserRoles($load = false): self
+    public function loadUserRoles(): self
     {
-        $roles = resolve(RoleService::class)->roles();
-        if ($load) {
-            $this->userRoles = [
-                'admin' => [
-                    $roles->where('front', Front::FRONT_ADMIN)->pluck('id')->toArray(),
-                ],
-                'mas' => [
-                    'merchant_operator' => UserDto::MAS__MERCHANT_OPERATOR,
-                    'merchant_admin' => UserDto::MAS__MERCHANT_ADMIN,
-                ],
-                'i_commerce_ml' => [
-                    'external_system' => UserDto::I_COMMERCE_ML__EXTERNAL_SYSTEM,
-                ],
-                'showcase' => [
-                    'professional' => UserDto::SHOWCASE__PROFESSIONAL,
-                    'referral_partner' => UserDto::SHOWCASE__REFERRAL_PARTNER,
-                ],
-            ];
-        }
+        $this->userRoles = RoleDto::rolesGroupByFront();
+
+        return $this;
+    }
+
+    public function loadUserFronts(): self
+    {
+        $this->userFronts = [
+            'admin' => Front::FRONT_ADMIN,
+            'mas' => Front::FRONT_MAS,
+            'i_commerce_ml' => Front::FRONT_I_COMMERCE_ML,
+            'showcase' => Front::FRONT_SHOWCASE,
+        ];
 
         return $this;
     }
@@ -832,13 +824,13 @@ class ViewRender
             $this->props,
             [
                 'menu' => Menu::getMenuItems(),
-                /** TODO брать роли из базы */
                 'user' => [
                     'isGuest' => resolve(TokenStore::class)->token() == null,
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR),
                 ],
 
                 'userRoles' => $this->userRoles,
+                'userFronts' => $this->userFronts,
                 'blocks' => $this->blocks,
                 'blockPermissions' => $this->blockPermissions,
 

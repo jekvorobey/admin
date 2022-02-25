@@ -117,6 +117,10 @@ Vue.mixin({
         userRoles() {
             return this.$store.state.layout.userRoles;
         },
+        /** @return {UserFronts} */
+        userFronts() {
+            return this.$store.state.layout.userFronts;
+        },
         /** @return {Blocks} */
         blocks() {
             return this.$store.state.layout.blocks;
@@ -312,6 +316,14 @@ Vue.mixin({
  @property {ICommerceMlUserRoles} i_commerce_ml
  @property {MasUserRoles} mas
  @property {AdminUserRoles} admin
+ */
+/**
+ @typedef UserFronts
+ @type {Object}
+ @property {number} admin
+ @property {number} mas
+ @property {number} i_commerce_ml
+ @property {number} showcase
  */
 /**
  @typedef Blocks

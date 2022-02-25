@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\Search\ProductQuery;
@@ -38,7 +38,7 @@ class SearchController extends Controller
         $productSuggestQuery->withProducts = true;
         $productSuggestQuery->showInactive = true;
         $productSuggestQuery->productsLimit = $data['limit'] ?? 10;
-        $productSuggestQuery->role = UserDto::SHOWCASE__GUEST;
+        $productSuggestQuery->role = RoleDto::ROLE_SHOWCASE_GUEST;
         $productSuggestQuery->segment = 1;
         if ($merchantId) {
             $productSuggestQuery->merchantId = $merchantId;
