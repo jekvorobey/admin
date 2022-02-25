@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\Customer\Dto\OptionDto as CustomerOptionDto;
 use Greensight\Marketing\Dto\Option\OptionDto as MarketingOptionDto;
 use Greensight\Marketing\Services\OptionService\OptionService as MarketingOptionService;
@@ -55,11 +55,10 @@ class MarketingController extends Controller
             'max_debit_percentage_for_discount_product' => 'integer|between:0,100',
             'max_debit_percentage_for_order' => 'integer|between:0,100',
             'roles_available_for_bonuses' => 'array',
-            /** TODO заменить на роли из базы */
             'roles_available_for_bonuses.*' => [
                 Rule::in([
-                    UserDto::SHOWCASE__PROFESSIONAL,
-                    UserDto::SHOWCASE__REFERRAL_PARTNER,
+                    RoleDto::ROLE_SHOWCASE_PROFESSIONAL,
+                    RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER,
                 ]),
             ],
             'activation_bonus' => 'array|nullable',
