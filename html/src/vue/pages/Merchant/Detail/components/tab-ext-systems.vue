@@ -1,33 +1,72 @@
 <template>
     <div>
-        <button v-if="!extSystem && canUpdate(blocks.merchants)" @click="create()" class="btn btn-success btn-md">
-            Создать интеграцию c 1С
-        </button>
+        <div v-if="!extSystem && canUpdate(blocks.merchants)">
+            <v-select class="col-md-4 col-6" :options="extSystemOptions" v-model="extSystemsSelect.driver_id"><h4>Выберите интеграцию</h4></v-select>
+            <div v-if="isMoySklad(extSystemsSelect.driver_id)" >
+                <div class="row">
+                    <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
+                    <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
+                    <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
 
-        <table v-else class="table table-sm">
-            <tbody>
-            <tr>
-                <th width="400px">ID</th>
-                <td>{{ extSystem.id }}</td>
-            </tr>
-            <tr>
-                <th width="400px">Логин</th>
-                <td>{{ extSystem.connection_params.login }}</td>
-            </tr>
-            <tr>
-                <th width="400px">Пароль</th>
-                <td>{{ extSystem.connection_params.password }}</td>
-            </tr>
-            <tr>
-                <th width="400px">Хост</th>
-                <td>{{ host }}</td>
-            </tr>
-            <tr>
-                <th width="400px">Дата создания</th>
-                <td>{{ datetimePrint(extSystem.created_at) }}</td>
-            </tr>
-            </tbody>
-        </table>
+                </div>
+                <div class="row">
+                    <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
+                    <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5>ID организации</h5></v-input>
+                </div>
+            </div>
+            <button @click="create()" class="btn btn-success btn-md">
+                Создать интеграцию
+            </button>
+        </div>
+
+        <template v-if="extSystem && is1C(extSystem.driver)">
+            <table class="table table-sm">
+                <tbody>
+                <tr>
+                    <th width="400px">ID</th>
+                    <td>{{ extSystem.id }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th width="400px">Токен</th>
+                    <td>{{ extSystem.connection_params.token }}</td>
+                </tr>
+                <tr>
+                    <th width="400px">Логин</th>
+                    <td>{{ extSystem.connection_params.login }}</td>
+                </tr>
+                <tr>
+                    <th width="400px">Пароль</th>
+                    <td>{{ extSystem.connection_params.password }}</td>
+                </tr>
+                <tr>
+                    <th width="400px">Хост</th>
+                    <td>{{ host }}</td>
+                </tr>
+                <tr>
+                    <th width="400px">Дата создания</th>
+                    <td>{{ datetimePrint(extSystem.created_at) }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </template>
+
+        <template v-else-if="extSystem">
+            <div class="row">
+                <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
+                <v-input v-model="$v.form.host.$model" disabled="disabled" class="col-md-4 col-12"><h5>Хост</h5></v-input>
+            </div>
+            <div class="row">
+                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
+                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
+            </div>
+            <div class="row">
+                <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
+                <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5></h5>ID организации</v-input>
+            </div>
+            <button v-if="canUpdate(blocks.merchants)" @click="update()" class="btn btn-success btn-md">
+                Сохранить
+            </button>
+        </template>
     </div>
 </template>
 
@@ -35,15 +74,65 @@
 
 import Services from "../../../../../scripts/services/services";
 import {mapActions} from "vuex";
+import {validationMixin} from 'vuelidate';
+import {required, requiredIf} from 'vuelidate/lib/validators';
+import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+import VInput from '../../../../components/controls/VInput/VInput.vue';
 
 export default {
+    mixins: [validationMixin],
+    components: {
+        VSelect,
+        VInput,
+    },
     name: 'tab-ext-systems',
     props: ['id'],
     data() {
         return {
-            extSystem: null,
-            host: null,
+            form: {
+                token: '',
+                login: '',
+                password: '',
+                host: '',
+                settingPriceValue: '',
+                settingOrderValue: '',
+            },
+            extSystem: {},
+            host: '',
+            extSystemsOptions: [],
+            merchantSetting: {},
+            extSystemsSelect: {
+                driver_id: this.extSystem ? this.extSystem.driver : null,
+            },
         }
+    },
+    validations() {
+        return {
+            form: {
+                token: {
+                    required: requiredIf(function(form){
+                        return form.login === ''
+                    }),
+                },
+                login: {
+                    required: requiredIf(function(form){
+                        return form.token === ''
+                    }),
+                },
+                password: {
+                    required: requiredIf(function(form){
+                        return form.login !== ''
+                    }),
+                },
+                host: '',
+                settingPriceValue: {
+                    required: required,
+                },
+                settingOrderValue: {
+                    required: required,
+                },
+            }
+        };
     },
     methods: {
         ...mapActions({
@@ -53,22 +142,96 @@ export default {
             Services.showLoader();
 
             Services.net().get(this.getRoute('merchant.detail.extSystems', {id: this.id})).then(data => {
-                this.extSystem = data.extSystem;
+                this.extSystem = data.extSystem ? data.extSystem : null;
+                this.extSystemsOptions = data.extSystemsOptions;
                 this.host = data.host;
+                this.form.token = data.extSystem ? data.extSystem.connection_params.token : null;
+                this.form.login = data.extSystem ? data.extSystem.connection_params.login : null;
+                this.form.password = data.extSystem ? data.extSystem.connection_params.password : null;
+                this.form.host = data.host;
+                this.form.settingPriceValue = data.merchantPriceSetting ? data.merchantPriceSetting.value : null;
+                this.form.settingOrderValue = data.merchantOrderSetting ? data.merchantOrderSetting.value : null;
             }).finally(() => {
                 Services.hideLoader();
             })
         },
         create() {
             Services.showLoader();
-
-            Services.net().post(this.getRoute('merchant.detail.extSystems.store', {id: this.id})).then(() => {
+            let formData = {
+                token: this.form.token,
+                login: this.form.login,
+                password: this.form.password,
+                driver: this.extSystemsSelect.driver_id,
+                settingPriceValue: this.form.settingPriceValue,
+                settingOrderValue: this.form.settingOrderValue,
+            };
+            Services.net().post(
+                this.getRoute('merchant.detail.extSystems.store', {id: this.id}), {}, formData
+            ).then(() => {
                 Services.msg('Интеграция успешно создана');
                 this.loadExtSystem();
             }).finally(() => {
                 Services.hideLoader();
             })
+        },
+        update() {
+            Services.showLoader();
+            let formData = {
+                merchantId: this.id,
+                token: this.form.token,
+                login: this.form.login,
+                password: this.form.password,
+                settingPriceValue: this.form.settingPriceValue,
+                settingOrderValue: this.form.settingOrderValue,
+            };
+            Services.net().put(
+                this.getRoute('merchant.detail.extSystems.update', {id: this.extSystem.id}), {}, formData
+            ).then(() => {
+                Services.msg('Интеграция успешно обновлена');
+                this.loadExtSystem();
+            }).finally(() => {
+                Services.hideLoader();
+            })
+        },
+        is1C(driverId) {
+            return driverId === 5 || driverId === '5'
+        },
+        isMoySklad(driverId) {
+            return driverId === 1 || driverId === '1'
+        },
+    },
+    computed: {
+        extSystemOptions() {
+            let options = Object.values(this.extSystemsOptions)
+                .map(extSystem => ({ value: extSystem.id, text: extSystem.name }));
+            options.unshift({ value: null, text: '-' });
 
+            return options;
+        },
+        errorToken() {
+            if (this.$v.form.token.$dirty) {
+                if (!this.$v.form.token.required) return "Обязательное поле!";
+            }
+        },
+        errorLogin() {
+            if (this.$v.form.login.$dirty) {
+                if (!this.$v.form.login.required) return "Обязательное поле!";
+            }
+        },
+        errorPassword() {
+            if (this.$v.form.password.$dirty) {
+                if (!this.$v.form.password.required) return "Обязательное поле!";
+            }
+        },
+        errorSettingPriceValue() {
+            if (this.$v.form.settingPriceValue.$dirty) {
+                if (!this.$v.form.settingPriceValue.required) return "Обязательное поле!";
+            }
+        },
+        errorSettingOrderValue() {
+            if (this.$v.form.settingOrderValue.$dirty) {
+                if (!this.$v.form.settingOrderValue.required) return "Обязательное поле!";
+            }
         },
     },
     created() {
