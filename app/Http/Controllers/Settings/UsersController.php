@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BanUsersRequest;
-use App\Http\Requests\UserRolesAddRequest;
-use App\Http\Requests\UserRolesDeleteRequest;
+use App\Http\Requests\UserRolesRequest;
 use App\Http\Requests\UserSaveRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
@@ -172,7 +171,7 @@ class UsersController extends Controller
         }
     }
 
-    public function addRoles(int $id, UserRolesAddRequest $request, UserService $userService): JsonResponse
+    public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -183,7 +182,7 @@ class UsersController extends Controller
         ]);
     }
 
-    public function deleteRoles(int $id, UserRolesDeleteRequest $request, UserService $userService): JsonResponse
+    public function deleteRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 

@@ -5,17 +5,12 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * @property array[]|array $roles
+ * @property array $roles
  */
-class UserRolesAddRequest extends FormRequest
+class UserRolesRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
-     * @return array<string>
+     * @return array<int>
      */
     public function rules(): array
     {
