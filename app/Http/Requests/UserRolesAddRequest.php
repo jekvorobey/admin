@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 /**
  * @property array[]|array $roles
@@ -26,7 +24,6 @@ class UserRolesAddRequest extends FormRequest
             'roles.*' => [
                 'required',
                 'integer',
-                Rule::in(array_keys(RoleDto::roles())),
             ],
         ];
     }
