@@ -355,8 +355,11 @@ export default {
         },
         displayCargoIntake(cargo) {
             return this.datePrint(cargo.intake_date) + ' '
-                + this.timePrint(cargo.intake_time_from) + ' - '
-                + this.timePrint(cargo.intake_time_to);
+                + this.displayValue(cargo.intake_time_from) + ' - '
+                + this.displayValue(cargo.intake_time_to);
+        },
+        displayValue(value) {
+            return value ? value : '';
         },
         selectAllPageCargos() {
             let checkboxes = document.getElementsByClassName('cargo-select');
