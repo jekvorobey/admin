@@ -73,26 +73,7 @@ class CustomerListController extends Controller
             'role' => 'nullable',
         ]);
 
-        $restQueryCustomer = new RestQuery();
-        if (isset($filter['status']) && $filter['status']) {
-            $restQueryCustomer->setFilter('status', $filter['status']);
-        }
-        if (!empty($filter['gender'])) {
-            $restQueryCustomer->setFilter('gender', '=', $filter['gender']);
-        }
-        $usersId = $customerService->customers($restQueryCustomer->addFields(CustomerDto::entity(), 'user_id'))
-            ->pluck('user_id')
-            ->toArray();
-
-        if (empty($usersId)) {
-            return response()->json([
-                'users' => [],
-            ]);
-        }
-
         $restQueryUser = new RestQuery();
-
-        $restQueryUser->setFilter('id', $usersId);
 
         if (isset($filter['phone']) && $filter['phone']) {
             $restQueryUser->setFilter('phone', phone_format($filter['phone']));
@@ -123,13 +104,29 @@ class CustomerListController extends Controller
             $restQueryUser->setFilter('role', RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER);
         }
 
+        if (isset($filter['status']) && $filter['status']) {
+            $restQueryUser->setFilter('status', $filter['status']);
+        }
+        if (!empty($filter['gender'])) {
+            $restQueryUser->setFilter('gender', '=', $filter['gender']);
+        }
+
+        $restQueryUser->setFilter('front', Front::FRONT_SHOWCASE)
+            ->addSort('id', 'desc')
+            ->pageNumber(request('page', 1), self::PER_PAGE);
+        $users = $userService->users($restQueryUser)->keyBy('id');
+        if ($users->isEmpty()) {
+            return response()->json([
+                'users' => [],
+            ]);
+        }
+
         $usersCount = $userService->count($restQueryUser);
 
-        $restQueryUser->pageNumber(request('page', 1), self::PER_PAGE);
-        $users = $userService->users($restQueryUser)->keyBy('id');
-
-        $restQueryCustomer->addFields(CustomerDto::entity(), 'id', 'user_id', 'status', 'created_at', 'gender');
-        $restQueryCustomer->setFilter('user_id', $users->pluck('id')->toArray());
+        $restQueryCustomer = $customerService->newQuery()
+            ->addFields(CustomerDto::entity(), 'id', 'user_id', 'status', 'created_at', 'gender')
+            ->setFilter('user_id', $users->pluck('id')->toArray())
+            ->addSort('id', 'desc');
 
         $customers = $customerService->customers($restQueryCustomer);
 
@@ -152,7 +149,7 @@ class CustomerListController extends Controller
                 'last_visit' => '', //TODO
                 'gender' => $customer->gender,
             ];
-        })->filter()->sortByDesc('id')->values();
+        })->filter()->values();
 
         return response()->json([
             'users' => $result,

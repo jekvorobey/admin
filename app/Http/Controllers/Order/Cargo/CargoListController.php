@@ -133,6 +133,11 @@ class CargoListController extends Controller
             $data['store'] = $stores[$cargo->store_id];
             $data['delivery_service'] = $deliveryServices[$cargo->delivery_service];
 
+            // TODO: Проверку заявки на вызов курьера поддерживает только CDEK //
+            if ($data['delivery_service']['id'] == DeliveryService::SERVICE_CDEK) {
+                $data['delivery_service']['support_courier_check'] = true;
+            }
+
             return $data;
         });
 
