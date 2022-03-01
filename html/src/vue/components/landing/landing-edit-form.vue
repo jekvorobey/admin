@@ -75,11 +75,6 @@
                 placeholder="Введите контент"
             > </vue-editor>
         </b-form-group>
-        <b-button class="btn btn-info" v-b-modal.preview-modal type="button">Предпросмотр</b-button>
-
-        <b-modal size="xl" id="preview-modal" title="Предпросмотр">
-            <div v-html="landing.widgets"></div>
-        </b-modal>
     </div>
 </template>
 

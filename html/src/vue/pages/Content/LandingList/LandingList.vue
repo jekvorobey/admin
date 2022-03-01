@@ -19,6 +19,7 @@
                 <th>ID</th>
                 <th>Видимость</th>
                 <th>Название</th>
+                <th>Предпросмотр</th>
                 <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
             </tr>
             </thead>
@@ -39,6 +40,9 @@
                 </td>
                 <td v-else class="with-small">
                     {{landing.name}}
+                </td>
+                <td>
+                    <a target="_blank" :href="'http://ibt-front.test:8080/landings/preview?type=' + landing.code"></a>
                 </td>
                 <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
@@ -167,6 +171,10 @@
             typeOptions() {
                 return this.options.types.map(type => ({value: type.id, text: type.name}));
             },
+            getUrl() {
+
+                config('app.env')
+            }
         }
     };
 </script>
