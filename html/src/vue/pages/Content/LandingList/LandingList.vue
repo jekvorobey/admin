@@ -154,7 +154,7 @@
                     });
             },
             getUrl(code) {
-                return this.url + '/' + code;
+                return this.url + '/pages/' + code;
             }
         },
         created() {
