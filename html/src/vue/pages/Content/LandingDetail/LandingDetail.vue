@@ -21,7 +21,10 @@
             LandingEditForm,
         },
         props: {
-            iLanding: Object,
+            iLanding: {
+                type: Object,
+                default: {},
+            },
         },
         data() {
             return {

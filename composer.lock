@@ -1243,7 +1243,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "bd3de6b8202fe5401b2fee011b03246aa9457c05"
+                "reference": "57cb7bf881a50d395a2b0a5a8234170ea244572f"
             },
             "require": {
                 "ext-json": "*",
@@ -1266,7 +1266,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2022-02-22T10:33:35+00:00"
+            "time": "2022-03-02T11:01:46+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -10835,7 +10835,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-436-refactor-landings",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },

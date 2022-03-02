@@ -68,7 +68,7 @@
         >
             <vue-editor
                 id="landing-group-meta-description"
-                v-model="landing.widgets"
+                v-model="landing.content"
                 :editorOptions="editorSettings"
                 type="text"
                 tag-name="textarea"
@@ -94,7 +94,10 @@
           VueEditor,
       },
       props: {
-          iLanding: Object,
+          iLanding: {
+              type: Object,
+              default: {},
+          },
       },
 
       data() {
@@ -104,12 +107,12 @@
                   modules: {
                       imageDrop: true,
                       imageResize: {
-                        modules: ["Resize", "DisplaySize", "Toolbar"],
-                        handleStyles: {
-                          backgroundColor: "black",
-                          border: "none",
-                          color: "white",
-                        },
+                          modules: ["Resize", "DisplaySize", "Toolbar"],
+                          handleStyles: {
+                              backgroundColor: "black",
+                              border: "none",
+                              color: "white",
+                          },
                       },
                   }
               }
@@ -127,7 +130,7 @@
                   name: source.name ? source.name : null,
                   code: source.code ? source.code : null,
                   active: source.active ? source.active : false,
-                  widgets: source.widgets ? source.widgets : null,
+                  content: source.content ? source.content : null,
                   meta_title: source.meta_title ? source.meta_title : null,
                   meta_description: source.meta_description ? source.meta_description : null,
               };

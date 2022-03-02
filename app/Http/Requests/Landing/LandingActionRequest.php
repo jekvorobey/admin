@@ -9,10 +9,10 @@ class LandingActionRequest extends FormRequest
     public function rules()
     {
         return [
-            'active' => 'integer|required',
+            'active' => 'boolean|required',
             'code' => 'string|required',
             'name' => 'string|required',
-            'widgets' => 'string|required',
+            'content' => 'string|required',
             'meta_title' => 'string|nullable',
             'meta_description' => 'string|nullable',
         ];

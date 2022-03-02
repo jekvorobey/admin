@@ -37,9 +37,7 @@ class LandingDetailController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        return $this->render('Content/LandingDetail', [
-            'iLanding' => new \stdClass(),
-        ]);
+        return $this->render('Content/LandingDetail');
     }
 
     /**
