@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Services\OperatorService\OperatorService;
@@ -26,14 +27,14 @@ class TabOperatorController extends Controller
 
         return response()->json([
             'communication_methods' => OperatorCommunicationMethod::allMethods(),
-            'roles' => UserDto::rolesByFrontIds([Front::FRONT_MAS]),
+            'roles' => RoleDto::rolesByFrontIds([Front::FRONT_MAS]),
         ]);
     }
 
     /**
      * AJAX пагинация списка операторов
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function loadOperators(
         int $merchantId,
@@ -64,8 +65,8 @@ class TabOperatorController extends Controller
                     'email' => $users[$operator->user_id]->email,
                     'phone' => $users[$operator->user_id]->phone,
                     'communication_method' => OperatorCommunicationMethod::methodById($operator->communication_method)['name'],
-                    'roles' => collect($users[$operator->user_id]->roles)->keys()->map(function ($roleId) {
-                        return UserDto::roles()[$roleId];
+                    'roles' => collect($users[$operator->user_id]->roles)->map(function ($roleId) {
+                        return RoleDto::roles()[$roleId];
                     })->all(),
                     'active' => $users[$operator->user_id]->active,
                     'login' => $users[$operator->user_id]->login,
@@ -108,7 +109,7 @@ class TabOperatorController extends Controller
                     Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
                 ],
                 'roles' => 'array|someone',
-                'roles.' => Rule::in(UserDto::rolesByFrontIds([Front::FRONT_MAS])),
+                'roles.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
                 'active' => 'integer|someone',
             ]
         )->attributes();

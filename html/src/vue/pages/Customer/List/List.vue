@@ -2,7 +2,7 @@
     <layout-main>
         <div class="card">
             <div class="card-body">
-                <b-form @submit.prevent="filterUsers">
+                <b-form @submit.prevent="applyFilters">
                     <b-row class="mb-2">
                         <b-col>
                             <label for="filter-status">Статус</label>
@@ -109,22 +109,24 @@ import { telMask } from '../../../../scripts/mask.js';
 import Services from '../../../../scripts/services/services.js';
 import ModalCreateUser from './components/modal-create-user.vue';
 
+const defaultFilter = {
+    status: null,
+    phone: '',
+    full_name: '',
+    gender: 0,
+    created_between: [],
+    created_at: null,
+    use_period: false,
+    role: 0,
+};
+
 export default {
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate},
     props: ['statuses', 'perPage', 'isReferral','roles'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',
-            filter: {
-                status: null,
-                phone: '',
-                full_name: '',
-                gender: 0,
-                created_between: [],
-                created_at: null,
-                use_period: false,
-                role: 0,
-            },
+            filter: {...defaultFilter},
 
             users: [],
             pager: {
@@ -133,14 +135,14 @@ export default {
                 perPage: this.perPage,
             },
             genders: {
-                0:'Все',
-                2:'Мужской',
-                1:'Женский'
+                0: 'Все',
+                2: 'Мужской',
+                1: 'Женский'
             }
         };
     },
     watch: {
-        'pager.page': 'filterUsers',
+        'pager.page': 'fetchUsers'
     },
     computed: {
         telMask() {
@@ -148,24 +150,31 @@ export default {
         }
     },
     methods: {
-        filterUsers() {
+        fetchUsers() {
             let filter = {...this.filter};
 
             filter.isReferral = this.isReferral ? 1 : 0;
             filter.page = this.pager.page;
             Services.net().get(this.getRoute('customers.filter'), filter).then((data)=> {
                 this.users = data.users;
-                this.pager.count = data.count;
+                this.pager.count = data.count || 0;
             });
         },
+        applyFilters() {
+            if (this.pager.page === 1) {
+                this.fetchUsers();
+            }
+
+            this.pager.page = 1;
+            // fetchUsers called into watch 'pager.page'
+        },
         cleanFilter() {
-            Object.keys(this.filter).forEach(key =>
-                this.filter[key] = null
-            )
+            this.filter = {...defaultFilter};
+            this.applyFilters();
         }
     },
     created() {
-        this.filterUsers();
+        this.fetchUsers();
     }
 };
 </script>

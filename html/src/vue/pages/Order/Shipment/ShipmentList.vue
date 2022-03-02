@@ -358,7 +358,7 @@ export default {
                     name: 'Статус Оплаты',
                     code: 'payment_status',
                     value: (shipment) => {
-                        return Object.values(this.shipmentStatuses).find(item =>
+                        return Object.values(this.paymentStatuses).find(item =>
                             item.id === shipment.payment_status
                         ).name;
                     },

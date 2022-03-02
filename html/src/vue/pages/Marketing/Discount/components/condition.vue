@@ -3,7 +3,7 @@
         <div class="col-4">
             <v-select
                 v-model="conditionType"
-                :options="types"
+                :options="allowedTypes"
                 :error="conditionError"
             >Условия предоставления скидки</v-select>
         </div>
@@ -66,7 +66,7 @@
 
                 <!-- На количество единиц одного товара -->
                 <template v-if="conditionType === CONDITION_TYPE_EVERY_UNIT_PRODUCT">
-                    <div class="col-4">
+                    <div>
                         <v-input
                             v-model="values.count"
                             type="number"
@@ -76,7 +76,7 @@
                         >Количество</v-input>
                     </div>
 
-                    <div class="col-4">
+                    <div>
                         <v-input
                             v-model="values.offer"
                             type="number"
@@ -122,10 +122,11 @@
                     >Регионы</f-multi-select>
                 </div>
 
-                <div class="mb-2 col-12" :class="{ 'error': valuesErrors.user }">
+                <div v-if="valuesErrors.user" class="mb-2" :class="{ 'error': valuesErrors.user }">
                     {{ valuesErrors.user }}
                 </div>
-                <div class="col-4" v-if="conditionType === CONDITION_TYPE_USER">
+
+                <div v-if="conditionType === CONDITION_TYPE_USER">
                     <!-- Для определенных пользователей системы -->
                     <v-input
                         v-model="values.users"
@@ -153,7 +154,7 @@
                 </div>
 
                 <!-- Порядковый номер заказа -->
-                <div class="col-4" v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
+                <div v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
                     <v-input
                         v-model="values.sequenceNumber"
                         type="number"
@@ -164,15 +165,28 @@
                 </div>
 
                 <!-- Суммируется с другими маркетинговыми инструментами -->
-                <div class="col-6" v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
-                    <v-select
-                        v-model="values.synergy"
-                        :options="discounts"
-                        :multiple="true"
-                        :selectSize="10"
-                        :error="valuesErrors.synergy"
-                        @change="initSynergyError"
-                    >Суммируется с другими скидками</v-select>
+                <div v-if="conditionType === CONDITION_TYPE_DISCOUNT_SYNERGY">
+                    <div class="form-group">
+                        <label for="synergy-select">
+                            Суммируется с другими скидками
+                        </label>
+
+                        <v-select2
+                            v-model="values.synergy"
+                            id="synergy-select"
+                            class="form-control"
+                            multiple
+                            @change="initSynergyError"
+                        >
+                            <option v-for="discount in discounts" :key="discount.value" :value="discount.value">
+                                {{ discount.text }}
+                            </option>
+                        </v-select2>
+
+                        <div v-if="valuesErrors.synergy" class="mb-2 error" role="alert">
+                            {{ valuesErrors.synergy }}
+                        </div>
+                    </div>
 
                     <div v-if="canHasSynergyMax">
                         <p>Суммируется, но максимальный размер:</p>
@@ -203,9 +217,11 @@
     import BrandsSearch from '../../components/brands-search.vue';
     import CategoriesSearch from '../../components/categories-search.vue';
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
+    import VSelect2 from "../../../../components/controls/VSelect2/v-select2.vue";
 
     export default {
         components: {
+            VSelect2,
             VInput,
             VSelect,
             FMultiSelect,
@@ -322,6 +338,22 @@
                     {text: 'Проценты', value: 1},
                     {text: 'Рубли', value: 2}
                 ];
+            },
+
+            allowedTypes() {
+                const { types } = this;
+
+                let result = {};
+
+                for (const key in types) {
+                    const index = this.discount.conditions.findIndex(condition => condition.type === types[key].value);
+
+                    if (index === -1 || this.values.type === types[key].value) {
+                        result[key] = types[key];
+                    }
+                }
+
+                return result;
             },
 
             valuesUserError() {

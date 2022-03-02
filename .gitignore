@@ -5,6 +5,8 @@
 /.idea/
 *.komodoproject
 *.vscode
+.phpstorm.meta.php
+_ide_helper.php
 .valetphprc
 .phpstorm.meta.php
 

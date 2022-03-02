@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestClientException;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -37,7 +38,7 @@ class ChatsController extends Controller
 
         $this->title = 'Непрочитанные сообщения';
         return $this->render('Communication/ChatsUnread', [
-            'roles' => UserDto::rolesByFrontIds([
+            'roles' => RoleDto::rolesByFrontIds([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
@@ -59,7 +60,7 @@ class ChatsController extends Controller
         $this->title = 'Массовая рассылка';
 
         return $this->render('Communication/Broadcast', [
-            'roles' => UserDto::rolesByFrontIds([
+            'roles' => RoleDto::rolesByFrontIds([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
@@ -217,9 +218,7 @@ class ChatsController extends Controller
         $listConstructor = $communicationService->chats();
         $listConstructor->setUserIds('null');
         $chats = $listConstructor->load();
-
-        /** TODO изменить метод под роли из базы */
-        $roles = UserDto::rolesGroupByFront();
+        $roles = RoleDto::rolesGroupByFront();
         $users = $userService
             ->users(
                 (new RestQuery())

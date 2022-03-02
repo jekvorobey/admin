@@ -84,6 +84,7 @@ export default {
         },
         updateRole(newData) {
             Object.assign(this.role, newData.role);
+            this.roleBlockPermissions = this.createRoleBlockPermissions();
             this.closeModal();
             this.showMessageBox({text: 'Роль обновлена'});
         },
@@ -109,6 +110,14 @@ export default {
                     Services.hideLoader();
                 })
         },
+        createRoleBlockPermissions() {
+            return Object.values(this.options.blocks).filter(block =>block.front === this.role.front).map(block => {
+                return {
+                    block_id: block.id,
+                    permission_id: this.rolePermissionIdByBlock(block.id)
+                }
+            });
+        },
     },
     computed: {
         roleInfo() {
@@ -132,12 +141,7 @@ export default {
         }
     },
     created() {
-        this.roleBlockPermissions = Object.values(this.options.blocks).map(block => {
-            return {
-                block_id: block.id,
-                permission_id: this.rolePermissionIdByBlock(block.id)
-            }
-        });
+        this.roleBlockPermissions = this.createRoleBlockPermissions();
     }
 };
 </script>

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -198,7 +198,7 @@ class ProductListController extends Controller
         $page = $request->get('page', 1);
         $query->page($page, 10);
         $query->segment = 1;// todo
-        $query->role = UserDto::SHOWCASE__GUEST;
+        $query->role = RoleDto::ROLE_SHOWCASE_GUEST;
         $query->fields([
             ProductQuery::PRODUCT_ID,
             ProductQuery::DATE_ADD,

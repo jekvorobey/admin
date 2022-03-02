@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Merchant;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -19,10 +20,16 @@ use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\Dto\RegisterNewMerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class MerchantListController extends Controller
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function registration()
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -32,6 +39,10 @@ class MerchantListController extends Controller
         return $this->list(false);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function active()
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -41,6 +52,10 @@ class MerchantListController extends Controller
         return $this->list(true);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     protected function list($done)
     {
         $this->loadMerchantStatuses = true;
@@ -54,7 +69,7 @@ class MerchantListController extends Controller
         /** @var UserService $userService */
         $userService = resolve(UserService::class);
 
-        $managers = $userService->users((new RestQuery())->setFilter('role', UserDto::ADMIN__MANAGER_MERCHANT));
+        $managers = $userService->users((new RestQuery())->setFilter('role', RoleDto::ROLE_KAM));
 
         $query = $this->makeQuery($done);
 
@@ -198,7 +213,7 @@ class MerchantListController extends Controller
             $userService = resolve(UserService::class);
             $users = $userService
                 ->users(
-                    $userQuery->setFilter('role', [UserDto::MAS__MERCHANT_ADMIN])
+                    $userQuery->setFilter('role', [RoleDto::ROLE_MAS_MERCHANT_ADMIN])
                 )
                 ->pluck('id')
                 ->all();
@@ -244,7 +259,7 @@ class MerchantListController extends Controller
         $data = $this->validate(request(), [
             'legal_name' => 'required|string',
             'inn' => ['required', 'regex:/^\d{10}(\d{2})?$/'],
-            'kpp' => 'required|string|size:9',
+            'kpp' => 'string|size:9|nullable',
             'legal_address' => 'required|string',
             'fact_address' => 'required|string',
 
@@ -256,7 +271,7 @@ class MerchantListController extends Controller
 
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'middle_name' => 'required|string',
+            'middle_name' => 'nullable|string',
             'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
             'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CatalogImport\Services\ProductsImportService\ProductsImportService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
-use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\Request;
 use Pim\Dto\Search\ProductQuery;
@@ -54,7 +54,7 @@ class ProductsExportController extends Controller
         $query = (new ProductQuery())
             ->setFilters($data['filters']);
         $query->segment = 1;// todo
-        $query->role = UserDto::SHOWCASE__GUEST;
+        $query->role = RoleDto::ROLE_SHOWCASE_GUEST;
         $query->fields([
             ProductQuery::PRODUCT_ID,
         ]);
