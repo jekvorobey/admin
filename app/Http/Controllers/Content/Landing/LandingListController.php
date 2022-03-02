@@ -26,6 +26,7 @@ class LandingListController extends Controller
             'iPager' => $landingService->landingsCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
+            'url' => config('app.showcase_host'),
             'options' => [
             ],
         ]);

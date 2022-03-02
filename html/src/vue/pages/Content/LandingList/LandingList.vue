@@ -42,7 +42,7 @@
                     {{landing.name}}
                 </td>
                 <td>
-                    <a target="_blank" :href="'http://ibt-front.test:8080/landings/preview?type=' + landing.code"></a>
+                    <a target="_blank" :href="getUrl(landing.code)">Предпросмотр</a>
                 </td>
                 <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
@@ -90,11 +90,11 @@
             iPager: {},
             iCurrentPage: {},
             iFilter: {},
+            url: String,
             options: {}
         },
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
-
             return {
                 landings: this.iLandings,
                 pager: this.iPager,
@@ -152,6 +152,9 @@
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
+            },
+            getUrl(code) {
+                return this.url + '/' + code;
             }
         },
         created() {
@@ -171,10 +174,6 @@
             typeOptions() {
                 return this.options.types.map(type => ({value: type.id, text: type.name}));
             },
-            getUrl() {
-
-                config('app.env')
-            }
         }
     };
 </script>
