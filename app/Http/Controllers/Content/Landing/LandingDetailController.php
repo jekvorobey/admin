@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content\Landing;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Landing\LandingActionRequest;
 use Cms\Core\CmsException;
 use Cms\Dto\LandingDto;
 use Cms\Dto\LandingWidgetDto;
@@ -38,27 +39,18 @@ class LandingDetailController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         return $this->render('Content/LandingDetail', [
-            'iLanding' => [],
+            'iLanding' => new \stdClass(),
         ]);
     }
 
     /**
      * @throws CmsException
      */
-    public function create(Request $request, LandingService $landingService): JsonResponse
+    public function create(LandingActionRequest $request, LandingService $landingService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $validatedData = $request->validate([
-            'active' => 'integer|required',
-            'code' => 'string|required',
-            'name' => 'string|required',
-            'widgets' => 'string|nullable|required',
-            'meta_title' => 'string|nullable',
-            'meta_description' => 'string|nullable',
-        ]);
-
-        $landingService->createLanding(new LandingDto($validatedData));
+        $landingService->createLanding(new LandingDto($request->validated()));
 
         return response()->json([], 204);
     }
@@ -66,23 +58,11 @@ class LandingDetailController extends Controller
     /**
      * @throws CmsException
      */
-    public function update(int $id, Request $request, LandingService $landingService): JsonResponse
+    public function update(int $id, LandingActionRequest $request, LandingService $landingService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $validatedData = $request->validate([
-            'id' => 'integer|required',
-            'active' => 'integer|required',
-            'code' => 'string|required',
-            'name' => 'string|required',
-            'widgets' => 'string|required',
-            'meta_title' => 'string|nullable',
-            'meta_description' => 'string|nullable',
-        ]);
-
-        $validatedData['id'] = $id;
-
-        $landingService->updateLanding($validatedData['id'], new LandingDto($validatedData));
+        $landingService->updateLanding($id, new LandingDto($request->validated()));
 
         return response()->json([], 204);
     }

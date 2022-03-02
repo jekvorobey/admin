@@ -109,7 +109,6 @@
                           backgroundColor: "black",
                           border: "none",
                           color: "white",
-                          // other camelCase styles for size display
                         },
                       },
                   }

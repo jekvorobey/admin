@@ -21,7 +21,7 @@
             LandingEditForm,
         },
         props: {
-            iLanding: [Object, Array],
+            iLanding: Object,
         },
         data() {
             return {
