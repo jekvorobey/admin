@@ -94,7 +94,7 @@
           VueEditor,
       },
       props: {
-          iLanding: [Object, Array],
+          iLanding: Object,
       },
 
       data() {
