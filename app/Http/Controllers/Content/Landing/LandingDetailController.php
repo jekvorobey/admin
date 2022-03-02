@@ -10,7 +10,6 @@ use Cms\Dto\LandingWidgetDto;
 use Cms\Services\LandingService\LandingService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class LandingDetailController extends Controller
