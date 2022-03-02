@@ -54,9 +54,7 @@ class BundleController extends Controller
             'roles' => Helpers::getOptionRoles(),
             'iFilter' => $params['filter'],
             'discountStatuses' => DiscountStatusDto::allStatuses(),
-            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->keys()->filter(function ($key) {
-                return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
-            }),
+            'optionDiscountTypes' => collect(DiscountTypeDto::allTypes())->only(DiscountTypeDto::TYPE_BUNDLE_OFFER, DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS),
             'merchantNames' => DiscountHelper::getMerchantNames(),
             'userNames' => DiscountHelper::getUserNames(),
             'authors' => $discountUserInfo['authors'],
