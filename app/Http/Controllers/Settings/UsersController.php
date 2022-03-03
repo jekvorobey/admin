@@ -171,6 +171,40 @@ class UsersController extends Controller
         }
     }
 
+    public function isEmailUnique(Request $request, UserService $userService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $email = $request->get('email');
+        $emailUnique = true;
+        if ($email) {
+            $userQuery = new RestQuery();
+            $userQuery->setFilter('login_email', $email);
+            $emailUnique = $userService->users($userQuery)->isEmpty();
+        }
+
+        return response()->json([
+            'emailUnique' => $emailUnique,
+        ]);
+    }
+
+    public function isPhoneUnique(Request $request, UserService $userService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $phone = $request->get('phone');
+        $phoneUnique = true;
+        if ($phone) {
+            $userQuery = new RestQuery();
+            $userQuery->setFilter('login', $phone);
+            $phoneUnique = $userService->users($userQuery)->isEmpty();
+        }
+
+        return response()->json([
+            'phoneUnique' => $phoneUnique,
+        ]);
+    }
+
     public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);

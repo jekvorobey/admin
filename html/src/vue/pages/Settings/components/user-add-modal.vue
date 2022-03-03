@@ -148,12 +148,18 @@ export default {
                         return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
                     email,
+                    isUnique: function() {
+                        return this.isEmailUnique();
+                    },
                     $lazy: true
                 },
                 phone: {
                     required: requiredIf(function(form){
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
+                    isUnique: function() {
+                        return this.isPhoneUnique();
+                    },
                     $lazy: true
                 },
                 login: {},
@@ -237,6 +243,23 @@ export default {
                 });
             });
         },
+        isEmailUnique() {
+            Services.showLoader();
+            return Services.net().get(this.getRoute('user.isEmailUnique'), {email: this.form.email})
+                .then(data => data.emailUnique)
+                .finally(() => {
+                    Services.hideLoader();
+                });
+        },
+        isPhoneUnique() {
+            Services.showLoader();
+            let phoneNumber = this.form.phone.replace(/[()]|\s|-/g, '');
+            return Services.net().get(this.getRoute('user.isPhoneUnique'), {phone: phoneNumber})
+                .then(data => data.phoneUnique)
+                .finally(() => {
+                    Services.hideLoader();
+                });
+        },
         rolesCheckbox(e, id) {
             id = parseInt(id);
             if (e.target.checked) {
@@ -299,12 +322,14 @@ export default {
         errorPhone() {
             if (this.$v.form.phone.$dirty) {
                 if (!this.$v.form.phone.required) return "Обязательное поле!";
+                if (!this.$v.form.phone.isUnique) return "Телефон должен быть уникальным!";
             }
         },
         errorEmail() {
             if (this.$v.form.email.$dirty) {
                 if (!this.$v.form.email.required) return "Обязательное поле!";
                 if (!this.$v.form.email.email) return "Формат E-mail не соответствует требованиям!";
+                if (!this.$v.form.email.isUnique) return "E-mail должен быть уникальным!";
             }
         },
         errorPassword() {

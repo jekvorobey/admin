@@ -308,6 +308,8 @@ Route::middleware('auth')->group(function () {
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
             Route::put('banArray', 'UsersController@banArray')->name('settings.banArray');
             Route::post('updatePassword', 'UsersController@updatePassword')->name('user.updatePassword');
+            Route::get('is-email-unique', 'UsersController@isEmailUnique')->name('user.isEmailUnique');
+            Route::get('is-phone-unique', 'UsersController@isPhoneUnique')->name('user.isPhoneUnique');
         });
 
         Route::prefix('roles')->group(function () {
