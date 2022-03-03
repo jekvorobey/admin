@@ -179,7 +179,8 @@ class UsersController extends Controller
         $emailUnique = true;
         if ($email) {
             $userQuery = new RestQuery();
-            $userQuery->setFilter('login_email', $email);
+            $userQuery->setFilter('email', $email);
+            $userQuery->setFilter('email', 'notNull');
             $emailUnique = $userService->users($userQuery)->isEmpty();
         }
 
@@ -196,7 +197,8 @@ class UsersController extends Controller
         $phoneUnique = true;
         if ($phone) {
             $userQuery = new RestQuery();
-            $userQuery->setFilter('login', $phone);
+            $userQuery->setFilter('phone', $phone);
+            $userQuery->setFilter('phone', 'notNull');
             $phoneUnique = $userService->users($userQuery)->isEmpty();
         }
 
