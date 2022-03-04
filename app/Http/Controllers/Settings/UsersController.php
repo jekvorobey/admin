@@ -171,6 +171,29 @@ class UsersController extends Controller
         }
     }
 
+    public function isUnique(Request $request, UserService $userService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+
+        $data = $request->get('data');
+        $field = $request->get('field');
+        $id = $request->get('id');
+        $isUnique = true;
+        if ($data && $field) {
+            $userQuery = new RestQuery();
+            $userQuery->setFilter($field, $data);
+            $userQuery->setFilter($field, 'notNull');
+            if ($id) {
+                $userQuery->setFilter('id', '!=', $id);
+            }
+            $isUnique = $userService->users($userQuery)->isEmpty();
+        }
+
+        return response()->json([
+            'isUnique' => $isUnique,
+        ]);
+    }
+
     public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);

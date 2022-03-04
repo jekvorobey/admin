@@ -1,36 +1,36 @@
 <template>
     <layout-main>
-        <b-card>
-            <template v-slot:header>
-                Фильтр
-            </template>
-            <div class="row">
-                <f-input v-model="filter.id" class="col-sm-12 col-md-3 col-xl-2">
-                    ID пользователя
-                </f-input>
-                <f-input v-model="filter.full_name" class="col-sm-12 col-md-3 col-xl-2">
-                    ФИО
-                </f-input>
-                <f-input v-model="filter.email" class="col-sm-12 col-md-3 col-xl-2">
-                    Email
-                </f-input>
-                <f-input v-model="filter.phone" class="col-sm-12 col-md-3 col-xl-2">
-                    Телефон
-                </f-input>
-                <f-select v-model="filter.front" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
-                    Система
-                </f-select>
-                <f-select v-model="filter.role" :options="roleOptions" class="col-sm-12 col-md-3 col-xl-2">
-                    Роли
-                </f-select>
+        <div class="card">
+            <div class="card-body">
+                <b-form @submit.prevent="applyFilter">
+                    <b-row class="mb-2">
+                        <f-input v-model="filter.id" class="col-sm-12 col-md-3 col-xl-2">
+                            ID пользователя
+                        </f-input>
+                        <f-input v-model="filter.full_name" class="col-sm-12 col-md-3 col-xl-2">
+                            ФИО
+                        </f-input>
+                        <f-input v-model="filter.email" class="col-sm-12 col-md-3 col-xl-2">
+                            Email
+                        </f-input>
+                        <f-input v-model="filter.phone" class="col-sm-12 col-md-3 col-xl-2">
+                            Телефон
+                        </f-input>
+                        <f-select v-model="filter.front" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
+                            Система
+                        </f-select>
+                        <f-select v-model="filter.role" :options="roleOptions" class="col-sm-12 col-md-3 col-xl-2">
+                            Роли
+                        </f-select>
+                    </b-row>
+
+                    <b-button type="submit" variant="dark">Применить</b-button>
+                    <b-button type="button" @click="clearFilter" variant="light">Очистить</b-button>
+                    <span class="float-right">Всего ролей: {{ pager.total }}. <span
+                        v-if="selectedItems.length">Выбрано: {{ selectedItems.length }}</span></span>
+                </b-form>
             </div>
-            <template v-slot:footer>
-                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
-                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
-                <span class="float-right">Всего ролей: {{ pager.total }}. <span
-                    v-if="selectedItems.length">Выбрано: {{ selectedItems.length }}</span></span>
-            </template>
-        </b-card>
+        </div>
         <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.settings)">
             <button @click="openModal('userAdd')" class="btn btn-success">
                 <fa-icon icon="plus"/>
@@ -78,7 +78,7 @@
                     <b-button class="btn btn-sm"
                               :class="{'btn-danger': !user.banned, 'btn-success': user.banned}"
                               @click="!user.banned ? banUser(user.id) : unBanUser(user.id)">
-                        {{!user.banned ? 'Заблокировать' : 'Разблокировать' }}
+                        {{ !user.banned ? 'Заблокировать' : 'Разблокировать' }}
                     </b-button>
                 </td>
             </tr>
@@ -95,7 +95,8 @@
                 class="mt-3 float-right"
             ></b-pagination>
         </div>
-        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants" @onSave="onUserCreated"></user-add-modal>
+        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
+                        @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
 

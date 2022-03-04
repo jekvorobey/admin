@@ -148,12 +148,18 @@ export default {
                         return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
                     email,
+                    isUnique: function(form) {
+                        return this.isFieldUnique(this.form.email, 'email');
+                    },
                     $lazy: true
                 },
                 phone: {
                     required: requiredIf(function(form){
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
+                    isUnique: function() {
+                        return this.isFieldUnique(this.form.phone, 'phone');
+                    },
                     $lazy: true
                 },
                 login: {},
@@ -237,6 +243,15 @@ export default {
                 });
             });
         },
+        isFieldUnique(data, field) {
+            Services.showLoader();
+            let userId = this.source ? this.source.id : null;
+            return Services.net().get(this.getRoute('user.isUnique'), {data: data, field: field, id: userId})
+                .then(data => data.isUnique)
+                .finally(() => {
+                    Services.hideLoader();
+                });
+        },
         rolesCheckbox(e, id) {
             id = parseInt(id);
             if (e.target.checked) {
@@ -299,12 +314,14 @@ export default {
         errorPhone() {
             if (this.$v.form.phone.$dirty) {
                 if (!this.$v.form.phone.required) return "Обязательное поле!";
+                if (!this.$v.form.phone.isUnique) return "Телефон должен быть уникальным!";
             }
         },
         errorEmail() {
             if (this.$v.form.email.$dirty) {
                 if (!this.$v.form.email.required) return "Обязательное поле!";
                 if (!this.$v.form.email.email) return "Формат E-mail не соответствует требованиям!";
+                if (!this.$v.form.email.isUnique) return "E-mail должен быть уникальным!";
             }
         },
         errorPassword() {
