@@ -11,6 +11,8 @@ use Illuminate\Support\Collection;
 
 class SeoLogicService
 {
+    private const PER_PAGE = 10;
+
     /**
      * @throws CmsException
      */
@@ -18,10 +20,10 @@ class SeoLogicService
     {
         $query = $this->makeQuery($request);
         $data = [
-            'landings' => $this->getSeos($query, $seoService),
+            'landings' => $this->getSeoList($query, $seoService),
         ];
         if ($request->get('page', 1) == 1) {
-            $data['pager'] = $seoService->seosCount($query);
+            $data['pager'] = $seoService->seoCount($query);
         }
 
         return $data;
@@ -32,7 +34,7 @@ class SeoLogicService
         $query = new RestQuery();
 
         $page = $request->get('page', 1);
-        $query->pageNumber($page, 10);
+        $query->pageNumber($page, self::PER_PAGE);
 
         return $query;
     }
@@ -41,9 +43,9 @@ class SeoLogicService
      * @return Collection|SeoDto[]
      * @throws CmsException
      */
-    public function getSeos(RestQuery $query, SeoService $seoService)
+    public function getSeoList(RestQuery $query, SeoService $seoService): Collection
     {
-        return $seoService->seos($query);
+        return $seoService->seo($query);
     }
 
     /**
@@ -53,6 +55,6 @@ class SeoLogicService
     {
         $query = $seoService->newQuery()->setFilter('id', $id);
 
-        return $this->getSeos($query, $seoService)->first();
+        return $this->getSeoList($query, $seoService)->first();
     }
 }

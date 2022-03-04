@@ -10,6 +10,7 @@ class SeoUpdateRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'code' => 'required|string',
             'meta_title' => 'required|string',
             'meta_description' => 'required|string',
         ];

@@ -33,8 +33,8 @@ class SeoController extends Controller
         $query = $this->service->makeQuery($request);
 
         return $this->render('Content/SeoList', [
-            'iSeo' => $this->service->getSeos($query, $seoService),
-            'iPager' => $seoService->seosCount($query),
+            'iSeo' => $this->service->getSeoList($query, $seoService),
+            'iPager' => $seoService->seoCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'options' => [],
         ]);
@@ -47,6 +47,9 @@ class SeoController extends Controller
         return response()->json($this->service->page($request, $seoService));
     }
 
+    /**
+     * @throws CmsException
+     */
     public function edit(int $id, SeoService $seoService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
