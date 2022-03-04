@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "77dd558fbdcb2cca985213157f4da2c1",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1239,11 +1239,11 @@
         },
         {
             "name": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-700-seo",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "3219f67cd56b66cc708caf68d829da13ebcf4199"
+                "reference": "fb19295d081333d35743be842884b8b3e5cc85c1"
             },
             "require": {
                 "ext-json": "*",
@@ -1266,7 +1266,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2021-12-23T13:59:07+00:00"
+            "time": "2022-03-04T09:38:43+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -10835,7 +10835,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-700-seo",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
