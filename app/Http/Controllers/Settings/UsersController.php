@@ -171,39 +171,26 @@ class UsersController extends Controller
         }
     }
 
-    public function isEmailUnique(Request $request, UserService $userService): JsonResponse
+    public function isUnique(Request $request, UserService $userService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
-        $email = $request->get('email');
-        $emailUnique = true;
-        if ($email) {
+        $data = $request->get('data');
+        $field = $request->get('field');
+        $id = $request->get('id');
+        $isUnique = true;
+        if ($data && $field) {
             $userQuery = new RestQuery();
-            $userQuery->setFilter('email', $email);
-            $userQuery->setFilter('email', 'notNull');
-            $emailUnique = $userService->users($userQuery)->isEmpty();
+            $userQuery->setFilter($field, $data);
+            $userQuery->setFilter($field, 'notNull');
+            if ($id) {
+                $userQuery->setFilter('id', '!=', $id);
+            }
+            $isUnique = $userService->users($userQuery)->isEmpty();
         }
 
         return response()->json([
-            'emailUnique' => $emailUnique,
-        ]);
-    }
-
-    public function isPhoneUnique(Request $request, UserService $userService): JsonResponse
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
-
-        $phone = $request->get('phone');
-        $phoneUnique = true;
-        if ($phone) {
-            $userQuery = new RestQuery();
-            $userQuery->setFilter('phone', $phone);
-            $userQuery->setFilter('phone', 'notNull');
-            $phoneUnique = $userService->users($userQuery)->isEmpty();
-        }
-
-        return response()->json([
-            'phoneUnique' => $phoneUnique,
+            'isUnique' => $isUnique,
         ]);
     }
 

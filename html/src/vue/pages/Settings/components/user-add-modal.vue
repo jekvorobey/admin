@@ -148,8 +148,8 @@ export default {
                         return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
                     email,
-                    isUnique: function() {
-                        return this.isEmailUnique();
+                    isUnique: function(form) {
+                        return this.isFieldUnique(this.form.email, 'email');
                     },
                     $lazy: true
                 },
@@ -158,7 +158,7 @@ export default {
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
                     isUnique: function() {
-                        return this.isPhoneUnique();
+                        return this.isFieldUnique(this.form.phone, 'phone');
                     },
                     $lazy: true
                 },
@@ -243,19 +243,11 @@ export default {
                 });
             });
         },
-        isEmailUnique() {
+        isFieldUnique(data, field) {
             Services.showLoader();
-            return Services.net().get(this.getRoute('user.isEmailUnique'), {email: this.form.email})
-                .then(data => data.emailUnique)
-                .finally(() => {
-                    Services.hideLoader();
-                });
-        },
-        isPhoneUnique() {
-            Services.showLoader();
-            let phoneNumber = this.form.phone.replace(/[()]|\s|-/g, '');
-            return Services.net().get(this.getRoute('user.isPhoneUnique'), {phone: phoneNumber})
-                .then(data => data.phoneUnique)
+            let userId = this.source ? this.source.id : null;
+            return Services.net().get(this.getRoute('user.isUnique'), {data: data, field: field, id: userId})
+                .then(data => data.isUnique)
                 .finally(() => {
                     Services.hideLoader();
                 });
