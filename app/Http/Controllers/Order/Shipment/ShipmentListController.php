@@ -10,6 +10,8 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Logistics\Dto\Lists\PointDto;
+use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\StoreDto;
@@ -229,6 +231,7 @@ class ShipmentListController extends Controller
         $customerService = resolve(CustomerService::class);
         $userService = resolve(UserService::class);
         $brandService = resolve(BrandService::class);
+        $listService = resolve(ListsService::class);
 
         $shipments = $shipmentService->shipments($restQuery);
 
@@ -263,6 +266,25 @@ class ShipmentListController extends Controller
                         ->keyBy('id');
                 }
             }
+        }
+
+        if ($shipments) {
+            $selfPickupShipments = $shipments->where('delivery.point_id', '!=', null);
+
+            $pointIds = $selfPickupShipments
+                ->pluck('delivery.point_id')->unique()->toArray();
+
+            $query = $listService->newQuery()
+                ->setFilter('id', $pointIds)
+                ->addFields(PointDto::entity(), 'id', 'address');
+
+            $points = $listService->points($query);
+
+            $selfPickupShipments->each(function ($shipment) use ($points) {
+                $point = $points->firstWhere('id', $shipment->delivery->point_id);
+
+                $shipment->delivery->delivery_address = $point->address;
+            });
         }
 
         $brands = $brandService->brands((new RestQuery())
