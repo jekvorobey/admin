@@ -442,7 +442,7 @@ export default {
                     description: 'Дата доставки фактическая',
                     code: 'delivery_time_end',
                     value: (shipment) => {
-                        return shipment.delivery_time_end ? this.datetimePrint(shipment.delivery_time_end) : this.invalidData
+                        return shipment.delivery.delivered_at ? this.datetimePrint(shipment.delivery.delivered_at) : this.invalidData
                     },
                     isShown: true,
                     isAlwaysShown: false,
