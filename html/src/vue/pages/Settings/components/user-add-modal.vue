@@ -148,7 +148,7 @@ export default {
                         return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
                     email,
-                    isUnique: function(form) {
+                    isUnique: function() {
                         return this.isFieldUnique(this.form.email, 'email');
                     },
                     $lazy: true

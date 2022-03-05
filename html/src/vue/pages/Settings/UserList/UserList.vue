@@ -26,7 +26,7 @@
 
                     <b-button type="submit" variant="dark">Применить</b-button>
                     <b-button type="button" @click="clearFilter" variant="light">Очистить</b-button>
-                    <span class="float-right">Всего ролей: {{ pager.total }}. <span
+                    <span class="float-right">Всего пользователей: {{ pager.total }}. <span
                         v-if="selectedItems.length">Выбрано: {{ selectedItems.length }}</span></span>
                 </b-form>
             </div>
