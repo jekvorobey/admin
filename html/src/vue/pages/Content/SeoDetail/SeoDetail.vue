@@ -2,30 +2,6 @@
     <layout-main back>
         <b-form @submit.prevent="submit">
             <b-form-group
-                label="Наименование*"
-                label-for="seo-group-name"
-            >
-                <b-form-input
-                    id="seo-group-name"
-                    v-model="seo.name"
-                    type="text"
-                    required
-                    placeholder="Введите наименование"
-                />
-            </b-form-group>
-            <b-form-group
-                label="Код страницы*"
-                label-for="seo-group-code"
-            >
-                <b-form-input
-                    id="seo-group-code"
-                    v-model="seo.code"
-                    type="text"
-                    required
-                    placeholder="Введите код страницы"
-                />
-            </b-form-group>
-            <b-form-group
                 label="Мета заголовок*"
                 label-for="seo-group-meta-title"
             >

@@ -9,8 +9,6 @@ class SeoUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'code' => 'required|string',
             'meta_title' => 'required|string',
             'meta_description' => 'required|string',
         ];
