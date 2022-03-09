@@ -259,6 +259,7 @@
             author: Object,
             categories: Array,
             brands: Array,
+            conditionInvalid: Boolean,
         },
         data() {
             return {
@@ -301,9 +302,17 @@
             };
         },
         methods: {
-            save() {
+            async save() {
                 this.$v.$touch();
                 if (this.$v.$invalid) {
+                    return;
+                }
+
+                this.checkConditionValidity();
+
+                await this.$nextTick();
+
+                if(this.conditionInvalid) {
                     return;
                 }
 
@@ -412,6 +421,10 @@
                     .split(',')
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
+            },
+
+            checkConditionValidity() {
+                this.$emit("validateCondition");
             },
         },
         computed: {
