@@ -12,7 +12,7 @@
                 <!-- На заказ от определенной суммы -->
                 <div v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
                     <v-input
-                        v-model="values.sum"
+                        v-model="value.sum"
                         type="number"
                         min="0"
                         :error="valuesErrors.sum"
@@ -24,7 +24,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_BRAND">
                     <div>
                         <v-input
-                            v-model="values.sum"
+                            v-model="value.sum"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -46,7 +46,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_CATEGORY">
                     <div>
                         <v-input
-                            v-model="values.sum"
+                            v-model="value.sum"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -68,7 +68,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_EVERY_UNIT_PRODUCT">
                     <div>
                         <v-input
-                            v-model="values.count"
+                            v-model="value.count"
                             type="number"
                             min="0"
                             :error="valuesErrors.count"
@@ -78,7 +78,7 @@
 
                     <div>
                         <v-input
-                            v-model="values.offer"
+                            v-model="value.offer"
                             type="number"
                             min="0"
                             :error="valuesErrors.offer"
@@ -90,7 +90,7 @@
                 <!-- На способ доставки -->
                 <div v-if="conditionType === CONDITION_TYPE_DELIVERY_METHOD">
                     <v-select
-                        v-model="values.deliveryMethods"
+                        v-model="value.deliveryMethods"
                         :options="iDeliveryMethods"
                         :multiple="true"
                         :error="valuesErrors.deliveryMethods"
@@ -101,7 +101,7 @@
                 <!-- На способ оплаты -->
                 <div v-if="conditionType === CONDITION_TYPE_PAY_METHOD">
                     <v-select
-                        v-model="values.paymentMethods"
+                        v-model="value.paymentMethods"
                         :options="iPaymentMethods"
                         :multiple="true"
                         :error="valuesErrors.paymentMethods"
@@ -112,7 +112,7 @@
                 <!-- Территория действия (регион с точки зрения адреса доставки заказа) -->
                 <div v-if="conditionType === CONDITION_TYPE_REGION">
                     <f-multi-select
-                        v-model="values.regions"
+                        v-model="value.regions"
                         :options="regions"
                         name="condition-type-region"
                         grouped
@@ -129,14 +129,14 @@
                 <div v-if="conditionType === CONDITION_TYPE_USER">
                     <!-- Для определенных пользователей системы -->
                     <v-input
-                        v-model="values.users"
+                        v-model="value.users"
                         :error="valuesUserError"
                         @change="initUserError"
                     >ID пользователей (через запятую)</v-input>
 
                     <!-- Для определенных пользовательских сегментов -->
                     <v-select
-                        v-model="values.segments"
+                        v-model="value.segments"
                         :options="segments"
                         :multiple="true"
                         :error="valuesUserError"
@@ -145,7 +145,7 @@
 
                     <!-- Для определенных пользовательских ролей -->
                     <v-select
-                        v-model="values.roles"
+                        v-model="value.roles"
                         :options="roles"
                         :multiple="true"
                         :error="valuesUserError"
@@ -156,7 +156,7 @@
                 <!-- Порядковый номер заказа -->
                 <div v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
                     <v-input
-                        v-model="values.sequenceNumber"
+                        v-model="value.sequenceNumber"
                         type="number"
                         min="0"
                         :error="valuesErrors.sequenceNumber"
@@ -172,7 +172,7 @@
                         </label>
 
                         <v-select2
-                            v-model="values.synergy"
+                            v-model="value.synergy"
                             id="synergy-select"
                             class="form-control"
                             multiple
@@ -191,14 +191,14 @@
                     <div v-if="canHasSynergyMax">
                         <p>Суммируется, но максимальный размер:</p>
                         <v-select
-                            v-model="values.maxValueType"
+                            v-model="value.maxValueType"
                             :options="[{text: 'Без ограничения', value: null}, ...discountSizeTypes]"
                             :error="valuesErrors.synergyMaxValueType"
                             @change="initErrorSynergyMaxValueType"
                         >Тип значения
                         </v-select>
                         <v-input
-                            v-model="values.maxValue"
+                            v-model="value.maxValue"
                             type="number"
                             min="1"
                             :error="valuesErrors.synergyMaxValue"
