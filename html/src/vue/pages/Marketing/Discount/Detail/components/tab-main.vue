@@ -6,7 +6,7 @@
                 v-model="discount.conditions[i]"
                 :key="i"
                 class="mt-3"
-                :types="conditionTypes"
+                :types="iConditionTypes"
                 :discount="discount"
                 :discounts="discounts"
                 :brands="brands"
@@ -99,10 +99,6 @@
                     });
                 }
                 return regions;
-            },
-
-            conditionTypes() {
-                return Object.assign({}, this.iConditionTypes);
             },
         },
         methods: {
