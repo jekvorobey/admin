@@ -214,6 +214,7 @@ class ProductListController extends Controller
             ProductQuery::PRODUCTION_STATUS,
             ProductQuery::APPROVAL_STATUS,
             ProductQuery::INDEX_MARK,
+            ProductQuery::STRIKES,
         ]);
 
         $filter = $request->get('filter', []);
