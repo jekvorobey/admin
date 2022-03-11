@@ -12,7 +12,7 @@
                 <!-- На заказ от определенной суммы -->
                 <div v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
                     <v-input
-                        v-model="value.sum"
+                        v-model="values.sum"
                         type="number"
                         min="0"
                         :error="valuesErrors.sum"
@@ -24,7 +24,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_BRAND">
                     <div>
                         <v-input
-                            v-model="value.sum"
+                            v-model="values.sum"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -46,7 +46,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_CATEGORY">
                     <div>
                         <v-input
-                            v-model="value.sum"
+                            v-model="values.sum"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -68,7 +68,7 @@
                 <template v-if="conditionType === CONDITION_TYPE_EVERY_UNIT_PRODUCT">
                     <div>
                         <v-input
-                            v-model="value.count"
+                            v-model="values.count"
                             type="number"
                             min="0"
                             :error="valuesErrors.count"
@@ -78,7 +78,7 @@
 
                     <div>
                         <v-input
-                            v-model="value.offer"
+                            v-model="values.offer"
                             type="number"
                             min="0"
                             :error="valuesErrors.offer"
@@ -90,7 +90,7 @@
                 <!-- На способ доставки -->
                 <div v-if="conditionType === CONDITION_TYPE_DELIVERY_METHOD">
                     <v-select
-                        v-model="value.deliveryMethods"
+                        v-model="values.deliveryMethods"
                         :options="iDeliveryMethods"
                         :multiple="true"
                         :error="valuesErrors.deliveryMethods"
@@ -101,7 +101,7 @@
                 <!-- На способ оплаты -->
                 <div v-if="conditionType === CONDITION_TYPE_PAY_METHOD">
                     <v-select
-                        v-model="value.paymentMethods"
+                        v-model="values.paymentMethods"
                         :options="iPaymentMethods"
                         :multiple="true"
                         :error="valuesErrors.paymentMethods"
@@ -112,7 +112,7 @@
                 <!-- Территория действия (регион с точки зрения адреса доставки заказа) -->
                 <div v-if="conditionType === CONDITION_TYPE_REGION">
                     <f-multi-select
-                        v-model="value.regions"
+                        v-model="values.regions"
                         :options="regions"
                         name="condition-type-region"
                         grouped
@@ -129,14 +129,14 @@
                 <div v-if="conditionType === CONDITION_TYPE_USER">
                     <!-- Для определенных пользователей системы -->
                     <v-input
-                        v-model="value.users"
+                        v-model="values.users"
                         :error="valuesUserError"
                         @change="initUserError"
                     >ID пользователей (через запятую)</v-input>
 
                     <!-- Для определенных пользовательских сегментов -->
                     <v-select
-                        v-model="value.segments"
+                        v-model="values.segments"
                         :options="segments"
                         :multiple="true"
                         :error="valuesUserError"
@@ -145,7 +145,7 @@
 
                     <!-- Для определенных пользовательских ролей -->
                     <v-select
-                        v-model="value.roles"
+                        v-model="values.roles"
                         :options="roles"
                         :multiple="true"
                         :error="valuesUserError"
@@ -156,7 +156,7 @@
                 <!-- Порядковый номер заказа -->
                 <div v-if="conditionType === CONDITION_TYPE_ORDER_SEQUENCE_NUMBER">
                     <v-input
-                        v-model="value.sequenceNumber"
+                        v-model="values.sequenceNumber"
                         type="number"
                         min="0"
                         :error="valuesErrors.sequenceNumber"
@@ -172,7 +172,7 @@
                         </label>
 
                         <v-select2
-                            v-model="value.synergy"
+                            v-model="values.synergy"
                             id="synergy-select"
                             class="form-control"
                             multiple
@@ -191,14 +191,14 @@
                     <div v-if="canHasSynergyMax">
                         <p>Суммируется, но максимальный размер:</p>
                         <v-select
-                            v-model="value.maxValueType"
+                            v-model="values.maxValueType"
                             :options="[{text: 'Без ограничения', value: null}, ...discountSizeTypes]"
                             :error="valuesErrors.synergyMaxValueType"
                             @change="initErrorSynergyMaxValueType"
                         >Тип значения
                         </v-select>
                         <v-input
-                            v-model="value.maxValue"
+                            v-model="values.maxValue"
                             type="number"
                             min="1"
                             :error="valuesErrors.synergyMaxValue"
@@ -410,10 +410,13 @@
                 );
             },
 
-            values() {
-                this.$emit('input', Object.assign(this.values, {
-                    type: this.conditionType
-                }));
+            values: {
+                handler: function() {
+                    this.$emit('input', Object.assign(this.values, {
+                        type: this.conditionType
+                    }));           
+                },
+                deep: true
             },
 
             'values.users': {
