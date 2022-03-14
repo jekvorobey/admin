@@ -28,13 +28,13 @@ class PromoProductsManager
         /** @var PriceService $priceService */
         $priceService = resolve(PriceService::class);
 
-        $restQuery = new GetPromotionDto();
         if ($merchantId) {
-            $restQuery->setReferralId($merchantId);
+            $promoProducts = $referralService
+                ->getPromotions((new GetPromotionDto())->setReferralId($merchantId));
         } else {
-            $restQuery->setMass(true);
+            $promoProducts = $referralService
+                ->getMassPromotions((new GetPromotionDto())->setMass(true));
         }
-        $promoProducts = $referralService->getPromotions($restQuery);
 
         $productIds = $promoProducts->pluck('product_id');
         $result = $promoProducts->toArray();
