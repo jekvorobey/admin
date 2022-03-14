@@ -192,9 +192,19 @@ export default {
         };
     },
     methods: {
-        save() {
-            this.$v.$touch();
-            if (this.$v.$invalid) {
+        waitForValidation () {
+            return new Promise((resolve) => {
+                const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
+                    if (isNotPending) {
+                        resolve(!this.$v.$invalid)
+                    }
+                }, {immediate: true})
+            })
+        },
+        async save() {
+            await this.$v.$touch();
+            const isValid = await this.waitForValidation();
+            if (!isValid) {
                 return;
             }
             let formData = {
