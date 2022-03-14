@@ -4,7 +4,7 @@
             <condition
                 ref="conditions"
                 v-model="discount.conditions[i]"
-                :key="i"
+                :key="generateKey()"
                 class="mt-3"
                 :types="iConditionTypes"
                 :discount="discount"
@@ -43,6 +43,8 @@
 <script>
     import Condition from "../../components/condition.vue";
     import Services from "../../../../../../scripts/services/services";
+
+    import { v4 as uuidv4 } from 'uuid';
 
     export default {
         name: 'tab-main',
@@ -104,6 +106,10 @@
         methods: {
             addDiscountCondition() {
                 this.discount.conditions.push(this.newCondition);
+            },
+
+            generateKey() {
+                return uuidv4();
             },
         },
         mounted() {
