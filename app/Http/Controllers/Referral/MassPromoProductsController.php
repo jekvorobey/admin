@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Customers\Detail\TabPromoProductController;
+use App\Managers\PromoProducts\PromoProductsManager;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -14,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Core\PimException;
-use Pim\Services\ProductService\ProductService;
 
 class MassPromoProductsController extends Controller
 {
@@ -24,13 +24,15 @@ class MassPromoProductsController extends Controller
      * @throws PimException
      * @throws CustomerException
      */
-    public function list(CustomerService $customerService, ReferralService $referralService)
-    {
+    public function list(
+        CustomerService $customerService,
+        ReferralService $referralService,
+        PromoProductsManager $promoProductsManager
+    ) {
         $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
 
         // Получить список массовых промо-товаров //
-        $helper = resolve(TabPromoProductController::class);
-        $promoProducts = $helper->loadPromotionProducts(null);
+        $promoProducts = $promoProductsManager->fetch();
 
         // Получить все виды деятельности //
         $activities = $customerService->activities()->load();
@@ -39,6 +41,7 @@ class MassPromoProductsController extends Controller
         $ref_levels = $referralService->getLevels();
 
         $this->title = 'Товары для продвижения';
+
         return $this->render('Referral/PromoProducts', [
             'iPromoProducts' => $promoProducts,
             'activities' => $activities,
@@ -50,17 +53,23 @@ class MassPromoProductsController extends Controller
      * Обновить/Добавить промо-товар для массового назначения
      * @throws PimException
      */
-    public function editProduct(
-        Request $request,
-        ProductService $productService,
-        ReferralService $referralService
-    ): JsonResponse {
+    public function editProduct(Request $request, PromoProductsManager $promoProductsManager): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
-        $helper = resolve(TabPromoProductController::class);
+        $data = $this->validate($request, [
+            'product_id' => 'required|integer',
+            'mass' => 'required|integer',
+            'active' => 'integer',
+            'files' => 'nullable|array',
+            'description' => 'required',
+        ]);
 
-        return $helper
-            ->save(null, $request, $productService, $referralService);
+        $promoProductsManager->save(null, $data);
+
+        return response()->json([
+            'promoProducts' => $promoProductsManager->fetch(),
+        ]);
     }
 
     /**

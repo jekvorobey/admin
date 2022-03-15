@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use App\Managers\PromoProducts\PromoProductsManager;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
@@ -11,21 +12,9 @@ use Box\Spout\Writer\Common\Creator\WriterFactory;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\Customer\Services\ReferralService\Dto\GetPromotionDto;
-use Greensight\Customer\Services\ReferralService\Dto\PutPromotionDto;
-use Greensight\Customer\Services\ReferralService\ReferralService;
-use Greensight\Marketing\Dto\Price\PricesInDto;
-use Greensight\Marketing\Services\PriceService\PriceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Core\PimException;
-use Pim\Dto\BrandDto;
-use Pim\Dto\CategoryDto;
-use Pim\Dto\Product\ProductDto;
-use Pim\Services\OfferService\OfferService;
-use Pim\Services\ProductService\ProductService;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoProductController extends Controller
 {
@@ -33,12 +22,12 @@ class TabPromoProductController extends Controller
      * Возвращает список промо-товаров
      * @throws PimException
      */
-    public function load(?int $merchantId = null): JsonResponse
+    public function load(?int $merchantId, PromoProductsManager $promoProductsManager): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         return response()->json([
-            'promoProducts' => $this->loadPromotionProducts($merchantId),
+            'promoProducts' => $promoProductsManager->fetch($merchantId),
         ]);
     }
 
@@ -46,12 +35,8 @@ class TabPromoProductController extends Controller
      * Обновить/Добавить промо-товар
      * @throws PimException
      */
-    public function save(
-        ?int $merchantId,
-        Request $request,
-        ProductService $productService,
-        ReferralService $referralService
-    ): JsonResponse {
+    public function save(?int $merchantId, Request $request, PromoProductsManager $promoProductsManager): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $data = $this->validate($request, [
@@ -62,30 +47,10 @@ class TabPromoProductController extends Controller
             'description' => 'required',
         ]);
 
-        $product = $productService->newQuery()
-        ->setFilter('id', $data['product_id'])
-        ->products();
-        if ($product->isEmpty()) {
-            throw new BadRequestHttpException('Ошибка: товар не найден');
-        }
-
-        $promotionDto = new PutPromotionDto();
-        $promotionDto
-            ->setProductId($data['product_id'])
-            ->setMass((bool) $data['mass'])
-            ->setActive((bool) $data['active'])
-            ->setFiles(request('files', []))
-            ->setDescription($data['description'])
-            ->setCustomerId($merchantId);
-
-        if ($merchantId) {
-            $referralService->putPromotions($promotionDto);
-        } else {
-            $referralService->putMassPromotions($promotionDto);
-        }
+        $promoProductsManager->save($merchantId, $data);
 
         return response()->json([
-            'promoProducts' => $this->loadPromotionProducts($merchantId),
+            'promoProducts' => $promoProductsManager->fetch($merchantId),
         ]);
     }
 
@@ -95,7 +60,7 @@ class TabPromoProductController extends Controller
      * @throws IOException
      * @throws PimException
      */
-    public function export($id)
+    public function export($id, PromoProductsManager $promoProductsManager)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -113,7 +78,7 @@ class TabPromoProductController extends Controller
             'Дата создания',
             'Дата архивации',
         ], null));
-        $promoProducts = $this->loadPromotionProducts($id);
+        $promoProducts = $promoProductsManager->fetch($id);
         foreach ($promoProducts as $promoProduct) {
             $files = [];
             foreach ($promoProduct['files'] as $file) {
@@ -132,66 +97,5 @@ class TabPromoProductController extends Controller
         }
 
         $writer->close();
-    }
-
-    /**
-     * Подгрузить информацию о промо-товарах
-     * @throws PimException
-     */
-    public function loadPromotionProducts(?int $merchantId = null): array
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
-
-        /** @var ReferralService $referralService */
-        $referralService = resolve(ReferralService::class);
-        /** @var ProductService $productService */
-        $productService = resolve(ProductService::class);
-        /** @var OfferService $offerService */
-        $offerService = resolve(OfferService::class);
-        /** @var PriceService $priceService */
-        $priceService = resolve(PriceService::class);
-
-        if ($merchantId) {
-            $promoProducts = $referralService
-                ->getPromotions((new GetPromotionDto())->setReferralId($merchantId));
-        } else {
-            $promoProducts = $referralService
-                ->getMassPromotions((new GetPromotionDto())->setMass(true));
-        }
-
-        $product_ids = $promoProducts->pluck('product_id');
-        $result = $promoProducts->toArray();
-        if ($product_ids->isNotEmpty()) {
-            $products = $productService
-                ->products(
-                    (new RestQuery())
-                        ->setFilter('id', $product_ids->all())
-                        ->include('brand', 'category')
-                        ->addFields(ProductDto::entity(), 'id', 'brand_id', 'category_id', 'name')
-                        ->addFields(BrandDto::entity(), 'id', 'name')
-                        ->addFields(CategoryDto::entity(), 'id', 'name')
-                )
-                ->keyBy('id');
-            $offers = $offerService->offersByProduct($product_ids->all(), null, true)->pluck('id', 'product_id');
-
-            $prices = $priceService
-                ->prices((new PricesInDto())->setOffers($offers->values()->all()))
-                ->keyBy('offer_id');
-
-            foreach ($result as &$promoProduct) {
-                if ($products->has($promoProduct['product_id'])) {
-                    $promoProduct['brand'] = $products[$promoProduct['product_id']]->brand();
-                    $promoProduct['category'] = $products[$promoProduct['product_id']]->category();
-                    $promoProduct['product_name'] = $products[$promoProduct['product_id']]->name;
-                }
-                if ($offers->has($promoProduct['product_id'])) {
-                    if ($prices->has($offers[$promoProduct['product_id']])) {
-                        $promoProduct['price'] = $prices[$offers[$promoProduct['product_id']]]->price;
-                    }
-                }
-            }
-        }
-
-        return $result;
     }
 }
