@@ -348,7 +348,7 @@
                 for (const key in types) {
                     const index = this.discount.conditions.findIndex(condition => condition.type === types[key].value);
 
-                    if (index === -1 || this.values.type === types[key].value) {
+                    if (index === -1 || this.value.type === types[key].value) {
                         result[key] = types[key];
                     }
                 }
@@ -410,10 +410,13 @@
                 );
             },
 
-            values() {
-                this.$emit('input', Object.assign(this.values, {
-                    type: this.conditionType
-                }));
+            values: {
+                handler: function() {
+                    this.$emit('input', Object.assign(this.values, {
+                        type: this.conditionType
+                    }));           
+                },
+                deep: true
             },
 
             'values.users': {

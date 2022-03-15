@@ -11,7 +11,9 @@
                         :author="author"
                         :categories="categories"
                         :brands="brands"
+                        :conditionInvalid="condition.invalid"
                         @initDiscount="initDiscount"
+                        @validateCondition="validateCondition"
                     ></infopanel>
                 </b-card>
             </b-col>
@@ -61,6 +63,8 @@
                               :brands="brands"
                               :categories="categories"
                               :i-districts="iDistricts"
+                              :validateCondition="condition.validate"
+                              @validate="checkConditionValidity"
                     />
                     <tab-order v-else-if="key === 'order'"
                        :model.sync="discount"
@@ -137,6 +141,11 @@
                 CONDITION_TYPE_USER: 9,
                 CONDITION_TYPE_ORDER_SEQUENCE_NUMBER: 10,
                 CONDITION_TYPE_DISCOUNT_SYNERGY: 11,
+
+                condition: {
+                    validate: false,
+                    invalid: false,
+                },
             };
         },
         methods: {
@@ -191,6 +200,15 @@
                 }
 
                 this.discount = discount;
+            },
+
+            validateCondition() {
+                this.condition.validate = true;
+            },
+
+            checkConditionValidity(isValid) {
+                this.condition.validate = false;
+                this.condition.invalid = !isValid;
             },
         },
         computed: {

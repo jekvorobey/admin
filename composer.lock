@@ -1274,7 +1274,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "7ef213db99a9becfe3276b38757967e1863b1e3f"
+                "reference": "504f703fbe820e875c6debb1980cef81abc17e32"
             },
             "require": {
                 "ext-json": "*",
@@ -1324,7 +1324,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-02-25T09:35:34+00:00"
+            "time": "2022-03-03T13:17:33+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "e382ae685196cbf23bf780571c9d3018f634b8cb"
+                "reference": "164182a17a286041f0706a06d0583aca39ae03b1"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2021-12-14T14:17:19+00:00"
+            "time": "2022-03-04T11:19:14+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -1532,7 +1532,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "d201b6e694fecce4343c6be7864eeb83b03c27ee"
+                "reference": "fae49473610228a92998a9aaf3d53225a2a55a5a"
             },
             "require": {
                 "ext-json": "*",
@@ -1555,7 +1555,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2021-12-03T12:26:20+00:00"
+            "time": "2022-03-10T06:29:00+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",

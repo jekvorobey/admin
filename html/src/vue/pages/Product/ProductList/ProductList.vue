@@ -163,6 +163,7 @@
                     <th>На витрине</th>
                     <th>В архиве</th>
                     <th>Контент</th>
+                    <th>Причина</th>
                     <th>Согласование</th>
                     <th>Отгружен в Shoppilot</th>
                 </tr>
@@ -204,6 +205,11 @@
                         <span class="badge" :class="{'badge-success':isProductionDone(product.productionStatus),'badge-danger':!isProductionDone(product.productionStatus)}">
                             {{productionName(product.productionStatus)}}
                         </span>
+                    </td>
+                    <td>
+                      <ul>
+                        <li v-for="strike in product.strikes" class="small">{{ strike }}</li>
+                      </ul>
                     </td>
                     <td>
                         <span class="badge" :class="{'badge-success':isApprovalDone(product.approvalStatus),'badge-danger':!isApprovalDone(product.approvalStatus)}">
