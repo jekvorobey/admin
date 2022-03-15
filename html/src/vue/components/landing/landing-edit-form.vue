@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-form-group
-            label="Наименование*"
+            label="Название*"
             label-for="landing-group-name"
         >
           <b-form-input
@@ -9,12 +9,12 @@
               v-model="landing.name"
               type="text"
               required
-              placeholder="Введите наименование"
+              placeholder="Введите название"
           />
         </b-form-group>
 
         <b-form-group
-            label="Ссылка*"
+            label="Символьный код*"
             label-for="landing-group-code"
         >
             <b-form-input
@@ -22,7 +22,7 @@
                 v-model="landing.code"
                 type="text"
                 required
-                placeholder="Введите ссылку"
+                placeholder="Введите символьный код"
             />
         </b-form-group>
 

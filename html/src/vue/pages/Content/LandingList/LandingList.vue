@@ -27,6 +27,7 @@
                 <th>ID</th>
                 <th>Видимость</th>
                 <th>Название</th>
+                <th>Символьный код</th>
                 <th v-if="canUpdate(blocks.content)"><!-- Кнопки --></th>
             </tr>
             </thead>
@@ -47,6 +48,9 @@
                 </td>
                 <td v-else class="with-small">
                     {{landing.name}}
+                </td>
+                <td>
+                    {{landing.code}}
                 </td>
                 <td v-if="canUpdate(blocks.content)">
                     <a v-if="landing.active" :href="getShowcaseUrl(landing.code)" class="btn btn-primary btn-sm">

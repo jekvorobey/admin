@@ -51,7 +51,7 @@ class LandingListController extends Controller
         $page = $request->get('page', 1);
         $query->pageNumber($page, 10);
 
-        $query->addFields(LandingDto::entity(), 'id', 'active', 'name');
+        $query->addFields(LandingDto::entity(), 'id', 'active', 'code', 'name');
 
         $filter = $request->get('filter', []);
 
