@@ -26,8 +26,7 @@ class LandingListController extends Controller
             'iPager' => $landingService->landingsCount($query),
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
-            'options' => [
-            ],
+            'url' => config('app.showcase_host'),
         ]);
     }
 
@@ -52,12 +51,20 @@ class LandingListController extends Controller
         $page = $request->get('page', 1);
         $query->pageNumber($page, 10);
 
-        $query->addFields('type', '*');
+        $query->addFields(LandingDto::entity(), 'id', 'active', 'name');
 
         $filter = $request->get('filter', []);
 
         if (isset($filter['id']) && $filter['id']) {
             $query->setFilter('id', $filter['id']);
+        }
+
+        if (isset($filter['name'])) {
+            $query->setFilter('name', 'like', "%{$filter['name']}%");
+        }
+
+        if (isset($filter['active'])) {
+            $query->setFilter('active', $filter['active']);
         }
 
         return $query;

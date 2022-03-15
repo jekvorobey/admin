@@ -3,6 +3,14 @@
         <div class="mt-3 mb-3 shadow p-3">
             <div class="row">
                 <f-input v-model="filter.id" class="col-lg-3 col-md-6 col-sm-12">ID</f-input>
+                <f-input v-model="filter.name" class="col-lg-3 col-md-6 col-sm-12">Название</f-input>
+                <f-select
+                    v-model="filter.active"
+                    :options="activeOptions"
+                    class="col-lg-3 col-md-6 col-sm-12"
+                >
+                    Видимость
+                </f-select>
             </div>
             <button @click="applyFilter" class="btn btn-dark">Применить</button>
             <button @click="clearFilter" class="btn btn-secondary">Очистить</button>
@@ -11,7 +19,7 @@
             <button @click="goToCreatePage" class="btn btn-success">Создать</button>
         </div>
         <div class="mb-3">
-            Всего баннеров: {{ pager.total }}.
+            Всего страниц: {{ pager.total }}.
         </div>
         <table class="table">
             <thead>
@@ -41,9 +49,11 @@
                     {{landing.name}}
                 </td>
                 <td v-if="canUpdate(blocks.content)">
-                    <b-button class="btn btn-danger btn-sm">
-                        <fa-icon icon="trash-alt"
-                                 @click="removeItem(landing.id)"/>
+                    <a v-if="landing.active" :href="getShowcaseUrl(landing.code)" class="btn btn-primary btn-sm">
+                        <fa-icon icon="eye" />
+                    </a>
+                    <b-button class="btn btn-danger btn-sm" @click="removeItem(landing.id)">
+                        <fa-icon icon="trash-alt" />
                     </b-button>
                 </td>
             </tr>
@@ -74,6 +84,7 @@
 
     const cleanFilter = {
         id: '',
+        name: '',
     };
 
     export default {
@@ -86,11 +97,10 @@
             iPager: {},
             iCurrentPage: {},
             iFilter: {},
-            options: {}
+            url: String,
         },
         data() {
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
-
             return {
                 landings: this.iLandings,
                 pager: this.iPager,
@@ -139,6 +149,7 @@
                 this.applyFilter();
             },
             removeItem(id) {
+                Services.showLoader();
                 Services.net()
                     .delete(this.getRoute('landing.delete', {id: id,}))
                     .then((data) => {
@@ -147,7 +158,12 @@
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                    }).finally(() => {
+                        Services.hideLoader();
                     });
+            },
+            getShowcaseUrl(code) {
+                return this.url + '/pages/' + code;
             }
         },
         created() {
@@ -164,8 +180,17 @@
             }
         },
         computed: {
-            typeOptions() {
-                return this.options.types.map(type => ({value: type.id, text: type.name}));
+            activeOptions() {
+                return [
+                    {
+                        value: 0,
+                        text: 'Деактивирована',
+                    },
+                    {
+                        value: 1,
+                        text: 'Активна',
+                    },
+                ];
             },
         }
     };
