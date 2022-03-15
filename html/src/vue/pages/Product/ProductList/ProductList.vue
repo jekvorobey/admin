@@ -194,12 +194,14 @@
                         <span class="badge" :class="{'badge-success':product.active,'badge-danger':!product.active}">
                             {{product.active ? 'Да' : 'Нет'}}
                         </span>
-                        <fa-icon icon="question-circle" :id="'product-strikes-popover' + product.id"></fa-icon>
-                        <b-popover :target="'product-strikes-popover' + product.id" triggers="hover">
-                            <ul class="list-group ml-3">
-                                <li v-for="strike in product.strikes">{{ strike }}</li>
-                            </ul>
-                        </b-popover>
+                        <template v-if="!product.active">
+                            <fa-icon icon="question-circle" :id="'product-strikes-popover' + product.id"></fa-icon>
+                            <b-popover :target="'product-strikes-popover' + product.id" triggers="hover">
+                                <ul class="list-group ml-3">
+                                    <li v-for="strike in product.strikes">{{ strike }}</li>
+                                </ul>
+                            </b-popover>
+                        </template>
                     </td>
                     <td>
                         <span class="badge" :class="{'badge-success':!product.archive,'badge-danger':product.archive}">
