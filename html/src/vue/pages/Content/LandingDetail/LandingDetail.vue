@@ -46,17 +46,21 @@
                 }
             },
             update() {
+                Services.showLoader();
                 Services.net()
-                    .put(this.getRoute('landing.update', {id: this.landing.id,}), {}, this.landing)
+                    .put(this.getRoute('landing.update', {id: this.landing.id}), {}, this.landing)
                     .then((data) => {
                         this.showMessageBox({title: 'Изменения сохранены'});
                         window.location.href = this.route('landing.listPage');
                     })
                     .catch((e) => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                    }).finally(() => {
+                        Services.hideLoader();
                     });
             },
             create() {
+                Services.showLoader();
                 Services.net()
                     .post(this.getRoute('landing.create'), {}, this.landing)
                     .then((data) => {
@@ -65,6 +69,8 @@
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                    }).finally(() => {
+                        Services.hideLoader();
                     });
             },
         },

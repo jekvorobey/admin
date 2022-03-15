@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aa271f3f6609ed98388557902e4c076",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1239,11 +1239,11 @@
         },
         {
             "name": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-436-refactor-landings",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "57cb7bf881a50d395a2b0a5a8234170ea244572f"
+                "reference": "fe219d36811a1931afa0377d70c96b4e0b0cc1c1"
             },
             "require": {
                 "ext-json": "*",
@@ -1266,7 +1266,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2022-03-02T11:01:46+00:00"
+            "time": "2022-03-15T11:02:51+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",
@@ -10835,7 +10835,7 @@
         },
         {
             "package": "iwengo/ibt-cms-lib",
-            "version": "dev-feature/IBT-436-refactor-landings",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.1.0"
 }
