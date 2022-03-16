@@ -158,8 +158,9 @@ export default {
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
                     isUnique: function() {
-                        let phone = this.form.phone.replace(/[()]|\s|-/g, '');
-                        return this.isFieldUnique(phone, 'phone');
+                        let phoneNumber = this.form.phone ?
+                            this.form.phone.replace(/[()]|\s|-/g, '') : null;
+                        return this.isFieldUnique(phoneNumber, 'phone');
                     },
                     $lazy: true
                 },
