@@ -27,6 +27,7 @@ class LandingDetailController extends Controller
 
         return $this->render('Content/LandingDetail', [
             'iLanding' => $landing,
+            'url' => config('app.showcase_host'),
         ]);
     }
 
@@ -37,7 +38,9 @@ class LandingDetailController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        return $this->render('Content/LandingDetail');
+        return $this->render('Content/LandingDetail', [
+            'url' => config('app.showcase_host'),
+        ]);
     }
 
     /**
@@ -79,9 +82,24 @@ class LandingDetailController extends Controller
     /**
      * @throws CmsException
      */
+    public function landingCache(LandingActionRequest $request, LandingService $landingService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
+        $hash = $request->hash ?? $landingService->setLandingInСache(new LandingDto($request->validated()));
+
+        return response()->json([
+            'hash' => $hash,
+        ]);
+    }
+
+    /**
+     * @throws CmsException
+     */
     private function getLanding(int $id, LandingService $landingService): ?LandingDto
     {
         $query = $landingService->newQuery()->setFilter('id', $id);
+
         return $landingService->landings($query)->first();
     }
 

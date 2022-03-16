@@ -7,16 +7,17 @@
                 ></landing-edit-form>
 
             <b-button v-if="canUpdate(blocks.content)" type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
+            <b-button v-if="canView(blocks.content)" type="button" @click="previewPage()" class="mt-3" variant="green">{{ Предпросмотр }}</b-button>
         </b-form>
     </layout-main>
 </template>
 
 <script>
-    import LandingEditForm from "../../../components/landing/landing-edit-form.vue";
-    import {mapActions} from "vuex";
-    import Services from "../../../../scripts/services/services";
+import LandingEditForm from "../../../components/landing/landing-edit-form.vue";
+import {mapActions} from "vuex";
+import Services from "../../../../scripts/services/services";
 
-    export default {
+export default {
         components: {
             LandingEditForm,
         },
@@ -24,11 +25,13 @@
             iLanding: {
                 type: Object,
                 default: {},
+                url: String,
             },
         },
         data() {
             return {
                 landing: this.iLanding,
+                hash: String,
             };
         },
         methods: {
@@ -71,6 +74,21 @@
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     }).finally(() => {
                         Services.hideLoader();
+                    });
+            },
+            previewPage() {
+                if (this.hash) {
+                    this.landing.hash = this.hash;
+                }
+                Services.net()
+                    .post(this.getRoute('landing.landingCache'), {}, this.landing)
+                    .then((data) => {
+                        this.hash = data.hash;
+                        let previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
+                        window.open(previewUrl, '_blank');
+                    })
+                    .catch(() => {
+                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
             },
         },
