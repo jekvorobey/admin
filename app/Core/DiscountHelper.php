@@ -24,8 +24,8 @@ use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
 use Greensight\Marketing\Dto\Discount\DiscountTypeDto;
 use Greensight\Marketing\Dto\Discount\DiscountUserRoleDto;
 use Greensight\Marketing\Services\DiscountService\DiscountService;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
@@ -455,12 +455,13 @@ class DiscountHelper
         $discountService = resolve(DiscountService::class);
         $listsService = resolve(ListsService::class);
         $merchantService = resolve(MerchantService::class);
+        $paymentService = resolve(PaymentService::class);
 
         $data = [];
         $data['optionDiscountTypes'] = Helpers::getSelectOptions(DiscountTypeDto::allTypes());
         $data['conditionTypes'] = Helpers::getSelectOptions(DiscountConditionDto::allTypes());
         $data['deliveryMethods'] = Helpers::getSelectOptions(DeliveryMethod::allMethods())->values();
-        $data['paymentMethods'] = Helpers::getSelectOptions(PaymentMethod::allMethods())->values();
+        $data['paymentMethods'] = Helpers::getSelectOptions($paymentService->getPaymentMethods())->values();
         $data['roles'] = Helpers::getOptionRoles(false);
         $data['discountStatuses'] = Helpers::getSelectOptions(DiscountStatusDto::allStatuses());
         $data['merchants'] = $merchantService->merchants()->map(function (MerchantDto $merchant) {
