@@ -45,6 +45,12 @@
                         <th>Коммерческие условия</th>
                         <td><v-input tag="textarea" v-model="$v.form.commercial_info.$model"/></td>
                     </tr>
+                    <tr>
+                        <th>Способы оплаты</th>
+                        <td><f-multi-select v-model="$v.form.payment_methods" label="label"
+                                      :options="paymentMethodList" :error="errorPaymentMethods">
+                        </f-multi-select></td>
+                    </tr>
 
                     <tr class="table-secondary"><th colspan="2">Реквизиты юр лица</th></tr>
                     <tr>
@@ -183,6 +189,7 @@
     import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import DatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
@@ -193,8 +200,8 @@
 
     export default {
     name: 'tab-main',
-    components: {VDadata, VInput, FileInput, VDeleteButton, DatePicker},
-    props: ['model', 'categoryList', 'brandList'],
+    components: {VDadata, VInput, FileInput, VDeleteButton, DatePicker, FMultiSelect},
+    props: ['model', 'categoryList', 'brandList', 'paymentMethodList'],
     mixins: [
         validationMixin,
     ],
@@ -219,6 +226,7 @@
                 commissionaire_contract_at: this.model.commissionaire_contract_at ? this.model.commissionaire_contract_at : '',
                 agent_contract_number: this.model.agent_contract_number,
                 agent_contract_at: this.model.agent_contract_at ? this.model.agent_contract_at : '',
+                payment_methods: this.model.payment_methods ? this.model.payment_methods : [],
 
                 agentFile: null,
                 commissionaireFile: null,
@@ -252,6 +260,7 @@
                 commissionaire_contract_at: {notRequired},
                 agent_contract_number: {notRequired},
                 agent_contract_at: {notRequired},
+                payment_methods: {required},
             },
         };
     },
@@ -284,6 +293,7 @@
                 this.merchant.commissionaire_contract_at = this.form.commissionaire_contract_at;
                 this.merchant.agent_contract_number = this.form.agent_contract_number;
                 this.merchant.agent_contract_at = this.form.agent_contract_at;
+                this.merchant.payment_methods = this.form.payment_methods;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
                 Services.hideLoader();
@@ -309,6 +319,7 @@
             this.form.commissionaire_contract_at = this.merchant.commissionaire_contract_at;
             this.form.agent_contract_number = this.merchant.agent_contract_number;
             this.form.agent_contract_at = this.merchant.agent_contract_at;
+            this.form.payment_methods = this.merchant.payment_methods;
         },
         deleteDocument(file_id, index) {
             Services.showLoader();
@@ -458,6 +469,14 @@
                 }
             }
         },
+        errorPaymentMethods() {
+            if (this.$v.form.payment_methods.$dirty) {
+                if (!this.$v.form.payment_methods.required) {
+                    return "Обязательное поле";
+                }
+            }
+        },
+
         commissionaireDocuments() {
           return this.documents.filter(doc => doc.type === this.merchantDocumentTypes.commissionaire)
         },
