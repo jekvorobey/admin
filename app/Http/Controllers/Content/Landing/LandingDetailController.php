@@ -86,7 +86,12 @@ class LandingDetailController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $hash = $request->hash ?? $landingService->setLandingInСache(new LandingDto($request->validated()));
+        $hash = $request->hash;
+        if ($hash) {
+            $landingService->updateLandingInCache($hash);
+        } else {
+            $hash = $landingService->setLandingInCache(new LandingDto($request->validated()));
+        }
 
         return response()->json([
             'hash' => $hash,
