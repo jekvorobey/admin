@@ -10,6 +10,7 @@ use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,6 +75,11 @@ class MerchantListController extends Controller
         $paymentService = resolve(PaymentService::class);
 
         $managers = $userService->users((new RestQuery())->setFilter('role', RoleDto::ROLE_KAM));
+        $paymentMethods = $paymentService->getPaymentMethods(
+            (new RestQuery())
+                ->addFields(PaymentMethod::entity(), 'id', 'name')
+                ->setFilter('active', true)
+        );
 
         $query = $this->makeQuery($done);
 
@@ -90,7 +96,7 @@ class MerchantListController extends Controller
                 'statuses' => MerchantStatus::statusesByMode(!$done),
                 'ratings' => $merchantService->ratings(),
                 'communicationMethods' => OperatorCommunicationMethod::allMethods(),
-                'paymentMethodList' => Helpers::getSelectOptions($paymentService->getPaymentMethods()),
+                'paymentMethodList' => Helpers::getSelectOptions($paymentMethods),
             ],
         ]);
     }

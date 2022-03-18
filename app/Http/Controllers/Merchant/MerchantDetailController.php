@@ -11,6 +11,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
@@ -153,6 +154,11 @@ class MerchantDetailController extends Controller
             ];
         }
         $categoryList = array_intersect_key($allCategoryList, $categoryIds);
+        $paymentMethods = $paymentService->getPaymentMethods(
+            (new RestQuery())
+                ->addFields(PaymentMethod::entity(), 'id', 'name')
+                ->setFilter('active', true)
+        );
 
         return $this->render('Merchant/Detail', [
             'iMerchant' => [
@@ -225,7 +231,7 @@ class MerchantDetailController extends Controller
             'unreadMsgCount' => $unreadMsgCount,
             'brandList' => $brandList,
             'categoryList' => $categoryList,
-            'paymentMethodList' => Helpers::getSelectOptions($paymentService->getPaymentMethods()),
+            'paymentMethodList' => Helpers::getSelectOptions($paymentMethods),
         ]);
     }
 
