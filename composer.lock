@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f3ee608b8521502c1c37e70ecb7ba41",
+    "content-hash": "aa9d03a74a2679e9a92d0c4e59424cbb",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-726-merchant-payment-methods",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "584563fe67031e1259bd74f0bd2d97f96bbb5f01"
+                "reference": "5ce5f8cdb92b2c5307fac8530aa39ac97539a0bd"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-02-21T09:32:16+00:00"
+            "time": "2022-03-18T09:02:51+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -10859,7 +10859,7 @@
         },
         {
             "package": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/IBT-726-merchant-payment-methods",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
