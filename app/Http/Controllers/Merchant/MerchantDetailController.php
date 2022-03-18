@@ -182,7 +182,7 @@ class MerchantDetailController extends Controller
                 'sale_info_categories' => json_decode($merchant->sale_info, true)['categories'] ?? [],
                 'vat_info' => $merchant->vat_info,
                 'commercial_info' => $merchant->commercial_info,
-                'payment_methods' => $merchant->payment_methods,
+                'excluded_payment_methods' => $merchant->excluded_payment_methods,
                 'commissionaire_contract_number' => $merchant->commissionaire_contract_number,
                 'commissionaire_contract_at' => $merchant->commissionaire_contract_at
                     ? Carbon::createFromFormat('Y-m-d', $merchant->commissionaire_contract_at)->format('Y-m-d') : null,
@@ -225,7 +225,7 @@ class MerchantDetailController extends Controller
             'unreadMsgCount' => $unreadMsgCount,
             'brandList' => $brandList,
             'categoryList' => $categoryList,
-            'paymentMethodList' => Helpers::getSelectOptions($paymentService->getPaymentMethods())->values(),
+            'paymentMethodList' => Helpers::getSelectOptions($paymentService->getPaymentMethods()),
         ]);
     }
 
@@ -240,8 +240,8 @@ class MerchantDetailController extends Controller
             'merchant.city' => 'nullable',
             'merchant.rating_id' => 'nullable|integer',
             'merchant.manager_id' => 'nullable|integer',
-            'merchant.payment_methods' => 'nullable|array',
-            'merchant.payment_methods.*' => 'integer',
+            'merchant.excluded_payment_methods' => 'nullable|array',
+            'merchant.excluded_payment_methods.*' => 'integer',
 
             'merchant.inn' => ['nullable', 'regex:/^\d{10}(\d{2})?$/'],
             'merchant.kpp' => 'nullable|string|size:9',
@@ -282,6 +282,7 @@ class MerchantDetailController extends Controller
 
         $editedMerchant = new MerchantDto($data['merchant']);
         $editedMerchant->id = $id;
+        $editedMerchant->excluded_payment_methods = $data['excluded_payment_methods'] ?? null;
         $merchantService->update($editedMerchant);
 
         return response('', 204);

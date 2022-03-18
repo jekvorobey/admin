@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Merchant;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
@@ -9,6 +10,7 @@ use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -68,6 +70,8 @@ class MerchantListController extends Controller
         $merchantService = resolve(MerchantService::class);
         /** @var UserService $userService */
         $userService = resolve(UserService::class);
+        /** @var PaymentService $paymentService */
+        $paymentService = resolve(PaymentService::class);
 
         $managers = $userService->users((new RestQuery())->setFilter('role', RoleDto::ROLE_KAM));
 
@@ -86,6 +90,7 @@ class MerchantListController extends Controller
                 'statuses' => MerchantStatus::statusesByMode(!$done),
                 'ratings' => $merchantService->ratings(),
                 'communicationMethods' => OperatorCommunicationMethod::allMethods(),
+                'paymentMethodList' => Helpers::getSelectOptions($paymentService->getPaymentMethods()),
             ],
         ]);
     }
@@ -281,6 +286,7 @@ class MerchantListController extends Controller
             'site' => 'required|string',
             'can_integration' => 'boolean',
             'sale_info' => 'required|string',
+            'excluded_payment_methods' => 'array|nullable',
         ]);
 
         $merchantId = $merchantService->createMerchant(
@@ -306,6 +312,7 @@ class MerchantListController extends Controller
                 ->setCanIntegration((bool) $data['can_integration'])
                 ->setSaleInfo($data['sale_info'])
                 ->setCommunicationMethod($data['communication_method'])
+                ->setExcludedPaymentMethods($data['excluded_payment_methods'])
         );
 
         if (!$merchantId) {
