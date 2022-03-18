@@ -7,7 +7,7 @@
                 ></landing-edit-form>
 
             <b-button v-if="canUpdate(blocks.content)" type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
-            <b-button v-if="canView(blocks.content)" type="button" @click="previewPage()" class="mt-3" variant="green">{{ Предпросмотр }}</b-button>
+            <b-button v-if="canView(blocks.content)" type="button" @click="previewPage()" class="mt-3" variant="light">Предпросмотр</b-button>
         </b-form>
     </layout-main>
 </template>
