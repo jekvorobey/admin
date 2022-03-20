@@ -25,8 +25,8 @@ export default {
             iLanding: {
                 type: Object,
                 default: {},
-                url: String,
             },
+            url: String,
         },
         data() {
             return {
@@ -84,11 +84,12 @@ export default {
                     .post(this.getRoute('landing.landingCache'), {}, this.landing)
                     .then((data) => {
                         this.hash = data.hash;
-                        let previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
-                        window.open(previewUrl, '_blank');
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                    }).finally(() => {
+                        let previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
+                        window.open(previewUrl, '_blank');
                     });
             },
         },
