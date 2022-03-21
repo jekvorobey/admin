@@ -66,28 +66,48 @@
             label="Контент"
             label-for="landing-group-meta-description"
         >
-            <vue-editor
-                id="landing-group-meta-description"
+            <div class="text-right mb-3">
+                <b-button
+                    :pressed="editorMode === 'wysiwyg'"
+                    size="sm"
+                    variant="outline-secondary"
+                    @click="editorMode = 'wysiwyg'"
+                >WYSIWYG</b-button>
+
+                <b-button
+                    :pressed="editorMode === 'html'"
+                    size="sm"
+                    variant="outline-secondary"
+                    @click="editorMode = 'html'"
+                >HTML</b-button>
+            </div>
+
+            <ckeditor
+                v-if="editorMode === 'wysiwyg'"
+                @ready="onReady"
                 v-model="landing.content"
-                :editorOptions="editorSettings"
-                type="text"
+                :config="editorSettings"
+                class="custom-width"
                 tag-name="textarea"
-                placeholder="Введите контент"
-            > </vue-editor>
+                type="classic"
+            />
+
+            <textarea
+                v-else
+                v-model="landing.content"
+                class="form-control"
+                rows="14"
+            />
         </b-form-group>
     </div>
 </template>
 
 <script>
-  import {mapActions} from 'vuex';
+import {mapActions} from 'vuex';
 
-  import { VueEditor, Quill } from 'vue2-editor';
-
-  import { ImageDrop } from 'quill-image-drop-module';
-  import ImageResize from 'quill-image-resize-vue';
-
-  Quill.register("modules/imageDrop", ImageDrop);
-  Quill.register("modules/imageResize", ImageResize);
+import VueEditor from '../../plugins/VueCkeditor';
+import CKEditorUploadAdapter from '../../plugins/CKEditorUploadAdapter';
+import "@ckeditor/ckeditor5-build-classic/build/translations/ru";
 
   export default {
       components: {
@@ -103,19 +123,14 @@
       data() {
           return {
               landing: this.normalizeLanding(this.iLanding),
+              editorMode: 'wysiwyg',
               editorSettings: {
-                  modules: {
-                      imageDrop: true,
-                      imageResize: {
-                          modules: ["Resize", "DisplaySize", "Toolbar"],
-                          handleStyles: {
-                              backgroundColor: "black",
-                              border: "none",
-                              color: "white",
-                          },
-                      },
-                  }
-              }
+                  height: 200,
+                  language: 'ru',
+                  ckfinder: {
+                      uploadUrl: `/upload`,
+                  },
+              },
           };
       },
 
@@ -135,6 +150,11 @@
                   meta_description: source.meta_description ? source.meta_description : null,
               };
           },
+          onReady(editor) {
+              editor.plugins.get("FileRepository").createUploadAdapter = loader => {
+                  return new CKEditorUploadAdapter(loader);
+              };
+          }
       },
       watch: {
           landing: {
@@ -146,3 +166,9 @@
       }
   };
 </script>
+
+<style>
+.ck-editor__editable_inline {
+    min-height: 500px;
+}
+</style>
