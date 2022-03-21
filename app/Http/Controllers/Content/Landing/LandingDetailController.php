@@ -88,7 +88,7 @@ class LandingDetailController extends Controller
 
         $hash = $request->hash;
         if ($hash) {
-            $landingService->updateLandingInCache($hash);
+            $landingService->updateLandingInCache($hash, new LandingDto($request->validated()));
         } else {
             $hash = $landingService->setLandingInCache(new LandingDto($request->validated()));
         }
