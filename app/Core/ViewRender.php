@@ -6,6 +6,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
+use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
@@ -28,6 +29,7 @@ use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
+use Greensight\Oms\Services\PaymentService\PaymentService;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
@@ -549,15 +551,12 @@ class ViewRender
     public function loadPaymentMethods(bool $load = false): self
     {
         if ($load) {
-            $mapPaymentMethods = [
-                PaymentMethod::ONLINE => 'online',
-            ];
-            foreach (PaymentMethod::allMethods() as $id => $method) {
-                if (!isset($mapPaymentMethods[$id])) {
-                    continue;
-                }
-                $this->paymentMethods[$mapPaymentMethods[$id]] = $method->toArray();
-            }
+            $paymentService = resolve(PaymentService::class);
+            $this->paymentMethods = $paymentService->getPaymentMethods(
+                (new RestQuery())
+                    ->addFields(PaymentMethod::entity(), 'id', 'name', 'is_postpaid')
+                    ->setFilter('active', true)
+            )->keyBy('id');
         }
 
         return $this;

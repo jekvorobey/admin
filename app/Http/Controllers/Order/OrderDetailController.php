@@ -18,6 +18,7 @@ use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentDto;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
@@ -460,9 +461,13 @@ class OrderDetailController extends Controller
         $order->created_at = date_time2str(new Carbon($order->created_at));
         $order->updated_at = date_time2str(new Carbon($order->updated_at));
 
-        $order['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
-            return $payment->paymentMethod()->name;
-        })->unique()->join(', ');
+        if ($order->is_postpaid) {
+            $order['payment_methods'] = PaymentMethod::methodById(PaymentMethod::POSTPAYMENT)->name;
+        } else {
+            $order['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
+                return $payment->paymentMethod()->name;
+            })->unique()->join(', ');
+        }
         $order['discount'] = $order->getDiscount();
         $order['delivery_discount'] = $order->getDeliveryDiscount();
         $order['product_cost'] = $order->cost - $order->delivery_cost;

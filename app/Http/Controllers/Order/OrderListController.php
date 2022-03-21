@@ -135,7 +135,7 @@ class OrderListController extends Controller
                 'brands.*' => 'integer',
                 'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
-                'payment_method.*' => Rule::in(array_keys(PaymentMethod::allMethods())),
+                'payment_method.*' => 'integer',
                 'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
                 'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),
@@ -258,9 +258,13 @@ class OrderListController extends Controller
             $data['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return DeliveryService::serviceById($delivery->delivery_service)->name;
             })->unique()->join(', ');
-            $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
-                return $payment->paymentMethod()->name;
-            })->unique()->join(', ');
+            if ($order->is_postpaid) {
+                $data['payment_methods'] = PaymentMethod::methodById(PaymentMethod::POSTPAYMENT)->name;
+            } else {
+                $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
+                    return $payment->paymentMethod()->name;
+                })->unique()->join(', ');
+            }
             $data['created_at'] = date_time2str(new Carbon($order->created_at));
             $data['updated_at'] = date_time2str(new Carbon($order->updated_at));
             $data['status_at'] = date_time2str(new Carbon($order->status_at));
