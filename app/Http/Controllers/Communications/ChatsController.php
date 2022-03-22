@@ -34,7 +34,6 @@ class ChatsController extends Controller
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
         $this->loadCommunicationTypes = true;
-        $this->loadUserRoles = true;
 
         $this->title = 'Непрочитанные сообщения';
         return $this->render('Communication/ChatsUnread', [

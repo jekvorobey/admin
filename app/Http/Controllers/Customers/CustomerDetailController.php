@@ -49,7 +49,6 @@ class CustomerDetailController extends Controller
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
