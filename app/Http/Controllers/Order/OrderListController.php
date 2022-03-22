@@ -22,7 +22,6 @@ use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentDto;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
@@ -58,7 +57,6 @@ class OrderListController extends Controller
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
         $this->loadPaymentStatuses = true;
-        $this->loadPaymentMethods = true;
         $this->loadDeliveryTypes = true;
         $this->loadDeliveryMethods = true;
         $this->loadDeliveryServices = true;

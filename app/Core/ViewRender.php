@@ -6,7 +6,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\PermissionDto;
 use Greensight\CommonMsa\Dto\RoleDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\CommonMsa\Services\TokenStore\TokenStore;
 use Greensight\Customer\Dto\CustomerBonusDto;
@@ -27,9 +26,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
-use Greensight\Oms\Services\PaymentService\PaymentService;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
@@ -90,7 +87,6 @@ class ViewRender
     private $orderStatuses = [];
     private $basketTypes = [];
     private $paymentStatuses = [];
-    private $paymentMethods = [];
     private $deliveryStatuses = [];
     private $shipmentStatuses = [];
     private $cargoStatuses = [];
@@ -548,23 +544,6 @@ class ViewRender
     /**
      * @return $this
      */
-    public function loadPaymentMethods(bool $load = false): self
-    {
-        if ($load) {
-            $paymentService = resolve(PaymentService::class);
-            $this->paymentMethods = $paymentService->getPaymentMethods(
-                (new RestQuery())
-                    ->addFields(PaymentMethod::entity(), 'id', 'name', 'is_postpaid')
-                    ->setFilter('active', true)
-            )->keyBy('id');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
     public function loadDeliveryStatuses(bool $load = false): self
     {
         if ($load) {
@@ -865,7 +844,6 @@ class ViewRender
                 'orderStatuses' => $this->orderStatuses,
                 'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
-                'paymentMethods' => $this->paymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
                 'shipmentStatuses' => $this->shipmentStatuses,
                 'cargoStatuses' => $this->cargoStatuses,

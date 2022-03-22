@@ -187,7 +187,6 @@ class DiscountController extends Controller
 
         $this->loadDiscountTypes = true;
         $this->loadDeliveryMethods = true;
-        $this->loadPaymentMethods = true;
         $this->loadOrderStatuses = true;
         $data = DiscountHelper::detail($id);
         $data['KPI'] = resolve(OrderService::class)->orderDiscountKPI($id);
