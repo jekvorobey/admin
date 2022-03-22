@@ -20,7 +20,8 @@ return [
     'showcaseHost' => env('SHOWCASE_HOST', 'https://ibt.ru'),
 
     /**
-     * Адрес микросервиса интеграции с 1С. Пока нужен только для показа в интеграции мерчанта.
+     * Адрес микросервиса интеграции. Пока нужен только для показа в интеграции мерчанта.
      */
     'integration1CHost' => env('I_1C_SERVICE_HOST', 'https://i-1c.ibt.ru'),
+    'integrationMoyskladHost' => env('MOYSKLAD_SERVICE_HOST', 'https://online.moysklad.ru/api/remap/1.2'),
 ];

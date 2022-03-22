@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Settings\UsersController;
 use Illuminate\Support\Facades\Route;
+
+Route::get('user/{id}/change-password/{signature}', [UsersController::class, 'changePassword'])->name('page.changePassword');
 
 Route::prefix('login')->group(function () {
     Route::get('', 'MainController@login')->name('page.login');
@@ -98,6 +101,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('extSystems')->group(function () {
                     Route::get('', 'TabExtSystemsController@load')->name('merchant.detail.extSystems');
                     Route::post('', 'TabExtSystemsController@create')->name('merchant.detail.extSystems.store');
+                    Route::put('', 'TabExtSystemsController@update')->name('merchant.detail.extSystems.update');
                 });
             });
         });
@@ -294,12 +298,17 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'UsersController@page')->name('settings.userListPagination');
             Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('', 'UsersController@detail')->name('settings.userDetail');
-                Route::post('addRole', 'UsersController@addRole')->name('user.addRole');
-                Route::post('deleteRole', 'UsersController@deleteRole')->name('user.deleteRole');
+                Route::put('addRoles', 'UsersController@addRoles')->name('user.addRoles');
+                Route::post('deleteRoles', 'UsersController@deleteRoles')->name('user.deleteRoles');
+                Route::put('banUser', 'UsersController@banUser')->name('user.banUser');
+                Route::put('unBanUser', 'UsersController@unBanUser')->name('user.unBanUser');
             });
             Route::get('', 'UsersController@index')->name('settings.userList');
-            Route::post('', 'UsersController@saveUser')->name('settings.createUser');
+            Route::post('', 'UsersController@saveUser')->name('settings.saveUser');
             Route::get('by-roles', 'UsersController@usersByRoles')->name('user.byRoles');
+            Route::put('banArray', 'UsersController@banArray')->name('settings.banArray');
+            Route::post('updatePassword', 'UsersController@updatePassword')->name('user.updatePassword');
+            Route::get('is-unique', 'UsersController@isUnique')->name('user.isUnique');
         });
 
         Route::prefix('roles')->group(function () {
