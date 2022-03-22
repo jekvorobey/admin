@@ -4,16 +4,19 @@ import axios from 'axios';
  * Customized upload picture plugin
  */
 class CKEditorUploadAdapter {
-    constructor(loader) {
+    constructor(loader, routeLink, destination) {
         this.loader = loader;
+        this.destination = destination;
+        this.routeLink = routeLink;
     }
 
     async upload() {
         const data = new FormData();
         data.append('file', await this.loader.file);
+        data.append('destination', this.destination);
 
         const res = await axios({
-            url: `${process.env.VUE_APP_BASE_URL}/upload`,
+            url: this.routeLink,
             method: 'POST',
             data,
             withCredentials: false, // True is not allowed to bring token, false is allowed
@@ -21,7 +24,7 @@ class CKEditorUploadAdapter {
 
         // Method Returns data format: {Default: "URL"}
         return {
-            default: process.env.VUE_APP_TARGET_URL + res.data.data.url,
+            default: res.data.url,
         };
     }
 }

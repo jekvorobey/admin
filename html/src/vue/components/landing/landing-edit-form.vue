@@ -66,37 +66,10 @@
             label="Контент"
             label-for="landing-group-meta-description"
         >
-            <div class="text-right mb-3">
-                <b-button
-                    :pressed="editorMode === 'wysiwyg'"
-                    size="sm"
-                    variant="outline-secondary"
-                    @click="editorMode = 'wysiwyg'"
-                >WYSIWYG</b-button>
-
-                <b-button
-                    :pressed="editorMode === 'html'"
-                    size="sm"
-                    variant="outline-secondary"
-                    @click="editorMode = 'html'"
-                >HTML</b-button>
-            </div>
-
             <ckeditor
-                v-if="editorMode === 'wysiwyg'"
-                @ready="onReady"
+                :editor="editor"
                 v-model="landing.content"
                 :config="editorSettings"
-                class="custom-width"
-                tag-name="textarea"
-                type="classic"
-            />
-
-            <textarea
-                v-else
-                v-model="landing.content"
-                class="form-control"
-                rows="14"
             />
         </b-form-group>
     </div>
@@ -105,13 +78,13 @@
 <script>
 import {mapActions} from 'vuex';
 
-import VueEditor from '../../plugins/VueCkeditor';
+import CKEditor from '../../plugins/VueCustomCkeditor';
+import CustomEditor from 'ckeditor5-custom-build';
 import CKEditorUploadAdapter from '../../plugins/CKEditorUploadAdapter';
-import "@ckeditor/ckeditor5-build-classic/build/translations/ru";
 
   export default {
       components: {
-          VueEditor,
+          CKEditor,
       },
       props: {
           iLanding: {
@@ -121,15 +94,18 @@ import "@ckeditor/ckeditor5-build-classic/build/translations/ru";
       },
 
       data() {
+          let routeLink = this.route('uploadFile');
+          function CKEditorUpload( editor ) {
+              editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+                  return new CKEditorUploadAdapter( loader, routeLink, 'landing');
+              };
+          }
+
           return {
               landing: this.normalizeLanding(this.iLanding),
-              editorMode: 'wysiwyg',
+              editor: CustomEditor,
               editorSettings: {
-                  height: 200,
-                  language: 'ru',
-                  ckfinder: {
-                      uploadUrl: `/upload`,
-                  },
+                  extraPlugins: [ CKEditorUpload ],
               },
           };
       },
@@ -150,11 +126,6 @@ import "@ckeditor/ckeditor5-build-classic/build/translations/ru";
                   meta_description: source.meta_description ? source.meta_description : null,
               };
           },
-          onReady(editor) {
-              editor.plugins.get("FileRepository").createUploadAdapter = loader => {
-                  return new CKEditorUploadAdapter(loader);
-              };
-          }
       },
       watch: {
           landing: {
@@ -166,9 +137,3 @@ import "@ckeditor/ckeditor5-build-classic/build/translations/ru";
       }
   };
 </script>
-
-<style>
-.ck-editor__editable_inline {
-    min-height: 500px;
-}
-</style>
