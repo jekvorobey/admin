@@ -184,7 +184,7 @@ export default {
                         const containsNumber = /[0-9]/.test(value)
                         //const containsSpecial = /[#?!@$%^&*-]/.test(value)
 
-                        return containsUppercase && containsLowercase && containsNumber
+                        return containsUppercase && containsLowercase && containsNumber;
                     }
                 },
                 repeatPassword: {sameAsPassword: sameAs('password')},

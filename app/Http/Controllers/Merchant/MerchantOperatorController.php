@@ -61,6 +61,7 @@ class MerchantOperatorController extends Controller
 
         $operator = [
             'id' => $operator->id,
+            'user_id' => $operator->user_id,
             'merchant_id' => $operator->merchant_id,
             'last_name' => $user->last_name,
             'first_name' => $user->first_name,
@@ -95,11 +96,12 @@ class MerchantOperatorController extends Controller
         $userData = $request->validate([
             'last_name' => 'string|required',
             'first_name' => 'string|required',
-            'middle_name' => 'string|required',
+            'middle_name' => 'string|nullable',
             'email' => 'email|required',
-            'phone' => 'string|required',
             'login' => 'string|required',
-            'password' => 'string|required',
+            'login_email' => 'email|required',
+            'phone' => 'string|required',
+            'password' => 'string|nullable',
             'roles' => 'array|required',
             'roles.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
             'active' => 'bool|required',

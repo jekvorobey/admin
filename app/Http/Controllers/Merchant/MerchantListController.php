@@ -275,7 +275,7 @@ class MerchantListController extends Controller
             'email' => 'required|email',
             'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
             'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
-            'password' => 'required|string|min:8|confirmed',
+            //'password' => 'required|string|min:8|confirmed',
 
             'storage_address' => 'required|string',
             'site' => 'required|string',
@@ -300,7 +300,7 @@ class MerchantListController extends Controller
                 ->setMiddleName($data['middle_name'])
                 ->setEmail($data['email'])
                 ->setPhone(phone_format($data['phone']))
-                ->setPassword($data['password'])
+                //->setPassword($data['password'])
                 ->setStorageAddress($data['storage_address'])
                 ->setSite($data['site'])
                 ->setCanIntegration((bool) $data['can_integration'])
@@ -314,20 +314,6 @@ class MerchantListController extends Controller
 
         return response()->json([
             'redirect' => route('merchant.detail', ['id' => $merchantId]),
-        ]);
-    }
-
-    public function checkEmailExists(Request $request, UserService $userService): JsonResponse
-    {
-        $email = $request->get('email', false);
-        if (!$email) {
-            throw new BadRequestHttpException('email is empty');
-        }
-
-        $exists = $userService->exists($email, Front::FRONT_MAS);
-
-        return response()->json([
-            'exists' => $exists,
         ]);
     }
 }
