@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Merchant;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
