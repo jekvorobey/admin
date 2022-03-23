@@ -8,6 +8,7 @@
 
             <b-button v-if="canUpdate(blocks.content)" type="submit" class="mt-3" variant="dark">{{ isCreatingMode ? 'Создать' : 'Обновить' }}</b-button>
             <b-button v-if="canView(blocks.content)" type="button" @click="previewPage()" class="mt-3" variant="light">Предпросмотр</b-button>
+            <a :href="previewUrl" target="_blank" ref="previewAnchor" class="d-none"></a>
         </b-form>
     </layout-main>
 </template>
@@ -31,8 +32,9 @@ export default {
         data() {
             return {
                 landing: this.iLanding,
-                hash: String,
-            };
+                hash: null,
+                previewUrl: null,
+            }
         },
         methods: {
             ...mapActions({
@@ -84,12 +86,12 @@ export default {
                     .post(this.getRoute('landing.landingCache'), {}, this.landing)
                     .then((data) => {
                         this.hash = data.hash;
+
+                        this.previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
+                        this.$nextTick(() => this.$refs.previewAnchor.click());
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-                    }).finally(() => {
-                        let previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
-                        window.open(previewUrl, '_blank');
                     });
             },
         },
