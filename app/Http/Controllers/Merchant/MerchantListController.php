@@ -271,7 +271,7 @@ class MerchantListController extends Controller
             'last_name' => 'required|string',
             'middle_name' => 'nullable|string',
             'email' => 'required|email',
-            'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
+            'phone' => 'required|regex:/^\+7\d{10}$/',
             'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
             //'password' => 'required|string|min:8|confirmed',
 
