@@ -8,7 +8,6 @@ use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -22,8 +21,6 @@ use Greensight\Oms\Dto\Order\OrderConfirmationType;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentDto;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Greensight\Store\Dto\StoreDto;
@@ -182,12 +179,6 @@ class OrderListController extends Controller
         }
         $operatorIds = $operatorIds->unique();
 
-        $paymentPostpaidMethod = $paymentService->getPaymentMethods(
-            (new RestQuery())
-                ->addFields(PaymentMethod::entity(), 'id', 'name')
-                ->setFilter('is_postpaid', true)
-        )->first();
-
         //Получаем реферальных партнеров заказов
         $referralIds = collect();
         foreach ($orders as $order) {
@@ -225,7 +216,7 @@ class OrderListController extends Controller
                 ->keyBy('id');
         }
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $points, $paymentPostpaidMethod) {
+        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $points) {
             $data = $order->toArray();
 
             $data['customer'] = $customers->has($order->customer_id) && $users->has($customers[$order->customer_id]->user_id)
@@ -267,12 +258,8 @@ class OrderListController extends Controller
             $data['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return DeliveryService::serviceById($delivery->delivery_service)->name;
             })->unique()->join(', ');
-            if ($order->is_postpaid) {
-                $data['payment_methods'] = $paymentPostpaidMethod->name ?? '';
-            } else {
-                $payment = $order->payments->first();
-                $data['payment_methods'] = $payment ? $payment->paymentMethod['name'] : '';
-            }
+
+            $data['payment_methods'] = $order->paymentMethod->name;
 
             $data['created_at'] = date_time2str(new Carbon($order->created_at));
             $data['updated_at'] = date_time2str(new Carbon($order->updated_at));
@@ -325,7 +312,7 @@ class OrderListController extends Controller
     {
         $restQuery = $orderService->newQuery()->include(
             'payments',
-            'payments.paymentMethod',
+            'paymentMethod',
             'deliveries.shipments',
             //'history',
             'basketitem',

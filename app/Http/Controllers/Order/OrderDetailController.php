@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -18,10 +17,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentDto;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\PaymentService\PaymentService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
 use Greensight\Store\Dto\Package\PackageType;
@@ -463,19 +459,7 @@ class OrderDetailController extends Controller
         $order->created_at = date_time2str(new Carbon($order->created_at));
         $order->updated_at = date_time2str(new Carbon($order->updated_at));
 
-        if ($order->is_postpaid) {
-            $paymentService = resolve(PaymentService::class);
-            $paymentMethod = $paymentService->getPaymentMethods(
-                (new RestQuery())
-                    ->addFields(PaymentMethod::entity(), 'id', 'name')
-                    ->setFilter('is_postpaid', true)
-            )->first();
-
-            $order['payment_methods'] = $paymentMethod->name ?? '';
-        } else {
-            $paymentMethod = $order->payments->first();
-            $order['payment_methods'] = $paymentMethod ? $paymentMethod->paymentMethod['name'] : '';
-        }
+        $order['payment_methods'] = $order->paymentMethod->name;
         $order['discount'] = $order->getDiscount();
         $order['delivery_discount'] = $order->getDeliveryDiscount();
         $order['product_cost'] = $order->cost - $order->delivery_cost;
