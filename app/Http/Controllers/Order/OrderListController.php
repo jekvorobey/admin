@@ -21,8 +21,8 @@ use Greensight\Oms\Dto\Order\OrderConfirmationType;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentDto;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\PaymentService\PaymentService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -165,6 +165,8 @@ class OrderListController extends Controller
         $userService = resolve(UserService::class);
         /** @var ListsService $listsService */
         $listsService = resolve(ListsService::class);
+        /** @var PaymentService $paymentService */
+        $paymentService = resolve(PaymentService::class);
 
         $orders = $orderService->orders($restQuery);
 
@@ -256,9 +258,9 @@ class OrderListController extends Controller
             $data['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return DeliveryService::serviceById($delivery->delivery_service)->name;
             })->unique()->join(', ');
-            $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
-                return $payment->paymentMethod()->name;
-            })->unique()->join(', ');
+
+            $data['payment_methods'] = $order->paymentMethod->name;
+
             $data['created_at'] = date_time2str(new Carbon($order->created_at));
             $data['updated_at'] = date_time2str(new Carbon($order->updated_at));
             $data['status_at'] = date_time2str(new Carbon($order->status_at));
@@ -310,6 +312,7 @@ class OrderListController extends Controller
     {
         $restQuery = $orderService->newQuery()->include(
             'payments',
+            'paymentMethod',
             'deliveries.shipments',
             //'history',
             'basketitem',
