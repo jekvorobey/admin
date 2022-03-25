@@ -9,8 +9,10 @@
                         <values-table :values="userInfo" :names="userValuesNames"/>
                     </div>
                     <div v-if="user.fronts.includes(this.userFronts.showcase)" class="mt-4">
-                        <span>Профиль в разделе клиенты: <a
-                            :href="getRoute('customers.detail', { id: customerId })">{{ user.full_name }}</a></span>
+                        <span>
+                            Профиль в разделе клиенты:
+                            <a :href="getRoute('customers.detail', { id: customerId })">#{{ customerId }}: {{ user.full_name }}</a>
+                        </span>
                     </div>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3"
