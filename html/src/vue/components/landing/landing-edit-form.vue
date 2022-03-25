@@ -106,6 +106,9 @@ import CKEditorUploadAdapter from '../../plugins/CKEditorUploadAdapter';
               editor: CustomEditor,
               editorSettings: {
                   extraPlugins: [ CKEditorUpload ],
+                  mediaEmbed: {
+                      previewsInData: true,
+                  },
               },
           };
       },
