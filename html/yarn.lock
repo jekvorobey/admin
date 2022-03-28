@@ -716,6 +716,9 @@
   resolved "https://registry.npmjs.org/@fortawesome/vue-fontawesome/-/vue-fontawesome-0.1.6.tgz"
   integrity sha512-HAGRbrOuGDwwUmCYdpzR0hhNQ3EE30dOS4JiJKcoZ+S4M210CxyU0OXCgzIg3HzK/23rlpHbV8zi9PDDZDnuIw==
 
+"@ibt/ckeditor5-file-upload@file:./customCKEditorBuild/plugins/ckeditor5-file-upload":
+  version "1.0.0"
+
 "@jimp/bmp@^0.6.4":
   version "0.6.4"
   resolved "https://registry.npmjs.org/@jimp/bmp/-/bmp-0.6.4.tgz"
@@ -2541,6 +2544,8 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
 
 "ckeditor5-custom-build@file:./customCKEditorBuild":
   version "0.0.1"
+  dependencies:
+    "@ibt/ckeditor5-file-upload" "file:./customCKEditorBuild/plugins/ckeditor5-file-upload"
 
 class-utils@^0.3.5:
   version "0.3.6"

@@ -45,6 +45,8 @@ import TableProperties from '@ckeditor/ckeditor5-table/src/tableproperties';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar.js';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation.js';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
+import FileUpload from '@ibt/ckeditor5-file-upload/fileupload';
+import SimpleFileUploadAdapter from '@ibt/ckeditor5-file-upload/src/simplefileuploadadapter';
 
 class Editor extends ClassicEditor {}
 
@@ -91,6 +93,8 @@ Editor.builtinPlugins = [
 	TableProperties,
 	TableToolbar,
 	TextTransformation,
+	FileUpload,
+	SimpleFileUploadAdapter,
 	Underline
 ];
 
@@ -125,6 +129,7 @@ Editor.defaultConfig = {
 			'pageBreak',
 			'removeFormat',
 			'underline',
+			'fileUpload',
 			'sourceEditing'
 		]
 	},

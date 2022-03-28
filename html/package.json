@@ -125,8 +125,8 @@
     },
     "dependencies": {
         "@babel/polyfill": "^7.4.3",
-        "@ckeditor/ckeditor5-vue2": "^2.0.0",
         "@ckeditor/ckeditor5-build-classic": "^19.0.2",
+        "@ckeditor/ckeditor5-vue2": "^2.0.0",
         "@fortawesome/fontawesome-svg-core": "^1.2.22",
         "@fortawesome/free-solid-svg-icons": "^5.10.2",
         "@fortawesome/vue-fontawesome": "^0.1.6",

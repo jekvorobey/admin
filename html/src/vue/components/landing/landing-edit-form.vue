@@ -80,7 +80,6 @@ import {mapActions} from 'vuex';
 
 import CKEditor from '../../plugins/VueCustomCkeditor';
 import CustomEditor from 'ckeditor5-custom-build';
-import CKEditorUploadAdapter from '../../plugins/CKEditorUploadAdapter';
 
   export default {
       components: {
@@ -95,19 +94,24 @@ import CKEditorUploadAdapter from '../../plugins/CKEditorUploadAdapter';
 
       data() {
           let routeLink = this.route('uploadFile');
-          function CKEditorUpload( editor ) {
-              editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
-                  return new CKEditorUploadAdapter( loader, routeLink, 'landing');
-              };
-          }
 
           return {
               landing: this.normalizeLanding(this.iLanding),
               editor: CustomEditor,
               editorSettings: {
-                  extraPlugins: [ CKEditorUpload ],
                   mediaEmbed: {
                       previewsInData: true,
+                  },
+                  simpleFileUpload: {
+                      fileTypes: [
+                          '.pdf',
+                          '.doc',
+                          '.docx',
+                          '.xls',
+                          '.xlsx'
+                      ],
+                      destination: 'landing',
+                      url: routeLink,
                   },
               },
           };

@@ -44,5 +44,8 @@
   },
   "scripts": {
     "build": "webpack --mode production"
+  },
+  "dependencies": {
+    "@ibt/ckeditor5-file-upload": "file:./plugins/ckeditor5-file-upload"
   }
 }
