@@ -267,12 +267,15 @@ class MerchantListController extends Controller
             'bank_bik' => 'required|string|size:9',
             'correspondent_account' => 'required|string|size:20',
 
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
             'middle_name' => 'nullable|string',
-            'email' => 'required|email',
-            'phone' => 'required|regex:/^\+7\d{10}$/',
-            'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
+            'email' => 'nullable|email',
+            'phone' => 'nullable|regex:/^\+7\d{10}$/',
+            'communication_method' => [
+                'nullable',
+                Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
+            ],
             //'password' => 'required|string|min:8|confirmed',
 
             'storage_address' => 'required|string',
@@ -297,7 +300,7 @@ class MerchantListController extends Controller
                 ->setLastName($data['last_name'])
                 ->setMiddleName($data['middle_name'])
                 ->setEmail($data['email'])
-                ->setPhone(phone_format($data['phone']))
+                ->setPhone($data['phone'] ? phone_format($data['phone']) : null)
                 //->setPassword($data['password'])
                 ->setStorageAddress($data['storage_address'])
                 ->setSite($data['site'])

@@ -196,11 +196,10 @@
                     maxLength: maxLength(20),
                 },
 
-                first_name: {required},
-                last_name: {required},
+                first_name: {},
+                last_name: {},
                 middle_name: {},
                 email: {
-                    required,
                     email,
                     isUnique: function() {
                         return this.isFieldUnique(this.form.email, 'email');
@@ -208,14 +207,13 @@
                     $lazy: true
                 },
                 phone: {
-                    required,
                     isUnique: function() {
                         let phone = this.form.phone.replace(/[()]|\s|-/g, '');
                         return this.isFieldUnique(phone, 'phone');
                     },
                     $lazy: true
                 },
-                communication_method: {required},
+                communication_method: {},
                 storage_address: {required},
                 site: {required},
                 can_integration: {},
@@ -378,35 +376,21 @@
                     if (!this.$v.form.correspondent_account.maxLength) return "Должно быть 20 символов!";
                 }
             },
-            errorFirstName() {
-                if (this.$v.form.first_name.$dirty) {
-                    if (!this.$v.form.first_name.required) return "Обязательное поле!";
-                }
-            },
-            errorLastName() {
-                if (this.$v.form.last_name.$dirty) {
-                    if (!this.$v.form.last_name.required) return "Обязательное поле!";
-                }
-            },
+            errorFirstName() {},
+            errorLastName() {},
             errorMiddleName() {},
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
-                    if (!this.$v.form.email.required) return "Обязательное поле!";
                     if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                     if (!this.$v.form.email.isUnique) return "Пользователь с таким E-mail уже существует";
                 }
             },
             errorPhone() {
                 if (this.$v.form.phone.$dirty) {
-                    if (!this.$v.form.phone.required) return "Обязательное поле!";
                     if (!this.$v.form.phone.isUnique) return "Пользователь с таким телефоном уже существует";
                 }
             },
-            errorCommunicationMethod() {
-                if (this.$v.form.communication_method.$dirty) {
-                    if (!this.$v.form.communication_method.required) return "Обязательное поле!";
-                }
-            },
+            errorCommunicationMethod() {},
             errorStorageAddress() {
                 if (this.$v.form.storage_address.$dirty) {
                     if (!this.$v.form.storage_address.required) return "Обязательное поле!";
