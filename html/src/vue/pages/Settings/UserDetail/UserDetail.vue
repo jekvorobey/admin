@@ -62,7 +62,7 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles"
+        <user-edit-modal :source="user" :fronts="options.fronts" :roles="options.roles"
                          :merchantId="merchantId" :merchants="options.merchants" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>

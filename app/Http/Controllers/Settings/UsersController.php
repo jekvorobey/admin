@@ -180,6 +180,9 @@ class UsersController extends Controller
         $id = $request->get('id');
         $isUnique = true;
         if ($data && $field) {
+            if ($field === 'phone') {
+                $data = phone_format($data);
+            }
             $userQuery = new RestQuery();
             $userQuery->setFilter($field, $data);
             $userQuery->setFilter($field, 'notNull');

@@ -1243,7 +1243,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "fe219d36811a1931afa0377d70c96b4e0b0cc1c1"
+                "reference": "bb085e6de14db6ad0ebb426bc24539bea206537a"
             },
             "require": {
                 "ext-json": "*",
@@ -1266,7 +1266,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2022-03-15T11:02:51+00:00"
+            "time": "2022-03-29T10:00:18+00:00"
         },
         {
             "name": "iwengo/ibt-common-lib",

@@ -677,6 +677,11 @@
   resolved "https://registry.npmjs.org/@ckeditor/ckeditor5-build-classic/-/ckeditor5-build-classic-19.0.2.tgz"
   integrity sha512-yz2M9Q6jMy9zF+JiQiSoaG/m7Eu48H+Yi3FgtVGDFpLDqGUJntNsW26g3qZld5Pa4pgVPRmDcfKHzLTWAo3iRg==
 
+"@ckeditor/ckeditor5-vue2@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@ckeditor/ckeditor5-vue2/-/ckeditor5-vue2-2.0.0.tgz#bc4f5bf14bd4a98efde2164f05d0d72494f91770"
+  integrity sha512-ieTmMO6HrDVmKkr8/vlapKdj35FCL0/5v+OkVahar2SIg47dveJHYHyCOO0FjBhzMYnshlZYjWIxIssm64BvBw==
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.npmjs.org/@csstools/convert-colors/-/convert-colors-1.4.0.tgz"
@@ -710,6 +715,9 @@
   version "0.1.6"
   resolved "https://registry.npmjs.org/@fortawesome/vue-fontawesome/-/vue-fontawesome-0.1.6.tgz"
   integrity sha512-HAGRbrOuGDwwUmCYdpzR0hhNQ3EE30dOS4JiJKcoZ+S4M210CxyU0OXCgzIg3HzK/23rlpHbV8zi9PDDZDnuIw==
+
+"@ibt/ckeditor5-file-upload@file:./customCKEditorBuild/plugins/ckeditor5-file-upload":
+  version "1.0.0"
 
 "@jimp/bmp@^0.6.4":
   version "0.6.4"
@@ -2533,6 +2541,11 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   dependencies:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
+
+"ckeditor5-custom-build@file:./customCKEditorBuild":
+  version "0.0.1"
+  dependencies:
+    "@ibt/ckeditor5-file-upload" "file:./customCKEditorBuild/plugins/ckeditor5-file-upload"
 
 class-utils@^0.3.5:
   version "0.3.6"

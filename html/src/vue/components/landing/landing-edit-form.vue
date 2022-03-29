@@ -66,32 +66,24 @@
             label="Контент"
             label-for="landing-group-meta-description"
         >
-            <vue-editor
-                id="landing-group-meta-description"
+            <ckeditor
+                :editor="editor"
                 v-model="landing.content"
-                :editorOptions="editorSettings"
-                type="text"
-                tag-name="textarea"
-                placeholder="Введите контент"
-            > </vue-editor>
+                :config="editorSettings"
+            />
         </b-form-group>
     </div>
 </template>
 
 <script>
-  import {mapActions} from 'vuex';
+import {mapActions} from 'vuex';
 
-  import { VueEditor, Quill } from 'vue2-editor';
-
-  import { ImageDrop } from 'quill-image-drop-module';
-  import ImageResize from 'quill-image-resize-vue';
-
-  Quill.register("modules/imageDrop", ImageDrop);
-  Quill.register("modules/imageResize", ImageResize);
+import CKEditor from '../../plugins/VueCustomCkeditor';
+import CustomEditor from 'ckeditor5-custom-build';
 
   export default {
       components: {
-          VueEditor,
+          CKEditor,
       },
       props: {
           iLanding: {
@@ -101,21 +93,27 @@
       },
 
       data() {
+          let routeLink = this.route('uploadFile');
+
           return {
               landing: this.normalizeLanding(this.iLanding),
+              editor: CustomEditor,
               editorSettings: {
-                  modules: {
-                      imageDrop: true,
-                      imageResize: {
-                          modules: ["Resize", "DisplaySize", "Toolbar"],
-                          handleStyles: {
-                              backgroundColor: "black",
-                              border: "none",
-                              color: "white",
-                          },
-                      },
-                  }
-              }
+                  mediaEmbed: {
+                      previewsInData: true,
+                  },
+                  simpleFileUpload: {
+                      fileTypes: [
+                          '.pdf',
+                          '.doc',
+                          '.docx',
+                          '.xls',
+                          '.xlsx'
+                      ],
+                      destination: 'landing',
+                      url: routeLink,
+                  },
+              },
           };
       },
 
