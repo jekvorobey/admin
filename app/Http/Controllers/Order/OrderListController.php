@@ -22,7 +22,6 @@ use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\PaymentService\PaymentService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -165,8 +164,6 @@ class OrderListController extends Controller
         $userService = resolve(UserService::class);
         /** @var ListsService $listsService */
         $listsService = resolve(ListsService::class);
-        /** @var PaymentService $paymentService */
-        $paymentService = resolve(PaymentService::class);
 
         $orders = $orderService->orders($restQuery);
 
