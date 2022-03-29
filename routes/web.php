@@ -630,6 +630,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'LandingDetailController@create')->name('landing.create');
             Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
+            Route::post('/landingCache', 'LandingDetailController@landingCache')->name('landing.landingCache');
         });
 
         Route::prefix('redirect')->namespace('Redirect')->group(function () {
