@@ -268,7 +268,7 @@ class CustomerDetailController extends Controller
             }
 
             // Если пользователь использует телефон для авторизации, то меняем пользователю логин
-            if ($userDto->hasPassword()) {
+            if ($userDto->login === $userDto->phone) {
                 if (!$user['phone']) {
                     throw new BadRequestHttpException(
                         'Невозможно удалить телефон. Он используется в качестве логина'
