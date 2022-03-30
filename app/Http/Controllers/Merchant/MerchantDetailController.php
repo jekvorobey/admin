@@ -288,7 +288,8 @@ class MerchantDetailController extends Controller
 
         $editedMerchant = new MerchantDto($data['merchant']);
         $editedMerchant->id = $id;
-        $editedMerchant->excluded_payment_methods = $data['excluded_payment_methods'] ?? null;
+
+        $editedMerchant->excluded_payment_methods = $data['merchant']['excluded_payment_methods'] ?? null;
         $merchantService->update($editedMerchant);
 
         return response('', 204);
