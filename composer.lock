@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa9d03a74a2679e9a92d0c4e59424cbb",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/IBT-726-merchant-payment-methods",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "5ce5f8cdb92b2c5307fac8530aa39ac97539a0bd"
+                "reference": "ed5bec182bab2530784efdb5f2df55265f2436f3"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-03-18T09:02:51+00:00"
+            "time": "2022-03-31T12:02:51+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -1485,11 +1485,11 @@
         },
         {
             "name": "iwengo/ibt-oms-lib",
-            "version": "dev-feature/IBT-726",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "ad4e1fd99f118668d37843d613a37237432d66ee"
+                "reference": "46e01611314183a422eaddaa4cb909d0b5985d41"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-03-24T10:40:27+00:00"
+            "time": "2022-03-31T12:03:05+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10859,7 +10859,7 @@
         },
         {
             "package": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/IBT-726-merchant-payment-methods",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10871,7 +10871,7 @@
         },
         {
             "package": "iwengo/ibt-oms-lib",
-            "version": "dev-feature/IBT-726",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
