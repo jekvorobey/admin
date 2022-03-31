@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MerchantIntegration\IntegrationRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\Integration\ExtSystemDriver;
 use MerchantManagement\Dto\Integration\ExtSystemDto;
 use MerchantManagement\Dto\Integration\IntegrationDto;
@@ -18,7 +17,7 @@ use MerchantManagement\Services\MerchantService\MerchantService;
 class TabExtSystemsController extends Controller
 {
     protected const MERCHANT_SETTING_PRICE_NAME = 'moy_sklad_import_price_type_name';
-    protected const MERCHANT_SETTING_ORDER_NAME = 'moy_sklad_order_organization';
+    protected const MERCHANT_SETTING_ORGANIZATION_NAME = 'moy_sklad_order_organization';
 
     public function load(
         int $merchantId,
@@ -30,13 +29,19 @@ class TabExtSystemsController extends Controller
         $restQuery = $merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
         $extSystem = $merchantIntegrationService->extSystems($restQuery)->first();
         $merchantPriceSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_PRICE_NAME)->first();
-        $merchantOrderSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_ORDER_NAME)->first();
+        $merchantOrganizationSetting = $merchantService->getSetting($merchantId, self::MERCHANT_SETTING_ORGANIZATION_NAME)->first();
         $extSystemsOptions = [
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_1C),
             ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_MOY_SKLAD),
+            ExtSystemDriver::driverById(ExtSystemDriver::DRIVER_FILE_SHARING),
         ];
-        $host = '';
+        $host = $extSystem->connection_params['host'] ?? '';
+        $paramPrice = null;
+        $paramStock = null;
+        $paramOrder = null;
+        $paramPriceStock = null;
         if ($extSystem) {
+            $integration = $merchantIntegrationService->integrations($extSystem->id);
             $driver = (int) $extSystem->driver;
             switch ($driver) {
                 case ExtSystemDriver::DRIVER_1C:
@@ -44,58 +49,41 @@ class TabExtSystemsController extends Controller
                     break;
                 case ExtSystemDriver::DRIVER_MOY_SKLAD:
                     $host = config('common-lib.integrationMoyskladHost');
+                    $paramPrice = $integration->where('type', IntegrationType::TYPE_PRICE_IMPORT)->first();
+                    $paramStock = $integration->where('type', IntegrationType::TYPE_STOCK_IMPORT)->first();
+                    $paramOrder = $integration->where('type', IntegrationType::TYPE_ORDER_EXPORT)->first();
+                    break;
+                case ExtSystemDriver::DRIVER_FILE_SHARING:
+                    $paramPriceStock = $integration->where('type', IntegrationType::TYPE_PRICE_STOCK_IMPORT)->first();
             }
         }
 
         return response()->json([
             'extSystem' => $extSystem,
-            'merchantPriceSetting' => $merchantPriceSetting,
-            'merchantOrderSetting' => $merchantOrderSetting,
             'extSystemsOptions' => $extSystemsOptions,
-            'host' => $host,
+            'paramOptions' => [
+                'host' => $host,
+                'port' => $extSystem->connection_params['port'] ?? '',
+                'paramPrice' => $paramPrice,
+                'paramStock' => $paramStock,
+                'paramOrder' => $paramOrder,
+                'paramPriceStock' => $paramPriceStock,
+                'fileName' => $extSystem->connection_params['fileName'] ?? '',
+                'merchantPriceSetting' => $merchantPriceSetting->value ?? null,
+                'merchantOrganizationSetting' => $merchantOrganizationSetting->value ?? null,
+            ],
         ]);
     }
 
     public function create(
         int $merchantId,
-        Request $request,
+        IntegrationRequest $request,
         MerchantService $merchantService,
         MerchantIntegrationService $merchantIntegrationService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
-        $data = $this->validate($request, [
-            'token' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && !$request->input('login');
-                }),
-            ],
-            'login' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && !$request->input('token');
-                }),
-            ],
-            'password' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && $request->input('login');
-                }),
-            ],
-            'settingPriceValue' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
-                }),
-            ],
-            'settingOrderValue' => [
-                Rule::requiredIf(function () use ($request) {
-                    return $request->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
-                }),
-            ],
-            'driver' => [
-                'required',
-                'integer',
-                Rule::in(array_keys(ExtSystemDriver::allDrivers())),
-            ],
-        ]);
+        $data = $request->all();
 
         $merchant = $merchantService->merchant($merchantId);
         $connectionParams = [];
@@ -112,9 +100,19 @@ class TabExtSystemsController extends Controller
                 $code = 'moysklad';
                 $name = 'МойСклад';
                 $connectionParams = [
-                    'token' => $data['token'],
+                    'token' => $data['token'] ?? '',
+                    'login' => $data['login'] ?? '',
+                    'password' => $data['password'] ?? '',
+                ];
+                break;
+            case ExtSystemDriver::DRIVER_FILE_SHARING:
+                $code = 'filesharing';
+                $name = 'Файловый обмен';
+                $connectionParams = [
                     'login' => $data['login'],
                     'password' => $data['password'],
+                    'host' => $data['host'],
+                    'port' => $data['port'],
                 ];
                 break;
             default:
@@ -132,12 +130,18 @@ class TabExtSystemsController extends Controller
 
         $extSystemId = $merchantIntegrationService->createExtSystem($extSystem);
         if ($data['driver'] === ExtSystemDriver::DRIVER_MOY_SKLAD) {
-            foreach ($this->moyskladIntegrationsData() as $integrationData) {
+            foreach ($this->moyskladIntegrationsData($data['integrationParams']) as $integrationData) {
                 $integrationDto = new IntegrationDto($integrationData);
                 $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
             }
             $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
-            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_ORDER_NAME, $data['settingOrderValue']);
+            $merchantService->setSetting($merchantId, self::MERCHANT_SETTING_ORGANIZATION_NAME, $data['settingOrganizationValue']);
+        }
+        if ($data['driver'] === ExtSystemDriver::DRIVER_FILE_SHARING) {
+            foreach ($this->fileSharingIntegrationsData($data['integrationParams']) as $integrationData) {
+                $integrationDto = new IntegrationDto($integrationData);
+                $merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
+            }
         }
 
         return response()->json([]);
@@ -145,58 +149,97 @@ class TabExtSystemsController extends Controller
 
     public function update(
         int $extSystemId,
-        Request $request,
+        IntegrationRequest $request,
         MerchantService $merchantService,
         MerchantIntegrationService $merchantIntegrationService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
-        $data = $this->validate($request, [
-            'merchantId' => 'required|int',
-            'token' => 'required_without:login',
-            'login' => 'required_without:token',
-            'password' => 'required_with:login',
-            'settingPriceValue' => 'required|string',
-            'settingOrderValue' => 'required|string',
-        ]);
-        $connectionParams = [
-            'token' => $data['token'],
-            'login' => $data['login'],
-            'password' => $data['password'],
-        ];
+        $data = $request->all();
+        switch ($data['driver']) {
+            case ExtSystemDriver::DRIVER_MOY_SKLAD:
+                $connectionParams = [
+                    'token' => $data['token'] ?? '',
+                    'login' => $data['login'] ?? '',
+                    'password' => $data['password'] ?? '',
+                ];
+                break;
+            case ExtSystemDriver::DRIVER_FILE_SHARING:
+                $connectionParams = [
+                    'login' => $data['login'],
+                    'password' => $data['password'],
+                    'host' => $data['host'],
+                    'port' => $data['port'],
+                ];
+                break;
+        }
         $extSystem = new ExtSystemDto([
             'merchant_id' => $data['merchantId'],
             'connection_params' => $connectionParams,
         ]);
 
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
-        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
-        $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_ORDER_NAME, $data['settingOrderValue']);
+        if ((int) $data['driver'] === ExtSystemDriver::DRIVER_MOY_SKLAD) {
+            $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
+            $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_ORGANIZATION_NAME, $data['settingOrganizationValue']);
+            foreach ($this->moyskladIntegrationsData($data['integrationParams']) as $integrationData) {
+                $integrationDto = new IntegrationDto($integrationData);
+                $restQuery = $merchantIntegrationService->newQuery()->setFilter('type', $integrationData['type']);
+                $integration = $merchantIntegrationService->integrations($extSystemId, $restQuery)->first();
+                $merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
+            }
+        }
+        if ((int) $data['driver'] === ExtSystemDriver::DRIVER_FILE_SHARING) {
+            foreach ($this->fileSharingIntegrationsData($data['integrationParams']) as $integrationData) {
+                $integrationDto = new IntegrationDto($integrationData);
+                $restQuery = $merchantIntegrationService->newQuery()->setFilter('type', $integrationData['type']);
+                $integration = $merchantIntegrationService->integrations($extSystemId, $restQuery)->first();
+                $merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
+            }
+        }
 
         return response()->json([]);
     }
 
-    private function moyskladIntegrationsData(): array
+    private function moyskladIntegrationsData(array $params): array
     {
         return [
             [
                 'name' => 'Импорт остатков',
-                'active' => true,
+                'active' => $params['paramActivePrice'] ?? false,
                 'type' => IntegrationType::TYPE_STOCK_IMPORT,
                 'params' => [
-                    'type' => 'changes',
-                    'period' => '1',
-                    'logsLifetime' => '5',
+                    'period' => $params['paramPeriodPrice'] ?? '10',
                 ],
             ],
             [
                 'name' => 'Импорт цен',
-                'active' => true,
+                'active' => $params['paramActiveStock'] ?? false,
                 'type' => IntegrationType::TYPE_PRICE_IMPORT,
                 'params' => [
-                    'type' => 'changes',
-                    'period' => '1',
-                    'logsLifetime' => '5',
+                    'period' => $params['paramPeriodStock'] ?? '10',
+                ],
+            ],
+            [
+                'name' => 'Экспорт заказов',
+                'active' => $params['paramActiveOrder'] ?? false,
+                'type' => IntegrationType::TYPE_ORDER_EXPORT,
+                'params' => [
+                    'period' => $params['paramPeriodOrder'] ?? '10',
+                ],
+            ],
+        ];
+    }
+
+    private function fileSharingIntegrationsData(array $params): array
+    {
+        return [
+            [
+                'name' => 'Импорт цен и остатков',
+                'active' => $params['paramActivePriceStock'] ?? false,
+                'type' => IntegrationType::TYPE_PRICE_STOCK_IMPORT,
+                'params' => [
+                    'period' => $params['paramPeriodPriceStock'] ?? '10',
                 ],
             ],
         ];
