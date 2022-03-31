@@ -95,7 +95,7 @@
             ></b-pagination>
         </div>
 
-        <modal-create-merchant :id="modalIdCreateMerchant" :communication-methods="options.communicationMethods"/>
+        <modal-create-merchant :id="modalIdCreateMerchant" :communication-methods="options.communicationMethods" :payment-method-list="options.paymentMethodList"/>
 
         <b-modal id="modal-broadcast-create" title="Создание чата" hide-footer>
             <communication-chat-creator v-if="this.selectedOperators.length"
