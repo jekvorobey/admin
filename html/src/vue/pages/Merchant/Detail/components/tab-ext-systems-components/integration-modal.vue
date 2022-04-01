@@ -215,6 +215,7 @@ export default {
             }
             Services.showLoader();
             let formData = {
+                merchantId: this.id,
                 login: this.form.login,
                 password: this.form.password,
                 driver: this.checkExtSystemDriver(),
@@ -246,9 +247,6 @@ export default {
             }
             if (this.form.host) {
                 formData.host = this.form.host;
-            }
-            if (this.extSystem) {
-                formData.merchantId = this.id;
             }
             if (!this.extSystem) {
                 Services.net().post(

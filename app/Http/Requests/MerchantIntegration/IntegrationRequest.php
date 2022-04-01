@@ -56,6 +56,11 @@ class IntegrationRequest extends FormRequest
                 }),
                 'integer',
             ],
+            'fileName' => [
+                Rule::requiredIf(function () {
+                    return $this->input('driver') === ExtSystemDriver::DRIVER_FILE_SHARING;
+                }),
+            ],
             'driver' => [
                 'required',
                 'integer',

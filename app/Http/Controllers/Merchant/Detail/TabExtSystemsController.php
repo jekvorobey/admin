@@ -113,6 +113,7 @@ class TabExtSystemsController extends Controller
                     'password' => $data['password'],
                     'host' => $data['host'],
                     'port' => $data['port'],
+                    'fileName' => $data['fileName'],
                 ];
                 break;
             default:
@@ -156,7 +157,7 @@ class TabExtSystemsController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $request->all();
-        switch ($data['driver']) {
+        switch ((int) $data['driver']) {
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 $connectionParams = [
                     'token' => $data['token'] ?? '',
@@ -170,6 +171,7 @@ class TabExtSystemsController extends Controller
                     'password' => $data['password'],
                     'host' => $data['host'],
                     'port' => $data['port'],
+                    'fileName' => $data['fileName'],
                 ];
                 break;
         }
@@ -182,18 +184,18 @@ class TabExtSystemsController extends Controller
         if ((int) $data['driver'] === ExtSystemDriver::DRIVER_MOY_SKLAD) {
             $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_PRICE_NAME, $data['settingPriceValue']);
             $merchantService->setSetting($data['merchantId'], self::MERCHANT_SETTING_ORGANIZATION_NAME, $data['settingOrganizationValue']);
+            $integrations = $merchantIntegrationService->integrations($extSystemId);
             foreach ($this->moyskladIntegrationsData($data['integrationParams']) as $integrationData) {
                 $integrationDto = new IntegrationDto($integrationData);
-                $restQuery = $merchantIntegrationService->newQuery()->setFilter('type', $integrationData['type']);
-                $integration = $merchantIntegrationService->integrations($extSystemId, $restQuery)->first();
+                $integration = $integrations->where('type', $integrationData['type'])->first();
                 $merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
             }
         }
         if ((int) $data['driver'] === ExtSystemDriver::DRIVER_FILE_SHARING) {
+            $integrations = $merchantIntegrationService->integrations($extSystemId);
             foreach ($this->fileSharingIntegrationsData($data['integrationParams']) as $integrationData) {
                 $integrationDto = new IntegrationDto($integrationData);
-                $restQuery = $merchantIntegrationService->newQuery()->setFilter('type', $integrationData['type']);
-                $integration = $merchantIntegrationService->integrations($extSystemId, $restQuery)->first();
+                $integration = $integrations->where('type', $integrationData['type'])->first();
                 $merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
             }
         }

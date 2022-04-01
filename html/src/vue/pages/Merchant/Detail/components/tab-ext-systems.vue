@@ -41,6 +41,10 @@
                     <td>{{ extSystem.connection_params.port }}</td>
                 </tr>
                 <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Наименование файла</th>
+                    <td>{{ extSystem.connection_params.fileName }}</td>
+                </tr>
+                <tr v-if="isFileSharing(extSystem.driver)">
                     <th>Период проверки (мин)</th>
                     <td>{{ paramOptions.paramPriceStock.params.period }}</td>
                 </tr>
@@ -65,6 +69,14 @@
                     <td>{{ checkStatus(paramOptions.paramPrice.active) }}</td>
                     <td>{{ checkStatus(paramOptions.paramStock.active) }}</td>
                     <td>{{ checkStatus(paramOptions.paramOrder.active) }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Настройка цены</th>
+                    <td>{{ paramOptions.merchantPriceSetting }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>ID организации</th>
+                    <td>{{ paramOptions.merchantOrganizationSetting }}</td>
                 </tr>
                 <tr>
                     <th>Дата создания</th>
