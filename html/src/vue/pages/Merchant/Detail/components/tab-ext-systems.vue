@@ -97,7 +97,7 @@
                 <div slot="body">
                     <integration-modal :id="id" :extSystem="extSystem" :options="paramOptions"
                                        :extSystemsSelect="extSystemsSelect"
-                                       @onSave="onIntegrationCreated"></integration-modal>
+                                       @onSave="onIntegrationSave"></integration-modal>
                 </div>
             </modal>
         </transition>
@@ -169,7 +169,8 @@ export default {
         isFileSharing(driverId) {
             return driverId === 7 || driverId === '7'
         },
-        onIntegrationCreated() {
+        onIntegrationSave() {
+            this.closeModal();
             this.loadExtSystem();
         },
         checkStatus(status) {
