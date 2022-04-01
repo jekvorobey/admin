@@ -13,6 +13,8 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
@@ -36,7 +38,8 @@ class ProductListController extends Controller
         BrandService $brandService,
         ShoppilotService $shoppilotService,
         ContentBadgesService $badgesService,
-        OfferService $offerService
+        OfferService $offerService,
+        MerchantService $merchantService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -66,6 +69,9 @@ class ProductListController extends Controller
             return $product;
         }, $productSearchResult->products);
 
+        $merchantsQuery = $merchantService->newQuery()
+            ->addFields(MerchantDto::entity(), 'id', 'name');
+
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
             'iTotal' => $productSearchResult->total,
@@ -79,6 +85,7 @@ class ProductListController extends Controller
                 'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
                 'availableBadges' => $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id'),
+                'merchants' => $merchantService->merchants($merchantsQuery)->keyBy('id'),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ],
@@ -240,6 +247,7 @@ class ProductListController extends Controller
         $query->dateFrom = data_get($filter, 'dateFrom');
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
+        $query->badges = data_get($filter, 'badges');
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
 
         return $query;

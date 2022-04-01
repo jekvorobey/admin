@@ -89,6 +89,18 @@
                                         class="col-md-3 col-sm-12"
                                 >Контент</f-select>
                             </div>
+                            <div class="row">
+                                <f-select
+                                    v-model="filter.merchant"
+                                    :options="merchantOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Мерчант</f-select>
+                                <f-select
+                                    v-model="filter.badge"
+                                    :options="badgeOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Мерчант</f-select>
+                            </div>
                         </div>
                     </div>
                 </transition>
@@ -302,6 +314,8 @@
     const cleanHiddenFilter = {
         brand: '',
         category: '',
+        merchant: '',
+        badges: '',
         approvalStatus: '',
         productionStatus: '',
         priceFrom: null,
@@ -619,6 +633,12 @@
             },
             brandOptions() {
                 return this.options.brands.map(brand => ({value: brand.code, text: brand.name}));
+            },
+            merchantOptions() {
+                return this.options.merchants.map(merchant => ({value: merchant.id, merchant: merchant.name}));
+            },
+            badgeOptions() {
+                return this.options.availableBadges.map(badge => ({value: badge.code, text: badge.name}));
             },
             categoryOptions() {
                 const groups = this.options.categories.filter(category => !category.parent_id);
