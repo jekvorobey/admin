@@ -251,6 +251,8 @@ export default {
                     infinity_sip_extension: this.form.infinity_sip_extension,
                     fronts: this.form.fronts,
                     roles: this.form.roles,
+                }).finally(() => {
+                    this.closeModal();
                 });
             });
         },
