@@ -256,6 +256,7 @@ export default {
                     this.$emit('onSave');
                 }).finally(() => {
                     Services.hideLoader();
+                    this.closeModal();
                 })
             }
             if (this.extSystem) {
@@ -266,17 +267,18 @@ export default {
                     this.$emit('onSave');
                 }).finally(() => {
                     Services.hideLoader();
+                    this.closeModal();
                 })
             }
         },
         is1C(driverId) {
-            return driverId === 5 || driverId === '5'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.one_c
         },
         isMoySklad(driverId) {
-            return driverId === 1 || driverId === '1'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.moysklad
         },
         isFileSharing(driverId) {
-            return driverId === 7 || driverId === '7'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.filesharing
         },
         checkExtSystemDriver() {
             if (this.extSystem && this.extSystem.driver) {
@@ -348,27 +350,5 @@ export default {
             }
         },
     },
-    watch: {
-        '$store.state.modal.currentModal': function (newValue) {
-            if (newValue === 'integrationModal' && this.extSystem) {
-                this.form.token = this.extSystem.connection_params.token ? this.extSystem.connection_params.token : '';
-                this.form.login = this.extSystem.connection_params.login;
-                this.form.password = this.extSystem.connection_params.password;
-                this.form.host = this.options.host ? this.options.host : '';
-                this.form.port = this.options.port ? this.options.host : '';
-                this.form.merchantPriceSetting = this.options.merchantPriceSetting ? this.options.merchantPriceSetting : '';
-                this.form.merchantOrganizationSetting = this.options.merchantOrganizationSetting ? this.options.merchantOrganizationSetting : '';
-                this.form.paramPeriodPrice = this.options.paramPrice ? this.options.paramPrice.params.period : '';
-                this.form.paramActivePrice = this.options.paramPrice ? this.options.paramPrice.avtive : true;
-                this.form.paramPeriodStock = this.options.paramStock ? this.options.paramStock.params.period : '';
-                this.form.paramActiveStock = this.options.paramStock ? this.options.paramStock.active : true;
-                this.form.paramPeriodOrder = this.options.paramOrder ? this.options.paramOrder.params.period : '';
-                this.form.paramActiveOrder = this.options.paramOrder ? this.options.paramOrder.active : true;
-                this.form.paramPeriodPriceStock = this.options.paramPriceStock ? this.options.paramPriceStock.params.period : '';
-                this.form.paramActivePriceStock = this.options.paramPriceStock ? this.options.paramPriceStock.active : '';
-                this.form.fileName = this.options.fileName ? this.options.fileName : '';
-            }
-        }
-    }
 }
 </script>

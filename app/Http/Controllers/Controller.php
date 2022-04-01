@@ -60,6 +60,7 @@ class Controller extends BaseController
             ->loadBlocks()
             ->loadBlockPermissions()
             ->loadProductImagesTypes()
+            ->loadExtSystemDriver()
             ->loadCustomerStatus($this->loadCustomerStatus)
             ->loadCommunicationChannelTypes($this->loadCommunicationChannelTypes)
             ->loadCommunicationChannels($this->loadCommunicationChannels)

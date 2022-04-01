@@ -161,16 +161,15 @@ export default {
             })
         },
         is1C(driverId) {
-            return driverId === 5 || driverId === '5'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.one_c
         },
         isMoySklad(driverId) {
-            return driverId === 1 || driverId === '1'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.moysklad
         },
         isFileSharing(driverId) {
-            return driverId === 7 || driverId === '7'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.filesharing
         },
         onIntegrationSave() {
-            this.closeModal();
             this.loadExtSystem();
         },
         checkStatus(status) {

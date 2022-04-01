@@ -179,6 +179,10 @@ Vue.mixin({
         merchantDocumentTypes() {
             return this.$store.state.layout.merchantDocumentTypes;
         },
+        /** @return {MerchantExtSystemDrivers} */
+        merchantExtSystemDrivers() {
+            return this.$store.state.layout.merchantExtSystemDrivers;
+        },
         /** @return {PublicEventType[]} */
         publicEventTypes() {
             return this.$store.state.layout.publicEventTypes;
@@ -490,6 +494,18 @@ Vue.mixin({
  @type {Object}
  @property {string} commissionaire
  @property {string} agent
+ */
+/**
+ @typedef MerchantExtSystemDrivers
+ @type {Object}
+ @property {number} moysklad
+ @property {number} authentica
+ @property {number} galser
+ @property {number} hitek
+ @property {number} one_c
+ @property {number} termix
+ @property {number} filesharing
+ @property {number} lb
  */
 /**
  @typedef PublicEventType
