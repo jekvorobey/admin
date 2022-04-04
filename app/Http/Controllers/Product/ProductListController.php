@@ -13,8 +13,6 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use MerchantManagement\Dto\MerchantDto;
-use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
