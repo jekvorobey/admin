@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="isMoySklad(checkExtSystemDriver())">
+        <div v-if="isMoySklad">
             <div class="row">
                 <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5>
                 </v-input>
@@ -142,7 +142,7 @@ export default {
             form: {
                 token: {
                     required: requiredIf(function (form) {
-                        return form.login === '' && this.isMoySklad(this.checkExtSystemDriver())
+                        return form.login === '' && this.isMoySklad
                     }),
                 },
                 login: {
@@ -157,47 +157,47 @@ export default {
                 },
                 host: {
                     required: requiredIf(function () {
-                        return this.isFileSharing(this.checkExtSystemDriver())
+                        return this.isFileSharing
                     }),
                 },
                 port: {
                     required: requiredIf(function () {
-                        return this.isFileSharing(this.checkExtSystemDriver())
+                        return this.isFileSharing
                     }),
                 },
                 fileName: {
                     required: requiredIf(function () {
-                        return this.isFileSharing(this.checkExtSystemDriver())
+                        return this.isFileSharing
                     }),
                 },
                 merchantPriceSetting: {
                     required: requiredIf(function () {
-                        return this.isMoySklad(this.checkExtSystemDriver())
+                        return this.isMoySklad
                     }),
                 },
                 merchantOrganizationSetting: {
                     required: requiredIf(function () {
-                        return this.isMoySklad(this.checkExtSystemDriver())
+                        return this.isMoySklad
                     }),
                 },
                 paramPeriodPrice: {
                     required: requiredIf(function () {
-                        return this.isMoySklad(this.checkExtSystemDriver())
+                        return this.isMoySklad
                     }),
                 },
                 paramPeriodStock: {
                     required: requiredIf(function () {
-                        return this.isMoySklad(this.checkExtSystemDriver())
+                        return this.isMoySklad
                     }),
                 },
                 paramPeriodOrder: {
                     required: requiredIf(function () {
-                        return this.isMoySklad(this.checkExtSystemDriver())
+                        return this.isMoySklad
                     }),
                 },
                 paramPeriodPriceStock: {
                     required: requiredIf(function () {
-                        return this.isFileSharing(this.checkExtSystemDriver())
+                        return this.isFileSharing
                     }),
                 },
                 paramActivePrice: {},
@@ -271,13 +271,18 @@ export default {
                 })
             }
         },
-        is1C(driverId) {
+    },
+    computed: {
+        is1C() {
+            let driverId = this.checkExtSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.one_c
         },
-        isMoySklad(driverId) {
+        isMoySklad() {
+            let driverId = this.checkExtSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.moysklad
         },
-        isFileSharing(driverId) {
+        isFileSharing() {
+            let driverId = this.checkExtSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.filesharing
         },
         checkExtSystemDriver() {
@@ -286,9 +291,7 @@ export default {
             }
 
             return this.extSystemsSelect.driver_id;
-        }
-    },
-    computed: {
+        },
         errorToken() {
             if (this.$v.form.token.$dirty) {
                 if (!this.$v.form.token.required) return "Обязательное поле!";
