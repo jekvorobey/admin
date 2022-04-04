@@ -96,10 +96,10 @@
                                     class="col-md-3 col-sm-12"
                                 >Мерчант</f-select>
                                 <f-select
-                                    v-model="filter.badge"
+                                    v-model="filter.badges"
                                     :options="badgeOptions"
                                     class="col-md-3 col-sm-12"
-                                >Мерчант</f-select>
+                                >Шильдики</f-select>
                             </div>
                         </div>
                     </div>
@@ -635,10 +635,10 @@
                 return this.options.brands.map(brand => ({value: brand.code, text: brand.name}));
             },
             merchantOptions() {
-                return this.options.merchants.map(merchant => ({value: merchant.id, merchant: merchant.name}));
+                return this.options.merchants.map(merchant => ({value: merchant.id, text: merchant.legal_name}));
             },
             badgeOptions() {
-                return this.options.availableBadges.map(badge => ({value: badge.code, text: badge.name}));
+                return this.options.availableBadges.map(badge => ({value: badge.code, text: badge.text}));
             },
             categoryOptions() {
                 const groups = this.options.categories.filter(category => !category.parent_id);

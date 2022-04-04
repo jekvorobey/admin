@@ -38,8 +38,7 @@ class ProductListController extends Controller
         BrandService $brandService,
         ShoppilotService $shoppilotService,
         ContentBadgesService $badgesService,
-        OfferService $offerService,
-        MerchantService $merchantService
+        OfferService $offerService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -69,9 +68,6 @@ class ProductListController extends Controller
             return $product;
         }, $productSearchResult->products);
 
-        $merchantsQuery = $merchantService->newQuery()
-            ->addFields(MerchantDto::entity(), 'id', 'name');
-
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
             'iTotal' => $productSearchResult->total,
@@ -84,8 +80,8 @@ class ProductListController extends Controller
                 'productionDone' => ProductProductionStatus::DONE,
                 'productionCancel' => ProductProductionStatus::REJECTED,
                 'approvalStatuses' => ProductApprovalStatus::allStatuses(),
-                'availableBadges' => $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id'),
-                'merchants' => $merchantService->merchants($merchantsQuery)->keyBy('id'),
+                'availableBadges' => $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI),
+                'merchants' => $this->getMerchants()->values(),
                 'approvalDone' => ProductApprovalStatus::STATUS_APPROVED,
                 'approvalCancel' => ProductApprovalStatus::STATUS_REJECT,
             ],
@@ -248,6 +244,7 @@ class ProductListController extends Controller
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
         $query->badges = data_get($filter, 'badges');
+        $query->merchantId = data_get($filter, 'merchant');
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
 
         return $query;

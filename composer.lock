@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "e11a900f4d18b23bca9776b8f2075695",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1528,11 +1528,11 @@
         },
         {
             "name": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/ICC-11-extra-filters-of-products",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "fae49473610228a92998a9aaf3d53225a2a55a5a"
+                "reference": "f72b3c2eb45d4980732384539745cece4ed2334d"
             },
             "require": {
                 "ext-json": "*",
@@ -1555,7 +1555,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2022-03-10T06:29:00+00:00"
+            "time": "2022-04-01T14:29:47+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
@@ -10877,7 +10877,7 @@
         },
         {
             "package": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/ICC-11-extra-filters-of-products",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
