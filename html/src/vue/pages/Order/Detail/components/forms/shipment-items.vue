@@ -213,6 +213,20 @@
                                     </fa-icon>
                                 </div>
                             </b-td>
+                            <b-td v-if="canEdit">
+                                <div v-if="!shipment.is_problem && !isAssembled" class="float-right">
+                                    <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
+                                             @click="editShipmentPackageItem(item)">
+                                    </fa-icon>
+                                    <br>
+                                    <modal-edit-shipment-package-item :model-shipment.sync="shipment"
+                                                                      :model-order.sync="order"
+                                                                      :shipment-item.sync="selectedShipmentItem"
+                                                                      :max-qty="selectedMaxQty"
+                                                                      @onSave="onShipmentItemCancel"
+                                                                      v-if="Object.values(selectedShipmentItem).length > 0"/>
+                                </div>
+                            </b-td>
                         </b-tr>
                         <b-tr v-if="!shipmentPackage.items || !shipmentPackage.items.length">
                             <td :colspan="canEdit ? 12 : 10">Коробка пуста</td>
@@ -229,6 +243,7 @@ import Services from '../../../../../../scripts/services/services.js';
 import ModalAddShipmentPackage from './modal-add-shipment-package.vue';
 import ModalAddShipmentPackageItems from './modal-add-shipment-package-items.vue';
 import ModalEditShipmentPackageItem from './modal-edit-shipment-package-item.vue';
+import ModalCancelShipmentItem from './modal-cancel-shipment-item.vue';
 
 export default {
     name: "shipment-items",
@@ -236,6 +251,7 @@ export default {
         ModalEditShipmentPackageItem,
         ModalAddShipmentPackageItems,
         ModalAddShipmentPackage,
+        ModalCancelShipmentItem,
     },
     props: {
         modelShipment: {
@@ -337,6 +353,12 @@ export default {
 
             this.$bvModal.show('modal-edit-shipment-package-item');
         },
+        cancelShipmentItem(shipmentItem) {
+            this.selectedShipmentItem = shipmentItem;
+            this.selectedMaxQty = shipmentItem.qty - shipmentItem.qty_canceled;
+
+            this.$bvModal.show('modal-cancel-shipment-item');
+        },
         deleteShipmentPackageItem(shipmentPackageId, basketItemId) {
             Services.showLoader();
             Services.net().delete(
@@ -367,6 +389,10 @@ export default {
             this.selectedShipmentPackage = {};
             this.selectedShipmentItem = {};
             this.$bvModal.hide('modal-edit-shipment-package-item');
+        },
+        onShipmentItemCancel() {
+            this.selectedShipmentItem = {};
+            this.$bvModal.hide('modal-cancel-shipment-item');
         }
     },
     computed: {

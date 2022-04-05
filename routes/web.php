@@ -408,6 +408,8 @@ Route::middleware('auth')->group(function () {
                                     Route::prefix('/{basketItemId}')->where(['basketItemId' => '[0-9]+'])->group(function () {
                                         Route::put('', 'TabShipmentsController@editShipmentPackageItem')
                                             ->name('orders.detail.shipments.editShipmentPackageItem');
+                                        Route::put('', 'TabShipmentsController@cancelShipmentItem')
+                                            ->name('orders.detail.shipments.cancelShipmentItem');
                                         Route::delete('', 'TabShipmentsController@deleteShipmentPackageItem')
                                             ->name('orders.detail.shipments.deleteShipmentPackageItem');
                                     });
