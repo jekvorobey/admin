@@ -333,7 +333,7 @@ class TabShipmentsController extends OrderDetailController
             $shipmentCancelItem = new ShipmentCancelItemDto($data);
             $shipmentCancelItem->shipment_id = $shipmentId;
             $shipmentCancelItem->basket_item_id = $basketItemId;
-            $shipmentCancelItem->set_by = $requestInitiator->userId();
+            $shipmentCancelItem->canceled_by = $requestInitiator->userId();
 
             $shipmentService->shipmentCancelItem($shipmentCancelItem);
         });
