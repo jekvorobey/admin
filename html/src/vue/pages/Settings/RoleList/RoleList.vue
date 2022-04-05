@@ -48,7 +48,7 @@
                 <td v-else>{{ role.name }}</td>
                 <td>{{ frontName(role.front) }}</td>
                 <td v-if="canUpdate(blocks.settings)">
-                    <b-button class="btn btn-danger btn-sm" v-if="role.can_edit">
+                    <b-button class="btn btn-danger btn-sm" v-if="role.can_delete">
                         <fa-icon icon="trash-alt"
                                  @click="deleteRole(role.id)"/>
                     </b-button>
