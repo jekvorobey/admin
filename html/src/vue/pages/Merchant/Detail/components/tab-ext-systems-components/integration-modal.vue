@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div v-else-if="isFileSharing(extSystemsSelect.driver_id)">
+        <div v-else-if="isFileSharing">
             <div class="row">
                 <v-input v-model="$v.form.host.$model" :error="errorHost" class="col-md-6 col-12"><h5>Хост</h5>
                 </v-input>
@@ -274,18 +274,18 @@ export default {
     },
     computed: {
         is1C() {
-            let driverId = this.checkExtSystemDriver;
+            let driverId = this.extSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.one_c
         },
         isMoySklad() {
-            let driverId = this.checkExtSystemDriver;
+            let driverId = this.extSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.moysklad
         },
         isFileSharing() {
-            let driverId = this.checkExtSystemDriver;
+            let driverId = this.extSystemDriver;
             return parseInt(driverId) === this.merchantExtSystemDrivers.filesharing
         },
-        checkExtSystemDriver() {
+        extSystemDriver() {
             if (this.extSystem && this.extSystem.driver) {
                 return this.extSystem.driver;
             }
