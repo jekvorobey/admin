@@ -192,11 +192,22 @@ class MerchantOperatorController extends Controller
             'operator_ids' => 'required|array',
         ]);
 
-        $userIds = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']))
-            ->pluck('user_id')
-            ->all();
+        $users = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
 
-        $userService->deleteArray($userIds);
+        $userForDeleteIds = [];
+        /** @var UserDto $user */
+        foreach ($users as $user) {
+            if (array_diff($user->fronts, [Front::FRONT_MAS])) {
+                unset($user->fronts[Front::FRONT_MAS]);
+                $userData['fronts'] = $user->fronts;
+                $userService->update(new UserDto($userData));
+            } else {
+                $userForDeleteIds[] = $user->id;
+            }
+        }
+        if ($userForDeleteIds) {
+            $userService->deleteArray($userForDeleteIds);
+        }
         $operatorService->deleteArray($data['operator_ids']);
 
         return response('', 204);
