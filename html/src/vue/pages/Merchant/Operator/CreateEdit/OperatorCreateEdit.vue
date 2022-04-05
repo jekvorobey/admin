@@ -120,7 +120,6 @@ function myCustomValidator () {
                     merchant_id: this.merchantId,
                     roles: [],
                     active: true,
-                    password: '',
                 };
             } else {
                 title = 'Редактирование менеджера: ' +
@@ -133,7 +132,6 @@ function myCustomValidator () {
                     middle_name: this.operatorProp.middle_name,
                     email: this.operatorProp.email,
                     phone: this.operatorProp.phone,
-                    password: null,
                     position: this.operatorProp.position,
                     communication_method: this.operatorProp.communication_method,
                     roles: [...this.operatorProp.roles],
@@ -170,7 +168,7 @@ function myCustomValidator () {
                 password: {
                     minLength: minLength(8),
                     valid: function (value) {
-                        if (value === '') {
+                        if (!value) {
                             return true
                         }
                         const containsUppercase = /[A-Z]/.test(value)
@@ -220,6 +218,7 @@ function myCustomValidator () {
                     this.operator
                 ).then(() => {
                     Services.msg('Менеджер успешно создан.');
+                    window.location.href = this.getRoute('merchant.detail', {id: this.merchantId}) + '?tab=operator&allTab=0';
                 }, () => {
                     Services.msg('Произошла ошибка при добавлении менеджера.', 'danger');
                 }).finally(() => {
@@ -241,6 +240,9 @@ function myCustomValidator () {
                     }
                     if (key === 'phone') {
                         operatorEdit['login_email'] = value;
+                    }
+                    if (key === 'password') {
+                        operatorEdit['password'] = value;
                     }
                     if (
                         (value !== this.operatorProp[key]) &&
@@ -282,6 +284,7 @@ function myCustomValidator () {
                             }
                         }
                         Services.msg('Данные о менеджере успешно обновлены.');
+                        window.location.href = this.getRoute('merchant.detail', {id: this.operatorProp.merchant_id}) + '?tab=operator&allTab=0';
                     }, () => {
                         Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
                     }).finally(() => {
@@ -331,7 +334,7 @@ function myCustomValidator () {
                 if (this.$v.operator.email.$dirty) {
                     if (!this.$v.operator.email.required) return "Обязательное поле!";
                     if (!this.$v.operator.email.email) return "Формат E-mail не соответствует требованиям!";
-                    if (!this.$v.operator.email.isUnique) return "Пользователь с таким E-mail уже существует";
+                    if (!this.$v.operator.email.$pending && !this.$v.operator.email.isUnique) return "Пользователь с таким E-mail уже существует";
                 }
             },
             telMask() {
@@ -340,7 +343,7 @@ function myCustomValidator () {
             errorPhone() {
                 if (this.$v.operator.phone.$dirty) {
                     if (!this.$v.operator.phone.required) return "Обязательное поле!";
-                    if (!this.$v.operator.phone.isUnique) return "Пользователь с таким телефоном уже существует";
+                    if (!this.$v.operator.phone.$pending && !this.$v.operator.phone.isUnique) return "Пользователь с таким телефоном уже существует";
                 }
             },
             errorPassword() {
