@@ -51,7 +51,6 @@ class ViewRender
     private $props;
     private $title;
 
-    private $userRoles = [];
     private $userFronts = [];
     private $blocks = [];
     private $blockPermissions = [];
@@ -112,13 +111,6 @@ class ViewRender
     public function setTitle($title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function loadUserRoles(): self
-    {
-        $this->userRoles = RoleDto::rolesGroupByFront();
 
         return $this;
     }
@@ -807,7 +799,6 @@ class ViewRender
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR),
                 ],
 
-                'userRoles' => $this->userRoles,
                 'userFronts' => $this->userFronts,
                 'blocks' => $this->blocks,
                 'blockPermissions' => $this->blockPermissions,

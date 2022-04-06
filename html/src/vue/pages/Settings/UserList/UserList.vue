@@ -63,7 +63,7 @@
                 <td>{{ user.id }}</td>
                 <td>
                     <a :href="getRoute('settings.userDetail', {id: user.id})">
-                        {{ user.full_name }}
+                        {{ user.full_name || 'N/A' }}
                     </a>
                 </td>
                 <td>{{ userLoginCheck(user) }}</td>

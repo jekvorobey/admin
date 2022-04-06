@@ -50,7 +50,6 @@ class MerchantDetailController extends Controller
         $this->loadMerchantCommissionTypes = true;
         $this->loadMerchantVatTypes = true;
         $this->loadMerchantDocumentTypes = true;
-        $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;

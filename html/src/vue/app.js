@@ -113,10 +113,6 @@ Vue.mixin({
         user() {
             return this.$store.state.layout.user;
         },
-        /** @return {UserRoles} */
-        userRoles() {
-            return this.$store.state.layout.userRoles;
-        },
         /** @return {UserFronts} */
         userFronts() {
             return this.$store.state.layout.userFronts;
@@ -306,14 +302,6 @@ Vue.mixin({
  @property {boolean} isSuper - isSuper
  */
 /**
- @typedef UserRoles
- @type {Object}
- @property {ShowcaseUserRoles} showcase
- @property {ICommerceMlUserRoles} i_commerce_ml
- @property {MasUserRoles} mas
- @property {AdminUserRoles} admin
- */
-/**
  @typedef UserFronts
  @type {Object}
  @property {number} admin
@@ -353,31 +341,6 @@ Vue.mixin({
  @typedef UpdateBlockPermissions
  @type {Array}
  @property {number}
- */
-/**
- @typedef ShowcaseUserRoles
- @type {Object}
- @property {number} referral_partner
- @property {number} professional
- */
-/**
- @typedef ICommerceMlUserRoles
- @type {Object}
- @property {number} external_system
- */
-/**
- @typedef MasUserRoles
- @type {Object}
- @property {number} merchant_operator
- @property {number} merchant_admin
- */
-/**
- @typedef AdminUserRoles
- @type {Object}
- @property {number} manager_client
- @property {number} manager_merchant
- @property {number} admin
- @property {number} super
  */
 /**
  @typedef CommunicationChannelTypes
