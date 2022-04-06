@@ -386,6 +386,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
                         Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+                        Route::put('/items/{basketItemId}', 'TabShipmentsController@cancelShipmentItem')->name('orders.detail.shipments.cancelShipmentItem');
 
                         Route::prefix('documents')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
@@ -408,8 +409,6 @@ Route::middleware('auth')->group(function () {
                                     Route::prefix('/{basketItemId}')->where(['basketItemId' => '[0-9]+'])->group(function () {
                                         Route::put('', 'TabShipmentsController@editShipmentPackageItem')
                                             ->name('orders.detail.shipments.editShipmentPackageItem');
-                                        Route::put('', 'TabShipmentsController@cancelShipmentItem')
-                                            ->name('orders.detail.shipments.cancelShipmentItem');
                                         Route::delete('', 'TabShipmentsController@deleteShipmentPackageItem')
                                             ->name('orders.detail.shipments.deleteShipmentPackageItem');
                                     });

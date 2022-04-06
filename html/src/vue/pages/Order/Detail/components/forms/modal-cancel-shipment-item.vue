@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-edit-shipment-package-item" hide-footer ref="modal">
+    <b-modal id="modal-cancel-shipment-item" hide-footer ref="modal">
         <template v-slot:modal-title>
             Количество к отмене
         </template>
@@ -7,9 +7,9 @@
             <b-form-row>
                 <b-col>
                     <v-input v-model="$v.form['qty'].$model" :error="errorQty()">
-                        <img :src="productPhoto(shipmentItem.basketItem.product)" class="preview" :alt="shipmentItem.basketItem.name" v-if="shipmentItem.basketItem.product.mainImage">
-                        {{ shipmentItem.basketItem.name }}
-                        <small>{{ shipmentItem.basketItem.product.vendor_code }}</small>
+                        <img :src="productPhoto(basketItem.product)" class="preview" :alt="basketItem.name" v-if="basketItem.product.mainImage">
+                        {{ basketItem.name }}
+                        <small>{{ basketItem.product.vendor_code }}</small>
                     </v-input>
                 </b-col>
             </b-form-row>
@@ -30,14 +30,14 @@
     import {between, integer} from 'vuelidate/lib/validators';
 
     export default {
-        name: 'modal-edit-shipment-package-item',
+        name: 'modal-cancel-shipment-item',
         components: {
             VInput
         },
         props: [
             'modelShipment',
             'modelOrder',
-            'shipmentItem',
+            'basketItem',
             'maxQty',
         ],
         mixins: [
@@ -46,7 +46,7 @@
         data() {
             return {
                 form: {
-                    'qty': parseInt(this.shipmentItem.qty),
+                    'qty': parseInt(this.basketItem.qty),
                 }
             };
         },
@@ -85,7 +85,7 @@
                     this.getRoute('orders.detail.shipments.cancelShipmentItem', {
                         id: this.order.id,
                         shipmentId: this.shipment.id,
-                        basketItemId: this.shipmentItem.basketItem.id,
+                        basketItemId: this.basketItem.id,
                     }),
                     {},
                     {qty: this.form['qty']})
