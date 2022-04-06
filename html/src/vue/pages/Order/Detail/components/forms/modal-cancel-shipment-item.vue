@@ -11,6 +11,13 @@
                         {{ basketItem.name }}
                         <small>{{ basketItem.product.vendor_code }}</small>
                     </v-input>
+                    <v-select
+                        v-model="$v.returnReason.$model"
+                        :options="orderReturnReasonsOptions"
+                        :nullable-value="0"
+                    >
+                        Причина отмены*
+                    </v-select>
                 </b-col>
             </b-form-row>
 
@@ -25,20 +32,23 @@
 <script>
     import Services from '../../../../../../scripts/services/services.js';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
+    import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
 
     import {validationMixin} from 'vuelidate';
-    import {between, integer} from 'vuelidate/lib/validators';
+    import {between, integer, required} from 'vuelidate/lib/validators';
 
     export default {
         name: 'modal-cancel-shipment-item',
         components: {
-            VInput
+            VSelect,
+            VInput,
         },
         props: [
             'modelShipment',
             'modelOrder',
             'basketItem',
             'maxQty',
+            'returnReasons',
         ],
         mixins: [
             validationMixin,
@@ -47,6 +57,7 @@
             return {
                 form: {
                     'qty': parseInt(this.basketItem.qty),
+                    'returnReason': this.returnReasons.returnReason ? this.returnReasons.returnReason.text : 0,
                 }
             };
         },
@@ -56,7 +67,8 @@
                     'qty': {
                         integer,
                         between: between(1, this.maxQty)
-                    }
+                    },
+                    'returnReason': {required},
                 }
             }
         },
@@ -88,7 +100,7 @@
                         basketItemId: this.basketItem.id,
                     }),
                     {},
-                    {qty: this.form['qty']})
+                    {qty: this.form['qty'], return_reason_id: this.form['returnReason']})
                 .then((data) => {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);
@@ -107,6 +119,12 @@
             shipment: {
                 get() {return this.modelShipment},
                 set(value) {this.$emit('update:modelShipment', value)},
+            },
+            orderReturnReasonsOptions() {
+                return Object.values(this.returnReasons).map(returnReason => ({
+                    value: returnReason.id,
+                    text: returnReason.text
+                }));
             },
         },
         created() {

@@ -329,6 +329,7 @@ class TabShipmentsController extends OrderDetailController
             $requestInitiator = resolve(RequestInitiator::class);
             $data = $this->validate($request, [
                 'qty' => ['required', 'integer'],
+                'return_reason_id' => ['required', 'integer'],
             ]);
             $shipmentCancelItem = new ShipmentCancelItemDto($data);
             $shipmentCancelItem->shipment_id = $shipmentId;

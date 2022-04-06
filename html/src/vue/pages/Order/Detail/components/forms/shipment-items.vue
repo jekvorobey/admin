@@ -107,6 +107,7 @@
                                                             :model-order.sync="order"
                                                             :basket-item.sync="selectedShipmentItem"
                                                             :max-qty="selectedMaxQty"
+                                                            :returnReasons="order.orderReturnReasons"
                                                             @onSave="onShipmentItemCancel"
                                                             v-if="Object.values(selectedShipmentItem).length > 0"/>
                             </div>
