@@ -218,7 +218,7 @@ export default {
                 merchantId: this.id,
                 login: this.form.login,
                 password: this.form.password,
-                driver: this.checkExtSystemDriver,
+                driver: this.extSystemDriver,
                 integrationParams: {
                     paramPeriodPrice: this.form.paramPeriodPrice,
                     paramPeriodStock: this.form.paramPeriodStock,
