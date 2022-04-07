@@ -19,7 +19,12 @@ class IntegrationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'merchantId' => 'required|int',
+            'merchantId' => [
+                Rule::requiredIf(function () {
+                    return $this->input('driver') !== ExtSystemDriver::DRIVER_1C;
+                }),
+                'integer',
+            ],
             'token' => [
                 Rule::requiredIf(function () {
                     return $this->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && !$this->input('login');
@@ -66,7 +71,12 @@ class IntegrationRequest extends FormRequest
                 'integer',
                 Rule::in(array_keys(ExtSystemDriver::allDrivers())),
             ],
-            'integrationParams' => 'required|array',
+            'integrationParams' => [
+                Rule::requiredIf(function () {
+                    return $this->input('driver') !== ExtSystemDriver::DRIVER_1C;
+                }),
+                'array',
+            ],
         ];
     }
 }
