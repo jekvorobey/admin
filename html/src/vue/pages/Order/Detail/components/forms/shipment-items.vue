@@ -87,15 +87,12 @@
                             <small> {{ basketItem.product.length }} x {{ basketItem.product.width }} x
                                 {{ basketItem.product.height }} мм</small>
                         </b-td>
-                        <b-td v-if="basketItem.is_canceled" class="with-small">
-                            Полностью отменено
-                        </b-td>
+                        <b-td v-if="basketItem.is_canceled" class="with-small">Полностью отменено</b-td>
                         <b-td>{{ preparePrice(basketItem.cost / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice((basketItem.cost - basketItem.price) / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб
-                        </b-td>
+                        <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td v-if="canEdit">
                             <div v-if="!shipment.is_problem && canCancelShipmentItem && !basketItem.is_canceled" class="float-right">
@@ -105,8 +102,8 @@
                                 <br>
                                 <modal-cancel-shipment-item :model-shipment.sync="shipment"
                                                             :model-order.sync="order"
-                                                            :basket-item.sync="selectedShipmentItem"
-                                                            :max-qty="selectedMaxQty"
+                                                            :basket-item.sync="basketItem"
+                                                            :max-qty="basketItem.qty"
                                                             :returnReasons="order.orderReturnReasons"
                                                             @onSave="onShipmentItemCancel"
                                                             v-if="Object.values(selectedShipmentItem).length > 0"/>
@@ -358,7 +355,7 @@ export default {
         },
         cancelShipmentItem(basketItem) {
             this.selectedShipmentItem = basketItem;
-            this.selectedMaxQty = basketItem.qty - basketItem.qty_canceled;
+            this.selectedMaxQty = parseInt(basketItem.qty);
 
             this.$bvModal.show('modal-cancel-shipment-item');
         },
