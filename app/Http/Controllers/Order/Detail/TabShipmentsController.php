@@ -317,7 +317,7 @@ class TabShipmentsController extends OrderDetailController
     }
 
     /**
-     * Отменить по-штучно товар из отправления
+     * Отменить поштучно товар из отправления
      * @throws Exception
      */
     public function cancelShipmentItem(int $orderId, int $shipmentId, int $basketItemId, Request $request): JsonResponse

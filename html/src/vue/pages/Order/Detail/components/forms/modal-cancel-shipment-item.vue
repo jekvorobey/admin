@@ -12,7 +12,7 @@
                         <small>{{ basketItem.product.vendor_code }}</small>
                     </v-input>
                     <v-select
-                        v-model="$v.returnReason.$model"
+                        v-model="$v.form.returnReason.$model"
                         :options="orderReturnReasonsOptions"
                         :nullable-value="0"
                     >
