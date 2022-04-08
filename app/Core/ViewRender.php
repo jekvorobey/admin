@@ -26,7 +26,6 @@ use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
@@ -52,7 +51,6 @@ class ViewRender
     private $props;
     private $title;
 
-    private $userRoles = [];
     private $userFronts = [];
     private $blocks = [];
     private $blockPermissions = [];
@@ -88,7 +86,6 @@ class ViewRender
     private $orderStatuses = [];
     private $basketTypes = [];
     private $paymentStatuses = [];
-    private $paymentMethods = [];
     private $deliveryStatuses = [];
     private $shipmentStatuses = [];
     private $cargoStatuses = [];
@@ -114,13 +111,6 @@ class ViewRender
     public function setTitle($title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function loadUserRoles(): self
-    {
-        $this->userRoles = RoleDto::rolesGroupByFront();
 
         return $this;
     }
@@ -546,26 +536,6 @@ class ViewRender
     /**
      * @return $this
      */
-    public function loadPaymentMethods(bool $load = false): self
-    {
-        if ($load) {
-            $mapPaymentMethods = [
-                PaymentMethod::ONLINE => 'online',
-            ];
-            foreach (PaymentMethod::allMethods() as $id => $method) {
-                if (!isset($mapPaymentMethods[$id])) {
-                    continue;
-                }
-                $this->paymentMethods[$mapPaymentMethods[$id]] = $method->toArray();
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
     public function loadDeliveryStatuses(bool $load = false): self
     {
         if ($load) {
@@ -829,7 +799,6 @@ class ViewRender
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR),
                 ],
 
-                'userRoles' => $this->userRoles,
                 'userFronts' => $this->userFronts,
                 'blocks' => $this->blocks,
                 'blockPermissions' => $this->blockPermissions,
@@ -866,7 +835,6 @@ class ViewRender
                 'orderStatuses' => $this->orderStatuses,
                 'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
-                'paymentMethods' => $this->paymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
                 'shipmentStatuses' => $this->shipmentStatuses,
                 'cargoStatuses' => $this->cargoStatuses,

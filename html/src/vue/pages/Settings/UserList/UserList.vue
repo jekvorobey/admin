@@ -63,11 +63,11 @@
                 <td>{{ user.id }}</td>
                 <td>
                     <a :href="getRoute('settings.userDetail', {id: user.id})">
-                        {{ user.full_name }}
+                        {{ user.full_name || 'N/A' }}
                     </a>
                 </td>
-                <td>{{ user.login }}</td>
-                <td>{{ user.login_email }}</td>
+                <td>{{ userLoginCheck(user) }}</td>
+                <td>{{ userLoginEmailCheck(user) }}</td>
                 <td v-html="frontsName(user.fronts)"></td>
                 <td v-html="rolesName(user.roles)"></td>
                 <td><span class="badge"
@@ -254,6 +254,20 @@ export default {
                 }).finally(() => {
                 Services.hideLoader();
             });
+        },
+        userLoginCheck(user){
+            if (user.phone && user.fronts.includes(this.userFronts.showcase)) {
+                return user.phone;
+            }
+
+            return 'N/A';
+        },
+        userLoginEmailCheck(user){
+            if (user.login_email && (user.fronts.includes(this.userFronts.admin) || user.fronts.includes(this.userFronts.mas))) {
+                return user.login_email;
+            }
+
+            return 'N/A';
         },
     },
     computed: {

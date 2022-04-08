@@ -22,7 +22,7 @@
                                                :id="`front-${front.id}`"
                                                @change="e => frontsCheckbox(e, front.id)"
                                                :value="front.id"
-                                               :checked="source ? source.fronts.includes(parseInt(front.id)) : null"
+                                               :checked="selectedFronts(front.id)"
                                         >
                                         <label class="form-check-label" :for="`front-${front.id}`">
                                             {{ front.name }}
@@ -47,7 +47,7 @@
                                                    :id="`role-${role.id}`"
                                                    @change="e => rolesCheckbox(e, role.id)"
                                                    :value="role.id"
-                                                   :checked="userCheckedRoles ? rolesCheck(role.id) : null"
+                                                   :checked="selectedRoles(role.id) "
                                             >
                                             <label class="form-check-label" :for="`role-${role.id}`">
                                                 {{ role.name }}
@@ -114,7 +114,6 @@ export default {
         roles: {},
         merchants: {},
         merchantId: null,
-        userCheckedRoles: {},
     },
     data() {
         return {
@@ -158,7 +157,9 @@ export default {
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
                     isUnique: function() {
-                        return this.isFieldUnique(this.form.phone, 'phone');
+                        let phoneNumber = this.form.phone ?
+                            this.form.phone.replace(/[()]|\s|-/g, '') : null;
+                        return this.isFieldUnique(phoneNumber, 'phone');
                     },
                     $lazy: true
                 },
@@ -183,7 +184,7 @@ export default {
                         const containsNumber = /[0-9]/.test(value)
                         //const containsSpecial = /[#?!@$%^&*-]/.test(value)
 
-                        return containsUppercase && containsLowercase && containsNumber
+                        return containsUppercase && containsLowercase && containsNumber;
                     }
                 },
                 repeatPassword: {sameAsPassword: sameAs('password')},
@@ -192,9 +193,19 @@ export default {
         };
     },
     methods: {
-        save() {
-            this.$v.$touch();
-            if (this.$v.$invalid) {
+        waitForValidation () {
+            return new Promise((resolve) => {
+                const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
+                    if (isNotPending) {
+                        resolve(!this.$v.$invalid)
+                    }
+                }, {immediate: true})
+            })
+        },
+        async save() {
+            await this.$v.$touch();
+            const isValid = await this.waitForValidation();
+            if (!isValid) {
                 return;
             }
             let formData = {
@@ -240,6 +251,8 @@ export default {
                     infinity_sip_extension: this.form.infinity_sip_extension,
                     fronts: this.form.fronts,
                     roles: this.form.roles,
+                }).finally(() => {
+                    this.closeModal();
                 });
             });
         },
@@ -271,12 +284,19 @@ export default {
                 this.frontsModalSelect = this.frontsModalSelect.filter((frontId) => {
                     return frontId !== id;
                 });
+                this.rolesModalSelect = Object.values(this.roles)
+                    .filter(role => role.front !== id)
+                    .filter(role => this.rolesModalSelect.includes(role.id))
+                    .map(role => role.id);
             }
+            this.form.roles = this.rolesModalSelect;
             this.form.fronts = this.frontsModalSelect;
         },
-        rolesCheck(id) {
-            let rolesList = Object.values(this.userCheckedRoles).filter(role => role.id === id);
-            return rolesList.length > 0;
+        selectedRoles(id) {
+            return this.rolesModalSelect.includes(id);
+        },
+        selectedFronts(id) {
+            return this.frontsModalSelect.includes(id);
         },
     },
     computed: {

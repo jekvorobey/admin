@@ -408,19 +408,16 @@
             },
             linkUser(userId, chatId) {
                 let user = this.users[userId];
-                let userRole = parseInt(Object.keys(user.roles)[0]);
                 let result = '';
-                switch (userRole) {
-                    case this.userRoles.mas.merchant_admin:
-                    case this.userRoles.mas.merchant_operator:
+
+                if (user.fronts && user.fronts.length) {
+                    if (user.fronts.includes(this.userFronts.mas)) {
                         result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
-                        '?tab=communication&allTab=0&showChat=' + chatId;
-                        break;
-                    case this.userRoles.showcase.professional:
-                    case this.userRoles.showcase.referral_partner:
+                            '?tab=communication&allTab=0&showChat=' + chatId;
+                    } else if (user.fronts.includes(this.userFronts.mas)) {
                         result = this.getRoute('customers.detail', { id: this.customers[userId].id }) +
                             '?tab=communication&allTab=1&showChat=' + chatId;
-                        break;
+                    }
                 }
 
                 return result;

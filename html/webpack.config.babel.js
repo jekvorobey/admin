@@ -55,7 +55,7 @@ export default ({ mode, presets }) =>
                         options: {
                             name: 'images/[name].[ext]',
                         },
-                    }
+                    },
                 ],
             },
             resolve: {

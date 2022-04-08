@@ -9,8 +9,10 @@
                         <values-table :values="userInfo" :names="userValuesNames"/>
                     </div>
                     <div v-if="user.fronts.includes(this.userFronts.showcase)" class="mt-4">
-                        <span>Профиль в разделе клиенты: <a
-                            :href="getRoute('customers.detail', { id: customerId })">{{ user.full_name }}</a></span>
+                        <span>
+                            Профиль в разделе клиенты:
+                            <a :href="getRoute('customers.detail', { id: customerId })">#{{ customerId }}: {{ user.full_name }}</a>
+                        </span>
                     </div>
                 </shadow-card>
                 <shadow-card title="Роли пользователя" padding="3"
@@ -62,7 +64,7 @@
                 </div>
             </modal>
         </transition>
-        <user-edit-modal :source="user" :userCheckedRoles="roles" :fronts="options.fronts" :roles="options.roles"
+        <user-edit-modal :source="user" :fronts="options.fronts" :roles="options.roles"
                          :merchantId="merchantId" :merchants="options.merchants" @onSave="updateUser"></user-edit-modal>
     </layout-main>
 </template>
@@ -100,7 +102,8 @@ export default {
         let sip = {
             id: 'ID',
             name: 'ФИО',
-            login: 'Логин',
+            login: 'Логин (Витрина)',
+            login_email: 'Логин (ADMIN/MAS)',
             front: 'Система',
             email_verified: 'E-mail подтверждён',
             created_at: 'Дата регистрации',
@@ -174,7 +177,8 @@ export default {
             return {
                 id: this.user.id,
                 name: this.user.full_name,
-                login: this.user.login_email ? this.user.login_email : this.user.login,
+                login: this.user.login || 'N/A',
+                login_email: this.user.login_email || 'N/A',
                 front: this.frontName(this.user.fronts),
                 email_verified: this.user.email_verified ? 'Да' : 'Нет',
                 infinity_sip_extension: this.user.infinity_sip_extension ? this.user.infinity_sip_extension : 'N/A',

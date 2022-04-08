@@ -22,7 +22,7 @@
                 <b-tab v-for='(tab, key) in tabs' :key="key"  :title="tab.title">
                     <tab-digest v-if="key === 'digest'" :model.sync="merchant"/>
                     <tab-public-event v-if="key === 'publicEvent'" :model.sync="merchant"/>
-                    <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList"/>
+                    <tab-main v-else-if="key === 'main'" :model.sync="merchant" :brand-list="brandList" :category-list="categoryList" :payment-method-list="paymentMethodList"/>
                     <tab-store v-else-if="key === 'store'" :id="merchant.id"/>
                     <tab-commission v-else-if="key === 'commission'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
                     <tab-taxes v-else-if="key === 'taxes'" :id="merchant.id" :brand-list="brandList" :category-list="categoryList"/>
@@ -72,6 +72,7 @@ export default {
         'unreadMsgCount',
         'brandList',
         'categoryList',
+        'paymentMethodList',
     ],
     components: {
         TabExtSystems,

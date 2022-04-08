@@ -1,0 +1,156 @@
+<template>
+    <b-modal id="payment-method-edit-modal" hide-footer ref="modal" size="lg" @hidden="$v.$reset()">
+        <div slot="modal-title">
+            <strong>Редактировать способ оплаты</strong>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-name">Название</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-name"
+                               v-model="$v.paymentMethod.name.$model"
+                               class="mb-2"
+                               :error="errorNameField"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-code">
+                            Символьный код
+                        </label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-code"
+                                 :value="paymentMethod.code"
+                                 class="mb-2"
+                                 disabled
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-active">Постоплата</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-postpaid"
+                               type="checkbox"
+                               :value="paymentMethod.is_postpaid"
+                               disabled
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-active">Активен</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-active"
+                               type="checkbox"
+                               v-model="$v.paymentMethod.active.$model"
+                        />
+                    </b-col>
+                </b-row>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-success"
+                    :disabled="$v.paymentMethod.$invalid"
+                    @click="save">
+                Сохранить
+            </button>
+            <button class="btn btn-outline-danger"
+                    @click="closeModal">
+                Отмена
+            </button>
+        </div>
+    </b-modal>
+</template>
+
+
+<script>
+    import Services from "../../../../../scripts/services/services";
+    import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import VInput from '../../../../components/controls/VInput/VInput.vue';
+    import VDate from '../../../../components/controls/VDate/VDate.vue';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
+
+    export default {
+        components: {
+            VSelect,
+            VInput,
+            VDate
+        },
+        mixins: [validationMixin],
+        props: {
+            editingModel: Object,
+        },
+        data() {
+            return {
+                paymentMethod: this.editingModel || {},
+            }
+        },
+        validations() {
+            return {
+                paymentMethod: {
+                    name: {required},
+                    active: {required},
+                },
+            }
+        },
+        methods: {
+            save() {
+                this.$v.$touch();
+                if (this.$v.$invalid) {
+                    return;
+                }
+
+                let data = {
+                    name: this.paymentMethod.name,
+                    code: this.paymentMethod.code,
+                    active: this.paymentMethod.active,
+                    is_postpaid: this.paymentMethod.is_postpaid,
+                };
+
+                Services.showLoader();
+                Services.net().put(
+                    this.getRoute('settings.paymentMethods.edit', {id: this.paymentMethod.id}), {}, data
+                )
+                    .then(() => {
+                        this.$emit('saved', this.paymentMethod);
+                        Services.msg('Параметры способа оплаты успешно сохранены');
+                    }, () => {
+                        Services.msg('Не удалось сохранить изменения','danger');
+                    }).finally(() => {
+                        this.$v.$reset();
+                        this.closeModal();
+                        Services.hideLoader();
+                    });
+            },
+            closeModal() {
+                this.$bvModal.hide('payment-method-edit-modal');
+            },
+        },
+        computed: {
+            errorNameField() {
+                if (this.$v.paymentMethod.name.$dirty
+                    && this.$v.paymentMethod.name.$invalid) {
+                    return "Введите корректное название";
+                }
+            },
+        },
+        watch: {
+            editingModel(value) {
+                this.paymentMethod = value;
+            },
+        },
+    }
+</script>
+
+<style scoped>
+
+</style>
