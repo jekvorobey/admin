@@ -21,8 +21,6 @@ use Greensight\Oms\Dto\Order\OrderConfirmationType;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentDto;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
@@ -58,7 +56,6 @@ class OrderListController extends Controller
         $this->loadOrderStatuses = true;
         $this->loadBasketTypes = true;
         $this->loadPaymentStatuses = true;
-        $this->loadPaymentMethods = true;
         $this->loadDeliveryTypes = true;
         $this->loadDeliveryMethods = true;
         $this->loadDeliveryServices = true;
@@ -135,7 +132,7 @@ class OrderListController extends Controller
                 'brands.*' => 'integer',
                 'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
-                'payment_method.*' => Rule::in(array_keys(PaymentMethod::allMethods())),
+                'payment_method.*' => 'integer',
                 'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
                 'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),
@@ -258,9 +255,9 @@ class OrderListController extends Controller
             $data['delivery_services'] = $order->deliveries->map(function (DeliveryDto $delivery) {
                 return DeliveryService::serviceById($delivery->delivery_service)->name;
             })->unique()->join(', ');
-            $data['payment_methods'] = $order->payments->map(function (PaymentDto $payment) {
-                return $payment->paymentMethod()->name;
-            })->unique()->join(', ');
+
+            $data['payment_methods'] = $order->paymentMethod->name;
+
             $data['created_at'] = date_time2str(new Carbon($order->created_at));
             $data['updated_at'] = date_time2str(new Carbon($order->updated_at));
             $data['status_at'] = date_time2str(new Carbon($order->status_at));
@@ -312,6 +309,7 @@ class OrderListController extends Controller
     {
         $restQuery = $orderService->newQuery()->include(
             'payments',
+            'paymentMethod',
             'deliveries.shipments',
             //'history',
             'basketitem',

@@ -61,6 +61,7 @@ class MerchantOperatorController extends Controller
 
         $operator = [
             'id' => $operator->id,
+            'user_id' => $operator->user_id,
             'merchant_id' => $operator->merchant_id,
             'last_name' => $user->last_name,
             'first_name' => $user->first_name,
@@ -95,11 +96,12 @@ class MerchantOperatorController extends Controller
         $userData = $request->validate([
             'last_name' => 'string|required',
             'first_name' => 'string|required',
-            'middle_name' => 'string|required',
+            'middle_name' => 'string|nullable',
             'email' => 'email|required',
-            'phone' => 'string|required',
             'login' => 'string|required',
-            'password' => 'string|required',
+            'login_email' => 'email|required',
+            'phone' => 'string|required',
+            'password' => 'string|nullable',
             'roles' => 'array|required',
             'roles.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
             'active' => 'bool|required',
@@ -190,11 +192,22 @@ class MerchantOperatorController extends Controller
             'operator_ids' => 'required|array',
         ]);
 
-        $userIds = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']))
-            ->pluck('user_id')
-            ->all();
+        $users = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
 
-        $userService->deleteArray($userIds);
+        $userForDeleteIds = [];
+        /** @var UserDto $user */
+        foreach ($users as $user) {
+            if (array_diff($user->fronts, [Front::FRONT_MAS])) {
+                unset($user->fronts[Front::FRONT_MAS]);
+                $userData['fronts'] = $user->fronts;
+                $userService->update(new UserDto($userData));
+            } else {
+                $userForDeleteIds[] = $user->id;
+            }
+        }
+        if ($userForDeleteIds) {
+            $userService->deleteArray($userForDeleteIds);
+        }
         $operatorService->deleteArray($data['operator_ids']);
 
         return response('', 204);

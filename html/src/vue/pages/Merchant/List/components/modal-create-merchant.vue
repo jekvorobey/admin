@@ -79,22 +79,6 @@
                         class="col-md-4 col-12"
                 >Способ связи</v-select>
             </div>
-            <div class="row">
-                <v-input
-                        v-model="$v.form.password.$model"
-                        :error="errorPassword"
-                        class="col-md-6 col-12"
-                        type="password"
-                        autocomplete="new-password"
-                >Пароль</v-input>
-                <v-input
-                        v-model="$v.form.password_confirmation.$model"
-                        :error="errorPasswordConfirm"
-                        class="col-md-6 col-12"
-                        type="password"
-                        autocomplete="new-password"
-                >Повтор пароля</v-input>
-            </div>
 
             <hr/>
 
@@ -103,6 +87,13 @@
             </div>
             <div class="mb-3">
                 <v-input v-model="$v.form.site.$model" :error="errorSite">Сайт компании</v-input>
+            </div>
+            <div class="mb-3">
+                <v-select
+                    v-model="$v.form.excluded_payment_methods.$model"
+                    :options="paymentMethodList"
+                    :multiple="true"
+                >Способы оплаты, недоступные для мерчанта</v-select>
             </div>
             <div class="mb-3">
                 <input v-model="$v.form.can_integration.$model" type="checkbox">
@@ -152,13 +143,12 @@
         email: '',
         phone: '',
         communication_method: '',
-        password: '',
-        password_confirmation: '',
 
         storage_address: '',
         site: '',
         can_integration: false,
         sale_info: '',
+        excluded_payment_methods: [],
     };
 
     export default {
@@ -167,6 +157,7 @@
         props: [
             'id',
             'communicationMethods',
+            'paymentMethodList',
         ],
         components: {VInput, VSelect, VDadata},
         data() {
@@ -214,44 +205,54 @@
                     maxLength: maxLength(20),
                 },
 
-                first_name: {required},
-                last_name: {required},
+                first_name: {},
+                last_name: {},
                 middle_name: {},
                 email: {
-                    required,
                     email,
-                    isUnique(value) {
-                        return new Promise((resolve, reject) => {
-                            Services.net().get(this.route('check.emailExists'), {
-                                email: value
-                            }).then(data => {
-                                resolve(data.exists === false);
-                            });
-                        });
-                    }
+                    isUnique: function() {
+                        return this.isFieldUnique(this.form.email, 'email');
+                    },
+                    $lazy: true
                 },
-                phone: {required},
-                communication_method: {required},
-                password: {
-                    required,
-                    minLength: minLength(8)
+                phone: {
+                    isUnique: function() {
+                        let phone = this.form.phone.replace(/[()]|\s|-/g, '');
+                        return this.isFieldUnique(phone, 'phone');
+                    },
+                    $lazy: true
                 },
-                password_confirmation: {
-                    required,
-                    sameAsPassword: sameAs('password')
-                },
-
+                communication_method: {},
                 storage_address: {required},
                 site: {required},
                 can_integration: {},
                 sale_info: {required},
+                excluded_payment_methods: {},
             },
         },
         methods: {
-            save() {
-                this.$v.$touch();
-                if (this.$v.$invalid) {
+            waitForValidation () {
+                return new Promise((resolve) => {
+                    const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
+                        if (isNotPending) {
+                            resolve(!this.$v.$invalid)
+                        }
+                    }, {immediate: true})
+                })
+            },
+            async save() {
+                await this.$v.$touch();
+                const isValid = await this.waitForValidation();
+                if (!isValid) {
                     return;
+                }
+                if (this.form.phone) {
+                    let phoneNumber = this.form.phone.replace(/[()]|\s|-/g, '');
+                    this.form.phone = phoneNumber;
+                    this.form.login = phoneNumber;
+                }
+                if (this.form.email) {
+                    this.form.login_email = this.form.email;
                 }
                 Services.showLoader();
                 Services.net().post(this.route('merchant.create'), null, this.form
@@ -305,7 +306,11 @@
                 if (typeof data.address !== 'undefined') {
                     this.$v.form.bank_address.$model = data.address.unrestricted_value;
                 }
-            }
+            },
+            isFieldUnique(data, field) {
+                return Services.net().get(this.getRoute('user.isUnique'), {data: data, field: field})
+                    .then(data => data.isUnique);
+            },
         },
         computed: {
             telMask() {
@@ -381,46 +386,21 @@
                     if (!this.$v.form.correspondent_account.maxLength) return "Должно быть 20 символов!";
                 }
             },
-            errorFirstName() {
-                if (this.$v.form.first_name.$dirty) {
-                    if (!this.$v.form.first_name.required) return "Обязательное поле!";
-                }
-            },
-            errorLastName() {
-                if (this.$v.form.last_name.$dirty) {
-                    if (!this.$v.form.last_name.required) return "Обязательное поле!";
-                }
-            },
+            errorFirstName() {},
+            errorLastName() {},
             errorMiddleName() {},
             errorEmail() {
                 if (this.$v.form.email.$dirty) {
-                    if (!this.$v.form.email.required) return "Обязательное поле!";
                     if (!this.$v.form.email.email) return "Введите валидный e-mail!";
-                    if (!this.$v.form.email.isUnique) return "Такой e-mail уже зарегистрирован!";
+                    if (!this.$v.form.email.isUnique) return "Пользователь с таким E-mail уже существует";
                 }
             },
             errorPhone() {
                 if (this.$v.form.phone.$dirty) {
-                    if (!this.$v.form.phone.required) return "Обязательное поле!";
+                    if (!this.$v.form.phone.isUnique) return "Пользователь с таким телефоном уже существует";
                 }
             },
-            errorCommunicationMethod() {
-                if (this.$v.form.communication_method.$dirty) {
-                    if (!this.$v.form.communication_method.required) return "Обязательное поле!";
-                }
-            },
-            errorPassword() {
-                if (this.$v.form.password.$dirty) {
-                    if (!this.$v.form.password.required) return "Обязательное поле!";
-                    if (!this.$v.form.password.minLength) return "Не меньше 8 символов!";
-                }
-            },
-            errorPasswordConfirm() {
-                if (this.$v.form.password_confirmation.$dirty) {
-                    if (!this.$v.form.password_confirmation.required) return "Обязательное поле!";
-                    if (!this.$v.form.password_confirmation.sameAsPassword) return "Введённые пароли не совпадают!";
-                }
-            },
+            errorCommunicationMethod() {},
             errorStorageAddress() {
                 if (this.$v.form.storage_address.$dirty) {
                     if (!this.$v.form.storage_address.required) return "Обязательное поле!";
