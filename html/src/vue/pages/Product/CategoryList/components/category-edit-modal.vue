@@ -170,8 +170,8 @@
                     'code': this.categoryToEdit.code,
                     'active': this.categoryToEdit.active,
                     'parent_id': this.parentId,
-                    'meta_title': this.categoryToEdit.metaTitle,
-                    'meta_description': this.categoryToEdit.metaDescription,
+                    'meta_title': this.categoryToEdit.meta_title,
+                    'meta_description': this.categoryToEdit.meta_description,
                 };
                 Services.showLoader();
                 let savePromise;
