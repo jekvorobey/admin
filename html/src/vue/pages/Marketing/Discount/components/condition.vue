@@ -188,7 +188,7 @@
                         </div>
                     </div>
 
-                    <div v-if="canHasSynergyMax">
+                    <div>
                         <p>Суммируется, но максимальный размер:</p>
                         <v-select
                             v-model="values.maxValueType"
@@ -664,12 +664,6 @@
             },
 
             checkValuesSynergyMax() {
-                if (!this.canHasSynergyMax) {
-                    this.values.maxValue = null;
-                    this.values.maxValueType = null;
-                    return true;
-                }
-
                 if (!this.values.maxValue && !this.values.maxValueType) {
                     return true;
                 } else if (this.values.maxValue && this.values.maxValueType) {

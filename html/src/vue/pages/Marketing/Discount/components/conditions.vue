@@ -275,7 +275,7 @@
                       @change="initSynergyError"
             >Суммируется с другими скидками</v-select>
 
-            <div v-if="canHasSynergyMax">
+            <div>
                 <p>Суммируется, но максимальный размер:</p>
                 <v-select v-model="values.maxValueType"
                         :options="[{text: 'Без ограничения', value: null}, ...discountSizeTypes]"
@@ -531,12 +531,6 @@
                 return true;
             },
             checkValuesSynergyMax() {
-                if (!this.canHasSynergyMax) {
-                    this.values.maxValue = null;
-                    this.values.maxValueType = null;
-                    return true;
-                }
-
                 if (!this.values.maxValue && !this.values.maxValueType) {
                     return true;
                 } else if (this.values.maxValue && this.values.maxValueType) {
