@@ -710,34 +710,6 @@
             valuesUserError() {
                 return (this.valuesErrors.user) ? ' ' : null;
             },
-            canHasSynergyMax() {
-                if ([
-                    this.discountTypes.brand,
-                    this.discountTypes.category,
-                    this.discountTypes.offer,
-                ].indexOf(this.discount.type) === -1) {
-                    return false;
-                }
-
-                let canHasSynergyMax = true;
-
-                if (this.values.synergy.length > 0) {
-                    this.values.synergy.forEach((discount_id) => {
-                        let discount = this.discounts.find(discount => discount.value === discount_id);
-                        if (discount) {
-                            if ([
-                                this.discountTypes.brand,
-                                this.discountTypes.category,
-                                this.discountTypes.offer,
-                            ].indexOf(discount.type) === -1) {
-                                canHasSynergyMax = false;
-                            }
-                        }
-                    });
-                }
-
-                return canHasSynergyMax;
-            }
         },
         watch: {
             conditionType() {
