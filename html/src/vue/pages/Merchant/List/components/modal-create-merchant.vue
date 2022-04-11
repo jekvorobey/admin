@@ -89,6 +89,13 @@
                 <v-input v-model="$v.form.site.$model" :error="errorSite">Сайт компании</v-input>
             </div>
             <div class="mb-3">
+                <v-select
+                    v-model="$v.form.excluded_payment_methods.$model"
+                    :options="paymentMethodList"
+                    :multiple="true"
+                >Способы оплаты, недоступные для мерчанта</v-select>
+            </div>
+            <div class="mb-3">
                 <input v-model="$v.form.can_integration.$model" type="checkbox">
                 Подтверждение о возможности работы с Платформой с использованием автоматических механизмов интеграции
             </div>
@@ -141,6 +148,7 @@
         site: '',
         can_integration: false,
         sale_info: '',
+        excluded_payment_methods: [],
     };
 
     export default {
@@ -149,6 +157,7 @@
         props: [
             'id',
             'communicationMethods',
+            'paymentMethodList',
         ],
         components: {VInput, VSelect, VDadata},
         data() {
@@ -218,6 +227,7 @@
                 site: {required},
                 can_integration: {},
                 sale_info: {required},
+                excluded_payment_methods: {},
             },
         },
         methods: {

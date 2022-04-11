@@ -39,7 +39,6 @@ class Controller extends BaseController
     protected bool $loadOrderStatuses = false;
     protected bool $loadBasketTypes = false;
     protected bool $loadPaymentStatuses = false;
-    protected bool $loadPaymentMethods = false;
     protected bool $loadDeliveryStatuses = false;
     protected bool $loadShipmentStatuses = false;
     protected bool $loadCargoStatuses = false;
@@ -59,6 +58,7 @@ class Controller extends BaseController
             ->loadBlocks()
             ->loadBlockPermissions()
             ->loadProductImagesTypes()
+            ->loadExtSystemDriver()
             ->loadCustomerStatus($this->loadCustomerStatus)
             ->loadCommunicationChannelTypes($this->loadCommunicationChannelTypes)
             ->loadCommunicationChannels($this->loadCommunicationChannels)
@@ -89,7 +89,6 @@ class Controller extends BaseController
             ->loadDeliveryTypes($this->loadDeliveryTypes)
             ->loadDeliveryMethods($this->loadDeliveryMethods)
             ->loadDeliveryServices($this->loadDeliveryServices)
-            ->loadPaymentMethods($this->loadPaymentMethods)
             ->loadOfferSaleStatuses($this->loadOfferSaleStatuses)
             ->loadBillingReportStatuses($this->loadBillingReportStatuses)
             ->loadBillingReportTypes($this->loadBillingReportTypes)

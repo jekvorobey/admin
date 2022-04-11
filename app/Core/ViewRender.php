@@ -26,13 +26,13 @@ use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
-use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
+use MerchantManagement\Dto\Integration\ExtSystemDriver;
 use MerchantManagement\Dto\MerchantDocumentDto;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
@@ -70,6 +70,7 @@ class ViewRender
     private $merchantCommissionTypes = [];
     private $merchantVatTypes = [];
     private $merchantDocumentTypes = [];
+    private $merchantExtSystemDrivers = [];
 
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
@@ -87,7 +88,6 @@ class ViewRender
     private $orderStatuses = [];
     private $basketTypes = [];
     private $paymentStatuses = [];
-    private $paymentMethods = [];
     private $deliveryStatuses = [];
     private $shipmentStatuses = [];
     private $cargoStatuses = [];
@@ -158,6 +158,22 @@ class ViewRender
         $this->blockPermissions = [
             'view' => array_merge($view, $update),
             'update' => $update,
+        ];
+
+        return $this;
+    }
+
+    public function loadExtSystemDriver(): self
+    {
+        $this->merchantExtSystemDrivers = [
+            'moysklad' => ExtSystemDriver::DRIVER_MOY_SKLAD,
+            'authentica' => ExtSystemDriver::DRIVER_AUTHENTICA,
+            'galser' => ExtSystemDriver::DRIVER_GALSER,
+            'hitek' => ExtSystemDriver::DRIVER_HITEK,
+            'one_c' => ExtSystemDriver::DRIVER_1C,
+            'termix' => ExtSystemDriver::DRIVER_TERMIX,
+            'filesharing' => ExtSystemDriver::DRIVER_FILE_SHARING,
+            'lb' => ExtSystemDriver::DRIVER_LABIOSTHETIQUE,
         ];
 
         return $this;
@@ -538,26 +554,6 @@ class ViewRender
     /**
      * @return $this
      */
-    public function loadPaymentMethods(bool $load = false): self
-    {
-        if ($load) {
-            $mapPaymentMethods = [
-                PaymentMethod::ONLINE => 'online',
-            ];
-            foreach (PaymentMethod::allMethods() as $id => $method) {
-                if (!isset($mapPaymentMethods[$id])) {
-                    continue;
-                }
-                $this->paymentMethods[$mapPaymentMethods[$id]] = $method->toArray();
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
     public function loadDeliveryStatuses(bool $load = false): self
     {
         if ($load) {
@@ -839,6 +835,7 @@ class ViewRender
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
                 'merchantVatTypes' => $this->merchantVatTypes,
                 'merchantDocumentTypes' => $this->merchantDocumentTypes,
+                'merchantExtSystemDrivers' => $this->merchantExtSystemDrivers,
 
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,
@@ -857,7 +854,6 @@ class ViewRender
                 'orderStatuses' => $this->orderStatuses,
                 'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
-                'paymentMethods' => $this->paymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
                 'shipmentStatuses' => $this->shipmentStatuses,
                 'cargoStatuses' => $this->cargoStatuses,

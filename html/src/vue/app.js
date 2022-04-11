@@ -175,6 +175,10 @@ Vue.mixin({
         merchantDocumentTypes() {
             return this.$store.state.layout.merchantDocumentTypes;
         },
+        /** @return {MerchantExtSystemDrivers} */
+        merchantExtSystemDrivers() {
+            return this.$store.state.layout.merchantExtSystemDrivers;
+        },
         /** @return {PublicEventType[]} */
         publicEventTypes() {
             return this.$store.state.layout.publicEventTypes;
@@ -230,10 +234,6 @@ Vue.mixin({
         /** @return {PaymentStatuses} */
         paymentStatuses() {
             return this.$store.state.layout.paymentStatuses;
-        },
-        /** @return {PaymentMethods} */
-        paymentMethods() {
-            return this.$store.state.layout.paymentMethods;
         },
         /** @return {DeliveryStatuses} */
         deliveryStatuses() {
@@ -455,6 +455,18 @@ Vue.mixin({
  @property {string} agent
  */
 /**
+ @typedef MerchantExtSystemDrivers
+ @type {Object}
+ @property {number} moysklad
+ @property {number} authentica
+ @property {number} galser
+ @property {number} hitek
+ @property {number} one_c
+ @property {number} termix
+ @property {number} filesharing
+ @property {number} lb
+ */
+/**
  @typedef PublicEventType
  @type {Object}
  @property {number} id
@@ -599,17 +611,6 @@ Vue.mixin({
  */
 /**
  @typedef PaymentStatus - статус оплаты
- @type {Object}
- @property {integer} id
- @property {string} name
- */
-/**
- @typedef PaymentMethods - способы оплаты
- @type {Object}
- @property {PaymentMethod} online - онлайн
- */
-/**
- @typedef PaymentMethod - способ оплаты
  @type {Object}
  @property {integer} id
  @property {string} name

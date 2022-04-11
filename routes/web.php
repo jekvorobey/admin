@@ -630,6 +630,15 @@ Route::middleware('auth')->group(function () {
             Route::post('/', 'LandingDetailController@create')->name('landing.create');
             Route::put('/{id}', 'LandingDetailController@update')->where(['id' => '[0-9]+'])->name('landing.update');
             Route::delete('/{id}', 'LandingDetailController@delete')->where(['id' => '[0-9]+'])->name('landing.delete');
+            Route::post('/landingCache', 'LandingDetailController@landingCache')->name('landing.landingCache');
+        });
+
+        Route::prefix('seo')->namespace('Seo')->group(function () {
+            Route::get('/', 'SeoController@listPage')->name('seo.listPage');
+            Route::get('/{id}', 'SeoController@edit')->where(['id' => '[0-9]+'])->name('seo.updatePage');
+
+            Route::get('/page', 'SeoController@page')->name('seo.page');
+            Route::put('/{id}', 'SeoController@update')->where(['id' => '[0-9]+'])->name('seo.update');
         });
 
         Route::prefix('redirect')->namespace('Redirect')->group(function () {
