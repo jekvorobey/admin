@@ -23,8 +23,10 @@ class TabExtSystemsController extends Controller
     private MerchantIntegrationService $merchantIntegrationService;
     private MerchantService $merchantService;
 
-    public function __construct(MerchantIntegrationService $merchantIntegrationService, MerchantService $merchantService)
-    {
+    public function __construct(
+        MerchantIntegrationService $merchantIntegrationService,
+        MerchantService $merchantService
+    ) {
         $this->merchantIntegrationService = $merchantIntegrationService;
         $this->merchantService = $merchantService;
     }
