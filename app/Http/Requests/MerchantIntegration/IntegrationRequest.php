@@ -40,16 +40,8 @@ class IntegrationRequest extends FormRequest
                     return $this->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD && $this->input('login');
                 }),
             ],
-            'settingPriceValue' => [
-                Rule::requiredIf(function () {
-                    return $this->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
-                }),
-            ],
-            'settingOrganizationValue' => [
-                Rule::requiredIf(function () {
-                    return $this->input('driver') === ExtSystemDriver::DRIVER_MOY_SKLAD;
-                }),
-            ],
+            'settingPriceValue' => [],
+            'settingOrganizationValue' => [],
             'host' => [
                 Rule::requiredIf(function () {
                     return $this->input('driver') === ExtSystemDriver::DRIVER_FILE_SHARING;

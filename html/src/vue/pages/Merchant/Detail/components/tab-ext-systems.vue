@@ -75,7 +75,7 @@
                     <td>{{ paramOptions.merchantPriceSetting }}</td>
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
-                    <th>ID организации</th>
+                    <th>Код Юр.лица</th>
                     <td>{{ paramOptions.merchantOrganizationSetting }}</td>
                 </tr>
                 <tr>
@@ -124,7 +124,7 @@ export default {
     props: ['id'],
     data() {
         return {
-            extSystem: {},
+            extSystem: null,
             extSystemsOptions: [],
             paramOptions: {},
             extSystemsSelect: {

@@ -2,31 +2,29 @@
     <div>
         <div v-if="isMoySklad">
             <div class="row">
-                <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5>
-                </v-input>
-                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5>
-                </v-input>
-                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>
-                    Пароль</h5>
-                </v-input>
+                <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12">Токен</v-input>
+                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12">Логин</v-input>
+                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12">Пароль</v-input>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.merchantPriceSetting.$model" :error="errorSettingPriceValue"
+                <v-input v-model="$v.form.merchantPriceSetting.$model"
+                         :error="errorSettingPriceValue"
                          class="col-md-4 col-12">
-                    <h5>
-                        Значение настройки цены</h5></v-input>
-                <v-input v-model="$v.form.merchantOrganizationSetting.$model" :error="errorSettingOrganizationValue"
+                    Значение настройки цены
+                </v-input>
+                <v-input v-model="$v.form.merchantOrganizationSetting.$model"
+                         :error="errorSettingOrganizationValue"
                          class="col-md-4 col-12">
-                    <h5>ID
-                        организации</h5></v-input>
+                        Код Юр.лица
+                        <fa-icon icon="question-circle" v-b-popover.hover="'Обязательно для экспорта заказов'"></fa-icon>
+                </v-input>
             </div>
 
             <div class="row">
                 <v-input v-model="$v.form.paramPeriodPrice.$model" :error="errorParamPeriodPrice"
-                         class="col-md-6 col-12"><h5>
-                    Импорт цен.Период
-                    проверки
-                    (мин)</h5></v-input>
+                         class="col-md-6 col-12">
+                    Импорт цен. Период обмена (мин)
+                </v-input>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" v-model="$v.form.paramActivePrice.$model" id="paramActivePrice"
                            type="checkbox">
@@ -35,10 +33,9 @@
             </div>
             <div class="row">
                 <v-input v-model="$v.form.paramPeriodStock.$model" :error="errorParamPeriodStock"
-                         class="col-md-6 col-12"><h5>
-                    Импорт остатков.Период
-                    проверки
-                    (мин)</h5></v-input>
+                         class="col-md-6 col-12">
+                    Импорт остатков. Период обмена (мин)
+                </v-input>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" v-model="$v.form.paramActiveStock.$model" id="paramActiveStock"
                            type="checkbox">
@@ -47,10 +44,9 @@
             </div>
             <div class="row">
                 <v-input v-model="$v.form.paramPeriodOrder.$model" :error="errorParamPeriodOrder"
-                         class="col-md-6 col-12"><h5>
-                    Экспорт заказов.Период
-                    проверки
-                    (мин)</h5></v-input>
+                         class="col-md-6 col-12">
+                    Экспорт заказов. Период обмена (мин)
+                </v-input>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" v-model="$v.form.paramActiveOrder.$model" id="paramActiveOrder"
                            type="checkbox">
@@ -60,28 +56,20 @@
         </div>
         <div v-else-if="isFileSharing">
             <div class="row">
-                <v-input v-model="$v.form.host.$model" :error="errorHost" class="col-md-6 col-12"><h5>Хост</h5>
-                </v-input>
-                <v-input v-model="$v.form.port.$model" :error="errorPort" class="col-md-6 col-12"><h5>Порт</h5>
-                </v-input>
+                <v-input v-model="$v.form.host.$model" :error="errorHost" class="col-md-6 col-12">Хост</v-input>
+                <v-input v-model="$v.form.port.$model" :error="errorPort" class="col-md-6 col-12">Порт</v-input>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-6 col-12"><h5>Логин</h5>
-                </v-input>
-                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-6 col-12"><h5>
-                    Пароль</h5>
-                </v-input>
+                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-6 col-12">Логин</v-input>
+                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-6 col-12">Пароль</v-input>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.fileName.$model" :error="errorFileName" class="col-md-6 col-12"><h5>
-                    Наименование
-                    файла</h5></v-input>
-                <v-input v-model="$v.form.paramPeriodPriceStock.$model" :error="errorParamPeriodPriceStock" class="col-md-6 col-12"><h5>
-                    Период
-                    проверки
-                    (мин)</h5></v-input>
+                <v-input v-model="$v.form.fileName.$model" :error="errorFileName" class="col-md-6 col-12">Наименование файла</v-input>
+                <v-input v-model="$v.form.paramPeriodPriceStock.$model" :error="errorParamPeriodPriceStock" class="col-md-6 col-12">
+                    Период обмена (мин)
+                </v-input>
             </div>
-            <input v-model="$v.form.paramActivePriceStock.$model" type="checkbox">Активировать
+            <input v-model="$v.form.paramActivePriceStock.$model" type="checkbox"> Активировать
         </div>
         <button @click="save" class="btn mt-4 btn-dark">Сохранить</button>
     </div>
@@ -125,13 +113,13 @@ export default {
                 port: this.options ? this.options.port : '',
                 merchantPriceSetting: this.options ? this.options.merchantPriceSetting : '',
                 merchantOrganizationSetting: this.options ? this.options.merchantOrganizationSetting : '',
-                paramPeriodPrice: this.options.paramPrice ? this.options.paramPrice.params.period : '',
+                paramPeriodPrice: this.options.paramPrice ? this.options.paramPrice.params.period : 10,
                 paramActivePrice: this.options.paramPrice ? this.options.paramPrice.active : true,
-                paramPeriodStock: this.options.paramStock ? this.options.paramStock.params.period : '',
+                paramPeriodStock: this.options.paramStock ? this.options.paramStock.params.period : 10,
                 paramActiveStock: this.options.paramStock ? this.options.paramStock.active : true,
-                paramPeriodOrder: this.options.paramOrder ? this.options.paramOrder.params.period : '',
-                paramActiveOrder: this.options.paramOrder ? this.options.paramOrder.avtive : true,
-                paramPeriodPriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.params.period : '',
+                paramPeriodOrder: this.options.paramOrder ? this.options.paramOrder.params.period : 10,
+                paramActiveOrder: this.options.paramOrder ? this.options.paramOrder.avtive : false,
+                paramPeriodPriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.params.period : 10,
                 paramActivePriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.active : true,
                 fileName: this.options ? this.options.fileName : '',
             },
@@ -170,16 +158,8 @@ export default {
                         return this.isFileSharing
                     }),
                 },
-                merchantPriceSetting: {
-                    required: requiredIf(function () {
-                        return this.isMoySklad
-                    }),
-                },
-                merchantOrganizationSetting: {
-                    required: requiredIf(function () {
-                        return this.isMoySklad
-                    }),
-                },
+                merchantPriceSetting: {},
+                merchantOrganizationSetting: {},
                 paramPeriodPrice: {
                     required: requiredIf(function () {
                         return this.isMoySklad
@@ -309,12 +289,12 @@ export default {
         },
         errorSettingPriceValue() {
             if (this.$v.form.merchantPriceSetting.$dirty) {
-                if (!this.$v.form.merchantPriceSetting.required) return "Обязательное поле!";
+                //
             }
         },
         errorSettingOrganizationValue() {
             if (this.$v.form.merchantOrganizationSetting.$dirty) {
-                if (!this.$v.form.merchantOrganizationSetting.required) return "Обязательное поле!";
+                //
             }
         },
         errorHost() {
