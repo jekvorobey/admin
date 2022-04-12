@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08f9ee3e3aa297d1c65e6707947a575b",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1370,11 +1370,11 @@
         },
         {
             "name": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/ICC-5-copy-discount",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "2adcfa164635e7eba06653bee69a7143c079822e"
+                "reference": "b5d0b8843e445cbae07f4532ac96fcf8190e263e"
             },
             "require": {
                 "ext-json": "*",
@@ -1408,7 +1408,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2022-04-11T11:38:38+00:00"
+            "time": "2022-04-12T13:27:49+00:00"
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
@@ -10853,7 +10853,7 @@
         },
         {
             "package": "iwengo/ibt-marketing-lib",
-            "version": "dev-feature/ICC-5-copy-discount",
+            "version": "dev-master-ylab",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         },
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
