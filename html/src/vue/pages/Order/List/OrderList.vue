@@ -292,6 +292,7 @@
             'iPager',
             'merchants',
             'confirmationTypes',
+            'paymentMethods',
             'iFilter',
             'iSort',
             'brands',
