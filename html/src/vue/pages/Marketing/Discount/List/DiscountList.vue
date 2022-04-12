@@ -475,12 +475,12 @@
         },
         computed: {
             selectedIds() {
-                return this.iDiscounts.filter(discount => {
+                return this.discounts.filter(discount => {
                     return (discount.id in this.checkboxes) && this.checkboxes[discount.id];
                 }).map(discount => discount.id);
             },
             selectedDiscounts() {
-                return this.iDiscounts.filter((discount) => {
+                return this.discounts.filter((discount) => {
                     return (discount.id in this.checkboxes) && this.checkboxes[discount.id];
                 });
             },
