@@ -361,10 +361,8 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function auth(
-        int $id,
-        AuthService $authService
-    ): JsonResponse {
+    public function auth(int $id, AuthService $authService): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
         $tokenData = $authService->tokenByUserId(Front::FRONT_ADMIN, $id);
 
@@ -373,7 +371,6 @@ class CustomerDetailController extends Controller
                 'status' => 'failed',
             ]);
         }
-        \Log::debug(json_encode($tokenData));
         $url = sprintf(config('app.showcase_host') . '/user/login-by-token/%s/%s', $tokenData['token'], $tokenData['refresh']);
 
         return response()->json([
