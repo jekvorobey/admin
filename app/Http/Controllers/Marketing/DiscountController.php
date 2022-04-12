@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Discount\CopyAndDeleteRequest;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -244,16 +245,25 @@ class DiscountController extends Controller
     /**
      * @throws MarketingException
      */
-    public function delete(Request $request, DiscountService $discountService): JsonResponse
+    public function delete(CopyAndDeleteRequest $request, DiscountService $discountService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 
-        $data = $request->validate([
-            'ids' => 'array|required',
-            'ids.*' => 'integer|required',
-        ]);
+        $data = $request->all();
 
         $discountService->delete($data['ids']);
+
+        return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * @throws MarketingException
+     */
+    public function copy(CopyAndDeleteRequest $request, DiscountService $discountService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
+        $data = $request->all();
+        $discountService->copy($data['ids']);
 
         return response()->json(['status' => 'ok']);
     }

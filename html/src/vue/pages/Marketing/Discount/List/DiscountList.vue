@@ -127,6 +127,10 @@
                     <template v-if="countSelected <= 1">скидки</template>
                     <template v-else>скидок</template>
                 </button>
+                <button class="btn btn-secondary" :disabled="countSelected < 1" @click="copy()">Скопировать
+                    <template v-if="countSelected <= 1">скидку</template>
+                    <template v-else>скидки</template>
+                </button>
                 <button class="btn btn-info">Сгенерировать отчет</button>
             </div>
         </div>
@@ -204,6 +208,18 @@
                 <div slot="body">
                     <DiscountList :discounts="selectedDiscounts"></DiscountList>
                     <button class="btn btn-danger mt-3" type="button" @click="approveDelete()" :disabled="processing">Удалить</button>
+                </div>
+            </modal>
+        </transition>
+
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('CopyDiscount')">
+                <div slot="header">
+                    <b>Вы уверены, что хотите скопировать следующие скидки?</b>
+                </div>
+                <div slot="body">
+                    <DiscountList :discounts="selectedDiscounts"></DiscountList>
+                    <button class="btn btn-success mt-3" type="button" @click="approveCopy()" :disabled="processing">Скопировать</button>
                 </div>
             </modal>
         </transition>
@@ -350,6 +366,19 @@
                 }).then(data => {
                     this.processing = false;
                     this.closeModal('UpdateStatusDiscount');
+                    window.location.reload();
+                });
+            },
+            copy() {
+                this.openModal('CopyDiscount');
+            },
+            approveCopy() {
+                this.processing = true;
+                Service.net().post(this.route('discount.copy'), {
+                    ids: this.selectedIds,
+                }).then(data => {
+                    this.processing = false;
+                    this.closeModal('CopyDiscount');
                     window.location.reload();
                 });
             },

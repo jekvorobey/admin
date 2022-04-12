@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
             Route::put('/', 'DiscountController@status')->name('discount.status');
             Route::delete('/', 'DiscountController@delete')->name('discount.delete');
+            Route::post('/copy', 'DiscountController@copy')->name('discount.copy');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
