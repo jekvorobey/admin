@@ -287,7 +287,7 @@
                         min="1"
                         :error="valuesErrors.synergyMaxValue"
                         @change="initErrorSynergyMaxValue"
-                >Значение в {{ isPercentType(values.value_type) ? 'процентах' : 'рублях' }}
+                >Значение в {{ isPercentType(values.maxValueType) ? 'процентах' : 'рублях' }}
                 </v-input>
             </div>
 

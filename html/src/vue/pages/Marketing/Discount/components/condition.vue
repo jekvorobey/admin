@@ -203,7 +203,7 @@
                             min="1"
                             :error="valuesErrors.synergyMaxValue"
                             @change="initErrorSynergyMaxValue"
-                        >Значение в {{ isPercentType(values.value_type) ? 'процентах' : 'рублях' }}</v-input>
+                        >Значение в {{ isPercentType(values.maxValueType) ? 'процентах' : 'рублях' }}</v-input>
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@
                 handler: function() {
                     this.$emit('input', Object.assign(this.values, {
                         type: this.conditionType
-                    }));           
+                    }));
                 },
                 deep: true
             },
