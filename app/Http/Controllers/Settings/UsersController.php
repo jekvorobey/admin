@@ -173,7 +173,8 @@ class UsersController extends Controller
 
     public function isUnique(Request $request, UserService $userService): JsonResponse
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        // TODO: используется также при создании мерчанта (с правами на BlockDto::ADMIN_BLOCK_MERCHANTS)
+        // $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $data = $request->get('data');
         $field = $request->get('field');
