@@ -48,17 +48,17 @@
         </div>
 
         Роль пользователя*:
-        <template v-for="(roleName, roleId) in roles">
+        <template v-for="role in roles">
             <div class="form-check">
                 <input class="form-check-input"
                        type="checkbox"
-                       :id="`role-${roleId}`"
-                       @change="e => rolesCheckbox(e, roleId)"
-                       :value="roleId"
-                       :checked="operator.roles.includes(parseInt(roleId))"
+                       :id="`role-${role.value}`"
+                       @change="e => rolesCheckbox(e, role.value)"
+                       :value="role.value"
+                       :checked="operator.roles.includes(role.value)"
                 >
-                <label class="form-check-label" :for="`role-${roleId}`">
-                    {{ roleName }}
+                <label class="form-check-label" :for="`role-${role.value}`">
+                    {{ role.text }}
                 </label>
             </div>
         </template>
@@ -251,15 +251,8 @@ function myCustomValidator () {
                         ((key !== 'roles') || (JSON.stringify(value) !== JSON.stringify(this.operatorProp[key]))) &&
                         ((key !== 'active') || (+value !== this.operatorProp[key]))
                     ) {
-                        if (key === 'roles') {
-                            let cross = this.operatorProp['roles'].filter(role => value.includes(role));
-                            operatorEdit[key] = {};
-                            operatorEdit[key]['add'] = value.filter(role => !cross.includes(role));
-                            operatorEdit[key]['delete'] = this.operatorProp['roles'].filter(role => !cross.includes(role));
-                        } else {
-                            if (value !== '') {
-                                operatorEdit[key] = value;
-                            }
+                        if (value !== '') {
+                            operatorEdit[key] = value;
                         }
                     }
                 }
@@ -272,16 +265,7 @@ function myCustomValidator () {
                         operatorEdit
                     ).then(() => {
                         for (let [key, value] of Object.entries(operatorEdit)) {
-                            if (key === 'roles') {
-                                if (value['add']) {
-                                    this.operatorProp[key] = this.operatorProp[key].concat(value['add']);
-                                }
-                                if (value['delete']) {
-                                    this.operatorProp[key] = this.operatorProp[key].filter((role) => !value['delete'].includes(role));
-                                }
-                            } else {
-                                this.operatorProp[key] = value;
-                            }
+                            this.operatorProp[key] = value;
                         }
                         Services.msg('Данные о менеджере успешно обновлены.');
                         window.location.href = this.getRoute('merchant.detail', {id: this.operatorProp.merchant_id}) + '?tab=operator&allTab=0';

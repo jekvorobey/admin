@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Claim;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -220,7 +220,7 @@ class ContentClaimController extends Controller
             'products' => $products,
             'history' => $history,
             'historyMeta' => ClaimHistoryTypeDto::claimHistoryMeta(),
-            'roleNames' => RoleDto::roles(),
+            'roleNames' => Helpers::getRoles(),
         ]);
     }
 

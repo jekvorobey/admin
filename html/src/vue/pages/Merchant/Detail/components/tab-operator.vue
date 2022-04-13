@@ -34,7 +34,7 @@
                             <f-multi-select v-model="filter.communication_method" :options="communicationMethodOptions" class="col-4">
                                 Способ связи
                             </f-multi-select>
-                            <f-multi-select v-model="filter.role" :options="roleOptions" class="col-4">
+                            <f-multi-select v-model="filter.role" :options="roles" class="col-4">
                                 Роли
                             </f-multi-select>
                             <v-select v-model="filter.active" :options="activeOptions" class="col-4">
@@ -143,17 +143,17 @@
                     <b>Изменить роли оператора {{ selectedOperators[0].full_name }}</b>
                 </div>
                 <div slot="body">
-                    <template v-for="[roleId, roleName] in Object.entries(roles)">
+                    <template v-for="role in roles">
                         <div class="form-check">
                             <input class="form-check-input"
                                    type="checkbox"
-                                   :id="`role-${roleId}`"
-                                   @change="e => rolesCheckbox(e, roleId)"
-                                   :value="roleId"
-                                   :checked="Object.keys(selectedOperators[0].roles).includes(roleId)"
+                                   :id="`role-${role.value}`"
+                                   @change="e => rolesCheckbox(e, role.value)"
+                                   :value="role.value"
+                                   :checked="selectedOperators[0].roles.includes(role.value)"
                             >
-                            <label class="form-check-label" :for="`role-${roleId}`">
-                                {{ roleName }}
+                            <label class="form-check-label" :for="`role-${role.value}`">
+                                {{ role.text }}
                             </label>
                         </div>
                     </template>
@@ -327,10 +327,11 @@
                     {
                         name: 'Роли',
                         code: 'roles',
-                        value: function(operator) {
-                            let text = '';
-                            Object.values(operator.roles).forEach((role) => text = text + role + '<br>');
-                            return text.slice(0, -4);
+                        value: (operator) => {
+                            return this.roles
+                                .filter(role => operator.roles.includes(role.value))
+                                .map(role => role.text)
+                                .join('<br>') || 'N/A';
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -472,7 +473,7 @@
             },
             changeRolesOperator() {
                 this.openModal('ChangeRolesOperator');
-                this.rolesSelect = Object.keys(this.selectedOperators[0].roles).map(roleId => parseInt(roleId));
+                this.rolesSelect = [...this.selectedOperators[0].roles];
             },
             rolesCheckbox(e, id) {
                 id = parseInt(id);
@@ -485,21 +486,10 @@
                 }
             },
             approveChangeRoles() {
-                let cross = this.rolesSelect.filter(
-                    role => Object.keys(this.selectedOperators[0].roles)
-                        .map(roleId => parseInt(roleId))
-                        .includes(role)
-                );
-                let rolesChange = {};
-                rolesChange['add'] = this.rolesSelect.filter(role => !cross.includes(role));
-                rolesChange['delete'] = Object.keys(this.selectedOperators[0].roles)
-                    .map(roleId => parseInt(roleId))
-                    .filter(role => !cross.includes(role));
-
                 Services.showLoader();
                 Services.net().put(this.route('merchant.operator.changeRoles'), {}, {
                     user_id: this.selectedOperators[0].user_id,
-                    roles: rolesChange,
+                    roles: this.rolesSelect,
                 }).then(() => {
                     this.closeModal('ChangeRolesOperator');
                     this.loadPage();
@@ -522,16 +512,6 @@
                     value: method.id,
                     text: method.name,
                 }));
-            },
-            roleOptions() {
-                let arr = [];
-                for (let [roleId, roleName] of Object.entries(this.roles)) {
-                    arr.push({
-                        value: roleId,
-                        text: roleName,
-                    });
-                }
-                return arr;
             },
             activeOptions() {
                 return [
