@@ -364,7 +364,7 @@ class CustomerDetailController extends Controller
     public function auth(int $id, AuthService $authService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
-        $tokenData = $authService->tokenByUserId(Front::FRONT_ADMIN, $id);
+        $tokenData = $authService->tokenByUserId(Front::FRONT_SHOWCASE, $id);
 
         if (!isset($tokenData['token']) || !isset($tokenData['refresh'])) {
             return response()->json([
