@@ -3,61 +3,70 @@
         <div class="card">
             <div class="card-header">
                 Фильтр
+                <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
+                    <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
+                </button>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <f-input v-model="filter.id" class="col-2" type="number">
-                        ID
-                    </f-input>
                     <f-input v-model="filter.name" class="col-4">
                         Название
                     </f-input>
                     <f-select v-model="filter.status"
-                                    :options="discountStatusesOptions"
-                                    class="col-2">
+                              :options="discountStatusesOptions"
+                              class="col-4">
                         Статус
                     </f-select>
                     <f-select v-model="filter.type"
-                                    :options="discountTypesOptions"
-                                    :name="'type'"
-                                    class="col-2">
+                              :options="discountTypesOptions"
+                              :name="'type'"
+                              class="col-4">
                         Скидка на
                     </f-select>
-                    <div class="col-4">
-                        <div class="row">
-                            <label><b>Период действия скидки</b></label>
-                        </div>
-                        <div class="row">
-                            <f-date v-model="filter.start_date" class="col-5">От</f-date>
-                            <div class="col-4">
-                                <label>Точная дата
-                                    <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
-                                </label>
-                                <div>
-                                    <input class="ml-5" type="checkbox" v-model="filter.fix_start_date">
+                </div>
+                <transition name="slide">
+                    <div v-show="opened">
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <div class="row">
+                                    <label><b>Период действия скидки</b></label>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <f-date v-model="filter.end_date" class="col-5">До</f-date>
-                            <div class="col-4">
-                                <label>Точная дата
-                                    <fa-icon icon="question-circle" v-b-popover.hover="fixDateTooltip"></fa-icon>
-                                </label>
-                                <div>
-                                    <input class="ml-5" type="checkbox" v-model="filter.fix_end_date">
+                                <div class="row">
+                                    <f-date v-model="filter.start_date" class="col-5">От</f-date>
+                                    <div class="col-4">
+                                        <label>Точная дата
+                                            <fa-icon icon="question-circle"
+                                                     v-b-popover.hover="fixDateTooltip"></fa-icon>
+                                        </label>
+                                        <div>
+                                            <input class="ml-5" type="checkbox" v-model="filter.fix_start_date">
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-3">
-                                <label>Бессрочная</label>
-                                <input class="ml-3 mt-3"
-                                       type="checkbox"
-                                       v-model="filter.indefinitely"
-                                       :checked="filter.indefinitely">
+                                <div class="row">
+                                    <f-date v-model="filter.end_date" class="col-5">До</f-date>
+                                    <div class="col-4">
+                                        <label>Точная дата
+                                            <fa-icon icon="question-circle"
+                                                     v-b-popover.hover="fixDateTooltip"></fa-icon>
+                                        </label>
+                                        <div>
+                                            <input class="ml-5" type="checkbox" v-model="filter.fix_end_date">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <label>Бессрочная</label>
+                                        <input class="ml-3 mt-3"
+                                               type="checkbox"
+                                               v-model="filter.indefinitely"
+                                               :checked="filter.indefinitely">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </transition>
             </div>
             <div class="card-footer">
                 <button class="btn btn-sm btn-dark" @click="load">Применить</button>
@@ -77,10 +86,10 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-if="!discountSynergy">
-                <td colspan="9" class="text-center">Скидки не найдены!</td>
+            <tr v-if="!discounts">
+                <td colspan="9" class="text-center">Суммирующиеся скидки не найдены!</td>
             </tr>
-            <tr v-if="discountSynergy" v-for="discount in discountSynergy">
+            <tr v-if="discounts" v-for="discount in discounts">
                 <td>{{ discount.id }}</td>
                 <td>{{ datePrint(discount.created_at) }}</td>
                 <td><a :href="link(discount.id)">{{ discount.name }}</a></td>
@@ -96,7 +105,7 @@
         </table>
 
         <b-pagination
-            v-if="pager.count > pager.perPage"
+            v-if="discounts && pager.count.length > pager.perPage"
             v-model="pager.page"
             :total-rows="pager.count"
             :per-page="pager.perPage"
@@ -123,20 +132,19 @@ export default {
     },
     props: {
         model: Object,
-        iDiscounts: [Array, null],
         optionDiscountTypes: {},
         discountStatuses: {},
     },
     data() {
         return {
-            discounts: this.iDiscounts,
+            discounts: {},
             pager: {
                 page: 1,
                 count: 1,
-                perPage: 15,
+                perPage: 30,
             },
             filter: {
-                id: null,
+                id: this.discountSynergies,
                 name: null,
                 status: null,
                 type: null,
@@ -146,6 +154,7 @@ export default {
                 fix_end_date: null,
                 indefinitely: null,
             },
+            opened: false,
 
             // Статус скидки
             STATUS_CREATED: 1,
@@ -162,10 +171,13 @@ export default {
         }
     },
     computed: {
-        discountSynergy() {
-            return this.discounts.filter((discount) => {
-                return this.model.conditions.synergy ? this.model.conditions.synergy.indexOf(discount.id) === -1 : false;
-            });
+        discountSynergies() {
+            let conditionSynergy = this.model.conditions.filter((condition) => {
+                return condition.synergy && condition.synergy.length > 0
+            }).map(condition => condition.synergy);
+            console.log(conditionSynergy[0]);
+
+            return conditionSynergy[0] ? conditionSynergy[0] : [];
         },
         discountTypesOptions() {
             return Object.values(this.optionDiscountTypes).map(type => ({value: type.value, text: type.text}));
@@ -182,28 +194,32 @@ export default {
             return this.getRoute('discount.detail', {id: parseInt(discountId)});
         },
         load() {
-            let filter = {};
-            for (let k in this.filter) {
-                if (this.filter[k]) {
-                    filter[k] = this.filter[k];
+            if (this.discountSynergies.length > 0) {
+                let filter = {};
+                for (let k in this.filter) {
+                    if (this.filter[k]) {
+                        filter[k] = this.filter[k];
+                    }
                 }
+                filter['id'] = this.discountSynergies;
+                this.processing = true;
+                Service.showLoader();
+                Service.net().get(this.route('discount.pagination'), {
+                    page: this.pager.page,
+                    perPage: 30,
+                    filter: filter,
+                }).then(data => {
+                    this.discounts = data.iDiscounts;
+                    this.pager.count = data.total;
+                    this.processing = false;
+                    Service.hideLoader();
+                });
+            } else {
+                this.discounts = null;
             }
-
-            this.processing = true;
-            let route = this.ifBundle() ?
-                this.route('bundle.pagination') :
-                this.route('discount.pagination');
-            Service.showLoader();
-            Service.net().get(route, {
-                page: this.pager.page,
-                perPage: this.pager.perPage,
-                filter: filter,
-            }).then(data => {
-                this.discounts = data.iDiscounts;
-                this.pager.count = data.total;
-                this.processing = false;
-                Service.hideLoader();
-            });
+        },
+        toggleHiddenFilter() {
+            this.opened = !this.opened;
         },
         clearFilter() {
             this.filter = {
@@ -216,7 +232,8 @@ export default {
                 end_date: null,
                 fix_end_date: null,
                 indefinitely: null,
-            }
+            };
+            this.load();
         },
         statusClass(discount) {
             switch (discount.status) {
@@ -238,11 +255,8 @@ export default {
                 JSON.stringify([this.discountTypes.bundleOffer, this.discountTypes.bundleMasterclass]);
         },
         discountTypeName(type) {
-            return (type in this.optionDiscountTypes) ? this.optionDiscountTypes[type].name : 'N/A';
+            return (type in this.optionDiscountTypes) ? this.optionDiscountTypes[type].text : 'N/A';
         },
-    },
-    mounted() {
-
     },
     created() {
         this.load();
@@ -252,10 +266,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-.condition-list {
-    line-height: 0.9;
-    margin-top: 10px;
-}
-</style>

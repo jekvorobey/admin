@@ -68,7 +68,6 @@
                     />
                     <tab-synergy v-else-if="key === 'synergy'"
                                  :model.sync="discount"
-                                 :iDiscounts="discounts"
                                  :optionDiscountTypes = "optionDiscountTypes"
                                  :discountStatuses = "discountStatuses"
                     ></tab-synergy>
