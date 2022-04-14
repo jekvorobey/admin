@@ -250,10 +250,6 @@ export default {
                     return 'table-secondary';
             }
         },
-        ifBundle() {
-            return JSON.stringify(Object.keys(this.optionDiscountTypes).map(type => parseInt(type))) ===
-                JSON.stringify([this.discountTypes.bundleOffer, this.discountTypes.bundleMasterclass]);
-        },
         discountTypeName(type) {
             return (type in this.optionDiscountTypes) ? this.optionDiscountTypes[type].text : 'N/A';
         },
