@@ -156,7 +156,6 @@ class MerchantDetailController extends Controller
         $paymentMethods = $paymentService->getPaymentMethods(
             (new RestQuery())
                 ->addFields(PaymentMethod::entity(), 'id', 'name')
-                ->setFilter('active', true)
         );
 
         return $this->render('Merchant/Detail', [
