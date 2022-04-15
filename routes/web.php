@@ -851,6 +851,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('professional', 'CustomerDetailController@professional')->name('customers.detail.professional');
                 Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('customers.detail.portfolio.save');
                 Route::post('dial', 'CustomerDetailController@dial')->name('customers.detail.dial');
+                Route::post('auth', 'CustomerDetailController@auth')->name('customers.detail.auth');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('main')->group(function () {

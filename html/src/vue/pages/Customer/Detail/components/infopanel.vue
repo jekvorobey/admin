@@ -2,7 +2,7 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="4">
+            <th colspan="5">
                 Инфопанель
                 <button v-if="canUpdate(blocks.clients)" class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
                     Сохранить
@@ -10,6 +10,7 @@
                 <button @click="cancel" v-if="canUpdate(blocks.clients)" class="btn btn-outline-danger btn-sm" :disabled="!showBtn">Отмена</button>
 
                 <button v-if="canUpdate(blocks.clients)" @click="makeDial" class="btn btn-info btn-sm">Позвонить</button>
+                <button v-if="canUpdate(blocks.clients)" @click="authByUser" class="btn btn-warning btn-sm">Войти под клиентом</button>
                 <b-dropdown text="Изменить статус" class="float-right" size="sm" v-if="canUpdate(blocks.clients)">
                     <template v-if="!customer.referral">
                         <b-dropdown-item-button v-if="customer.status != customerStatus.created " @click="openModal('modal-mark-status-created')">
@@ -260,6 +261,20 @@
                 }).finally(data => {
                     Services.hideLoader();
                 })
+        },
+        authByUser() {
+            Services.showLoader();
+            Services.net().post(this.getRoute('customers.detail.auth', {id: this.customer.user_id}), null, )
+                .then(data => {
+                    if (data.url) {
+                        window.open(data.url);
+                        Services.msg("Авторизация выполнена, витрина откроется в новом окне");
+                    } else {
+                        Services.msg('Ошибка при авторизации');
+                    }
+                }).finally(data => {
+                Services.hideLoader();
+            })
         },
         makeReferral() {
             Services.showLoader();

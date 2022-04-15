@@ -7,10 +7,12 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\SocialUserLinkDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\AuthService;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -356,6 +358,24 @@ class CustomerDetailController extends Controller
 
         return response()->json([
             'status' => 'ok',
+        ]);
+    }
+
+    public function auth(int $id, AuthService $authService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+        $tokenData = $authService->tokenByUserId(Front::FRONT_SHOWCASE, $id);
+
+        if (!isset($tokenData['token']) || !isset($tokenData['refresh'])) {
+            return response()->json([
+                'status' => 'failed',
+            ]);
+        }
+        $url = sprintf(config('app.showcase_host') . '/user/login-by-token/%s/%s', $tokenData['token'], $tokenData['refresh']);
+
+        return response()->json([
+            'status' => 'ok',
+            'url' => $url,
         ]);
     }
 }
