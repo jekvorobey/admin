@@ -1,5 +1,5 @@
 <template>
-    <b-modal id="modal-cancel-shipment-item" hide-footer ref="modal">
+    <b-modal id="modal-cancel-shipment-item" hide-footer ref="modal" @hide="onClose">
         <template v-slot:modal-title>
             Количество к отмене
         </template>
@@ -100,6 +100,9 @@
                     Services.hideLoader();
                 });
             },
+            onClose() {
+                this.$emit("onClose");
+            }
         },
         computed: {
             order: {
