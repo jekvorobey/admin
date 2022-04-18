@@ -337,10 +337,10 @@ export default {
             return returnReason ? returnReason.text : '-';
         },
         hasExportErrors(shipment) {
-            return shipment.exports.filter(exportError => exportError.err_code).length > 0;
+            return this.getExportErrors(shipment).length > 0;
         },
         getExportErrors(shipment) {
-            return shipment.exports.filter(exportError => exportError.err_code);
+            return shipment.exports.filter(exportError => exportError.err_code !== null);
         }
     },
     computed: {

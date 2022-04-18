@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Merchant\Detail;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -27,7 +27,7 @@ class TabOperatorController extends Controller
 
         return response()->json([
             'communication_methods' => OperatorCommunicationMethod::allMethods(),
-            'roles' => RoleDto::rolesByFrontIds([Front::FRONT_MAS]),
+            'roles' => Helpers::getOptionRoles(false, [Front::FRONT_MAS]),
         ]);
     }
 
@@ -65,9 +65,7 @@ class TabOperatorController extends Controller
                     'email' => $users[$operator->user_id]->email,
                     'phone' => $users[$operator->user_id]->phone,
                     'communication_method' => OperatorCommunicationMethod::methodById($operator->communication_method)['name'],
-                    'roles' => collect($users[$operator->user_id]->roles)->map(function ($roleId) {
-                        return RoleDto::roles()[$roleId];
-                    })->all(),
+                    'roles' => $users[$operator->user_id]->roles,
                     'active' => $users[$operator->user_id]->active,
                     'login' => $users[$operator->user_id]->login,
                 ];
@@ -109,7 +107,7 @@ class TabOperatorController extends Controller
                     Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
                 ],
                 'roles' => 'array|someone',
-                'roles.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
+                'roles.' => Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS))),
                 'active' => 'integer|someone',
             ]
         )->attributes();

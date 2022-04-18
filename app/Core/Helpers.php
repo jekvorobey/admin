@@ -2,7 +2,8 @@
 
 namespace App\Core;
 
-use Greensight\CommonMsa\Dto\RoleDto;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Illuminate\Support\Collection;
 
 class Helpers
@@ -20,16 +21,39 @@ class Helpers
     }
 
     /**
-     * @param bool $showDefault
-     * @return array
+     * @param int|array $fronts
      */
-    public static function getOptionRoles($showDefault = true): array
+    public static function getRoles($fronts = []): array
     {
-        $roles = $showDefault ? [['value' => null, 'text' => 'Все']] : [];
-        $roles[] = ['value' => RoleDto::ROLE_SHOWCASE_PROFESSIONAL, 'text' => 'Профессионал'];
-        $roles[] = ['value' => RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER, 'text' => 'Реферальный партнер'];
+        /** @var RoleService $roleService */
+        $roleService = resolve(RoleService::class);
+        $roleQuery = $roleService->newQuery();
+        if ($fronts) {
+            $roleQuery->setFilter('front', $fronts);
+        }
 
-        return $roles;
+        return $roleService->roles($roleQuery)->pluck('name', 'id')->all();
+    }
+
+    public static function getOptionRoles(bool $showDefault = true, $front = Front::FRONT_SHOWCASE): array
+    {
+        $roles = collect(self::getRoles($front));
+
+        $options = $roles->map(function (string $name, int $id) {
+            return [
+                'value' => $id,
+                'text' => $name,
+            ];
+        });
+
+        if ($showDefault) {
+            $options->prepend([
+                'value' => null,
+                'text' => 'Все',
+            ]);
+        }
+
+        return $options->values()->all();
     }
 
     /**

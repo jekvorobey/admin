@@ -118,7 +118,7 @@ export default {
                 paramPeriodStock: this.options.paramStock ? this.options.paramStock.params.period : 10,
                 paramActiveStock: this.options.paramStock ? this.options.paramStock.active : true,
                 paramPeriodOrder: this.options.paramOrder ? this.options.paramOrder.params.period : 10,
-                paramActiveOrder: this.options.paramOrder ? this.options.paramOrder.avtive : false,
+                paramActiveOrder: this.options.paramOrder ? this.options.paramOrder.active : false,
                 paramPeriodPriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.params.period : 10,
                 paramActivePriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.active : true,
                 fileName: this.options ? this.options.fileName : '',

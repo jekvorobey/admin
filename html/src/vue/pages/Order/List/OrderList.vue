@@ -76,7 +76,7 @@
                                 Мерчант
                                 <template #help>Будут показаны заказы в которых есть товары указанного мерчанта</template>
                             </f-multi-select>
-                            <f-multi-select v-model="filter.payment_method" :options="paymentMethodOptions" class="col-sm-12 col-md-3">
+                            <f-multi-select v-model="filter.payment_method_id" :options="paymentMethodOptions" class="col-sm-12 col-md-3">
                                 Способ оплаты
                             </f-multi-select>
                             <f-multi-select v-model="filter.stores" :options="storeOptions" class="col-sm-12 col-md-3">
@@ -231,7 +231,7 @@
         delivery_xml_id: '',
         brands: [],
         merchants: [],
-        payment_method: [],
+        payment_method_id: [],
         stores: [],
         delivery_type: [],
         delivery_service: [],
@@ -268,7 +268,7 @@
         'delivery_xml_id',
         'brands',
         'merchants',
-        'payment_method',
+        'payment_method_id',
         'stores',
         'delivery_type',
         'delivery_service',
@@ -313,7 +313,7 @@
             let filter = Object.assign({}, cleanFilter, this.iFilter);
             filter.status = filter.status.map(value => parseInt(value));
             filter.delivery_type = filter.delivery_type.map(value => parseInt(value));
-            filter.payment_method = filter.payment_method.map(value => parseInt(value));
+            filter.payment_method_id = filter.payment_method_id.map(value => parseInt(value));
             filter.delivery_service = filter.delivery_service.map(value => parseInt(value));
             filter.brands = filter.brands.map(value => parseInt(value));
             filter.merchants = filter.merchants.map(value => parseInt(value));

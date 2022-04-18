@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customers;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\Front;
@@ -50,7 +51,7 @@ class CustomerListController extends Controller
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
             'perPage' => self::PER_PAGE,
-            'roles' => $this->getRoles($isReferral),
+            'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
         ]);
     }
 
@@ -192,18 +193,5 @@ class CustomerListController extends Controller
         return response()->json([
             'redirect' => route('customers.detail', ['id' => $customerId]),
         ]);
-    }
-
-    /**
-     * @param $isReferral
-     * @return string[]|null
-     */
-    protected function getRoles($isReferral): ?array
-    {
-        return $isReferral === null ? [
-            0 => 'Все',
-            RoleDto::ROLE_SHOWCASE_PROFESSIONAL => 'Профессионалы',
-            RoleDto::ROLE_SHOWCASE_REFERRAL_PARTNER => 'Реферальные партнеры',
-        ] : null;
     }
 }
