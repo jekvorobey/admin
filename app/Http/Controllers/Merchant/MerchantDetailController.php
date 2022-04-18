@@ -50,7 +50,6 @@ class MerchantDetailController extends Controller
         $this->loadMerchantCommissionTypes = true;
         $this->loadMerchantVatTypes = true;
         $this->loadMerchantDocumentTypes = true;
-        $this->loadUserRoles = true;
         $this->loadCustomerStatus = true;
         $this->loadCommunicationChannelTypes = true;
         $this->loadCommunicationChannels = true;
@@ -157,7 +156,6 @@ class MerchantDetailController extends Controller
         $paymentMethods = $paymentService->getPaymentMethods(
             (new RestQuery())
                 ->addFields(PaymentMethod::entity(), 'id', 'name')
-                ->setFilter('active', true)
         );
 
         return $this->render('Merchant/Detail', [

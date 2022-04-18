@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Merchant;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -38,7 +38,7 @@ class MerchantOperatorController extends Controller
             $props['merchants'] = $merchants;
         }
         $props['communicationMethods'] = OperatorCommunicationMethod::allMethods();
-        $props['roles'] = RoleDto::rolesByFrontIds([Front::FRONT_MAS]);
+        $props['roles'] = Helpers::getOptionRoles(false, Front::FRONT_MAS);
 
         return $this->render('Merchant/Operator/CreateEdit', $props);
     }
@@ -61,6 +61,7 @@ class MerchantOperatorController extends Controller
 
         $operator = [
             'id' => $operator->id,
+            'user_id' => $operator->user_id,
             'merchant_id' => $operator->merchant_id,
             'last_name' => $user->last_name,
             'first_name' => $user->first_name,
@@ -84,7 +85,7 @@ class MerchantOperatorController extends Controller
             'operatorProp' => $operator,
             'merchants' => $merchants,
             'communicationMethods' => OperatorCommunicationMethod::allMethods(),
-            'roles' => RoleDto::rolesByFrontIds([Front::FRONT_MAS]),
+            'roles' => Helpers::getOptionRoles(false, Front::FRONT_MAS),
         ]);
     }
 
@@ -95,13 +96,14 @@ class MerchantOperatorController extends Controller
         $userData = $request->validate([
             'last_name' => 'string|required',
             'first_name' => 'string|required',
-            'middle_name' => 'string|required',
+            'middle_name' => 'string|nullable',
             'email' => 'email|required',
-            'phone' => 'string|required',
             'login' => 'string|required',
-            'password' => 'string|required',
+            'login_email' => 'email|required',
+            'phone' => 'string|required',
+            'password' => 'string|nullable',
             'roles' => 'array|required',
-            'roles.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
+            'roles.' => Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS))),
             'active' => 'bool|required',
         ]);
 
@@ -145,11 +147,8 @@ class MerchantOperatorController extends Controller
         ]);
 
         $userRolesData = $request->validate([
-            'roles' => 'array',
-            'roles.add' => 'array',
-            'roles.delete' => 'array',
-            'roles.add.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
-            'roles.delete.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
+            'roles' => 'required|array',
+            'roles.*' => ['integer', Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS)))],
         ]);
 
         $operatorData = $request->validate([
@@ -168,11 +167,8 @@ class MerchantOperatorController extends Controller
                 $userData['id'] = $operator->user_id;
                 $userService->update(new UserDto($userData));
             }
-            if ($userRolesData && $userRolesData['roles']['add']) {
-                $userService->addRoles($operator->user_id, $userRolesData['roles']['add']);
-            }
-            if ($userRolesData && $userRolesData['roles']['delete']) {
-                $userService->deleteRoles($operator->user_id, $userRolesData['roles']['delete']);
+            if ($userRolesData) {
+                $userService->addRoles($operator->user_id, $userRolesData['roles']);
             }
         }
 
@@ -190,11 +186,22 @@ class MerchantOperatorController extends Controller
             'operator_ids' => 'required|array',
         ]);
 
-        $userIds = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']))
-            ->pluck('user_id')
-            ->all();
+        $users = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
 
-        $userService->deleteArray($userIds);
+        $userForDeleteIds = [];
+        /** @var UserDto $user */
+        foreach ($users as $user) {
+            if (array_diff($user->fronts, [Front::FRONT_MAS])) {
+                unset($user->fronts[Front::FRONT_MAS]);
+                $userData['fronts'] = $user->fronts;
+                $userService->update(new UserDto($userData));
+            } else {
+                $userForDeleteIds[] = $user->id;
+            }
+        }
+        if ($userForDeleteIds) {
+            $userService->deleteArray($userForDeleteIds);
+        }
         $operatorService->deleteArray($data['operator_ids']);
 
         return response('', 204);
@@ -207,19 +214,11 @@ class MerchantOperatorController extends Controller
 
         $userRolesData = $request->validate([
             'user_id' => 'integer',
-            'roles' => 'array',
-            'roles.add' => 'array',
-            'roles.delete' => 'array',
-            'roles.add.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
-            'roles.delete.' => Rule::in(RoleDto::rolesByFrontIds([Front::FRONT_MAS])),
+            'roles' => 'required|array',
+            'roles.*' => ['integer', Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS)))],
         ]);
 
-        if ($userRolesData['roles'] && $userRolesData['roles']['add']) {
-            $userService->addRoles($userRolesData['user_id'], $userRolesData['roles']['add']);
-        }
-        if ($userRolesData['roles'] && $userRolesData['roles']['delete']) {
-            $userService->deleteRoles($userRolesData['user_id'], $userRolesData['roles']['delete']);
-        }
+        $userService->addRoles($userRolesData['user_id'], $userRolesData['roles']);
 
         return response('', 204);
     }

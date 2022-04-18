@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
             Route::put('/', 'DiscountController@status')->name('discount.status');
             Route::delete('/', 'DiscountController@delete')->name('discount.delete');
+            Route::post('/copy', 'DiscountController@copy')->name('discount.copy');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
@@ -635,6 +636,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/landingCache', 'LandingDetailController@landingCache')->name('landing.landingCache');
         });
 
+        Route::prefix('seo')->namespace('Seo')->group(function () {
+            Route::get('/', 'SeoController@listPage')->name('seo.listPage');
+            Route::get('/{id}', 'SeoController@edit')->where(['id' => '[0-9]+'])->name('seo.updatePage');
+
+            Route::get('/page', 'SeoController@page')->name('seo.page');
+            Route::put('/{id}', 'SeoController@update')->where(['id' => '[0-9]+'])->name('seo.update');
+        });
+
         Route::prefix('redirect')->namespace('Redirect')->group(function () {
             Route::get('', 'RedirectListController@index')->name('redirect.list');
             Route::get('/page', 'RedirectListController@page')->name('redirect.page');
@@ -844,6 +853,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('professional', 'CustomerDetailController@professional')->name('customers.detail.professional');
                 Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('customers.detail.portfolio.save');
                 Route::post('dial', 'CustomerDetailController@dial')->name('customers.detail.dial');
+                Route::post('auth', 'CustomerDetailController@auth')->name('customers.detail.auth');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('main')->group(function () {

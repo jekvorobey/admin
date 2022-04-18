@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Merchant;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -13,7 +12,6 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
@@ -280,13 +278,16 @@ class MerchantListController extends Controller
             'bank_bik' => 'required|string|size:9',
             'correspondent_account' => 'required|string|size:20',
 
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
             'middle_name' => 'nullable|string',
-            'email' => 'required|email',
-            'phone' => 'required|regex:/\+\d\(\d\d\d\)\s\d\d\d-\d\d-\d\d/',
-            'communication_method' => Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|regex:/^\+7\d{10}$/',
+            'communication_method' => [
+                'nullable',
+                Rule::in(array_keys(OperatorCommunicationMethod::allMethods())),
+            ],
+            //'password' => 'required|string|min:8|confirmed',
 
             'storage_address' => 'required|string',
             'site' => 'required|string',
@@ -311,8 +312,8 @@ class MerchantListController extends Controller
                 ->setLastName($data['last_name'])
                 ->setMiddleName($data['middle_name'])
                 ->setEmail($data['email'])
-                ->setPhone(phone_format($data['phone']))
-                ->setPassword($data['password'])
+                ->setPhone($data['phone'] ? phone_format($data['phone']) : null)
+                //->setPassword($data['password'])
                 ->setStorageAddress($data['storage_address'])
                 ->setSite($data['site'])
                 ->setCanIntegration((bool) $data['can_integration'])
@@ -327,20 +328,6 @@ class MerchantListController extends Controller
 
         return response()->json([
             'redirect' => route('merchant.detail', ['id' => $merchantId]),
-        ]);
-    }
-
-    public function checkEmailExists(Request $request, UserService $userService): JsonResponse
-    {
-        $email = $request->get('email', false);
-        if (!$email) {
-            throw new BadRequestHttpException('email is empty');
-        }
-
-        $exists = $userService->exists($email, Front::FRONT_MAS);
-
-        return response()->json([
-            'exists' => $exists,
         ]);
     }
 }

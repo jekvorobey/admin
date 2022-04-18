@@ -32,6 +32,7 @@ use IBT\Reports\Dto\Enum\ReportTypeDto;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use MerchantManagement\Dto\CommissionDto;
+use MerchantManagement\Dto\Integration\ExtSystemDriver;
 use MerchantManagement\Dto\MerchantDocumentDto;
 use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Dto\MerchantStatus;
@@ -51,7 +52,6 @@ class ViewRender
     private $props;
     private $title;
 
-    private $userRoles = [];
     private $userFronts = [];
     private $blocks = [];
     private $blockPermissions = [];
@@ -70,6 +70,7 @@ class ViewRender
     private $merchantCommissionTypes = [];
     private $merchantVatTypes = [];
     private $merchantDocumentTypes = [];
+    private $merchantExtSystemDrivers = [];
 
     private $publicEventTypes = [];
     private $publicEventMediaTypes = [];
@@ -116,13 +117,6 @@ class ViewRender
         return $this;
     }
 
-    public function loadUserRoles(): self
-    {
-        $this->userRoles = RoleDto::rolesGroupByFront();
-
-        return $this;
-    }
-
     public function loadUserFronts(): self
     {
         $this->userFronts = [
@@ -164,6 +158,22 @@ class ViewRender
         $this->blockPermissions = [
             'view' => array_merge($view, $update),
             'update' => $update,
+        ];
+
+        return $this;
+    }
+
+    public function loadExtSystemDriver(): self
+    {
+        $this->merchantExtSystemDrivers = [
+            'moysklad' => ExtSystemDriver::DRIVER_MOY_SKLAD,
+            'authentica' => ExtSystemDriver::DRIVER_AUTHENTICA,
+            'galser' => ExtSystemDriver::DRIVER_GALSER,
+            'hitek' => ExtSystemDriver::DRIVER_HITEK,
+            'one_c' => ExtSystemDriver::DRIVER_1C,
+            'termix' => ExtSystemDriver::DRIVER_TERMIX,
+            'filesharing' => ExtSystemDriver::DRIVER_FILE_SHARING,
+            'lb' => ExtSystemDriver::DRIVER_LABIOSTHETIQUE,
         ];
 
         return $this;
@@ -807,7 +817,6 @@ class ViewRender
                     'isSuper' => resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR),
                 ],
 
-                'userRoles' => $this->userRoles,
                 'userFronts' => $this->userFronts,
                 'blocks' => $this->blocks,
                 'blockPermissions' => $this->blockPermissions,
@@ -826,6 +835,7 @@ class ViewRender
                 'merchantCommissionTypes' => $this->merchantCommissionTypes,
                 'merchantVatTypes' => $this->merchantVatTypes,
                 'merchantDocumentTypes' => $this->merchantDocumentTypes,
+                'merchantExtSystemDrivers' => $this->merchantExtSystemDrivers,
 
                 'publicEventTypes' => $this->publicEventTypes,
                 'publicEventMediaTypes' => $this->publicEventMediaTypes,

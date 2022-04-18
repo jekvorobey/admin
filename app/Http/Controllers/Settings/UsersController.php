@@ -106,8 +106,8 @@ class UsersController extends Controller
 
         return $this->render('Settings/UserDetail', [
             'iUser' => $user,
-            'customerId' => $customer ? $customer->id : null,
-            'merchantId' => $operator ? $operator->merchant_id : null,
+            'customerId' => $customer->id ?? null,
+            'merchantId' => $operator->merchant_id ?? null,
             'iRoles' => $userRoles,
             'options' => [
                 'fronts' => Front::allFronts(),
@@ -173,7 +173,8 @@ class UsersController extends Controller
 
     public function isUnique(Request $request, UserService $userService): JsonResponse
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        // TODO: используется также при создании мерчанта (с правами на BlockDto::ADMIN_BLOCK_MERCHANTS)
+        // $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $data = $request->get('data');
         $field = $request->get('field');
@@ -182,13 +183,17 @@ class UsersController extends Controller
         if ($data && $field) {
             if ($field === 'phone') {
                 $data = phone_format($data);
+            } elseif ($field === 'email') {
+                $field = 'login_email';
             }
-            $userQuery = new RestQuery();
-            $userQuery->setFilter($field, $data);
-            $userQuery->setFilter($field, 'notNull');
+
+            $userQuery = $userService->newQuery()
+                ->setFilter($field, $data)
+                ->setFilter($field, 'notNull');
             if ($id) {
                 $userQuery->setFilter('id', '!=', $id);
             }
+
             $isUnique = $userService->users($userQuery)->isEmpty();
         }
 

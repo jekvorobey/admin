@@ -22,6 +22,7 @@ use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\PaymentService\PaymentService;
 use Greensight\Store\Dto\StoreDto;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -48,7 +49,8 @@ class OrderListController extends Controller
         Request $request,
         OrderService $orderService,
         BrandService $brandService,
-        StoreService $storeService
+        StoreService $storeService,
+        PaymentService $paymentService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
@@ -70,6 +72,7 @@ class OrderListController extends Controller
             'iPager' => $pager,
             'merchants' => $this->getMerchants(),
             'confirmationTypes' => OrderConfirmationType::allTypes(),
+            'paymentMethods' => $paymentService->getPaymentMethods(),
             'orderTypes' => OrderType::allTypes(),
             'stores' => $storeService->newQuery()->addFields(StoreDto::entity(), 'id', 'address')->stores(),
             'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
@@ -132,7 +135,8 @@ class OrderListController extends Controller
                 'brands.*' => 'integer',
                 'merchants' => 'array|sometimes',
                 'merchants.*' => 'integer',
-                'payment_method.*' => 'integer',
+                'payment_method_id' => 'array',
+                'payment_method_id.*' => 'integer',
                 'stores' => 'array|sometimes',
                 'stores.*' => 'integer',
                 'delivery_type.*' => Rule::in(array_keys(DeliveryType::allTypes())),

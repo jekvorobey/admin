@@ -184,7 +184,7 @@ export default {
                         const containsNumber = /[0-9]/.test(value)
                         //const containsSpecial = /[#?!@$%^&*-]/.test(value)
 
-                        return containsUppercase && containsLowercase && containsNumber
+                        return containsUppercase && containsLowercase && containsNumber;
                     }
                 },
                 repeatPassword: {sameAsPassword: sameAs('password')},
@@ -251,6 +251,8 @@ export default {
                     infinity_sip_extension: this.form.infinity_sip_extension,
                     fronts: this.form.fronts,
                     roles: this.form.roles,
+                }).finally(() => {
+                    this.closeModal();
                 });
             });
         },

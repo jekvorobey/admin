@@ -153,10 +153,10 @@ class Menu
 //                        'title' => 'Контент-разделы',
 //                        'route' => '#',
 //                    ],
-//                    [
-//                        'title' => 'SEO',
-//                        'route' => '#',
-//                    ],
+                    [
+                        'title' => 'SEO',
+                        'route' => route('seo.listPage'),
+                    ],
 //                    [
 //                        'title' => 'Отзывы',
 //                        'route' => '#',

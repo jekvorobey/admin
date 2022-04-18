@@ -1,72 +1,106 @@
 <template>
     <div>
         <div v-if="!extSystem && canUpdate(blocks.merchants)">
-            <v-select class="col-md-4 col-6" :options="extSystemOptions" v-model="extSystemsSelect.driver_id"><h4>Выберите интеграцию</h4></v-select>
-            <div v-if="isMoySklad(extSystemsSelect.driver_id)" >
-                <div class="row">
-                    <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
-                    <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
-                    <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
-
-                </div>
-                <div class="row">
-                    <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
-                    <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5>ID организации</h5></v-input>
-                </div>
-            </div>
-            <button @click="create()" class="btn btn-success btn-md">
-                Создать интеграцию
+            <v-select class="col-md-4 col-6" :options="extSystemOptions" v-model="extSystemsSelect.driver_id"><h4>
+                Выберите интеграцию</h4></v-select>
+            <button v-if="extSystemsSelect.driver_id && !is1C(extSystemsSelect.driver_id)" @click="openModal('integrationModal')"
+                    class="btn btn-success btn-md">
+                Добавить интеграцию
+            </button>
+            <button v-if="extSystemsSelect.driver_id && is1C(extSystemsSelect.driver_id)" @click="create1C"
+                    class="btn btn-success btn-md">
+                Добавить интеграцию с 1C
             </button>
         </div>
 
-        <template v-if="extSystem && is1C(extSystem.driver)">
+        <div v-else-if="extSystem">
             <table class="table table-sm">
                 <tbody>
                 <tr>
-                    <th width="400px">ID</th>
+                    <th>ID</th>
                     <td>{{ extSystem.id }}</td>
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
-                    <th width="400px">Токен</th>
+                    <th>Токен</th>
                     <td>{{ extSystem.connection_params.token }}</td>
                 </tr>
                 <tr>
-                    <th width="400px">Логин</th>
+                    <th>Логин</th>
                     <td>{{ extSystem.connection_params.login }}</td>
                 </tr>
                 <tr>
-                    <th width="400px">Пароль</th>
+                    <th>Пароль</th>
                     <td>{{ extSystem.connection_params.password }}</td>
                 </tr>
-                <tr>
-                    <th width="400px">Хост</th>
-                    <td>{{ host }}</td>
+                <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Хост</th>
+                    <td>{{ extSystem.connection_params.host }}</td>
+                </tr>
+                <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Порт</th>
+                    <td>{{ extSystem.connection_params.port }}</td>
+                </tr>
+                <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Наименование файла</th>
+                    <td>{{ extSystem.connection_params.fileName }}</td>
+                </tr>
+                <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Период проверки (мин)</th>
+                    <td>{{ paramOptions.paramPriceStock.params.period }}</td>
+                </tr>
+                <tr v-if="isFileSharing(extSystem.driver)">
+                    <th>Статус</th>
+                    <td>{{ checkStatus(paramOptions.paramPriceStock.active) }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Интеграция</th>
+                    <td>Импорт цен</td>
+                    <td>Импорт остатков</td>
+                    <td>Экспорт заказов</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Период проверки (мин)</th>
+                    <td>{{ paramOptions.paramPrice.params.period }}</td>
+                    <td>{{ paramOptions.paramStock.params.period }}</td>
+                    <td>{{ paramOptions.paramOrder.params.period }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Статус</th>
+                    <td>{{ checkStatus(paramOptions.paramPrice.active) }}</td>
+                    <td>{{ checkStatus(paramOptions.paramStock.active) }}</td>
+                    <td>{{ checkStatus(paramOptions.paramOrder.active) }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Настройка цены</th>
+                    <td>{{ paramOptions.merchantPriceSetting }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Код Юр.лица</th>
+                    <td>{{ paramOptions.merchantOrganizationSetting }}</td>
                 </tr>
                 <tr>
-                    <th width="400px">Дата создания</th>
+                    <th>Дата создания</th>
                     <td>{{ datetimePrint(extSystem.created_at) }}</td>
                 </tr>
                 </tbody>
             </table>
-        </template>
-
-        <template v-else-if="extSystem">
-            <div class="row">
-                <v-input v-model="$v.form.token.$model" :error="errorToken" class="col-md-4 col-12"><h5>Токен</h5></v-input>
-                <v-input v-model="$v.form.host.$model" disabled="disabled" class="col-md-4 col-12"><h5>Хост</h5></v-input>
-            </div>
-            <div class="row">
-                <v-input v-model="$v.form.login.$model" :error="errorLogin" class="col-md-4 col-12"><h5>Логин</h5></v-input>
-                <v-input v-model="$v.form.password.$model" :error="errorPassword" class="col-md-4 col-12"><h5>Пароль</h5></v-input>
-            </div>
-            <div class="row">
-                <v-input v-model="$v.form.settingPriceValue.$model" :error="errorSettingPriceValue" class="col-md-4 col-12"><h5>Значение настройки цены</h5></v-input>
-                <v-input v-model="$v.form.settingOrderValue.$model" :error="errorSettingOrderValue" class="col-md-4 col-12"><h5></h5>ID организации</v-input>
-            </div>
-            <button v-if="canUpdate(blocks.merchants)" @click="update()" class="btn btn-success btn-md">
-                Сохранить
+            <button v-if="!is1C(extSystem.driver)" @click="openModal('integrationModal')"
+                    class="btn btn-sm btn-success">
+                Редактировать
             </button>
-        </template>
+        </div>
+        <transition name="modal" v-if="canUpdate(blocks.merchants)">
+            <modal :close="closeModal" v-if="isModalOpen('integrationModal')">
+                <div slot="header">
+                    {{ extSystem ? 'Редактирование интеграции' : 'Добавление интеграции' }}
+                </div>
+                <div slot="body">
+                    <integration-modal :id="id" :extSystem="extSystem" :options="paramOptions"
+                                       :extSystemsSelect="extSystemsSelect"
+                                       @onSave="onIntegrationSave"></integration-modal>
+                </div>
+            </modal>
+        </transition>
     </div>
 </template>
 
@@ -74,65 +108,29 @@
 
 import Services from "../../../../../scripts/services/services";
 import {mapActions} from "vuex";
-import {validationMixin} from 'vuelidate';
-import {required, requiredIf} from 'vuelidate/lib/validators';
 import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
-import VInput from '../../../../components/controls/VInput/VInput.vue';
+import IntegrationModal from '../components/tab-ext-systems-components/integration-modal.vue';
+import modalMixin from '../../../../mixins/modal.js';
+import Modal from '../../../../components/controls/modal/modal.vue';
 
 export default {
-    mixins: [validationMixin],
+    mixins: [modalMixin],
     components: {
         VSelect,
-        VInput,
+        IntegrationModal,
+        Modal,
     },
     name: 'tab-ext-systems',
     props: ['id'],
     data() {
         return {
-            form: {
-                token: '',
-                login: '',
-                password: '',
-                host: '',
-                settingPriceValue: '',
-                settingOrderValue: '',
-            },
-            extSystem: {},
-            host: '',
+            extSystem: null,
             extSystemsOptions: [],
-            merchantSetting: {},
+            paramOptions: {},
             extSystemsSelect: {
                 driver_id: this.extSystem ? this.extSystem.driver : null,
             },
         }
-    },
-    validations() {
-        return {
-            form: {
-                token: {
-                    required: requiredIf(function(form){
-                        return form.login === ''
-                    }),
-                },
-                login: {
-                    required: requiredIf(function(form){
-                        return form.token === ''
-                    }),
-                },
-                password: {
-                    required: requiredIf(function(form){
-                        return form.login !== ''
-                    }),
-                },
-                host: '',
-                settingPriceValue: {
-                    required: required,
-                },
-                settingOrderValue: {
-                    required: required,
-                },
-            }
-        };
     },
     methods: {
         ...mapActions({
@@ -140,98 +138,51 @@ export default {
         }),
         loadExtSystem() {
             Services.showLoader();
-
             Services.net().get(this.getRoute('merchant.detail.extSystems', {id: this.id})).then(data => {
                 this.extSystem = data.extSystem ? data.extSystem : null;
                 this.extSystemsOptions = data.extSystemsOptions;
-                this.host = data.host;
-                this.form.token = data.extSystem ? data.extSystem.connection_params.token : null;
-                this.form.login = data.extSystem ? data.extSystem.connection_params.login : null;
-                this.form.password = data.extSystem ? data.extSystem.connection_params.password : null;
-                this.form.host = data.host;
-                this.form.settingPriceValue = data.merchantPriceSetting ? data.merchantPriceSetting.value : null;
-                this.form.settingOrderValue = data.merchantOrderSetting ? data.merchantOrderSetting.value : null;
+                this.paramOptions = data.paramOptions;
             }).finally(() => {
                 Services.hideLoader();
             })
         },
-        create() {
+        create1C() {
             Services.showLoader();
             let formData = {
-                token: this.form.token,
-                login: this.form.login,
-                password: this.form.password,
                 driver: this.extSystemsSelect.driver_id,
-                settingPriceValue: this.form.settingPriceValue,
-                settingOrderValue: this.form.settingOrderValue,
             };
             Services.net().post(
                 this.getRoute('merchant.detail.extSystems.store', {id: this.id}), {}, formData
             ).then(() => {
-                Services.msg('Интеграция успешно создана');
-                this.loadExtSystem();
-            }).finally(() => {
-                Services.hideLoader();
-            })
-        },
-        update() {
-            Services.showLoader();
-            let formData = {
-                merchantId: this.id,
-                token: this.form.token,
-                login: this.form.login,
-                password: this.form.password,
-                settingPriceValue: this.form.settingPriceValue,
-                settingOrderValue: this.form.settingOrderValue,
-            };
-            Services.net().put(
-                this.getRoute('merchant.detail.extSystems.update', {id: this.extSystem.id}), {}, formData
-            ).then(() => {
-                Services.msg('Интеграция успешно обновлена');
+                Services.msg('Интеграция с 1C успешно создана');
                 this.loadExtSystem();
             }).finally(() => {
                 Services.hideLoader();
             })
         },
         is1C(driverId) {
-            return driverId === 5 || driverId === '5'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.one_c
         },
         isMoySklad(driverId) {
-            return driverId === 1 || driverId === '1'
+            return parseInt(driverId) === this.merchantExtSystemDrivers.moysklad
+        },
+        isFileSharing(driverId) {
+            return parseInt(driverId) === this.merchantExtSystemDrivers.filesharing
+        },
+        onIntegrationSave() {
+            this.loadExtSystem();
+        },
+        checkStatus(status) {
+            return status ? 'Активна' : 'Неактивна';
         },
     },
     computed: {
         extSystemOptions() {
             let options = Object.values(this.extSystemsOptions)
-                .map(extSystem => ({ value: extSystem.id, text: extSystem.name }));
-            options.unshift({ value: null, text: '-' });
+                .map(extSystem => ({value: extSystem.id, text: extSystem.name}));
+            options.unshift({value: null, text: '-'});
 
             return options;
-        },
-        errorToken() {
-            if (this.$v.form.token.$dirty) {
-                if (!this.$v.form.token.required) return "Обязательное поле!";
-            }
-        },
-        errorLogin() {
-            if (this.$v.form.login.$dirty) {
-                if (!this.$v.form.login.required) return "Обязательное поле!";
-            }
-        },
-        errorPassword() {
-            if (this.$v.form.password.$dirty) {
-                if (!this.$v.form.password.required) return "Обязательное поле!";
-            }
-        },
-        errorSettingPriceValue() {
-            if (this.$v.form.settingPriceValue.$dirty) {
-                if (!this.$v.form.settingPriceValue.required) return "Обязательное поле!";
-            }
-        },
-        errorSettingOrderValue() {
-            if (this.$v.form.settingOrderValue.$dirty) {
-                if (!this.$v.form.settingOrderValue.required) return "Обязательное поле!";
-            }
         },
     },
     created() {

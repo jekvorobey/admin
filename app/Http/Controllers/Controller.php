@@ -54,11 +54,11 @@ class Controller extends BaseController
     {
         return (new ViewRender($componentName, $props))
             ->setTitle($this->title)
-            ->loadUserRoles()
             ->loadUserFronts()
             ->loadBlocks()
             ->loadBlockPermissions()
             ->loadProductImagesTypes()
+            ->loadExtSystemDriver()
             ->loadCustomerStatus($this->loadCustomerStatus)
             ->loadCommunicationChannelTypes($this->loadCommunicationChannelTypes)
             ->loadCommunicationChannels($this->loadCommunicationChannels)

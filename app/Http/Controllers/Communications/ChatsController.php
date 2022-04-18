@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Communications;
 
+use App\Core\Helpers;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\Front;
-use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestClientException;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -34,11 +34,10 @@ class ChatsController extends Controller
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
         $this->loadCommunicationTypes = true;
-        $this->loadUserRoles = true;
 
         $this->title = 'Непрочитанные сообщения';
         return $this->render('Communication/ChatsUnread', [
-            'roles' => RoleDto::rolesByFrontIds([
+            'roles' => Helpers::getRoles([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
@@ -60,7 +59,7 @@ class ChatsController extends Controller
         $this->title = 'Массовая рассылка';
 
         return $this->render('Communication/Broadcast', [
-            'roles' => RoleDto::rolesByFrontIds([
+            'roles' => Helpers::getRoles([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
@@ -218,11 +217,11 @@ class ChatsController extends Controller
         $listConstructor = $communicationService->chats();
         $listConstructor->setUserIds('null');
         $chats = $listConstructor->load();
-        $roles = RoleDto::rolesGroupByFront();
+        $roles = Helpers::getRoles([Front::FRONT_MAS, Front::FRONT_SHOWCASE]);
         $users = $userService
             ->users(
                 (new RestQuery())
-                    ->setFilter('role', array_merge($roles[Front::FRONT_MAS], $roles[Front::FRONT_SHOWCASE]))
+                    ->setFilter('role', array_keys($roles))
             )
                 ->keyBy('id')
                 ->map(function (UserDto $user) {

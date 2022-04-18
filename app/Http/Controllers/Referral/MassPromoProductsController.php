@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Referral;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Customers\Detail\TabPromoProductController;
 use App\Managers\PromoProducts\PromoProductsManager;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Core\CustomerException;
@@ -76,8 +75,10 @@ class MassPromoProductsController extends Controller
      * Назначить промо-товар реф. партнерам по критериям
      * @throws PimException
      */
-    public function attachProduct(ReferralService $referralService): JsonResponse
-    {
+    public function attachProduct(
+        ReferralService $referralService,
+        PromoProductsManager $promoProductsManager
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
         $data = $this->validate(request(), [
@@ -94,11 +95,8 @@ class MassPromoProductsController extends Controller
         $segments = $data['segments'] ?? null;
         $referralService->attachMassPromotions($data['promo_products'], $segments);
 
-        $helper = resolve(TabPromoProductController::class);
-        $promoProducts = $helper->loadPromotionProducts(null);
-
         return response()->json([
-            'promoProducts' => $promoProducts,
+            'promoProducts' => $promoProductsManager->fetch(),
         ]);
     }
 
