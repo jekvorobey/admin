@@ -136,6 +136,19 @@ class OrderDetailController extends Controller
     }
 
     /**
+     * Вручную подтвердить платеж
+     * @throws Exception
+     */
+    public function capturePayment(int $id, OrderService $orderService): JsonResponse
+    {
+        $orderService->capturePayment($id);
+
+        return response()->json([
+            'order' => $this->getOrder($id),
+        ]);
+    }
+
+    /**
      * Вручную оплатить заказ
      * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
      * @throws Exception
