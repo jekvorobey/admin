@@ -455,7 +455,7 @@ export default {
             return this.isStatus(this.shipmentStatuses.assembling.id);
         },
         isAssembled() {
-            return Object.keys(this.shipment.nonPackedBasketItems).length === 0;
+            return this.isStatus(this.shipmentStatuses.assembled.id);
         },
         hasShipmentPackages() {
             return this.shipment.packages.length > 0;
