@@ -91,6 +91,7 @@
                         </b-td>
                         <b-td v-if="!basketItem.is_canceled" class="with-small">
                             {{ basketItem.qty | integer }} шт
+                            <small v-if="basketItem.qty_canceled"> Отменено {{ basketItem.qty_canceled }} шт</small>
                             <small> {{ basketItem.product.weight }} г</small>
                             <small> {{ basketItem.product.length }} x {{ basketItem.product.width }} x
                                 {{ basketItem.product.height }} мм</small>
