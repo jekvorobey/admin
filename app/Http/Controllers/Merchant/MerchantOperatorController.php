@@ -186,7 +186,8 @@ class MerchantOperatorController extends Controller
             'operator_ids' => 'required|array',
         ]);
 
-        $users = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
+        $operators = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
+        $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()));
 
         $userForDeleteIds = [];
         /** @var UserDto $user */
