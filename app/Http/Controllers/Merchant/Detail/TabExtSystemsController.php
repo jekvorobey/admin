@@ -188,23 +188,29 @@ class TabExtSystemsController extends Controller
                 foreach ($this->moyskladIntegrationsData($data['integrationParams']) as $integrationData) {
                     $integrationDto = new IntegrationDto($integrationData);
 
-                    $integration = $integrations->firstWhere('type', $integrationData['type']);
-                    if ($integration) {
-                        $this->merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
-                    } else {
-                        $this->merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
-                    }
+                    $this->saveIntegration($integrationDto, $integrations, $extSystemId);
                 }
                 return;
             case ExtSystemDriver::DRIVER_FILE_SHARING:
                 foreach ($this->fileSharingIntegrationsData($data['integrationParams']) as $integrationData) {
                     $integrationDto = new IntegrationDto($integrationData);
-                    $integration = $integrations->where('type', $integrationData['type'])->first();
-                    $this->merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
+
+                    $this->saveIntegration($integrationDto, $integrations, $extSystemId);
                 }
                 return;
             default:
                 //
+        }
+    }
+
+    private function saveIntegration(IntegrationDto $integrationDto, Collection $integrations, int $extSystemId): void
+    {
+        $integration = $integrations->firstWhere('type', $integrationDto->type);
+
+        if ($integration) {
+            $this->merchantIntegrationService->updateIntegration($integration->id, $integrationDto);
+        } else {
+            $this->merchantIntegrationService->createIntegration($extSystemId, $integrationDto);
         }
     }
 
