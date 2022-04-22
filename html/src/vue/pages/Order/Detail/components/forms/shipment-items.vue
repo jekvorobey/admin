@@ -413,7 +413,7 @@ export default {
             this.$bvModal.hide('modal-cancel-shipment-item');
         },
         canCancelShipmentItem(shipment) {
-            return shipment.status && shipment.status.id < this.shipmentStatuses.assembled.id && !shipment.is_canceled;
+            return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
         },
     },
     computed: {
