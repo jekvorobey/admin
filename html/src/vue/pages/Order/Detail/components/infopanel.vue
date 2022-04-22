@@ -14,9 +14,13 @@
                       <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
                           Оплатить
                       </b-dropdown-item-button>-->
-                      <b-dropdown-item-button v-if="!isNotPaid">
-                        Вернуть деньги
-                      </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="!isNotPaid">
+                            Вернуть деньги
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="isHold"
+                                                @click="capturePayment()">
+                            Подтвердить платеж
+                        </b-dropdown-item-button>
                       <b-dropdown-item-button>
                         Отправить уведомление клиенту
                       </b-dropdown-item-button>
@@ -196,6 +200,24 @@ export default {
                 Services.hideLoader();
             });
         },
+        capturePayment() {
+            let errorMessage = 'Ошибка при подтверждении платежа';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.capturePayment', {id: this.order.id})).then(data => {
+                if (data.order) {
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
+                    Services.msg('Платеж подтвержден');
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
         payOrder() {
             let errorMessage = 'Ошибка при оплате заказа';
 
@@ -286,7 +308,10 @@ export default {
             return this.isStatus(this.orderStatuses.created.id);
         },
         isNotPaid() {
-            return this.order.payment_status.id !== 2;
+            return this.order.payment_status.id !== this.paymentStatuses.paid.id;
+        },
+        isHold() {
+            return this.order.payment_status.id === this.paymentStatuses.hold.id;
         },
         isCancel() {
             return this.order.is_canceled;

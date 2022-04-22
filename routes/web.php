@@ -360,6 +360,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
             Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
             Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
+            Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
             Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
 
@@ -387,6 +388,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
                         Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+                        Route::put('/items/{basketItemId}', 'TabShipmentsController@cancelShipmentItem')->name('orders.detail.shipments.cancelShipmentItem');
 
                         Route::prefix('documents')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
