@@ -66,6 +66,11 @@
                               :validateCondition="condition.validate"
                               @validate="checkConditionValidity"
                     />
+                    <tab-synergy v-else-if="key === 'synergy'"
+                                 :model.sync="discount"
+                                 :optionDiscountTypes = "optionDiscountTypes"
+                                 :discountStatuses = "discountStatuses"
+                    ></tab-synergy>
                     <tab-order v-else-if="key === 'order'"
                        :model.sync="discount"
                     ></tab-order>
@@ -81,6 +86,7 @@
 <script>
     import Infopanel from './components/infopanel.vue';
     import TabMain from './components/tab-main.vue';
+    import TabSynergy from './components/tab-synergy.vue';
     import TabOrder from './components/tab-order.vue';
     import tabsMixin from '../../../../mixins/tabs.js';
 
@@ -89,6 +95,7 @@
         components: {
             Infopanel,
             TabMain,
+            TabSynergy,
             TabOrder,
         },
         mixins: [tabsMixin],
@@ -217,6 +224,7 @@
                 let i = 0;
 
                 tabs.main = {i: i++, title: 'Информация'};
+                tabs.synergy = {i: i++, title: 'Cуммирующиеся акции'};
                 tabs.order = {i: i++, title: 'Заказы'};
                 tabs.report = {i: i++, title: 'Отчеты'};
                 tabs.log = {i: i++, title: 'Логи'};

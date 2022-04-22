@@ -188,7 +188,7 @@
                         </div>
                     </div>
 
-                    <div v-if="canHasSynergyMax">
+                    <div>
                         <p>Суммируется, но максимальный размер:</p>
                         <v-select
                             v-model="values.maxValueType"
@@ -203,7 +203,7 @@
                             min="1"
                             :error="valuesErrors.synergyMaxValue"
                             @change="initErrorSynergyMaxValue"
-                        >Значение в {{ isPercentType(values.value_type) ? 'процентах' : 'рублях' }}</v-input>
+                        >Значение в {{ isPercentType(values.maxValueType) ? 'процентах' : 'рублях' }}</v-input>
                     </div>
                 </div>
             </div>
@@ -359,35 +359,6 @@
             valuesUserError() {
                 return (this.valuesErrors.user) ? ' ' : null;
             },
-
-            canHasSynergyMax() {
-                if ([
-                    this.discountTypes.brand,
-                    this.discountTypes.category,
-                    this.discountTypes.offer,
-                ].indexOf(this.discount.type) === -1) {
-                    return false;
-                }
-
-                let canHasSynergyMax = true;
-
-                if (this.values.synergy.length > 0) {
-                    this.values.synergy.forEach((discount_id) => {
-                        let discount = this.discounts.find(discount => discount.value === discount_id);
-                        if (discount) {
-                            if ([
-                                this.discountTypes.brand,
-                                this.discountTypes.category,
-                                this.discountTypes.offer,
-                            ].indexOf(discount.type) === -1) {
-                                canHasSynergyMax = false;
-                            }
-                        }
-                    });
-                }
-
-                return canHasSynergyMax;
-            }
         },
 
         watch: {
@@ -414,7 +385,7 @@
                 handler: function() {
                     this.$emit('input', Object.assign(this.values, {
                         type: this.conditionType
-                    }));           
+                    }));
                 },
                 deep: true
             },
@@ -664,12 +635,6 @@
             },
 
             checkValuesSynergyMax() {
-                if (!this.canHasSynergyMax) {
-                    this.values.maxValue = null;
-                    this.values.maxValueType = null;
-                    return true;
-                }
-
                 if (!this.values.maxValue && !this.values.maxValueType) {
                     return true;
                 } else if (this.values.maxValue && this.values.maxValueType) {
