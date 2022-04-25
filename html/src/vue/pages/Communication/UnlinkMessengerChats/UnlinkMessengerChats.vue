@@ -33,7 +33,7 @@
                 </tr>
                 <template v-if="showChat === chat.id">
                     <tr v-for="message in chat.messages">
-                        <td colspan="4">{{ message.message }}</td>
+                        <td colspan="4" v-html="message.message"></td>
                         <td colspan="1">
                             {{ datetimePrint(message.created_at) }}
                         </td>
