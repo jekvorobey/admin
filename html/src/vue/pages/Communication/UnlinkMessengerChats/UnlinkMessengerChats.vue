@@ -55,7 +55,7 @@
                                 <label for="chat-user">Пользователь</label>
                             </b-col>
                             <b-col cols="9">
-                                <v-select2 v-model="editForm.userId" class="form-control form-control-sm">
+                                <v-select2 id="chat-user" v-model="editForm.userId" class="form-control form-control-sm">
                                     <option v-for="user in iUsers" :value="user.id">{{ user.name }}</option>
                                 </v-select2>
                             </b-col>
