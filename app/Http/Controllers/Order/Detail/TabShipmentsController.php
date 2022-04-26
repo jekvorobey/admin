@@ -11,6 +11,7 @@ use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\Delivery\ShipmentPackageDto;
 use Greensight\Oms\Dto\Delivery\ShipmentPackageItemDto;
+use Greensight\Oms\Dto\Delivery\ShipmentCancelItemDto;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\Document\DocumentDto;
 use Greensight\Oms\Services\ShipmentPackageService\ShipmentPackageService;
@@ -312,6 +313,30 @@ class TabShipmentsController extends OrderDetailController
             $shipmentPackageItem->set_by = $requestInitiator->userId();
 
             $shipmentPackageService->setShipmentPackageItem($shipmentPackageItem);
+        });
+    }
+
+    /**
+     * Отменить поштучно товар из отправления
+     * @throws Exception
+     */
+    public function cancelShipmentItem(int $orderId, int $shipmentId, int $basketItemId, Request $request): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        return $this->abstractAction($orderId, function () use ($shipmentId, $basketItemId, $request) {
+            $shipmentService = resolve(ShipmentService::class);
+            $requestInitiator = resolve(RequestInitiator::class);
+            $data = $this->validate($request, [
+                'qty' => ['required', 'integer'],
+                'return_reason_id' => ['required', 'integer'],
+            ]);
+            $shipmentCancelItem = new ShipmentCancelItemDto($data);
+            $shipmentCancelItem->shipment_id = $shipmentId;
+            $shipmentCancelItem->basket_item_id = $basketItemId;
+            $shipmentCancelItem->canceled_by = $requestInitiator->userId();
+
+            $shipmentService->shipmentCancelItem($shipmentCancelItem);
         });
     }
 

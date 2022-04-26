@@ -163,6 +163,7 @@ Route::middleware('auth')->group(function () {
             Route::get('page', 'DiscountController@page')->name('discount.pagination');
             Route::put('/', 'DiscountController@status')->name('discount.status');
             Route::delete('/', 'DiscountController@delete')->name('discount.delete');
+            Route::post('/copy', 'DiscountController@copy')->name('discount.copy');
 
             Route::prefix('/{id}')->where(['id' => '[0-9]+'])->group(function () {
                 Route::get('/edit', 'DiscountController@edit')->name('discount.edit');
@@ -359,6 +360,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
             Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
             Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
+            Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
             Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
 
@@ -386,6 +388,7 @@ Route::middleware('auth')->group(function () {
                         Route::get('barcodes', 'TabShipmentsController@barcodes')->name('orders.detail.shipments.barcodes');
                         Route::get('cdek-receipt', 'TabShipmentsController@cdekReceipt')->name('orders.detail.shipments.cdekReceipt');
                         Route::put('cancel', 'TabShipmentsController@cancelShipment')->name('orders.detail.shipments.cancel');
+                        Route::put('/items/{basketItemId}', 'TabShipmentsController@cancelShipmentItem')->name('orders.detail.shipments.cancelShipmentItem');
 
                         Route::prefix('documents')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
@@ -850,6 +853,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('professional', 'CustomerDetailController@professional')->name('customers.detail.professional');
                 Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('customers.detail.portfolio.save');
                 Route::post('dial', 'CustomerDetailController@dial')->name('customers.detail.dial');
+                Route::post('auth', 'CustomerDetailController@auth')->name('customers.detail.auth');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('main')->group(function () {

@@ -15,13 +15,14 @@
                         <button class="btn btn-primary" @click="addShipmentPackage(shipment)">
                             + Добавить коробку
                         </button>
-                        <modal-add-shipment-package :model-shipment.sync="selectedShipment" :model-order.sync="order"
+                        <modal-add-shipment-package :model-shipment.sync="selectedShipment"
+                                                    :model-order.sync="order"
                                                     v-if="Object.values(selectedShipment).length > 0"/>
                     </template>
                 </div>
             </b-col>
         </b-row>
-        <b-table-simple hover small caption-top responsive>
+        <b-table-simple hover small caption-top responsive="true">
             <b-thead>
                 <b-tr>
                     <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
@@ -29,7 +30,10 @@
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
                     </b-th>
-                    <b-th v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled && shipment.packages.length">Возврат</b-th>
+                    <b-th
+                        v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled && shipment.packages.length">
+                        Возврат
+                    </b-th>
                     <b-th>Фото</b-th>
                     <b-th class="with-small">Название <small>ID</small><small>Артикул</small></b-th>
                     <b-th class="with-small">Категория <small>Бренд</small></b-th>
@@ -63,7 +67,7 @@
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
                     <tr v-for="basketItem in shipment.nonPackedBasketItems">
-                        <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
+                        <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && !basketItem.is_canceled">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds"
                                    v-if="!shipment.is_problem && isAssemblingStatus && hasShipmentPackages">
@@ -78,23 +82,44 @@
                             <small>{{ basketItem.product ? basketItem.product.vendor_code : '' }}</small>
                         </b-td>
                         <b-td class="with-small">
-                            {{ basketItem.product && basketItem.product.category ? basketItem.product.category.name : '' }}
-                            <small>{{ basketItem.product && basketItem.product.brand ? basketItem.product.brand.name : '' }}</small>
+                            {{
+                                basketItem.product && basketItem.product.category ? basketItem.product.category.name : ''
+                            }}
+                            <small>{{
+                                    basketItem.product && basketItem.product.brand ? basketItem.product.brand.name : ''
+                                }}</small>
                         </b-td>
-                        <b-td class="with-small">
+                        <b-td v-if="!basketItem.is_canceled" class="with-small">
                             {{ basketItem.qty | integer }} шт
+                            <small v-if="basketItem.qty_canceled"> Отменено {{ basketItem.qty_canceled | integer }} шт</small>
                             <small> {{ basketItem.product.weight }} г</small>
                             <small> {{ basketItem.product.length }} x {{ basketItem.product.width }} x
                                 {{ basketItem.product.height }} мм</small>
                         </b-td>
+                        <b-td v-if="basketItem.is_canceled" class="with-small">Полностью отменено</b-td>
                         <b-td>{{ preparePrice(basketItem.cost / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice((basketItem.cost - basketItem.price) / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб
-                        </b-td>
+                        <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
-                        <b-td v-if="canEdit"></b-td>
+                        <b-td v-if="canEdit">
+                            <div v-if="canCancelShipmentItem && !basketItem.is_canceled"
+                                 class="float-right">
+                                <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
+                                         @click="cancelShipmentItem(basketItem)">
+                                </fa-icon>
+                                <br>
+                                <modal-cancel-shipment-item :model-shipment.sync="shipment"
+                                                            :model-order.sync="order"
+                                                            :basket-item.sync="selectedBasketItem"
+                                                            :max-qty="selectedMaxQty"
+                                                            :returnReasons="order.orderReturnReasons"
+                                                            @onSave="onShipmentItemCancel"
+                                                            @onClose="onCloseModal"
+                                                            v-if="selectedBasketItem === basketItem"/>
+                            </div>
+                        </b-td>
                     </tr>
                 </template>
                 <template v-if="shipment.packages.length > 0">
@@ -111,7 +136,9 @@
                                 <b-row>
                                     <div class="col-sm-9">
                                         <b>Коробка #{{ pKey + 1 }} (ID: {{ shipmentPackage.id }},
-                                            {{ shipmentPackage.package.name }}, вес брутто {{ shipmentPackage.weight }}
+                                            {{ shipmentPackage.package.name }}, вес брутто {{
+                                                shipmentPackage.weight
+                                            }}
                                             г, вес пустой коробки {{ shipmentPackage.wrapper_weight }} г)</b>
                                     </div>
                                     <div class="col-sm-3" v-if="canUpdate(blocks.orders)">
@@ -151,14 +178,15 @@
                                     </fa-icon>
                                 </div>
                             </b-td>
-                            <b-td v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled"
+                            <b-td
+                                v-if="returnable && order.status.id === orderStatuses.done.id && !shipment.is_canceled"
                                 class="text-center"
                             >
                                 <input type="checkbox"
-                                   v-if="!item.basketItem.is_returned"
-                                   class="shipment-select"
-                                   @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
-                                   :checked="basketItemsToReturn.includes(item.basket_item_id)"
+                                       v-if="!item.basketItem.is_returned"
+                                       class="shipment-select"
+                                       @change="$emit('toggleBasketItemReturn', item.basket_item_id)"
+                                       :checked="basketItemsToReturn.includes(item.basket_item_id)"
                                 />
                                 <span v-else class="badge badge-secondary">Возвращен</span>
                             </b-td>
@@ -212,6 +240,21 @@
                                              @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
                                     </fa-icon>
                                 </div>
+                                <div v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
+                                     class="float-right">
+                                    <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
+                                             @click="cancelShipmentItem(item.basketItem)">
+                                    </fa-icon>
+                                    <br>
+                                    <modal-cancel-shipment-item :model-shipment.sync="shipment"
+                                                                :model-order.sync="order"
+                                                                :basket-item.sync="selectedBasketItem"
+                                                                :max-qty="selectedMaxQty"
+                                                                :returnReasons="order.orderReturnReasons"
+                                                                @onSave="onShipmentItemCancel"
+                                                                @onClose="onCloseModal"
+                                                                v-if="selectedBasketItem === item.basketItem"/>
+                                </div>
                             </b-td>
                         </b-tr>
                         <b-tr v-if="!shipmentPackage.items || !shipmentPackage.items.length">
@@ -229,6 +272,7 @@ import Services from '../../../../../../scripts/services/services.js';
 import ModalAddShipmentPackage from './modal-add-shipment-package.vue';
 import ModalAddShipmentPackageItems from './modal-add-shipment-package-items.vue';
 import ModalEditShipmentPackageItem from './modal-edit-shipment-package-item.vue';
+import ModalCancelShipmentItem from './modal-cancel-shipment-item.vue';
 
 export default {
     name: "shipment-items",
@@ -236,6 +280,7 @@ export default {
         ModalEditShipmentPackageItem,
         ModalAddShipmentPackageItems,
         ModalAddShipmentPackage,
+        ModalCancelShipmentItem,
     },
     props: {
         modelShipment: {
@@ -249,8 +294,8 @@ export default {
             default: false,
         },
         returnable: {
-          type: Boolean,
-          default: false
+            type: Boolean,
+            default: false
         },
         basketItemsToReturn: {
             type: Array,
@@ -337,6 +382,15 @@ export default {
 
             this.$bvModal.show('modal-edit-shipment-package-item');
         },
+        cancelShipmentItem(basketItem) {
+            this.selectedBasketItem = basketItem;
+            this.selectedMaxQty = basketItem.qty;
+            this.$bvModal.show('modal-cancel-shipment-item');
+        },
+        onCloseModal() {
+            this.selectedBasketItem = {};
+            this.selectedMaxQty = 0;
+        },
         deleteShipmentPackageItem(shipmentPackageId, basketItemId) {
             Services.showLoader();
             Services.net().delete(
@@ -367,7 +421,15 @@ export default {
             this.selectedShipmentPackage = {};
             this.selectedShipmentItem = {};
             this.$bvModal.hide('modal-edit-shipment-package-item');
-        }
+        },
+        onShipmentItemCancel() {
+            this.selectedBasketItem = {};
+            this.selectedMaxQty = 0;
+            this.$bvModal.hide('modal-cancel-shipment-item');
+        },
+        canCancelShipmentItem(shipment) {
+            return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
+        },
     },
     computed: {
         order: {
@@ -389,7 +451,7 @@ export default {
         selectedBasketItems() {
             let selectedBasketItems = {};
             for (let [id, basketItem] of Object.entries(this.shipment.nonPackedBasketItems)) {
-                if (this.selectedBasketItemIds.indexOf(basketItem.id) !== -1) {
+                if (this.selectedBasketItemIds.indexOf(basketItem.id) !== -1 && !basketItem.is_canceled) {
                     selectedBasketItems[basketItem.id] = basketItem;
                 }
             }
@@ -409,7 +471,7 @@ export default {
             return this.isStatus(this.shipmentStatuses.assembling.id);
         },
         isAssembled() {
-            return Object.keys(this.shipment.nonPackedBasketItems).length === 0;
+            return this.isStatus(this.shipmentStatuses.assembled.id);
         },
         hasShipmentPackages() {
             return this.shipment.packages.length > 0;
