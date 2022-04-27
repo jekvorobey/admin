@@ -74,7 +74,7 @@
         "iwengo/ibt-logistics-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-marketing-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-merchant-management-lib": "dev-master-ylab as dev-master",
-        "iwengo/ibt-message-lib": "dev-feature/ICC-315-communication-chats-update as dev-master-ylab",
+        "iwengo/ibt-message-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-oms-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-pim-lib": "dev-master-ylab as dev-master",
         "ibt/reports-lib": "dev-master",

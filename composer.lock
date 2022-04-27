@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b16fe56be0779953ee2968c563ecf47",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1443,15 +1443,15 @@
         },
         {
             "name": "iwengo/ibt-message-lib",
-            "version": "dev-feature/ICC-315-communication-chats-update",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "9b0feab092d0fa152dd51778179cb2dffe45f619"
+                "reference": "6d725701a325b5cf397f68a3fa0bb344c59547dd"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master",
+                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
@@ -1481,7 +1481,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-04-21T11:05:24+00:00"
+            "time": "2022-04-27T09:47:02+00:00"
         },
         {
             "name": "iwengo/ibt-oms-lib",
@@ -10865,9 +10865,9 @@
         },
         {
             "package": "iwengo/ibt-message-lib",
-            "version": "dev-feature/ICC-315-communication-chats-update",
-            "alias": "dev-master-ylab",
-            "alias_normalized": "dev-master-ylab"
+            "version": "dev-master-ylab",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
         },
         {
             "package": "iwengo/ibt-oms-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.2.0"
 }
