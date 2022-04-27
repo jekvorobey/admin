@@ -90,6 +90,9 @@ class TabOrderController extends Controller
             ->include('delivery');
 
         $shipments = $shipmentService->shipments($restQuery);
+        if ($shipments->isEmpty()) {
+            return [];
+        }
 
         $orderIds = $shipments->pluck('delivery.order_id')->all();
         $orders = $orderService->orders(
@@ -299,6 +302,10 @@ class TabOrderController extends Controller
                 'required_shipping_at'
             )->include('delivery')
         );
+
+        if ($shipments->isEmpty()) {
+            return collect();
+        }
 
         $orderIds = $shipments->pluck('delivery.order_id')->all();
         $orders = $orderService->orders(

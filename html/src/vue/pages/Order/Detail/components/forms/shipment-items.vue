@@ -104,7 +104,7 @@
                         <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td v-if="canEdit">
-                            <div v-if="!shipment.is_problem && canCancelShipmentItem && !basketItem.is_canceled"
+                            <div v-if="canCancelShipmentItem && !basketItem.is_canceled"
                                  class="float-right">
                                 <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
                                          @click="cancelShipmentItem(basketItem)">
@@ -239,6 +239,21 @@
                                     <fa-icon icon="times" title="Удалить из коробки" class="cursor-pointer"
                                              @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
                                     </fa-icon>
+                                </div>
+                                <div v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
+                                     class="float-right">
+                                    <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
+                                             @click="cancelShipmentItem(item.basketItem)">
+                                    </fa-icon>
+                                    <br>
+                                    <modal-cancel-shipment-item :model-shipment.sync="shipment"
+                                                                :model-order.sync="order"
+                                                                :basket-item.sync="selectedBasketItem"
+                                                                :max-qty="selectedMaxQty"
+                                                                :returnReasons="order.orderReturnReasons"
+                                                                @onSave="onShipmentItemCancel"
+                                                                @onClose="onCloseModal"
+                                                                v-if="selectedBasketItem === item.basketItem"/>
                                 </div>
                             </b-td>
                         </b-tr>
@@ -413,7 +428,7 @@ export default {
             this.$bvModal.hide('modal-cancel-shipment-item');
         },
         canCancelShipmentItem(shipment) {
-            return shipment.status && shipment.status.id < this.shipmentStatuses.assembled.id && !shipment.is_canceled;
+            return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
         },
     },
     computed: {
