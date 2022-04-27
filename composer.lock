@@ -1447,7 +1447,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "f0940e7160fe99aedb6c79821d21548e59a5d991"
+                "reference": "6d725701a325b5cf397f68a3fa0bb344c59547dd"
             },
             "require": {
                 "ext-json": "*",
@@ -1481,7 +1481,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2021-11-30T13:08:01+00:00"
+            "time": "2022-04-27T09:47:02+00:00"
         },
         {
             "name": "iwengo/ibt-oms-lib",

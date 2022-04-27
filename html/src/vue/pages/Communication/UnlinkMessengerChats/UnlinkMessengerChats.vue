@@ -7,6 +7,7 @@
                 <th>Тема</th>
                 <th>Канал</th>
                 <th>Последнее сообщение</th>
+                <th>Получатель</th>
                 <th v-if="canUpdate(blocks.communications)">Действия</th>
             </tr>
             </thead>
@@ -19,6 +20,7 @@
                     <td @click="openChat(chat)">
                         {{ datePrint(chat.messages[chat.messages.length-1].created_at) }}
                     </td>
+                    <td @click="openChat(chat)">{{ chat.external_user_id }}</td>
                     <td v-if="canUpdate(blocks.communications)">
                         <b-button
                                 class="btn btn-info btn-sm"
@@ -31,7 +33,7 @@
                 </tr>
                 <template v-if="showChat === chat.id">
                     <tr v-for="message in chat.messages">
-                        <td colspan="4">{{ message.message }}</td>
+                        <td colspan="4" v-html="message.message"></td>
                         <td colspan="1">
                             {{ datetimePrint(message.created_at) }}
                         </td>
@@ -53,7 +55,7 @@
                                 <label for="chat-user">Пользователь</label>
                             </b-col>
                             <b-col cols="9">
-                                <v-select2 v-model="editForm.userId" class="form-control form-control-sm">
+                                <v-select2 id="chat-user" v-model="editForm.userId" class="form-control form-control-sm">
                                     <option v-for="user in iUsers" :value="user.id">{{ user.name }}</option>
                                 </v-select2>
                             </b-col>
