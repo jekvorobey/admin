@@ -74,6 +74,7 @@
             iOldSelectedFilters: Array,
             iProductGroupTypes: Array,
         },
+
         data() {
             return {
                 productGroupTypes: this.iProductGroupTypes,
@@ -81,9 +82,9 @@
                 selectedFilters: this.filterNormalization(this.iSelectedFilters),
                 oldSelectedFilters: this.iOldSelectedFilters,
                 filters: {},
-                genericFilters: [],
             };
         },
+
         methods: {
             fetchFilters(source) {
                 let filterPromise = this.productGroupTypes.find(type => type.code === source)
@@ -91,35 +92,22 @@
                     : Services.net().get(this.getRoute('productGroup.getFiltersByCategory'), {category: source});
 
                 Services.showLoader();
+
                 filterPromise.then((data) => {
-                    this.filters[source] = data;
-                    this.mergeFilters();
+                    this.$set(this.filters, source, data);
                 }).finally(() => {
                   Services.hideLoader();
                 });
             },
-            mergeFilters() {
-                let allFilters = [];
-                Object.values(this.filters).forEach(filtersBySource => {
-                    filtersBySource.forEach(filter => {
-                        allFilters.push(Object.assign({}, filter));
-                    });
-                });
-                let groupedFilters = this.groupByCode(allFilters);
-                let genericFilters = Object.values(groupedFilters)
-                    .filter(arr => arr.length === Object.keys(this.filters).length)
-                    .map(filterGroup => {
-                        let allValues = [];
-                        filterGroup.forEach(filter => {
-                          allValues = allValues.concat(filter.values);
-                        });
-                        let groupedValues = this.groupByCode(allValues);
-                        let genericValues = Object.values(groupedValues).filter(arr => arr.length === Object.keys(this.filters).length);
-                        filterGroup[0]['values'] = genericValues.map(values => values[0]);
-                        return filterGroup[0];
-                    });
-                this.genericFilters = genericFilters.filter(filter => filter.values.length > 0);
+
+            async getFilters(source) {
+                const data = await this.productGroupTypes.find(type => type.code === source)
+                    ? Services.net().get(this.getRoute('productGroup.getFilters'))
+                    : Services.net().get(this.getRoute('productGroup.getFiltersByCategory'), {category: source});
+
+                return data;
             },
+
             groupByCode(array) {
                 let result = {};
                 array.forEach(item => {
@@ -162,12 +150,41 @@
         computed: {
             phantomicFilters() {
                 let genericFilters = this.groupByCode(this.genericFilters);
+
                 return this.oldSelectedFilters.filter(item => {
                     if (Object.keys(genericFilters).includes(item.code)) {
                         return !Object.keys(this.groupByCode(genericFilters[item.code][0].values)).includes(item.value);
                     }
                     return false;
                 });
+            },
+
+            genericFilters() {
+                let allFilters = [];
+
+                Object.values(this.filters).forEach(filtersBySource => {
+                    filtersBySource.forEach(filter => {
+                        allFilters.push(Object.assign({}, filter));
+                    });
+                });
+
+                let groupedFilters = this.groupByCode(allFilters);
+
+                let genericFilters = Object.values(groupedFilters)
+                    .map(filterGroup => {
+                        let allValues = [];
+                        filterGroup.forEach(filter => {
+                            allValues = allValues.concat(filter.values);
+                        });
+
+                        let groupedValues = this.groupByCode(allValues);
+                        let genericValues = Object.values(groupedValues);
+
+                        filterGroup[0]['values'] = genericValues.map(values => values[0]);
+                        return filterGroup[0];
+                    });
+
+                return genericFilters.filter(filter => filter.values.length > 0);
             },
         },
         watch: {
@@ -180,8 +197,7 @@
                     this.fetchFilters(addedSource);
                 }
                 if (removedSource) {
-                    delete this.filters[removedSource];
-                    this.mergeFilters();
+                    this.$delete(this.filters, removedSource);
                 }
                 this.selectedFilterSources = val;
             },
@@ -220,8 +236,19 @@
                 this.$emit('update', allFilters);
             }
         },
-        mounted: function () {
-            this.selectedFilterSources.forEach(source => this.fetchFilters(source));
+
+        async mounted() {
+            let filters = {};
+
+            Services.showLoader();
+
+            for (const source of this.selectedFilterSources) {
+                filters[source] = await this.getFilters(source);
+            }
+
+            this.filters = filters;
+
+            Services.hideLoader();
         }
     }
 </script>
