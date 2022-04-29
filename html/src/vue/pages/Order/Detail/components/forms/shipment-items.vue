@@ -223,38 +223,40 @@
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div v-if="!shipment.is_problem && isAssemblingStatus" class="float-right">
-                                    <fa-icon icon="pencil-alt" title="Изменить кол-во" class="cursor-pointer"
-                                             @click="editShipmentPackageItem(shipmentPackage, item)">
-                                    </fa-icon>
-                                    <br>
-                                    <modal-edit-shipment-package-item :model-shipment.sync="shipment"
-                                                                      :model-order.sync="order"
-                                                                      :shipment-package.sync="selectedShipmentPackage"
-                                                                      :shipment-package-num="key+1"
-                                                                      :shipment-item.sync="selectedShipmentItem"
-                                                                      :max-qty="selectedMaxQty"
-                                                                      @onSave="onShipmentPackageItemEdit"
-                                                                      v-if="Object.values(selectedShipmentItem).length > 0"/>
-
                                     <fa-icon icon="times" title="Удалить из коробки" class="cursor-pointer"
                                              @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
                                     </fa-icon>
                                 </div>
-                                <div v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
-                                     class="float-right">
-                                    <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
-                                             @click="cancelShipmentItem(item.basketItem)">
-                                    </fa-icon>
-                                    <br>
-                                    <modal-cancel-shipment-item :model-shipment.sync="shipment"
-                                                                :model-order.sync="order"
-                                                                :basket-item.sync="selectedBasketItem"
-                                                                :max-qty="selectedMaxQty"
-                                                                :returnReasons="order.orderReturnReasons"
-                                                                @onSave="onShipmentItemCancel"
-                                                                @onClose="onCloseModal"
-                                                                v-if="selectedBasketItem === item.basketItem"/>
-                                </div>
+                                <b-dropdown size="lg" text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
+                                    <template #button-content>
+                                        <fa-icon icon="edit" title="Действия" class="cursor-pointer">
+                                        </fa-icon>
+                                    </template>
+                                        <b-dropdown-item-button v-if="!shipment.is_problem && isAssemblingStatus"
+                                                                @click="editShipmentPackageItem(shipmentPackage, item)">
+                                            Изменить кол-во
+                                        </b-dropdown-item-button>
+                                        <modal-edit-shipment-package-item :model-shipment.sync="shipment"
+                                                                          :model-order.sync="order"
+                                                                          :shipment-package.sync="selectedShipmentPackage"
+                                                                          :shipment-package-num="key+1"
+                                                                          :shipment-item.sync="selectedShipmentItem"
+                                                                          :max-qty="selectedMaxQty"
+                                                                          @onSave="onShipmentPackageItemEdit"
+                                                                          v-if="Object.values(selectedShipmentItem).length > 0"/>
+                                        <b-dropdown-item-button v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
+                                                                @click="cancelShipmentItem(item.basketItem)">
+                                            Частично отменить
+                                            <modal-cancel-shipment-item :model-shipment.sync="shipment"
+                                                                        :model-order.sync="order"
+                                                                        :basket-item.sync="selectedBasketItem"
+                                                                        :max-qty="selectedMaxQty"
+                                                                        :returnReasons="order.orderReturnReasons"
+                                                                        @onSave="onShipmentItemCancel"
+                                                                        @onClose="onCloseModal"
+                                                                        v-if="selectedBasketItem === item.basketItem"/>
+                                        </b-dropdown-item-button>
+                                </b-dropdown>
                             </b-td>
                         </b-tr>
                         <b-tr v-if="!shipmentPackage.items || !shipmentPackage.items.length">
