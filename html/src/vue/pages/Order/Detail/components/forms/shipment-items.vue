@@ -25,7 +25,7 @@
         <b-table-simple hover small caption-top responsive="true">
             <b-thead>
                 <b-tr>
-                    <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
+                    <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && hasNonPackagedItems">
                         <input type="checkbox" id="select-all-page-shipments" v-model="isSelectAllBasketItem"
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
@@ -223,15 +223,11 @@
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div v-if="!shipment.is_problem && isAssemblingStatus" class="float-right">
-                                    <fa-icon icon="times" title="Удалить из коробки" class="cursor-pointer"
-                                             @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
-                                    </fa-icon>
-                                </div>
-                                <b-dropdown size="lg" text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
-                                    <template #button-content>
-                                        <fa-icon icon="edit" title="Действия" class="cursor-pointer">
-                                        </fa-icon>
-                                    </template>
+                                    <b-dropdown size="lg" right text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
+                                        <template #button-content>
+                                            <fa-icon icon="edit" title="Действия" class="cursor-pointer">
+                                            </fa-icon>
+                                        </template>
                                         <b-dropdown-item-button v-if="!shipment.is_problem && isAssemblingStatus"
                                                                 @click="editShipmentPackageItem(shipmentPackage, item)">
                                             Изменить кол-во
@@ -256,7 +252,11 @@
                                                                         @onClose="onCloseModal"
                                                                         v-if="selectedBasketItem === item.basketItem"/>
                                         </b-dropdown-item-button>
-                                </b-dropdown>
+                                        <b-dropdown-item-button @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
+                                            Удалить из коробки
+                                        </b-dropdown-item-button>
+                                    </b-dropdown>
+                                </div>
                             </b-td>
                         </b-tr>
                         <b-tr v-if="!shipmentPackage.items || !shipmentPackage.items.length">
@@ -477,6 +477,9 @@ export default {
         },
         hasShipmentPackages() {
             return this.shipment.packages.length > 0;
+        },
+        hasNonPackagedItems() {
+            return Object.values(this.shipment.nonPackedBasketItems).length > 0;
         },
         tooltipUnitCostHelp() {
             return 'Цена товара без скидки за единицу товара';
