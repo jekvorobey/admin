@@ -82,6 +82,8 @@ class RedirectListController extends Controller
             $query->setFilter('product_id', $filter['product_id']);
         }
 
+        $query->addSort('id', 'desc');
+
         return $query;
     }
 
