@@ -223,7 +223,7 @@
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div v-if="!shipment.is_problem && isAssemblingStatus" class="float-right">
-                                    <b-dropdown size="lg" right text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
+                                    <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
                                         <template #button-content>
                                             <fa-icon icon="edit" title="Действия" class="cursor-pointer">
                                             </fa-icon>
