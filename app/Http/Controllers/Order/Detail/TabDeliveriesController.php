@@ -196,4 +196,25 @@ class TabDeliveriesController extends OrderDetailController
             'order' => $this->getOrder($orderId),
         ]);
     }
+
+    /**
+     * Изменить статус доставки
+     * @throws Exception
+     */
+    public function changeDeliveryStatus(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $data = $this->validate(request(), [
+            'status' => ['required', Rule::in(array_keys(DeliveryStatus::allStatuses()))],
+        ]);
+
+        $deliveryDto = new DeliveryDto();
+        $deliveryDto->status = $data['status'];
+        $deliveryService->updateDelivery($deliveryId, $deliveryDto);
+
+        return response()->json([
+            'order' => $this->getOrder($orderId),
+        ]);
+    }
 }

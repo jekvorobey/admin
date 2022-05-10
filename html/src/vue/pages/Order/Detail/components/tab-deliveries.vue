@@ -25,6 +25,18 @@
                                 Отменить доставку
                             </b-dropdown-item-button>
                         </b-dropdown>
+                        <b-dropdown dropleft text="Действия" size="sm"
+                                    v-if="canChangeCancellationExpected(delivery)">
+                          <b-dropdown-item-button @click="changeDeliveryStatus(deliveryStatuses.returnExpectedFromCustomer.id, delivery.id)">
+                            Ожидается возврат товара от клиента
+                          </b-dropdown-item-button>
+                          <b-dropdown-item-button @click="changeDeliveryStatus(deliveryStatuses.readyForRecipient.id, delivery.id)">
+                            Находится в пункте выдачи
+                          </b-dropdown-item-button>
+                          <b-dropdown-item-button @click="changeDeliveryStatus(deliveryStatuses.returned.id, delivery.id)">
+                            Возвращен
+                          </b-dropdown-item-button>
+                        </b-dropdown>
                         <button class="btn btn-light btn-sm" @click="editDelivery(delivery)"
                                 v-if="canEditDelivery(delivery)">
                             <fa-icon icon="pencil-alt" title="Изменить"/>
@@ -286,6 +298,9 @@ export default {
         canCancelDelivery(delivery) {
             return delivery.status && delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled
         },
+        canChangeCancellationExpected(delivery) {
+          return delivery.status && delivery.status.id === this.deliveryStatuses.cancellationExpected.id && !delivery.is_canceled
+        },
         cancelDelivery(returnReason) {
             let errorMessage = 'Ошибка при отмене доставки';
 
@@ -308,6 +323,28 @@ export default {
             }).finally(data => {
                 Services.hideLoader();
             });
+        },
+        changeDeliveryStatus(statusId, deliveryId) {
+            let errorMessage = 'Ошибка при изменении статуса доставки';
+            Services.showLoader();
+            Services.net().put(
+                this.getRoute(
+                    'orders.detail.deliveries.changeDeliveryStatus',
+                    {id: this.order.id, deliveryId: deliveryId},
+                ),
+                {},
+                {'status': statusId},
+            ).then((data) => {
+                if (data.order) {
+                  this.$set(this, 'order', data.order);
+                  this.$set(this.order, 'shipments', data.order.shipments);
+                  Services.msg("Статус доставки сохранен");
+                } else {
+                  Services.msg(errorMessage, 'danger');
+                }
+              }).finally(() => {
+                Services.hideLoader();
+              });
         },
         canEditDelivery(delivery) {
             return delivery.status && delivery.status.id < this.deliveryStatuses.done.id && !delivery.is_canceled;
