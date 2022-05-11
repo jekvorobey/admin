@@ -221,7 +221,7 @@ class VariantGroupListController extends Controller
                         $value = array_filter($value);
                         if ($value) {
                             $restQuery->setFilter('created_at', '>=', $value[0]);
-                            $restQuery->setFilter('created_at', '<=', $value[1]);
+                            $restQuery->setFilter('created_at', '<=', end_of_day_filter($value[1]));
                         }
                         break;
                     case 'created_at':

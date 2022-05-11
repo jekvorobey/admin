@@ -86,272 +86,260 @@
 import VInput from '../../../../components/controls/VInput/VInput.vue';
 import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
 
-import {validationMixin} from 'vuelidate';
-import {email, minLength, required, requiredIf} from 'vuelidate/lib/validators';
-import {telMask} from '../../../../../scripts/mask';
+import { validationMixin } from 'vuelidate';
+import { email, minLength, required } from 'vuelidate/lib/validators';
+import { telMask } from '../../../../../scripts/mask';
 
 import Services from "../../../../../scripts/services/services.js";
-import {mapActions} from 'vuex';
+import { mapActions } from 'vuex';
 
-function myCustomValidator () {
-        return value === 'isOk' // should return Boolean
-    }
-
-    export default {
-        name: 'operator-create-edit',
-        props: [
-            'operatorProp',
-            'merchantId',
-            'merchants',
-            'communicationMethods',
-            'roles'
-        ],
-        components: {
-            VInput,
-            VSelect2,
-        },
-        mixins: [validationMixin],
-        data() {
-            let title = '';
-            let operator = {};
-            if (!this.operatorProp) {
-                title = 'Создание менеджера';
-                operator = {
-                    merchant_id: this.merchantId,
-                    roles: [],
-                    active: true,
-                };
-            } else {
-                title = 'Редактирование менеджера: ' +
-                    this.operatorProp.last_name + ' ' + this.operatorProp.first_name + ' ' + this.operatorProp.middle_name;
-                operator = {
-                    merchant_id: this.operatorProp.merchant_id,
-                    user_id: this.operatorProp.user_id,
-                    last_name: this.operatorProp.last_name,
-                    first_name: this.operatorProp.first_name,
-                    middle_name: this.operatorProp.middle_name,
-                    email: this.operatorProp.email,
-                    phone: this.operatorProp.phone,
-                    position: this.operatorProp.position,
-                    communication_method: this.operatorProp.communication_method,
-                    roles: [...this.operatorProp.roles],
-                    active: this.operatorProp.active,
-                };
-            }
-
-            return {
-                title: title,
-                operator: operator,
+export default {
+    name: 'operator-create-edit',
+    props: [
+        'operatorProp',
+        'merchantId',
+        'merchants',
+        'communicationMethods',
+        'roles'
+    ],
+    components: {
+        VInput,
+        VSelect2,
+    },
+    mixins: [validationMixin],
+    data() {
+        let title = '';
+        let operator = {};
+        if (!this.operatorProp) {
+            title = 'Создание менеджера';
+            operator = {
+                merchant_id: this.merchantId,
+                roles: [],
+                active: true,
             };
-        },
-        validations: {
-            operator: {
-                merchant_id: {required},
-                last_name: {required},
-                first_name: {required},
-                middle_name: {},
-                email: {
-                    required,
-                    email,
-                    isUnique: function() {
-                        return this.isFieldUnique(this.operator.email, 'email');
-                    },
-                    $lazy: true,
-                },
-                phone: {
-                    required,
-                    isUnique: function() {
-                        return this.isFieldUnique(this.operator.phone, 'phone');
-                    },
-                    $lazy: true,
-                },
-                password: {
-                    minLength: minLength(8),
-                    valid: function (value) {
-                        if (!value) {
-                            return true
-                        }
-                        const containsUppercase = /[A-Z]/.test(value)
-                        const containsLowercase = /[a-z]/.test(value)
-                        const containsNumber = /[0-9]/.test(value)
-                        //const containsSpecial = /[#?!@$%^&*-]/.test(value)
+        } else {
+            title = 'Редактирование менеджера: ' +
+                this.operatorProp.last_name + ' ' + this.operatorProp.first_name + ' ' + this.operatorProp.middle_name;
+            operator = {
+                merchant_id: this.operatorProp.merchant_id,
+                user_id: this.operatorProp.user_id,
+                last_name: this.operatorProp.last_name,
+                first_name: this.operatorProp.first_name,
+                middle_name: this.operatorProp.middle_name,
+                email: this.operatorProp.email,
+                phone: this.operatorProp.phone,
+                position: this.operatorProp.position,
+                communication_method: this.operatorProp.communication_method,
+                roles: [...this.operatorProp.roles],
+                active: this.operatorProp.active,
+            };
+        }
 
-                        return containsUppercase && containsLowercase && containsNumber;
-                    }
+        return {
+            title: title,
+            operator: operator,
+        };
+    },
+    validations: {
+        operator: {
+            merchant_id: {required},
+            last_name: {required},
+            first_name: {required},
+            middle_name: {},
+            email: {
+                required,
+                email,
+                isUnique: function () {
+                    return this.isFieldUnique(this.operator.email, 'email');
                 },
-                communication_method: {required},
-                roles: {required},
-            }
-        },
-        methods: {
-            ...mapActions({
-                showMessageBox: 'modal/showMessageBox',
-            }),
-            waitForValidation () {
-                return new Promise((resolve) => {
-                    const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
-                        if (isNotPending) {
-                            resolve(!this.$v.$invalid)
-                        }
-                    }, {immediate: true})
-                })
+                $lazy: true,
             },
+            phone: {
+                required,
+                isUnique: function () {
+                    return this.isFieldUnique(this.operator.phone, 'phone');
+                },
+                $lazy: true,
+            },
+            password: {
+                minLength: minLength(8),
+                valid: function (value) {
+                    if (!value) {
+                        return true
+                    }
+                    const containsUppercase = /[A-Z]/.test(value)
+                    const containsLowercase = /[a-z]/.test(value)
+                    const containsNumber = /[0-9]/.test(value)
+                    //const containsSpecial = /[#?!@$%^&*-]/.test(value)
 
-            async create() {
-                await this.$v.$touch();
-                const isValid = await this.waitForValidation();
-                if (!isValid) {
-                    return;
+                    return containsUppercase && containsLowercase && containsNumber;
                 }
-                if (this.operator.phone) {
-                    let phoneNumber = this.operator.phone.replace(/[()]|\s|-/g, '');
-                    this.operator.phone = phoneNumber;
-                    this.operator.login = phoneNumber;
+            },
+            communication_method: {required},
+            roles: {required},
+        }
+    },
+    methods: {
+        ...mapActions({
+            showMessageBox: 'modal/showMessageBox',
+        }),
+        waitForValidation() {
+            return new Promise((resolve) => {
+                const unwatch = this.$watch(() => !this.$v.$pending, (isNotPending) => {
+                    if (isNotPending) {
+                        resolve(!this.$v.$invalid)
+                    }
+                }, {immediate: true})
+            })
+        },
+
+        async create() {
+            await this.$v.$touch();
+            const isValid = await this.waitForValidation();
+            if (!isValid) {
+                return;
+            }
+            if (this.operator.phone) {
+                let phoneNumber = this.operator.phone.replace(/[()]|\s|-/g, '');
+                this.operator.phone = phoneNumber;
+                this.operator.login = phoneNumber;
+            }
+            if (this.operator.email) {
+                this.operator.login_email = this.operator.email;
+            }
+            Services.showLoader();
+            Services.net().post(
+                this.getRoute('merchant.operator.save'),
+                {},
+                this.operator
+            ).then(() => {
+                Services.msg('Менеджер успешно создан.');
+                window.location.href = this.getRoute('merchant.detail', {id: this.merchantId}) + '?tab=operator&allTab=0';
+            }, () => {
+                Services.msg('Произошла ошибка при добавлении менеджера.', 'danger');
+            }).finally(() => {
+                Services.hideLoader();
+            });
+        },
+        async edit() {
+            await this.$v.$touch();
+            const isValid = await this.waitForValidation();
+            if (!isValid) {
+                return;
+            }
+            let operatorEdit = {};
+            for (let [key, value] of Object.entries(this.operator)) {
+                if (key === 'phone') {
+                    let phoneNumber = value.replace(/[()]|\s|-/g, '');
+                    value = phoneNumber;
+                    operatorEdit['login'] = phoneNumber;
                 }
-                if (this.operator.email) {
-                    this.operator.login_email = this.operator.email;
+                if (key === 'email') {
+                    operatorEdit['login_email'] = value;
                 }
+                if (
+                    (value !== this.operatorProp[key]) &&
+                    ((key !== 'merchant_id') || (parseInt(value) !== this.operatorProp[key])) &&
+                    ((key !== 'password') || value) &&
+                    ((key !== 'active') || (+value !== this.operatorProp[key]))
+                ) {
+                    if (value !== '') {
+                        operatorEdit[key] = value;
+                    }
+                }
+            }
+
+            if (Object.keys(operatorEdit).length !== 0 || operatorEdit.constructor !== Object) {
                 Services.showLoader();
-                Services.net().post(
-                    this.getRoute('merchant.operator.save'),
-                    {},
-                    this.operator
+                Services.net().put(
+                    this.route('merchant.operator.update'),
+                    {id: this.operatorProp.id},
+                    operatorEdit
                 ).then(() => {
-                    Services.msg('Менеджер успешно создан.');
-                    window.location.href = this.getRoute('merchant.detail', {id: this.merchantId}) + '?tab=operator&allTab=0';
+                    for (let [key, value] of Object.entries(operatorEdit)) {
+                        this.operatorProp[key] = value;
+                    }
+                    Services.msg('Данные о менеджере успешно обновлены.');
+                    window.location.href = this.getRoute('merchant.detail', {id: this.operatorProp.merchant_id}) + '?tab=operator&allTab=0';
                 }, () => {
-                    Services.msg('Произошла ошибка при добавлении менеджера.', 'danger');
+                    Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
                 }).finally(() => {
                     Services.hideLoader();
                 });
-            },
-            async edit() {
-                await this.$v.$touch();
-                const isValid = await this.waitForValidation();
-                if (!isValid) {
-                    return;
-                }
-                let operatorEdit = {};
-                for (let [key, value] of Object.entries(this.operator)) {
-                    if (key === 'phone') {
-                        let phoneNumber = value.replace(/[()]|\s|-/g, '');
-                        value = phoneNumber;
-                        operatorEdit['login'] = phoneNumber;
-                    }
-                    if (key === 'phone') {
-                        operatorEdit['login_email'] = value;
-                    }
-                    if (key === 'password') {
-                        operatorEdit['password'] = value;
-                    }
-                    if (
-                        (value !== this.operatorProp[key]) &&
-                        ((key !== 'merchant_id') || (parseInt(value) !== this.operatorProp[key])) &&
-                        ((key !== 'password') || value) &&
-                        ((key !== 'roles') || (JSON.stringify(value) !== JSON.stringify(this.operatorProp[key]))) &&
-                        ((key !== 'active') || (+value !== this.operatorProp[key]))
-                    ) {
-                        if (value !== '') {
-                            operatorEdit[key] = value;
-                        }
-                    }
-                }
-
-                if (Object.keys(operatorEdit).length !== 0 || operatorEdit.constructor !== Object) {
-                    Services.showLoader();
-                    Services.net().put(
-                        this.route('merchant.operator.update'),
-                        {id: this.operatorProp.id},
-                        operatorEdit
-                    ).then(() => {
-                        for (let [key, value] of Object.entries(operatorEdit)) {
-                            this.operatorProp[key] = value;
-                        }
-                        Services.msg('Данные о менеджере успешно обновлены.');
-                        window.location.href = this.getRoute('merchant.detail', {id: this.operatorProp.merchant_id}) + '?tab=operator&allTab=0';
-                    }, () => {
-                        Services.msg('Произошла ошибка при обновлении данных о менеджере.', 'danger');
-                    }).finally(() => {
-                        Services.hideLoader();
-                    });
-                } else {
-                    Services.msg('Данные о менеджере успешно обновлены.');
-                }
-            },
-            rolesCheckbox(e, id) {
-                id = parseInt(id);
-                if (e.target.checked) {
-                    this.operator.roles.push(id);
-                } else {
-                    this.operator.roles = this.operator.roles.filter((roleId) => {
-                        return roleId !== id;
-                    });
-                }
-            },
-            showHidePass() {
-                this.showPass = !this.showPass;
-                this.operator.password = null;
-            },
-            isFieldUnique(data, field) {
-                let userId = this.operator.user_id ? this.operator.user_id : null;
-                return Services.net().get(this.getRoute('user.isUnique'), {data: data, field: field, id: userId})
-                    .then(data => data.isUnique);
-            },
+            } else {
+                Services.msg('Данные о менеджере успешно обновлены.');
+            }
         },
-        computed: {
-            errorMerchantId() {
-                if (this.$v.operator.merchant_id.$dirty) {
-                    if (!this.$v.operator.merchant_id.required) return "Обязательное поле!";
-                }
-            },
-            errorLastName() {
-                if (this.$v.operator.last_name.$dirty) {
-                    if (!this.$v.operator.last_name.required) return "Обязательное поле!";
-                }
-            },
-            errorFirstName() {
-                if (this.$v.operator.first_name.$dirty) {
-                    if (!this.$v.operator.first_name.required) return "Обязательное поле!";
-                }
-            },
-            errorEmail() {
-                if (this.$v.operator.email.$dirty) {
-                    if (!this.$v.operator.email.required) return "Обязательное поле!";
-                    if (!this.$v.operator.email.email) return "Формат E-mail не соответствует требованиям!";
-                    if (!this.$v.operator.email.$pending && !this.$v.operator.email.isUnique) return "Пользователь с таким E-mail уже существует";
-                }
-            },
-            telMask() {
-                return telMask;
-            },
-            errorPhone() {
-                if (this.$v.operator.phone.$dirty) {
-                    if (!this.$v.operator.phone.required) return "Обязательное поле!";
-                    if (!this.$v.operator.phone.$pending && !this.$v.operator.phone.isUnique) return "Пользователь с таким телефоном уже существует";
-                }
-            },
-            errorPassword() {
-                if (this.$v.operator.password.$dirty) {
-                    if (!this.$v.operator.password.minLength) return "Не меньше 8 символов!";
-                    if (!this.$v.operator.password.valid) return 'Пароль должен содержать буквы верхнего и нижнего регистров, а также цифры';
-                }
-            },
-            errorCommunicationMethod() {
-                if (this.$v.operator.communication_method.$dirty) {
-                    if (!this.$v.operator.communication_method.required) return "Выберите один из пунктов!";
-                }
-            },
-            errorRoles() {
-                if (this.$v.operator.roles.$dirty) {
-                    if (!this.$v.operator.roles.required) return "Выберите хотя бы один из пунктов!";
-                }
-            },
-        }
-    };
+        rolesCheckbox(e, id) {
+            id = parseInt(id);
+            if (e.target.checked) {
+                this.operator.roles.push(id);
+            } else {
+                this.operator.roles = this.operator.roles.filter((roleId) => {
+                    return roleId !== id;
+                });
+            }
+        },
+        isFieldUnique(data, field) {
+            let userId = this.operator.user_id ? this.operator.user_id : null;
+            return Services.net().get(this.getRoute('user.isUnique'), {data: data, field: field, id: userId})
+                .then(data => data.isUnique);
+        },
+    },
+    computed: {
+        errorMerchantId() {
+            if (this.$v.operator.merchant_id.$dirty) {
+                if (!this.$v.operator.merchant_id.required) return "Обязательное поле!";
+            }
+        },
+        errorLastName() {
+            if (this.$v.operator.last_name.$dirty) {
+                if (!this.$v.operator.last_name.required) return "Обязательное поле!";
+            }
+        },
+        errorFirstName() {
+            if (this.$v.operator.first_name.$dirty) {
+                if (!this.$v.operator.first_name.required) return "Обязательное поле!";
+            }
+        },
+        errorEmail() {
+            if (this.$v.operator.email.$dirty) {
+                if (!this.$v.operator.email.required) return "Обязательное поле!";
+                if (!this.$v.operator.email.email) return "Формат E-mail не соответствует требованиям!";
+                if (!this.$v.operator.email.$pending && !this.$v.operator.email.isUnique) return "Пользователь с таким E-mail уже существует";
+            }
+        },
+        telMask() {
+            return telMask;
+        },
+        errorPhone() {
+            if (this.$v.operator.phone.$dirty) {
+                if (!this.$v.operator.phone.required) return "Обязательное поле!";
+                if (!this.$v.operator.phone.$pending && !this.$v.operator.phone.isUnique) return "Пользователь с таким телефоном уже существует";
+            }
+        },
+        errorPassword() {
+            if (this.$v.operator.password.$dirty) {
+                if (!this.$v.operator.password.minLength) return "Не меньше 8 символов!";
+                if (!this.$v.operator.password.valid) return 'Пароль должен содержать буквы верхнего и нижнего регистров, а также цифры';
+            }
+        },
+        errorCommunicationMethod() {
+            if (this.$v.operator.communication_method.$dirty) {
+                if (!this.$v.operator.communication_method.required) return "Выберите один из пунктов!";
+            }
+        },
+        errorRoles() {
+            if (this.$v.operator.roles.$dirty) {
+                if (!this.$v.operator.roles.required) return "Выберите хотя бы один из пунктов!";
+            }
+        },
+    }
+};
 </script>
 
 <style>
-    .error {
-        color: red;
-    }
+.error {
+    color: red;
+}
 </style>

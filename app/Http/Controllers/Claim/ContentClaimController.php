@@ -16,7 +16,6 @@ use Greensight\Message\Services\ClaimService\ContentClaimService;
 use Greensight\Message\Dto\Document\DocumentDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use MerchantManagement\Dto\MerchantDto;
@@ -358,9 +357,7 @@ class ContentClaimController extends Controller
                     $value = array_filter($value);
                     if ($value) {
                         $restQuery->setFilter('created_at', '>=', $value[0]);
-                        $restQuery->setFilter('created_at', '<', Carbon::parse($value[1])
-                            ->addDay()
-                            ->toDateTimeString());
+                        $restQuery->setFilter('created_at', '<=', end_of_day_filter($value[1]));
                     }
                     break;
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Frontend;
+use Carbon\Carbon;
 
 if (!function_exists('frontend')) {
     /**
@@ -77,5 +78,12 @@ if (!function_exists('date_time2str')) {
     function date_time2str(?DateTime $date): string
     {
         return $date ? $date->format('d.m.Y H:i:s') : '';
+    }
+}
+
+if (!function_exists('end_of_day_filter')) {
+    function end_of_day_filter(string $date): string
+    {
+        return Carbon::parse($date)->endOfDay()->toDateTimeString();
     }
 }

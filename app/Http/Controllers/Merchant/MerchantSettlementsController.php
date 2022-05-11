@@ -91,7 +91,7 @@ class MerchantSettlementsController extends Controller
 
         if (isset($filter['created_at']) && array_filter($filter['created_at'])) {
             $restQuery->setFilter('date_from', '>=', $filter['created_at'][0]);
-            $restQuery->setFilter('date_to', '<=', $filter['created_at'][1]);
+            $restQuery->setFilter('date_to', '<=', end_of_day_filter($filter['created_at'][1]));
         }
 
         if (isset($filter['status'])) {

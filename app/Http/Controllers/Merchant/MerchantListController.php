@@ -195,7 +195,7 @@ class MerchantListController extends Controller
 
         if (isset($filter['created_at']) && array_filter($filter['created_at'])) {
             $query->setFilter('created_at', '>=', $filter['created_at'][0]);
-            $query->setFilter('created_at', '<=', $filter['created_at'][1]);
+            $query->setFilter('created_at', '<=', end_of_day_filter($filter['created_at'][1]));
         }
         if (isset($filter['rating'])) {
             $query->setFilter('rating_id', $filter['rating']);
