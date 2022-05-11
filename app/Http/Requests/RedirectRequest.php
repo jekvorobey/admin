@@ -24,12 +24,12 @@ class RedirectRequest extends FormRequest
 
         $regexFrom = "/^$regexWithoutQueryBody$/i";
         $regexTo = "/^{$regexWithoutQueryBody}{$regexQueryBody}$/i";
-        $defaultRules = "string|required";
+        $defaultRules = 'string|required';
 
         return [
             'id' => 'nullable|int',
             'from' => "$defaultRules|regex:{$regexFrom}",
-            'to' => "$defaultRules|different:from|regex:{$regexTo}"
+            'to' => "$defaultRules|different:from|regex:{$regexTo}",
         ];
     }
 
