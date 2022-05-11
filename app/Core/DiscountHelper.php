@@ -565,7 +565,7 @@ class DiscountHelper
                     $query->setFilter('created_at', '>=', $value . ' 00:00:00');
                     break;
                 case 'orderDateTo':
-                    $query->setFilter('created_at', '<=', $value . ' 23:59:59');
+                    $query->setFilter('created_at', '<=', end_of_day_filter($value));
                     break;
                 case 'orderNum':
                     $query->setFilter('number', 'like', "%{$value}%");

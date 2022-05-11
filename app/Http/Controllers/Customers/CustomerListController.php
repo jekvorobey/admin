@@ -96,7 +96,7 @@ class CustomerListController extends Controller
         }
         if (!empty($filter['created_between'])) {
             $restQueryUser->setFilter('created_at', '>=', $filter['created_between'][0]);
-            $restQueryUser->setFilter('created_at', '<=', $filter['created_between'][1]);
+            $restQueryUser->setFilter('created_at', '<=', end_of_day_filter($filter['created_between'][1]));
         }
 
         if (!empty($filter['role'])) {
