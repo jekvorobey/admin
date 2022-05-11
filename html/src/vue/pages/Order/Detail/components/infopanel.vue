@@ -137,6 +137,14 @@
             <div class="col-sm-6">
                 <span class="font-weight-bold">Статус оплаты:</span>
                 <payment-status :status='order.payment_status'/>
+                <template v-if="order.payment_status.id === paymentStatuses.timeout.id">
+                    <fa-icon icon="question-circle" :id="'product-strikes-popover' + order.id"></fa-icon>
+                    <b-popover :target="'product-strikes-popover' + order.id" triggers="hover">
+                        <ul class="list-group ml-3">
+                            <li v-for="payment in order.payments" v-if="payment.cancel_reason">{{ payment.cancel_reason }}</li>
+                        </ul>
+                    </b-popover>
+                </template>
                 {{ order.payment_status_at }}
             </div>
         </b-row>
