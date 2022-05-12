@@ -17,6 +17,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
+use Greensight\Oms\Dto\Payment\PaymentCancelReason;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
@@ -73,6 +74,7 @@ class OrderDetailController extends Controller
 
         $order['barcodes'] = $barCodes;
         $order['orderReturnReasons'] = $orderReturnReasons;
+        $order['paymentCancelReasons'] = PaymentCancelReason::allReasons();
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,

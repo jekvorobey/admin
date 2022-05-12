@@ -141,7 +141,7 @@
                     <fa-icon icon="question-circle" :id="'product-strikes-popover' + order.id"></fa-icon>
                     <b-popover :target="'product-strikes-popover' + order.id" triggers="hover">
                         <ul class="list-group ml-3">
-                            <li v-for="payment in order.payments" v-if="payment.cancel_reason">{{ payment.cancel_reason }}</li>
+                            <li v-for="payment in order.payments" v-if="payment.cancel_reason">{{ paymentCancelReasonName(payment.cancel_reason) }}</li>
                         </ul>
                     </b-popover>
                 </template>
@@ -295,6 +295,10 @@ export default {
                 }).finally(data => {
                 Services.hideLoader();
             })
+        },
+        paymentCancelReasonName(code) {
+            let cancelReasonList = Object.values(this.order.paymentCancelReasons).filter(reason => reason.code === code);
+            return cancelReasonList.length > 0 ? cancelReasonList[0].name : 'N/A';
         },
     },
     computed: {
