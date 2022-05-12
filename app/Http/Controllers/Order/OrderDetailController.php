@@ -74,7 +74,9 @@ class OrderDetailController extends Controller
 
         $order['barcodes'] = $barCodes;
         $order['orderReturnReasons'] = $orderReturnReasons;
-        $order['paymentCancelReasons'] = PaymentCancelReason::allReasons();
+        $order['paymentCancelReasons'] = collect(PaymentCancelReason::allReasons())->filter(function ($reason) use ($order) {
+            return in_array($reason->code, $order->payments->pluck('cancel_reason')->all());
+        });
 
         return $this->render('Order/Detail', [
             'iOrder' => $order,
