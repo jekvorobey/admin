@@ -137,7 +137,7 @@
             <div class="col-sm-6">
                 <span class="font-weight-bold">Статус оплаты:</span>
                 <payment-status :status='order.payment_status'/>
-                <template v-if="order.payment_status.id === paymentStatuses.timeout.id">
+                <template v-if="order.payment_status.id === paymentStatuses.timeout.id && paymentsHasReturnReason">
                     <fa-icon icon="question-circle" :id="'product-strikes-popover' + order.id"></fa-icon>
                     <b-popover :target="'product-strikes-popover' + order.id" triggers="hover">
                         <ul class="list-group ml-3">
@@ -342,6 +342,10 @@ export default {
             );
 
             return returnReason ? returnReason.text : '-';
+        },
+        paymentsHasReturnReason() {
+            let payments = this.order.payments.filter(payment => payment.cancel_reason !== '');
+            return payments.length > 0;
         },
     },
 };
