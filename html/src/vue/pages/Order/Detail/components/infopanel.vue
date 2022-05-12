@@ -297,8 +297,7 @@ export default {
             })
         },
         paymentCancelReasonName(code) {
-            let cancelReasonList = Object.values(this.order.paymentCancelReasons).filter(reason => reason.code === code);
-            return cancelReasonList.length > 0 ? cancelReasonList[0].name : 'N/A';
+            return this.order.paymentCancelReasons[code].name;
         },
     },
     computed: {
