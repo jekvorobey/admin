@@ -111,6 +111,12 @@
                 ></BrandsSearch>
 
                 <div class="offset-3 col-9">
+                    <div class="mb-2">
+                        <b-button variant="light" size="sm" @click="selectAllBrands">Выбрать все</b-button>
+                    </div>
+                </div>
+
+                <div class="offset-3 col-9">
                     <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением офферов</v-input>
                 </div>
             </template>
@@ -131,6 +137,12 @@
                         :i-brands="discount.brands"
                         @update="updateBrands"
                     ></BrandsSearch>
+                </div>
+
+                <div class="offset-3 col-9">
+                    <div class="mb-2">
+                        <b-button variant="light" size="sm" @click="selectAllBrands">Выбрать все</b-button>
+                    </div>
                 </div>
             </template>
 
