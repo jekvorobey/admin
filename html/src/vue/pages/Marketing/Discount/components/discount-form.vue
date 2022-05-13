@@ -81,6 +81,12 @@
                 ></BrandsSearch>
 
                 <div class="offset-3 col-9">
+                    <div class="mb-2">
+                        <b-button variant="light" size="sm" @click="selectAllBrands">Выбрать все</b-button>
+                    </div>
+                </div>
+
+                <div class="offset-3 col-9">
                     <v-input v-model="discount.offers" :help="'ID офферов через запятую'">За исключением офферов</v-input>
                 </div>
             </template>
@@ -532,6 +538,13 @@
             updateBrands(brands) {
                 this.discount = {...this.discount, brands};
                 this.initErrorBrands();
+            },
+            selectAllBrands() {
+                if (this.discount.brands.length === this.brands.length) {
+                    this.updateBrands([]);
+                } else {
+                    this.updateBrands(this.brands.map(brand => brand.id));
+                }
             },
             onTypeChange() {
                 this.discount.offers = null;
