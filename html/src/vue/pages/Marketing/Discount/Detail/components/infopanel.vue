@@ -82,6 +82,8 @@
                             :error="errorBrands"
                             @update="updateBrands"
                     ></BrandsSearch>
+
+                    <b-button variant="light" size="sm" @click="selectAllBrands">Выбрать все</b-button>
                 </td>
             </tr>
             <tr v-show="showOffers">
@@ -403,6 +405,13 @@
             updateBrands(brands) {
                 this.discount = {...this.discount, brands};
                 this.$v.discount.brands.$model = brands;
+            },
+            selectAllBrands() {
+                if (this.discount.brands.length === this.brands.length) {
+                    this.updateBrands([]);
+                } else {
+                    this.updateBrands(this.brands.map(brand => brand.id));
+                }
             },
             updateCategories(categories) {
                 this.discount = {...this.discount, categories};
