@@ -25,6 +25,10 @@
                 <td colspan="2">{{ offer.merchantName }}</td>
             </tr>
             <tr>
+                <th>ID в системе мерчанта</th>
+                <td colspan="2">{{ offerModel.xml_id }}</td>
+            </tr>
+            <tr>
                 <th>Название товара</th>
                 <td colspan="2">{{ offerModel.name }}</td>
             </tr>
@@ -48,7 +52,7 @@
                 <th>Статус</th>
                 <td colspan="2">
                     <span class="badge" :class="statusClass">
-                        {{ statusNames[offerModel.status] ?statusNames[offerModel.status] : 'N/A' }}
+                        {{ statusNames[offerModel.status] ? statusNames[offerModel.status] : 'N/A' }}
                     </span>
                 </td>
             </tr>
@@ -64,7 +68,6 @@
 </template>
 
 <script>
-    import Helpers from '../../../../../scripts/helpers';
     import OfferStatusEditModal from './offer-status-edit-modal.vue';
 
     export default {
