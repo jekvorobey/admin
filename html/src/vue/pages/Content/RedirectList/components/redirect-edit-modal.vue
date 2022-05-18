@@ -12,10 +12,20 @@
                     </b-col>
                     <b-col cols="8">
                         <v-input
+                            ref="fromComponent"
                             v-model="from"
-                            class="mb-2"
+                            class="mb-0"
                             :error="reqErrors.from"
                         />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4" />
+                    <b-col cols="8">
+                        <div class="mb-2">
+                            <b-button size="sm" @click="generateShortUrl">Сгенерировать</b-button>
+                            <b-button size="sm" @click="copyFrom">Скопировать</b-button>
+                        </div>
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
@@ -130,7 +140,46 @@ export default {
                 from: '',
                 to: ''
             }
-        }
+        },
+
+        async copyFrom() {
+            const oldValue = this.from;
+
+            if (this.from.indexOf('https://ibt.ru') === -1 && this.from.indexOf('http://ibt.ru')) {
+                this.from = 'https://ibt.ru' + this.from;
+            }
+
+            await this.$nextTick();
+            this.$refs.fromComponent.copy();
+            this.from = oldValue;
+        },
+
+        async generateShortUrl() {
+            let tryCounts = 1;
+            let isUnique = false;
+            let shortString = '/' + Helpers.getRandomString(13);
+
+            while (isUnique === false && tryCounts <= 10) {
+                const { redirects } = await Services.net().get(this.getRoute('redirect.page'), {
+                    filter: {
+                        from: shortString,
+                    }
+                });
+
+                if (redirects.length === 0) {
+                    isUnique = true;
+                } else {
+                    tryCounts++;
+                    shortString = '/' + Helpers.getRandomString(13);
+                }
+            }
+
+            if (!isUnique) {
+                throw new Error('Не удалось сгенерировать уникальную ссылку');
+            }
+
+            this.from = shortString;
+        },
     },
     watch: {
         redirect(value) {

@@ -7,6 +7,7 @@
                 v-if="tag === 'input'"
                 v-bind="$attrs"
                 v-on="inputListeners"
+                ref="input"
                 class="form-control"
                 :class="{ 'is-invalid': error, 'form-control-sm': sm  }"
                 :id="inputId"
@@ -18,6 +19,7 @@
                 v-if="tag === 'textarea'"
                 v-bind="$attrs"
                 v-on="inputListeners"
+                ref="input"
                 class="form-control"
                 :class="{ 'is-invalid': error }"
                 :id="inputId"
@@ -62,5 +64,17 @@ export default {
             inputId: `v-input-id-${this._uid}`,
         };
     },
+
+    methods: {
+        copy() {
+            this.$refs.input.select();
+
+            if (typeof document !== 'undefined') {
+                document.execCommand('copy')
+            }
+
+            return this.value;
+        }
+    }
 };
 </script>

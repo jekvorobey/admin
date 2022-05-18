@@ -41,6 +41,7 @@
         </td>
         <td>
           {{ redirect.from }}
+          <b-button size="sm" class="d-inline-block ml-3" @click="copyFrom(redirect.from)">Скопировать</b-button>
         </td>
         <td>
           {{ redirect.to }}
@@ -73,6 +74,9 @@
           class="mt-3 float-right"
       ></b-pagination>
     </div>
+
+    <v-input ref="copyInputComponent" class="hidden-copy-component" v-model="copyValue" />
+
     <redirect-edit-modal
         :redirect="currentRedirect"
         @saved="loadPage"
@@ -92,6 +96,7 @@
 
 <script>
 import FInput from '../../../components/filter/f-input.vue';
+import VInput from '../../../components/controls/VInput/VInput.vue';
 import FileInput from '../../../components/controls/FileInput/FileInput.vue';
 import RedirectEditModal from './components/redirect-edit-modal.vue';
 import {mapActions} from "vuex";
@@ -108,7 +113,8 @@ export default {
   components: {
     FInput,
     RedirectEditModal,
-    FileInput
+    FileInput,
+    VInput,
   },
   props: {
     iRedirects: {},
@@ -126,7 +132,8 @@ export default {
       currentPage: this.iCurrentPage || 1,
       currentRedirect: null,
       filter,
-      importErrors: []
+      importErrors: [],
+      copyValue: '',
     };
   },
   methods: {
@@ -210,6 +217,11 @@ export default {
       this.currentRedirect = redirect
       this.$bvModal.show('redirect-edit-modal');
     },
+    async copyFrom(value) {
+      this.copyValue = `https://ibt.ru${value}`;
+      await this.$nextTick();
+      this.$refs.copyInputComponent.copy();
+    }
   },
   watch: {
     currentPage() {
@@ -222,5 +234,10 @@ export default {
   .import-modal-body {
     max-height: 400px;
     overflow: auto;
+  }
+
+  .hidden-copy-component {
+      position: absolute;
+      left: -9999px;
   }
 </style>
