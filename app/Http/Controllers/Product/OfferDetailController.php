@@ -99,7 +99,7 @@ class OfferDetailController extends Controller
         $offer = $offerService->newQuery()
             ->setFilter('id', $id)
             ->include(ProductDto::entity())
-            ->addFields(OfferDto::entity(), 'id', 'merchant_id', 'sale_status', 'sale_at', 'created_at')
+            ->addFields(OfferDto::entity(), 'id', 'merchant_id', 'xml_id', 'sale_status', 'sale_at', 'created_at')
             ->addFields(ProductDto::entity(), 'id', 'name')
             ->offers()
             ->first();
@@ -126,11 +126,12 @@ class OfferDetailController extends Controller
             'product_id' => $offer->product->id,
             'merchant_id' => $offer->merchant_id,
             'merchantName' => $merchant ? $merchant->legal_name : 'N/A',
+            'xml_id' => $offer->xml_id,
             'name' => $offer->product ? $offer->product->name : 'N/A',
             'status' => $offer->sale_status,
             'sale_at' => $offer->sale_at,
-            'price' => $price ? $price->price : 0,
-            'cost' => $price ? $price->cost : 0,
+            'price' => $price->price ?? 0,
+            'cost' => $price->cost ?? 0,
             'created_at' => $offer->created_at,
             'stocks' => $stocks->map(function ($stock) {
                 return [
@@ -138,7 +139,7 @@ class OfferDetailController extends Controller
                     'qty' => $stock->qty,
                     'name' => $stock->store ? $stock->store->name : 'N/A',
                     'address' => $stock->store ? $stock->store->address['address_string'] : 'N/A',
-                    'contacts' => $q = $stock->store->storeContact->first() ?? null,
+                    'contacts' => $stock->store->storeContact->first() ?? null,
                 ];
             })->toArray(),
         ];

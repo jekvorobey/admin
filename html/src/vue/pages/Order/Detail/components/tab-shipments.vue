@@ -111,11 +111,16 @@
                        target="_blank">{{ shipment.store.address.address_string }}</a>
                 </div>
             </b-row>
-            <b-row class="mt-2 border-top" v-if="hasExportErrors(shipment)">
+            <b-row class="mt-2 border-top" v-if="shipment.exports.length > 0">
                 <div class="col-sm-6">
-                    <span class="font-weight-bold">Ошибки экспорта:</span>
-                    <p v-for="error in getExportErrors(shipment)">
-                        Код: {{ error.err_code }}, Ошибка: {{ error.err_message }}
+                    <span class="font-weight-bold">Экспорт мерчанту:</span>
+                    <p v-for="shipmentExport in shipment.exports">
+                        <template v-if="shipmentExport.shipment_xml_id">
+                            ID: {{ shipmentExport.shipment_xml_id }}
+                        </template>
+                        <template v-if="shipmentExport.err_code !== null">
+                            Ошибка: {{ shipmentExport.err_code }} {{ shipmentExport.err_message }}
+                        </template>
                     </p>
                 </div>
             </b-row>
@@ -336,12 +341,6 @@ export default {
 
             return returnReason ? returnReason.text : '-';
         },
-        hasExportErrors(shipment) {
-            return this.getExportErrors(shipment).length > 0;
-        },
-        getExportErrors(shipment) {
-            return shipment.exports.filter(exportError => exportError.err_code !== null);
-        }
     },
     computed: {
         order: {
