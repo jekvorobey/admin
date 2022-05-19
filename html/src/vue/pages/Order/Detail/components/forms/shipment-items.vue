@@ -429,9 +429,6 @@ export default {
             this.selectedMaxQty = 0;
             this.$bvModal.hide('modal-cancel-shipment-item');
         },
-        canCancelShipmentItem(shipment) {
-            return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
-        },
     },
     computed: {
         order: {
@@ -501,7 +498,10 @@ export default {
         },
         canEdit() {
             return this.withEdit && this.canUpdate(this.blocks.orders);
-        }
+        },
+        canCancelShipmentItem() {
+            return this.shipment.status && this.shipment.status.id < this.shipmentStatuses.shipped.id && !this.shipment.is_canceled;
+        },
     }
 }
 </script>
