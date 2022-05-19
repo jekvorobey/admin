@@ -1,14 +1,22 @@
 <template>
     <div>
         Продукты<br>
-        <b-input-group>
-            <b-form-input v-model="inputVendorCode" placeholder="Введите артикул"/>
-            <b-input-group-append>
-                <b-button v-on:click="addProduct" variant="info">Добавить</b-button>
-            </b-input-group-append>
+        <b-input-group class="mb-2">
+            <b-form-textarea rows="5" v-model="inputVendorCode" placeholder="Введите артикулы" />
         </b-input-group>
 
-        <div v-show="products.length">
+        <b-button v-on:click="addProduct" variant="info">Добавить</b-button>
+
+        <b-table-simple v-if="report.length > 0" class="mt-3" small>
+            <b-tbody>
+                <b-tr v-for="(item, i) in report" :key="i">
+                    <b-td style="width: 20%" :variant="item.variant">Артикул {{ item.vendorCode }}</b-td>
+                    <b-td :variant="item.variant">{{ item.status }}</b-td>
+                </b-tr>
+            </b-tbody>
+        </b-table-simple>
+
+        <div v-show="products.length > 0" class="mt-3">
             Добавленные продукты<br>
             <b-card v-for="product in products"
                     no-body
@@ -52,21 +60,61 @@
                 selectedProductIds: this.iSelectedProductIds,
                 inputVendorCode: '',
                 products: [],
+                report: [],
+
+                debounce: null,
             };
         },
         methods: {
-            addProduct() {
-                const val = this.inputVendorCode;
+            async addProduct() {
+                const productVendorCodes = this.inputVendorCode.split("\n");
 
-                Services.net().get(this.getRoute('productGroup.getProducts'), {vendor_code: val})
-                    .then((data) => {
+                if (productVendorCodes.length > 0) {
+                    Services.showLoader();
+                    this.report = [];
+                }
+
+                for (const productVendorCode of productVendorCodes) {
+                    try {
+                        const data = await Services.net().get(
+                            this.getRoute('productGroup.getProducts'),
+                            {vendor_code: productVendorCode}
+                        );
+
                         if (data && data[0]) {
-                            let productId = data[0].id;
-                            this.$emit('add', productId);
-                            this.selectedProductIds.push(productId);
-                            this.inputVendorCode = '';
+                            const productId = data[0].id;
+
+                            if (!this.selectedProductIds.includes(productId)) {
+                                this.$emit('add', productId);
+                                this.selectedProductIds.push(productId);
+
+                                this.report.push({
+                                    vendorCode: productVendorCode,
+                                    variant: 'success',
+                                    status: 'Добавлен'
+                                });
+                            } else {
+                                this.report.push({
+                                    vendorCode: productVendorCode,
+                                    variant: 'warning',
+                                    status: 'Повторный'
+                                });
+                            }
+                        } else {
+                            this.report.push({
+                                vendorCode: productVendorCode,
+                                variant: 'danger',
+                                status: 'Не найден'
+                            });
                         }
-                    });
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+
+                Services.hideLoader();
+
+                this.inputVendorCode = '';
             },
             removeProduct(id) {
                 this.selectedProductIds = this.selectedProductIds.filter((selectProductId) => {
@@ -88,7 +136,10 @@
         },
         watch: {
             selectedProductIds(val) {
-                this.fetchProducts(val);
+                clearTimeout(this.debounce);
+                this.debounce = setTimeout(() => {
+                    this.fetchProducts(val);
+                }, 150);
             }
         },
         mounted: function () {
