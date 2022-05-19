@@ -22,7 +22,7 @@ class RedirectListController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
-        $this->title = 'Редиректы';
+        $this->title = 'Редиректы (short url)';
         $query = $this->makeQuery($request);
 
         return $this->render('Content/RedirectList', [
@@ -31,6 +31,7 @@ class RedirectListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
+                'host' => config('app.showcase_host'),
             ],
         ]);
     }

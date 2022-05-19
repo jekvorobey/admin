@@ -162,7 +162,7 @@ class Menu
 //                        'route' => '#',
 //                    ],
                     [
-                        'title' => 'Редиректы',
+                        'title' => 'Редиректы (short url)',
                         'route' => route('redirect.list'),
                     ],
                     [
