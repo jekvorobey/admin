@@ -8,6 +8,18 @@
             <div class="card-body">
                 <b-row class="mb-2">
                     <b-col cols="4">
+                        <label> Результат</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input
+                            v-model="to"
+                            class="mb-2"
+                            :error="reqErrors.to"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
                         <label>Источник</label>
                     </b-col>
                     <b-col cols="8">
@@ -26,18 +38,6 @@
                             <b-button size="sm" @click="generateShortUrl">Сгенерировать</b-button>
                             <b-button size="sm" @click="copyFrom">Скопировать</b-button>
                         </div>
-                    </b-col>
-                </b-row>
-                <b-row class="mb-2">
-                    <b-col cols="4">
-                        <label> Результат</label>
-                    </b-col>
-                    <b-col cols="8">
-                        <v-input
-                            v-model="to"
-                            class="mb-2"
-                            :error="reqErrors.to"
-                        />
                     </b-col>
                 </b-row>
             </div>
