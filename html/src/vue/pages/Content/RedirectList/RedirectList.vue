@@ -79,6 +79,7 @@
 
     <redirect-edit-modal
         :redirect="currentRedirect"
+        :options="options"
         @saved="loadPage"
     />
 
@@ -218,7 +219,7 @@ export default {
       this.$bvModal.show('redirect-edit-modal');
     },
     async copyFrom(value) {
-      this.copyValue = `https://ibt.ru${value}`;
+      this.copyValue = this.options.host + value;
       await this.$nextTick();
       this.$refs.copyInputComponent.copy();
     }

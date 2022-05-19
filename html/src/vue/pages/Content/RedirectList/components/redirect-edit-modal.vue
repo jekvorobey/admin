@@ -73,6 +73,14 @@ export default {
     },
     props: {
         redirect: null,
+        options: {
+            type: Object,
+            default() {
+                return {
+                    host: ''
+                };
+            },
+        },
     },
     data() {
         return {
@@ -145,8 +153,8 @@ export default {
         async copyFrom() {
             const oldValue = this.from;
 
-            if (this.from.indexOf('https://ibt.ru') === -1 && this.from.indexOf('http://ibt.ru')) {
-                this.from = 'https://ibt.ru' + this.from;
+            if (this.options.host.length > 0 && this.from.indexOf(this.options.host) === -1) {
+                this.from = this.options.host + this.from;
             }
 
             await this.$nextTick();
@@ -157,7 +165,7 @@ export default {
         async generateShortUrl() {
             let tryCounts = 1;
             let isUnique = false;
-            let shortString = '/' + Helpers.getRandomString(13);
+            let shortString = '/' + Helpers.getRandomString(6);
 
             while (isUnique === false && tryCounts <= 10) {
                 const { redirects } = await Services.net().get(this.getRoute('redirect.page'), {
@@ -170,7 +178,7 @@ export default {
                     isUnique = true;
                 } else {
                     tryCounts++;
-                    shortString = '/' + Helpers.getRandomString(13);
+                    shortString = '/' + Helpers.getRandomString(6);
                 }
             }
 

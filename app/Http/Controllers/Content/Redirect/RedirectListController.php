@@ -31,6 +31,7 @@ class RedirectListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
+                'host' => config('app.showcase_host'),
             ],
         ]);
     }
