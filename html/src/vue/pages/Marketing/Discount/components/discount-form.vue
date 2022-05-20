@@ -18,6 +18,18 @@
                          :error="discountErrors.offers"
                          @change="initErrorOffers"
                 >Офферы</v-input>
+
+                <bulk-offer-loader
+                    :loaded-products="
+                        discount.offers
+                            ? discount.offers.split(',').map(offer => Number.parseInt(offer.trim()))
+                            : []
+                    "
+                    show-report
+                    @load="ids => {
+                        discount.offers = syncOffers(discount.offers, ids);
+                    }"
+                />
             </div>
 
             <div v-if="discount.type === discountTypes.bundleOffer" class="col-9 mb-3">
@@ -26,6 +38,19 @@
                          :error="discountErrors.bundleOffers"
                          @change="initErrorBundleOffers"
                 >Офферы</v-input>
+
+                <bulk-offer-loader
+                    :loaded-products="
+                        discount.bundleItems
+                            ? discount.bundleItems.split(',').map(offer => Number.parseInt(offer.trim()))
+                            : []
+                    "
+                    show-report
+                    @load="ids => {
+                        discount.bundleItems = syncOffers(discount.bundleItems, ids);
+                    }"
+                />
+
                 <div v-if="iDiscount">
                     <template v-for="bundleItem in iDiscount.bundleItems">
                         <a :href="getRoute('products.detail', {id: offers[bundleItem.item_id].product_id})">
@@ -318,6 +343,7 @@
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
     import Condition from "./condition.vue";
+    import BulkOfferLoader from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
 
     import { v4 as uuidv4 } from 'uuid';
 
@@ -332,6 +358,7 @@
             Conditions,
             CategoriesSearch,
             DatePicker,
+            BulkOfferLoader,
         },
         props: {
             iDiscount: Object,
@@ -397,6 +424,19 @@
             }
         },
         methods: {
+            syncOffers(offers, newOffers) {
+                if (offers && offers.length > 0) {
+                    return [
+                        ...offers.split(',').map(offer => Number.parseInt(offer.trim())),
+                        ...newOffers
+                    ].filter((value, index, self) => self.indexOf(value) === index).join(', ');
+                } else {
+                    return [
+                        ...newOffers
+                    ].filter((value, index, self) => self.indexOf(value) === index).join(', ');
+                }
+            },
+
             send() {
                 if (!this.processing) {
                     let bool = true;
