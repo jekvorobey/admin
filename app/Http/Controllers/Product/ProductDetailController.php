@@ -346,16 +346,17 @@ class ProductDetailController extends Controller
         $query->fields([
             ProductQuery::OFFER_ID,
             ProductQuery::QTY,
+            ProductQuery::INDEXED_AT,
+            ProductQuery::ACTIVE,
         ]);
         $query->id = $id;
-        $query->active = true;
         /** @var SearchService $searchService */
         $searchService = resolve(SearchService::class);
         $elasticProduct = current($searchService->products($query)->products);
         $currentOffer = [];
         if ($elasticProduct) {
             $currentOffer = clone $product->offers->where('id', $elasticProduct['offerId'])->first();
-            $currentOffer['qty'] = $elasticProduct['qty'];
+            $currentOffer['qty'] = $elasticProduct['active'] ? $elasticProduct['qty'] : null;
         }
         if (!$currentOffer) {
             $currentOffer['qty'] = 0;
@@ -372,6 +373,8 @@ class ProductDetailController extends Controller
         [$props, $availableProps, $directoryValues] = $this->properties($product);
 
         $publicEvents = $publicEventService->query()->setFilter('status_id', '=', PublicEventStatus::ACTIVE)->get();
+
+        $product['indexed_at'] = $elasticProduct['indexed_at'] ? (new Carbon($elasticProduct['indexed_at']))->format('Y-m-d H:i:s') : 'N/A';
 
         return [
             $product,

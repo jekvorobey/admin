@@ -17,6 +17,7 @@
                 <p class="text-secondary">Текущий остаток товара на витрине: <span class="float-right">{{ product.currentOffer.qty }} шт.</span></p>
                 <p class="text-secondary">Дата создания товара: <span class="float-right">{{ product.created_at }}</span></p>
                 <p class="text-secondary">Дата последнего обновления товара: <span class="float-right">{{ product.updated_at }}</span></p>
+                <p class="text-secondary">Дата последней индексации: <span class="float-right">{{ product.indexed_at }}</span></p>
                 <div style="margin-top: 10px" v-if="canUpdate(blocks.products)">
                     <button @click="openModal('productStatusEdit')" class="btn btn-outline-dark md-3">
                         Изменить статус

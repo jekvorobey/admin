@@ -22,7 +22,7 @@
             </tr>
             <tr>
                 <th>Мерчант</th>
-                <td colspan="2">{{ offer.merchantName }}</td>
+                <td colspan="2"><a :href="getRoute('merchant.detail', {id: offer.merchant_id})">{{ offer.merchantName }}</a></td>
             </tr>
             <tr>
                 <th>ID в системе мерчанта</th>
@@ -31,6 +31,10 @@
             <tr>
                 <th>Название товара</th>
                 <td colspan="2">{{ offerModel.name }}</td>
+            </tr>
+            <tr>
+                <th>Артикул</th>
+                <td colspan="2"><a :href="getRoute('products.detail', {id: offerModel.product_id})">{{ offerModel.vendor_code }}</a></td>
             </tr>
             <tr>
                 <th>Дата создания</th>
