@@ -443,7 +443,7 @@ class DiscountHelper
     {
         return [
             'page' => (int) $request->get('page', 1),
-            'perPage' => (int) $request->get('perPage') ?? $perPage,
+            'perPage' => (int) $request->get('perPage', $perPage),
         ];
     }
 
