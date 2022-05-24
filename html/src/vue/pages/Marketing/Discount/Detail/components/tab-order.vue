@@ -46,8 +46,8 @@
             <tr v-for="order in orders">
                 <td><a :href="getRoute('orders.detail', {id: order.id})">{{ order.number }}</a></td>
                 <td>{{ getDate(order.created_at) }}</td>
-                <td>{{ parseInt(order.cost) }} ₽</td>
-                <td>{{ parseInt(order.cost) - parseInt(order.discount) }} ₽</td>
+                <td>{{ preparePrice(order.cost - order.delivery_cost) }} ₽</td>
+                <td>{{ preparePrice(order.price - order.delivery_price) }} ₽</td>
                 <td>{{ customerName(order.customer_id) }}</td>
                 <td>{{ orderStatusesNames[order.status] }}</td>
             </tr>
