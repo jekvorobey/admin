@@ -215,6 +215,9 @@ class TabOrderController extends Controller
                             $restQuery->setFilter($key, '<=', (new Carbon($value[1]))->modify('+1 day')->format('Y-m-d'));
                         }
                         break;
+                    case 'is_problem':
+                        $restQuery->setFilter($key, to_boolean($value));
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -238,7 +241,7 @@ class TabOrderController extends Controller
                 'number' => 'string|someone',
                 'status' => 'array|someone',
                 'status.' => Rule::in(array_keys(ShipmentStatus::allStatuses())),
-                'is_problem' => 'boolean|someone',
+                'is_problem' => 'string|someone',
                 'customer_id' => 'numeric|someone',
                 'customer_full_name' => 'string|someone',
                 'package_qty_from' => 'numeric|someone',
