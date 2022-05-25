@@ -1532,7 +1532,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "7f482855a8f5646daac74932d26a5595a40fa2e5"
+                "reference": "ed76512d61f779d12352961ca1cbc3fd06a85549"
             },
             "require": {
                 "ext-json": "*",
@@ -1555,7 +1555,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2022-04-04T13:17:49+00:00"
+            "time": "2022-05-20T12:48:32+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
