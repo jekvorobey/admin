@@ -100,7 +100,7 @@ class OfferDetailController extends Controller
             ->setFilter('id', $id)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'merchant_id', 'xml_id', 'sale_status', 'sale_at', 'created_at')
-            ->addFields(ProductDto::entity(), 'id', 'name')
+            ->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code')
             ->offers()
             ->first();
 
@@ -128,6 +128,7 @@ class OfferDetailController extends Controller
             'merchantName' => $merchant ? $merchant->legal_name : 'N/A',
             'xml_id' => $offer->xml_id,
             'name' => $offer->product ? $offer->product->name : 'N/A',
+            'vendor_code' => $offer->product ? $offer->product->vendor_code : 'N/A',
             'status' => $offer->sale_status,
             'sale_at' => $offer->sale_at,
             'price' => $price->price ?? 0,

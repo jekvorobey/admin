@@ -1,12 +1,12 @@
 <template>
     <layout-main back>
         <b-row class="mb-2">
-            <b-col>
+            <b-col class="col-md-7">
                 <b-card>
                     <infopanel :model.sync="customer" :referral-levels="referralLevels"/>
                 </b-card>
             </b-col>
-            <b-col>
+            <b-col class="col-md-5">
                 <b-card>
                     <table class="table table-sm">
                         <thead>
