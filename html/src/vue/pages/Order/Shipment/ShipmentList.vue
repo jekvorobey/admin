@@ -630,7 +630,10 @@ export default {
             return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));
         },
         booleanOptions() {
-            return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
+            return [
+                {value: true, text: 'Да'},
+                {value: false, text: 'Нет'},
+            ];
         },
         editedShowColumns() {
             return this.columns.filter(function(column) {

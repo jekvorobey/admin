@@ -615,7 +615,10 @@
                 return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));
             },
             booleanOptions() {
-                return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
+                return [
+                    {value: true, text: 'Да'},
+                    {value: false, text: 'Нет'},
+                ];
             },
             typeOptions() {
                 return Object.values(this.orderTypes).map(type => ({value: type.id, text: type.name}))

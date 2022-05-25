@@ -170,6 +170,10 @@ class ShipmentListController extends Controller
                             $restQuery->setFilter('status', 'in', $value);
                         }
                         break;
+                    case 'is_canceled':
+                    case 'is_problem':
+                        $restQuery->setFilter($key, to_boolean($value));
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
@@ -214,8 +218,8 @@ class ShipmentListController extends Controller
                 'pdd.*' => 'string|nullable',
                 'cargo_id' => 'string|sometimes',
                 'cargo_xml_id' => 'string|sometimes',
-                'is_canceled' => 'boolean|sometimes',
-                'is_problem' => 'boolean|sometimes',
+                'is_canceled' => 'string|sometimes',
+                'is_problem' => 'string|sometimes',
             ]
         );
     }
