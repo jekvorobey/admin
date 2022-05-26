@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('digest')->group(function () {
                     Route::get('', 'TabDigestController@load')->name('merchant.detail.digest');
                     Route::put('comment', 'TabDigestController@comment')->name('merchant.detail.digest.comment');
+                    Route::post('auth', 'TabDigestController@auth')->name('merchant.detail.digest.auth');
                 });
                 Route::prefix('main')->group(function () {
                     Route::get('', 'TabMainController@load')->name('merchant.detail.main');

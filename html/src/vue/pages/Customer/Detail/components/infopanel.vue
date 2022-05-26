@@ -11,6 +11,7 @@
 
                 <button v-if="canUpdate(blocks.clients)" @click="makeDial" class="btn btn-info btn-sm">Позвонить</button>
                 <button v-if="canUpdate(blocks.clients)" @click="authByUser" class="btn btn-warning btn-sm">Войти под клиентом</button>
+                <a :href="showcaseUrl" target="_blank" ref="showcaseAnchor" class="d-none"></a>
                 <b-dropdown text="Изменить статус" class="float-right" size="sm" v-if="canUpdate(blocks.clients)">
                     <template v-if="!customer.referral">
                         <b-dropdown-item-button v-if="customer.status != customerStatus.created " @click="openModal('modal-mark-status-created')">
@@ -200,7 +201,8 @@
                 phone: this.model.phone,
                 avatar: this.model.avatar,
                 referral_level_id: this.model.referral_level_id,
-            }
+            },
+            showcaseUrl: null,
         };
     },
     watch: {
@@ -271,12 +273,15 @@
             Services.net().post(this.getRoute('customers.detail.auth', {id: this.customer.user_id}), null, )
                 .then(data => {
                     if (data.url) {
-                        window.open(data.url);
+                        this.showcaseUrl = data.url;
+                        setTimeout(() => {
+                            this.$nextTick(() => this.$refs.showcaseAnchor.click());
+                        }, 1000);
                         Services.msg("Авторизация выполнена, витрина откроется в новом окне");
                     } else {
                         Services.msg('Ошибка при авторизации');
                     }
-                }).finally(data => {
+                }).finally(() => {
                 Services.hideLoader();
             })
         },
@@ -341,7 +346,3 @@
     }
 };
 </script>
-
-<style scoped>
-
-</style>

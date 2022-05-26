@@ -6,6 +6,8 @@ return [
 
     'showcase_host' => env('SHOWCASE_HOST'),
 
+    'mas_host' => env('MAS_HOST'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name

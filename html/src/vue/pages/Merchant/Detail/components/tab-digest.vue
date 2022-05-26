@@ -6,9 +6,8 @@
                 <h3>Текущий отчетный период <em>({{ period }})</em></h3>
             </th>
             <th colspan="1" style="text-align: right">
-                <a href="#" class="btn btn-warning btn-md">
-                    Войти под мерчантом <fa-icon icon="eye"/>
-                </a>
+                <button v-if="canUpdate(blocks.merchants)" @click="authByMerchant" class="btn btn-warning btn-sm">Войти под мерчантом <fa-icon icon="eye"/></button>
+                <a :href="masUrl" target="_blank" ref="masAnchor" class="d-none"></a>
                 <button @click="save()" class="btn btn-success btn-md" v-if="canUpdate(blocks.merchants)">
                     Сохранить изменения <fa-icon icon="check"/>
                 </button>
@@ -114,6 +113,8 @@ export default {
             commission: '',
             comment: '',
             inputMode: false,
+            masUrl: null,
+            operatorUser: null,
         }
     },
     methods: {
@@ -128,6 +129,33 @@ export default {
             }, () => {
                 Services.msg('Не удалось сохранить изменения', 'danger')
             }).finally(() => {
+                Services.hideLoader();
+            })
+        },
+        authByMerchant() {
+            if (this.model.operators.length === 0 ) {
+                Services.msg('У мерчанта нет оператора');
+                return false;
+            }
+            this.operatorUser = this.model.operators.filter((operator) => { return operator.is_admin });
+            if (!this.operatorUser) {
+                this.operatorUser = this.model.operators[0];
+            }
+
+            Services.showLoader();
+            console.log(this.operatorUser[0].id);
+            Services.net().post(this.getRoute('merchant.detail.digest.auth', {id: this.operatorUser[0].id}), null, )
+                .then(data => {
+                    if (data.url && data.status) {
+                        this.masUrl = data.url;
+                        setTimeout(() => {
+                            this.$nextTick(() => this.$refs.masAnchor.click());
+                        }, 1000);
+                        Services.msg("Авторизация выполнена");
+                    } else {
+                        Services.msg('Ошибка при авторизации');
+                    }
+                }).finally(() => {
                 Services.hideLoader();
             })
         },
@@ -168,7 +196,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-
-</style>
