@@ -443,7 +443,7 @@ class DiscountHelper
     {
         return [
             'page' => (int) $request->get('page', 1),
-            'perPage' => (int) $request->get('perPage') ?? $perPage,
+            'perPage' => (int) $request->get('perPage', $perPage),
         ];
     }
 
@@ -596,7 +596,9 @@ class DiscountHelper
                 'number' => $order['number'],
                 'customer_id' => $order['customer_id'],
                 'cost' => $order['cost'],
+                'delivery_cost' => $order['delivery_cost'],
                 'price' => $order['price'],
+                'delivery_price' => $order['delivery_price'],
                 'status' => $order['status'],
                 'created_at' => $order['created_at'],
                 'discount' => collect($order['discounts'])->filter(function ($discount) use ($id) {
