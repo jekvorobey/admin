@@ -411,7 +411,10 @@ export default {
             return Object.values(this.deliveryServices).map(deliveryService => ({value: deliveryService.id, text: deliveryService.name}));
         },
         booleanOptions() {
-            return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
+            return [
+                {value: true, text: 'Да'},
+                {value: false, text: 'Нет'},
+            ];
         },
         editedShowColumns() {
             return this.columns.filter(function(column) {
