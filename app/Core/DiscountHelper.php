@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Exception;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
@@ -36,18 +37,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DiscountHelper
 {
-    /**
-     * @param array $pager
-     * @param array $type
-     * @return array
-     */
     public static function getParams(
         Request $request,
         int $userId,
         array $pager = [],
         ?int $merchantId = null,
         array $type = []
-    ) {
+    ): array {
         $discountInDto = new DiscountInDto();
 
         if (!empty($pager)) {
@@ -94,8 +90,11 @@ class DiscountHelper
             });
     }
 
-    public static function getDiscountUsersInfo(DiscountService $discountService, int $userId, $merchantId = null)
-    {
+    public static function getDiscountUsersInfo(
+        DiscountService $discountService,
+        int $userId,
+        $merchantId = null
+    ): array {
         $filter = [
             'filter' => [
                 '!status' => DiscountStatusDto::STATUS_CREATED,
@@ -105,25 +104,18 @@ class DiscountHelper
         if ($merchantId) {
             $filter['filter']['merchant_id'] = $merchantId;
         }
+
         return $discountService->usersInfo($filter);
     }
 
-    /**
-     * @param array $params
-     *
-     * @return int
-     */
-    public static function count(array $params, DiscountService $discountService)
+    public static function count(array $params, DiscountService $discountService): int
     {
         $discounts = $discountService->discountsCount($params);
 
         return $discounts['total'] ?? 0;
     }
 
-    /**
-     * @return DiscountDto
-     */
-    public static function validate(Request $request)
+    public static function validate(Request $request): DiscountDto
     {
         $data = $request->validate([
             'name' => 'string|required',
@@ -185,7 +177,7 @@ class DiscountHelper
      * @param array $data
      * @return array
      */
-    public static function getDiscountRelations(array $data)
+    public static function getDiscountRelations(array $data): array
     {
         $relations = [
             DiscountDto::DISCOUNT_OFFER_RELATION => [],
@@ -332,12 +324,10 @@ class DiscountHelper
 
     /**
      * Возвращает условия возникновения скидки
-     *
      * @param array $data
-     *
      * @return array
      */
-    public static function getDiscountCondition($data)
+    public static function getDiscountCondition(array $data): array
     {
         $conditions = [];
 
@@ -411,10 +401,7 @@ class DiscountHelper
         return $conditions;
     }
 
-    /**
-     * @return array|Collection
-     */
-    public static function getMerchantNames()
+    public static function getMerchantNames(): Collection
     {
         $merchantService = resolve(MerchantService::class);
         $merchants = $merchantService->newQuery()
@@ -424,10 +411,7 @@ class DiscountHelper
         return collect($merchants)->pluck('legal_name', 'id');
     }
 
-    /**
-     * @return array|Collection
-     */
-    public static function getUserNames()
+    public static function getUserNames(): Collection
     {
         $userService = resolve(UserService::class);
         $query = $userService->newQuery();
@@ -436,10 +420,7 @@ class DiscountHelper
         return collect($users)->pluck('login', 'id');
     }
 
-    /**
-     * @return array
-     */
-    public static function getDefaultPager(Request $request, int $perPage = 20)
+    public static function getDefaultPager(Request $request, int $perPage = 20): array
     {
         return [
             'page' => (int) $request->get('page', 1),
@@ -449,8 +430,9 @@ class DiscountHelper
 
     /**
      * @return array
+     * @throws Exception
      */
-    public static function loadData()
+    public static function loadData(): array
     {
         $discountService = resolve(DiscountService::class);
         $listsService = resolve(ListsService::class);
@@ -487,10 +469,9 @@ class DiscountHelper
     }
 
     /**
-     * @return array
-     * @throws \Pim\Core\PimException
+     * @throws Exception
      */
-    public static function detail(int $id)
+    public static function detail(int $id): array
     {
         /** @var DiscountService $discountService */
         $discountService = resolve(DiscountService::class);
@@ -535,12 +516,7 @@ class DiscountHelper
         ];
     }
 
-    /**
-     * @param $id
-     *
-     * @return array
-     */
-    public static function getOrdersByDiscount($id, Request $request)
+    public static function getOrdersByDiscount($id, Request $request): array
     {
         $page = $request->get('page', 1);
         $perPage = $request->get('perPage', 10);
@@ -571,20 +547,20 @@ class DiscountHelper
                     $query->setFilter('number', 'like', "%{$value}%");
                     break;
                 case 'orderCostFrom':
-                    $query->setFilter('cost', '>=', $value);
+                    $query->setFilter('orderCostFrom', $value);
                     break;
                 case 'orderCostTo':
-                    $query->setFilter('cost', '<=', $value);
+                    $query->setFilter('orderCostTo', $value);
                     break;
                 case 'buyer':
                     $customerIds = DiscountHelper::getCustomerIdsByFullName($value);
                     $query->setFilter('customer_id', '=', $customerIds);
                     break;
                 case 'orderPriceFrom':
-                    $query->setFilter('min_price_for_current_discount', $value);
+                    $query->setFilter('orderPriceFrom', $value);
                     break;
                 case 'orderPriceTo':
-                    $query->setFilter('max_price_for_current_discount', $value);
+                    $query->setFilter('orderPriceTo', $value);
                     break;
             }
         }
@@ -611,10 +587,7 @@ class DiscountHelper
         return $data;
     }
 
-    /**
-     * @return array
-     */
-    public static function getCustomerIdsByFullName(string $fullName)
+    public static function getCustomerIdsByFullName(string $fullName): array
     {
         // Users
         $users = resolve(UserService::class)->users(
