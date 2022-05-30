@@ -2,7 +2,7 @@
     <table class="table table-sm">
         <thead>
         <tr>
-            <th colspan="5">
+            <th colspan="4">
                 Инфопанель
                 <button v-if="canUpdate(blocks.clients)" class="btn btn-success btn-sm" @click="saveCustomer" :disabled="!showBtn">
                     Сохранить
@@ -59,12 +59,16 @@
         <tbody>
         <tr>
             <th>Роль</th>
-            <td colspan="3">
+            <td>
                 {{ customer.referral ? 'Реферальный Партнер' : 'Профессионал' }}
                 <!--{{ customer.role_date ? `(${formatDate(customer.role_date)})` : '' }}-->
                 <span v-if="customer.referrer">
                     (РП: <a :href="getRoute('customers.detail', {id: customer.referrer.id})">{{customer.referrer.title}}</a>)
                 </span>
+            </td>
+            <th>ID пользователя</th>
+            <td>
+                <a :href="getRoute('settings.userDetail', {id: customer.user_id})">{{ customer.user_id }}</a>
             </td>
         </tr>
         <tr v-if="customer.referral">

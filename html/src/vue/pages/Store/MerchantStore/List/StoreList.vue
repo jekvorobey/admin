@@ -44,7 +44,9 @@
             </tr>
             <tr v-if="stores" v-for="(store, index) in stores">
                 <td>{{ store.id }}</td>
-                <td>{{ store.merchant ? store.merchant.legal_name : '' }}</td>
+                <td><a :href="getRoute('merchant.detail', {id: store.merchant.id})">{{
+                        store.merchant ? store.merchant.legal_name : ''
+                    }}</a>
                 <td>
                     <a :href="getRoute('merchantStore.edit', {id: store.id})">{{ store.name }}</a>
                 </td>

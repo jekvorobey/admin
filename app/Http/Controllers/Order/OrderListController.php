@@ -147,9 +147,9 @@ class OrderListController extends Controller
                 'psd.*' => 'string|nullable',
                 'pdd' => 'array|sometimes',
                 'pdd.*' => 'string|nullable',
-                'is_canceled' => 'boolean|sometimes',
-                'is_problem' => 'boolean|sometimes',
-                'is_require_check' => 'boolean|sometimes',
+                'is_canceled' => 'string|sometimes',
+                'is_problem' => 'string|sometimes',
+                'is_require_check' => 'string|sometimes',
                 'confirmation_type.*' => Rule::in(array_keys(OrderConfirmationType::allTypes())),
                 'manager_comment' => 'string|sometimes',
                 'type.*' => Rule::in(array_keys(OrderType::allTypes())),
@@ -357,7 +357,11 @@ class OrderListController extends Controller
                         break;
                     case 'delivery_city_string':
                         break;
-
+                    case 'is_canceled':
+                    case 'is_problem':
+                    case 'is_require_check':
+                        $restQuery->setFilter($key, to_boolean($value));
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }

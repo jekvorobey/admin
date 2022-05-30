@@ -1447,7 +1447,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "f0940e7160fe99aedb6c79821d21548e59a5d991"
+                "reference": "6d725701a325b5cf397f68a3fa0bb344c59547dd"
             },
             "require": {
                 "ext-json": "*",
@@ -1481,7 +1481,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2021-11-30T13:08:01+00:00"
+            "time": "2022-04-27T09:47:02+00:00"
         },
         {
             "name": "iwengo/ibt-oms-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "991fc147e78cdd97367fb087d6224ff0d0ca5412"
+                "reference": "dd9bf76ad66430dd759f52754c5fd9071db2a091"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-04-22T07:00:16+00:00"
+            "time": "2022-05-12T12:44:29+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -1532,7 +1532,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "7f482855a8f5646daac74932d26a5595a40fa2e5"
+                "reference": "ed76512d61f779d12352961ca1cbc3fd06a85549"
             },
             "require": {
                 "ext-json": "*",
@@ -1555,7 +1555,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2022-04-04T13:17:49+00:00"
+            "time": "2022-05-20T12:48:32+00:00"
         },
         {
             "name": "iwengo/ibt-store-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }

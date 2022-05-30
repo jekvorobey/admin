@@ -20,7 +20,7 @@
                         Статус отправления текущий
                     </f-multi-select>
                     <f-select v-model="filter.is_problem" :options="problemOptions" class="col-3">
-                        Проблемное/нет проблем
+                        Проблемный
                     </f-select>
                 </div>
                 <transition name="slide">
@@ -522,11 +522,11 @@
             problemOptions() {
                 return [
                     {
-                        value: 0,
+                        value: false,
                         text: 'Нет проблем'
                     },
                     {
-                        value: 1,
+                        value: true,
                         text: 'Проблемный'
                     }
                 ];

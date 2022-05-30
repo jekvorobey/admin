@@ -7,7 +7,7 @@ const port = 3000;
 
 export default {
     output: {
-        path: path.resolve(__dirname, '../build'),
+        path: path.resolve(__dirname, '../../public/build'),
         filename: 'scripts/[name].js',
         publicPath: '/build/',
         pathinfo: false,

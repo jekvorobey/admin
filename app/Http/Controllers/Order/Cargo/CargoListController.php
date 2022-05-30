@@ -92,7 +92,7 @@ class CargoListController extends Controller
                 'store_id' => 'array|someone',
                 'shipment_number' => 'integer|someone',
                 'created_at' => 'array|someone',
-                'is_canceled' => 'boolean|someone',
+                'is_canceled' => 'string|someone',
                 'cdek_intake_number' => 'string|sometimes',
             ]
         )->attributes();
@@ -169,7 +169,9 @@ class CargoListController extends Controller
                             $restQuery->setFilter($key, '<=', $value[1]);
                         }
                         break;
-
+                    case 'is_canceled':
+                        $restQuery->setFilter($key, to_boolean($value));
+                        break;
                     default:
                         $restQuery->setFilter($key, $value);
                 }
