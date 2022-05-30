@@ -88,7 +88,9 @@ export default {
                         this.hash = data.hash;
 
                         this.previewUrl = this.url + '/pages/' + this.hash + '?draft=1';
-                        this.$nextTick(() => this.$refs.previewAnchor.click());
+                        setTimeout(() => {
+                            this.$nextTick(() => this.$refs.previewAnchor.click());
+                        }, 1000);
                     })
                     .catch(() => {
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});

@@ -201,16 +201,14 @@ class MerchantDetailController extends Controller
                     'email' => $userMain ? $userMain->email : 'N/A',
                 ],
                 'operators' => $operatorUsers->map(function (UserDto $operatorUser) {
+                    $isAdmin = in_array(RoleDto::ROLE_MAS_MERCHANT_ADMIN, $operatorUser->roles);
                         return [
                             'id' => $operatorUser->id,
-                            'title' => $operatorUser->getTitle() . (in_array(
-                                RoleDto::ROLE_MAS_MERCHANT_ADMIN,
-                                $operatorUser->roles
-                            ) ? ' (Администратор)' : ''),
+                            'title' => $operatorUser->getTitle() . ($isAdmin ? ' (Администратор)' : ''),
                             'email' => $operatorUser->email,
+                            'is_admin' => $isAdmin,
                         ];
-                })->values()
-                        ->all(),
+                })->values()->all(),
             ],
             'statuses' => MerchantStatus::statusesByMode($isRequest),
             'ratings' => $ratings->map(function (RatingDto $ratingDto) {
