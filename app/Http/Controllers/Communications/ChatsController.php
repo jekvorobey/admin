@@ -231,6 +231,7 @@ class ChatsController extends Controller
                     ];
                 });
         $this->title = 'Неперсонифицированные чаты';
+        $this->loadCommunicationChannels = true;
 
         return $this->render('Communication/UnlinkMessengerChats', [
             'iChats' => $chats,

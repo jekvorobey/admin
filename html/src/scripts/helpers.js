@@ -380,4 +380,22 @@ export default class Helpers {
     static addSlash(uri) {
         return uri.charAt(0) !== '/' ? `/${uri}` : uri;
     }
+
+    /**
+     * @param {number} len
+     * @returns {string}
+     */
+    static getRandomString(len) {
+        /**
+         * @param {number} dec
+         * @returns {string}
+         */
+        function dec2hex(dec) {
+            return dec.toString(16).padStart(2, '0');
+        }
+
+        const arr = new Uint8Array((len || 40) / 2);
+        window.crypto.getRandomValues(arr);
+        return Array.from(arr, dec2hex).join('');
+    }
 }

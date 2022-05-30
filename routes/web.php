@@ -373,6 +373,7 @@ Route::middleware('auth')->group(function () {
                     Route::prefix('{deliveryId}')->where(['deliveryId' => '[0-9]+'])->group(function () {
                         Route::get('', 'TabDeliveriesController@load')->name('orders.detail.deliveries');
                         Route::put('', 'TabDeliveriesController@save')->name('orders.detail.deliveries.save');
+                        Route::put('change-status', 'TabDeliveriesController@changeDeliveryStatus')->name('orders.detail.deliveries.changeDeliveryStatus');
                         Route::put('save-delivery-order', 'TabDeliveriesController@saveDeliveryOrder')->name('orders.detail.deliveries.saveDeliveryOrder');
                         Route::put('cancel-delivery-order', 'TabDeliveriesController@cancelDeliveryOrder')->name(
                             'orders.detail.deliveries.cancelDeliveryOrder'

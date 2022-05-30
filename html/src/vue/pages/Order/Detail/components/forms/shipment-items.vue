@@ -25,7 +25,7 @@
         <b-table-simple hover small caption-top responsive="true">
             <b-thead>
                 <b-tr>
-                    <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem">
+                    <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && hasNonPackagedItems">
                         <input type="checkbox" id="select-all-page-shipments" v-model="isSelectAllBasketItem"
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
@@ -223,37 +223,39 @@
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div v-if="!shipment.is_problem && isAssemblingStatus" class="float-right">
-                                    <fa-icon icon="pencil-alt" title="Изменить кол-во" class="cursor-pointer"
-                                             @click="editShipmentPackageItem(shipmentPackage, item)">
-                                    </fa-icon>
-                                    <br>
-                                    <modal-edit-shipment-package-item :model-shipment.sync="shipment"
-                                                                      :model-order.sync="order"
-                                                                      :shipment-package.sync="selectedShipmentPackage"
-                                                                      :shipment-package-num="key+1"
-                                                                      :shipment-item.sync="selectedShipmentItem"
-                                                                      :max-qty="selectedMaxQty"
-                                                                      @onSave="onShipmentPackageItemEdit"
-                                                                      v-if="Object.values(selectedShipmentItem).length > 0"/>
-
-                                    <fa-icon icon="times" title="Удалить из коробки" class="cursor-pointer"
-                                             @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
-                                    </fa-icon>
-                                </div>
-                                <div v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
-                                     class="float-right">
-                                    <fa-icon icon="pencil-alt" title="Частично отменить" class="cursor-pointer"
-                                             @click="cancelShipmentItem(item.basketItem)">
-                                    </fa-icon>
-                                    <br>
-                                    <modal-cancel-shipment-item :model-shipment.sync="shipment"
-                                                                :model-order.sync="order"
-                                                                :basket-item.sync="selectedBasketItem"
-                                                                :max-qty="selectedMaxQty"
-                                                                :returnReasons="order.orderReturnReasons"
-                                                                @onSave="onShipmentItemCancel"
-                                                                @onClose="onCloseModal"
-                                                                v-if="selectedBasketItem === item.basketItem"/>
+                                    <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
+                                        <template #button-content>
+                                            <fa-icon icon="edit" title="Действия" class="cursor-pointer">
+                                            </fa-icon>
+                                        </template>
+                                        <b-dropdown-item-button v-if="!shipment.is_problem && isAssemblingStatus"
+                                                                @click="editShipmentPackageItem(shipmentPackage, item)">
+                                            Изменить кол-во
+                                        </b-dropdown-item-button>
+                                        <modal-edit-shipment-package-item :model-shipment.sync="shipment"
+                                                                          :model-order.sync="order"
+                                                                          :shipment-package.sync="selectedShipmentPackage"
+                                                                          :shipment-package-num="key+1"
+                                                                          :shipment-item.sync="selectedShipmentItem"
+                                                                          :max-qty="selectedMaxQty"
+                                                                          @onSave="onShipmentPackageItemEdit"
+                                                                          v-if="Object.values(selectedShipmentItem).length > 0"/>
+                                        <b-dropdown-item-button v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
+                                                                @click="cancelShipmentItem(item.basketItem)">
+                                            Частично отменить
+                                            <modal-cancel-shipment-item :model-shipment.sync="shipment"
+                                                                        :model-order.sync="order"
+                                                                        :basket-item.sync="selectedBasketItem"
+                                                                        :max-qty="selectedMaxQty"
+                                                                        :returnReasons="order.orderReturnReasons"
+                                                                        @onSave="onShipmentItemCancel"
+                                                                        @onClose="onCloseModal"
+                                                                        v-if="selectedBasketItem === item.basketItem"/>
+                                        </b-dropdown-item-button>
+                                        <b-dropdown-item-button @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
+                                            Удалить из коробки
+                                        </b-dropdown-item-button>
+                                    </b-dropdown>
                                 </div>
                             </b-td>
                         </b-tr>
@@ -427,9 +429,6 @@ export default {
             this.selectedMaxQty = 0;
             this.$bvModal.hide('modal-cancel-shipment-item');
         },
-        canCancelShipmentItem(shipment) {
-            return shipment.status && shipment.status.id < this.shipmentStatuses.shipped.id && !shipment.is_canceled;
-        },
     },
     computed: {
         order: {
@@ -476,6 +475,9 @@ export default {
         hasShipmentPackages() {
             return this.shipment.packages.length > 0;
         },
+        hasNonPackagedItems() {
+            return Object.values(this.shipment.nonPackedBasketItems).length > 0;
+        },
         tooltipUnitCostHelp() {
             return 'Цена товара без скидки за единицу товара';
         },
@@ -496,7 +498,10 @@ export default {
         },
         canEdit() {
             return this.withEdit && this.canUpdate(this.blocks.orders);
-        }
+        },
+        canCancelShipmentItem() {
+            return this.shipment.status && this.shipment.status.id < this.shipmentStatuses.shipped.id && !this.shipment.is_canceled;
+        },
     }
 }
 </script>
