@@ -101,6 +101,7 @@ class PropertiesController extends Controller
             'is_multiple' => 'required|boolean',
             'is_color' => 'required|boolean',
             'categories' => 'present|json',
+            'ungrouped_variants_categories' => 'present|json',
             'old_values' => 'nullable|json',
             'new_values' => 'nullable|json',
             'measurement_unit' => 'nullable|string',
@@ -136,6 +137,7 @@ class PropertiesController extends Controller
 
         $propQuery = $productService->newQuery()
             ->include('categoryPropertyLinks')
+            ->include('categoryPropertyUngroupedVariantLinks')
             ->addFields(
                 PropertyDto::entity(),
                 'id',
@@ -215,6 +217,7 @@ class PropertiesController extends Controller
         $dto->is_multiple = $data['is_multiple'];
         $dto->is_color = $data['is_color'];
         $dto->categoryPropertyLinks = $data['categories'] ?? json_encode([]);
+        $dto->categoryPropertyUngroupedVariantLinks = $data['ungrouped_variants_categories'] ?? json_encode([]);
         $dto->measurement_unit = $data['measurement_unit'];
 
         if ($dto->type === PropertyDto::TYPE_DIRECTORY) {
