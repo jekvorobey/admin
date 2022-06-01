@@ -54,6 +54,28 @@
                         />
                     </b-col>
                 </b-row>
+                <b-row v-if="isCreditPayment" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-setting-discount">Размер скидки</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-setting-discount"
+                                 v-model="$v.paymentMethod.settings.discount.$model"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="isCreditPayment" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-setting-signingKD">Подписание КД</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-setting-signingKD"
+                                 v-model="$v.paymentMethod.settings.signingKD.$model"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
             </div>
         </div>
         <div class="mt-3">
@@ -99,6 +121,11 @@
                 paymentMethod: {
                     name: {required},
                     active: {required},
+                    settings: {
+                        discount: {},
+                        signingKD: {},
+                    },
+
                 },
             }
         },
@@ -114,6 +141,7 @@
                     code: this.paymentMethod.code,
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
+                    settings: {discount: this.paymentMethod.settings.discount, signingKD: this.paymentMethod.settings.signingKD},
                 };
 
                 Services.showLoader();
@@ -142,6 +170,9 @@
                     return "Введите корректное название";
                 }
             },
+            isCreditPayment() {
+                return this.allPaymentMethods.creditpaid.id === this.paymentMethod.id;
+            }
         },
         watch: {
             editingModel(value) {

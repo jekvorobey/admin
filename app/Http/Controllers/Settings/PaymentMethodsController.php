@@ -19,6 +19,8 @@ class PaymentMethodsController extends Controller
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
+        $this->loadAllPaymentMethods = true;
+
         $paymentMethods = $paymentService->getPaymentMethods()->keyBy('id');
 
         $this->title = 'Управление способами оплаты';
