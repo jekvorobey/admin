@@ -371,13 +371,9 @@
             this.store.address.area = address.area_with_type;
             this.store.address.area_guid = address.area_fias_id;
 
-            let assignSettlementAsCity = address.settlement_with_type && address.settlement_with_type !== 'автодорога';
+            let assignSettlementAsCity = address.settlement_with_type && address.settlement_type !== 'автодорога';
             this.store.address.city = assignSettlementAsCity ? address.settlement_with_type : address.city_with_type;
             this.store.address.city_guid = assignSettlementAsCity ? address.settlement_fias_id : address.city_fias_id;
-            this.store.address.city = address.settlement_with_type ? address.settlement_with_type :
-                address.city_with_type;
-            this.store.address.city_guid = address.settlement_with_type ? address.settlement_fias_id :
-                address.city_fias_id;
             this.store.address.street = address.street_with_type;
             this.store.address.house = address.house ? [address.house_type, address.house].join(' ') : '';
             this.store.address.block = address.block ? [address.block_type, address.block].join(' ') : '';
