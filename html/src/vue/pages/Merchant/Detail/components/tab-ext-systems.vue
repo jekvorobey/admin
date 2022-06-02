@@ -78,6 +78,14 @@
                     <th>Код Юр.лица</th>
                     <td>{{ paramOptions.merchantOrganizationSetting }}</td>
                 </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Код контрагента</th>
+                    <td>{{ paramOptions.merchantAgentSetting }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Код отвественного сотрудника</th>
+                    <td>{{ paramOptions.merchantOwnerSetting }}</td>
+                </tr>
                 <tr>
                     <th>Дата создания</th>
                     <td>{{ datetimePrint(extSystem.created_at) }}</td>
