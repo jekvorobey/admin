@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
@@ -18,6 +19,7 @@ use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
+use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
@@ -136,6 +138,26 @@ class OrderDetailController extends Controller
 
         return response()->json([
             'status' => OrderStatus::allStatuses()[$data['status']]->toArray(),
+        ]);
+    }
+
+    /**
+     * Изменить статус оплаты заказа
+     */
+    public function changePaymentStatus(int $id, Request $request, OrderService $orderService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+
+        $data = $this->validate($request, [
+            'payment_status' => Rule::in(array_keys(PaymentStatus::allStatuses())),
+        ]);
+        $order = new OrderDto();
+        $order->payment_status = $data['payment_status'];
+        $orderService->updateOrder($id, $order);
+
+        return response()->json([
+            'payment_status' => PaymentStatus::allStatuses()[$data['payment_status']]->toArray(),
         ]);
     }
 

@@ -35,6 +35,10 @@
                                               @click="showOrderReturnModal()">
                         Отменить заказ
                       </b-dropdown-item-button>
+                      <b-dropdown-item-button v-if="isAwaitingPaymentStatus"
+                                              @click="changePaymentStatus(paymentStatuses.paid.id)">
+                        Заказ оплачен
+                      </b-dropdown-item-button>
                     </template>
                     <b-dropdown-item-button
                         v-else-if="this.order.basket.type === this.basketTypes.product && order.status && order.status.id === orderStatuses.done.id"
@@ -208,6 +212,24 @@ export default {
                 Services.hideLoader();
             });
         },
+        changePaymentStatus(statusId) {
+            let errorMessage = 'Ошибка при изменении статуса платежа';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.changePaymentStatus', {id: this.order.id}), null,
+                {'payment_status': statusId}).then(data => {
+                if (data.payment_status) {
+                    this.order.payment_status = data.payment_status;
+                    Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
         capturePayment() {
             let errorMessage = 'Ошибка при подтверждении платежа';
 
@@ -317,6 +339,9 @@ export default {
         },
         isCreatedStatus() {
             return this.isStatus(this.orderStatuses.created.id);
+        },
+        isAwaitingPaymentStatus() {
+            return this.order.payment_status && this.order.payment_status.id === this.paymentStatuses.waiting.id;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;

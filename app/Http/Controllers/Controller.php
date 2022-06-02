@@ -149,4 +149,18 @@ class Controller extends BaseController
 
         return true;
     }
+
+    /**
+     * Проверить есть ли роль/роли у пользователя
+     * @param int|int[] $roleId
+     */
+    protected function hasRole($roleId): bool
+    {
+        $state = resolve(RequestInitiator::class)->hasRole($roleId);
+        if ($state === false) {
+            abort(403, 'Недостаточно прав');
+        }
+
+        return true;
+    }
 }
