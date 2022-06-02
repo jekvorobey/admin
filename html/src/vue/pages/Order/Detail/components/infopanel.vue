@@ -35,7 +35,7 @@
                                               @click="showOrderReturnModal()">
                         Отменить заказ
                       </b-dropdown-item-button>
-                      <b-dropdown-item-button v-if="isAwaitingPaymentStatus"
+                      <b-dropdown-item-button v-if="isAwaitingPaymentStatus && isCreditPayment"
                                               @click="changePaymentStatus(paymentStatuses.paid.id)">
                         Заказ оплачен
                       </b-dropdown-item-button>
@@ -342,6 +342,9 @@ export default {
         },
         isAwaitingPaymentStatus() {
             return this.order.payment_status && this.order.payment_status.id === this.paymentStatuses.waiting.id;
+        },
+        isCreditPayment() {
+            return this.order.payment_method_id && this.order.payment_method_id === this.allPaymentMethods.creditpaid.id;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;
