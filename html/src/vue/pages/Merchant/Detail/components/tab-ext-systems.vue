@@ -54,9 +54,9 @@
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
                     <th>Интеграция</th>
-                    <td>Импорт цен</td>
-                    <td>Импорт остатков</td>
-                    <td>Экспорт заказов</td>
+                    <td>Импорт цен (ID {{ paramOptions.paramPrice.id }})</td>
+                    <td>Импорт остатков (ID {{ paramOptions.paramStock.id }})</td>
+                    <td>Экспорт заказов (ID {{ paramOptions.paramOrder.id }})</td>
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
                     <th>Период проверки (мин)</th>
