@@ -145,7 +145,7 @@
             this.store.address.area = address.area_with_type;
             this.store.address.area_guid = address.area_fias_id;
 
-            let assignSettlementAsCity = address.settlement_with_type && address.settlement_type !== 'автодорога';
+            let assignSettlementAsCity = address.settlement_with_type && !['автодорога', 'мкр'].includes(address.settlement_type);
             this.store.address.city = assignSettlementAsCity ? address.settlement_with_type : address.city_with_type;
             this.store.address.city_guid = assignSettlementAsCity ? address.settlement_fias_id : address.city_fias_id;
 
