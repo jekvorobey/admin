@@ -89,18 +89,18 @@ class TabExtSystemsController extends Controller
 
     private function loadParamsOptions(int $merchantId): array
     {
-        $merchantSettings = $this->merchantService->getSettings($merchantId);
-        $merchantPriceSetting = $merchantSettings->firstWhere('name', MerchantSettingDto::PRICE_NAME);
-        $merchantOrganizationSetting = $merchantSettings->firstWhere('name', MerchantSettingDto::ORGANIZATION_CODE);
-        $merchantAgentSetting = $merchantSettings->firstWhere('name', MerchantSettingDto::AGENT_CODE);
-        $merchantOwnerSetting = $merchantSettings->firstWhere('name', MerchantSettingDto::OWNER_CODE);
+        $merchantSettings = $this->merchantService->getSettings($merchantId)->keyBy('name');
+        $merchantPriceSetting = $merchantSettings->get(MerchantSettingDto::PRICE_NAME);
+        $merchantOrganizationSetting = $merchantSettings->get(MerchantSettingDto::ORGANIZATION_CODE);
+        $merchantAgentSetting = $merchantSettings->get(MerchantSettingDto::AGENT_CODE);
+        $merchantOwnerSetting = $merchantSettings->get(MerchantSettingDto::OWNER_CODE);
         $host = $extSystem->connection_params['host'] ?? '';
         $paramPrice = null;
         $paramStock = null;
         $paramOrder = null;
         $paramPriceStock = null;
         if ($this->extSystem) {
-            $integration = $this->merchantIntegrationService->integrations($this->extSystem->id);
+            $integration = $this->merchantIntegrationService->integrations($this->extSystem->id)->keyBy('type');
             $driver = (int) $this->extSystem->driver;
             switch ($driver) {
                 case ExtSystemDriver::DRIVER_1C:
@@ -108,12 +108,12 @@ class TabExtSystemsController extends Controller
                     break;
                 case ExtSystemDriver::DRIVER_MOY_SKLAD:
                     $host = config('common-lib.integrationMoyskladHost');
-                    $paramPrice = $integration->firstWhere('type', IntegrationType::TYPE_PRICE_IMPORT);
-                    $paramStock = $integration->firstWhere('type', IntegrationType::TYPE_STOCK_IMPORT);
-                    $paramOrder = $integration->firstWhere('type', IntegrationType::TYPE_ORDER_EXPORT);
+                    $paramPrice = $integration->get(IntegrationType::TYPE_PRICE_IMPORT);
+                    $paramStock = $integration->get(IntegrationType::TYPE_STOCK_IMPORT);
+                    $paramOrder = $integration->get(IntegrationType::TYPE_ORDER_EXPORT);
                     break;
                 case ExtSystemDriver::DRIVER_FILE_SHARING:
-                    $paramPriceStock = $integration->firstWhere('type', IntegrationType::TYPE_PRICE_STOCK_IMPORT);
+                    $paramPriceStock = $integration->get(IntegrationType::TYPE_PRICE_STOCK_IMPORT);
             }
         }
 
