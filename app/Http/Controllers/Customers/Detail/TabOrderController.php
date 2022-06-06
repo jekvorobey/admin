@@ -26,7 +26,7 @@ class TabOrderController extends Controller
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id));
+        $orders = $orderService->orders((new RestQuery())->setFilter('customer_id', $id)->addSort('created_at', 'desc'));
         if ($orders->count()) {
             $orderIds = $orders->pluck('id')->all();
             $payments = $paymentService->payments($orderIds)->groupBy('order_id');
