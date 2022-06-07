@@ -166,6 +166,15 @@
                 </div>
             </div>
         </b-modal>
+        <b-pagination
+            v-if="pager.pages > 1"
+            v-model="currentPage"
+            :total-rows="pager.total"
+            :per-page="pager.pageSize"
+            @change="changePage"
+            :hide-goto-end-buttons="pager.pages < 10"
+            class="float-right"
+        ></b-pagination>
     </div>
 </template>
 
@@ -177,6 +186,7 @@
     import CommunicationChatMessage from '../communication-chat-message/communication-chat-message.vue';
 
     import Services from '../../../../scripts/services/services.js';
+    import withQuery from "with-query";
 
     export default {
         name: 'communication-chat-list',
@@ -194,6 +204,9 @@
         },
         data() {
             return {
+                currentPage: {},
+                pager: {},
+                pageNumber: null,
                 showChat: null,
                 searchForm: {
                     theme: '',
@@ -247,6 +260,10 @@
             }
         },
         methods: {
+            changePage(newPage) {
+                this.pageNumber = newPage;
+                this.filterChats();
+            },
             userShortName(userId) {
                 if (!userId) {
                     return 'Маркетплейс';
@@ -269,6 +286,9 @@
                 if (this.searchForm.type_ids) {
                     filter.type_ids = this.searchForm.type_ids;
                 }
+                if (this.pageNumber) {
+                    filter.pageNumber = this.pageNumber;
+                }
                 filter = Object.assign(filter, this.filter);
                 Services.net().get(
                     this.getRoute('communications.chats.filter'), filter)
@@ -279,6 +299,8 @@
                         this.customers = data.customers;
                         this.operators = data.operators;
                         this.statuses = data.statuses;
+                        this.currentPage = data.iCurrentPage;
+                        this.pager = data.iPager;
 
                         let showChat = parseInt(Services.route().get('showChat', null));
                         if (showChat) {
@@ -452,7 +474,3 @@
         }
     };
 </script>
-
-<style scoped>
-
-</style>
