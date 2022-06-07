@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "813df7761a9b2648ca0c15e160dbafe6",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1443,11 +1443,11 @@
         },
         {
             "name": "iwengo/ibt-message-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-feature/BX-6497-chats-pagination",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "6d725701a325b5cf397f68a3fa0bb344c59547dd"
+                "reference": "11738c7a84b6b45c046bfc3cf07083c304b36ef6"
             },
             "require": {
                 "ext-json": "*",
@@ -1481,7 +1481,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-04-27T09:47:02+00:00"
+            "time": "2022-06-07T08:30:14+00:00"
         },
         {
             "name": "iwengo/ibt-oms-lib",
@@ -10865,9 +10865,9 @@
         },
         {
             "package": "iwengo/ibt-message-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
+            "version": "dev-feature/BX-6497-chats-pagination",
+            "alias": "dev-master-ylab",
+            "alias_normalized": "dev-master-ylab"
         },
         {
             "package": "iwengo/ibt-oms-lib",
