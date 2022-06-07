@@ -19,7 +19,6 @@ use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
@@ -97,7 +96,6 @@ class ChatsController extends Controller
             $listConstructor->setUnreadAdmin((bool) request('unread_admin'));
         }
         if (request('pageNumber')) {
-            Log::info(print_r(request('pageNumber'), true));
             $listConstructor->setPage(request('pageNumber'));
         }
 
