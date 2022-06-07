@@ -19,9 +19,12 @@ use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class ChatsController extends Controller
 {
@@ -67,6 +70,11 @@ class ChatsController extends Controller
         ]);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws RestClientException
+     */
     public function filter(CommunicationService $communicationService): JsonResponse
     {
         $listConstructor = $communicationService->chats();
@@ -88,8 +96,12 @@ class ChatsController extends Controller
         if (!is_null(request('unread_admin'))) {
             $listConstructor->setUnreadAdmin((bool) request('unread_admin'));
         }
+        if (request('pageNumber')) {
+            Log::info(print_r(request('pageNumber'), true));
+            $listConstructor->setPage(request('pageNumber'));
+        }
 
-        [$chats, $users, $files, $customers, $operators] = $this->loadChats($listConstructor);
+        [$chats, $users, $files, $customers, $operators, $pager] = $this->loadChats($listConstructor);
 
         return response()->json([
             'chats' => $chats,
@@ -97,6 +109,8 @@ class ChatsController extends Controller
             'files' => $files,
             'customers' => $customers,
             'operators' => $operators,
+            'iCurrentPage' => $this->getPage(),
+            'iPager' => $pager,
         ]);
     }
 
@@ -216,7 +230,7 @@ class ChatsController extends Controller
     {
         $listConstructor = $communicationService->chats();
         $listConstructor->setUserIds('null');
-        $chats = $listConstructor->load();
+        $chats = $listConstructor->load()->chats;
         $roles = Helpers::getRoles([Front::FRONT_MAS, Front::FRONT_SHOWCASE]);
         $users = $userService
             ->users(
@@ -247,11 +261,12 @@ class ChatsController extends Controller
         $userService = resolve(UserService::class);
         $fileService = resolve(FileService::class);
 
-        $chats = $constructor->load();
+        $loadedChats = $constructor->load();
 
         $userIds = [];
         $fileIds = [];
-        foreach ($chats as $chat) {
+        /** @var CommunicationChatDto $chat */
+        foreach ($loadedChats->chats as $chat) {
             $userIds[$chat->user_id] = $chat->user_id;
             foreach ($chat->messages as $message) {
                 $userIds[$message->user_id] = $message->user_id;
@@ -302,6 +317,21 @@ class ChatsController extends Controller
                 ->setFilter('user_id', $userIds)
         )->keyBy('user_id');
 
-        return [$chats, $users, $files, $customers, $operators];
+        $pager = [
+            'total' => $loadedChats->total,
+            'pages' => $loadedChats->pages,
+            'pageSize' => $loadedChats->pageSize,
+        ];
+
+        return [$loadedChats->chats, $users, $files, $customers, $operators, $pager];
+    }
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function getPage(): int
+    {
+        return request()->get('pageNumber', 1);
     }
 }
