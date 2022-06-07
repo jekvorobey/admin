@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\Front;
+use Greensight\CommonMsa\Services\AuthService\AuthService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
@@ -84,6 +86,25 @@ class TabDigestController extends Controller
         ]);
         $merchantService->commentMerchant($merchantId, $data['comment']);
         return response('', 204);
+    }
+
+    public function auth(int $id, AuthService $authService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
+
+        $tokenData = $authService->tokenByUserId(Front::FRONT_MAS, $id);
+
+        if (!isset($tokenData['token']) || !isset($tokenData['refresh'])) {
+            return response()->json([
+                'status' => false,
+            ]);
+        }
+        $url = sprintf(config('app.mas_host') . '/login-by-token/%s/%s', $tokenData['token'], $tokenData['refresh']);
+
+        return response()->json([
+            'status' => true,
+            'url' => $url,
+        ]);
     }
 
     /**
