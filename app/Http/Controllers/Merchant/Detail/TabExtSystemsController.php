@@ -80,7 +80,7 @@ class TabExtSystemsController extends Controller
         return response()->json([]);
     }
 
-    private function loadExtSystem(int $merchantId)
+    private function loadExtSystem(int $merchantId): void
     {
         $restQuery = $this->merchantIntegrationService->newQuery()->setFilter('merchant_id', $merchantId);
         $extSystem = $this->merchantIntegrationService->extSystems($restQuery)->first();
@@ -90,10 +90,10 @@ class TabExtSystemsController extends Controller
     private function loadParamsOptions(int $merchantId): array
     {
         $merchantSettings = $this->merchantService->getSettings($merchantId)->keyBy('name');
-        $merchantPriceSetting = $merchantSettings->get(MerchantSettingDto::PRICE_NAME);
-        $merchantOrganizationSetting = $merchantSettings->get(MerchantSettingDto::ORGANIZATION_CODE);
-        $merchantAgentSetting = $merchantSettings->get(MerchantSettingDto::AGENT_CODE);
-        $merchantOwnerSetting = $merchantSettings->get(MerchantSettingDto::OWNER_CODE);
+        $merchantPriceSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_PRICE_NAME);
+        $merchantOrganizationSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_ORGANIZATION_CODE);
+        $merchantAgentSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_AGENT_CODE);
+        $merchantOwnerSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_OWNER_CODE);
         $host = $extSystem->connection_params['host'] ?? '';
         $paramPrice = null;
         $paramStock = null;
@@ -217,10 +217,10 @@ class TabExtSystemsController extends Controller
         switch ((int) $data['driver']) {
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 $settings = [
-                    new MerchantSettingDto(['name' => MerchantSettingDto::PRICE_NAME, 'value' => $data['settingPriceValue'] ?? '']),
-                    new MerchantSettingDto(['name' => MerchantSettingDto::ORGANIZATION_CODE, 'value' => $data['settingOrganizationValue'] ?? '']),
-                    new MerchantSettingDto(['name' => MerchantSettingDto::AGENT_CODE, 'value' => $data['settingAgentValue'] ?? '']),
-                    new MerchantSettingDto(['name' => MerchantSettingDto::OWNER_CODE, 'value' => $data['settingOwnerValue'] ?? '']),
+                    new MerchantSettingDto(['name' => MerchantSettingDto::MOYSKLAD_PRICE_NAME, 'value' => $data['settingPriceValue'] ?? '']),
+                    new MerchantSettingDto(['name' => MerchantSettingDto::MOYSKLAD_ORGANIZATION_CODE, 'value' => $data['settingOrganizationValue'] ?? '']),
+                    new MerchantSettingDto(['name' => MerchantSettingDto::MOYSKLAD_AGENT_CODE, 'value' => $data['settingAgentValue'] ?? '']),
+                    new MerchantSettingDto(['name' => MerchantSettingDto::MOYSKLAD_OWNER_CODE, 'value' => $data['settingOwnerValue'] ?? '']),
                 ];
                 $this->merchantService->setSettings($data['merchantId'], $settings);
                 return;

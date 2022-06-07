@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83b0c764e2924a467fadf1ad1e91f12b",
+    "content-hash": "0a0e670363052073f6600b52f51cbcab",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1412,11 +1412,11 @@
         },
         {
             "name": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/BX-6335-agent-owner-settings",
+            "version": "dev-master-ylab",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "883e7293236950380cb6350b30145549c336b045"
+                "reference": "49fc3d9eb7037dc583328f1dd3872b158ee6523c"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-06-03T12:25:17+00:00"
+            "time": "2022-06-07T13:17:13+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -10859,9 +10859,9 @@
         },
         {
             "package": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-feature/BX-6335-agent-owner-settings",
-            "alias": "dev-master-ylab",
-            "alias_normalized": "dev-master-ylab"
+            "version": "dev-master-ylab",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
         },
         {
             "package": "iwengo/ibt-message-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

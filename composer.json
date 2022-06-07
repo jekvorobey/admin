@@ -73,7 +73,7 @@
         "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-logistics-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-marketing-lib": "dev-master-ylab as dev-master",
-        "iwengo/ibt-merchant-management-lib": "dev-feature/BX-6335-agent-owner-settings as dev-master-ylab",
+        "iwengo/ibt-merchant-management-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-message-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-oms-lib": "dev-master-ylab as dev-master",
         "iwengo/ibt-pim-lib": "dev-master-ylab as dev-master",
