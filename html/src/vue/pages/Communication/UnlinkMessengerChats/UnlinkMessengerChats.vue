@@ -18,7 +18,7 @@
                     <td @click="openChat(chat)">{{ chat.theme }}</td>
                     <td @click="openChat(chat)">{{ communicationChannels[chat.channel_id].name }}</td>
                     <td @click="openChat(chat)">
-                        {{ datePrint(chat.messages[chat.messages.length-1].created_at) }}
+                        {{ chatMessageDate(chat) }}
                     </td>
                     <td @click="openChat(chat)">{{ chat.external_user_id }}</td>
                     <td v-if="canUpdate(blocks.communications)">
@@ -113,6 +113,12 @@
                     this.$bvModal.hide('modal-select-user');
                     Services.hideLoader();
                 });
+            },
+            chatMessageDate(chat) {
+                if (chat.messages && chat.messages.length > 0) {
+                    return this.datePrint(chat.messages[chat.messages.length-1].created_at);
+                }
+                return 'Нет сообщений';
             },
         },
     };
