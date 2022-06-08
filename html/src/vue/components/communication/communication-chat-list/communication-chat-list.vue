@@ -301,6 +301,7 @@
                         this.statuses = data.statuses;
                         this.currentPage = data.iCurrentPage;
                         this.pager = data.iPager;
+                        this.pageNumber = null;
 
                         let showChat = parseInt(Services.route().get('showChat', null));
                         if (showChat) {
