@@ -386,9 +386,13 @@ export default {
             this.$bvModal.show('modal-edit-shipment-package-item');
         },
         cancelShipmentItem(basketItem) {
-            this.selectedBasketItem = basketItem;
-            this.selectedMaxQty = basketItem.qty;
-            this.$bvModal.show('modal-cancel-shipment-item');
+            if (Boolean(this.order.can_partially_cancelled)) {
+                this.selectedBasketItem = basketItem;
+                this.selectedMaxQty = basketItem.qty;
+                this.$bvModal.show('modal-cancel-shipment-item');
+            } else {
+                Services.msg('Заказ был оплачен способом оплаты, для которого недоступен частичный возврат', 'danger');
+            }
         },
         onCloseModal() {
             this.selectedBasketItem = {};
