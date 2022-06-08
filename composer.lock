@@ -1416,7 +1416,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "42ea5b37e04abb748b375fa1d1f0638e00b2ccba"
+                "reference": "49fc3d9eb7037dc583328f1dd3872b158ee6523c"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-04-08T08:33:56+00:00"
+            "time": "2022-06-07T13:17:13+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

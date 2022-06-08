@@ -42,6 +42,8 @@ class IntegrationRequest extends FormRequest
             ],
             'settingPriceValue' => [],
             'settingOrganizationValue' => [],
+            'settingAgentValue' => [],
+            'settingOwnerValue' => [],
             'host' => [
                 Rule::requiredIf(function () {
                     return $this->input('driver') === ExtSystemDriver::DRIVER_FILE_SHARING;
