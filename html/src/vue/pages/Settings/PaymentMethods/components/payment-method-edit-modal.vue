@@ -33,12 +33,24 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label for="payment-method-active">Постоплата</label>
+                        <label for="payment-method-postpaid">Постоплата</label>
                     </b-col>
                     <b-col cols="8">
                         <input id="payment-method-postpaid"
                                type="checkbox"
                                :value="paymentMethod.is_postpaid"
+                               disabled
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-need-payment">Необходимо создание заказа</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-need-payment"
+                               type="checkbox"
+                               :value="paymentMethod.is_need_payment"
                                disabled
                         />
                     </b-col>
@@ -141,6 +153,7 @@
                     code: this.paymentMethod.code,
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
+                    is_need_payment: this.paymentMethod.is_need_payment,
                     settings: {discount: this.paymentMethod.settings.discount, signingKD: this.paymentMethod.settings.signingKD},
                 };
 
@@ -181,7 +194,3 @@
         },
     }
 </script>
-
-<style scoped>
-
-</style>
