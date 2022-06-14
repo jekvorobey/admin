@@ -97,6 +97,10 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list'),
                     ],
+                    [
+                        'title' => 'Брошенные корзины',
+                        'route' => route('baskets.list'),
+                    ],
                     /* @link https://redmine.greensight.ru/issues/57841 [
                      * 'title' => 'Отправления',
                      * 'route' => route('shipment.list')

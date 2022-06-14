@@ -483,6 +483,20 @@ Route::middleware('auth')->group(function () {
                 Route::post('delete', 'OrderReturnReasonListController@delete')->name('orderReturnReasons.delete');
             });
         });
+
+        Route::prefix('abandoned-baskets')->group(function () {
+            Route::get('', 'AbandonedBasketListController@index')->name('abandonedBaskets.list');
+        });
+    });
+
+    Route::prefix('baskets')->namespace('Basket')->group(function () {
+        Route::get('', 'BasketListController@index')->name('baskets.list');
+        Route::get('page', 'BasketListController@page')->name('baskets.pagination');
+
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+            Route::get('', 'BasketDetailController@detail')->name('baskets.detail');
+            Route::put('detail', 'BasketDetailController@save')->name('baskets.detail.save');
+        });
     });
 
     Route::prefix('offers')->namespace('Product')->group(function () {
