@@ -483,10 +483,6 @@ Route::middleware('auth')->group(function () {
                 Route::post('delete', 'OrderReturnReasonListController@delete')->name('orderReturnReasons.delete');
             });
         });
-
-        Route::prefix('abandoned-baskets')->group(function () {
-            Route::get('', 'AbandonedBasketListController@index')->name('abandonedBaskets.list');
-        });
     });
 
     Route::prefix('baskets')->namespace('Basket')->group(function () {

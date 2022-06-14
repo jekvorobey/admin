@@ -34,7 +34,6 @@ export default {
     computed: {
         basket: {
             get() {
-                console.dir(this.model);
                 return this.model;
             },
             set(value) {

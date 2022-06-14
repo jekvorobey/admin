@@ -16,8 +16,8 @@
             <b-tbody>
                 <template>
                     <tr v-for="basketItem in basket.items">
-                        <b-td><img :src="productPhoto(basketItem.product)" class="preview" :alt="basketItem.name"
-                                   v-if="basketItem.product.mainImage"></b-td>
+                        <b-td><img :src="imageUrl(basketItem.product.mainImage.file_id, 100, 100)" class="preview" :alt="basketItem.name"
+                                   v-if="basketItem.product && basketItem.product.mainImage"></b-td>
                         <b-td class="with-small">
                             <a :href="getRoute('products.detail', {id: basketItem.product.id})" target="_blank">
                                 {{ basketItem.name }}
@@ -49,39 +49,42 @@
 </template>
 
 <script>
-export default {
-    name: "basket-product-items",
-    components: {
-    },
-    props: {
-        model: {
-            type: Object,
-        },
-    },
-    data() {
-        return {
+    import mediaMixin from '../../../../mixins/media';
 
-        }
-    },
-    methods: {
-        productPhoto(product) {
-            return '/files/compressed/' + product.mainImage.file_id + '/50/50/webp';
-        }
-    },
-    computed: {
-        basket: {
-            get() {
-                return this.model
-            },
-            set(value) {
-                this.$emit('update:modelBasket', value)
+    export default {
+        name: "basket-product-items",
+        mixins: [
+            mediaMixin,
+        ],
+        components: {
+        },
+        props: {
+            model: {
+                type: Object,
             },
         },
-        tooltipUnitPriceHelp() {
-            return 'Цена товара со всеми скидками за единицу товара';
+        data() {
+            return {
+
+            }
         },
+        methods: {
+
+        },
+        computed: {
+            basket: {
+                get() {
+                    return this.model
+                },
+                set(value) {
+                    this.$emit('update:modelBasket', value)
+                },
+            },
+            tooltipUnitPriceHelp() {
+                return 'Цена товара со всеми скидками за единицу товара';
+            },
+        }
     }
-}
 </script>
 
 <style scoped>

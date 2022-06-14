@@ -15,7 +15,6 @@ use Greensight\Oms\Dto\BasketDto;
 use Greensight\Oms\Dto\BasketItemDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -61,7 +60,7 @@ class BasketDetailController extends Controller
             ->include('items');
 
         $baskets = $basketService->baskets($restQuery);
-        if (!$baskets->count()) {
+        if ($baskets->isEmpty()) {
             throw new NotFoundHttpException();
         }
 
@@ -89,22 +88,18 @@ class BasketDetailController extends Controller
         $customerQuery = $customerService->newQuery()
             ->setFilter('id', $basket->customer_id);
 
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
-        $customer = $customers->has($basket->customer_id) ? $customers[$basket->customer_id] : null;
+        /** @var CustomerDto $customer */
+        $customer = $customerService->customers($customerQuery)->first();
 
-        // Получаем самих пользователей
-        $userIds = $customers->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
+        if ($customer) {
             $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
+                ->setFilter('id', $customer->user_id);
+            /** @var UserDto $user */
+            $user = $userService->users($userQuery)->first();
         }
 
-        if ($customer && $users->has($customer->user_id)) {
-            $customer['user'] = $users[$customer->user_id];
+        if ($customer instanceof CustomerDto && isset($user) && $user instanceof UserDto) {
+            $customer['user'] = $user;
             $basket['customer'] = $customer;
         }
     }
@@ -114,26 +109,9 @@ class BasketDetailController extends Controller
         $basket->created_at = date_time2str(new Carbon($basket->created_at));
         $basket->updated_at = date_time2str(new Carbon($basket->updated_at));
 
-        $basket['weight'] = $basket->items->isNotEmpty() ? $basket->items->reduce(function (
-            int $sum,
-            BasketItemDto $item
-        ) {
-            return $sum + $item->getProductWeight();
-        }, 0) : 0;
-
-        $basket['total_qty'] = $basket->items->isNotEmpty() ? $basket->items->reduce(function (
-            int $sum,
-            BasketItemDto $item
-        ) {
-            return $sum + $item->qty;
-        }, 0) : 0;
-
-        $basket['total_price'] = $basket->items->isNotEmpty() ? $basket->items->reduce(function (
-            int $sum,
-            BasketItemDto $item
-        ) {
-            return $sum + $item->price;
-        }, 0) : 0;
+        $basket['weight'] = $basket->items->sum(fn(BasketItemDto $item) => $item->getProductWeight());
+        $basket['total_qty'] = $basket->items->sum('qty');
+        $basket['total_price'] = $basket->items->sum('price');
     }
 
     protected function addBasketProductInfo(BasketDto $basket): void
@@ -220,15 +198,6 @@ class BasketDetailController extends Controller
         $data = $this->validate(request(), [
             'manager_comment' => ['sometimes', 'string', 'nullable'],
         ]);
-
-        $restQuery = $basketService
-            ->newQuery()
-            ->setFilter('id', $id);
-
-        $baskets = $basketService->baskets($restQuery);
-        if (!$baskets->count()) {
-            throw new NotFoundHttpException();
-        }
 
         $newBasketDto = new BasketDto();
         $newBasketDto->manager_comment = $data['manager_comment'];

@@ -14,7 +14,6 @@ use Greensight\Oms\Dto\BasketDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\BasketService\BasketService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -22,7 +21,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
-use Greensight\Oms\Dto\BasketItemDto;
 
 /**
  * Class BasketListController
@@ -34,7 +32,7 @@ class BasketListController extends Controller
      * @return mixed
      * @throws Exception
      */
-    public function index(Request $request, BasketService $basketService, BrandService $brandService)
+    public function index(BasketService $basketService, BrandService $brandService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_BASKETS);
 
@@ -53,7 +51,6 @@ class BasketListController extends Controller
             'orderTypes' => OrderType::allTypes(),
             'brands' => $brandService->newQuery()->addFields(BrandDto::entity(), 'id', 'name')->brands(),
             'iFilter' => $this->getFilter(true),
-            'iSort' => $request->get('sort', 'created_at'),
         ]);
     }
 
@@ -140,18 +137,12 @@ class BasketListController extends Controller
         $baskets = $baskets->map(function (BasketDto $basket) use ($users, $customers) {
             $data = $basket->toArray();
 
-            $data['customer'] = $customers->has($basket->customer_id) && $users->has($customers[$basket->customer_id]->user_id)
-                ? $users[$customers[$basket->customer_id]->user_id] : null;
+            $data['customer'] = $users[$customers[$basket->customer_id]->user_id] ?? null;
 
             $data['created_at'] = date_time2str(new Carbon($basket->created_at));
             $data['updated_at'] = date_time2str(new Carbon($basket->updated_at));
 
-            $data['price'] = $basket->items->isNotEmpty() ? $basket->items->reduce(function (
-                int $sum,
-                BasketItemDto $item
-            ) {
-                return $sum + $item->price;
-            }, 0) : 0;
+            $data['price'] = $basket->items->sum('price');
 
             return $data;
         });
