@@ -17,16 +17,20 @@
                         <b-dropdown-item-button v-if="!isNotPaid">
                             Вернуть деньги
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="isHold"
+                        <b-dropdown-item-button v-if="canCapturePayment"
                                                 @click="capturePayment()">
                             Подтвердить платеж
                         </b-dropdown-item-button>
-                      <b-dropdown-item-button>
-                        Отправить уведомление клиенту
-                      </b-dropdown-item-button>
-                      <b-dropdown-item-button>
-                        Отправить уведомление мерчанту
-                      </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="canMarkAsPaid"
+                                                @click="markAsPaid()">
+                            Заказ оплачен
+                        </b-dropdown-item-button>
+<!--                      <b-dropdown-item-button>-->
+<!--                        Отправить уведомление клиенту-->
+<!--                      </b-dropdown-item-button>-->
+<!--                      <b-dropdown-item-button>-->
+<!--                        Отправить уведомление мерчанту-->
+<!--                      </b-dropdown-item-button>-->
                       <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
                                               @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
@@ -34,10 +38,6 @@
                       <b-dropdown-item-button v-if="order.status && order.status.id < orderStatuses.done.id && !isCancel"
                                               @click="showOrderReturnModal()">
                         Отменить заказ
-                      </b-dropdown-item-button>
-                      <b-dropdown-item-button v-if="isAwaitingPaymentStatus && isCreditPayment"
-                                              @click="changePaymentStatus(paymentStatuses.paid.id)">
-                        Заказ оплачен
                       </b-dropdown-item-button>
                     </template>
                     <b-dropdown-item-button
@@ -154,7 +154,7 @@
         </b-row>
         <b-row class="mb-3">
             <div class="col-sm-6">
-                <span class="font-weight-bold">Способ оплаты:</span> {{ order.payment_methods }}
+                <span class="font-weight-bold">Способ оплаты:</span> {{ order.payment_method.name }}
             </div>
             <div class="col-sm-6">
                 <span class="font-weight-bold">К оплате:</span> {{ preparePrice(order.to_pay) }} руб.
@@ -212,21 +212,21 @@ export default {
                 Services.hideLoader();
             });
         },
-        changePaymentStatus(statusId) {
+        markAsPaid() {
             let errorMessage = 'Ошибка при изменении статуса платежа';
 
             Services.showLoader();
-            Services.net().put(this.getRoute('orders.changePaymentStatus', {id: this.order.id}), null,
-                {'payment_status': statusId}).then(data => {
-                if (data.payment_status) {
-                    this.order.payment_status = data.payment_status;
-                    Services.msg("Изменения сохранены");
+            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id})).then(data => {
+                if (data.order) {
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
+                    Services.msg('Платеж подтвержден');
                 } else {
                     Services.msg(errorMessage, 'danger');
                 }
             }, () => {
                 Services.msg(errorMessage, 'danger');
-            }).finally(data => {
+            }).finally(() => {
                 Services.hideLoader();
             });
         },
@@ -340,17 +340,22 @@ export default {
         isCreatedStatus() {
             return this.isStatus(this.orderStatuses.created.id);
         },
-        isAwaitingPaymentStatus() {
-            return this.order.payment_status && this.order.payment_status.id === this.paymentStatuses.waiting.id;
+        canCapturePayment() {
+            return this.isHold && !this.isCancel
+                && this.order.payment_method.is_need_create_payment && !this.order.payment_method.is_postpaid;
         },
-        isCreditPayment() {
-            return this.order.payment_method_id && this.order.payment_method_id === this.allPaymentMethods.creditpaid.id;
+        canMarkAsPaid() {
+            return this.order.canMarkAsPaid && this.isAwaitingPaymentStatus && !this.isCancel
+                && !this.order.payment_method.is_need_create_payment && !this.order.payment_method.is_postpaid;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;
         },
         isHold() {
             return this.order.payment_status.id === this.paymentStatuses.hold.id;
+        },
+        isAwaitingPaymentStatus() {
+            return this.order.payment_status && this.order.payment_status.id === this.paymentStatuses.waiting.id;
         },
         isCancel() {
             return this.order.is_canceled;

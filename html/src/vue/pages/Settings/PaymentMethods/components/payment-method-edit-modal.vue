@@ -45,18 +45,6 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label for="payment-method-need-payment">Необходимо создание заказа</label>
-                    </b-col>
-                    <b-col cols="8">
-                        <input id="payment-method-need-payment"
-                               type="checkbox"
-                               :value="paymentMethod.is_need_payment"
-                               disabled
-                        />
-                    </b-col>
-                </b-row>
-                <b-row class="mb-2">
-                    <b-col cols="4">
                         <label for="payment-method-active">Активен</label>
                     </b-col>
                     <b-col cols="8">
@@ -66,7 +54,18 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="isCreditPayment" class="mb-2">
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-is-apply-discounts">Доступны ли применение скидок и списание бонусов</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-is-apply-discounts"
+                               type="checkbox"
+                               v-model="$v.paymentMethod.is_apply_discounts.$model"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="isHasSettings" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-discount">Размер скидки</label>
                     </b-col>
@@ -77,7 +76,7 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="isCreditPayment" class="mb-2">
+                <b-row v-if="isHasSettings" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-signingKD">Подписание КД</label>
                     </b-col>
@@ -133,6 +132,7 @@
                 paymentMethod: {
                     name: {required},
                     active: {required},
+                    is_apply_discounts: {required},
                     settings: {
                         discount: {},
                         signingKD: {},
@@ -153,8 +153,8 @@
                     code: this.paymentMethod.code,
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
-                    is_need_payment: this.paymentMethod.is_need_payment,
-                    settings: {discount: this.paymentMethod.settings.discount, signingKD: this.paymentMethod.settings.signingKD},
+                    is_apply_discounts: this.paymentMethod.is_apply_discounts,
+                    settings: this.paymentMethod.settings,
                 };
 
                 Services.showLoader();
@@ -183,8 +183,8 @@
                     return "Введите корректное название";
                 }
             },
-            isCreditPayment() {
-                return this.allPaymentMethods.creditpaid.id === this.paymentMethod.id;
+            isHasSettings() {
+                return Object.keys(this.paymentMethod.settings).length > 0;
             }
         },
         watch: {

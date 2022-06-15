@@ -235,10 +235,6 @@ Vue.mixin({
         paymentStatuses() {
             return this.$store.state.layout.paymentStatuses;
         },
-        /** @return {AllPaymentMethods} */
-        allPaymentMethods() {
-            return this.$store.state.layout.allPaymentMethods;
-        },
         /** @return {DeliveryStatuses} */
         deliveryStatuses() {
             return this.$store.state.layout.deliveryStatuses;
@@ -612,13 +608,6 @@ Vue.mixin({
  @property {PaymentStatus} hold - средства захолдированы
  @property {PaymentStatus} error - ошибка
  @property {PaymentStatus} waiting - ожидает оплаты
- */
-/**
- @typedef AllPaymentMethods - методы оплаты
- @type {Object}
- @property {AllPaymentMethods} prepaid - Предоплата (онлайн)
- @property {AllPaymentMethods} postpaid - Постоплата (Наличными или картой при получении)
- @property {AllPaymentMethods} creditpaid - В кредит от pp.credit
  */
 /**
  @typedef PaymentStatus - статус оплаты

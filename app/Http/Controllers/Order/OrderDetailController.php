@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -93,22 +94,19 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Изменить статус оплаты заказа
+     * Отметить заказ как оплаченный (для рассрочки)
      */
-    public function changePaymentStatus(int $id, Request $request, OrderService $orderService): JsonResponse
+    public function markAsPaid(int $id, OrderService $orderService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
-        $data = $this->validate($request, [
-            'payment_status' => Rule::in(array_keys(PaymentStatus::allStatuses())),
-        ]);
         $order = new OrderDto();
-        $order->payment_status = $data['payment_status'];
+        $order->payment_status = PaymentStatus::PAID;
         $orderService->updateOrder($id, $order);
 
         return response()->json([
-            'payment_status' => PaymentStatus::allStatuses()[$data['payment_status']]->toArray(),
+            'order' => $this->getOrder($id),
         ]);
     }
 
@@ -448,7 +446,7 @@ class OrderDetailController extends Controller
         $order->created_at = date_time2str(new Carbon($order->created_at));
         $order->updated_at = date_time2str(new Carbon($order->updated_at));
 
-        $order['payment_methods'] = $order->paymentMethod->name;
+        $order['payment_method'] = $order->paymentMethod;
         $order['discount'] = $order->getDiscount();
         $order['delivery_discount'] = $order->getDeliveryDiscount();
         $order['product_cost'] = $order->cost - $order->delivery_cost;
@@ -472,6 +470,8 @@ class OrderDetailController extends Controller
         ) {
             return $sum + $item->qty;
         }, 0) : 0;
+
+        $order['canMarkAsPaid'] = resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
