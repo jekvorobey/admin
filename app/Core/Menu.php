@@ -97,10 +97,6 @@ class Menu
                         'title' => 'Грузы',
                         'route' => route('cargo.list'),
                     ],
-                    [
-                        'title' => 'Брошенные корзины',
-                        'route' => route('baskets.list'),
-                    ],
                     /* @link https://redmine.greensight.ru/issues/57841 [
                      * 'title' => 'Отправления',
                      * 'route' => route('shipment.list')
@@ -117,6 +113,16 @@ class Menu
                                 'route' => route('orderReturnReasons.list'),
                             ],
                         ],
+                    ],
+                ],
+            ],
+            [
+                'id' => BlockDto::ADMIN_BLOCK_BASKETS,
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_BASKETS)->name,
+                'items' => [
+                    [
+                        'title' => 'Брошенные корзины',
+                        'route' => route('baskets.list'),
                     ],
                 ],
             ],
