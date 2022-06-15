@@ -21,7 +21,6 @@ use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
 use Greensight\Store\Dto\Package\PackageType;
 use Greensight\Store\Services\PackageService\PackageService;
@@ -44,15 +43,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class OrderDetailController extends Controller
 {
-    // Готово к отгрузке id в базе
-    private const READY_TO_SHIP = 6;
-    private const ON_COMPLECT = 4;
-
     /**
      * @return mixed
      * @throws Exception
      */
-    public function detail(int $id, ShipmentService $shipmentService, OrderService $orderService)
+    public function detail(int $id, OrderService $orderService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
@@ -64,18 +59,9 @@ class OrderDetailController extends Controller
         $this->loadDeliveryServices = true;
 
         $order = $this->getOrder($id);
-        $number = $order->number;
-        $partsNumber = explode('-', $number);
-
-        $barCodes = $this->checkShipmentsToConsolidation($partsNumber, $shipmentService);
-
-        $query = $orderService->newQuery();
-        $orderReturnReasons = $orderService->orderReturnReasons($query);
 
         $this->title = 'Заказ ' . $order->number . ' от ' . $order->created_at;
 
-        $order['barcodes'] = $barCodes;
-        $order['orderReturnReasons'] = $orderReturnReasons;
         $order['paymentCancelReasons'] = collect(PaymentCancelReason::allReasons())->filter(function ($reason) use ($order) {
             return in_array($reason->code, $order->payments->pluck('cancel_reason')->all());
         });
@@ -85,41 +71,6 @@ class OrderDetailController extends Controller
             'iOrderInfo' => $orderService->order($id),
             'kpis' => $order ? $this->getKpis($order) : [],
         ]);
-    }
-
-    /**
-     * Проверить отправления на сборку
-     */
-    private function checkShipmentsToConsolidation(array $partsNumber, ShipmentService $shipmentService): bool
-    {
-        $restQuery = $shipmentService->newQuery()->addSort('created_at', 'desc')
-            ->setFilter('number', 'like', $partsNumber[0] . '%');
-        $restQuery->addFields(
-            ShipmentDto::entity(),
-            'id',
-            'status',
-            'number',
-            'is_canceled',
-            'created_at'
-        );
-        $shipments = $shipmentService->shipments($restQuery);
-
-        $readyToShipItemsCount = 0;
-        $notCanceledShipmentItemsCount = 0;
-
-        foreach ($shipments as $item) {
-            if ($item->is_canceled) {
-                continue;
-            }
-
-            if ($item->status >= self::READY_TO_SHIP) {
-                $readyToShipItemsCount += 1;
-            }
-
-            $notCanceledShipmentItemsCount += 1;
-        }
-
-        return $readyToShipItemsCount == $notCanceledShipmentItemsCount;
     }
 
     /**
@@ -252,8 +203,7 @@ class OrderDetailController extends Controller
         $this->addOrderCommonInfo($order);
         $this->addOrderProductInfo($order);
 
-        $orderReturnReasonsquery = $orderService->newQuery();
-        $orderReturnReasons = $orderService->orderReturnReasons($orderReturnReasonsquery);
+        $orderReturnReasons = $orderService->orderReturnReasons($orderService->newQuery());
         $order['orderReturnReasons'] = $orderReturnReasons;
 
         return $order;

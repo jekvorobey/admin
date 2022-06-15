@@ -1416,7 +1416,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "42ea5b37e04abb748b375fa1d1f0638e00b2ccba"
+                "reference": "49fc3d9eb7037dc583328f1dd3872b158ee6523c"
             },
             "require": {
                 "ext-json": "*",
@@ -1439,7 +1439,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-04-08T08:33:56+00:00"
+            "time": "2022-06-07T13:17:13+00:00"
         },
         {
             "name": "iwengo/ibt-message-lib",
@@ -1447,7 +1447,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "6d725701a325b5cf397f68a3fa0bb344c59547dd"
+                "reference": "76f897ff1faf43607801202ae15ec8678c86e4d2"
             },
             "require": {
                 "ext-json": "*",
@@ -1481,7 +1481,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-04-27T09:47:02+00:00"
+            "time": "2022-06-08T11:53:44+00:00"
         },
         {
             "name": "iwengo/ibt-oms-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "819b9990bd0b251da9087991f9e4829bb7230aa1"
+                "reference": "6a0cead0e31dc227913ea0c5e571e19b3ce73516"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-06-01T08:33:36+00:00"
+            "time": "2022-06-15T07:58:08+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

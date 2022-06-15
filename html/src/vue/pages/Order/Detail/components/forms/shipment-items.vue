@@ -222,7 +222,7 @@
                             </b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
-                                <div v-if="!shipment.is_problem && isAssemblingStatus" class="float-right">
+                                <div class="float-right">
                                     <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
                                         <template #button-content>
                                             <fa-icon icon="edit" title="Действия" class="cursor-pointer">
@@ -252,7 +252,8 @@
                                                                         @onClose="onCloseModal"
                                                                         v-if="selectedBasketItem === item.basketItem"/>
                                         </b-dropdown-item-button>
-                                        <b-dropdown-item-button @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
+                                        <b-dropdown-item-button v-if="canDeleteShipmentItemFromPackage"
+                                                                @click="deleteShipmentPackageItem(shipmentPackage.id, item.basket_item_id)">
                                             Удалить из коробки
                                         </b-dropdown-item-button>
                                     </b-dropdown>
@@ -501,6 +502,9 @@ export default {
         },
         canCancelShipmentItem() {
             return this.shipment.status && this.shipment.status.id < this.shipmentStatuses.shipped.id && !this.shipment.is_canceled;
+        },
+        canDeleteShipmentItemFromPackage() {
+            return this.shipment.status && this.shipment.status.id < this.shipmentStatuses.assembled.id;
         },
     }
 }
