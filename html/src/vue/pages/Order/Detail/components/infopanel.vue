@@ -345,17 +345,13 @@ export default {
                 && this.order.payment_method.is_need_create_payment && !this.order.payment_method.is_postpaid;
         },
         canMarkAsPaid() {
-            return this.order.canMarkAsPaid && this.isAwaitingPaymentStatus && !this.isCancel
-                && !this.order.payment_method.is_need_create_payment && !this.order.payment_method.is_postpaid;
+            return this.order.canMarkAsPaid;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;
         },
         isHold() {
             return this.order.payment_status.id === this.paymentStatuses.hold.id;
-        },
-        isAwaitingPaymentStatus() {
-            return this.order.payment_status && this.order.payment_status.id === this.paymentStatuses.waiting.id;
         },
         isCancel() {
             return this.order.is_canceled;

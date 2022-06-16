@@ -20,6 +20,7 @@ use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Dto\Package\PackageDto;
@@ -471,7 +472,10 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $order['canMarkAsPaid'] = resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+        $order['canMarkAsPaid'] = $order->paymentMethod->id === PaymentMethod::CREDITPAID
+            && $order->payment_status->id === PaymentStatus::WAITING
+            && !$order->is_canceled
+            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void

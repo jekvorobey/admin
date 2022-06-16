@@ -56,7 +56,7 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label for="payment-method-is-apply-discounts">Доступны ли применение скидок и списание бонусов</label>
+                        <label for="payment-method-is-apply-discounts">Доступно ли скидки и списание бонусов</label>
                     </b-col>
                     <b-col cols="8">
                         <input id="payment-method-is-apply-discounts"
@@ -65,7 +65,7 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="isHasSettings" class="mb-2">
+                <b-row v-if="hasSetting('discount')" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-discount">Размер скидки</label>
                     </b-col>
@@ -76,7 +76,7 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="isHasSettings" class="mb-2">
+                <b-row v-if="hasSetting('signingKD')" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-signingKD">Подписание КД</label>
                     </b-col>
@@ -137,7 +137,6 @@
                         discount: {},
                         signingKD: {},
                     },
-
                 },
             }
         },
@@ -175,6 +174,9 @@
             closeModal() {
                 this.$bvModal.hide('payment-method-edit-modal');
             },
+            hasSetting(settingKey) {
+                return this.paymentMethod.settings && Object.keys(this.paymentMethod.settings).includes(settingKey);
+            },
         },
         computed: {
             errorNameField() {
@@ -183,9 +185,6 @@
                     return "Введите корректное название";
                 }
             },
-            isHasSettings() {
-                return Object.keys(this.paymentMethod.settings).length > 0;
-            }
         },
         watch: {
             editingModel(value) {
