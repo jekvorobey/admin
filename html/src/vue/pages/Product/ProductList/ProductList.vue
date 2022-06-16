@@ -176,7 +176,7 @@
                     <th>В архиве</th>
                     <th>Контент</th>
                     <th>Согласование</th>
-                    <th>Отгружен в Shoppilot</th>
+                    <th>Отгружен в Aplaut</th>
                 </tr>
             </thead>
             <tbody>
