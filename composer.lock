@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "3e15603d358f873c744826054d6621a9",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1270,18 +1270,18 @@
         },
         {
             "name": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-hottask/BX-6349-abandoned-baskets",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "504f703fbe820e875c6debb1980cef81abc17e32"
+                "reference": "48bb20f6fd50f8d705017dcbe1c2c094c9ccc043"
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "ext-pdo": "*",
                 "firebase/php-jwt": "^5.0",
-                "guzzlehttp/guzzle": "^6.3",
+                "guzzlehttp/guzzle": "^6.3|^7.4",
                 "mikehaertl/phpwkhtmltopdf": "^2.4",
                 "php": "^7.4"
             },
@@ -1324,7 +1324,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-03-03T13:17:33+00:00"
+            "time": "2022-06-17T09:55:28+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -1485,11 +1485,11 @@
         },
         {
             "name": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
+            "version": "dev-hottask/BX-6349-abandoned-baskets",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "dd9bf76ad66430dd759f52754c5fd9071db2a091"
+                "reference": "5b2be40376acd4baf1fe47f3d2b2fe6bddc4bf0c"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-05-12T12:44:29+00:00"
+            "time": "2022-06-14T04:42:25+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10841,9 +10841,9 @@
         },
         {
             "package": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
+            "version": "dev-hottask/BX-6349-abandoned-baskets",
+            "alias": "dev-master-ylab",
+            "alias_normalized": "dev-master-ylab"
         },
         {
             "package": "iwengo/ibt-logistics-lib",
@@ -10871,9 +10871,9 @@
         },
         {
             "package": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
+            "version": "dev-hottask/BX-6349-abandoned-baskets",
+            "alias": "dev-master-ylab",
+            "alias_normalized": "dev-master-ylab"
         },
         {
             "package": "iwengo/ibt-pim-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
