@@ -293,7 +293,7 @@
                     :i-delivery-methods="iDeliveryMethods"
                 />
 
-                <div v-if="i > 0">
+                <div>
                     <b-btn
                         variant="danger"
                         size="sm"
@@ -308,10 +308,10 @@
             <b-btn
                 size="sm"
                 :class="{
-                    'mt-3': discount.conditions.length > 1
+                    'mt-3': discount.conditions.length > 1 || discount.conditions.length === 0,
                 }"
                 @click="addDiscountCondition"
-            >Добавить дополнительное условие</b-btn>
+            >{{ discount.conditions.length > 0 ? 'Добавить дополнительное условие' : 'Добавить условие предоставления скидки' }}</b-btn>
         </div>
 
         <div class="row">
@@ -394,12 +394,7 @@
                     brands: [],
                     categories: [],
                     publicEvents: null,
-                    conditions: [
-                        {
-                            key: uuidv4(),
-                            type: null,
-                        }
-                    ],
+                    conditions: [],
                     comment: null,
                 },
 
