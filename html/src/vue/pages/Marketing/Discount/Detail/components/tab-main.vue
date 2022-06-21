@@ -18,7 +18,7 @@
                 :i-delivery-methods="iDeliveryMethods"
             />
 
-            <div v-if="i > 0">
+            <div>
                 <b-btn
                     variant="danger"
                     size="sm"
@@ -33,11 +33,11 @@
         <b-btn
             size="sm"
             :class="{
-                'mt-3': discount.conditions.length > 1
+                'mt-3': discount.conditions.length > 1 || discount.conditions.length === 0,
             }"
             @click="addDiscountCondition"
-        >Добавить дополнительное условие</b-btn>
-    </div>        
+        >{{ discount.conditions.length > 0 ? 'Добавить дополнительное условие' : 'Добавить условие предоставления скидки' }}</b-btn>
+    </div>
 </template>
 
 <script>
@@ -133,7 +133,7 @@
                             }
                         }
                     }
-                    this.$emit("validate", isValid);                    
+                    this.$emit("validate", isValid);
                 }
             },
         }

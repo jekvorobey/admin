@@ -19,7 +19,18 @@
                         <fa-icon icon="question-circle" v-b-popover.hover="'Обязательно для экспорта заказов'"></fa-icon>
                 </v-input>
             </div>
-
+            <div class="row">
+                <v-input v-model="$v.form.merchantAgentSetting.$model"
+                         :error="errorSettingAgentValue"
+                         class="col-md-4 col-12">
+                    Код контрагента
+                </v-input>
+                <v-input v-model="$v.form.merchantOwnerSetting.$model"
+                         :error="errorSettingOwnerValue"
+                         class="col-md-4 col-12">
+                    Код отвественного сотрудника
+                </v-input>
+            </div>
             <div class="row">
                 <v-input v-model="$v.form.paramPeriodPrice.$model" :error="errorParamPeriodPrice"
                          class="col-md-6 col-12">
@@ -113,6 +124,8 @@ export default {
                 port: this.options ? this.options.port : '',
                 merchantPriceSetting: this.options ? this.options.merchantPriceSetting : '',
                 merchantOrganizationSetting: this.options ? this.options.merchantOrganizationSetting : '',
+                merchantAgentSetting: this.options ? this.options.merchantAgentSetting : '',
+                merchantOwnerSetting: this.options ? this.options.merchantOwnerSetting : '',
                 paramPeriodPrice: this.options.paramPrice ? this.options.paramPrice.params.period : 10,
                 paramActivePrice: this.options.paramPrice ? this.options.paramPrice.active : true,
                 paramPeriodStock: this.options.paramStock ? this.options.paramStock.params.period : 10,
@@ -160,6 +173,8 @@ export default {
                 },
                 merchantPriceSetting: {},
                 merchantOrganizationSetting: {},
+                merchantAgentSetting: {},
+                merchantOwnerSetting: {},
                 paramPeriodPrice: {
                     required: requiredIf(function () {
                         return this.isMoySklad
@@ -218,6 +233,12 @@ export default {
             }
             if (this.form.merchantOrganizationSetting) {
                 formData.settingOrganizationValue = this.form.merchantOrganizationSetting;
+            }
+            if (this.form.merchantAgentSetting) {
+                formData.settingAgentValue = this.form.merchantAgentSetting;
+            }
+            if (this.form.merchantOwnerSetting) {
+                formData.settingOwnerValue = this.form.merchantOwnerSetting;
             }
             if (this.form.fileName) {
                 formData.fileName = this.form.fileName;
@@ -294,6 +315,16 @@ export default {
         },
         errorSettingOrganizationValue() {
             if (this.$v.form.merchantOrganizationSetting.$dirty) {
+                //
+            }
+        },
+        errorSettingAgentValue() {
+            if (this.$v.form.merchantAgentSetting.$dirty) {
+                //
+            }
+        },
+        errorSettingOwnerValue() {
+            if (this.$v.form.merchantOwnerSetting.$dirty) {
                 //
             }
         },
