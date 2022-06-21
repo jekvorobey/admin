@@ -54,9 +54,9 @@
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
                     <th>Интеграция</th>
-                    <td>Импорт цен</td>
-                    <td>Импорт остатков</td>
-                    <td>Экспорт заказов</td>
+                    <td>Импорт цен (ID {{ paramOptions.paramPrice.id }})</td>
+                    <td>Импорт остатков (ID {{ paramOptions.paramStock.id }})</td>
+                    <td>Экспорт заказов (ID {{ paramOptions.paramOrder.id }})</td>
                 </tr>
                 <tr v-if="isMoySklad(extSystem.driver)">
                     <th>Период проверки (мин)</th>
@@ -77,6 +77,14 @@
                 <tr v-if="isMoySklad(extSystem.driver)">
                     <th>Код Юр.лица</th>
                     <td>{{ paramOptions.merchantOrganizationSetting }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Код контрагента</th>
+                    <td>{{ paramOptions.merchantAgentSetting }}</td>
+                </tr>
+                <tr v-if="isMoySklad(extSystem.driver)">
+                    <th>Код отвественного сотрудника</th>
+                    <td>{{ paramOptions.merchantOwnerSetting }}</td>
                 </tr>
                 <tr>
                     <th>Дата создания</th>
