@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Basket;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Oms\Dto\BasketDto;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Services\BasketService\BasketService;
@@ -110,29 +108,19 @@ class BasketListController extends Controller
     {
         /** @var BasketService $basketService */
         $basketService = resolve(BasketService::class);
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
 
         $baskets = $basketService->baskets($restQuery);
+        if ($baskets->isEmpty()) {
+            return collect();
+        }
 
-        // Получаем покупателей и реферальных партнеров заказов
+        // Получаем покупателей корзин
         $customerIds = $baskets->pluck('customer_id')->unique()->all();
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $customerIds);
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds);
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds);
 
         $baskets = $baskets->map(function (BasketDto $basket) use ($users, $customers) {
             $data = $basket->toArray();

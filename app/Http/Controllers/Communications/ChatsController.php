@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Communications;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
@@ -256,7 +257,6 @@ class ChatsController extends Controller
      */
     protected function loadChats(ListConstructor $constructor): array
     {
-        $userService = resolve(UserService::class);
         $fileService = resolve(FileService::class);
 
         $loadedChats = $constructor->load();
@@ -274,18 +274,7 @@ class ChatsController extends Controller
             }
         }
 
-        if ($userIds) {
-            $users = $userService
-                ->users(
-                    $userService
-                        ->newQuery()
-                        ->include('profile')
-                        ->setFilter('id', 'in', array_values($userIds))
-                )
-                ->keyBy('id');
-        } else {
-            $users = [];
-        }
+        $users = UserHelper::getUsersByIds(array_values($userIds), [], ['profile']);
 
         if ($fileIds) {
             $files = $fileService

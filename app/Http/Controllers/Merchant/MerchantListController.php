@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
@@ -140,15 +141,16 @@ class MerchantListController extends Controller
         $merchantService = resolve(MerchantService::class);
         /** @var OperatorService $operatorService */
         $operatorService = resolve(OperatorService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
 
         if (is_null($query)) {
             return collect();
         }
 
-
         $merchants = $merchantService->merchants($query);
+        if ($merchants->isEmpty()) {
+            return collect();
+        }
+
         $merchantIds = $merchants->pluck('id')->all();
         $operatorsQuery = (new RestQuery())
             ->setFilter('merchant_id', $merchantIds)
@@ -165,9 +167,7 @@ class MerchantListController extends Controller
                 return [$first->merchant_id => $first];
             });
 
-        $users = $userService
-            ->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
-            ->keyBy('id');
+        $users = UserHelper::getUsersByIds($operators->pluck('user_id')->all());
 
         return $merchants->map(function (MerchantDto $merchant) use ($mainOperators, $operatorsByMerchant, $users) {
             /** @var OperatorDto $operator */

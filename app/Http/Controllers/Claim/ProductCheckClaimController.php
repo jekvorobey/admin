@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Claim;
 
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\ProductCheckClaimDto;
 use Greensight\Message\Services\ClaimService\ClaimService;
@@ -32,12 +32,8 @@ class ProductCheckClaimController extends Controller
     /**
      * @return mixed
      */
-    public function index(
-        Request $request,
-        ClaimService $claimService,
-        MerchantService $merchantService,
-        UserService $userService
-    ) {
+    public function index(Request $request, ClaimService $claimService, MerchantService $merchantService)
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $this->title = 'Заявки на проверку товаров';
@@ -49,7 +45,7 @@ class ProductCheckClaimController extends Controller
             ->claimTypes();
 
         $query = $this->prepareQuery($request, $claimService);
-        $claims = $this->loadClaims($query, $userService);
+        $claims = $this->loadClaims($query);
         $pager = $query->countClaims();
 
         return $this->render('Claim/ClaimList', [
@@ -63,13 +59,13 @@ class ProductCheckClaimController extends Controller
         ]);
     }
 
-    public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
+    public function page(Request $request, ClaimService $claimService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $this->prepareQuery($request, $claimService);
         $result = [
-            'items' => $this->loadClaims($query, $userService),
+            'items' => $this->loadClaims($query),
         ];
         if ($request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
@@ -81,13 +77,13 @@ class ProductCheckClaimController extends Controller
     /**
      * @return mixed
      */
-    public function detail(int $id, ClaimService $claimService, UserService $userService)
+    public function detail(int $id, ClaimService $claimService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ProductCheckClaimDto $claim */
-        $claim = $this->loadClaims($query, $userService, true)->first();
+        $claim = $this->loadClaims($query, true)->first();
 
         if (!$claim) {
             throw new NotFoundHttpException();
@@ -145,7 +141,6 @@ class ProductCheckClaimController extends Controller
         int $id,
         Request $request,
         ClaimService $claimService,
-        UserService $userService,
         ProductService $productService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
@@ -165,7 +160,7 @@ class ProductCheckClaimController extends Controller
             if ($claim->status == ProductCheckClaimDto::STATUS_WORK) {
                 $query = $claimService->newQuery()->setFilter('id', $id);
                 /** @var ProductCheckClaimDto $claim */
-                $claim = $this->loadClaims($query, $userService)->first();
+                $claim = $this->loadClaims($query)->first();
 
                 if ($claim->getProductIds()) {
                     $productService->changeApprovalStatus(
@@ -177,7 +172,7 @@ class ProductCheckClaimController extends Controller
 
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var ProductCheckClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService, true)->first();
+            $claim = $this->loadClaims($query, true)->first();
         } catch (\Throwable $e) {
             $result = 'fail';
             if ($request->get('status') == ProductCheckClaimDto::STATUS_DONE) {
@@ -225,10 +220,13 @@ class ProductCheckClaimController extends Controller
     /**
      * @return Collection|ProductCheckClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();
+        if ($claims->isEmpty()) {
+            return collect();
+        }
 
         $merchantIds = [];
         foreach ($claims as $claim) {
@@ -238,14 +236,7 @@ class ProductCheckClaimController extends Controller
         $merchants = $this->getMerchants($merchantIds);
 
         $userIds = $claims->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService
-                ->newQuery()
-                ->setFilter('id', $userIds)
-                ->include('profile');
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds, [], ['profile']);
 
         /** @var Collection|ProductDto[] $products */
         $products = collect();

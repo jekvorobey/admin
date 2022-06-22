@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Marketing;
 
+use App\Core\CustomerHelper;
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Marketing\Builder\PromoCode\PromoCodeBuilder;
 use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Dto\Discount\DiscountDto;
@@ -38,12 +37,8 @@ class PromoCodeController extends Controller
      * Список промокодов
      * @return mixed
      */
-    public function index(
-        PromoCodeService $promoCodeService,
-        UserService $userService,
-        CustomerService $customerService,
-        CommunicationService $communicationService
-    ) {
+    public function index(PromoCodeService $promoCodeService, CommunicationService $communicationService)
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_MARKETING);
 
         $this->title = 'Промокоды';
@@ -55,20 +50,14 @@ class PromoCodeController extends Controller
         $merchantsIds = $promoCodes->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantsIds)->values();
 
-        $users = collect();
-        $referrals = collect();
         $creatorIds = $promoCodes->pluck('creator_id')->unique();
         $userIds = collect($creatorIds);
 
         $referralIds = $promoCodes->pluck('owner_id')->filter()->unique();
-        if ($referralIds->isNotEmpty()) {
-            $referrals = $customerService->customers((new RestQuery())->setFilter('id', $referralIds->all()))->keyBy('id');
-            $userIds = $userIds->merge($referrals->pluck('user_id'));
-        }
+        $referrals = CustomerHelper::getCustomersByIds($referralIds->all());
 
-        if ($userIds->isNotEmpty()) {
-            $users = $userService->users((new RestQuery())->setFilter('id', $userIds->all()))->keyBy('id');
-        }
+        $userIds = $userIds->merge($referrals->pluck('user_id'));
+        $users = UserHelper::getUsersByIds($userIds->all());
 
         $promoCodes = $promoCodes
             ->sortByDesc('created_at')

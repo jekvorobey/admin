@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -94,18 +95,14 @@ class MerchantDetailController extends Controller
                 ->setFilter('merchant_id', $merchant->id)
         )->pluck('user_id')->all();
 
-        $operatorUsers = $userService->users(
-            (new RestQuery())->addFields(
-                UserDto::class,
-                'id',
-                'first_name',
-                'last_name',
-                'middle_name',
-                'phone',
-                'email'
-            )->include('roles')
-                ->setFilter('id', $userOperatorIds)
-        )->keyBy('id');
+        $operatorUsers = UserHelper::getUsersByIds($userOperatorIds, [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'phone',
+            'email',
+        ], ['roles']);
 
         // Счетчик непрочитанных сообщений от пользователя //
         $unreadMsgCount = $operatorMain ? $communicationService->unreadCount(

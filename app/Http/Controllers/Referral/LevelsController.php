@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Referral;
 
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\Dto\PutCommissionDto;
@@ -20,7 +20,7 @@ use Greensight\Customer\Dto\ReferralLevelDto;
 
 class LevelsController extends Controller
 {
-    public function list(ReferralService $referralService, CustomerService $customerService, UserService $userService)
+    public function list(ReferralService $referralService, CustomerService $customerService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
 
@@ -29,10 +29,7 @@ class LevelsController extends Controller
         $levels = $referralService->getLevels()->sortBy('sort')->values();
 
         $customers = $customerService->customers((new RestQuery())->setFilter('referral_code', 'notNull'));
-        $users = collect();
-        if ($customers->isNotEmpty()) {
-            $users = $userService->users((new RestQuery())->setFilter('id', $customers->pluck('user_id')))->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($customers->pluck('user_id')->all());
 
         return $this->render('Referral/Levels', [
             'levels' => $levels,
