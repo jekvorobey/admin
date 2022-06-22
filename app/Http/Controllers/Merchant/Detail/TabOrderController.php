@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Merchant\Detail;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -80,12 +82,6 @@ class TabOrderController extends Controller
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
 
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-
         $restQuery->addFields(ShipmentDto::entity(), 'id')
             ->include('delivery');
 
@@ -102,18 +98,10 @@ class TabOrderController extends Controller
         )->keyBy('id');
 
         $customerIds = $orders->pluck('customer_id')->all();
-        $customers = $customerService->customers(
-            (new RestQuery())
-                ->addFields(CustomerDto::class, 'id', 'user_id')
-                ->setFilter('id', $customerIds)
-        )->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds, ['id', 'user_id']);
 
         $userIds = $customers->pluck('user_id')->all();
-        $users = $userService->users(
-            (new RestQuery())
-                ->addFields(UserDto::class, 'id', 'full_name')
-                ->setFilter('id', $userIds)
-        )->keyBy('id');
+        $users = UserHelper::getUsersByIds($userIds, ['id', 'full_name']);
 
         return array_filter($users->map(function (UserDto $user) {
             return $user->full_name;
@@ -282,12 +270,6 @@ class TabOrderController extends Controller
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
 
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-
         /** @var StoreService $storeService */
         $storeService = resolve(StoreService::class);
 
@@ -318,18 +300,10 @@ class TabOrderController extends Controller
         )->keyBy('id');
 
         $customerIds = $orders->pluck('customer_id')->all();
-        $customers = $customerService->customers(
-            (new RestQuery())
-                ->addFields(CustomerDto::class, 'id', 'user_id')
-                ->setFilter('id', $customerIds)
-        )->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds, ['id', 'user_id']);
 
         $userIds = $customers->pluck('user_id')->all();
-        $users = $userService->users(
-            (new RestQuery())
-                ->addFields(UserDto::class, 'id', 'full_name', 'phone')
-                ->setFilter('id', $userIds)
-        )->keyBy('id');
+        $users = UserHelper::getUsersByIds($userIds, ['id', 'full_name', 'phone']);
 
         $storesIds = $shipments->pluck('store_id')->all();
         $stores = $storeService->stores(

@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers\Merchant\Detail;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Oms\Dto\Order\OrderType;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
@@ -111,12 +109,10 @@ class TabPublicEventController extends Controller
 
     protected function loadOrders(OrderService $orderService, DataQuery $restQuery): Collection
     {
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-
         $orders = $orderService->orders($restQuery);
+        if ($orders->isEmpty()) {
+            return collect();
+        }
 
         //Получаем реферальных партнеров заказов
         $referralIds = collect();
@@ -128,24 +124,11 @@ class TabPublicEventController extends Controller
 
         // Получаем покупателей и реферальных партнеров заказов
         $customerIds = $orders->pluck('customer_id')->merge($referralIds)->unique()->all();
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $customerIds);
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds);
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
-        /** @var Collection|UserDto[] $users */
-        $users = collect();
-        if ($userIds) {
-            // chunking for prevent large query string
-            foreach (array_chunk($userIds, 50) as $userIdsChunk) {
-                $userQuery = $userService->newQuery()->setFilter('id', $userIdsChunk);
-                $users->concat(
-                    $userService->users($userQuery)->keyBy('id')
-                );
-            }
-        }
+        $users = UserHelper::getUsersByIds($userIds);
 
         return $orders->map(function (OrderDto $order) use ($users, $customers) {
             $data = $order->toArray();

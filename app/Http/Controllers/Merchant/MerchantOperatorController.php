@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Validation\Rule;
@@ -187,7 +188,7 @@ class MerchantOperatorController extends Controller
         ]);
 
         $operators = $operatorService->operators((new RestQuery())->setFilter('id', $data['operator_ids']));
-        $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()));
+        $users = UserHelper::getUsersByIds($operators->pluck('user_id')->all());
 
         $userForDeleteIds = [];
         /** @var UserDto $user */
