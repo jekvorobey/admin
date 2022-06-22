@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\PublicEvent;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -12,10 +14,6 @@ use Pim\Services\PublicEventService\PublicEventService;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\Oms\Dto\OrderDto;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Illuminate\Support\Collection;
 
 class PublicEventOrdersController extends Controller
@@ -64,12 +62,10 @@ class PublicEventOrdersController extends Controller
 
     protected function loadOrders(OrderService $orderService, DataQuery $restQuery): Collection
     {
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-
         $orders = $orderService->orders($restQuery);
+        if ($orders->isEmpty()) {
+            return collect();
+        }
 
         //Получаем реферальных партнеров заказов
         $referralIds = collect();
@@ -81,20 +77,11 @@ class PublicEventOrdersController extends Controller
 
         // Получаем покупателей и реферальных партнеров заказов
         $customerIds = $orders->pluck('customer_id')->merge($referralIds)->unique()->all();
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $customerIds);
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds);
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds);
 
         $orders = $orders->map(function (OrderDto $order) use ($users, $customers) {
             $data = $order->toArray();

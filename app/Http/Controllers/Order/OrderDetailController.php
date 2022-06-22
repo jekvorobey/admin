@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Order;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
@@ -210,11 +209,6 @@ class OrderDetailController extends Controller
 
     protected function addOrderUserInfo(OrderDto $order): void
     {
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
-
         //Получаем реферальных партнеров заказов
         $referralIds = $order->basket->items->pluck('referrer_id')->filter()
             ->merge($order->promoCodes->pluck('owner_id')->filter())
@@ -225,21 +219,12 @@ class OrderDetailController extends Controller
             ->unique()
             ->values()
             ->all();
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $customerIds);
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds);
         $customer = $customers->has($order->customer_id) ? $customers[$order->customer_id] : null;
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds);
 
         if ($customer && $users->has($customer->user_id)) {
             $customer['user'] = $users[$customer->user_id];

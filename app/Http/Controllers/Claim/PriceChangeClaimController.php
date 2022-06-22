@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Claim;
 
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Marketing\Dto\Price\OfferPriceDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
@@ -33,12 +33,8 @@ class PriceChangeClaimController extends Controller
     /**
      * @return mixed
      */
-    public function index(
-        Request $request,
-        ClaimService $claimService,
-        MerchantService $merchantService,
-        UserService $userService
-    ) {
+    public function index(Request $request, ClaimService $claimService, MerchantService $merchantService)
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $this->title = 'Заявки на изменение цен';
@@ -50,7 +46,7 @@ class PriceChangeClaimController extends Controller
             ->claimTypes();
 
         $query = $this->prepareQuery($request, $claimService);
-        $claims = $this->loadClaims($query, $userService);
+        $claims = $this->loadClaims($query);
         $pager = $query->countClaims();
 
         return $this->render('Claim/ClaimList', [
@@ -64,13 +60,13 @@ class PriceChangeClaimController extends Controller
         ]);
     }
 
-    public function page(Request $request, ClaimService $claimService, UserService $userService): JsonResponse
+    public function page(Request $request, ClaimService $claimService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $this->prepareQuery($request, $claimService);
         $result = [
-            'items' => $this->loadClaims($query, $userService),
+            'items' => $this->loadClaims($query),
         ];
         if ($request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
@@ -81,13 +77,13 @@ class PriceChangeClaimController extends Controller
     /**
      * @return mixed
      */
-    public function detail(int $id, ClaimService $claimService, UserService $userService)
+    public function detail(int $id, ClaimService $claimService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var PriceChangeClaimDto $claim */
-        $claim = $this->loadClaims($query, $userService, true)->first();
+        $claim = $this->loadClaims($query, true)->first();
 
         if (!$claim) {
             throw new NotFoundHttpException();
@@ -139,12 +135,8 @@ class PriceChangeClaimController extends Controller
     /**
      * Изменить статус заявки
      */
-    public function changeStatus(
-        int $id,
-        Request $request,
-        ClaimService $claimService,
-        UserService $userService
-    ): JsonResponse {
+    public function changeStatus(int $id, Request $request, ClaimService $claimService): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $result = 'ok';
@@ -160,7 +152,7 @@ class PriceChangeClaimController extends Controller
 
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService)->first();
+            $claim = $this->loadClaims($query)->first();
         } catch (\Throwable $e) {
             $result = 'fail';
             if ($request->get('status') == PriceChangeClaimDto::STATUS_DONE) {
@@ -175,12 +167,8 @@ class PriceChangeClaimController extends Controller
     /**
      * Изменить цену
      */
-    public function changePrice(
-        int $id,
-        Request $request,
-        ClaimService $claimService,
-        UserService $userService
-    ): JsonResponse {
+    public function changePrice(int $id, Request $request, ClaimService $claimService): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $result = 'ok';
@@ -196,7 +184,7 @@ class PriceChangeClaimController extends Controller
 
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService)->first();
+            $claim = $this->loadClaims($query)->first();
             $offers = $claim->getOffers();
             //Формируем массив с измененными ценами
             $newPrices = collect();
@@ -231,7 +219,7 @@ class PriceChangeClaimController extends Controller
             //Получаем всю информацию по заявке
             $query = $claimService->newQuery()->setFilter('id', $id);
             /** @var PriceChangeClaimDto $claim */
-            $claim = $this->loadClaims($query, $userService)->first();
+            $claim = $this->loadClaims($query)->first();
         } catch (\Throwable $e) {
             $result = 'fail';
             $systemError = $e->getMessage();
@@ -276,12 +264,15 @@ class PriceChangeClaimController extends Controller
     /**
      * @return Collection|PriceChangeClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, UserService $userService, bool $withProducts = false): Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         /** @var Collection|PriceChangeClaimDto[] $claims */
         $claims = $query->claims();
+        if ($claims->isEmpty()) {
+            return collect();
+        }
 
         $merchantIds = [];
         foreach ($claims as $claim) {
@@ -291,14 +282,7 @@ class PriceChangeClaimController extends Controller
         $merchants = $this->getMerchants($merchantIds);
 
         $userIds = $claims->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService
-                ->newQuery()
-                ->setFilter('id', $userIds)
-                ->include('profile');
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds, [], ['profile']);
 
         /** @var Collection $productsByOffers */
         $productsByOffers = collect();

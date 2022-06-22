@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Claim;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Message\Core\MessageException;
@@ -63,7 +63,7 @@ class ContentClaimController extends Controller
         $meta = $claimMeta->pluck('value', 'propName');
 
         $query = $this->prepareQuery($request, $claimService, $userService);
-        $claims = $query ? $this->loadClaims($query, $userService, $merchantService) : [];
+        $claims = $query ? $this->loadClaims($query, $merchantService) : [];
         $pager = $query ? $query->countClaims() : [];
 
         $merchantsQuery = (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name');
@@ -153,7 +153,7 @@ class ContentClaimController extends Controller
 
         $query = $this->prepareQuery($request, $claimService, $userService);
         $result = $query ? [
-            'items' => $this->loadClaims($query, $userService, $merchantService),
+            'items' => $this->loadClaims($query, $merchantService),
         ] : [];
         if ($query && $request->get('page') == 1) {
             $result['pager'] = $query->countClaims();
@@ -178,7 +178,7 @@ class ContentClaimController extends Controller
 
         $query = $claimService->newQuery()->setFilter('id', $id);
         /** @var ContentClaimDto $claim */
-        $claim = $this->loadClaims($query, $userService, $merchantService)->first();
+        $claim = $this->loadClaims($query, $merchantService)->first();
 
         if (!$claim) {
             throw new NotFoundHttpException();
@@ -384,18 +384,16 @@ class ContentClaimController extends Controller
         return $restQuery;
     }
 
-    protected function loadClaims(
-        RestQuery $query,
-        UserService $userService,
-        MerchantService $merchantService
-    ): Collection {
+    protected function loadClaims(RestQuery $query, MerchantService $merchantService): Collection
+    {
         /** @var Collection|ContentClaimDto[] $claims */
         $claims = $query->claims();
+        if ($claims->isEmpty()) {
+            return collect();
+        }
 
         $userIds = $claims->pluck('user_id')->all();
-        $usersQuery = (new RestQuery())->setFilter('id', $userIds);
-        /** @var Collection|UserDto[] $users */
-        $users = $userService->users($usersQuery)->keyBy('id');
+        $users = UserHelper::getUsersByIds($userIds);
 
         $merchantIds = $claims->pluck('merchant_id')->all();
         $merchantQuery = (new RestQuery())
@@ -423,13 +421,12 @@ class ContentClaimController extends Controller
         foreach ($userIds as $id) {
             $usersRoles[$id] = $userService->userRoles($id)->first();
         }
-        $usersQuery = (new RestQuery())->setFilter('id', $userIds);
-        $userNames = $userService->users($usersQuery)->keyBy('id');
+        $users = UserHelper::getUsersByIds($userIds);
 
-        return $history->map(function (ClaimHistoryDto $event) use ($userNames, $usersRoles) {
+        return $history->map(function (ClaimHistoryDto $event) use ($users, $usersRoles) {
             /** TODO ошибка Trying to access array offset on value of type null */
             $event['userRoleId'] = $usersRoles[$event->user_id]['id'];
-            $event['userName'] = $userNames->has($event->user_id) ? $userNames->get($event->user_id)->short_name : 'N/A';
+            $event['userName'] = $users->has($event->user_id) ? $users->get($event->user_id)->short_name : 'N/A';
             return $event;
         });
     }
