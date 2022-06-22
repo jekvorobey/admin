@@ -33,7 +33,7 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label for="payment-method-active">Постоплата</label>
+                        <label for="payment-method-postpaid">Постоплата</label>
                     </b-col>
                     <b-col cols="8">
                         <input id="payment-method-postpaid"
@@ -51,6 +51,39 @@
                         <input id="payment-method-active"
                                type="checkbox"
                                v-model="$v.paymentMethod.active.$model"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-is-apply-discounts">Доступно ли скидки и списание бонусов</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-is-apply-discounts"
+                               type="checkbox"
+                               v-model="$v.paymentMethod.is_apply_discounts.$model"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="hasSetting('discount')" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-setting-discount">Размер скидки</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-setting-discount"
+                                 v-model="$v.paymentMethod.settings.discount.$model"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="hasSetting('signingKD')" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-setting-signingKD">Подписание КД</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-setting-signingKD"
+                                 v-model="$v.paymentMethod.settings.signingKD.$model"
+                                 class="mb-2"
                         />
                     </b-col>
                 </b-row>
@@ -99,6 +132,11 @@
                 paymentMethod: {
                     name: {required},
                     active: {required},
+                    is_apply_discounts: {required},
+                    settings: {
+                        discount: {},
+                        signingKD: {},
+                    },
                 },
             }
         },
@@ -114,6 +152,8 @@
                     code: this.paymentMethod.code,
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
+                    is_apply_discounts: this.paymentMethod.is_apply_discounts,
+                    settings: this.paymentMethod.settings,
                 };
 
                 Services.showLoader();
@@ -134,6 +174,9 @@
             closeModal() {
                 this.$bvModal.hide('payment-method-edit-modal');
             },
+            hasSetting(settingKey) {
+                return this.paymentMethod.settings && Object.keys(this.paymentMethod.settings).includes(settingKey);
+            },
         },
         computed: {
             errorNameField() {
@@ -150,7 +193,3 @@
         },
     }
 </script>
-
-<style scoped>
-
-</style>

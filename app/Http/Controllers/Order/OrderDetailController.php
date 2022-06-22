@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -18,6 +20,8 @@ use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
+use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Dto\Package\PackageDto;
 use Greensight\Store\Dto\Package\PackageType;
@@ -87,6 +91,23 @@ class OrderDetailController extends Controller
 
         return response()->json([
             'status' => OrderStatus::allStatuses()[$data['status']]->toArray(),
+        ]);
+    }
+
+    /**
+     * Отметить заказ как оплаченный (для рассрочки)
+     */
+    public function markAsPaid(int $id, OrderService $orderService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+
+        $order = new OrderDto();
+        $order->payment_status = PaymentStatus::PAID;
+        $orderService->updateOrder($id, $order);
+
+        return response()->json([
+            'order' => $this->getOrder($id),
         ]);
     }
 
@@ -426,7 +447,7 @@ class OrderDetailController extends Controller
         $order->created_at = date_time2str(new Carbon($order->created_at));
         $order->updated_at = date_time2str(new Carbon($order->updated_at));
 
-        $order['payment_methods'] = $order->paymentMethod->name;
+        $order['payment_method'] = $order->paymentMethod;
         $order['discount'] = $order->getDiscount();
         $order['delivery_discount'] = $order->getDeliveryDiscount();
         $order['product_cost'] = $order->cost - $order->delivery_cost;
@@ -450,6 +471,11 @@ class OrderDetailController extends Controller
         ) {
             return $sum + $item->qty;
         }, 0) : 0;
+
+        $order['canMarkAsPaid'] = $order->paymentMethod->id === PaymentMethod::CREDITPAID
+            && $order->payment_status->id === PaymentStatus::WAITING
+            && !$order->is_canceled
+            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void

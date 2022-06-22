@@ -1332,7 +1332,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-logistics-lib",
-                "reference": "7c58fd6b22096a13a23caf127effa18865c1adfd"
+                "reference": "d7ac67ef4fa88786698530cf2b1777f903fa704a"
             },
             "require": {
                 "ext-json": "*",
@@ -1366,7 +1366,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2022-03-24T14:54:52+00:00"
+            "time": "2022-05-19T08:05:19+00:00"
         },
         {
             "name": "iwengo/ibt-marketing-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "c226bdcc3e906ccfaf834efaacb0dc0c14f82465"
+                "reference": "a4e71f9b84490416384bbda379025ced65858d9b"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-06-21T07:42:49+00:00"
+            "time": "2022-06-22T12:17:38+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
