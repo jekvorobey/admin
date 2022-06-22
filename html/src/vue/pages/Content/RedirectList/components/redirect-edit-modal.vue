@@ -8,7 +8,7 @@
             <div class="card-body">
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label> Результат</label>
+                        <label>Ссылка</label>
                     </b-col>
                     <b-col cols="8">
                         <v-input
@@ -20,7 +20,7 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
-                        <label>Источник</label>
+                        <label>Короткая ссылка</label>
                     </b-col>
                     <b-col cols="8">
                         <v-input

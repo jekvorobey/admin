@@ -361,11 +361,19 @@ export default {
                 JSON.stringify(this.savedActivities) !== JSON.stringify(this.form.activities) ||
                 (this.customer.birthday || '') !== (this.form.birthday || '');
         },
+        isDirtyPassport() {
+            return this.form.pdr_lastName !== this.customer.passport.surname
+                || this.form.pdr_firstName !== this.customer.passport.name
+                || this.form.pdr_middleName !== this.customer.passport.patronymic
+                || this.form.pdr_docSerial !== this.customer.passport.serial
+                || this.form.pdr_docNumber !== this.customer.passport.no
+                || this.form.pdr_docIssueDate !== this.customer.passport.issue_date;
+        }
     },
     methods: {
         save() {
             Services.showLoader();
-            Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, {
+            let form = {
                 customer: {
                     comment_internal: this.form.comment_internal,
                     manager_id: this.form.manager_id,
@@ -383,18 +391,23 @@ export default {
                     referral_code: this.form.referral_code,
                     referral_contract_number: this.form.referral_contract_number,
                     referral_contract_at: this.form.referral_contract_at,
-                    passport: {
-                        surname: this.form.pdr_lastName,
-                        name: this.form.pdr_firstName,
-                        patronymic: this.form.pdr_middleName,
-                        no: this.form.pdr_docNumber,
-                        serial: this.form.pdr_docSerial,
-                        issue_date: this.form.pdr_docIssueDate,
-                        address: this.form.legal_info_company_address
-                    }
                 },
                 activities: this.form.activities,
-            }).then(data => {
+            }
+
+            if (this.isDirtyPassport) {
+                form.customer.passport = {
+                    surname: this.form.pdr_lastName,
+                    name: this.form.pdr_firstName,
+                    patronymic: this.form.pdr_middleName,
+                    no: this.form.pdr_docNumber,
+                    serial: this.form.pdr_docSerial,
+                    issue_date: this.form.pdr_docIssueDate,
+                    address: this.form.legal_info_company_address
+                }
+            }
+
+            Services.net().put(this.getRoute('customers.detail.save', {id: this.customer.id}), {}, form).then(() => {
                 this.customer.comment_internal = this.form.comment_internal;
                 this.customer.manager_id = this.form.manager_id;
                 this.customer.gender = this.form.gender;

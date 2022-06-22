@@ -486,6 +486,16 @@ Route::middleware('auth')->group(function () {
         });
     });
 
+    Route::prefix('baskets')->namespace('Basket')->group(function () {
+        Route::get('', 'BasketListController@index')->name('baskets.list');
+        Route::get('page', 'BasketListController@page')->name('baskets.pagination');
+
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+            Route::get('', 'BasketDetailController@detail')->name('baskets.detail');
+            Route::put('detail', 'BasketDetailController@save')->name('baskets.detail.save');
+        });
+    });
+
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');

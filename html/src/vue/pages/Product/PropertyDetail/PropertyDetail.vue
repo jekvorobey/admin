@@ -161,6 +161,16 @@
                                  :is-color="productProperty.is_color"
                                  :values-errors.sync="valuesErrors"/>
             </div>
+
+            <div class="row mt-4">
+                <div class="col-lg-6 col-sm-12">
+                    <h4>Не склеивать на витрине в категории:</h4>
+
+                    <modal-categories-checkbox class="mt-4"
+                                               :categories="formCategories.children"
+                                               :model.sync="productProperty.ungrouped_variants_categories"/>
+                </div>
+            </div>
         </div>
 
         <deletion-alert v-if="iProperty"
@@ -202,6 +212,7 @@ export default {
                 is_multiple: false,
                 is_color: false,
                 categories: [],
+                ungrouped_variants_categories: [],
                 measurement_unit: '',
                 values: {
                     old: [],
@@ -235,6 +246,10 @@ export default {
                 this.iProperty.categoryPropertyLinks.forEach(link => {
                     this.productProperty.categories.push(link.category_id)
                 });
+                this.iProperty.categoryPropertyUngroupedVariantLinks.forEach(link => {
+                    this.productProperty.ungrouped_variants_categories.push(link.category_id)
+                });
+
                 this.iProperty.values.forEach(value => {
                     this.iProperty.is_color ? value.code = '#' + value.code : value.code = '#000000';
                     this.productProperty.values.old.push(value)
@@ -252,6 +267,7 @@ export default {
                 is_multiple: Number(this.productProperty.is_multiple),
                 is_color: Number(this.productProperty.is_color),
                 categories: JSON.stringify(this.productProperty.categories),
+                ungrouped_variants_categories: JSON.stringify(this.productProperty.ungrouped_variants_categories),
                 old_values: JSON.stringify(this.productProperty.values.old),
                 new_values: JSON.stringify(this.productProperty.values.new),
                 measurement_unit: this.productProperty.measurement_unit,

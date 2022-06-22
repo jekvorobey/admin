@@ -134,6 +134,7 @@ class ViewRender
         $this->blocks = [
             'products' => BlockDto::ADMIN_BLOCK_PRODUCTS,
             'orders' => BlockDto::ADMIN_BLOCK_ORDERS,
+            'baskets' => BlockDto::ADMIN_BLOCK_BASKETS,
             'claims' => BlockDto::ADMIN_BLOCK_CLAIMS,
             'content' => BlockDto::ADMIN_BLOCK_CONTENT,
             'logistics' => BlockDto::ADMIN_BLOCK_LOGISTICS,

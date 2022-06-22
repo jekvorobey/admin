@@ -33,7 +33,7 @@
                 <th>Куплено</th>
                 <th>Билеты</th>
                 <th>Статус</th>
-                <th>Отгружен в Shoppilot</th>
+                <th>Отгружен в Aplaut</th>
                 <th v-if="canUpdate(blocks.events)">Действия</th>
             </tr>
             </thead>
