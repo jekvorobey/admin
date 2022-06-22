@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -80,7 +81,8 @@ class CustomerDetailController extends Controller
             }
         }
 
-        $users = $userService->users((new RestQuery())->setFilter('id', $user_ids))->keyBy('id');
+        $users = UserHelper::getUsersByIds($user_ids);
+
         if (!$users->has($customer->user_id)) {
             throw new NotFoundHttpException();
         }

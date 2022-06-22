@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Merchant\Detail;
 
 use App\Core\Helpers;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -36,12 +37,8 @@ class TabOperatorController extends Controller
      *
      * @throws Exception
      */
-    public function loadOperators(
-        int $merchantId,
-        Request $request,
-        OperatorService $operatorService,
-        UserService $userService
-    ): JsonResponse {
+    public function loadOperators(int $merchantId, Request $request, OperatorService $operatorService): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $page = $request->get('page', 1);
@@ -53,8 +50,7 @@ class TabOperatorController extends Controller
         if ($selectKey) {
             $operators = $operatorService->operators($restQuery);
 
-            $users = $userService->users((new RestQuery())->setFilter('id', $operators->pluck('user_id')->all()))
-                ->keyBy('id');
+            $users = UserHelper::getUsersByIds($operators->pluck('user_id')->all());
 
             $operators = $operators->map(function ($operator) use ($users) {
                 return [

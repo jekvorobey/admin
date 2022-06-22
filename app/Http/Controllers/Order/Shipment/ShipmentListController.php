@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Order\Shipment;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Greensight\CommonMsa\Services\AuthService\UserService;
-use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\PointDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Services\OrderService\OrderService;
@@ -232,8 +230,6 @@ class ShipmentListController extends Controller
         $shipmentService = resolve(ShipmentService::class);
         $storeService = resolve(StoreService::class);
         $orderService = resolve(OrderService::class);
-        $customerService = resolve(CustomerService::class);
-        $userService = resolve(UserService::class);
         $brandService = resolve(BrandService::class);
         $listService = resolve(ListsService::class);
 
@@ -255,21 +251,11 @@ class ShipmentListController extends Controller
                     ->setFilter('id', $orderIds))
                 ->keyBy('id');
 
-            if ($customerIds = $orders->pluck('customer_id')->toArray()) {
-                $customers = $customerService
-                    ->customers((new RestQuery())
-                        ->addFields(CustomerDto::entity(), 'id', 'user_id')
-                        ->setFilter('id', $customerIds))
-                    ->keyBy('id');
+            $customerIds = $orders->pluck('customer_id')->toArray();
+            $customers = CustomerHelper::getCustomersByIds($customerIds, ['id', 'user_id']);
 
-                if ($userIds = $customers->pluck('user_id')->toArray()) {
-                    $users = $userService
-                        ->users((new RestQuery())
-                            ->addFields(UserDto::entity(), 'id')
-                            ->setFilter('id', $userIds))
-                        ->keyBy('id');
-                }
-            }
+            $userIds = $customers->pluck('user_id')->all();
+            $users = UserHelper::getUsersByIds($userIds);
         }
 
         if ($shipments) {

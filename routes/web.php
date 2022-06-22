@@ -360,6 +360,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
             Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
+            Route::put('markAsPaid', 'OrderDetailController@markAsPaid')->name('orders.markAsPaid');
             Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
             Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
@@ -482,6 +483,16 @@ Route::middleware('auth')->group(function () {
                 Route::post('save', 'OrderReturnReasonListController@save')->name('orderReturnReasons.save');
                 Route::post('delete', 'OrderReturnReasonListController@delete')->name('orderReturnReasons.delete');
             });
+        });
+    });
+
+    Route::prefix('baskets')->namespace('Basket')->group(function () {
+        Route::get('', 'BasketListController@index')->name('baskets.list');
+        Route::get('page', 'BasketListController@page')->name('baskets.pagination');
+
+        Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
+            Route::get('', 'BasketDetailController@detail')->name('baskets.detail');
+            Route::put('detail', 'BasketDetailController@save')->name('baskets.detail.save');
         });
     });
 

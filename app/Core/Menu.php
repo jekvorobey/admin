@@ -117,6 +117,16 @@ class Menu
                 ],
             ],
             [
+                'id' => BlockDto::ADMIN_BLOCK_BASKETS,
+                'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_BASKETS)->name,
+                'items' => [
+                    [
+                        'title' => 'Брошенные корзины',
+                        'route' => route('baskets.list'),
+                    ],
+                ],
+            ],
+            [
                 'id' => BlockDto::ADMIN_BLOCK_CLAIMS,
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_CLAIMS)->name,
                 'items' => [

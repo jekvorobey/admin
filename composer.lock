@@ -1274,14 +1274,14 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "504f703fbe820e875c6debb1980cef81abc17e32"
+                "reference": "1d57245398c51fd597f494cb024fdaf1d974d8a3"
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "ext-pdo": "*",
                 "firebase/php-jwt": "^5.0",
-                "guzzlehttp/guzzle": "^6.3",
+                "guzzlehttp/guzzle": "^6.3|^7.4",
                 "mikehaertl/phpwkhtmltopdf": "^2.4",
                 "php": "^7.4"
             },
@@ -1324,7 +1324,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-03-03T13:17:33+00:00"
+            "time": "2022-06-21T07:42:51+00:00"
         },
         {
             "name": "iwengo/ibt-logistics-lib",
@@ -1332,7 +1332,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-logistics-lib",
-                "reference": "7c58fd6b22096a13a23caf127effa18865c1adfd"
+                "reference": "d7ac67ef4fa88786698530cf2b1777f903fa704a"
             },
             "require": {
                 "ext-json": "*",
@@ -1366,7 +1366,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2022-03-24T14:54:52+00:00"
+            "time": "2022-05-19T08:05:19+00:00"
         },
         {
             "name": "iwengo/ibt-marketing-lib",
@@ -1489,7 +1489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "dd9bf76ad66430dd759f52754c5fd9071db2a091"
+                "reference": "a4e71f9b84490416384bbda379025ced65858d9b"
             },
             "require": {
                 "ext-json": "*",
@@ -1524,7 +1524,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-05-12T12:44:29+00:00"
+            "time": "2022-06-22T12:17:38+00:00"
         },
         {
             "name": "iwengo/ibt-pim-lib",
@@ -10911,5 +10911,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

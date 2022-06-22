@@ -17,16 +17,20 @@
                         <b-dropdown-item-button v-if="!isNotPaid">
                             Вернуть деньги
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="isHold"
+                        <b-dropdown-item-button v-if="canCapturePayment"
                                                 @click="capturePayment()">
                             Подтвердить платеж
                         </b-dropdown-item-button>
-                      <b-dropdown-item-button>
-                        Отправить уведомление клиенту
-                      </b-dropdown-item-button>
-                      <b-dropdown-item-button>
-                        Отправить уведомление мерчанту
-                      </b-dropdown-item-button>
+                        <b-dropdown-item-button v-if="canMarkAsPaid"
+                                                @click="markAsPaid()">
+                            Заказ оплачен
+                        </b-dropdown-item-button>
+<!--                      <b-dropdown-item-button>-->
+<!--                        Отправить уведомление клиенту-->
+<!--                      </b-dropdown-item-button>-->
+<!--                      <b-dropdown-item-button>-->
+<!--                        Отправить уведомление мерчанту-->
+<!--                      </b-dropdown-item-button>-->
                       <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
                                               @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
                         Ожидает подтверждения Мерчантом
@@ -150,7 +154,7 @@
         </b-row>
         <b-row class="mb-3">
             <div class="col-sm-6">
-                <span class="font-weight-bold">Способ оплаты:</span> {{ order.payment_methods }}
+                <span class="font-weight-bold">Способ оплаты:</span> {{ order.payment_method.name }}
             </div>
             <div class="col-sm-6">
                 <span class="font-weight-bold">К оплате:</span> {{ preparePrice(order.to_pay) }} руб.
@@ -205,6 +209,24 @@ export default {
             }, () => {
                 Services.msg(errorMessage, 'danger');
             }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        markAsPaid() {
+            let errorMessage = 'Ошибка при изменении статуса платежа';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id})).then(data => {
+                if (data.order) {
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
+                    Services.msg('Платеж подтвержден');
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(() => {
                 Services.hideLoader();
             });
         },
@@ -317,6 +339,13 @@ export default {
         },
         isCreatedStatus() {
             return this.isStatus(this.orderStatuses.created.id);
+        },
+        canCapturePayment() {
+            return this.isHold && !this.isCancel
+                && this.order.payment_method.is_need_create_payment && !this.order.payment_method.is_postpaid;
+        },
+        canMarkAsPaid() {
+            return this.order.canMarkAsPaid;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;

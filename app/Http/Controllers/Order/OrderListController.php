@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Order;
 
+use App\Core\CustomerHelper;
+use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Dto\UserDto;
-use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Dto\CustomerDto;
-use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\PointDto;
@@ -162,23 +161,13 @@ class OrderListController extends Controller
     {
         /** @var OrderService $orderService */
         $orderService = resolve(OrderService::class);
-        /** @var CustomerService $customerService */
-        $customerService = resolve(CustomerService::class);
-        /** @var UserService $userService */
-        $userService = resolve(UserService::class);
         /** @var ListsService $listsService */
         $listsService = resolve(ListsService::class);
 
         $orders = $orderService->orders($restQuery);
-
-        //Получаем операторов обработки заказов
-        $operatorIds = collect();
-        foreach ($orders as $order) {
-            if ($order->latestHistory) {
-                $operatorIds->push($order->latestHistory->user_id);
-            }
+        if ($orders->isEmpty()) {
+            return collect();
         }
-        $operatorIds = $operatorIds->unique();
 
         //Получаем реферальных партнеров заказов
         $referralIds = collect();
@@ -190,20 +179,11 @@ class OrderListController extends Controller
 
         // Получаем покупателей и реферальных партнеров заказов
         $customerIds = $orders->pluck('customer_id')->merge($referralIds)->unique()->all();
-        $customerQuery = $customerService->newQuery()
-            ->setFilter('id', $customerIds);
-        /** @var Collection|CustomerDto[] $customers */
-        $customers = $customerService->customers($customerQuery)->keyBy('id');
+        $customers = CustomerHelper::getCustomersByIds($customerIds);
 
         // Получаем самих пользователей
         $userIds = $customers->pluck('user_id')->all();
-        $users = collect();
-        if ($userIds) {
-            $userQuery = $userService->newQuery()
-                ->setFilter('id', $userIds);
-            /** @var Collection|UserDto[] $users */
-            $users = $userService->users($userQuery)->keyBy('id');
-        }
+        $users = UserHelper::getUsersByIds($userIds);
 
         /** @var Collection|PointDto[] $points */
         $points = collect();

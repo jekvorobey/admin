@@ -10,6 +10,7 @@
                         <th>Артикул товара</th>
                         <th>Старая цена предложения мерчанта</th>
                         <th>Новая цена предложения мерчанта</th>
+                        <th>Отклонение</th>
                         <th>Статус изменения цены</th>
                         <th v-if="canUpdate(blocks.claims)">Комментарий по изменению цены</th>
                         <th>
@@ -39,6 +40,13 @@
                         <td>{{ product(offer.offerId).vendor_code }}</td>
                         <td>{{ offer.oldPrice }} руб</td>
                         <td>{{ offer.newPrice }} руб</td>
+                        <td>
+                            <value-difference
+                                v-if="offer.oldPrice > 0"
+                                :old-value="offer.oldPrice"
+                                :new-value="offer.newPrice"
+                            />
+                        </td>
                         <td>
                             <span class="badge" :class="statusChangePriceClass(offer.status)">
                                 {{ statusChangePrice(offer.status) }}<br>{{offer.updated_at}}
@@ -73,9 +81,13 @@
     import Services from '../../../../../../scripts/services/services';
     import OfferPriceRejectModal from './offer-price-reject-modal.vue';
     import modalMixin from '../../../../../mixins/modal';
+    import ValueDifference from '../../../../../components/value-difference/value-difference.vue';
 
     export default {
-        components: {OfferPriceRejectModal},
+        components: {
+            ValueDifference,
+            OfferPriceRejectModal
+        },
         props: [
             'model',
         ],
