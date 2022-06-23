@@ -34,11 +34,11 @@
                 </tr>
                 <tr v-if="isFileSharing(extSystem.driver) || is1C(extSystem.driver)">
                     <th>Хост</th>
-                    <td>{{ extSystem.connection_params.host }}</td>
+                    <td>{{ paramOptions.host }}</td>
                 </tr>
                 <tr v-if="isFileSharing(extSystem.driver)">
                     <th>Порт</th>
-                    <td>{{ extSystem.connection_params.port }}</td>
+                    <td>{{ paramOptions.port }}</td>
                 </tr>
                 <tr v-if="isFileSharing(extSystem.driver)">
                     <th>Наименование файла</th>
