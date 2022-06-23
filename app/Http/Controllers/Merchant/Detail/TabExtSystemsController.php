@@ -94,7 +94,7 @@ class TabExtSystemsController extends Controller
         $merchantOrganizationSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_ORGANIZATION_CODE);
         $merchantAgentSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_AGENT_CODE);
         $merchantOwnerSetting = $merchantSettings->get(MerchantSettingDto::MOYSKLAD_OWNER_CODE);
-        $host = $extSystem->connection_params['host'] ?? '';
+        $host = $this->extSystem->connection_params['host'] ?? '';
         $paramPrice = null;
         $paramStock = null;
         $paramOrder = null;
@@ -114,17 +114,18 @@ class TabExtSystemsController extends Controller
                     break;
                 case ExtSystemDriver::DRIVER_FILE_SHARING:
                     $paramPriceStock = $integration->get(IntegrationType::TYPE_PRICE_STOCK_IMPORT);
+                    break;
             }
         }
 
         return [
             'host' => $host,
-            'port' => $extSystem->connection_params['port'] ?? '',
+            'port' => $this->extSystem->connection_params['port'] ?? '',
             'paramPrice' => $paramPrice,
             'paramStock' => $paramStock,
             'paramOrder' => $paramOrder,
             'paramPriceStock' => $paramPriceStock,
-            'fileName' => $extSystem->connection_params['fileName'] ?? '',
+            'fileName' => $this->extSystem->connection_params['fileName'] ?? '',
             'merchantPriceSetting' => $merchantPriceSetting->value ?? null,
             'merchantOrganizationSetting' => $merchantOrganizationSetting->value ?? null,
             'merchantAgentSetting' => $merchantAgentSetting->value ?? null,

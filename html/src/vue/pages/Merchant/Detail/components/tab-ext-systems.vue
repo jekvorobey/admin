@@ -32,7 +32,7 @@
                     <th>Пароль</th>
                     <td>{{ extSystem.connection_params.password }}</td>
                 </tr>
-                <tr v-if="isFileSharing(extSystem.driver)">
+                <tr v-if="isFileSharing(extSystem.driver) || is1C(extSystem.driver)">
                     <th>Хост</th>
                     <td>{{ extSystem.connection_params.host }}</td>
                 </tr>
