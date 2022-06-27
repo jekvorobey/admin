@@ -4,25 +4,38 @@
             <b-form-textarea rows="5" v-model="productCodes" placeholder="Введите артикулы" />
         </b-input-group>
 
-        <b-table-simple v-if="showReport && report.length > 0" class="mt-3" small>
-            <b-tbody>
-                <b-tr v-for="(item, i) in report" :key="i">
-                    <b-td style="width: 20%" :variant="item.variant">Артикул {{ item.vendorCode }}</b-td>
-                    <b-td :variant="item.variant">{{ item.status }}</b-td>
-                </b-tr>
-            </b-tbody>
-        </b-table-simple>
+        <div v-if="showReport && report.length > 0" class="report-table__pane mb-3">
+            <table class="report-table">
+                <tr v-for="(item, i) in report" :key="i" :class="[ item.variant ]">
+                    <td style="width: 20%" :variant="item.variant">
+                        {{ mode === modes.OFFER_ID ? 'Офер' : 'Артикул' }} {{ item.vendorCode }}
+                    </td>
+                    <td :variant="item.variant">{{ item.status }}</td>
+                </tr>
+            </table>
+        </div>
 
         <div class="d-flex">
             <b-button v-on:click="changeMode" class="mr-2">
                 {{ mode === modes.OFFER_ID ? 'Поиск по оферам' : 'Поиск по артикулам' }}
             </b-button>
-            <b-button v-on:click="load" variant="info">Добавить</b-button>
+            <b-button v-on:click="onLoadClick" class="mr-2" variant="info">Добавить</b-button>
+            <b-button v-on:click="$refs.fileInput.$refs.input.click()" variant="info">Добавить из файла</b-button>
+
+            <b-form-file
+                ref="fileInput"
+                v-model="file"
+                class="d-none"
+                accept=".csv"
+                plain
+                placeholder="Добавить из файла"
+            />
         </div>
     </div>
 </template>
 
 <script>
+import _chunk from 'lodash/chunk';
 import Services from '../../../scripts/services/services';
 
 const mode = Object.freeze({
@@ -49,15 +62,42 @@ export default {
         return {
             productCodes: '',
             report: [],
+            file: null,
             mode: mode.VENDOR_CODE,
 
             modes: mode,
         };
     },
 
+    watch: {
+        file() {
+            if (this.file) {
+                const reader = new FileReader();
+
+                reader.onload = async (event) => {
+                    let productCodes = event.target.result.split("\n").filter(code => !!code);
+
+                    if (productCodes.length > 0) {
+                        await this.load(productCodes);
+                        this.file = null;
+                    }
+                };
+
+                reader.readAsText(this.file);
+            }
+        }
+    },
+
     methods: {
-        async load() {
-            const productCodes = this.productCodes.split("\n");
+        onLoadClick() {
+            const productCodes = this.productCodes.split("\n").filter(code => !!code);
+
+            if (productCodes.length > 0) {
+                this.load(productCodes);
+            }
+        },
+
+        async load(productCodes) {
             const loadedIds = [];
 
             if (productCodes.length > 0) {
@@ -65,61 +105,88 @@ export default {
                 this.report = [];
             }
 
-            for (const productCode of productCodes) {
-                try {
-                    const params = {
-                        page: 1,
-                        filter: {}
-                    };
+            const params = {
+                filter: {}
+            };
 
+            try {
+                let offers = [];
+                const parts = _chunk(productCodes, 500);
+
+                for (const codes of parts) {
                     if (this.mode === mode.OFFER_ID) {
-                        params.filter.id = productCode;
+                        params.filter.id = codes;
                     } else {
-                        params.filter.vendor_code = productCode;
+                        params.filter.vendor_code = codes;
                     }
 
-                    const { offers } = await Services.net().get(
-                        this.getRoute('offers.listPage'),
+                    let responseOffers = await Services.net().post(
+                        this.getRoute('offers.find'),
+                        {},
                         params,
                     );
 
-                    if (offers && offers[0]) {
-                        const offerId = offers[0].id;
+                    offers = [
+                        ...offers,
+                        ...responseOffers
+                    ];
 
-                        if (!this.loadedProducts.includes(offerId)) {
-                            loadedIds.push(offerId);
+                    await this.sleep();
+                }
+
+                const finded = offers.map(item => {
+                    if (this.mode === mode.VENDOR_CODE) {
+                        return item.vendorCode;
+                    }
+
+                    return item.id;
+                });
+
+                productCodes.forEach(codeOrId => {
+                    if (finded.includes(codeOrId)) {
+                        const offer = offers.find(offer => {
+                            if (this.mode === mode.VENDOR_CODE) {
+                                return offer.vendorCode === codeOrId;
+                            }
+
+                            return offer.id === codeOrId;
+                        });
+
+                        if (!this.loadedProducts.includes(offer.id)) {
+                            loadedIds.push(offer.id);
 
                             this.report.push({
-                                vendorCode: productCode,
+                                vendorCode: codeOrId,
                                 variant: 'success',
                                 status: 'Добавлен',
                             });
                         } else {
                             this.report.push({
-                                vendorCode: productCode,
+                                vendorCode: codeOrId,
                                 variant: 'warning',
                                 status: 'Повторный'
                             });
                         }
                     } else {
                         this.report.push({
-                            vendorCode: productCode,
+                            vendorCode: codeOrId,
                             variant: 'danger',
                             status: 'Не найден'
                         });
                     }
-                } catch (error) {
-                    console.error(error);
+                });
+
+                if (loadedIds.length > 0) {
+                    this.$emit('load', loadedIds);
                 }
+
+                Services.hideLoader();
+
+                this.productCodes = '';
+            } catch (error) {
+                console.error(error);
+                Services.hideLoader();
             }
-
-            if (loadedIds.length > 0) {
-                this.$emit('load', loadedIds);
-            }
-
-            Services.hideLoader();
-
-            this.productCodes = '';
         },
 
         changeMode() {
@@ -128,7 +195,37 @@ export default {
             } else {
                 this.mode = this.modes.VENDOR_CODE;
             }
+        },
+
+        sleep(timeout = 100) {
+            return new Promise(resolve => {
+                setTimeout(resolve, timeout);
+            });
         }
     },
 };
 </script>
+
+<style scoped>
+.report-table__pane {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+.report-table td {
+    border: 1px solid #000000;
+}
+
+.report-table tr.success td {
+    background-color: #c3e6cb;
+}
+
+.report-table tr.warning td {
+    background-color: #ffeeba;
+}
+
+.report-table tr.danger td {
+    background-color: #f5c6cb;
+}
+
+</style>

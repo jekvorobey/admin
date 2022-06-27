@@ -499,6 +499,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('offers')->namespace('Product')->group(function () {
         Route::get('', 'OfferListController@index')->name('offers.list');
         Route::get('page', 'OfferListController@page')->name('offers.listPage');
+        Route::post('find', 'OfferListController@findOffers')->name('offers.find');
         Route::post('', 'OfferListController@createOffer')->name('offers.create');
         Route::put('change-status', 'OfferListController@changeSaleStatus')->name('offers.change.saleStatus');
         Route::delete('', 'OfferListController@deleteOffers')->name('offers.delete');
@@ -656,7 +657,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/page', 'SeoController@page')->name('seo.page');
             Route::put('/{id}', 'SeoController@update')->where(['id' => '[0-9]+'])->name('seo.update');
         });
-
         Route::prefix('redirect')->namespace('Redirect')->group(function () {
             Route::get('', 'RedirectListController@index')->name('redirect.list');
             Route::get('/page', 'RedirectListController@page')->name('redirect.page');

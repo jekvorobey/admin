@@ -77,6 +77,31 @@ class OfferListController extends Controller
         return response()->json($data);
     }
 
+    public function findOffers(Request $request, OfferService $offerService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $query = $this->makeQuery($request);
+        $query->pageNumber(1, 1000);
+
+        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code');
+
+        $offers = $offerService->offers($query);
+        $offerIds = $offers->pluck('id')->all();
+        if (!$offerIds) {
+            return response()->json([]);
+        }
+
+        $offers = $offers->map(function (OfferDto $offer) {
+            return [
+                'id' => $offer->id,
+                'vendorCode' => $offer->product->vendor_code,
+            ];
+        });
+
+        return response()->json($offers);
+    }
+
     public function createOffer(
         Request $request,
         OfferService $offerService,
