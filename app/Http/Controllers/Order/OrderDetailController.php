@@ -95,6 +95,7 @@ class OrderDetailController extends Controller
 
     /**
      * Отметить заказ как оплаченный (для рассрочки)
+     * @throws Exception
      */
     public function markAsPaid(int $id, OrderService $orderService): JsonResponse
     {

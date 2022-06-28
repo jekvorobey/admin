@@ -65,7 +65,18 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="hasSetting('discount')" class="mb-2">
+                <b-row v-if="hasSetting('is_fixed_discount')" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-is-fixed-discount">Фиксированный размер скидки</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-is-fixed-discount"
+                               type="checkbox"
+                               v-model="$v.paymentMethod.settings.is_fixed_discount.$model"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="hasSetting('discount') && isFixedDiscount" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-discount">Размер скидки</label>
                     </b-col>
@@ -103,7 +114,6 @@
     </b-modal>
 </template>
 
-
 <script>
     import Services from "../../../../../scripts/services/services";
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
@@ -134,6 +144,7 @@
                     active: {required},
                     is_apply_discounts: {required},
                     settings: {
+                        is_fixed_discount: {},
                         discount: {},
                         signingKD: {},
                     },
@@ -184,6 +195,9 @@
                     && this.$v.paymentMethod.name.$invalid) {
                     return "Введите корректное название";
                 }
+            },
+            isFixedDiscount() {
+                return this.paymentMethod.settings.is_fixed_discount;
             },
         },
         watch: {
