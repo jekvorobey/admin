@@ -33,6 +33,41 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
+                        <label for="payment-method-button-text">Текст на кнопке</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-button-text"
+                                 v-model="$v.paymentMethod.button_text.$model"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-min-available-price">Доступность варианта оплаты при сумме от</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-min-available-price"
+                                 v-model="$v.paymentMethod.min_available_price.$model"
+                                 type="number"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-max-available-price">Доступность варианта оплаты при сумме до</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-max-available-price"
+                                 v-model="$v.paymentMethod.max_available_price.$model"
+                                 type="number"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
                         <label for="payment-method-postpaid">Постоплата</label>
                     </b-col>
                     <b-col cols="8">
@@ -98,17 +133,6 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="hasSetting('button_text')" class="mb-2">
-                    <b-col cols="4">
-                        <label for="payment-method-button-text">Текст на кнопке</label>
-                    </b-col>
-                    <b-col cols="8">
-                        <v-input id="payment-method-button-text"
-                               v-model="$v.paymentMethod.settings.button_text.$model"
-                               class="mb-2"
-                        />
-                    </b-col>
-                </b-row>
             </div>
         </div>
         <div class="mt-3">
@@ -154,11 +178,13 @@
                     name: {required},
                     active: {required},
                     is_apply_discounts: {required},
+                    button_text: {},
+                    min_available_price: {},
+                    max_available_price: {},
                     settings: {
                         is_fixed_discount: {},
                         discount: {},
                         signingKD: {},
-                        button_text: {},
                     },
                 },
             }
@@ -176,6 +202,9 @@
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
                     is_apply_discounts: this.paymentMethod.is_apply_discounts,
+                    button_text: this.paymentMethod.button_text,
+                    min_available_price: this.paymentMethod.min_available_price,
+                    max_available_price: this.paymentMethod.max_available_price,
                     settings: this.paymentMethod.settings,
                 };
 
