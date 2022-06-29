@@ -98,6 +98,17 @@
                         />
                     </b-col>
                 </b-row>
+                <b-row v-if="hasSetting('button_text')" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-button-text">Текст на кнопке</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-button-text"
+                               v-model="$v.paymentMethod.settings.button_text.$model"
+                               class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
             </div>
         </div>
         <div class="mt-3">
@@ -147,6 +158,7 @@
                         is_fixed_discount: {},
                         discount: {},
                         signingKD: {},
+                        button_text: {},
                     },
                 },
             }
