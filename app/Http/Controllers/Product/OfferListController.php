@@ -84,14 +84,9 @@ class OfferListController extends Controller
         $query = $this->makeQuery($request);
         $query->pageNumber(1, 1000);
 
-        $query->addFields(ProductDto::entity(), 'id', 'name', 'vendor_code');
+        $query->addFields(ProductDto::entity(), 'id', 'vendor_code');
 
         $offers = $offerService->offers($query);
-        $offerIds = $offers->pluck('id')->all();
-        if (!$offerIds) {
-            return response()->json([]);
-        }
-
         $offers = $offers->map(function (OfferDto $offer) {
             return [
                 'id' => $offer->id,
