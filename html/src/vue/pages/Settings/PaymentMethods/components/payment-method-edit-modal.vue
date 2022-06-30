@@ -36,10 +36,10 @@
                         <label for="payment-method-button-text">Текст на кнопке</label>
                     </b-col>
                     <b-col cols="8">
-                        <v-input id="payment-method-button-text"
-                                 v-model="$v.paymentMethod.button_text.$model"
-                                 class="mb-2"
-                        />
+                        <textarea id="payment-method-button-text"
+                                  v-model="$v.paymentMethod.button_text.$model"
+                                  class="form-control" rows="14">
+                        </textarea>
                     </b-col>
                 </b-row>
                 <b-row class="mb-2">
