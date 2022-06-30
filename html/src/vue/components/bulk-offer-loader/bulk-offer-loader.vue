@@ -36,6 +36,7 @@
 
 <script>
 import _chunk from 'lodash/chunk';
+import { detect } from 'jschardet';
 import Services from '../../../scripts/services/services';
 
 const mode = Object.freeze({
@@ -70,12 +71,26 @@ export default {
     },
 
     watch: {
-        file() {
+        async file() {
             if (this.file) {
+                let readEncoding = 'UTF-8';
+
+                const fileEncodingInfo = await this.detectFileEncoding(this.file);
+
+                // Если в файле большая часть символов числа, то библиотеки неверное определяют кодировку
+                // Подразумеваем, что если не UTF-8, то скорее всего Windows 1251
+                if (fileEncodingInfo.encoding && fileEncodingInfo.encoding !== 'UTF-8') {
+                    readEncoding = 'CP1251';
+                }
+
                 const reader = new FileReader();
 
                 reader.onload = async (event) => {
-                    let productCodes = event.target.result.split("\n").filter(code => !!code);
+                    let productCodes = event.target.result.split("\n")
+                        .map(code => {
+                            return code.replace(/\n/g, '').trim();
+                        })
+                        .filter(code => !!code);
 
                     if (productCodes.length > 0) {
                         await this.load(productCodes);
@@ -83,7 +98,7 @@ export default {
                     }
                 };
 
-                reader.readAsText(this.file);
+                reader.readAsText(this.file, readEncoding);
             }
         }
     },
@@ -95,6 +110,18 @@ export default {
             if (productCodes.length > 0) {
                 this.load(productCodes);
             }
+        },
+
+        async detectFileEncoding(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    resolve(detect(event.target.result));
+                };
+
+                reader.readAsBinaryString(file);
+            });
         },
 
         async load(productCodes) {
