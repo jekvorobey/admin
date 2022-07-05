@@ -33,6 +33,41 @@
                 </b-row>
                 <b-row class="mb-2">
                     <b-col cols="4">
+                        <label for="payment-method-button-text">Текст на кнопке</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <textarea id="payment-method-button-text"
+                                  v-model="$v.paymentMethod.button_text.$model"
+                                  class="form-control" rows="14">
+                        </textarea>
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-min-available-price">Доступность варианта оплаты при сумме от</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-min-available-price"
+                                 v-model="$v.paymentMethod.min_available_price.$model"
+                                 type="number"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-max-available-price">Доступность варианта оплаты при сумме до</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <v-input id="payment-method-max-available-price"
+                                 v-model="$v.paymentMethod.max_available_price.$model"
+                                 type="number"
+                                 class="mb-2"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row class="mb-2">
+                    <b-col cols="4">
                         <label for="payment-method-postpaid">Постоплата</label>
                     </b-col>
                     <b-col cols="8">
@@ -65,7 +100,18 @@
                         />
                     </b-col>
                 </b-row>
-                <b-row v-if="hasSetting('discount')" class="mb-2">
+                <b-row v-if="hasSetting('is_fixed_discount')" class="mb-2">
+                    <b-col cols="4">
+                        <label for="payment-method-is-fixed-discount">Фиксированный размер скидки</label>
+                    </b-col>
+                    <b-col cols="8">
+                        <input id="payment-method-is-fixed-discount"
+                               type="checkbox"
+                               v-model="$v.paymentMethod.settings.is_fixed_discount.$model"
+                        />
+                    </b-col>
+                </b-row>
+                <b-row v-if="hasSetting('discount') && isFixedDiscount" class="mb-2">
                     <b-col cols="4">
                         <label for="payment-method-setting-discount">Размер скидки</label>
                     </b-col>
@@ -103,7 +149,6 @@
     </b-modal>
 </template>
 
-
 <script>
     import Services from "../../../../../scripts/services/services";
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
@@ -133,7 +178,11 @@
                     name: {required},
                     active: {required},
                     is_apply_discounts: {required},
+                    button_text: {},
+                    min_available_price: {},
+                    max_available_price: {},
                     settings: {
+                        is_fixed_discount: {},
                         discount: {},
                         signingKD: {},
                     },
@@ -153,6 +202,9 @@
                     active: this.paymentMethod.active,
                     is_postpaid: this.paymentMethod.is_postpaid,
                     is_apply_discounts: this.paymentMethod.is_apply_discounts,
+                    button_text: this.paymentMethod.button_text,
+                    min_available_price: this.paymentMethod.min_available_price,
+                    max_available_price: this.paymentMethod.max_available_price,
                     settings: this.paymentMethod.settings,
                 };
 
@@ -184,6 +236,9 @@
                     && this.$v.paymentMethod.name.$invalid) {
                     return "Введите корректное название";
                 }
+            },
+            isFixedDiscount() {
+                return this.paymentMethod.settings.is_fixed_discount;
             },
         },
         watch: {
