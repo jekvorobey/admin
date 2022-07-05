@@ -1,14 +1,18 @@
 <template>
     <div>
         <b-input-group class="mb-2">
-            <b-form-textarea rows="5" v-model="productCodes" placeholder="Введите артикулы" />
+            <b-form-textarea
+                rows="5"
+                v-model="productCodes"
+                :placeholder="`Введите ${mode === modes.OFFER_ID ? 'идентификаторы предложений' : 'артикулы'}`"
+            />
         </b-input-group>
 
         <div v-if="showReport && report.length > 0" class="report-table__pane mb-3">
             <table class="report-table">
                 <tr v-for="(item, i) in report" :key="i" :class="[ item.variant ]">
                     <td style="width: 20%" :variant="item.variant">
-                        {{ mode === modes.OFFER_ID ? 'Офер' : 'Артикул' }} {{ item.vendorCode }}
+                        {{ item.vendorCode }}
                     </td>
                     <td :variant="item.variant">{{ item.status }}</td>
                 </tr>
@@ -115,7 +119,16 @@ export default {
 
     methods: {
         onLoadClick() {
-            const productCodes = this.productCodes.split("\n").filter(code => !!code);
+            const productCodes = this.productCodes
+                .split("\n")
+                .filter(code => !!code)
+                .map(code => {
+                    if (this.mode === mode.OFFER_ID) {
+                        return Number.parseInt(code);
+                    }
+
+                    return code;
+                });
 
             if (productCodes.length > 0) {
                 this.load(productCodes);
@@ -179,20 +192,20 @@ export default {
                             loadedIds.push(offer.id);
 
                             this.report.push({
-                                vendorCode: codeOrId,
+                                vendorCode: `${this.mode === this.modes.OFFER_ID ? 'Офер' : 'Артикул'} ${codeOrId}`,
                                 variant: 'success',
                                 status: 'Добавлен',
                             });
                         } else {
                             this.report.push({
-                                vendorCode: codeOrId,
+                                vendorCode: `${this.mode === this.modes.OFFER_ID ? 'Офер' : 'Артикул'} ${codeOrId}`,
                                 variant: 'warning',
                                 status: 'Повторный'
                             });
                         }
                     } else {
                         this.report.push({
-                            vendorCode: codeOrId,
+                            vendorCode: `${this.mode === this.modes.OFFER_ID ? 'Офер' : 'Артикул'} ${codeOrId}`,
                             variant: 'danger',
                             status: 'Не найден'
                         });
