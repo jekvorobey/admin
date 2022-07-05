@@ -39,7 +39,7 @@ import _chunk from 'lodash/chunk';
 import { detect } from 'jschardet';
 import Services from '../../../scripts/services/services';
 
-const mode = Object.freeze({
+export const mode = Object.freeze({
     VENDOR_CODE: 'VENDOR_CODE',
     OFFER_ID: 'OFFER_ID'
 });
@@ -56,6 +56,16 @@ export default {
         showReport: {
             type: Boolean,
             default: false,
+        },
+
+        chunkSize: {
+            type: Number,
+            default: 500,
+        },
+
+        loader: {
+            type: Function,
+            required: true,
         }
     },
 
@@ -125,43 +135,29 @@ export default {
         },
 
         async load(productCodes) {
-            const loadedIds = [];
+            let loadedIds = [];
 
             if (productCodes.length > 0) {
                 Services.showLoader();
                 this.report = [];
             }
 
-            const params = {
-                filter: {}
-            };
-
             try {
                 let offers = [];
-                const parts = _chunk(productCodes, 500);
+                const parts = _chunk(productCodes, this.chunkSize);
 
                 for (const codes of parts) {
-                    if (this.mode === mode.OFFER_ID) {
-                        params.filter.id = codes;
-                    } else {
-                        params.filter.vendor_code = codes;
-                    }
-
-                    let responseOffers = await Services.net().post(
-                        this.getRoute('offers.find'),
-                        {},
-                        params,
-                    );
+                    const loaderOffers = await this.loader(this.mode, codes);
 
                     offers = [
                         ...offers,
-                        ...responseOffers
+                        ...loaderOffers
                     ];
 
                     await this.sleep();
                 }
 
-                const finded = offers.map(item => {
+                const found = offers.map(item => {
                     if (this.mode === mode.VENDOR_CODE) {
                         return item.vendorCode;
                     }
@@ -170,7 +166,7 @@ export default {
                 });
 
                 productCodes.forEach(codeOrId => {
-                    if (finded.includes(codeOrId)) {
+                    if (found.includes(codeOrId)) {
                         const offer = offers.find(offer => {
                             if (this.mode === mode.VENDOR_CODE) {
                                 return offer.vendorCode === codeOrId;

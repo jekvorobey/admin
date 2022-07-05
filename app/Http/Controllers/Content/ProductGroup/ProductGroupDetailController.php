@@ -192,7 +192,7 @@ class ProductGroupDetailController extends Controller
 
         $validatedData = $request->validate([
             'id' => 'array',
-            'vendor_code' => 'string',
+            'vendor_code' => 'array',
         ]);
 
         $query = $productService->newQuery();
@@ -207,18 +207,6 @@ class ProductGroupDetailController extends Controller
         }
 
         $products = $productService->products($query);
-
-        $images = collect();
-        if ($products) {
-            $productIds = $products->pluck('id')->all();
-            $images = $productService->allImages($productIds, 1)->pluck('url', 'productId');
-        }
-        $products = $products->map(function (ProductDto $product) use ($images) {
-            $data = $product->toArray();
-            $data['photo'] = $images[$product->id] ?? '';
-
-            return $data;
-        });
 
         return response()->json($products);
     }

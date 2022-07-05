@@ -20,6 +20,7 @@
                 >Офферы</v-input>
 
                 <bulk-offer-loader
+                    :loader="offerLoader"
                     :loaded-products="
                         discount.offers
                             ? discount.offers.split(',').map(offer => Number.parseInt(offer.trim()))
@@ -40,6 +41,7 @@
                 >Офферы</v-input>
 
                 <bulk-offer-loader
+                    :loader="offerLoader"
                     :loaded-products="
                         discount.bundleItems
                             ? discount.bundleItems.split(',').map(offer => Number.parseInt(offer.trim()))
@@ -343,7 +345,7 @@
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
     import Condition from "./condition.vue";
-    import BulkOfferLoader from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
+    import BulkOfferLoader, { mode as loaderMode } from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
 
     import { v4 as uuidv4 } from 'uuid';
 
@@ -419,6 +421,32 @@
             }
         },
         methods: {
+            async offerLoader(mode, codes) {
+                const params = {
+                    filter: {},
+                };
+
+                if (mode === loaderMode.OFFER_ID) {
+                    params.filter.id = codes;
+                } else {
+                    params.filter.vendor_code = codes;
+                }
+
+                let offers = await Services.net().post(
+                    this.getRoute('offers.find'),
+                    {},
+                    params,
+                );
+
+                return offers.map(offer => {
+                    return {
+                        id: offer.id,
+                        vendorCode: offer.vendorCode,
+                        productId: null,
+                    };
+                });
+            },
+
             syncOffers(offers, newOffers) {
                 if (offers && offers.length > 0) {
                     return [
