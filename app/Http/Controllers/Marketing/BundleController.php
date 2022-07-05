@@ -106,9 +106,7 @@ class BundleController extends Controller
 
         return $this->render('Marketing/Discount/Create', [
             'discounts' => $data['discounts'],
-            'optionDiscountTypes' => $data['optionDiscountTypes']->keys()->filter(function ($key) {
-                return $key === DiscountTypeDto::TYPE_BUNDLE_OFFER || $key === DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS;
-            }),
+            'optionDiscountTypes' => $data['optionDiscountTypes']->only(DiscountTypeDto::TYPE_BUNDLE_OFFER, DiscountTypeDto::TYPE_BUNDLE_MASTERCLASS),
             'iConditionTypes' => $data['conditionTypes'],
             'iDeliveryMethods' => $data['deliveryMethods'],
             'discountStatuses' => $data['discountStatuses'],
