@@ -25,6 +25,8 @@
             <tr>
                 <th>ID</th>
                 <th>Видимость</th>
+                <th>Начало</th>
+                <th>Конец</th>
                 <th>Изображение</th>
                 <th>Название</th>
                 <th>Тип</th>
@@ -35,20 +37,30 @@
             <tr v-for="banner in banners">
                 <td>{{banner.id}}</td>
                 <td>
-                    <b-badge v-if="banner.active" variant="success">
+                    <b-badge v-if="banner.active && new Date(banner.date_from) <= new Date() && (new Date(banner.date_to) >= new Date() || !banner.date_to)" variant="success">
                         Активен
+                    </b-badge>
+                    <b-badge v-if="banner.active && new Date(banner.date_from) >= new Date() && (new Date(banner.date_to) >= new Date() || !banner.date_to)" variant="warning">
+                        Активируется
+                    </b-badge>
+                    <b-badge v-if="banner.active && banner.date_to && new Date(banner.date_to) < new Date()" variant="warning">
+                        Просрочен
                     </b-badge>
                     <b-badge v-if="!banner.active" variant="danger">
                         Деактивирован
                     </b-badge>
                     <br>
                 </td>
+                <td v-if="banner.date_from">{{ datePrint(banner.date_from) }}</td>
+                <td v-else></td>
+                <td v-if="banner.date_to">{{ datePrint(banner.date_to) }}</td>
+                <td v-else></td>
                 <td><img :src="banner.desktop_image ? banner.desktop_image : '//placehold.it/75x50?text=No+image'"
                          class="preview"></td>
                 <td class="with-small">
                     <a :href="getRoute('banner.updatePage', {id: banner.id})">{{banner.name}}</a>
                 </td>
-                <td>{{banner.type.name}}</td>
+                <td>{{ banner.type.name }}</td>
                 <td v-if="canUpdate(blocks.content)">
                     <b-button class="btn btn-danger btn-sm">
                         <fa-icon icon="trash-alt"
