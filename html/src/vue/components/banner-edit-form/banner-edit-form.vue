@@ -151,6 +151,7 @@
     import FileInput from '../controls/FileInput/FileInput.vue';
 
     import DatePicker from 'vue2-datepicker';
+    import moment from "moment";
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
 
