@@ -44,6 +44,7 @@
                 input-class="form-control"
                 format="YYYY-MM-DD HH:mm:ss"
                 value-type="format"
+                @change="onChangeDateTo"
             />
         </b-form-group>
 
@@ -243,6 +244,14 @@
             onUploadMobileImage(file) {
                 this.bannerImages[file.id] = file;
                 this.banner.mobile_image_id = file.id;
+            },
+            onChangeDateTo(value) {
+                let dateTime = new Date(value);
+                if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
+                    dateTime.setHours(23, 59, 59);
+                    let value = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
+                    this.banner.date_to = value;
+                }
             },
         },
 
