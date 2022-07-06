@@ -17,9 +17,6 @@ class ProductsExportController extends Controller
 {
     /**
      * Экспорт выбранных товаров в файлы Excel
-     * @param Request $request
-     * @param ProductsCatalogImportService $productsCatalogImportService
-     * @return JsonResponse
      */
     public function exportByProductIds(Request $request, ProductsCatalogImportService $productsCatalogImportService): JsonResponse
     {
@@ -42,10 +39,6 @@ class ProductsExportController extends Controller
 
     /**
      * Экспорт отфильтрованных товаров в файлы Excel
-     * @param Request $request
-     * @param SearchService $searchService
-     * @param ProductsCatalogImportService $productsCatalogImportService
-     * @return JsonResponse
      */
     public function exportByFilters(
         Request $request,
@@ -78,11 +71,9 @@ class ProductsExportController extends Controller
             'name' => $originalName,
         ]);
     }
-
+ 
     /**
      * Получить оригинальный путь к файлу и его имя по id-шнику
-     * @param int $fileId
-     * @return array
      */
     protected static function getOriginalFileUrlAndName(int $fileId): array
     {
