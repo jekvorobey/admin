@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
-use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
