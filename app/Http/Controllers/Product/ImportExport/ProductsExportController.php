@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Product\ImportExport;
 
 use App\Http\Controllers\Controller;
-use Greensight\CatalogImport\Services\ProductsImportService\ProductsImportService;
+use Greensight\CatalogImport\Services\ProductsService\ProductsCatalogImportService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Dto\RoleDto;
@@ -18,8 +18,10 @@ class ProductsExportController extends Controller
     /**
      * Экспорт выбранных товаров в файлы Excel
      */
-    public function exportByProductIds(Request $request, ProductsImportService $productsImportService): JsonResponse
-    {
+    public function exportByProductIds(
+        Request $request,
+        ProductsCatalogImportService $productsCatalogImportService
+    ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $this->validate($request, [
@@ -27,9 +29,9 @@ class ProductsExportController extends Controller
             'product_ids.*' => 'integer',
         ]);
 
-        $fileData = $productsImportService->exportByProductIds($data['product_ids']);
+        $fileData = $productsCatalogImportService->exportByProductIds(0, $data['product_ids']);
 
-        [$originalUrl, $originalName] = self::getOriginalFileUrlAndName($fileData['file_id']);
+        [$originalUrl, $originalName] = self::getOriginalFileUrlAndName($fileData->id);
 
         return response()->json([
             'path' => $originalUrl,
@@ -43,7 +45,7 @@ class ProductsExportController extends Controller
     public function exportByFilters(
         Request $request,
         SearchService $searchService,
-        ProductsImportService $productsImportService
+        ProductsCatalogImportService $productsCatalogImportService
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -62,9 +64,9 @@ class ProductsExportController extends Controller
         $productsSearchResult = $searchService->products($query);
         $productIds = collect($productsSearchResult->products)->pluck('id')->all();
 
-        $fileData = $productsImportService->exportByProductIds($productIds);
+        $fileData = $productsCatalogImportService->exportByProductIds(0, $productIds);
 
-        [$originalUrl, $originalName] = self::getOriginalFileUrlAndName($fileData['file_id']);
+        [$originalUrl, $originalName] = self::getOriginalFileUrlAndName($fileData->id);
 
         return response()->json([
             'path' => $originalUrl,
