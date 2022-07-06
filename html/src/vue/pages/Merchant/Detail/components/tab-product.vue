@@ -105,7 +105,7 @@
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(offer)"></td>
             </tr>
             <tr v-if="!offers.length">
-                <td :colspan="columns.length + 1">Заказы отсутствуют</td>
+                <td :colspan="columns.length + 1">Товары отсутствуют</td>
             </tr>
             </tbody>
         </table>
