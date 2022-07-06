@@ -18,8 +18,10 @@ class ProductsExportController extends Controller
     /**
      * Экспорт выбранных товаров в файлы Excel
      */
-    public function exportByProductIds(Request $request, ProductsCatalogImportService $productsCatalogImportService): JsonResponse
-    {
+    public function exportByProductIds(
+        Request $request,
+        ProductsCatalogImportService $productsCatalogImportService
+    ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $this->validate($request, [
@@ -71,7 +73,7 @@ class ProductsExportController extends Controller
             'name' => $originalName,
         ]);
     }
- 
+
     /**
      * Получить оригинальный путь к файлу и его имя по id-шнику
      */
