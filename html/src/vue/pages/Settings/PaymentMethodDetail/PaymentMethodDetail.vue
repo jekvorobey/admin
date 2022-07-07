@@ -31,53 +31,57 @@
             <v-input id="payment-method-max-available-price"
                      v-model="$v.paymentMethod.max_available_price.$model"
                      type="number"
-                     class="mb-2"
+                     class="mb-2 mt-2"
             >Доступен при сумме до</v-input>
 
             <div class="form-group">
-                <label for="payment-method-active">Активен</label>
-                <input id="payment-method-active"
-                       type="checkbox"
-                       class="form-control"
-                       v-model="$v.paymentMethod.active.$model"
-                />
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-active"
+                           v-model="$v.paymentMethod.active.$model"
+                    >
+                    <label class="custom-control-label" for="payment-method-active"></label>
+                    <label for="payment-method-active">Активен</label>
+                </span>
             </div>
 
             <div class="form-group">
-                <label for="payment-method-is-apply-discounts">Доступны ли скидки и списание бонусов</label>
-                <input id="payment-method-is-apply-discounts"
-                       type="checkbox"
-                       class="form-control"
-                       v-model="$v.paymentMethod.is_apply_discounts.$model"
-                />
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-apply-discounts"
+                           v-model="$v.paymentMethod.is_apply_discounts.$model"
+                    >
+                    <label class="custom-control-label" for="payment-method-is-apply-discounts"></label>
+                    <label for="payment-method-is-apply-discounts">Доступны ли скидки и списание бонусов</label>
+                </span>
             </div>
 
-
             <div class="form-group" v-if="hasSetting('is_fixed_discount')">
-                <label for="payment-method-is-fixed-discount">Фиксированный размер скидки</label>
-                <input id="payment-method-is-fixed-discount"
-                       type="checkbox"
-                       class="form-control"
-                       v-model="$v.paymentMethod.settings.is_fixed_discount.$model"
-                />
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-fixed-discount"
+                           v-model="$v.paymentMethod.settings.is_fixed_discount.$model"
+                    >
+                    <label class="custom-control-label" for="payment-method-is-fixed-discount"></label>
+                    <label for="payment-method-is-fixed-discount">Фиксированный размер скидки</label>
+                </span>
             </div>
 
             <div class="form-group" v-if="hasSetting('discount') && isFixedDiscount">
-                <label for="payment-method-setting-discount">Размер скидки</label>
-                <input id="payment-method-setting-discount"
-                       type="checkbox"
-                       class="form-control"
-                       v-model="$v.paymentMethod.settings.discount.$model"
-                />
+                <v-input id="payment-method-setting-discount"
+                         v-model="$v.paymentMethod.settings.discount.$model">
+                    Размер скидки
+                </v-input>
             </div>
 
             <div class="form-group" v-if="hasSetting('signingKD')">
-                <label for="payment-method-setting-signingKD">Подписание КД</label>
-                <input id="payment-method-setting-signingKD"
-                       type="checkbox"
-                       class="form-control"
-                       v-model="$v.paymentMethod.settings.signingKD.$model"
-                />
+                <v-input id="payment-method-setting-signingKD"
+                         v-model="$v.paymentMethod.settings.signingKD.$model">
+                    Подписание КД
+                </v-input>
             </div>
 
             <b-button v-if="canUpdate(blocks.settings)" type="submit" class="mt-3" variant="dark">

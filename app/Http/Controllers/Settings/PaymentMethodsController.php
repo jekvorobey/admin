@@ -36,6 +36,8 @@ class PaymentMethodsController extends Controller
 
         $paymentMethod = $paymentService->getPaymentMethod($id);
 
+        $this->title = 'Редактирование способа оплаты';
+
         return $this->render('Settings/PaymentMethodDetail', [
             'iPaymentMethod' => $paymentMethod,
         ]);
