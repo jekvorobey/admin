@@ -6,32 +6,28 @@
             </div>
             <v-input id="payment-method-name"
                      v-model="$v.paymentMethod.name.$model"
-                     class="mb-2"
                      :error="errorNameField"
             >Название</v-input>
 
             <v-input id="payment-method-code"
                      :value="paymentMethod.code"
-                     class="mb-2"
                      disabled
             >Символьный код</v-input>
 
-            <v-input tag="textarea" id="payment-method-button-text"
-                      v-model="$v.paymentMethod.button_text.$model"
-                     rows="14">
-                Контент на кнопке
-            </v-input>
+            <v-input tag="textarea"
+                     id="payment-method-button-text"
+                     v-model="$v.paymentMethod.button_text.$model"
+                     rows="14"
+            >Контент на кнопке</v-input>
 
             <v-input id="payment-method-min-available-price"
                      v-model="$v.paymentMethod.min_available_price.$model"
                      type="number"
-                     class="mb-2"
             >Доступен при сумме от</v-input>
 
             <v-input id="payment-method-max-available-price"
                      v-model="$v.paymentMethod.max_available_price.$model"
                      type="number"
-                     class="mb-2 mt-2"
             >Доступен при сумме до</v-input>
 
             <div class="form-group">
@@ -84,7 +80,7 @@
                 </v-input>
             </div>
 
-            <b-button v-if="canUpdate(blocks.settings)" type="submit" class="mt-3" variant="dark">
+            <b-button v-if="canUpdate(blocks.settings)" type="submit" variant="dark">
                 Обновить
             </b-button>
         </form>
