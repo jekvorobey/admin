@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a0e670363052073f6600b52f51cbcab",
+    "content-hash": "365ae0d501abfae90a601a1041536467",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1113,63 +1113,23 @@
             "time": "2021-07-21T13:50:14+00:00"
         },
         {
-            "name": "ibt/reports-lib",
+            "name": "ibt/catalog-import-lib",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib",
-                "reference": "ce020605d6978209e934636458257d7e8650cb61"
-            },
-            "require": {
-                "ext-json": "*",
-                "illuminate/contracts": "^5.8|^6.0|^7.0|^8.0",
-                "illuminate/support": "^5.8|^6.0|^7.0|^8.0",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
-                "php": "^7.4"
-            },
-            "require-dev": {
-                "orchestra/testbench": "^6.0",
-                "phpunit/phpunit": "^9.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "IBT\\Reports\\ReportsLibServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "IBT\\Reports\\": "src/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ]
-            },
-            "description": "iBT reports client",
-            "time": "2021-12-02T10:12:31+00:00"
-        },
-        {
-            "name": "iwengo/ibt-catalog-import-lib",
-            "version": "dev-master-ylab",
-            "source": {
-                "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-catalog-import-lib",
-                "reference": "9e13044d449dd539a356eea00086e2b524b2fade"
+                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.4"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1193,25 +1153,26 @@
                 }
             ],
             "description": "iBT catalog import client",
-            "time": "2021-08-02T07:21:49+00:00"
+            "time": "2022-07-08T10:33:12+00:00"
         },
         {
-            "name": "iwengo/ibt-cm-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/cm-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "8754dddea4e9d9a4b80626645c92ebc93a18eca2"
+                "reference": "c0a31bf0f0f2a07613c835cdb207a893a516214e"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1235,24 +1196,25 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2022-02-25T10:40:50+00:00"
+            "time": "2022-07-08T10:33:15+00:00"
         },
         {
-            "name": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/cms-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "762695386cd940a3d20506060004198376d15026"
+                "reference": "d8d8756541ce30a26d4ab41fa913a820a55e43fc"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1266,15 +1228,15 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2022-04-11T05:14:09+00:00"
+            "time": "2022-07-08T10:33:17+00:00"
         },
         {
-            "name": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/common-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "1d57245398c51fd597f494cb024fdaf1d974d8a3"
+                "reference": "69d1410c426fa2fd540c5bc352e2a9674dc71fad"
             },
             "require": {
                 "ext-json": "*",
@@ -1291,6 +1253,7 @@
                 "phpunit/php-code-coverage": "6.1.4",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1324,25 +1287,26 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-06-21T07:42:51+00:00"
+            "time": "2022-07-08T10:33:19+00:00"
         },
         {
-            "name": "iwengo/ibt-logistics-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/logistics-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-logistics-lib",
-                "reference": "d7ac67ef4fa88786698530cf2b1777f903fa704a"
+                "reference": "5bdd0b946145a99d22ab5ed7fa19609335157052"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1366,25 +1330,26 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2022-05-19T08:05:19+00:00"
+            "time": "2022-07-08T10:33:24+00:00"
         },
         {
-            "name": "iwengo/ibt-marketing-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/marketing-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "b5d0b8843e445cbae07f4532ac96fcf8190e263e"
+                "reference": "f7891c621ad790c6f0702723a6c7256ae986e1be"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1408,24 +1373,25 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2022-04-12T13:27:49+00:00"
+            "time": "2022-07-08T10:33:26+00:00"
         },
         {
-            "name": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/merchant-management-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "49fc3d9eb7037dc583328f1dd3872b158ee6523c"
+                "reference": "d635fb3a10d178be026e0150a22c1cd15c831cfa"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1439,25 +1405,26 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-06-07T13:17:13+00:00"
+            "time": "2022-07-08T10:33:28+00:00"
         },
         {
-            "name": "iwengo/ibt-message-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/message-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "76f897ff1faf43607801202ae15ec8678c86e4d2"
+                "reference": "6cf86a8d20da58db0c6f06dfefca314c4b8074fb"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1481,26 +1448,27 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-06-08T11:53:44+00:00"
+            "time": "2022-07-08T10:33:31+00:00"
         },
         {
-            "name": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/oms-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "ce3839bb54aa72e2bd6d63eebe8d52884757ad0a"
+                "reference": "4e9096d52ccff77764b07e2cc3c39924e1ea04f1"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
-                "iwengo/ibt-logistics-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
+                "ibt/logistics-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1524,24 +1492,25 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-06-22T12:49:08+00:00"
+            "time": "2022-07-08T10:33:33+00:00"
         },
         {
-            "name": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/pim-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "ed76512d61f779d12352961ca1cbc3fd06a85549"
+                "reference": "3cb1d790a494a820f64602fa48333f0a714a4adc"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1555,25 +1524,67 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2022-05-20T12:48:32+00:00"
+            "time": "2022-07-08T10:33:35+00:00"
         },
         {
-            "name": "iwengo/ibt-store-lib",
-            "version": "dev-master-ylab",
+            "name": "ibt/reports-lib",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@git.yiilab.com:ibt.studio/ibt-store-lib",
-                "reference": "3b5a395d6f963b35e936f84d46ce56a005f16fca"
+                "url": "git@git.yiilab.com:ibt.studio/ibt-reports-lib",
+                "reference": "5211b6d2309eafe81302652cee04ddffe3140b34"
             },
             "require": {
                 "ext-json": "*",
-                "iwengo/ibt-common-lib": "dev-master-ylab as dev-master",
+                "ibt/common-lib": "dev-master",
+                "illuminate/contracts": "^5.8|^6.0|^7.0|^8.0|^9.0",
+                "illuminate/support": "^5.8|^6.0|^7.0|^8.0|^9.0",
+                "php": "^7.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^9.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "IBT\\Reports\\ReportsLibServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "IBT\\Reports\\": "src/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "description": "iBT reports client",
+            "time": "2022-07-08T10:42:32+00:00"
+        },
+        {
+            "name": "ibt/store-lib",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@git.yiilab.com:ibt.studio/ibt-store-lib",
+                "reference": "dec8e203816bf308d46bdf11e31eb0d015b8fba1"
+            },
+            "require": {
+                "ext-json": "*",
+                "ibt/common-lib": "dev-master",
                 "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1597,7 +1608,7 @@
                 }
             ],
             "description": "iBT store client",
-            "time": "2021-04-13T08:12:14+00:00"
+            "time": "2022-07-08T10:33:37+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -10820,88 +10831,21 @@
             "time": "2021-03-09T10:59:23+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "iwengo/ibt-catalog-import-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-cm-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-cms-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-common-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-logistics-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-marketing-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-merchant-management-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-message-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-oms-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-pim-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "iwengo/ibt-store-lib",
-            "version": "dev-master-ylab",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "iwengo/ibt-catalog-import-lib": 20,
-        "iwengo/ibt-cm-lib": 20,
-        "iwengo/ibt-cms-lib": 20,
-        "iwengo/ibt-common-lib": 20,
-        "iwengo/ibt-logistics-lib": 20,
-        "iwengo/ibt-marketing-lib": 20,
-        "iwengo/ibt-merchant-management-lib": 20,
-        "iwengo/ibt-message-lib": 20,
-        "iwengo/ibt-oms-lib": 20,
-        "iwengo/ibt-pim-lib": 20,
+        "ibt/catalog-import-lib": 20,
+        "ibt/cm-lib": 20,
+        "ibt/cms-lib": 20,
+        "ibt/common-lib": 20,
+        "ibt/logistics-lib": 20,
+        "ibt/marketing-lib": 20,
+        "ibt/merchant-management-lib": 20,
+        "ibt/message-lib": 20,
+        "ibt/oms-lib": 20,
+        "ibt/pim-lib": 20,
         "ibt/reports-lib": 20,
-        "iwengo/ibt-store-lib": 20,
+        "ibt/store-lib": 20,
         "letsgoi/laravel-health-check": 20
     },
     "prefer-stable": true,
