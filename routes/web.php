@@ -868,6 +868,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('portfolios', 'CustomerDetailController@putPortfolios')->name('customers.detail.portfolio.save');
                 Route::post('dial', 'CustomerDetailController@dial')->name('customers.detail.dial');
                 Route::post('auth', 'CustomerDetailController@auth')->name('customers.detail.auth');
+                Route::put('sendSettingPasswordLink', 'CustomerDetailController@sendSettingPasswordLink')->name('customers.detail.sendSettingPasswordLink');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('main')->group(function () {
