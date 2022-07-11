@@ -1,22 +1,17 @@
 <template>
     <div>
-        Продукты<br>
-        <b-input-group class="mb-2">
-            <b-form-textarea rows="5" v-model="inputVendorCode" placeholder="Введите артикулы" />
-        </b-input-group>
+        Продукты
 
-        <b-button v-on:click="addProduct" variant="info">Добавить</b-button>
+        <br>
 
-        <b-table-simple v-if="report.length > 0" class="mt-3" small>
-            <b-tbody>
-                <b-tr v-for="(item, i) in report" :key="i">
-                    <b-td style="width: 20%" :variant="item.variant">Артикул {{ item.vendorCode }}</b-td>
-                    <b-td :variant="item.variant">{{ item.status }}</b-td>
-                </b-tr>
-            </b-tbody>
-        </b-table-simple>
+        <bulk-offer-loader
+            :loaded-products="iSelectedProductIds"
+            show-report
+            :loader="offerLoader"
+            @load="onLoadOffers"
+        />
 
-        <div v-show="products.length > 0" class="mt-3">
+        <div v-show="products.length > 0" class="mt-3" style="max-height: 500px; overflow: scroll">
             Добавленные продукты<br>
             <b-card v-for="product in products"
                     no-body
@@ -24,12 +19,7 @@
                     :key="product.id"
             >
                 <b-row no-gutters>
-                    <b-col md="1">
-                        <b-card-img :src="product.photo"
-                                    class="rounded-0"
-                        />
-                    </b-col>
-                    <b-col md="10">
+                    <b-col md="11">
                         <b-card-body :title="product.name">
                             <b-card-text>
                                 Артикул: {{ product.vendor_code }}
@@ -38,7 +28,12 @@
                     </b-col>
                     <b-col md="1">
                         <b-card-body>
-                            <b-button variant="danger" @click="() => {removeProduct(product.id)}"><fa-icon icon="trash-alt"/></b-button>
+                            <b-button
+                                variant="danger"
+                                @click="() => {removeProduct(product.id)}"
+                            >
+                                <fa-icon icon="trash-alt"/>
+                            </b-button>
                         </b-card-body>
                     </b-col>
                 </b-row>
@@ -48,13 +43,20 @@
 </template>
 
 <script>
+    import _chunk from 'lodash/chunk';
+
     import Services from '../../../../../scripts/services/services';
+    import BulkOfferLoader, { mode as loaderMode } from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
 
     export default {
-        components: {},
+        components: {
+            BulkOfferLoader
+        },
+
         props: {
             iSelectedProductIds: Array,
         },
+
         data() {
             return {
                 selectedProductIds: this.iSelectedProductIds,
@@ -65,83 +67,87 @@
                 debounce: null,
             };
         },
-        methods: {
-            async addProduct() {
-                const productVendorCodes = this.inputVendorCode.split("\n");
 
-                if (productVendorCodes.length > 0) {
-                    Services.showLoader();
-                    this.report = [];
+        methods: {
+            async offerLoader(mode, codes) {
+                const params = {};
+
+                if (mode === loaderMode.OFFER_ID) {
+                    params.id = codes;
+                } else {
+                    params.vendor_code = codes;
                 }
 
-                for (const productVendorCode of productVendorCodes) {
-                    try {
-                        const data = await Services.net().get(
-                            this.getRoute('productGroup.getProducts'),
-                            {vendor_code: productVendorCode}
-                        );
+                let offers = await Services.net().post(
+                    this.getRoute('productGroup.getProducts'),
+                    {},
+                    params,
+                );
 
-                        if (data && data[0]) {
-                            const productId = data[0].id;
+                return offers.map(offer => {
+                    return {
+                        id: offer.id,
+                        vendorCode: offer.vendor_code,
+                        productId: null,
+                    };
+                });
+            },
 
-                            if (!this.selectedProductIds.includes(productId)) {
-                                this.$emit('add', productId);
-                                this.selectedProductIds.push(productId);
+            onLoadOffers(ids) {
+                const internalIds = [ ...this.selectedProductIds ];
 
-                                this.report.push({
-                                    vendorCode: productVendorCode,
-                                    variant: 'success',
-                                    status: 'Добавлен'
-                                });
-                            } else {
-                                this.report.push({
-                                    vendorCode: productVendorCode,
-                                    variant: 'warning',
-                                    status: 'Повторный'
-                                });
-                            }
-                        } else {
-                            this.report.push({
-                                vendorCode: productVendorCode,
-                                variant: 'danger',
-                                status: 'Не найден'
-                            });
-                        }
-                    } catch (error) {
-                        console.error(error);
+                for (const id of ids) {
+                    if (!internalIds.includes(id)) {
+                        this.$emit('add', id);
+                        internalIds.push(id);
                     }
                 }
 
-                Services.hideLoader();
-
-                this.inputVendorCode = '';
+                this.selectedProductIds = [ ...internalIds ];
+                this.fetchProducts(this.selectedProductIds);
             },
+
             removeProduct(id) {
                 this.selectedProductIds = this.selectedProductIds.filter((selectProductId) => {
                     return selectProductId !== id
                 });
 
+                const index = this.products.findIndex(product => product.id === id);
+
+                if (index >= 0) {
+                    this.$delete(this.products, index);
+                }
+
                 this.$emit('delete', id);
             },
-            fetchProducts(ids) {
+
+            async fetchProducts(ids) {
                 if (ids && (ids.length > 0)) {
-                    Services.net().get(this.getRoute('productGroup.getProducts'), {id: ids})
-                        .then((data) => {
-                            this.products = data;
-                        });
+                    const parts = _chunk(ids, 500);
+                    let products = [];
+
+                    for (const part of parts) {
+                        const data = await Services.net().post(
+                            this.getRoute('productGroup.getProducts'),
+                            {},
+                            {
+                                id: part
+                            }
+                        );
+
+                        products = [
+                            ...products,
+                            ...data
+                        ];
+                    }
+
+                    this.products = products;
                 } else {
                     this.products = [];
                 }
             },
         },
-        watch: {
-            selectedProductIds(val) {
-                clearTimeout(this.debounce);
-                this.debounce = setTimeout(() => {
-                    this.fetchProducts(val);
-                }, 150);
-            }
-        },
+
         mounted: function () {
             this.fetchProducts(this.selectedProductIds);
         }

@@ -17,6 +17,7 @@
                     <th>Каналы</th>
                     <th>Тема</th>
                     <th>Отправить от</th>
+                    <th>Активно</th>
                     <th class="text-right" v-if="canUpdate(blocks.communications)">Действия</th>
                 </tr>
             </thead>
@@ -35,6 +36,14 @@
                     <td>{{channels(notification.channels)}}</td>
                     <td>{{notification.subject}}</td>
                     <td>{{notification.sender_id}}</td>
+                    <td>
+                        <b-badge v-if="notification.active" variant="success">
+                            да
+                        </b-badge>
+                        <b-badge v-if="!notification.active" variant="danger">
+                            нет
+                        </b-badge>
+                    </td>
                     <td v-if="canUpdate(blocks.communications)">
                         <v-delete-button @delete="() => deleteNotifications([notification.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editNotification(notification)">
@@ -65,6 +74,15 @@
                         <v-input v-model="$v.form.type.$model" :error="errorType">Тип*</v-input>
                         <v-input v-model="$v.form.subject.$model" :error="errorType">Тема</v-input>
                         <v-input v-model="$v.form.sender_id.$model" :error="errorType">Отправить от лица пользователя</v-input>
+                        <div class="form-group">
+                            <input type="checkbox"
+                                   id="active"
+                                   v-model="$v.form.active.$model"
+                            >
+                            <label for="active">
+                                Активно
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -137,7 +155,8 @@
                     name: null,
                     type: null,
                     subject: null,
-                    sender_id: null
+                    sender_id: null,
+                    active: null
                 },
                 massSelectionType: 'serviceNotifications',
             };
@@ -150,7 +169,8 @@
                     required
                 },
                 subject: {},
-                sender_id: {}
+                sender_id: {},
+                active: {}
             }
         },
         methods: {
@@ -174,6 +194,7 @@
                 this.form.type = null;
                 this.form.subject = null;
                 this.form.sender_id = null;
+                this.form.active = null;
                 this.openModal('NotificationFormModal');
             },
 
@@ -184,6 +205,7 @@
                 this.form.type = notification.type;
                 this.form.subject = notification.subject;
                 this.form.sender_id = notification.sender_id;
+                this.form.active = notification.active;
                 this.openModal('NotificationFormModal');
             },
             onSave() {
