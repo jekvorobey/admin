@@ -157,18 +157,4 @@ class TabPreferenceController extends Controller
 
         return response('', 204);
     }
-
-    public function searchItem(Request $request, SearchService $searchService): JsonResponse
-    {
-        $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
-
-        $query = $this->makeFavoriteProductQuery($request);
-        $productSearchResult = $searchService->products($query);
-        $data = [
-            'products' => $productSearchResult->products,
-            'total' => $productSearchResult->total,
-        ];
-
-        return response()->json($data);
-    }
 }
