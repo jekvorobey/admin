@@ -8,9 +8,12 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Pim\Dto\Certificate\CertificateNominalDto;
 use Pim\Services\CertificateService\CertificateService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class CertificateNominalController extends Controller
 {
@@ -69,7 +72,7 @@ class CertificateNominalController extends Controller
         return $this->service()->designQuery()->designs();
     }
 
-    public function delete($id)
+    public function delete($id): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

@@ -197,15 +197,12 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    /**
-     * @return Application|ResponseFactory|Response
-     */
     public function save(
         int $id,
         CustomerService $customerService,
         UserService $userService,
         RequestInitiator $requestInitiator
-    ) {
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $this->validate(request(), [
@@ -322,7 +319,7 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function professional($id, ReferralService $referralService)
+    public function professional($id, ReferralService $referralService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
@@ -331,7 +328,7 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function putPortfolios(int $id, CustomerService $customerService)
+    public function putPortfolios(int $id, CustomerService $customerService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 

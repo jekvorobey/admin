@@ -67,7 +67,6 @@ class PropertiesController extends Controller
     /**
      * Страница создания товарного атрибута
      * @return mixed
-     * @throws PimException
      */
     public function create()
     {
@@ -83,9 +82,8 @@ class PropertiesController extends Controller
 
     /**
      * Отправить запрос на сохранение редактируемого товарного атрибута
-     * @return Application|ResponseFactory|Response
      */
-    public function update(ProductService $productService)
+    public function update(ProductService $productService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -115,9 +113,8 @@ class PropertiesController extends Controller
 
     /**
      * Отправить запрос на удаление товарного атрибута и всех связанных с ним данных
-     * @return Application|ResponseFactory|Response
      */
-    public function delete(int $propertyId, ProductService $productService)
+    public function delete(int $propertyId, ProductService $productService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -128,7 +125,6 @@ class PropertiesController extends Controller
 
     /**
      * Подгрузить детальную информацию о товарном атрибуте
-     * @throws PimException
      */
     protected function getPropData(string $code): PropertyDto
     {
@@ -182,9 +178,8 @@ class PropertiesController extends Controller
     /**
      * Подгрузить информацию о продуктовых категориях
      * @return Collection|CategoryDto[]
-     * @throws PimException
      */
-    public function getCategoriesData()
+    public function getCategoriesData(): array|Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 

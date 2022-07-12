@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Services\FavoriteService\FavoriteService;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
+use Illuminate\Contracts\Foundation\Application;
 
 class TabPreferenceController extends Controller
 {
@@ -33,6 +35,7 @@ class TabPreferenceController extends Controller
         CategoryService $categoryService,
         CustomerService $customerService,
         ProductService $productService,
+        FavoriteService $favoriteService,
         Request $request
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
@@ -41,7 +44,7 @@ class TabPreferenceController extends Controller
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
-        $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
+        $favoriteItems = $favoriteService->favorites($id)->pluck('product_id')->toArray();
         $query = $this->makeFavoriteProductQuery($request, $favoriteItems);
 
         return response()->json([
@@ -97,11 +100,11 @@ class TabPreferenceController extends Controller
         return $query;
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function putBrands(int $id, int $prefType, CustomerService $customerService)
-    {
+    public function putBrands(
+        int $id,
+        int $prefType,
+        CustomerService $customerService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $data = $this->validate(request(), [
@@ -114,11 +117,11 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function putCategories(int $id, int $prefType, CustomerService $customerService)
-    {
+    public function putCategories(
+        int $id,
+        int $prefType,
+        CustomerService $customerService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $data = $this->validate(request(), [
@@ -131,20 +134,26 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
-    public function addFavoriteItem(CustomerService $customerService, $id, $product_id)
-    {
+    public function addFavoriteItem(
+        FavoriteService $favoriteService,
+        $id,
+        $product_id
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $customerService->addToFavorites($id, $product_id);
+        $favoriteService->addToFavorites($id, $product_id);
 
         return response('', 204);
     }
 
-    public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
-    {
+    public function deleteFavoriteItem(
+        FavoriteService $favoriteService,
+        $id,
+        $product_id
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $customerService->deleteFromFavorites($id, $product_id);
+        $favoriteService->deleteFromFavorites($id, $product_id);
 
         return response('', 204);
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PublicEvent;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\JsonResponse;
@@ -106,6 +107,9 @@ class PublicEventDetailController extends Controller
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function availableOrganizers(PublicEventOrganizerService $publicEventOrganizerService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
@@ -267,7 +271,7 @@ class PublicEventDetailController extends Controller
                 ->withMedia()
                 ->get()
                 ->first();
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             return null;
         }
     }

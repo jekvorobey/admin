@@ -53,13 +53,12 @@ class TabNewsletterController extends Controller
 
     /**
      * Редактировать параметры новостной подписки у пользователя
-     * @return Application|ResponseFactory|Response
      */
     public function edit(
         $customerId,
         CustomerNewsletterService $customerNewsletterService,
         ContentNewsletterService $contentNewsletterService
-    ) {
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $topics = $contentNewsletterService->getTopics()

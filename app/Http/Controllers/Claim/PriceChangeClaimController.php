@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Claim;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\OfferPriceDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
@@ -228,7 +227,7 @@ class PriceChangeClaimController extends Controller
         return response()->json(['result' => $result, 'claimPayload' => $claim->payload, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
-    protected function prepareQuery(Request $request, ClaimService $claimService): DataQuery
+    protected function prepareQuery(Request $request, ClaimService $claimService): RestQuery
     {
         $page = $request->get('page', 1);
         $filters = $this->getFilter();
@@ -264,7 +263,7 @@ class PriceChangeClaimController extends Controller
     /**
      * @return Collection|PriceChangeClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): array|Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 
@@ -284,7 +283,6 @@ class PriceChangeClaimController extends Controller
         $userIds = $claims->pluck('user_id')->all();
         $users = UserHelper::getUsersByIds($userIds, [], ['profile']);
 
-        /** @var Collection $productsByOffers */
         $productsByOffers = collect();
         if ($withProducts) {
             /** @var ProductService $productService */

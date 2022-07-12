@@ -15,11 +15,10 @@ use Illuminate\Support\Collection;
 class LandingDetailController extends Controller
 {
     /**
-     * @param int $id
      * @return mixed
      * @throws CmsException
      */
-    public function updatePage($id, LandingService $landingService)
+    public function updatePage(int $id, LandingService $landingService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -112,7 +111,7 @@ class LandingDetailController extends Controller
      * @return LandingWidgetDto[]|Collection
      * @throws CmsException
      */
-    private function getWidgets(LandingService $landingService)
+    private function getWidgets(LandingService $landingService): Collection|array
     {
         return $landingService->widgets($landingService->newQuery());
     }

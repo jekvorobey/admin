@@ -12,6 +12,7 @@ use Pim\Core\PimException;
 use Pim\Dto\PublicEvent\SpecialtyDto;
 use Pim\Services\PublicEventSpecialtyService\PublicEventSpecialtyService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Support\Collection;
 
 class SpecialtyController extends Controller
 {
@@ -107,8 +108,10 @@ class SpecialtyController extends Controller
     /**
      * @throws PimException
      */
-    protected function loadItems(RestQuery $query, PublicEventSpecialtyService $publicEventSpecialtyService)
-    {
+    protected function loadItems(
+        RestQuery $query,
+        PublicEventSpecialtyService $publicEventSpecialtyService
+    ): Collection|array {
         return $publicEventSpecialtyService->specialties($query);
     }
 

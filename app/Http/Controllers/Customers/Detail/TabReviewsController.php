@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customers\Detail;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -36,6 +37,7 @@ class TabReviewsController extends Controller
      * Постраничный вывод отзывов
      *
      * @throws PimException
+     * @throws Exception
      */
     public function page(
         $customerId,

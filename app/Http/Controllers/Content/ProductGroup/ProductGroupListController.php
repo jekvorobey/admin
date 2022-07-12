@@ -43,6 +43,9 @@ class ProductGroupListController extends Controller
         ]);
     }
 
+    /**
+     * @throws CmsException
+     */
     public function page(
         Request $request,
         ProductGroupService $productGroupService,
@@ -95,8 +98,11 @@ class ProductGroupListController extends Controller
      * @return ProductGroupDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, ProductGroupService $productGroupService, FileService $fileService)
-    {
+    protected function loadItems(
+        RestQuery $query,
+        ProductGroupService $productGroupService,
+        FileService $fileService
+    ): array|Collection {
         $productGroups = $productGroupService->productGroups($query);
         $photoIds = $productGroups->pluck('preview_photo_id')->all();
         $photos = $fileService->getFiles($photoIds)->keyBy('id');
@@ -114,7 +120,7 @@ class ProductGroupListController extends Controller
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */
-    protected function loadTypes(ProductGroupTypeService $productGroupTypeService)
+    protected function loadTypes(ProductGroupTypeService $productGroupTypeService): Collection|array
     {
         return $productGroupTypeService->productGroupTypes($productGroupTypeService->newQuery());
     }

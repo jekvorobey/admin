@@ -10,6 +10,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\FileService\FileService;
+use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Dto\CustomerCertificateDto;
 use Greensight\Customer\Dto\ReferralContractDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
@@ -17,9 +18,14 @@ use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Services\MarketingService\MarketingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TabMainController extends Controller
 {
+    /**
+     * @throws CustomerException
+     */
     public function load(
         int $id,
         CustomerService $customerService,
@@ -106,8 +112,11 @@ class TabMainController extends Controller
         ]);
     }
 
-    public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService)
-    {
+    public function deleteCertificate(
+        int $id,
+        int $certificate_id,
+        CustomerService $customerService
+    ): Response|Application|ResponseFactory {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $customerService->deleteCertificate($id, $certificate_id);

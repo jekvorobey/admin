@@ -93,9 +93,8 @@ class ProductBadgesController extends Controller
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @return Application|ResponseFactory|Response
      */
-    public function reorder(ContentBadgesService $badgesService)
+    public function reorder(ContentBadgesService $badgesService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -110,10 +109,11 @@ class ProductBadgesController extends Controller
 
     /**
      * Удалить продуктовый ярлык и его связи с товарами
-     * @return Application|ResponseFactory|Response
      */
-    public function remove(ContentBadgesService $badgesService, ProductService $productService)
-    {
+    public function remove(
+        ContentBadgesService $badgesService,
+        ProductService $productService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $data = $this->validate(request(), [

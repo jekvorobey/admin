@@ -23,10 +23,12 @@ class TabBillingController extends Controller
     /**
      * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
-     * @return Application|ResponseFactory|Response
      */
-    public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
-    {
+    public function addReturn(
+        int $merchantId,
+        int $operationId,
+        MerchantService $merchantService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $merchantService->addReturn($merchantId, $operationId);
@@ -37,10 +39,12 @@ class TabBillingController extends Controller
     /**
      * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
-     * @return Application|ResponseFactory|Response
      */
-    public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
-    {
+    public function deleteOperation(
+        int $merchantId,
+        int $operationId,
+        MerchantService $merchantService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $merchantService->deleteOperation($merchantId, $operationId);
@@ -66,10 +70,8 @@ class TabBillingController extends Controller
 
     /**
      * AJAX добавление корректировки биллинга
-     *
-     * @return Application|Response|ResponseFactory
      */
-    public function addCorrection(int $merchantId, Request $request)
+    public function addCorrection(int $merchantId, Request $request): Response|Application|ResponseFactory
     {
         $data = $this->validate($request, [
             'correction_sum' => 'integer',

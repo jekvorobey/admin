@@ -11,7 +11,7 @@ class UserHelper
     /**
      * @return Collection|UserDto[]
      */
-    public static function getUsersByIds(array $ids, array $fields = [], array $include = []): Collection
+    public static function getUsersByIds(array $ids, array $fields = [], array $include = []): array|Collection
     {
         if (!$ids) {
             return collect();

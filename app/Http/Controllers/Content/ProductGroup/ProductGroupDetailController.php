@@ -27,6 +27,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductGroupDetailController extends Controller
 {
+    /**
+     * @throws PimException
+     * @throws CmsException
+     */
     public function updatePage(
         $id,
         ProductGroupService $productGroupService,
@@ -54,6 +58,10 @@ class ProductGroupDetailController extends Controller
         ]);
     }
 
+    /**
+     * @throws CmsException
+     * @throws PimException
+     */
     public function createPage(ProductGroupTypeService $productGroupTypeService, CategoryService $categoryService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
@@ -214,7 +222,7 @@ class ProductGroupDetailController extends Controller
      * @return ProductGroupTypeDto[]|Collection
      * @throws CmsException
      */
-    protected function getProductGroupTypes(ProductGroupTypeService $productGroupTypeService)
+    protected function getProductGroupTypes(ProductGroupTypeService $productGroupTypeService): Collection|array
     {
         return $productGroupTypeService->productGroupTypes($productGroupTypeService->newQuery());
     }
@@ -223,7 +231,7 @@ class ProductGroupDetailController extends Controller
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
-    protected function getCategories(CategoryService $categoryService)
+    protected function getCategories(CategoryService $categoryService): array|Collection
     {
         return $categoryService->categories($categoryService->newQuery()
             ->include('ancestors')
@@ -287,7 +295,7 @@ class ProductGroupDetailController extends Controller
     /**
      * @return Collection|FileDto[]
      */
-    protected function getProductGroupImages(array $ids, FileService $fileService)
+    protected function getProductGroupImages(array $ids, FileService $fileService): array|Collection
     {
         return $fileService
             ->getFiles($ids)

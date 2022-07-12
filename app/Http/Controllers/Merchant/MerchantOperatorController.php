@@ -6,6 +6,7 @@ use App\Core\Helpers;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -17,6 +18,8 @@ use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class MerchantOperatorController extends Controller
 {
@@ -90,8 +93,11 @@ class MerchantOperatorController extends Controller
         ]);
     }
 
-    public function save(Request $request, UserService $userService, OperatorService $operatorService)
-    {
+    public function save(
+        Request $request,
+        UserService $userService,
+        OperatorService $operatorService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $userData = $request->validate([
@@ -133,7 +139,7 @@ class MerchantOperatorController extends Controller
         Request $request,
         OperatorService $operatorService,
         UserService $userService
-    ) {
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $userData = $request->validate([
@@ -179,8 +185,11 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
-    public function delete(Request $request, OperatorService $operatorService, UserService $userService)
-    {
+    public function delete(
+        Request $request,
+        OperatorService $operatorService,
+        UserService $userService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $request->validate([
@@ -209,8 +218,7 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
-    /** TODO изменить на выбор ролей из базы */
-    public function changeRoles(Request $request, UserService $userService)
+    public function changeRoles(Request $request, UserService $userService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

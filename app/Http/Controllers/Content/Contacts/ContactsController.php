@@ -90,9 +90,8 @@ class ContactsController extends Controller
 
     /**
      * Удалить контакт или соц. сеть
-     * @return Application|ResponseFactory|Response
      */
-    public function remove(ContactsService $contactsService)
+    public function remove(ContactsService $contactsService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

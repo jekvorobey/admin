@@ -125,7 +125,7 @@ class PopularProductController extends Controller
                         'weight' => $createdPopularProduct->weight,
                     ],
                 ];
-            } catch (CmsException $e) {
+            } catch (CmsException) {
                 $response[] = [
                     'isAdded' => false,
                     'popular_product' => [

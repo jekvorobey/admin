@@ -135,8 +135,11 @@ class BannerListController extends Controller
      * @return BannerDto[]|Collection
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, BannerService $bannerService, FileService $fileService)
-    {
+    protected function loadItems(
+        RestQuery $query,
+        BannerService $bannerService,
+        FileService $fileService
+    ): array|Collection {
         $banners = $bannerService->banners($query);
         $imagesIds = $banners->pluck('desktop_image_id')->all();
         $images = $fileService->getFiles($imagesIds)->keyBy('id');
@@ -154,7 +157,7 @@ class BannerListController extends Controller
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */
-    protected function loadTypes(BannerTypeService $bannerTypeService)
+    protected function loadTypes(BannerTypeService $bannerTypeService): array|Collection
     {
         return $bannerTypeService->bannerTypes($bannerTypeService->newQuery());
     }

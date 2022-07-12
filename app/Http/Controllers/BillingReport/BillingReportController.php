@@ -125,7 +125,6 @@ class BillingReportController extends Controller
 
     /**
      * Обновить статус у биллингового отчета
-     * @return Application|Response|ResponseFactory
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     public function billingReportStatusUpdate(
@@ -134,7 +133,7 @@ class BillingReportController extends Controller
         int $reportId,
         Request $request,
         ReportService $reportService
-    ) {
+    ): Response|Application|ResponseFactory {
         $this->canUpdate($this->getPermissionBlockByType($type));
 
         $data = $this->validate($request, [
@@ -148,11 +147,14 @@ class BillingReportController extends Controller
 
     /**
      * Удалить биллинговый отчет
-     * @return Application|ResponseFactory|JsonResponse|Response
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function deleteBillingReport(string $type, int $entityId, int $reportId, ReportService $reportService)
-    {
+    public function deleteBillingReport(
+        string $type,
+        int $entityId,
+        int $reportId,
+        ReportService $reportService
+    ): Response|Application|ResponseFactory {
         $this->canUpdate($this->getPermissionBlockByType($type));
 
         $reportService->delete($reportId);
@@ -191,14 +193,10 @@ class BillingReportController extends Controller
 
     private function getPermissionBlockByType(string $type): int
     {
-        switch ($type) {
-            case ReportTypeDto::BILLING:
-            case ReportTypeDto::PUBLIC_EVENTS:
-                return BlockDto::ADMIN_BLOCK_MERCHANTS;
-            case ReportTypeDto::REFERRAL_PARTNER:
-                return BlockDto::ADMIN_BLOCK_REFERRALS;
-            default:
-                return 0;
-        }
+        return match ($type) {
+            ReportTypeDto::BILLING, ReportTypeDto::PUBLIC_EVENTS => BlockDto::ADMIN_BLOCK_MERCHANTS,
+            ReportTypeDto::REFERRAL_PARTNER => BlockDto::ADMIN_BLOCK_REFERRALS,
+            default => 0,
+        };
     }
 }

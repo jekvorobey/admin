@@ -8,6 +8,7 @@ use App\Core\Helpers;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Discount\CopyAndDeleteRequest;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -90,6 +91,7 @@ class DiscountController extends Controller
      *
      * @return mixed
      * @throws PimException
+     * @throws Exception
      */
     public function createPage(CategoryService $categoryService, BrandService $brandService)
     {
@@ -148,6 +150,7 @@ class DiscountController extends Controller
     /**
      * @return mixed
      * @throws PimException
+     * @throws Exception
      */
     public function edit(int $id, OfferService $offerService)
     {
@@ -178,7 +181,7 @@ class DiscountController extends Controller
 
     /**
      * @return mixed
-     * @throws PimException
+     * @throws Exception
      */
     public function detail(int $id)
     {
@@ -217,6 +220,9 @@ class DiscountController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * @throws MarketingException
+     */
     public function status(Request $request, DiscountService $discountService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
@@ -246,9 +252,6 @@ class DiscountController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    /**
-     * @throws MarketingException
-     */
     public function copy(CopyAndDeleteRequest $request, DiscountService $discountService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);

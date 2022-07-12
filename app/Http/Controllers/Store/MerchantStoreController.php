@@ -369,18 +369,15 @@ class MerchantStoreController extends Controller
                         $allDeliveryServicePickupTimeDto = null;
                         if ($store->storePickupTime->isNotEmpty()) {
                             /** @var StorePickupTimeDto $pickupTimeDto */
-                            $pickupTimeDto = $store->storePickupTime->filter(function (StorePickupTimeDto $item) use (
-                                $day,
-                                $deliveryService
-                            ) {
-                                return $item->day == $day && $item->delivery_service == $deliveryService->id;
-                            })->first();
+                            $pickupTimeDto = $store->storePickupTime
+                                ->filter(function (StorePickupTimeDto $item) use ($day, $deliveryService) {
+                                    return $item->day == $day && $item->delivery_service == $deliveryService->id;
+                                })
+                                ->first();
 
                             $allDeliveryServicePickupTimeDto = $store->storePickupTime->filter(function (
                                 StorePickupTimeDto $item
-                            ) use (
-                                $day
-                            ) {
+                            ) use ($day) {
                                 return $item->day == $day && !$item->delivery_service;
                             })->first();
                         }

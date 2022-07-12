@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Content\SearchSynonym;
 use App\Http\Controllers\Controller;
 use Cms\Dto\SearchSynonymDto;
 use Cms\Services\SearchSynonymService\SearchSynonymService;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Contracts\Foundation\Application;
@@ -69,7 +70,7 @@ class SearchSynonymController extends Controller
     /**
      * @return Collection|SearchSynonymDto[]
      */
-    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService)
+    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService): array|Collection
     {
         $synonyms = $searchSynonymService->synonyms($query);
 
@@ -82,7 +83,7 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function create(SearchSynonymService $searchSynonymService): JsonResponse
     {
@@ -103,10 +104,9 @@ class SearchSynonymController extends Controller
     }
 
     /**
-     * @return Application|Response|ResponseFactory
-     * @throws \Exception
+     * @throws Exception
      */
-    public function update(SearchSynonymService $searchSynonymService)
+    public function update(SearchSynonymService $searchSynonymService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -124,10 +124,7 @@ class SearchSynonymController extends Controller
         return response('', 204);
     }
 
-    /**
-     * @return Application|ResponseFactory|Response
-     */
-    public function delete(SearchSynonymService $searchSynonymService)
+    public function delete(SearchSynonymService $searchSynonymService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

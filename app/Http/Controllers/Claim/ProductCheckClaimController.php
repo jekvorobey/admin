@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Claim;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Message\Dto\Claim\ClaimTypeDto;
 use Greensight\Message\Dto\Claim\ProductCheckClaimDto;
@@ -184,7 +183,7 @@ class ProductCheckClaimController extends Controller
         return response()->json(['result' => $result, 'claim' => $claim, 'error' => $error, 'systemErrors' => $systemError]);
     }
 
-    protected function prepareQuery(Request $request, ClaimService $claimService): DataQuery
+    protected function prepareQuery(Request $request, ClaimService $claimService): RestQuery
     {
         $page = $request->get('page', 1);
         $filters = $this->getFilter();
@@ -220,7 +219,7 @@ class ProductCheckClaimController extends Controller
     /**
      * @return Collection|ProductCheckClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): array|Collection
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();

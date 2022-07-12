@@ -17,14 +17,12 @@ class PromoCodeHelper
 {
     /**
      * Получение списка промокодов c типом скидка
-     *
-     * @return Collection
      */
     public static function getDiscountPromoCodes(
         DiscountService $discountService,
         PromoCodeService $promoCodeService,
         int $merchantId
-    ) {
+    ): Collection {
         $discountPromoCodes = collect();
 
         $discounts = $discountService->discounts([
@@ -45,10 +43,8 @@ class PromoCodeHelper
 
     /**
      * Получение списка промокодов
-     *
-     * @return Collection
      */
-    public static function getPromoCodes(PromoCodeService $promoCodeService, ?int $merchantId = null)
+    public static function getPromoCodes(PromoCodeService $promoCodeService, ?int $merchantId = null): Collection
     {
         $promoCodeInDto = (new PromoCodeInDto());
         if ($merchantId) {
@@ -59,11 +55,8 @@ class PromoCodeHelper
 
     /**
      * Получение списка реферальных партнеров в списке промокодов
-     *
-     * @param Collection $promoCodes
-     * @return Collection
      */
-    public static function getReferrals(Collection $referralIds, CustomerService $customerService)
+    public static function getReferrals(Collection $referralIds, CustomerService $customerService): Collection
     {
         $referrals = collect();
         if ($referralIds->isNotEmpty()) {
@@ -79,12 +72,12 @@ class PromoCodeHelper
 
     /**
      * Получение списка пользователей в списке промокодов
-     *
-     * @param Collection $promoCodes
-     * @return Collection
      */
-    public static function getUsers(Collection $userIds, UserService $userService, ?Collection $referrals = null)
-    {
+    public static function getUsers(
+        Collection $userIds,
+        UserService $userService,
+        ?Collection $referrals = null
+    ): Collection {
         if ($referrals) {
             $userIds = $userIds->merge($referrals->pluck('user_id'));
         }
@@ -104,11 +97,12 @@ class PromoCodeHelper
 
     /**
      * Форматирование списка промокодов для вывода в таблицу
-     *
-     * @return Collection
      */
-    public static function formatPromoCodes(Collection $promoCodes, Collection $referrals, Collection $users)
-    {
+    public static function formatPromoCodes(
+        Collection $promoCodes,
+        Collection $referrals,
+        Collection $users
+    ): Collection {
         return $promoCodes
             ->sortByDesc('created_at')
             ->map(function (PromoCodeOutDto $promoCode) use ($users, $referrals) {
@@ -141,10 +135,8 @@ class PromoCodeHelper
 
     /**
      * Получение списка пользователей-создателей промокодов
-     *
-     * @return Collection
      */
-    public static function getCreators(Collection $creatorIds, Collection $users)
+    public static function getCreators(Collection $creatorIds, Collection $users): Collection
     {
         return $creatorIds->map(function ($creatorId) use ($users) {
             /** @var UserDto $user */
@@ -159,11 +151,8 @@ class PromoCodeHelper
 
     /**
      * Получение списка реферальных партнеров, которые есть в списке промокодов
-     *
-     * @param Collection $creatorIds
-     * @return Collection
      */
-    public static function getOwners(Collection $referralIds, Collection $users, Collection $referrals)
+    public static function getOwners(Collection $referralIds, Collection $users, Collection $referrals): Collection
     {
         return $referralIds->map(function ($owner_id) use ($users, $referrals) {
             /** @var CustomerDto $referral */

@@ -102,9 +102,8 @@ class MassPromoProductsController extends Controller
 
     /**
      * Удалить промо-товар
-     * @return Application|ResponseFactory|Response
      */
-    public function removeProduct(ReferralService $referralService)
+    public function removeProduct(ReferralService $referralService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 

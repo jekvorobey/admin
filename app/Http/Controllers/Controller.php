@@ -110,7 +110,7 @@ class Controller extends BaseController
      * @param array|null $merchantIds
      * @return Collection|MerchantDto[]
      */
-    protected function getMerchants(?array $merchantIds = null): Collection
+    protected function getMerchants(?array $merchantIds = null): array|Collection
     {
         $merchants = collect();
 
@@ -152,7 +152,7 @@ class Controller extends BaseController
      * Проверить есть ли роль/роли у пользователя
      * @param int|int[] $roleId
      */
-    protected function hasRole($roleId): bool
+    protected function hasRole(array|int $roleId): bool
     {
         $state = resolve(RequestInitiator::class)->hasRole($roleId);
         if ($state === false) {

@@ -11,6 +11,9 @@ use Illuminate\Http\JsonResponse;
 
 class OptionsController extends Controller
 {
+    /**
+     * @throws CmsException
+     */
     public function index(OptionService $optionService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);

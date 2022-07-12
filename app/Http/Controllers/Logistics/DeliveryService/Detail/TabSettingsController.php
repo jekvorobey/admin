@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Services\ListsService\ListsService;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 
@@ -15,10 +16,7 @@ use Illuminate\Http\Response;
  */
 class TabSettingsController extends Controller
 {
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function save($id, ListsService $listsService): Response
+    public function save($id, ListsService $listsService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
 

@@ -88,10 +88,9 @@ class PopularBrandController extends Controller
 
     /**
      * Редактировать популярный бренд
-     * @return Application|Response|ResponseFactory
      * @throws CmsException
      */
-    public function update(PopularBrandService $popularBrandService)
+    public function update(PopularBrandService $popularBrandService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -113,10 +112,9 @@ class PopularBrandController extends Controller
 
     /**
      * Удалить популярный бренд
-     * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
-    public function delete(PopularBrandService $popularBrandService)
+    public function delete(PopularBrandService $popularBrandService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

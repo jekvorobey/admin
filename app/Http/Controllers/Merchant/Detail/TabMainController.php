@@ -7,8 +7,11 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\FileDto;
 use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use MerchantManagement\Dto\MerchantDocumentDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TabMainController extends Controller
 {
@@ -36,7 +39,7 @@ class TabMainController extends Controller
         ]);
     }
 
-    public function createDocument(int $id, MerchantService $merchantService)
+    public function createDocument(int $id, MerchantService $merchantService): Response|Application|ResponseFactory
     {
         $data = $this->validate(request(), [
             'file_id' => 'required',
@@ -48,7 +51,7 @@ class TabMainController extends Controller
         return response('', 201);
     }
 
-    public function deleteDocument(int $id, MerchantService $merchantService)
+    public function deleteDocument(int $id, MerchantService $merchantService): Response|Application|ResponseFactory
     {
         $data = $this->validate(request(), [
             'file_id' => 'required',

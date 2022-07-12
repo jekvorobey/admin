@@ -75,9 +75,8 @@ class TabDigestController extends Controller
 
     /**
      * Сохранить комментарий к мерчанту
-     * @return Application|ResponseFactory|Response
      */
-    public function comment(int $merchantId, MerchantService $merchantService)
+    public function comment(int $merchantId, MerchantService $merchantService): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

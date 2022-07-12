@@ -11,12 +11,14 @@ use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use IBT\Reports\Services\ReportService\ReportService;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class MerchantSettlementsController extends Controller
 {
@@ -162,7 +164,7 @@ class MerchantSettlementsController extends Controller
     /**
      * Создать реестр выплат
      */
-    public function createPayRegistry(Request $request, RequestInitiator $user): Response
+    public function createPayRegistry(Request $request, RequestInitiator $user): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
@@ -176,7 +178,7 @@ class MerchantSettlementsController extends Controller
     /**
      * Удалить реестр выплат
      */
-    public function deletePayRegistry(int $payRegistryId): Response
+    public function deletePayRegistry(int $payRegistryId): Response|Application|ResponseFactory
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

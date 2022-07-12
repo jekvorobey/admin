@@ -128,9 +128,7 @@ class BasketDetailController extends Controller
 
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
 
-            $basket->items = $basket->items->map(function (BasketItemDto $basketItemDto) use (
-                $productsByOffers
-            ) {
+            $basket->items = $basket->items->map(function (BasketItemDto $basketItemDto) use ($productsByOffers) {
                 $product = $basketItemDto->product;
                 $productPim = $productsByOffers->has($basketItemDto->offer_id) ?
                     $productsByOffers[$basketItemDto->offer_id]->product : [];
@@ -176,7 +174,7 @@ class BasketDetailController extends Controller
 
         $basket->items
             ->filter(fn($basketItem) => $basketItem->type == BasketDto::TYPE_MASTER)
-            ->map(function ($basketItem) use ($eventSprints, $publicEvents) {
+            ->map(function (&$basketItem) use ($eventSprints, $publicEvents) {
                 $publicEvent = $publicEvents->get($eventSprints->get($basketItem->product['sprint_id'])->public_event_id);
                 if (!$publicEvent) {
                     return;
