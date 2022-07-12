@@ -86,7 +86,7 @@
         </b-form-group>
 
         <b-form-group v-if="bannerIsCatalogTop" label="Дополнительный текст" id="additional-text" label-for="banner-additional-text">
-            <b-form-textarea v-model="banner.additional_text" id="banner-additional-text" />
+            <ckeditor v-model="banner.additional_text" type="classic" />
         </b-form-group>
 
         <b-form-group label="Сортировка" label-for="banner-sort">
@@ -132,14 +132,13 @@
         />
 
         <b-form-group
-                label="Ссылка*"
+                label="Ссылка"
                 label-for="banner-group-url"
         >
             <b-form-input
                     id="banner-group-url"
                     v-model="banner.url"
                     type="text"
-                    required
                     placeholder="Введите ссылку"
             />
         </b-form-group>
@@ -148,6 +147,7 @@
 
 <script>
     import {mapActions} from 'vuex';
+    import VueCkeditor from '../../plugins/VueCkeditor';
     import FileInput from '../controls/FileInput/FileInput.vue';
 
     import DatePicker from 'vue2-datepicker';
@@ -170,7 +170,8 @@
         components: {
             FileInput,
             DatePicker,
-            VueSwatches
+            VueSwatches,
+            VueCkeditor
         },
 
         props: {
