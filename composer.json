@@ -66,7 +66,6 @@
         "ext-json": "*",
         "barryvdh/laravel-debugbar": "^3.6",
         "box/spout": "^3.3",
-        "fideloper/proxy": "^4.0",
         "ibt/catalog-import-lib": "dev-master",
         "ibt/cm-lib": "dev-master",
         "ibt/cms-lib": "dev-master",
