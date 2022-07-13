@@ -6,10 +6,12 @@ use App\Core\Helpers;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Dto\Front;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
 use Illuminate\Http\JsonResponse;
@@ -261,7 +263,7 @@ class MerchantListController extends Controller
     /**
      * Создать нового мерчанта
      */
-    public function createMerchant(MerchantService $merchantService): JsonResponse
+    public function createMerchant(MerchantService $merchantService, RequestInitiator $requestInitiator): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
@@ -320,6 +322,8 @@ class MerchantListController extends Controller
                 ->setSaleInfo($data['sale_info'])
                 ->setCommunicationMethod($data['communication_method'])
                 ->setExcludedPaymentMethods($data['excluded_payment_methods'])
+                ->setRegistrationType(Front::FRONT_ADMIN)
+                ->setRegisteredByUserId($requestInitiator->userId())
         );
 
         if (!$merchantId) {
