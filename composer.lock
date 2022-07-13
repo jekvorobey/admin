@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4928bd456121180e2972f402539ded2a",
+    "content-hash": "365ae0d501abfae90a601a1041536467",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1232,11 +1232,11 @@
         },
         {
             "name": "ibt/common-lib",
-            "version": "dev-feature/BX-6474-info-about-new-registration",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "013856aa86f7089e152c6044ee3f25aec45c7e53"
+                "reference": "978627b11fedaab40728a4b96c3cb58b9c19b324"
             },
             "require": {
                 "ext-json": "*",
@@ -1253,6 +1253,7 @@
                 "phpunit/php-code-coverage": "6.1.4",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1286,7 +1287,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-07-11T08:50:04+00:00"
+            "time": "2022-07-13T06:46:11+00:00"
         },
         {
             "name": "ibt/logistics-lib",
@@ -1376,11 +1377,11 @@
         },
         {
             "name": "ibt/merchant-management-lib",
-            "version": "dev-feature/BX-6474-info-about-new-registration",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "1709b5ad168688ecd0627c8a99ac4608c998e9cc"
+                "reference": "84631faf108785f739ddbe173254dfffd5a21d65"
             },
             "require": {
                 "ext-json": "*",
@@ -1390,6 +1391,7 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1403,7 +1405,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-07-12T17:27:03+00:00"
+            "time": "2022-07-13T06:46:16+00:00"
         },
         {
             "name": "ibt/message-lib",
@@ -10829,20 +10831,7 @@
             "time": "2021-03-09T10:59:23+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "ibt/common-lib",
-            "version": "dev-feature/BX-6474-info-about-new-registration",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        },
-        {
-            "package": "ibt/merchant-management-lib",
-            "version": "dev-feature/BX-6474-info-about-new-registration",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
@@ -10866,5 +10855,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
