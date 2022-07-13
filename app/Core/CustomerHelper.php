@@ -11,7 +11,7 @@ class CustomerHelper
     /**
      * @return Collection|CustomerDto[]
      */
-    public static function getCustomersByIds(array $ids, array $fields = [], array $include = []): array|Collection
+    public static function getCustomersByIds(array $ids, array $fields = [], array $include = []): Collection
     {
         if (!$ids) {
             return collect();

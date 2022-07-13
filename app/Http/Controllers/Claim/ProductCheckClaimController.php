@@ -219,7 +219,7 @@ class ProductCheckClaimController extends Controller
     /**
      * @return Collection|ProductCheckClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, bool $withProducts = false): array|Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
     {
         /** @var Collection|ProductCheckClaimDto[] $claims */
         $claims = $query->claims();

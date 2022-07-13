@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use Pim\Dto\Certificate\CertificateDesignDto;
 use Pim\Services\CertificateService\CertificateService;
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class CertificateDesignController extends Controller
 {
@@ -63,7 +61,7 @@ class CertificateDesignController extends Controller
         ]);
     }
 
-    public function delete($id): Response|Application|ResponseFactory
+    public function delete($id): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

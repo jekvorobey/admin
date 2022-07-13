@@ -31,8 +31,6 @@ use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Support\Collection;
 
 class OfferListController extends Controller
@@ -118,7 +116,7 @@ class OfferListController extends Controller
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -177,7 +175,7 @@ class OfferListController extends Controller
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -231,7 +229,7 @@ class OfferListController extends Controller
     /**
      * @throws PimException
      */
-    public function changeSaleStatus(Request $request, OfferService $offerService): Response|Application|ResponseFactory
+    public function changeSaleStatus(Request $request, OfferService $offerService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -258,7 +256,7 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
-    public function deleteOffers(Request $request, OfferService $offerService): Response|Application|ResponseFactory
+    public function deleteOffers(Request $request, OfferService $offerService): Response
     {
         $data = $request->validate([
             'offer_ids' => 'array|required',
@@ -404,12 +402,12 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    ): array|Collection {
+    ): Collection {
         $offers = $offerService->offers($query);
         $merchantIds = $offers->pluck('merchant_id')->all();
         $offerIds = $offers->pluck('id')->all();
         if (!$offerIds) {
-            return [];
+            return collect();
         }
 
         $merchants = $merchantService

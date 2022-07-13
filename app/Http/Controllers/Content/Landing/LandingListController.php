@@ -77,10 +77,10 @@ class LandingListController extends Controller
     }
 
     /**
-     * @return LandingDto[]|Collection
+     * @return Collection|LandingDto[]
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, LandingService $landingService): array|Collection
+    protected function loadItems(RestQuery $query, LandingService $landingService): Collection
     {
         return $landingService->landings($query);
     }

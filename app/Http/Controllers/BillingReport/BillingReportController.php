@@ -12,8 +12,6 @@ use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
 use IBT\Reports\Dto\GenerateReportForm;
 use IBT\Reports\Services\ReportService\ReportService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -133,7 +131,7 @@ class BillingReportController extends Controller
         int $reportId,
         Request $request,
         ReportService $reportService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate($this->getPermissionBlockByType($type));
 
         $data = $this->validate($request, [
@@ -154,7 +152,7 @@ class BillingReportController extends Controller
         int $entityId,
         int $reportId,
         ReportService $reportService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate($this->getPermissionBlockByType($type));
 
         $reportService->delete($reportId);

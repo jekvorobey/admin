@@ -213,7 +213,7 @@ class BannerDetailController extends Controller
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */
-    private function getBannerTypes(BannerTypeService $bannerTypeService): array|Collection
+    private function getBannerTypes(BannerTypeService $bannerTypeService): Collection
     {
         return $bannerTypeService->bannerTypes(
             $bannerTypeService
@@ -244,7 +244,7 @@ class BannerDetailController extends Controller
     /**
      * @return Collection|FileDto[]
      */
-    private function getBannerImages(array $ids, FileService $fileService): array|Collection
+    private function getBannerImages(array $ids, FileService $fileService): Collection
     {
         return $fileService
             ->getFiles($ids)

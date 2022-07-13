@@ -43,7 +43,7 @@ class SeoLogicService
      * @return Collection|SeoDto[]
      * @throws CmsException
      */
-    public function getSeoList(RestQuery $query, SeoService $seoService): array|Collection
+    public function getSeoList(RestQuery $query, SeoService $seoService): Collection
     {
         return $seoService->seo($query);
     }

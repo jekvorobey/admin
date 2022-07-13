@@ -13,8 +13,6 @@ use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 /**
  * Class DeliveryServiceDetailController
@@ -75,7 +73,7 @@ class DeliveryServiceDetailController extends Controller
         ]);
     }
 
-    public function save(int $id, ListsService $listsService): Response|Application|ResponseFactory
+    public function save(int $id, ListsService $listsService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);
 

@@ -110,7 +110,7 @@ class Controller extends BaseController
      * @param array|null $merchantIds
      * @return Collection|MerchantDto[]
      */
-    protected function getMerchants(?array $merchantIds = null): array|Collection
+    protected function getMerchants(?array $merchantIds = null): Collection
     {
         $merchants = collect();
 

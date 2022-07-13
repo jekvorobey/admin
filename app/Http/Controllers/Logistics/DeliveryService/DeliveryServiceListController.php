@@ -88,7 +88,7 @@ class DeliveryServiceListController extends Controller
     /**
      * @return Collection|DeliveryService[]
      */
-    protected function loadDeliveryServices(DataQuery $restQuery, ListsService $listsService): array|Collection
+    protected function loadDeliveryServices(DataQuery $restQuery, ListsService $listsService): Collection
     {
         $restQuery->addFields(
             DeliveryService::entity(),

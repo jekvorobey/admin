@@ -8,8 +8,6 @@ use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -174,7 +172,7 @@ class ProductListController extends Controller
     /**
      * Назначить или обнулить шильдики у товаров
      */
-    public function attachBadges(ProductService $productService): Response|Application|ResponseFactory
+    public function attachBadges(ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 

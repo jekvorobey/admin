@@ -67,7 +67,7 @@ class CategoryController extends Controller
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
-    protected function loadCategories(CategoryService $categoryService): array|Collection
+    protected function loadCategories(CategoryService $categoryService): Collection
     {
         $categories = $categoryService->categories((new RestQuery())
             ->include('descendants', 'ancestors', 'products', 'properties')

@@ -174,7 +174,7 @@ class BasketDetailController extends Controller
 
         $basket->items
             ->filter(fn($basketItem) => $basketItem->type == BasketDto::TYPE_MASTER)
-            ->map(function (&$basketItem) use ($eventSprints, $publicEvents) {
+            ->map(function (BasketItemDto $basketItem) use ($eventSprints, $publicEvents) {
                 $publicEvent = $publicEvents->get($eventSprints->get($basketItem->product['sprint_id'])->public_event_id);
                 if (!$publicEvent) {
                     return;

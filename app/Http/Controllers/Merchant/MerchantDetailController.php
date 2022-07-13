@@ -28,8 +28,6 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\OfferService\OfferService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class MerchantDetailController extends Controller
 {
@@ -231,7 +229,7 @@ class MerchantDetailController extends Controller
         ]);
     }
 
-    public function updateMerchant(int $id, MerchantService $merchantService): Response|Application|ResponseFactory
+    public function updateMerchant(int $id, MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

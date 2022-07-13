@@ -263,7 +263,7 @@ class PriceChangeClaimController extends Controller
     /**
      * @return Collection|PriceChangeClaimDto[]
      */
-    protected function loadClaims(RestQuery $query, bool $withProducts = false): array|Collection
+    protected function loadClaims(RestQuery $query, bool $withProducts = false): Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLAIMS);
 

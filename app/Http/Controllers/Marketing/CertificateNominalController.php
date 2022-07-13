@@ -12,8 +12,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Pim\Dto\Certificate\CertificateNominalDto;
 use Pim\Services\CertificateService\CertificateService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class CertificateNominalController extends Controller
 {
@@ -72,7 +70,7 @@ class CertificateNominalController extends Controller
         return $this->service()->designQuery()->designs();
     }
 
-    public function delete($id): Response|Application|ResponseFactory
+    public function delete($id): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

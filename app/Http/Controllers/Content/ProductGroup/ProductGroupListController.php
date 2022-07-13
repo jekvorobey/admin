@@ -102,7 +102,7 @@ class ProductGroupListController extends Controller
         RestQuery $query,
         ProductGroupService $productGroupService,
         FileService $fileService
-    ): array|Collection {
+    ): Collection {
         $productGroups = $productGroupService->productGroups($query);
         $photoIds = $productGroups->pluck('preview_photo_id')->all();
         $photos = $fileService->getFiles($photoIds)->keyBy('id');

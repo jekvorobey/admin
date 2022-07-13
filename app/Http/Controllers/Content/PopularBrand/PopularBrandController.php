@@ -8,8 +8,6 @@ use Cms\Dto\PopularBrandDto;
 use Cms\Services\PopularBrandService\PopularBrandService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Pim\Core\PimException;
@@ -90,7 +88,7 @@ class PopularBrandController extends Controller
      * Редактировать популярный бренд
      * @throws CmsException
      */
-    public function update(PopularBrandService $popularBrandService): Response|Application|ResponseFactory
+    public function update(PopularBrandService $popularBrandService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -114,7 +112,7 @@ class PopularBrandController extends Controller
      * Удалить популярный бренд
      * @throws CmsException
      */
-    public function delete(PopularBrandService $popularBrandService): Response|Application|ResponseFactory
+    public function delete(PopularBrandService $popularBrandService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

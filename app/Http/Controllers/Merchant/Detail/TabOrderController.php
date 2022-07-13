@@ -109,10 +109,9 @@ class TabOrderController extends Controller
     }
 
     /**
-     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
-    public function loadStores(int $merchantId): array|Collection
+    protected function loadStores(int $merchantId): Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

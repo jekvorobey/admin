@@ -28,8 +28,6 @@ use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Throwable;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 /**
  * Class PromoCodeController
@@ -128,7 +126,7 @@ class PromoCodeController extends Controller
         ]);
     }
 
-    public function status(PromoCodeService $promoCodeService): Response|Application|ResponseFactory
+    public function status(PromoCodeService $promoCodeService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 
@@ -142,7 +140,7 @@ class PromoCodeController extends Controller
         return response('', 204);
     }
 
-    public function delete(PromoCodeService $promoCodeService): Response|Application|ResponseFactory
+    public function delete(PromoCodeService $promoCodeService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 
@@ -279,6 +277,6 @@ class PromoCodeController extends Controller
 
         return response()->json([
             'status' => $status,
-        ], 200);
+        ]);
     }
 }

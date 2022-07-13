@@ -51,7 +51,7 @@ class TabMainController extends Controller
         return response('', 201);
     }
 
-    public function deleteDocument(int $id, MerchantService $merchantService): Response|Application|ResponseFactory
+    public function deleteDocument(int $id, MerchantService $merchantService): Response
     {
         $data = $this->validate(request(), [
             'file_id' => 'required',

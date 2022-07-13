@@ -382,7 +382,7 @@ class UsersController extends Controller
         return $restQuery;
     }
 
-    protected function loadItems(RestQuery $query, UserService $userService): array|Collection
+    protected function loadItems(RestQuery $query, UserService $userService): Collection
     {
         return $userService->users($query);
     }

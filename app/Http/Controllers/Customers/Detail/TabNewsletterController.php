@@ -8,8 +8,6 @@ use Cms\Services\ContentNewsletterService\ContentNewsletterService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Dto\CustomerNewsletterDto;
 use Greensight\Customer\Services\CustomerNewsletterService\CustomerNewsletterService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
@@ -58,7 +56,7 @@ class TabNewsletterController extends Controller
         $customerId,
         CustomerNewsletterService $customerNewsletterService,
         ContentNewsletterService $contentNewsletterService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $topics = $contentNewsletterService->getTopics()

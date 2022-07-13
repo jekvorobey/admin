@@ -12,8 +12,6 @@ use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -118,7 +116,7 @@ class MerchantListController extends Controller
         return response()->json($data);
     }
 
-    public function status(MerchantService $merchantService): Response|Application|ResponseFactory
+    public function status(MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Cms\Dto\ContactDto;
 use Cms\Services\ContactsService\ContactsService;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -91,7 +89,7 @@ class ContactsController extends Controller
     /**
      * Удалить контакт или соц. сеть
      */
-    public function remove(ContactsService $contactsService): Response|Application|ResponseFactory
+    public function remove(ContactsService $contactsService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

@@ -8,8 +8,6 @@ use Cms\Services\SearchSynonymService\SearchSynonymService;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -70,7 +68,7 @@ class SearchSynonymController extends Controller
     /**
      * @return Collection|SearchSynonymDto[]
      */
-    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService): array|Collection
+    protected function loadItems(RestQuery $query, SearchSynonymService $searchSynonymService): Collection
     {
         $synonyms = $searchSynonymService->synonyms($query);
 
@@ -106,7 +104,7 @@ class SearchSynonymController extends Controller
     /**
      * @throws Exception
      */
-    public function update(SearchSynonymService $searchSynonymService): Response|Application|ResponseFactory
+    public function update(SearchSynonymService $searchSynonymService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -124,7 +122,7 @@ class SearchSynonymController extends Controller
         return response('', 204);
     }
 
-    public function delete(SearchSynonymService $searchSynonymService): Response|Application|ResponseFactory
+    public function delete(SearchSynonymService $searchSynonymService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

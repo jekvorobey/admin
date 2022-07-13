@@ -14,8 +14,6 @@ use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionSe
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -186,10 +184,8 @@ class ProductDetailController extends Controller
     /**
      * Обновить состав продукта
      */
-    public function saveIngredients(
-        int $productId,
-        ProductService $productService
-    ): Response|Application|ResponseFactory {
+    public function saveIngredients(int $productId, ProductService $productService): Response
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $this->validate(request(), [

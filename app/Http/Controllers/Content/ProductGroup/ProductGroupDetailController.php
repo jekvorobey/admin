@@ -231,7 +231,7 @@ class ProductGroupDetailController extends Controller
      * @return Collection|CategoryDto[]
      * @throws PimException
      */
-    protected function getCategories(CategoryService $categoryService): array|Collection
+    protected function getCategories(CategoryService $categoryService): Collection
     {
         return $categoryService->categories($categoryService->newQuery()
             ->include('ancestors')
@@ -295,7 +295,7 @@ class ProductGroupDetailController extends Controller
     /**
      * @return Collection|FileDto[]
      */
-    protected function getProductGroupImages(array $ids, FileService $fileService): array|Collection
+    protected function getProductGroupImages(array $ids, FileService $fileService): Collection
     {
         return $fileService
             ->getFiles($ids)

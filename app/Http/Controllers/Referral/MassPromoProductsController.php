@@ -8,8 +8,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Customer\Services\ReferralService\ReferralService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -103,7 +101,7 @@ class MassPromoProductsController extends Controller
     /**
      * Удалить промо-товар
      */
-    public function removeProduct(ReferralService $referralService): Response|Application|ResponseFactory
+    public function removeProduct(ReferralService $referralService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 

@@ -8,8 +8,6 @@ use Cms\Dto\SearchRequestDto;
 use Cms\Services\SearchRequestService\SearchRequestService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Throwable;
@@ -107,7 +105,7 @@ class SearchRequestController extends Controller
      * Удалить продуктовый ярлык
      * @throws CmsException
      */
-    public function delete(SearchRequestService $searchRequestService): Response|Application|ResponseFactory
+    public function delete(SearchRequestService $searchRequestService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

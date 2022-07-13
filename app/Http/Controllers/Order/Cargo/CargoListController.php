@@ -179,10 +179,9 @@ class CargoListController extends Controller
     }
 
     /**
-     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
-    public function loadStores(): array|Collection
+    protected function loadStores(): Collection
     {
         /** @var Collection|StoreDto[] $stores */
         static $stores = null;

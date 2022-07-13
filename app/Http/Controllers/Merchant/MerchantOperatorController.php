@@ -139,7 +139,7 @@ class MerchantOperatorController extends Controller
         Request $request,
         OperatorService $operatorService,
         UserService $userService
-    ): Response|Application|ResponseFactory {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $userData = $request->validate([
@@ -185,11 +185,8 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
-    public function delete(
-        Request $request,
-        OperatorService $operatorService,
-        UserService $userService
-    ): Response|Application|ResponseFactory {
+    public function delete(Request $request, OperatorService $operatorService, UserService $userService): Response
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $request->validate([
@@ -218,7 +215,7 @@ class MerchantOperatorController extends Controller
         return response('', 204);
     }
 
-    public function changeRoles(Request $request, UserService $userService): Response|Application|ResponseFactory
+    public function changeRoles(Request $request, UserService $userService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

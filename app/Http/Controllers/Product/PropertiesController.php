@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
@@ -83,7 +81,7 @@ class PropertiesController extends Controller
     /**
      * Отправить запрос на сохранение редактируемого товарного атрибута
      */
-    public function update(ProductService $productService): Response|Application|ResponseFactory
+    public function update(ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -114,7 +112,7 @@ class PropertiesController extends Controller
     /**
      * Отправить запрос на удаление товарного атрибута и всех связанных с ним данных
      */
-    public function delete(int $propertyId, ProductService $productService): Response|Application|ResponseFactory
+    public function delete(int $propertyId, ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -179,7 +177,7 @@ class PropertiesController extends Controller
      * Подгрузить информацию о продуктовых категориях
      * @return Collection|CategoryDto[]
      */
-    public function getCategoriesData(): array|Collection
+    public function getCategoriesData(): Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 

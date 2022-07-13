@@ -18,8 +18,6 @@ use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Services\MarketingService\MarketingService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class TabMainController extends Controller
 {
@@ -112,11 +110,8 @@ class TabMainController extends Controller
         ]);
     }
 
-    public function deleteCertificate(
-        int $id,
-        int $certificate_id,
-        CustomerService $customerService
-    ): Response|Application|ResponseFactory {
+    public function deleteCertificate(int $id, int $certificate_id, CustomerService $customerService): Response
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $customerService->deleteCertificate($id, $certificate_id);

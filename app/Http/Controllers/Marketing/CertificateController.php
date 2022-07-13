@@ -7,8 +7,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pim\Services\CertificateService\CertificateService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class CertificateController extends Controller
 {
@@ -180,7 +178,7 @@ class CertificateController extends Controller
         ];
     }
 
-    public function storeContent(Request $request): Response|Application|ResponseFactory
+    public function storeContent(Request $request): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

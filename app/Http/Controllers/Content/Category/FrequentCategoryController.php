@@ -78,7 +78,7 @@ class FrequentCategoryController extends Controller
         CategoryService $categoryService,
         FrequentCategoryService $frequentCategoryService,
         FileService $fileService
-    ): array|Collection {
+    ): Collection {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $categories = $categoryService->categories((new RestQuery())
