@@ -81,6 +81,20 @@
             </div>
         </b-form-group>
 
+        <b-form-group v-if="showControlsColorFields" label="Цвет управления и кнопок" label-for="banner-controls-color">
+            <div class="d-flex align-items-center">
+                <div>
+                    <vue-swatches v-model="banner.controls_color" id="banner-controls-color" show-fallback fallback-input-type="color" />
+                </div>
+                <div class="ml-2">
+                    <b-button size="sm" @click="banner.controls_color = null">Сбросить</b-button>
+                </div>
+            </div>
+            <div>
+                HEX: {{ banner.controls_color ? banner.controls_color : 'Не выбран' }}
+            </div>
+        </b-form-group>
+
         <b-form-group v-if="showPathTemplatesField" label="Страницы" label-for="banner-path-templates">
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates" />
         </b-form-group>
@@ -222,6 +236,7 @@
                     date_from: source.date_from ? source.date_from : null,
                     date_to: source.date_to ? source.date_to : null,
                     color: source.color ? source.color : null,
+                    controls_color: source.controls_color ? source.controls_color : null,
                     path_templates: source.path_templates ? source.path_templates : null,
                     sort: source.sort ? source.sort : null,
                     additional_text: source.additional_text ? source.additional_text : null,
@@ -294,6 +309,20 @@
 
             showColorField() {
                 if (this.banner && this.banner.type_id === bannerType.mainTop) {
+                    return true;
+                }
+
+                return false;
+            },
+
+            showControlsColorFields() {
+                if (
+                    this.banner &&
+                    (
+                        this.banner.type_id === bannerType.mainTop ||
+                        this.banner.type_id === bannerType.catalogTop
+                    )
+                ) {
                     return true;
                 }
 
