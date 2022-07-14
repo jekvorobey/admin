@@ -107,11 +107,10 @@
         <tr v-if="!customer.has_password">
             <th>Пароль</th>
             <td>Не установлен</td>
-            <td>
+            <td colspan="2">
                 <button v-if="canUpdate(blocks.clients) && this.showSendSettingPasswordLinkBtn()" class="btn btn-success btn-sm" @click="sendSettingPasswordLink">Отправить ссылку на установку пароля</button>
                 {{ customer.setting_password_link_will_be_available_in_seconds > 0 ? 'Повторно отправить ссылку на установку пароля можно через ' + customer.setting_password_link_will_be_available_in_seconds + ' сек.' : '' }}
             </td>
-            <td></td>
         </tr>
         <tr>
             <th>ФИО</th>
