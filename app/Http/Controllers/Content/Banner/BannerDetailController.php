@@ -122,7 +122,7 @@ class BannerDetailController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'string|required',
-            'url' => 'string|required',
+            'url' => 'string|nullable',
             'active' => 'boolean|required',
             'desktop_image_id' => 'integer|required',
             'tablet_image_id' => 'integer|nullable',
@@ -157,7 +157,7 @@ class BannerDetailController extends Controller
         $validatedData = $request->validate([
             'id' => 'integer|required',
             'name' => 'string|required',
-            'url' => 'string|required',
+            'url' => 'string|nullable',
             'active' => 'boolean|required',
             'desktop_image_id' => 'integer|required',
             'tablet_image_id' => 'integer|nullable',
@@ -229,9 +229,7 @@ class BannerDetailController extends Controller
                         BannerTypeDto::MAIN_MIDDLE_CODE,
                         BannerTypeDto::MAIN_BEST_CODE,
                         BannerTypeDto::MENU_CODE,
-                        BannerTypeDto::MK_TOP_CODE,
-                        BannerTypeDto::MK_ITEM_CODE,
-                        BannerTypeDto::MK_TOP_CODE,
+                        // BannerTypeDto::MK_TOP_CODE,
                         BannerTypeDto::MK_ITEM_CODE,
                     ]
                 )
