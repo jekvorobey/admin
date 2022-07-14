@@ -6,6 +6,7 @@ use App\Core\Helpers;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -90,8 +91,12 @@ class MerchantOperatorController extends Controller
         ]);
     }
 
-    public function save(Request $request, UserService $userService, OperatorService $operatorService)
-    {
+    public function save(
+        Request $request,
+        UserService $userService,
+        OperatorService $operatorService,
+        RequestInitiator $requestInitiator
+    ) {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $userData = $request->validate([
@@ -119,6 +124,8 @@ class MerchantOperatorController extends Controller
 
         $userData['phone'] = phone_format($userData['phone']);
         $userData['front'] = Front::FRONT_MAS;
+        $userData['registration_type'] = Front::FRONT_ADMIN;
+        $userData['registered_by_user_id'] = $requestInitiator->userId();
         $userId = $userService->create(new UserDto($userData));
         $userService->addRoles($userId, $userData['roles']);
 

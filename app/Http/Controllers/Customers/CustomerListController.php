@@ -10,6 +10,7 @@ use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
+use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
@@ -158,8 +159,11 @@ class CustomerListController extends Controller
         ]);
     }
 
-    public function create(UserService $userService, CustomerService $customerService): JsonResponse
-    {
+    public function create(
+        UserService $userService,
+        CustomerService $customerService,
+        RequestInitiator $requestInitiator
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $data = $this->validate(request(), [
@@ -178,6 +182,8 @@ class CustomerListController extends Controller
         $user->phone = $data['phone'];
         $user->password = $data['password'];
         $user->fronts = [Front::FRONT_SHOWCASE];
+        $user->registered_by_user_id = $requestInitiator->userId();
+        $user->registration_type = Front::FRONT_ADMIN;
 
         $id = $userService->create($user);
         if ($id) {

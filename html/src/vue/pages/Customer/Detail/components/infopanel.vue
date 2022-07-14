@@ -93,7 +93,7 @@
             <th>Статус</th>
             <td>
                 <div class="input-group input-grou  p-sm">
-                            {{ customerStatusName[customer.status] }}
+                    {{ customerStatusName[customer.status] }}
                     <div class="input-group-append" v-if="customer.comment_status">
                         <button class="btn btn-outline-info" v-b-tooltip.hover :title="customer.comment_status">
                             <fa-icon icon="info"/>
@@ -103,6 +103,14 @@
             </td>
             <th>Сегмент</th>
             <td></td>
+        </tr>
+        <tr v-if="!customer.has_password">
+            <th>Пароль</th>
+            <td>Не установлен</td>
+            <td colspan="2">
+                <button v-if="canUpdate(blocks.clients) && this.showSendSettingPasswordLinkBtn()" class="btn btn-success btn-sm" @click="sendSettingPasswordLink">Отправить ссылку на установку пароля</button>
+                {{ customer.setting_password_link_will_be_available_in_seconds > 0 ? 'Повторно отправить ссылку на установку пароля можно через ' + customer.setting_password_link_will_be_available_in_seconds + ' сек.' : '' }}
+            </td>
         </tr>
         <tr>
             <th>ФИО</th>
@@ -175,6 +183,12 @@
                 <button v-if="canUpdate(blocks.clients)" class="btn btn-info btn-sm" v-b-modal.modal-portfolios><fa-icon icon="pencil-alt"/></button>
             </td>
         </tr>
+        <tr>
+            <th>Система регистрации</th>
+            <td>{{ customer.registration_type ? customer.registration_type : 'N/A' }}</td>
+            <th>Кто регистрировал</th>
+            <td>{{ customer.registered_by ? `${customer.registered_by.full_name} (ID: ${customer.registered_by.id})` : 'N/A' }}</td>
+        </tr>
         </tbody>
     </table>
 </template>
@@ -225,6 +239,9 @@
                 (this.customer.referral_level_id || '') !== (this.form.referral_level_id || '') ||
                 (this.customer.avatar !== this.form.avatar);
         },
+    },
+    created() {
+        this.startSettingPasswordLinkCountDownTimer();
     },
     methods: {
         saveCustomer() {
@@ -339,9 +356,29 @@
 
             return `Проф.статус не подтвержден автоматически из-за совпадения с другим клиентом ${customerLink}`;
         },
-
         formatDate(str) {
             return moment(str).format('DD.MM.YYYY');
+        },
+        sendSettingPasswordLink() {
+            Services.showLoader();
+            Services.net().put(this.getRoute('customers.detail.sendSettingPasswordLink', {id: this.customer.id})).then(data => {
+                this.customer.setting_password_link_will_be_available_in_seconds = data.setting_password_link_will_be_available_in_seconds;
+                this.startSettingPasswordLinkCountDownTimer();
+                Services.msg("Сообщение с ссылкой на установку пароля отправлено");
+            }).finally(data => {
+                Services.hideLoader();
+            })
+        },
+        showSendSettingPasswordLinkBtn() {
+            return !this.customer.has_password && this.customer.setting_password_link_will_be_available_in_seconds === 0;
+        },
+        startSettingPasswordLinkCountDownTimer() {
+            if (this.customer.setting_password_link_will_be_available_in_seconds > 0) {
+                setTimeout(() => {
+                    this.customer.setting_password_link_will_be_available_in_seconds -= 1;
+                    this.startSettingPasswordLinkCountDownTimer();
+                }, 1000);
+            }
         }
     }
 };

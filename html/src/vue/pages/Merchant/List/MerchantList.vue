@@ -72,7 +72,7 @@
                             @change="e => selectMerchant(e, merchant)">
                 </td>
                 <td>{{ merchant.id }}</td>
-                <td>{{ merchant.created_at }}</td>
+                <td>{{ datetimePrint(merchant.created_at) }}</td>
                 <td><a :href="getRoute('merchant.detail', {id: merchant.id})">{{ merchant.name }}</a></td>
                 <td>{{ merchant.legal_name }}</td>
                 <td>{{ merchant.user ? merchant.user.full_name : '' }}</td>

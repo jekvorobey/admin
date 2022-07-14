@@ -8,6 +8,7 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
+use Greensight\Customer\Services\FavoriteService\FavoriteService;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class TabPreferenceController extends Controller
         BrandService $brandService,
         CategoryService $categoryService,
         CustomerService $customerService,
+        FavoriteService $favoriteService,
         ProductService $productService,
         Request $request
     ): JsonResponse {
@@ -41,7 +43,7 @@ class TabPreferenceController extends Controller
         $categories = $categoryService->categories((new RestQuery())->addFields(CategoryDto::entity(), 'id', 'name', '_lft', '_rgt', 'parent_id'));
         /** @var CustomerDto $customer */
         $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
-        $favoriteItems = $customerService->favorites($id)->pluck('product_id')->toArray();
+        $favoriteItems = $favoriteService->favorites($id)->pluck('product_id')->toArray();
         $query = $this->makeFavoriteProductQuery($request, $favoriteItems);
 
         return response()->json([
@@ -131,20 +133,20 @@ class TabPreferenceController extends Controller
         return response('', 204);
     }
 
-    public function addFavoriteItem(CustomerService $customerService, $id, $product_id)
+    public function addFavoriteItem(FavoriteService $favoriteService, $id, $product_id)
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $customerService->addToFavorites($id, $product_id);
+        $favoriteService->addToFavorites($id, $product_id);
 
         return response('', 204);
     }
 
-    public function deleteFavoriteItem(CustomerService $customerService, $id, $product_id)
+    public function deleteFavoriteItem(FavoriteService $favoriteService, $id, $product_id)
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $customerService->deleteFromFavorites($id, $product_id);
+        $favoriteService->deleteFromFavorites($id, $product_id);
 
         return response('', 204);
     }

@@ -14,7 +14,7 @@
       <tr v-for="registry in payRegisters">
 
         <td>{{ registry.id }}</td>
-        <td>{{ registry.created_at }}</td>
+        <td>{{ datetimePrint(registry.created_at) }}</td>
         <td>
           <a target="_blank" :href="$store.getters.getRoute('merchant.settlements.downloadPayRegistry',
           {registryFileId:registry.file})">Скачать</a>
