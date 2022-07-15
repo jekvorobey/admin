@@ -100,7 +100,7 @@
         </b-form-group>
 
         <b-form-group v-if="bannerIsCatalogTop" label="Дополнительный текст" id="additional-text" label-for="banner-additional-text">
-            <ckeditor v-model="banner.additional_text" type="classic" />
+            <ckeditor v-model="banner.additional_text" :editor="editor" :config="editorSettings" />
         </b-form-group>
 
         <b-form-group label="Сортировка" label-for="banner-sort">
@@ -161,7 +161,8 @@
 
 <script>
     import {mapActions} from 'vuex';
-    import VueCkeditor from '../../plugins/VueCkeditor';
+    import VueCkeditor from '../../plugins/VueCustomCkeditor';
+    import CustomEditor from 'ckeditor5-custom-build';
     import FileInput from '../controls/FileInput/FileInput.vue';
 
     import DatePicker from 'vue2-datepicker';
@@ -205,6 +206,24 @@
                 bannerButtonLocations: this.iBannerButtonLocations,
                 bannerImages: this.iBannerImages,
                 hasButton: this.initHasButton(),
+
+                editor: CustomEditor,
+                editorSettings: {
+                    mediaEmbed: {
+                        previewsInData: true,
+                    },
+                    simpleFileUpload: {
+                        fileTypes: [
+                            '.pdf',
+                            '.doc',
+                            '.docx',
+                            '.xls',
+                            '.xlsx'
+                        ],
+                        destination: 'landing',
+                        url: this.route('uploadFile'),
+                    },
+                }
             };
         },
 
