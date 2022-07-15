@@ -362,7 +362,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', 'OrderDetailController@detail')->name('orders.detail');
             Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
             Route::put('markAsPaid', 'OrderDetailController@markAsPaid')->name('orders.markAsPaid');
-            Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
+            Route::put('markAsPaidForce', 'OrderDetailController@markAsPaidForce')->name('orders.markAsPaidForce');
             Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
             Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
