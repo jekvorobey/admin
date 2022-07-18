@@ -109,11 +109,30 @@
             <div class="row">
                 <div class="col-3 mb-3 mt-3">
                     <label for="start_date">Дата старта</label>
-                    <b-form-input id="start_date" v-model="bonus.start_date" type="date"></b-form-input>
+                    <!--<b-form-input id="start_date" v-model="bonus.start_date" type="date"></b-form-input>-->
+                    <date-picker
+                        class="w-100"
+                        id="start_date"
+                        type="datetime"
+                        v-model="bonus.start_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                    />
                 </div>
                 <div class="col-3 mt-3">
                     <label for="end_date">Дата окончания</label>
-                    <b-form-input id="end_date" v-model="bonus.end_date" type="date"></b-form-input>
+                    <!--<b-form-input id="end_date" v-model="bonus.end_date" type="date"></b-form-input>-->
+                    <date-picker
+                        class="w-100"
+                        id="end_date"
+                        type="datetime"
+                        v-model="bonus.end_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        @change="onChangeDateTo"
+                        input-class="form-control form-control-sm"
+                    />
                 </div>
             </div>
 
@@ -143,10 +162,14 @@
 <script>
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import Services from "../../../../../scripts/services/services";
+    import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
     import {validationMixin} from 'vuelidate';
     import BrandsSearch from '../../components/brands-search.vue';
     import CategoriesSearch from '../../components/categories-search.vue';
     import {required, requiredIf, minValue, integer} from 'vuelidate/lib/validators';
+    import moment from "moment";
 
     export default {
         components: {
@@ -154,6 +177,7 @@
             Services,
             BrandsSearch,
             CategoriesSearch,
+            DatePicker,
         },
         props: {
             types: Object,
@@ -245,6 +269,13 @@
                     .split(',')
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
+            },
+            onChangeDateTo(value) {
+                let dateTime = new Date(value);
+                if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
+                    dateTime.setHours(23, 59, 59);
+                    this.bonus.end_date = moment(dateTime).format("YYYY-MM-DD HH:mm");
+                }
             },
         },
         computed: {

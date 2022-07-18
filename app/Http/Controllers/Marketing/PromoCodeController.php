@@ -234,11 +234,11 @@ class PromoCodeController extends Controller
         $data['creator_id'] = $requestInitiator->userId();
         try {
             $data['start_date'] = $data['start_date']
-                ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
+                ? Carbon::createFromFormat('Y-m-d H:i', $data['start_date'])
                 : null;
 
             $data['end_date'] = $data['end_date']
-                ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
+                ? Carbon::createFromFormat('Y-m-d H:i', $data['end_date'])
                 : null;
         } catch (Throwable $ex) {
             report($ex);
