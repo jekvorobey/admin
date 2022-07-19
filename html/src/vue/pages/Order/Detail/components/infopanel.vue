@@ -216,7 +216,7 @@ export default {
             let errorMessage = 'Ошибка при изменении статуса платежа';
 
             Services.showLoader();
-            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id})).then(data => {
+            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id}), {}, {payment_method: this.order.payment_method.id}).then(data => {
                 if (data.order) {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);

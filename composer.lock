@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "365ae0d501abfae90a601a1041536467",
+    "content-hash": "54bf0cf20f5d803e73f9d6f501d0a519",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1452,11 +1452,11 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-6366-bank-transfer-payment-method",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "4e9096d52ccff77764b07e2cc3c39924e1ea04f1"
+                "reference": "117e0d25f1433759b436880a1cfbf26d1d8b8ae3"
             },
             "require": {
                 "ext-json": "*",
@@ -1468,7 +1468,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1492,7 +1491,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-07-08T10:33:33+00:00"
+            "time": "2022-07-19T13:03:46+00:00"
         },
         {
             "name": "ibt/pim-lib",
@@ -10855,5 +10854,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }

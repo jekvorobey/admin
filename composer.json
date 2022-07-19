@@ -75,7 +75,7 @@
         "ibt/marketing-lib": "dev-master",
         "ibt/merchant-management-lib": "dev-master",
         "ibt/message-lib": "dev-master",
-        "ibt/oms-lib": "dev-master",
+        "ibt/oms-lib": "dev-feature/BX-6366-bank-transfer-payment-method",
         "ibt/pim-lib": "dev-master",
         "ibt/reports-lib": "dev-master",
         "ibt/store-lib": "dev-master",

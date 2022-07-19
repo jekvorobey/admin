@@ -94,17 +94,24 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Отметить заказ как оплаченный (для рассрочки)
+     * Отметить заказ как оплаченный (для рассрочки и по счету-оферте)
      * @throws Exception
      */
-    public function markAsPaid(int $id, OrderService $orderService): JsonResponse
+    public function markAsPaid(int $id, Request $request, OrderService $orderService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
+        $data = $this->validate($request, [
+            'payment_method' => 'required|integer',
+        ]);
+
         $order = new OrderDto();
         $order->payment_status = PaymentStatus::PAID;
         $orderService->updateOrder($id, $order);
+        if ($data['payment_method'] === PaymentMethod::BANK_TRANSFER_FOR_LEGAL) {
+            $orderService->generateOrderUPD($id);
+        }
 
         return response()->json([
             'order' => $this->getOrder($id),
