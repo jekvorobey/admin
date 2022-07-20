@@ -26,6 +26,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryStatus;
 use Greensight\Oms\Dto\Delivery\ShipmentStatus;
 use Greensight\Oms\Dto\DeliveryType;
 use Greensight\Oms\Dto\OrderStatus;
+use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use IBT\Reports\Dto\Enum\ReportStatusDto;
 use IBT\Reports\Dto\Enum\ReportTypeDto;
@@ -88,6 +89,7 @@ class ViewRender
     private $orderStatuses = [];
     private $basketTypes = [];
     private $paymentStatuses = [];
+    private $allPaymentMethods = [];
     private $deliveryStatuses = [];
     private $shipmentStatuses = [];
     private $cargoStatuses = [];
@@ -555,6 +557,24 @@ class ViewRender
     /**
      * @return $this
      */
+    public function loadAllPaymentMethods(bool $load = false): self
+    {
+        if ($load) {
+            $this->allPaymentMethods = [
+                PaymentMethod::PREPAID => 'prepaid',
+                PaymentMethod::POSTPAID => 'postpaid',
+                PaymentMethod::CREDITPAID => 'creditpaid',
+                PaymentMethod::B2B_SBERBANK => 'b2b_sberbank',
+                PaymentMethod::BANK_TRANSFER_FOR_LEGAL => 'bank_transfer',
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function loadDeliveryStatuses(bool $load = false): self
     {
         if ($load) {
@@ -855,6 +875,7 @@ class ViewRender
                 'orderStatuses' => $this->orderStatuses,
                 'basketTypes' => $this->basketTypes,
                 'paymentStatuses' => $this->paymentStatuses,
+                'allPaymentMethods' => $this->allPaymentMethods,
                 'deliveryStatuses' => $this->deliveryStatuses,
                 'shipmentStatuses' => $this->shipmentStatuses,
                 'cargoStatuses' => $this->cargoStatuses,

@@ -235,6 +235,10 @@ Vue.mixin({
         paymentStatuses() {
             return this.$store.state.layout.paymentStatuses;
         },
+        /** @return {AllPaymentMethods} */
+        allPaymentMethods() {
+            return this.$store.state.layout.allPaymentMethods;
+        },
         /** @return {DeliveryStatuses} */
         deliveryStatuses() {
             return this.$store.state.layout.deliveryStatuses;
@@ -608,6 +612,15 @@ Vue.mixin({
  @property {PaymentStatus} hold - средства захолдированы
  @property {PaymentStatus} error - ошибка
  @property {PaymentStatus} waiting - ожидает оплаты
+ */
+/**
+ @typedef AllPaymentMethods - методы оплаты
+ @type {Object}
+ @property {integer} prepaid - Предоплата (онлайн)
+ @property {integer} postpaid - Постоплата (Наличными или картой при получении)
+ @property {integer} creditpaid - В кредит от pp.credit
+ @property {integer} b2b_sberbank - СберБизнес онлайн
+ @property {integer} bank_transfer - Оплата через юрлицо
  */
 /**
  @typedef PaymentStatus - статус оплаты

@@ -16,6 +16,8 @@ use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Oms\Dto\Document\DocumentDto;
+use Greensight\Oms\Dto\Order\OrderDocumentDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
@@ -36,6 +38,7 @@ use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -58,6 +61,7 @@ class OrderDetailController extends Controller
         $this->loadDeliveryStatuses = true;
         $this->loadShipmentStatuses = true;
         $this->loadDeliveryServices = true;
+        $this->loadAllPaymentMethods = true;
 
         $order = $this->getOrder($id);
 
@@ -182,6 +186,37 @@ class OrderDetailController extends Controller
         return response()->json([
             'order' => $this->getOrder($id),
         ]);
+    }
+
+    /**
+     * Получить документ "Акт приема-передачи по отправлению"
+     */
+    public function invoiceOffer(int $orderId, OrderService $orderService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $invoiceOffer = $orderService->orderDocuments($orderId, OrderDocumentDto::INVOICE_OFFER_TYPE)->first();
+
+        return $this->getDocumentResponse($invoiceOffer);
+    }
+
+    /**
+     * Получить документ "Акт приема-передачи по отправлению"
+     */
+    public function upd(int $orderId, OrderService $orderService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $invoiceOffer = $orderService->orderDocuments($orderId, OrderDocumentDto::UPD_TYPE)->first();
+
+        return $this->getDocumentResponse($invoiceOffer);
+    }
+
+    protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($documentDto) {
+            echo file_get_contents($documentDto->absolute_url);
+        }, $documentDto->original_name);
     }
 
     /**

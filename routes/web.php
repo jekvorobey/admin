@@ -366,6 +366,8 @@ Route::middleware('auth')->group(function () {
             Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
             Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
             Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
+            Route::get('invoice-offer', 'OrderDetailController@invoiceOffer')->name('order.invoiceOffer');
+            Route::get('upd', 'OrderDetailController@upd')->name('order.upd');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
