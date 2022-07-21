@@ -16,7 +16,7 @@
             <span class="logo-text d-none d-md-block">Administration System</span>
         </div>
 
-        <div v-if="!user.isGuest" class="d-flex">
+        <div v-if="!user.isGuest" class="d-flex align-items-baseline">
             <notifications/>
 
             <communication-chats-unread/>
@@ -68,6 +68,9 @@
 </script>
 
 <style scoped>
+    .navbar{
+        padding: 0.5rem 1rem 0.7rem 1rem;
+    }
     .divider{
         height: 40px;
         width: 2px;
