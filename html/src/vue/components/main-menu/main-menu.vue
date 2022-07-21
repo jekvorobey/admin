@@ -1,6 +1,5 @@
 <template>
     <b-navbar toggleable="xl" class="p-0">
-        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
             <div class="sidebar-sticky">
                 <menu-item v-for="(item, index) in menu" :item="item" :key="index"></menu-item>

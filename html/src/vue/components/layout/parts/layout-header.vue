@@ -1,23 +1,19 @@
 <template>
     <header class="navbar navbar-dark bg-dark" style="color: #dfdfdf;">
-        <div class="d-flex">
+        <div class="d-flex align-items-center">
+            <div class="d-xl-none">
+                <menu-btn></menu-btn>
+            </div>
             <b-navbar-brand href="/" title="Бессовестно Талантливый">
-                <picture>
-                    <source srcset="/assets/images/logo_white.webp" type="image/webp">
-                    <img src="/assets/images/logo_white.png" width="128" height="46">
-                </picture>
+                <v-svg
+                    name="header-logo"
+                    modifier="fill-white"
+                    width="24"
+                    height="24"
+                />
             </b-navbar-brand>
-            <span class="d-none d-md-block">
-                <span style="
-                    font-size: 256%;
-                    line-height: 40px;
-                    margin-right: 10px;
-                    transform: scaleX(0.5);
-                ">|</span>
-                <span style="color:white">
-                    Administration System
-                </span>
-            </span>
+            <div class="divider d-none d-md-block"></div>
+            <span class="logo-text d-none d-md-block">Administration System</span>
         </div>
 
         <div v-if="!user.isGuest" class="d-flex">
@@ -27,10 +23,10 @@
 
             <button @click="logout" class="btn btn-dark">
                 <v-svg
-                        modifier="fill-white"
-                        name="user-logout"
-                        width="24"
-                        height="24"
+                    name="user-logout"
+                    modifier="fill-white"
+                    width="24"
+                    height="24"
                 />
             </button>
         </div>
@@ -38,17 +34,19 @@
 </template>
 
 <script>
+    import '../../../../images/sprite/header-logo.svg'
     import '../../../../images/sprite/user-logout.svg'
-    import '../../../../images/logo_white.png';
     import Services from '../../../../scripts/services/services';
     import modalMixin from '../../../mixins/modal.js';
     import CommunicationChatsUnread from './communication-chats-unread.vue';
     import Notifications from './notifications.vue';
     import VSvg from '../../controls/VSvg/VSvg.vue';
+    import MainMenu from '../../main-menu/main-menu.vue';
+    import MenuBtn from '../../main-menu/menu-btn.vue';
 
     export default {
     name: 'layout-header',
-    components: {Notifications, CommunicationChatsUnread, VSvg},
+    components: {Notifications, CommunicationChatsUnread, VSvg, MainMenu, MenuBtn},
     mixins: [modalMixin],
     props: {
         onIndex: { type: Boolean, default: false },
@@ -68,3 +66,16 @@
     },
 };
 </script>
+
+<style scoped>
+    .divider{
+        height: 40px;
+        width: 2px;
+        background-color: #fff;
+        margin-right: 10px;
+    }
+    .logo-text{
+        padding-top: 4px;
+        color: white;
+    }
+</style>

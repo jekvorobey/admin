@@ -4,8 +4,7 @@
                 @click="notificationsOpened = !notificationsOpened"
                 icon="comment-dots"
                 size="lg"
-                class="navbar-item navbar-icon"
-                style="margin-left: 70px">
+                class="navbar-item navbar-icon">
         </fa-icon>
         <span class="badge badge-pill badge-danger notification-badge" v-if="notificationsCount > 0">{{ notificationsCount }}</span>
 
