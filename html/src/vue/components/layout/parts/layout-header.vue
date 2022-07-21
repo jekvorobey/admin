@@ -25,21 +25,30 @@
 
             <communication-chats-unread/>
 
-            <button @click="logout" class="btn btn-dark">Выйти</button>
+            <button @click="logout" class="btn btn-dark">
+                <v-svg
+                        modifier="fill-white"
+                        name="user-logout"
+                        width="24"
+                        height="24"
+                />
+            </button>
         </div>
     </header>
 </template>
 
 <script>
+    import '../../../../images/sprite/user-logout.svg'
     import '../../../../images/logo_white.png';
     import Services from '../../../../scripts/services/services';
     import modalMixin from '../../../mixins/modal.js';
     import CommunicationChatsUnread from './communication-chats-unread.vue';
     import Notifications from './notifications.vue';
+    import VSvg from '../../controls/VSvg/VSvg.vue';
 
     export default {
     name: 'layout-header',
-    components: {Notifications, CommunicationChatsUnread},
+    components: {Notifications, CommunicationChatsUnread, VSvg},
     mixins: [modalMixin],
     props: {
         onIndex: { type: Boolean, default: false },
@@ -59,6 +68,3 @@
     },
 };
 </script>
-<style>
-
-</style>
