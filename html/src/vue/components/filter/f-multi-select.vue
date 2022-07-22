@@ -1,15 +1,19 @@
 <template>
     <div class="form-group">
-        <label :for="id">
+        <label :for="id" class="d-flex justify-content-between">
             <slot/>
+            <div>
+                <button class="btn small-btn badge btn-primary" @click="addAllOptions">all</button>
+                <button class="btn small-btn badge badge-danger" @click="deleteAllOptions">X</button>
+            </div>
             <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
         </label>
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend">
                 <slot name="prepend"/>
             </div>
-            <div class="form-control" :class="{ 'input-error': error }" @click="toggleList">
-                <span v-for="item in items" @click="e => {e.stopPropagation(); remove(item.value)}"
+            <div class="form-control" :class="{ 'input-error': error, 'h-100': items.length > 2 }" @click="toggleList">
+                <span v-for="item in items" :key="item.value" @click="e => {e.stopPropagation(); remove(item.value)}"
                       class="badge badge-secondary mr-2">
                     {{item.text}} <fa-icon icon="times"></fa-icon>
                 </span>
@@ -33,8 +37,9 @@
                     </template>
                 </template>
                 <template v-else>
+                    <v-search-input @onSearch="onSearch" :value="inputSearch"/>
                     <div
-                            v-for="option in options"
+                            v-for="option in filteredOptions"
                             class="select-item"
                             :class="{selected:valueSelected(option.value)}"
                             @click="toggleOption(option.value)"
@@ -49,8 +54,11 @@
 </template>
 
 <script>
+    import VSearchInput from "../controls/VSearchInput/VSearchInput.vue";
+
     export default {
         name: 'f-multi-select',
+        components: {VSearchInput},
         inheritAttrs: false,
         props: {
             value: {},
@@ -64,6 +72,7 @@
         data() {
             return {
                 opened: false,
+                inputSearch: null
             };
         },
         computed: {
@@ -81,7 +90,18 @@
                     res.add(value.group);
                     return res;
                 }, new Set())];
-            }
+            },
+            filteredOptions(){
+                if (this.inputSearch !== null && this.inputSearch !== ''){
+                    return this.options.filter(option => {
+                            return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
+                        }
+                    )
+                }
+                else {
+                    return this.options
+                }
+            },
         },
         methods: {
             input(e) {
@@ -109,6 +129,21 @@
             },
             groupOptions(group) {
                 return this.options.filter(option => option.group === group);
+            },
+            addAllOptions(){
+                this.options.forEach(option => {
+                    this.value.push(option.value);
+                    this.$emit('input', this.value);
+                    this.$emit('change');
+                })
+            },
+            deleteAllOptions(){
+                this.options.forEach(option => {
+                    this.remove(option.value);
+                })
+            },
+            onSearch(value){
+                this.inputSearch = value
             }
         },
     }
@@ -144,5 +179,13 @@
     }
     .input-error {
         border-color: red;
+    }
+    .h-100 {
+        height: 100%;
+    }
+    .small-btn{
+        border-radius: 0.2rem;
+        font-size: 12px;
+        padding: 3px 5px;
     }
 </style>
