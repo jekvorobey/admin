@@ -72,7 +72,7 @@
         data() {
             return {
                 opened: false,
-                inputSearch: null
+                inputSearch: ''
             };
         },
         computed: {

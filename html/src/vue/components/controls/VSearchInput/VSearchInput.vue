@@ -1,11 +1,11 @@
 <template>
     <div class="position-relative">
-        <input class="form-control" type="text" placeholder="Поиск..."
+        <input class="form-control search-input" type="text" placeholder="Поиск..."
                @input="onInput($event.target.value)"
                :value="value"
         >
         <button class="input-close-btn btn small-btn badge badge-danger"
-                @click="onInput(null)">X</button>
+                @click="onInput('')">X</button>
     </div>
 </template>
 
