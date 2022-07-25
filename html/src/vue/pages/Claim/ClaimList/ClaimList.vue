@@ -16,9 +16,9 @@
                     <f-multi-select v-model="filter.status" :options="statusOptions" class="col">
                         Статус заявки
                     </f-multi-select>
-                    <f-custom-select @onSelect="onSelect" v-model="filter.merchantId" :options="merchantOptions" class="col">
+                    <f-custom-search-select @onSelect="onSelect" v-model="filter.merchantId" :options="merchantOptions" class="col">
                         Мерчант
-                    </f-custom-select>
+                    </f-custom-search-select>
                 </div>
 
                 <transition name="slide">
@@ -89,7 +89,7 @@
     import FDate from '../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FSelect from '../../../components/filter/f-select.vue';
-    import FCustomSelect from '../../../components/filter/f-custom-select.vue';
+    import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
     import Helpers from '../../../../scripts/helpers';
 
@@ -120,7 +120,7 @@ export default {
         FSelect,
         FMultiSelect,
         ModalColumns,
-        FCustomSelect
+        FCustomSearchSelect
     },
     mixins: [modalMixin],
     props: {

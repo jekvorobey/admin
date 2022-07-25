@@ -4,7 +4,7 @@
                @input="onInput($event.target.value)"
                :value="value"
         >
-        <button class="input-close-btn btn small-btn badge badge-danger"
+        <button class="search-input-close-btn input-close-btn btn small-btn badge badge-danger"
                 @click="onInput('')">X</button>
     </div>
 </template>

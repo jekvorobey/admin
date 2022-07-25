@@ -29,7 +29,7 @@
 <script>
     import VSearchInput from "../controls/VSearchInput/VSearchInput.vue";
     export default {
-        name: 'f-custom-select',
+        name: 'f-custom-search-select',
         inheritAttrs: false,
         emits: ['onSelect'],
         components: {VSearchInput},
@@ -63,7 +63,7 @@
         },
         methods: {
             toggle(target) {
-                if(!target.classList.contains('search-input')){
+                if(!target.classList.contains('search-input') && !target.classList.contains('search-input-close-btn')){
                     this.visible = !this.visible;
                 }
             },
