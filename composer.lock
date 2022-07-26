@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "4af6a8ee241c3df55656ecd87be37142",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1503,7 +1503,7 @@
         },
         {
             "name": "ibt/logistics-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-5759-dpd-delivery",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-logistics-lib.git",
@@ -1524,7 +1524,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -11209,7 +11208,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/logistics-lib",
+            "version": "dev-feature/BX-5759-dpd-delivery",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
