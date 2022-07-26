@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\CourierCallTime\B2CplCourierCallTime;
+use Greensight\Logistics\Dto\Lists\CourierCallTime\DpdCourierCallTime;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Store\Dto\StoreContactDto;
 use Greensight\Store\Dto\StoreDto;
@@ -122,6 +123,7 @@ class MerchantStoreController extends Controller
     {
         return [
             DeliveryService::SERVICE_B2CPL => B2CplCourierCallTime::all(),
+            DeliveryService::SERVICE_DPD => DpdCourierCallTime::all(),
         ];
     }
 
@@ -153,6 +155,7 @@ class MerchantStoreController extends Controller
             'xml_id' => 'string|nullable',
             'active' => 'boolean',
             'name' => 'string|required',
+            'dpd_regular_num' => 'string|nullable',
         ], $addressValidate);
         $validatedData = $request->validate($validate);
 
