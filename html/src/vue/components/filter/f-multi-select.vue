@@ -12,7 +12,7 @@
             <div v-if="$slots.prepend" class="input-group-prepend">
                 <slot name="prepend"/>
             </div>
-            <div class="form-control" :class="{ 'input-error': error, 'h-100': items.length > 2 }" @click="toggleList">
+            <div class="form-control" :class="{ 'input-error': error, 'h-100': items.length >= 2 }" @click="toggleList">
                 <span v-for="item in items" :key="item.value" @click="e => {e.stopPropagation(); remove(item.value)}"
                       class="badge badge-secondary mr-2">
                     {{item.text}} <fa-icon icon="times"></fa-icon>
@@ -182,6 +182,8 @@
     }
     .h-100 {
         height: 100%;
+        max-height: 200px;
+        overflow-y: auto;
     }
     .small-btn{
         border-radius: 0.2rem;
