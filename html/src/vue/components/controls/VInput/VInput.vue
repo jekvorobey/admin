@@ -58,6 +58,7 @@ export default {
                 return validTags.indexOf(value) !== -1;
             },
         },
+        validation: { type: String, default: null },
     },
     data() {
         return {
@@ -74,7 +75,17 @@ export default {
             }
 
             return this.value;
-        }
+        },
+        input(e) {
+            if (!this.validation){
+                this.$emit('input', e.target.value);
+            }
+
+            if (this.validation === 'fio'){
+                let fioRegex = /[^А-яЁё A-Za-z]/g
+                this.$emit('input', e.target.value.replace(/[^А-яЁё A-Za-z]/g, ''))
+            }
+        },
     }
 };
 </script>

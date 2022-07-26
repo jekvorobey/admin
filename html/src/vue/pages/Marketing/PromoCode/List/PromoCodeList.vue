@@ -48,7 +48,7 @@
                 </div>
                 <f-input v-model="filter.id" class="col-lg-3 col-md-6">ID</f-input>
                 <f-input v-model="filter.name" class="col-lg-3 col-md-6">Название</f-input>
-                <f-input v-model="filter.code" class="col-lg-3 col-md-6">Код</f-input>
+                <f-input v-model="filter.code" type="number" class="col-lg-3 col-md-6">Код</f-input>
                 <div class="form-group col-lg-3 col-md-6">
                     <label for="owner">Реферальный партнер</label>
                     <div class="input-group input-group-sm">
