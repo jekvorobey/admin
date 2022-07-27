@@ -247,6 +247,7 @@ class CustomerDetailController extends Controller
             'customer.legal_info_company_name' => 'nullable',
             'customer.legal_info_company_address' => 'nullable',
             'customer.legal_info_inn' => 'nullable',
+            'customer.legal_info_kpp' => 'nullable',
             'customer.legal_info_payment_account' => 'nullable',
             'customer.legal_info_bik' => 'nullable',
             'customer.legal_info_bank' => 'nullable',
