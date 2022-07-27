@@ -25,7 +25,6 @@
         props: {
             value: {},
             type: { type: String, default: 'text' },
-            validation: { type: String, default: null },
         },
         computed: {
             id() {
@@ -37,15 +36,8 @@
         },
         methods: {
             input(e) {
-                if (!this.validation){
-                    this.$emit('input', e.target.value);
-                }
-
-                if (this.validation === 'fio'){
-                    let fioRegex = /[^А-яЁё A-Za-z]/g
-                    this.$emit('input', e.target.value.replace(/[^А-яЁё A-Za-z]/g, ''))
-                }
-            },
+                this.$emit('input', e.target.value);
+            }
         },
     }
 </script>
