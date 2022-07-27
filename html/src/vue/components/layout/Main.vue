@@ -50,27 +50,12 @@
         },
         methods: {
             goBack() {
-                if (this.backUrl) {
-                    if (document.referrer) {
-                        const referrer = new URL(document.referrer);
-                        window.location.href = (
-                            (referrer.host === location.host) &&
-                            (referrer.pathname === this.backUrl)
-                        )
-                            ? referrer
-                            : this.backUrl;
-                    } else {
-                        window.location.href = this.backUrl;
-                    }
-                } else {
-                    if (document.referrer) {
-                        const referrer = new URL(document.referrer);
-                        if (referrer.host === location.host) {
-                            window.location.href = referrer;
-                        }
+                if (document.referrer) {
+                    const referrer = new URL(document.referrer);
+                    if (referrer.host === location.host) {
+                        window.location.href = referrer;
                     }
                 }
-
             }
         },
         computed: {
