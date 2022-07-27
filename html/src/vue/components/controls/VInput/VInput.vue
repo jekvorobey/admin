@@ -38,6 +38,7 @@
 
 <script>
     import inputMixin from '../../../mixins/input-mixin';
+    import {fioClean} from '../../../utils/validations';
 
     const validTags = ['input', 'textarea'];
 
@@ -82,8 +83,8 @@ export default {
             }
 
             if (this.validation === 'fio'){
-                let fioRegex = /[^А-яЁё A-Za-z]/g
-                this.$emit('input', e.target.value.replace(/[^А-яЁё A-Za-z]/g, ''))
+                e.target.value = fioClean(e.target.value)
+                this.$emit('input', e.target.value)
             }
         },
     }
