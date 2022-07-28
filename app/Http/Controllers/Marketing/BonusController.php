@@ -70,11 +70,11 @@ class BonusController extends Controller
         ]);
 
         $data['start_date'] = $data['start_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
+            ? Carbon::createFromFormat('Y-m-d H:i', $data['start_date'])
             : null;
 
         $data['end_date'] = $data['end_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
+            ? Carbon::createFromFormat('Y-m-d H:i', $data['end_date'])
             : null;
 
         $builder = new BonusBuilder($data);

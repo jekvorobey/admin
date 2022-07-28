@@ -31,7 +31,7 @@
                 id="banner-date-from"
                 type="datetime"
                 input-class="form-control"
-                format="YYYY-MM-DD HH:mm:ss"
+                format="YYYY-MM-DD HH:mm"
                 value-type="format"
             />
         </b-form-group>
@@ -42,7 +42,7 @@
                 id="banner-date-to"
                 type="datetime"
                 input-class="form-control"
-                format="YYYY-MM-DD HH:mm:ss"
+                format="YYYY-MM-DD HH:mm"
                 value-type="format"
                 @change="onChangeDateTo"
             />
@@ -250,8 +250,7 @@
                 let dateTime = new Date(value);
                 if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
                     dateTime.setHours(23, 59, 59);
-                    let value = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-                    this.banner.date_to = value;
+                    this.banner.date_to = moment(dateTime).format("YYYY-MM-DD HH:mm");
                 }
             },
         },
