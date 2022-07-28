@@ -13,7 +13,7 @@
                         <f-input v-model="filter.email" class="col-sm-12 col-md-3 col-xl-2">
                             Email
                         </f-input>
-                        <f-input v-model="filter.phone" class="col-sm-12 col-md-3 col-xl-2">
+                        <f-input v-model="filter.phone" v-mask="telMask" class="col-sm-12 col-md-3 col-xl-2">
                             Телефон
                         </f-input>
                         <f-select v-model="filter.front" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
@@ -109,6 +109,8 @@ import UserAddModal from '../components/user-add-modal.vue';
 import modalMixin from '../../../mixins/modal.js';
 import FInput from '../../../components/filter/f-input.vue';
 import FSelect from '../../../components/filter/f-select.vue';
+
+import { telMask } from '../../../../scripts/mask.js';
 
 const cleanFilter = {
     id: '',
@@ -271,6 +273,9 @@ export default {
         },
     },
     computed: {
+        telMask() {
+            return telMask;
+        },
         roleOptions() {
             return Object.values(this.options.roles).map(role => ({
                 value: role.id,
