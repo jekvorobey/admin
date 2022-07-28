@@ -24,7 +24,7 @@
         inheritAttrs: false,
         props: {
             value: {},
-            type: { type: String, default: 'text' }
+            type: { type: String, default: 'text' },
         },
         computed: {
             id() {
@@ -37,7 +37,7 @@
         methods: {
             input(e) {
                 this.$emit('input', e.target.value);
-            },
+            }
         },
     }
 </script>
