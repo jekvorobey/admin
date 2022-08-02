@@ -53,8 +53,8 @@ class BonusController extends Controller
 
         $data = $request->validate([
             'name' => 'string|required',
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
+            'start_date' => 'string|nullable',
+            'end_date' => 'string|nullable',
             'status' => Rule::in(BonusDto::availableStatuses()),
             'type' => Rule::in(BonusDto::availableTypes()),
             'value' => 'numeric|gte:0|required',
