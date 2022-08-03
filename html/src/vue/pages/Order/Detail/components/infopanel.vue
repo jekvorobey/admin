@@ -23,7 +23,12 @@
                         </b-dropdown-item-button>
                         <b-dropdown-item-button v-if="canMarkAsPaid"
                                                 @click="markAsPaid()">
-                            Заказ оплачен
+                            Заказ оплачен (в рассрочку)
+                        </b-dropdown-item-button>
+
+                        <b-dropdown-item-button v-if="canMarkAsPaidForce"
+                                                @click="markAsPaidForce()">
+                            Сделать оплаченным
                         </b-dropdown-item-button>
 <!--                      <b-dropdown-item-button>-->
 <!--                        Отправить уведомление клиенту-->
@@ -248,11 +253,11 @@ export default {
                 Services.hideLoader();
             });
         },
-        payOrder() {
+        markAsPaidForce() {
             let errorMessage = 'Ошибка при оплате заказа';
 
             Services.showLoader();
-            Services.net().put(this.getRoute('orders.pay', {id: this.order.id})).then(data => {
+            Services.net().put(this.getRoute('orders.markAsPaidForce', {id: this.order.id})).then(data => {
                 if (data.order) {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);
@@ -346,6 +351,9 @@ export default {
         },
         canMarkAsPaid() {
             return this.order.canMarkAsPaid;
+        },
+        canMarkAsPaidForce() {
+            return this.order.canMarkAsPaidForce;
         },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;
