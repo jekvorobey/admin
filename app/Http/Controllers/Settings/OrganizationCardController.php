@@ -42,7 +42,7 @@ class OrganizationCardController extends Controller
         'general_accountant_last_name' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_LAST_NAME,
         'general_accountant_first_name' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_FIRST_NAME,
         'general_accountant_middle_name' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_MIDDLE_NAME,
-        'general_accountant_phone' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_EMAIL,
+        'general_accountant_phone' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_PHONE,
         'general_accountant_email' => OptionDto::KEY_ORGANIZATION_CARD_GENERAL_ACCOUNTANT_EMAIL,
 
         'contact_centre_phone' => OptionDto::KEY_ORGANIZATION_CARD_CONTACT_CENTRE_PHONE,
