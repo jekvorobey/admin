@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
+use Greensight\CommonMsa\Services\FileService\FileService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -24,6 +25,7 @@ use Greensight\Oms\Dto\Payment\PaymentCancelReason;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
 use Greensight\Store\Dto\Package\PackageType;
 use Greensight\Store\Services\PackageService\PackageService;
@@ -101,8 +103,12 @@ class OrderDetailController extends Controller
      * Отметить заказ как оплаченный (для рассрочки и по счету-оферте)
      * @throws Exception
      */
-    public function markAsPaid(int $id, Request $request, OrderService $orderService): JsonResponse
-    {
+    public function markAsPaid(
+        int $id,
+        Request $request,
+        OrderService $orderService,
+        ShipmentService $shipmentService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
@@ -113,12 +119,17 @@ class OrderDetailController extends Controller
         $order = new OrderDto();
         $order->payment_status = PaymentStatus::PAID;
         $orderService->updateOrder($id, $order);
+
+        $order = $this->getOrder($id);
         if ($data['payment_method'] === PaymentMethod::BANK_TRANSFER_FOR_LEGAL) {
             $orderService->generateOrderUPD($id);
+            foreach ($order->shipments as $shipment) {
+                $shipmentService->generateShipmentUPD($shipment->id);
+            }
         }
 
         return response()->json([
-            'order' => $this->getOrder($id),
+            'order' => $order,
         ]);
     }
 
@@ -189,27 +200,28 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Получить документ "Акт приема-передачи по отправлению"
+     * Получить документ "Счет оферта"
      */
     public function invoiceOffer(int $orderId, OrderService $orderService): StreamedResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
-        $invoiceOffer = $orderService->orderDocuments($orderId, OrderDocumentDto::INVOICE_OFFER_TYPE)->first();
+        $invoiceOffer = $orderService->orderInvoiceOffer($orderId);
 
         return $this->getDocumentResponse($invoiceOffer);
     }
 
     /**
-     * Получить документ "Акт приема-передачи по отправлению"
+     * Получить документ "Универсальный передаточный документ"
      */
-    public function upd(int $orderId, OrderService $orderService): StreamedResponse
+    public function upd(int $orderId, OrderService $orderService, FileService $fileService): StreamedResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
-        $invoiceOffer = $orderService->orderDocuments($orderId, OrderDocumentDto::UPD_TYPE)->first();
+        $upd = $orderService->orderDocuments($orderId, OrderDocumentDto::UPD_TYPE)->first();
+        $file = $fileService->getFiles($upd->file_id)->first();
 
-        return $this->getDocumentResponse($invoiceOffer);
+        return $this->getDocumentResponse($file);
     }
 
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse

@@ -323,6 +323,9 @@ export default {
             if (shipment.status && shipment.status.id >= this.shipmentStatuses.assembled.id) {
                 documents.push({value: 'acceptanceAct', text: 'Акт приема-передачи'});
             }
+            if (this.isBankTransferPayment && this.isPaid) {
+                documents.push({value: 'upd', text: 'Универсальный передаточный документ'});
+            }
 
             return documents;
         },
@@ -342,6 +345,12 @@ export default {
             set(value) {
                 this.$emit('update:model', value)
             },
+        },
+        isBankTransferPayment() {
+            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer;
+        },
+        isPaid() {
+            return this.order.payment_status.id === this.paymentStatuses.paid.id;
         },
     }
 }

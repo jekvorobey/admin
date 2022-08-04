@@ -1455,7 +1455,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "0a71679fb74c375f5c40b78b85d1a5346a2d4205"
+                "reference": "2efb3e9aa30fc6a67ce4d4169031bf0d5aba636b"
             },
             "require": {
                 "ext-json": "*",
@@ -1490,7 +1490,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-07-20T11:24:22+00:00"
+            "time": "2022-08-04T11:51:29+00:00"
         },
         {
             "name": "ibt/pim-lib",

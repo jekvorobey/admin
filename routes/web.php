@@ -400,6 +400,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
                             Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
                             Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
+                            Route::get('upd', 'TabShipmentsController@shipmentUpd')->name('orders.detail.shipments.documents.upd');
                         });
 
                         Route::prefix('/shipment-packages')->group(function () {

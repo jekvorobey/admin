@@ -139,6 +139,17 @@ class TabShipmentsController extends OrderDetailController
         return $this->getDocumentResponse($shipmentService->shipmentInventory($shipmentId));
     }
 
+    /**
+     * Получить документ "Универсальный передаточный документ"
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    public function shipmentUpd(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        return $this->getDocumentResponse($shipmentService->shipmentUpd($shipmentId));
+    }
+
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
     {
         return response()->streamDownload(function () use ($documentDto) {
