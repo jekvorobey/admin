@@ -50,8 +50,8 @@ class BonusController extends Controller
 
         $data = $request->validate([
             'name' => 'string|required',
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
+            'start_date' => 'string|nullable',
+            'end_date' => 'string|nullable',
             'status' => Rule::in(BonusDto::availableStatuses()),
             'type' => Rule::in(BonusDto::availableTypes()),
             'value' => 'numeric|gte:0|required',
@@ -67,11 +67,11 @@ class BonusController extends Controller
         ]);
 
         $data['start_date'] = $data['start_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
+            ? Carbon::createFromFormat('Y-m-d H:i', $data['start_date'])
             : null;
 
         $data['end_date'] = $data['end_date']
-            ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
+            ? Carbon::createFromFormat('Y-m-d H:i', $data['end_date'])
             : null;
 
         $builder = new BonusBuilder($data);

@@ -51,7 +51,7 @@
                 </select>
             </td>
             <th>Дата получения статуса</th>
-            <td>{{ merchant.status_at }}</td>
+            <td>{{ datetimePrint(merchant.status_at) }}</td>
         </tr>
         <tr>
             <th>Рейтинг</th>

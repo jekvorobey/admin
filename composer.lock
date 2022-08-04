@@ -1409,7 +1409,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-common-ms-code.git",
-                "reference": "69d1410c426fa2fd540c5bc352e2a9674dc71fad"
+                "reference": "978627b11fedaab40728a4b96c3cb58b9c19b324"
             },
             "require": {
                 "ext-json": "*",
@@ -1460,7 +1460,7 @@
                 }
             ],
             "description": "iBT common code for all microservices",
-            "time": "2022-07-08T10:33:19+00:00"
+            "time": "2022-07-13T06:46:11+00:00"
         },
         {
             "name": "ibt/logistics-lib",
@@ -1511,7 +1511,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-marketing-lib",
-                "reference": "f7891c621ad790c6f0702723a6c7256ae986e1be"
+                "reference": "5568bd60f5e9537b6498be88f0eb3c348335dee0"
             },
             "require": {
                 "ext-json": "*",
@@ -1546,7 +1546,7 @@
                 }
             ],
             "description": "iBT marketing client",
-            "time": "2022-07-08T10:33:26+00:00"
+            "time": "2022-08-04T06:34:49+00:00"
         },
         {
             "name": "ibt/merchant-management-lib",
@@ -1554,7 +1554,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-merchant-management-lib",
-                "reference": "d635fb3a10d178be026e0150a22c1cd15c831cfa"
+                "reference": "84631faf108785f739ddbe173254dfffd5a21d65"
             },
             "require": {
                 "ext-json": "*",
@@ -1578,7 +1578,7 @@
                 }
             ],
             "description": "iBT Merchant Management service client",
-            "time": "2022-07-08T10:33:28+00:00"
+            "time": "2022-07-13T06:46:16+00:00"
         },
         {
             "name": "ibt/message-lib",

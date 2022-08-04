@@ -36,6 +36,8 @@ use Illuminate\Http\Request;
 
 class CustomerDetailController extends Controller
 {
+    private const DELAY_BEFORE_SETTING_PASSWORD_LINK_RESEND = 1800;
+
     /**
      * @return mixed
      */
@@ -105,6 +107,11 @@ class CustomerDetailController extends Controller
             $avatar = $fileService->getFiles([$customer->avatar])->first();
         }
 
+        if ($user->registered_by_user_id) {
+            /** @var UserDto $registeredBy */
+            $registeredBy = $userService->users((new RestQuery())->setFilter('id', $user->registered_by_user_id))->first();
+        }
+
         // Счетчик непрочитанных сообщений от пользователя //
         $unreadMsgCount = $communicationService->unreadCount(
             [$user->id],
@@ -133,6 +140,8 @@ class CustomerDetailController extends Controller
                 'referral_level_id' => $customer->referral_level_id,
                 'status' => $customer->status,
                 'comment_status' => $customer->comment_status,
+                'has_password' => $user->has_password,
+                'setting_password_link_will_be_available_in_seconds' => $this->settingPasswordLinkWillBeAvailableInSeconds($user),
                 'last_name' => $user->last_name,
                 'first_name' => $user->first_name,
                 'middle_name' => $user->middle_name,
@@ -180,6 +189,8 @@ class CustomerDetailController extends Controller
                 'comment_internal' => $customer->comment_internal,
                 'manager_id' => $customer->manager_id,
                 'commission_route' => $commission_route,
+                'registration_type' => $user->registration_type ? Front::frontById($user->registration_type)->name : null,
+                'registered_by' => $registeredBy ?? null,
             ],
             'order' => [
                 'count' => $orders->count(),
@@ -193,6 +204,20 @@ class CustomerDetailController extends Controller
             ],
             'unreadMsgCount' => $unreadMsgCount,
         ]);
+    }
+
+    private function settingPasswordLinkWillBeAvailableInSeconds(UserDto $user): ?int
+    {
+        if ($user->has_password) {
+            return null;
+        }
+        if (!$user->setting_password_link_sent_at) {
+            return 0;
+        }
+
+        $diffInSeconds = now()->diffInSeconds($user->setting_password_link_sent_at);
+
+        return max(0, self::DELAY_BEFORE_SETTING_PASSWORD_LINK_RESEND - $diffInSeconds);
     }
 
     public function save(
@@ -373,6 +398,27 @@ class CustomerDetailController extends Controller
         return response()->json([
             'status' => 'ok',
             'url' => $url,
+        ]);
+    }
+
+    public function sendSettingPasswordLink(
+        int $id,
+        UserService $userService,
+        CustomerService $customerService
+    ): JsonResponse {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
+
+        /** @var CustomerDto $customer */
+        $customer = $customerService->customers((new RestQuery())->setFilter('id', $id))->first();
+        if (!$customer) {
+            throw new NotFoundHttpException();
+        }
+
+        $userService->sendSettingPasswordLink($customer->user_id);
+
+        return response()->json([
+            'status' => 'ok',
+            'setting_password_link_will_be_available_in_seconds' => self::DELAY_BEFORE_SETTING_PASSWORD_LINK_RESEND,
         ]);
     }
 }

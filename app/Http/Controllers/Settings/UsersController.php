@@ -115,7 +115,8 @@ class UsersController extends Controller
         UserSaveRequest $request,
         UserService $userService,
         CustomerService $customerService,
-        OperatorService $operatorService
+        OperatorService $operatorService,
+        RequestInitiator $authUser
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
 
@@ -125,6 +126,8 @@ class UsersController extends Controller
             $userId = $request->id;
             $ok = $userService->update($newUser);
         } else {
+            $newUser->registered_by_user_id = $authUser->userId();
+            $newUser->registration_type = Front::FRONT_ADMIN;
             $ok = $userId = $userService->create($newUser);
         }
         $userService->addRoles($userId, $request->roles);

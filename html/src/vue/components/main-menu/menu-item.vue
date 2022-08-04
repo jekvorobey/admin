@@ -85,6 +85,7 @@
         color: #6c0000 !important;
     }
     .menu-item {
+        background: #f8f9fa;
         border-bottom: 1px solid #DFDFDF;
         min-height: 48px;
         cursor: pointer;

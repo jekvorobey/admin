@@ -500,7 +500,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', [OrderDetailController::class, 'detail'])->name('orders.detail');
             Route::put('changeStatus', [OrderDetailController::class, 'changeStatus'])->name('orders.changeStatus');
             Route::put('markAsPaid', [OrderDetailController::class, 'markAsPaid'])->name('orders.markAsPaid');
-            Route::put('pay', [OrderDetailController::class, 'pay'])->name('orders.pay');
+            Route::put('markAsPaidForce', [OrderDetailController::class, 'markAsPaidForce'])->name('orders.markAsPaidForce');
             Route::put('capturePayment', [OrderDetailController::class, 'capturePayment'])->name('orders.capturePayment');
             Route::put('cancel', [OrderDetailController::class, 'cancel'])->name('orders.cancel');
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
@@ -1020,6 +1020,7 @@ Route::middleware('auth')->group(function () {
                 Route::put('portfolios', [CustomerDetailController::class, 'putPortfolios'])->name('customers.detail.portfolio.save');
                 Route::post('dial', [CustomerDetailController::class, 'dial'])->name('customers.detail.dial');
                 Route::post('auth', [CustomerDetailController::class, 'auth'])->name('customers.detail.auth');
+                Route::put('sendSettingPasswordLink', 'CustomerDetailController@sendSettingPasswordLink')->name('customers.detail.sendSettingPasswordLink');
 
                 Route::namespace('Detail')->group(function () {
                     Route::prefix('main')->group(function () {

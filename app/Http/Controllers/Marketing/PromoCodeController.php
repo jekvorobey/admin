@@ -218,8 +218,8 @@ class PromoCodeController extends Controller
             'code' => 'string|required',
             'counter' => 'numeric|nullable',
             'type_of_limit' => 'string|nullable|required_with:counter',
-            'start_date' => 'date|nullable',
-            'end_date' => 'date|nullable',
+            'start_date' => 'string|nullable',
+            'end_date' => 'string|nullable',
             'status' => 'numeric|required',
             'type' => 'numeric|required',
             'discount_id' => 'numeric|nullable',
@@ -237,11 +237,11 @@ class PromoCodeController extends Controller
         $data['creator_id'] = $requestInitiator->userId();
         try {
             $data['start_date'] = $data['start_date']
-                ? Carbon::createFromFormat('Y-m-d', $data['start_date'])
+                ? Carbon::createFromFormat('Y-m-d H:i', $data['start_date'])
                 : null;
 
             $data['end_date'] = $data['end_date']
-                ? Carbon::createFromFormat('Y-m-d', $data['end_date'])
+                ? Carbon::createFromFormat('Y-m-d H:i', $data['end_date'])
                 : null;
         } catch (Throwable $ex) {
             report($ex);

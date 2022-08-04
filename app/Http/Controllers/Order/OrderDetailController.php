@@ -113,12 +113,15 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Вручную подтвердить платеж
+     * Отметить заказ как оплаченный и отвязать от Юкассы
      * @throws Exception
      */
-    public function capturePayment(int $id, OrderService $orderService): JsonResponse
+    public function markAsPaidForce(int $id, OrderService $orderService): JsonResponse
     {
-        $orderService->capturePayment($id);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+
+        $orderService->payOrder($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -126,13 +129,12 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Вручную оплатить заказ
-     * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
+     * Вручную подтвердить платеж
      * @throws Exception
      */
-    public function pay(int $id, OrderService $orderService): JsonResponse
+    public function capturePayment(int $id, OrderService $orderService): JsonResponse
     {
-        $orderService->payOrder($id);
+        $orderService->capturePayment($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -463,6 +465,11 @@ class OrderDetailController extends Controller
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+
+        $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK])
+            && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING])
+            && !$order->is_canceled
+            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void

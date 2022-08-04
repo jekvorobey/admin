@@ -31,8 +31,8 @@ class TabPreferenceController extends Controller
         BrandService $brandService,
         CategoryService $categoryService,
         CustomerService $customerService,
-        ProductService $productService,
         FavoriteService $favoriteService,
+        ProductService $productService,
         Request $request
     ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
