@@ -109,10 +109,9 @@ class TabOrderController extends Controller
     }
 
     /**
-     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
-    public function loadStores(int $merchantId): Collection
+    protected function loadStores(int $merchantId): Collection
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
@@ -317,7 +316,7 @@ class TabOrderController extends Controller
         $users = $users->all();
 
         return $shipments->map(function (ShipmentDto $shipment) use ($orders, $customers, $users, $stores) {
-            $delivery = $shipment->delivery();
+            $delivery = $shipment->delivery;
 
             $data['order'] = [
                 'id' => $delivery->order_id,

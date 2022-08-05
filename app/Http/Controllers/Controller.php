@@ -130,11 +130,13 @@ class Controller extends BaseController
         return $merchants;
     }
 
-    protected function canView(int $block): bool
+    protected function canView(int|array $blocks): bool
     {
-        $state = resolve(RequestInitiator::class)->canView($block);
-        if ($state === false) {
-            abort(403, 'Недостаточно прав');
+        foreach ((array) $blocks as $block) {
+            $state = resolve(RequestInitiator::class)->canView($block);
+            if ($state === false) {
+                abort(403, 'Недостаточно прав');
+            }
         }
 
         return true;
@@ -154,7 +156,7 @@ class Controller extends BaseController
      * Проверить есть ли роль/роли у пользователя
      * @param int|int[] $roleId
      */
-    protected function hasRole($roleId): bool
+    protected function hasRole(array|int $roleId): bool
     {
         $state = resolve(RequestInitiator::class)->hasRole($roleId);
         if ($state === false) {

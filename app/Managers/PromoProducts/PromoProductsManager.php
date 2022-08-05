@@ -8,6 +8,7 @@ use Greensight\Customer\Services\ReferralService\Dto\PutPromotionDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -17,6 +18,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PromoProductsManager
 {
+    /**
+     * @throws PimException
+     */
     public function fetch(?int $merchantId = null): array
     {
         /** @var ReferralService $referralService */
@@ -71,6 +75,9 @@ class PromoProductsManager
         return $result;
     }
 
+    /**
+     * @throws PimException
+     */
     public function save(?int $merchantId, array $data): void
     {
         /** @var ReferralService $referralService */
@@ -78,9 +85,7 @@ class PromoProductsManager
         /** @var ProductService $productService */
         $productService = resolve(ProductService::class);
 
-        $product = $productService->newQuery()
-            ->setFilter('id', $data['product_id'])
-            ->products();
+        $product = $productService->products((new RestQuery())->setFilter('id', $data['product_id']));
         if ($product->isEmpty()) {
             throw new BadRequestHttpException('Ошибка: товар не найден');
         }

@@ -41,11 +41,30 @@
         <div class="row">
             <div class="col-3 mb-3 mt-3">
                 <label for="start_date">Дата старта</label>
-                <b-form-input id="start_date" v-model="promoCode.start_date" type="date"></b-form-input>
+                <!--<b-form-input id="start_date" v-model="promoCode.start_date" type="date"></b-form-input>-->
+                <date-picker
+                        class="w-100"
+                        id="start_date"
+                        type="datetime"
+                        v-model="promoCode.start_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                />
             </div>
             <div class="col-3 mt-3">
                 <label for="end_date">Дата окончания</label>
-                <b-form-input id="end_date" v-model="promoCode.end_date" type="date"></b-form-input>
+                <!--<b-form-input id="end_date" v-model="promoCode.end_date" type="date"></b-form-input>-->
+                <date-picker
+                        class="w-100"
+                        id="end_date"
+                        type="datetime"
+                        v-model="promoCode.end_date"
+                        format="YYYY-MM-DD HH:mm"
+                        value-type="format"
+                        input-class="form-control form-control-sm"
+                        @change="onChangeDateTo"
+                />
             </div>
         </div>
         <div class="row">
@@ -145,6 +164,9 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import VSelect2 from '../../../../components/controls/VSelect2/v-select2.vue';
+    import DatePicker from 'vue2-datepicker';
+    import 'vue2-datepicker/index.css';
+    import 'vue2-datepicker/locale/ru.js';
 
     moment.locale('ru');
 
@@ -154,6 +176,7 @@
             VSelect,
             VSelect2,
             Services,
+            DatePicker,
         },
         props: {
             iTypes: Object,
@@ -300,6 +323,13 @@
                             else this.promoCodeCheckProgress = ''
                         }),
                     2000);
+            },
+            onChangeDateTo(value) {
+                let dateTime = new Date(value);
+                if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
+                    dateTime.setHours(23, 59, 59);
+                    this.promoCode.end_date = moment(dateTime).format("YYYY-MM-DD HH:mm");
+                }
             },
         },
         computed: {

@@ -79,7 +79,7 @@ class CargoPage extends AbstractPage
             foreach (['created_at', 'updated_at'] as $date) {
                 $cargo[$date] = (new Carbon($date))->format('H:i:s Y-m-d');
             }
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             //
         }
 
@@ -103,7 +103,6 @@ class CargoPage extends AbstractPage
 
     /**
      * Информация о цене, складе, кол-ве товара и кол-ве единиц товара отправления
-     * @return array
      */
     public function priceQtyInfo(CargoDto $cargo): array
     {

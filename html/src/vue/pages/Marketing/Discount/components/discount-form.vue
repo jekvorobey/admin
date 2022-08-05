@@ -234,7 +234,7 @@
                     format="YYYY-MM-DD HH:mm"
                     value-type="format"
                     :state="checkEndDate"
-                    @change="initErrorEndDate"
+                    @change="onChangeDateTo"
                     input-class="form-control form-control-sm"
                 />
                 <b-form-invalid-feedback id="end_date-feedback">
@@ -714,12 +714,17 @@
             initErrorValue() {
                 this.discountErrors.value = null;
             },
-            initErrorEndDate() {
-                this.discountErrors.end_date = null;
-            },
             initErrorProductQtyLimit() {
                 this.discountErrors.product_qty_limit = null;
-            }
+            },
+            onChangeDateTo(value) {
+                this.discountErrors.end_date = null;
+                let dateTime = new Date(value);
+                if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
+                    dateTime.setHours(23, 59, 59);
+                    this.discount.end_date = moment(dateTime).format("YYYY-MM-DD HH:mm");
+                }
+            },
         },
         computed: {
             discountSizeTypes() {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Content\Menu;
 
 use App\Http\Controllers\Controller;
+use Cms\Core\CmsException;
 use Cms\Services\MenuService\MenuService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
@@ -10,6 +11,9 @@ use Illuminate\Http\Request;
 
 class MenuListController extends Controller
 {
+    /**
+     * @throws CmsException
+     */
     public function index(Request $request, MenuService $menuService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);

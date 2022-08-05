@@ -132,10 +132,10 @@ class BannerListController extends Controller
 
     /**
      * @param BannerService $bannerService ,
-     * @return BannerDto[]|Collection
+     * @return Collection|BannerDto[]
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, BannerService $bannerService, FileService $fileService)
+    protected function loadItems(RestQuery $query, BannerService $bannerService, FileService $fileService): Collection
     {
         $banners = $bannerService->banners($query);
         $imagesIds = $banners->pluck('desktop_image_id')->all();
@@ -151,10 +151,10 @@ class BannerListController extends Controller
     }
 
     /**
-     * @return BannerTypeDto[]|Collection
+     * @return Collection|BannerTypeDto[]
      * @throws CmsException
      */
-    protected function loadTypes(BannerTypeService $bannerTypeService)
+    protected function loadTypes(BannerTypeService $bannerTypeService): Collection
     {
         return $bannerTypeService->bannerTypes($bannerTypeService->newQuery());
     }

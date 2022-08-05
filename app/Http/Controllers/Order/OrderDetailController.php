@@ -19,6 +19,7 @@ use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Dto\Document\DocumentDto;
 use Greensight\Oms\Dto\Order\OrderDocumentDto;
+use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
@@ -134,12 +135,15 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Вручную подтвердить платеж
+     * Отметить заказ как оплаченный и отвязать от Юкассы
      * @throws Exception
      */
-    public function capturePayment(int $id, OrderService $orderService): JsonResponse
+    public function markAsPaidForce(int $id, OrderService $orderService): JsonResponse
     {
-        $orderService->capturePayment($id);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+
+        $orderService->payOrder($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -147,13 +151,12 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Вручную оплатить заказ
-     * Примечание: оплата по заказам автоматически должна поступать от платежной системы!
+     * Вручную подтвердить платеж
      * @throws Exception
      */
-    public function pay(int $id, OrderService $orderService): JsonResponse
+    public function capturePayment(int $id, OrderService $orderService): JsonResponse
     {
-        $orderService->payOrder($id);
+        $orderService->capturePayment($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
@@ -516,6 +519,11 @@ class OrderDetailController extends Controller
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+
+        $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK])
+            && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING])
+            && !$order->is_canceled
+            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
@@ -530,9 +538,7 @@ class OrderDetailController extends Controller
                 ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
 
-            $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use (
-                $productsByOffers
-            ) {
+            $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use ($productsByOffers) {
                 $product = $basketItemDto->product;
                 $productPim = $productsByOffers->has($basketItemDto->offer_id) ?
                     $productsByOffers[$basketItemDto->offer_id]->product : [];
@@ -583,6 +589,7 @@ class OrderDetailController extends Controller
             ],
         ]);
         if ($order->history->isNotEmpty()) {
+            /** @var HistoryDto $historyDto */
             foreach ($order->history as $historyDto) {
                 $data = $historyDto->data;
                 if (mb_strtolower($historyDto->entity_type) == OrderDto::entity() && isset($data['status'])) {

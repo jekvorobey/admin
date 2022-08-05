@@ -8,11 +8,13 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
 use Greensight\Logistics\Dto\Lists\DeliveryService as DeliveryServiceDto;
+use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Services\BasketService\BasketService;
 use Greensight\Store\Services\StockService\StockService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferSaleStatus;
@@ -163,8 +165,9 @@ class OrderCreateController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
 
+        $data = $request->all();
         /** @var \Illuminate\Validation\Validator $validator */
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($data, [
             'customer_id' => 'required|integer',
             'items' => 'required|array',
             'delivery_service' => ['required', Rule::in(array_keys(DeliveryServiceDto::allServices()))],
@@ -177,10 +180,10 @@ class OrderCreateController extends Controller
             throw new BadRequestHttpException($validator->errors()->first());
         }
 
-        $basket = $basketService->getByUser($data['user_id'], 1, true);
+        $basket = $basketService->getByCustomer($data['customer_id'], 1, true);
 
         foreach ($data['items'] as $item) {
-            $basketService->setItem($basket->id, $item['offer_id']);
+            $basketService->setItem($basket->id, $item['offer_id'], new BasketItemDto($item));
         }
 
 //        $basketService->setItem();

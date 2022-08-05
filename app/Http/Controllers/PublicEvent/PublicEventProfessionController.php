@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicEvent;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\PublicEvent\PublicEventProfessionDto;
@@ -13,6 +14,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PublicEventProfessionController extends Controller
 {
+    /**
+     * @throws GuzzleException
+     */
     public function list(
         PublicEventProfessionService $publicEventPublicEventProfessionService,
         Client $client
@@ -32,6 +36,9 @@ class PublicEventProfessionController extends Controller
         ]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function names(Client $client): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
@@ -110,6 +117,9 @@ class PublicEventProfessionController extends Controller
         return response()->json();
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function getByEvent(
         int $event_id,
         PublicEventProfessionService $publicEventPublicEventProfessionService,

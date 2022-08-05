@@ -31,7 +31,7 @@
                 id="banner-date-from"
                 type="datetime"
                 input-class="form-control"
-                format="YYYY-MM-DD HH:mm:ss"
+                format="YYYY-MM-DD HH:mm"
                 value-type="format"
             />
         </b-form-group>
@@ -42,7 +42,7 @@
                 id="banner-date-to"
                 type="datetime"
                 input-class="form-control"
-                format="YYYY-MM-DD HH:mm:ss"
+                format="YYYY-MM-DD HH:mm"
                 value-type="format"
                 @change="onChangeDateTo"
             />
@@ -81,12 +81,26 @@
             </div>
         </b-form-group>
 
+        <b-form-group v-if="showControlsColorFields" label="Цвет управления и кнопок" label-for="banner-controls-color">
+            <div class="d-flex align-items-center">
+                <div>
+                    <vue-swatches v-model="banner.controls_color" id="banner-controls-color" show-fallback fallback-input-type="color" />
+                </div>
+                <div class="ml-2">
+                    <b-button size="sm" @click="banner.controls_color = null">Сбросить</b-button>
+                </div>
+            </div>
+            <div>
+                HEX: {{ banner.controls_color ? banner.controls_color : 'Не выбран' }}
+            </div>
+        </b-form-group>
+
         <b-form-group v-if="showPathTemplatesField" label="Страницы" label-for="banner-path-templates">
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates" />
         </b-form-group>
 
         <b-form-group v-if="bannerIsCatalogTop" label="Дополнительный текст" id="additional-text" label-for="banner-additional-text">
-            <b-form-textarea v-model="banner.additional_text" id="banner-additional-text" />
+            <ckeditor v-model="banner.additional_text" :editor="editor" :config="editorSettings" />
         </b-form-group>
 
         <b-form-group label="Сортировка" label-for="banner-sort">
@@ -132,14 +146,13 @@
         />
 
         <b-form-group
-                label="Ссылка*"
+                label="Ссылка"
                 label-for="banner-group-url"
         >
             <b-form-input
                     id="banner-group-url"
                     v-model="banner.url"
                     type="text"
-                    required
                     placeholder="Введите ссылку"
             />
         </b-form-group>
@@ -148,6 +161,8 @@
 
 <script>
     import {mapActions} from 'vuex';
+    import VueCkeditor from '../../plugins/VueCustomCkeditor';
+    import CustomEditor from 'ckeditor5-custom-build';
     import FileInput from '../controls/FileInput/FileInput.vue';
 
     import DatePicker from 'vue2-datepicker';
@@ -170,7 +185,8 @@
         components: {
             FileInput,
             DatePicker,
-            VueSwatches
+            VueSwatches,
+            VueCkeditor
         },
 
         props: {
@@ -190,6 +206,24 @@
                 bannerButtonLocations: this.iBannerButtonLocations,
                 bannerImages: this.iBannerImages,
                 hasButton: this.initHasButton(),
+
+                editor: CustomEditor,
+                editorSettings: {
+                    mediaEmbed: {
+                        previewsInData: true,
+                    },
+                    simpleFileUpload: {
+                        fileTypes: [
+                            '.pdf',
+                            '.doc',
+                            '.docx',
+                            '.xls',
+                            '.xlsx'
+                        ],
+                        destination: 'landing',
+                        url: this.route('uploadFile'),
+                    },
+                }
             };
         },
 
@@ -221,6 +255,7 @@
                     date_from: source.date_from ? source.date_from : null,
                     date_to: source.date_to ? source.date_to : null,
                     color: source.color ? source.color : null,
+                    controls_color: source.controls_color ? source.controls_color : null,
                     path_templates: source.path_templates ? source.path_templates : null,
                     sort: source.sort ? source.sort : null,
                     additional_text: source.additional_text ? source.additional_text : null,
@@ -250,8 +285,7 @@
                 let dateTime = new Date(value);
                 if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
                     dateTime.setHours(23, 59, 59);
-                    let value = moment(dateTime).format("YYYY-MM-DD HH:mm:ss");
-                    this.banner.date_to = value;
+                    this.banner.date_to = moment(dateTime).format("YYYY-MM-DD HH:mm");
                 }
             },
         },
@@ -293,6 +327,20 @@
 
             showColorField() {
                 if (this.banner && this.banner.type_id === bannerType.mainTop) {
+                    return true;
+                }
+
+                return false;
+            },
+
+            showControlsColorFields() {
+                if (
+                    this.banner &&
+                    (
+                        this.banner.type_id === bannerType.mainTop ||
+                        this.banner.type_id === bannerType.catalogTop
+                    )
+                ) {
                     return true;
                 }
 

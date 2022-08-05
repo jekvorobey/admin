@@ -20,6 +20,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabCommissionController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function load(int $id): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -35,6 +38,9 @@ class TabCommissionController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function saveCommission(int $id, MerchantService $merchantService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -98,6 +104,9 @@ class TabCommissionController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function removeCommission(int $id, MerchantService $merchantService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);

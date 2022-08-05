@@ -10,6 +10,7 @@ use Greensight\Customer\Services\ReferralService\ReferralService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Illuminate\Http\JsonResponse;
+use Pim\Core\PimException;
 use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
@@ -20,6 +21,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabPromoPageController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function load($id): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
@@ -29,6 +33,9 @@ class TabPromoPageController extends Controller
         ]));
     }
 
+    /**
+     * @throws PimException
+     */
     public function add($id, ProductService $productService, ReferralService $referralService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
@@ -49,6 +56,9 @@ class TabPromoPageController extends Controller
         return response()->json($this->loadPromPageProducts($id));
     }
 
+    /**
+     * @throws PimException
+     */
     public function delete($id, ReferralService $referralService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
@@ -61,7 +71,10 @@ class TabPromoPageController extends Controller
         return response()->json($this->loadPromPageProducts($id));
     }
 
-    protected function loadPromPageProducts($id): array
+    /**
+     * @throws PimException
+     */
+    protected function loadPromPageProducts(int $id): array
     {
         /** @var ReferralService $referralService */
         $referralService = resolve(ReferralService::class);
@@ -112,15 +125,15 @@ class TabPromoPageController extends Controller
                         'id' => $promoProduct->product_id,
                         'image' => $allImages->get($promoProduct->product_id),
                         'name' => $productDto->name,
-                        'category' => $productDto->category(),
-                        'brand' => $productDto->brand(),
+                        'category' => $productDto->category,
+                        'brand' => $productDto->brand,
                         'price' => $price,
                         'status' => '',
                         'created_at' => $promoProduct->created_at,
                     ];
 
-                    $brands->put($productDto->brand()->id, $productDto->brand()->toArray());
-                    $categories->put($productDto->category()->id, $productDto->category()->toArray());
+                    $brands->put($productDto->brand->id, $productDto->brand->toArray());
+                    $categories->put($productDto->category->id, $productDto->category->toArray());
                 }
             }
         }

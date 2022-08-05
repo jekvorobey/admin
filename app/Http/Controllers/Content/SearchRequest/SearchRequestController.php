@@ -8,10 +8,9 @@ use Cms\Dto\SearchRequestDto;
 use Cms\Services\SearchRequestService\SearchRequestService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class SearchRequestController extends Controller
 {
@@ -39,7 +38,7 @@ class SearchRequestController extends Controller
     /**
      * Добавить новый продуктовый ярлык
      * @throws CmsException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function create(SearchRequestService $searchRequestService): JsonResponse
     {
@@ -54,7 +53,7 @@ class SearchRequestController extends Controller
 
         try {
             $newSearchRequest = $searchRequestService->create($searchRequest);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -71,11 +70,10 @@ class SearchRequestController extends Controller
 
     /**
      * Редактировать продуктовый ярлык
-     * @return Response|JsonResponse
      * @throws CmsException
-     * @throws \Throwable
+     * @throws Throwable
      */
-    public function update(SearchRequestService $searchRequestService)
+    public function update(SearchRequestService $searchRequestService): Response|JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -90,7 +88,7 @@ class SearchRequestController extends Controller
 
         try {
             $searchRequestService->update($searchRequest);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             if ($e->getCode() == 406) {
                 return response()->json([
                     'message' => $e->getMessage(),
@@ -105,10 +103,9 @@ class SearchRequestController extends Controller
 
     /**
      * Удалить продуктовый ярлык
-     * @return Application|ResponseFactory|Response
      * @throws CmsException
      */
-    public function delete(SearchRequestService $searchRequestService)
+    public function delete(SearchRequestService $searchRequestService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

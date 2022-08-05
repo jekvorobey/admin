@@ -19,6 +19,7 @@ class MarketingController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
 
         $this->title = 'Маркетинговые инструменты iBT.ru';
+        /** @var MarketingOptionService $marketingOptionService */
         $marketingOptionService = resolve(MarketingOptionService::class);
         $customerOptionService = resolve(CustomerOptionService::class);
         $activationBonus = $customerOptionService->get(CustomerOptionDto::KEY_ACTIVATION_BONUS);

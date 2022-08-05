@@ -14,6 +14,7 @@ use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Services\PaymentService\PaymentService;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Dto\MerchantStatus;
@@ -228,7 +229,7 @@ class MerchantDetailController extends Controller
         ]);
     }
 
-    public function updateMerchant(int $id, MerchantService $merchantService)
+    public function updateMerchant(int $id, MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

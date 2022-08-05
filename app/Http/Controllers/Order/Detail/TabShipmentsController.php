@@ -280,7 +280,7 @@ class TabShipmentsController extends OrderDetailController
                         $shipmentPackageId,
                         $basketItemId
                     );
-                } catch (\Throwable $e) {
+                } catch (\Throwable) {
                     $shipmentPackageItem = new ShipmentPackageItemDto();
                 }
                 $shipmentPackageItem->basket_item_id = $basketItemId;

@@ -29,22 +29,22 @@
                     <div v-if="opened">
                         <div class="additional-filter pt-3 mt-3">
                             <div class="row">
-                                <f-input v-model="filter.priceFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.priceFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     Цена
                                     <template #prepend><span class="input-group-text">от</span></template>
                                     <template #append><span class="input-group-text">руб.</span></template>
                                 </f-input>
-                                <f-input v-model="filter.priceTo" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.priceTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     &nbsp;
                                     <template #prepend><span class="input-group-text">до</span></template>
                                     <template #append><span class="input-group-text">руб.</span></template>
                                 </f-input>
 
-                                <f-input v-model="filter.qtyFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.qtyFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     Кол-во
                                     <template #prepend><span class="input-group-text">от</span></template>
                                 </f-input>
-                                <f-input v-model="filter.qtyTo" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.qtyTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     &nbsp;
                                     <template #prepend><span class="input-group-text">до</span></template>
                                 </f-input>

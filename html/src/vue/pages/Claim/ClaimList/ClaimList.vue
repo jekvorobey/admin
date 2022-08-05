@@ -16,9 +16,9 @@
                     <f-multi-select v-model="filter.status" :options="statusOptions" class="col">
                         Статус заявки
                     </f-multi-select>
-                    <f-select v-model="filter.merchantId" :options="merchantOptions" class="col">
+                    <f-custom-search-select @onSelect="onSelect" v-model="filter.merchantId" :options="merchantOptions" class="col">
                         Мерчант
-                    </f-select>
+                    </f-custom-search-select>
                 </div>
 
                 <transition name="slide">
@@ -89,6 +89,7 @@
     import FDate from '../../../components/filter/f-date.vue';
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FSelect from '../../../components/filter/f-select.vue';
+    import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
     import Helpers from '../../../../scripts/helpers';
 
@@ -119,6 +120,7 @@ export default {
         FSelect,
         FMultiSelect,
         ModalColumns,
+        FCustomSearchSelect
     },
     mixins: [modalMixin],
     props: {
@@ -208,6 +210,9 @@ export default {
         };
     },
     methods: {
+        onSelect(merchantID){
+            this.filter.merchantId = merchantID
+        },
         statusName(statusId) {
             return this.claimStatuses[statusId] || 'N/A';
         },

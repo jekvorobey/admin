@@ -9,8 +9,6 @@ use Greensight\CommonMsa\Services\AuthService\AuthService;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -75,9 +73,8 @@ class TabDigestController extends Controller
 
     /**
      * Сохранить комментарий к мерчанту
-     * @return Application|ResponseFactory|Response
      */
-    public function comment(int $merchantId, MerchantService $merchantService)
+    public function comment(int $merchantId, MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 

@@ -55,10 +55,10 @@ class RedirectListController extends Controller
     }
 
     /**
-     * @return RedirectDto[]|Collection
+     * @return Collection|RedirectDto[]
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, RedirectService $redirectService)
+    protected function loadItems(RestQuery $query, RedirectService $redirectService): Collection
     {
         return $redirectService->redirects($query);
     }

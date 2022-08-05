@@ -11,6 +11,7 @@ use MerchantManagement\Dto\VatDto;
 use MerchantManagement\Services\MerchantService\Dto\GetVatDto;
 use MerchantManagement\Services\MerchantService\Dto\SaveVatDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\ProductService\ProductService;
@@ -18,6 +19,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class TabVatController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function load(int $id): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -33,6 +37,9 @@ class TabVatController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function saveVat(int $id, MerchantService $merchantService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -86,6 +93,9 @@ class TabVatController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function removeVat(int $id, MerchantService $merchantService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
@@ -107,6 +117,9 @@ class TabVatController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     protected function loadVat(int $id): array
     {
         /** @var MerchantService $merchantService */
