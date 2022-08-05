@@ -1111,6 +1111,8 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('whitelist')->group(function () {
                 Route::get('', [CustomerWhitelistController::class, 'index'])->name('customers.whitelist');
+                Route::get('page', [CustomerWhitelistController::class, 'page'])->name('customers.whitelist.pagination');
+                Route::post('create-accounts', [CustomerWhitelistController::class, 'createAccounts'])->name('customers.whitelist.create_accounts');
                 Route::post('import', [CustomerWhitelistController::class, 'import'])->name('customers.whitelist.import');
                 Route::get('export', [CustomerWhitelistController::class, 'export'])->name('customers.whitelist.export');
             });
