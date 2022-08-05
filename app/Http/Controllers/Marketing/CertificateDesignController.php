@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Pim\Dto\Certificate\CertificateDesignDto;
 use Pim\Services\CertificateService\CertificateService;
+use Illuminate\Http\Response;
 
 class CertificateDesignController extends Controller
 {
@@ -60,7 +61,7 @@ class CertificateDesignController extends Controller
         ]);
     }
 
-    public function delete($id)
+    public function delete($id): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

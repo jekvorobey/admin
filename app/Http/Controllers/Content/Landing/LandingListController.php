@@ -14,6 +14,9 @@ use Illuminate\Http\JsonResponse;
 
 class LandingListController extends Controller
 {
+    /**
+     * @throws CmsException
+     */
     public function listPage(Request $request, LandingService $landingService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
@@ -30,6 +33,9 @@ class LandingListController extends Controller
         ]);
     }
 
+    /**
+     * @throws CmsException
+     */
     public function page(Request $request, LandingService $landingService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
@@ -71,10 +77,10 @@ class LandingListController extends Controller
     }
 
     /**
-     * @return LandingDto[]|Collection
+     * @return Collection|LandingDto[]
      * @throws CmsException
      */
-    protected function loadItems(RestQuery $query, LandingService $landingService)
+    protected function loadItems(RestQuery $query, LandingService $landingService): Collection
     {
         return $landingService->landings($query);
     }

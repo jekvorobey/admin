@@ -70,6 +70,7 @@
         <exclude name="SlevomatCodingStandard.Functions.FunctionLength"/>
         <exclude name="SlevomatCodingStandard.Files.FunctionLength"/>
         <exclude name="SlevomatCodingStandard.Commenting.RequireOneLineDocComment"/>
+        <exclude name="SlevomatCodingStandard.Classes.RequireAbstractOrFinal.ClassNeitherAbstractNorFinal"/>
 
         <!-- Ненужные правила -->
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
@@ -82,6 +83,7 @@
         <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall"/>
         <exclude name="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall"/>
         <exclude name="SlevomatCodingStandard.Functions.StrictCall"/>
+        <exclude name="SlevomatCodingStandard.Functions.RequireTrailingCommaInDeclaration.MissingTrailingComma"/>
 
         <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalFunctions"/>
         <exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedGlobalConstants"/>
@@ -107,6 +109,7 @@
 
         <exclude name="SlevomatCodingStandard.Classes.TraitUseDeclaration"/>
         <exclude name="SlevomatCodingStandard.Classes.ForbiddenPublicProperty"/>
+        <exclude name="SlevomatCodingStandard.Classes.RequireConstructorPropertyPromotion.RequiredConstructorPropertyPromotion"/>
 
         <exclude name="SlevomatCodingStandard.Commenting.EmptyComment"/>
         <exclude name="SlevomatCodingStandard.Commenting.DisallowOneLinePropertyDocComment"/>
@@ -119,6 +122,8 @@
         <exclude name="SlevomatCodingStandard.Operators.RequireOnlyStandaloneIncrementAndDecrementOperators"/>
 
         <exclude name="SlevomatCodingStandard.Arrays.DisallowImplicitArrayCreation"/>
+
+        <exclude name="SlevomatCodingStandard.Exceptions.DisallowNonCapturingCatch.DisallowedNonCapturingCatch"/>
     </rule>
 
     <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
@@ -141,10 +146,10 @@
                 <element value="uses"/>
                 <element value="public constants, protected constants, private constants"/>
                 <element
-                    value="public constants, public properties, protected properties, private properties, public static properties, protected static properties, private static properties"/>
+                    value="public constants, public properties, protected properties, private properties, public static properties, protected static properties, private static properties, enum cases"/>
                 <element value="constructor, destructor, static constructors"/>
                 <element
-                    value="public methods, public abstract methods, public static abstract methods, public static methods, protected methods, protected abstract methods, protected static abstract methods, protected static methods, private methods, private static methods"/>
+                    value="public methods, public abstract methods, public static abstract methods, public static methods, protected methods, protected abstract methods, protected static abstract methods, protected static methods, private methods, private static methods, public static final methods, protected static final methods, private methods, public final methods, protected final methods"/>
                 <element value="magic methods"/>
             </property>
         </properties>

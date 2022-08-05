@@ -7,9 +7,8 @@ if (!function_exists('frontend')) {
     /**
      * Входная точка в класс работы со сборщиком.
      * frontend()->img()...
-     * @return \App\Core\Frontend
      */
-    function frontend()
+    function frontend(): ?Frontend
     {
         static $frontend = null;
 
@@ -32,33 +31,22 @@ if (!function_exists('plural_form')) {
      *   plural_form(1, $forms); //банан
      *   plural_form(2, $forms); //банана
      *   plural_form(5, $forms); //бананов
-     * @param $n
-     * @param $forms
-     * @return string
      */
-    function plural_form($n, $forms)
+    function plural_form($n, $forms): string
     {
         return $n % 10 == 1 && $n % 100 != 11 ? $forms[0] : ($n % 10 >= 2 && $n % 10 <= 4 && ($n % 100 < 10 || $n % 100 >= 20) ? $forms[1] : $forms[2]);
     }
 }
 
 if (!function_exists('to_boolean')) {
-    /**
-     * @param $str
-     * @return bool
-     */
-    function to_boolean($str)
+    function to_boolean($str): bool
     {
         return !($str === 'false' || $str === '0' || !$str);
     }
 }
 
 if (!function_exists('url_showcase')) {
-    /**
-     * @param $path
-     * @return string
-     */
-    function url_showcase($path)
+    function url_showcase($path): string
     {
         return join('/', [
             rtrim(config('app.showcase_host'), '/'),

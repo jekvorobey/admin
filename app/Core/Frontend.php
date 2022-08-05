@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+
 class Frontend
 {
     /**
@@ -49,10 +51,8 @@ class Frontend
 
     /**
      * Включен ли режим отладки.
-     *
-     * @return bool
      */
-    public function isInDevMode()
+    public function isInDevMode(): bool
     {
         if (app()->environment('production')) {
             return false;
@@ -68,12 +68,9 @@ class Frontend
     /**
      * Функиця для формирования нужного пути до ресурса из сборщика.
      *
-     * @param string $path
-     * @param bool $addVersion
-     * @return string
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
-    public function path($path, $addVersion = false)
+    public function path(string $path, bool $addVersion = false): string
     {
         return $this->isInDevMode()
             ? $this->devDir . $path
@@ -84,18 +81,14 @@ class Frontend
 //            $resultPath .= $separator .'v=' . $this->version;
 //        }
 
-        return $resultPath;
+//        return $resultPath;
     }
 
     /**
      * Формирование пути до директории со скриптами.
      * Добавляет версию по-умолчанию.
-     *
-     * @param string $path
-     * @param bool $addVersion
-     * @return string
      */
-    public function scripts($path, $addVersion = true)
+    public function scripts(string $path, bool $addVersion = true): string
     {
         return $this->path("scripts/$path", $addVersion);
     }
@@ -103,12 +96,8 @@ class Frontend
     /**
      * Формирование пути до директории со стилями.
      * Добавляет версию по-умолчанию.
-     *
-     * @param string $path
-     * @param bool $addVersion
-     * @return string
      */
-    public function styles($path, $addVersion = true)
+    public function styles(string $path, bool $addVersion = true): string
     {
         return $this->path("styles/$path", $addVersion);
     }
@@ -116,12 +105,8 @@ class Frontend
     /**
      * Формирование пути до директории с изображениями.
      * Не добавляет версию по-умолчанию.
-     *
-     * @param string $path
-     * @param bool $addVersion
-     * @return string
      */
-    public function img($path, $addVersion = false)
+    public function img(string $path, bool $addVersion = false): string
     {
         return $this->path("img/$path", $addVersion);
     }
@@ -129,16 +114,15 @@ class Frontend
     /**
      * Формирование пути до директории с SVG.
      * Не добавляет версию по-умолчанию.
-     *
-     * @param string $path
-     * @param bool $addVersion
-     * @return string
      */
-    public function svg($path, $addVersion = false)
+    public function svg(string $path, bool $addVersion = false): string
     {
         return $this->path("img/svg/$path", $addVersion);
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function handle()
     {
         $key = $this->cookieName;

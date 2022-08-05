@@ -32,7 +32,7 @@ class PublicEventTicketsController extends Controller
         return response()->json(['tickets' => $tickets]);
     }
 
-    protected function getData($sprints)
+    protected function getData($sprints): array
     {
         $orderService = resolve(OrderService::class);
         $restQuery = $this->makeRestQuery($orderService, $sprints);
@@ -60,8 +60,7 @@ class PublicEventTicketsController extends Controller
 
             return $data;
         });
-        array_unique($ticketIds);
-        if (!$ticketIds) {
+        if (!array_unique($ticketIds)) {
             return [];
         }
 

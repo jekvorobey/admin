@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
 
@@ -77,7 +76,6 @@ class BasketListController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -122,7 +120,7 @@ class BasketListController extends Controller
         $userIds = $customers->pluck('user_id')->all();
         $users = UserHelper::getUsersByIds($userIds);
 
-        $baskets = $baskets->map(function (BasketDto $basket) use ($users, $customers) {
+        return $baskets->map(function (BasketDto $basket) use ($users, $customers) {
             $data = $basket->toArray();
 
             $data['customer'] = $users[$customers[$basket->customer_id]->user_id] ?? null;
@@ -134,8 +132,6 @@ class BasketListController extends Controller
 
             return $data;
         });
-
-        return $baskets;
     }
 
     /**
@@ -159,6 +155,7 @@ class BasketListController extends Controller
                             $restQuery->setFilter('created_at', '<=', end_of_day_filter($value[1]));
                         }
                         break;
+                    case 'updated_at':
                     case 'created_at':
                         if ($value) {
                             $restQuery->setFilter($key, 'like', "{$value}%");
@@ -169,11 +166,6 @@ class BasketListController extends Controller
                         if ($value) {
                             $restQuery->setFilter('updated_at', '>=', $value[0]);
                             $restQuery->setFilter('updated_at', '<=', end_of_day_filter($value[1]));
-                        }
-                        break;
-                    case 'updated_at':
-                        if ($value) {
-                            $restQuery->setFilter($key, 'like', "{$value}%");
                         }
                         break;
                     case 'price_from':

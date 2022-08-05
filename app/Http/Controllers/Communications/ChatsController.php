@@ -129,6 +129,9 @@ class ChatsController extends Controller
         return response()->json([], 204);
     }
 
+    /**
+     * @throws RestClientException
+     */
     public function send(CommunicationService $communicationService, RequestInitiator $user): JsonResponse
     {
         $chatIds = request('chat_ids');
@@ -145,6 +148,9 @@ class ChatsController extends Controller
         ]);
     }
 
+    /**
+     * @throws RestClientException
+     */
     public function create(CommunicationService $communicationService, RequestInitiator $user): JsonResponse
     {
         $userIds = request('user_ids');
@@ -175,6 +181,9 @@ class ChatsController extends Controller
         ]);
     }
 
+    /**
+     * @throws RestClientException
+     */
     public function update(CommunicationService $communicationService): JsonResponse
     {
         $chatId = request('chat_id');

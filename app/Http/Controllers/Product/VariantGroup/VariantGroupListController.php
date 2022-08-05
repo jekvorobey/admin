@@ -19,6 +19,7 @@ use Pim\Dto\Product\VariantGroupDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 use Pim\Services\VariantGroupService\VariantGroupService;
+use Throwable;
 
 /**
  * Class VariantGroupListController
@@ -93,6 +94,9 @@ class VariantGroupListController extends Controller
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function delete(Request $request): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
@@ -104,8 +108,8 @@ class VariantGroupListController extends Controller
 
         try {
             $this->variantGroupService->deleteVariantGroups($data['ids']);
-        } catch (\Throwable $exception) {
-            if (strpos($exception->getMessage(), 'Cannot delete or update a parent row') !== false) {
+        } catch (Throwable $exception) {
+            if (str_contains($exception->getMessage(), 'Cannot delete or update a parent row')) {
                 return response('', 424);
             }
             throw $exception;
@@ -147,7 +151,6 @@ class VariantGroupListController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -175,7 +178,7 @@ class VariantGroupListController extends Controller
      * @return Collection|VariantGroupDto[]
      * @throws PimException
      */
-    protected function loadVariantGroups(DataQuery $restQuery): Collection
+    protected function loadVariantGroups(DataQuery $restQuery): Collection|array
     {
         $variantGroups = $this->variantGroupService->variantGroups($restQuery);
         $merchants = $this->getMerchants($variantGroups->pluck('merchant_id')->all());

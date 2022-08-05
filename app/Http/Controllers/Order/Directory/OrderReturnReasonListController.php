@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 
 class OrderReturnReasonListController extends Controller
 {
+    /**
+     * @throws OmsException
+     */
     public function list(Request $request, OrderService $orderService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
@@ -26,6 +29,9 @@ class OrderReturnReasonListController extends Controller
         ]);
     }
 
+    /**
+     * @throws OmsException
+     */
     public function page(Request $request, OrderService $orderService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);

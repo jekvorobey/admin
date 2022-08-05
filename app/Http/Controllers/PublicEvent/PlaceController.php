@@ -108,9 +108,9 @@ class PlaceController extends Controller
     private function loadPlaces(PublicEventPlaceService $publicEventPlaceService, $page): array
     {
         $query = $publicEventPlaceService->query()->pageNumber($page, 10);
-
         $total = $publicEventPlaceService->count($query);
         $places = $publicEventPlaceService->find($query);
+
         return [$total, $places];
     }
 }

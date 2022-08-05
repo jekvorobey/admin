@@ -41,11 +41,10 @@ class FrequentCategoryController extends Controller
         ]);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function editCategories(Request $request, FrequentCategoryService $frequentCategoryService)
-    {
+    public function editCategories(
+        Request $request,
+        FrequentCategoryService $frequentCategoryService
+    ): Response|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $data = $request->validate([
@@ -79,7 +78,7 @@ class FrequentCategoryController extends Controller
         CategoryService $categoryService,
         FrequentCategoryService $frequentCategoryService,
         FileService $fileService
-    ) {
+    ): Collection {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $categories = $categoryService->categories((new RestQuery())

@@ -99,15 +99,14 @@ class DeliveryServiceListController extends Controller
             'pickup_priority'
         );
         $deliveryServices = $listsService->deliveryServices($restQuery);
-        $deliveryServices = $deliveryServices->map(function (DeliveryService $deliveryService) {
+
+        return $deliveryServices->map(function (DeliveryService $deliveryService) {
             $data = $deliveryService->toArray();
 
             $data['status'] = $deliveryService->status()->toArray();
 
             return $data;
         });
-
-        return $deliveryServices;
     }
 
     /**

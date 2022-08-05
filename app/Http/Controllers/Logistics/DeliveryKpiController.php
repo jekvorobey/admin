@@ -10,7 +10,6 @@ use Greensight\Logistics\Dto\Lists\DeliveryKpi\DeliveryKpiPptDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryServiceStatus;
 use Greensight\Logistics\Services\ListsService\ListsService;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
@@ -48,9 +47,6 @@ class DeliveryKpiController extends Controller
         ]);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
     public function setMain(ListsService $listsService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_LOGISTICS);

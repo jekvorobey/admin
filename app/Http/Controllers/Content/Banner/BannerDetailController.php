@@ -186,6 +186,9 @@ class BannerDetailController extends Controller
         return response()->json([], 204);
     }
 
+    /**
+     * @throws CmsException
+     */
     public function delete(int $id, BannerService $bannerService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
@@ -212,7 +215,7 @@ class BannerDetailController extends Controller
      * @return BannerTypeDto[]|Collection
      * @throws CmsException
      */
-    private function getBannerTypes(BannerTypeService $bannerTypeService)
+    private function getBannerTypes(BannerTypeService $bannerTypeService): Collection
     {
         return $bannerTypeService->bannerTypes(
             $bannerTypeService
@@ -241,7 +244,7 @@ class BannerDetailController extends Controller
     /**
      * @return Collection|FileDto[]
      */
-    private function getBannerImages(array $ids, FileService $fileService)
+    private function getBannerImages(array $ids, FileService $fileService): Collection
     {
         return $fileService
             ->getFiles($ids)

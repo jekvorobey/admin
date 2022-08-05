@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Customers;
 
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
+use Greensight\Customer\Core\CustomerException;
 use Greensight\Customer\Dto\ActivityDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
 
 class ActivitiesController extends Controller
 {
+    /**
+     * @throws CustomerException
+     */
     public function list(CustomerService $customerService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
@@ -21,6 +25,9 @@ class ActivitiesController extends Controller
         ]);
     }
 
+    /**
+     * @throws CustomerException
+     */
     public function save(CustomerService $customerService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);

@@ -213,11 +213,11 @@ class TabDocumentController extends Controller
         ]);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function deleteDocument(int $customerId, int $document_id, CustomerService $customerService)
-    {
+    public function deleteDocument(
+        int $customerId,
+        int $document_id,
+        CustomerService $customerService
+    ): Response|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $customerService->deleteDocument($customerId, $document_id);

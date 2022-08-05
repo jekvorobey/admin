@@ -20,10 +20,7 @@ class Helpers
         });
     }
 
-    /**
-     * @param int|array $fronts
-     */
-    public static function getRoles($fronts = []): array
+    public static function getRoles(int|array $fronts = []): array
     {
         /** @var RoleService $roleService */
         $roleService = resolve(RoleService::class);
@@ -56,13 +53,12 @@ class Helpers
         return $options->values()->all();
     }
 
-    /**
-     * @param int $decimals
-     * @param string $decPoint
-     * @param string $thousandsSep
-     */
-    public static function getPriceFormat($price, $decimals = 2, $decPoint = '.', $thousandsSep = ' '): string
-    {
+    public static function getPriceFormat(
+        $price,
+        int $decimals = 2,
+        string $decPoint = '.',
+        string $thousandsSep = ' '
+    ): string {
         return number_format($price, $decimals, $decPoint, $thousandsSep);
     }
 }

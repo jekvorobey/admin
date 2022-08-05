@@ -6,6 +6,7 @@ use App\Core\CustomerHelper;
 use App\Core\Helpers;
 use App\Core\UserHelper;
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
@@ -22,6 +23,7 @@ use Greensight\Marketing\Services\BonusService\BonusService;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -45,7 +47,7 @@ class PromoCodeController extends Controller
         $promoCodeInDto = new PromoCodeInDto();
         $promoCodes = $promoCodeService->promoCodes($promoCodeInDto);
 
-        $promoRequestsCount = $communicationService->unreadCount([], false, 'Запрос промокода');
+        $promoRequestsCount = $communicationService->unreadCount([], false);
 
         $merchantsIds = $promoCodes->pluck('merchant_id')->unique()->all();
         $merchants = $this->getMerchants($merchantsIds)->values();
@@ -124,7 +126,7 @@ class PromoCodeController extends Controller
         ]);
     }
 
-    public function status(PromoCodeService $promoCodeService)
+    public function status(PromoCodeService $promoCodeService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 
@@ -138,7 +140,7 @@ class PromoCodeController extends Controller
         return response('', 204);
     }
 
-    public function delete(PromoCodeService $promoCodeService)
+    public function delete(PromoCodeService $promoCodeService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 
@@ -155,6 +157,7 @@ class PromoCodeController extends Controller
      * Страница для создания промокода
      *
      * @return mixed
+     * @throws Exception
      */
     public function createPage(Request $request)
     {
@@ -274,6 +277,6 @@ class PromoCodeController extends Controller
 
         return response()->json([
             'status' => $status,
-        ], 200);
+        ]);
     }
 }

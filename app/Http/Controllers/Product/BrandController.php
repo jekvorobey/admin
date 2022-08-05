@@ -13,6 +13,9 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BrandController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function list(Request $request, BrandService $brandService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
@@ -27,6 +30,9 @@ class BrandController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function page(Request $request, BrandService $brandService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);

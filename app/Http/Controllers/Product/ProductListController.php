@@ -8,11 +8,10 @@ use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Greensight\CommonMsa\Rest\RestQuery;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Pim\Core\PimException;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
@@ -27,7 +26,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class ProductListController extends Controller
 {
     /**
-     * @throws \Pim\Core\PimException
+     * @throws PimException
      */
     public function index(
         Request $request,
@@ -86,6 +85,9 @@ class ProductListController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function page(
         Request $request,
         SearchService $searchService,
@@ -121,16 +123,11 @@ class ProductListController extends Controller
         $status = $request->get('status');
         $comment = $request->get('comment');
 
-        switch ($status) {
-            case 'accept':
-                $status = ProductApprovalStatus::STATUS_APPROVED;
-                break;
-            case 'reject':
-                $status = ProductApprovalStatus::STATUS_REJECT;
-                break;
-            default:
-                $status = $request->get('status');
-        }
+        $status = match ($status) {
+            'accept' => ProductApprovalStatus::STATUS_APPROVED,
+            'reject' => ProductApprovalStatus::STATUS_REJECT,
+            default => $request->get('status'),
+        };
         if (!$ids || $status === null) {
             throw new BadRequestHttpException('productIds and status required');
         }
@@ -174,9 +171,8 @@ class ProductListController extends Controller
 
     /**
      * Назначить или обнулить шильдики у товаров
-     * @return Application|ResponseFactory|Response
      */
-    public function attachBadges(ProductService $productService)
+    public function attachBadges(ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 

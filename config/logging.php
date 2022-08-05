@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 
@@ -36,20 +37,20 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['daily'],
+            'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
 
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
+            'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
+            'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
         ],
 
@@ -63,7 +64,7 @@ return [
 
         'papertrail' => [
             'driver' => 'monolog',
-            'level' => 'debug',
+            'level' => env('LOG_LEVEL', 'debug'),
             'handler' => SyslogUdpHandler::class,
             'handler_with' => [
                 'host' => env('PAPERTRAIL_URL'),
@@ -82,12 +83,17 @@ return [
 
         'syslog' => [
             'driver' => 'syslog',
-            'level' => 'debug',
+            'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level' => 'debug',
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
+        'null' => [
+            'driver' => 'monolog',
+            'handler' => NullHandler::class,
         ],
 
         'ms-queries' => [
@@ -95,6 +101,11 @@ return [
             'path' => storage_path('logs/ms-queries.log'),
             'level' => 'debug',
         ],
+
+        'emergency' => [
+            'path' => storage_path('logs/laravel.log'),
+        ],
+
     ],
 
 ];

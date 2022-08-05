@@ -28,7 +28,7 @@ class PublicEventSprintDocumentController extends Controller
     public function page(
         Request $request,
         PublicEventSprintDocumentService $publicEventPublicEventSprintDocumentService
-    ) {
+    ): JsonResponse {
         $page = $request->get('page', 1);
         [$total, $publicEventSprintDocuments] = $this->loadPublicEventSprintDocuments($publicEventPublicEventSprintDocumentService, $page);
 
@@ -99,9 +99,9 @@ class PublicEventSprintDocumentController extends Controller
         $page
     ): array {
         $query = $publicEventPublicEventSprintDocumentService->query()->pageNumber($page, 10);
-
         $total = $publicEventPublicEventSprintDocumentService->count($query);
         $publicEventSprintDocuments = $publicEventPublicEventSprintDocumentService->find($query);
+
         return [$total, $publicEventSprintDocuments];
     }
 }

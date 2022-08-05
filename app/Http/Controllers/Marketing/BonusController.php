@@ -11,14 +11,11 @@ use Greensight\Marketing\Dto\Bonus\BonusInDto;
 use Greensight\Marketing\Dto\Bonus\ProductBonusOption\ProductBonusOptionDto;
 use Greensight\Marketing\Services\BonusService\BonusService;
 use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
-use Pim\Core\PimException;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
 
@@ -86,7 +83,6 @@ class BonusController extends Controller
 
     /**
      * @return mixed
-     * @throws PimException
      */
     public function createPage()
     {
@@ -128,10 +124,7 @@ class BonusController extends Controller
         return response('', 204);
     }
 
-    /**
-     * @return Application|ResponseFactory|JsonResponse|Response
-     */
-    public function delete()
+    public function delete(): Response|JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

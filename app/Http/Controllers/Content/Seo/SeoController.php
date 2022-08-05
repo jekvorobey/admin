@@ -40,6 +40,9 @@ class SeoController extends Controller
         ]);
     }
 
+    /**
+     * @throws CmsException
+     */
     public function page(Request $request, SeoService $seoService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);

@@ -161,9 +161,9 @@ class PublicEventTicketTypeController extends Controller
         $page
     ): array {
         $query = $publicEventPublicEventTicketTypeService->query()->pageNumber($page, 10);
-
         $total = $publicEventPublicEventTicketTypeService->count($query);
         $publicEventTicketTypes = $publicEventPublicEventTicketTypeService->find($query);
+
         return [$total, $publicEventTicketTypes];
     }
 }

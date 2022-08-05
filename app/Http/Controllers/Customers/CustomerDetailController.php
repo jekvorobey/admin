@@ -26,8 +26,6 @@ use Greensight\Marketing\Dto\PromoCode\PromoCodeOutDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Services\OrderService\OrderService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
@@ -222,15 +220,12 @@ class CustomerDetailController extends Controller
         return max(0, self::DELAY_BEFORE_SETTING_PASSWORD_LINK_RESEND - $diffInSeconds);
     }
 
-    /**
-     * @return Application|ResponseFactory|Response
-     */
     public function save(
         int $id,
         CustomerService $customerService,
         UserService $userService,
         RequestInitiator $requestInitiator
-    ) {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $this->validate(request(), [
@@ -347,7 +342,7 @@ class CustomerDetailController extends Controller
         ]);
     }
 
-    public function professional($id, ReferralService $referralService)
+    public function professional($id, ReferralService $referralService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
@@ -356,7 +351,7 @@ class CustomerDetailController extends Controller
         return response('', 204);
     }
 
-    public function putPortfolios(int $id, CustomerService $customerService)
+    public function putPortfolios(int $id, CustomerService $customerService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 

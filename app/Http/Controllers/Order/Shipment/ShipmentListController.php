@@ -18,7 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ShipmentListController extends Controller
 {
@@ -184,7 +184,6 @@ class ShipmentListController extends Controller
 
     /**
      * Прочитать и проверить переданные правила фильтрации
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -245,7 +244,7 @@ class ShipmentListController extends Controller
         $customers = collect();
         $users = collect();
 
-        if ($orderIds = $shipments->pluck('delivery.order_id')->toArray()) {
+        if ($shipments && $orderIds = $shipments->pluck('delivery.order_id')->toArray()) {
             $orders = $orderService
                 ->orders((new RestQuery())
                     ->setFilter('id', $orderIds))
@@ -286,7 +285,6 @@ class ShipmentListController extends Controller
     /**
      * Возвращает упорядоченный массив подготовленных данных
      * @return array
-     * @throws ValidationException
      */
     protected function getOutputData(): array
     {

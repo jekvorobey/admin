@@ -19,8 +19,8 @@ use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use MerchantManagement\Dto\OperatorCommunicationMethod;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -29,9 +29,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UsersController extends Controller
 {
-    /**
-     * @throws ValidationException
-     */
     public function index(
         Request $request,
         UserService $userService,
@@ -56,9 +53,6 @@ class UsersController extends Controller
         ]);
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function page(Request $request, UserService $userService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
@@ -176,8 +170,7 @@ class UsersController extends Controller
 
     public function isUnique(Request $request, UserService $userService): JsonResponse
     {
-        // TODO: используется также при создании мерчанта (с правами на BlockDto::ADMIN_BLOCK_MERCHANTS)
-        // $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_MERCHANTS]);
 
         $data = $request->get('data');
         $field = $request->get('field');
@@ -336,7 +329,7 @@ class UsersController extends Controller
 
         try {
             $userService->verifyBySignature($request->userId, $request->signature);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             throw new AuthorizationException('Не удалось проверить пользователя');
         }
         $authUser->loginByUserId($request->userId, Front::FRONT_ADMIN);
@@ -356,7 +349,6 @@ class UsersController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -374,9 +366,6 @@ class UsersController extends Controller
         );
     }
 
-    /**
-     * @throws ValidationException
-     */
     protected function makeQuery(Request $request, bool $withDefaultFilter = false): RestQuery
     {
         $restQuery = new RestQuery();
@@ -396,7 +385,7 @@ class UsersController extends Controller
         return $restQuery;
     }
 
-    protected function loadItems(RestQuery $query, UserService $userService)
+    protected function loadItems(RestQuery $query, UserService $userService): Collection
     {
         return $userService->users($query);
     }

@@ -25,8 +25,10 @@ class PublicEventSprintStageController extends Controller
         ]);
     }
 
-    public function page(Request $request, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function page(
+        Request $request,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ): JsonResponse {
         $page = $request->get('page', 1);
         [$total, $publicEventSprintStages] = $this->loadPublicEventSprintStages($publicEventPublicEventSprintStageService, $page);
 
@@ -79,8 +81,10 @@ class PublicEventSprintStageController extends Controller
         return response()->json();
     }
 
-    public function getBySprint(int $sprint_id, PublicEventSprintStageService $publicEventPublicEventSprintStageService)
-    {
+    public function getBySprint(
+        int $sprint_id,
+        PublicEventSprintStageService $publicEventPublicEventSprintStageService
+    ): JsonResponse {
         $this->canView(BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS);
 
         $sprintStages = $publicEventPublicEventSprintStageService->getBySprint($sprint_id);

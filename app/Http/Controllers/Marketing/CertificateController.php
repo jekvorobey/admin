@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Pim\Services\CertificateService\CertificateService;
 
 class CertificateController extends Controller
@@ -57,7 +58,7 @@ class CertificateController extends Controller
             case 'cards':
                 return $this->getTabCards($request);
             case 'content':
-                return $this->getTabContent($request);
+                return $this->getTabContent();
             case 'reports':
                 return $this->getTabReports($request);
             case 'logs':
@@ -177,7 +178,7 @@ class CertificateController extends Controller
         ];
     }
 
-    public function storeContent(Request $request)
+    public function storeContent(Request $request): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MARKETING);
 

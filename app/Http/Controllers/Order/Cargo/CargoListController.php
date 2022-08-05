@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Oms\Dto\Delivery\CargoDto;
 use Greensight\Oms\Dto\Delivery\CargoStatus;
@@ -101,7 +100,7 @@ class CargoListController extends Controller
     /**
      * @return Collection|CargoDto[]
      */
-    protected function loadCargos(DataQuery $restQuery, CargoService $cargoService): Collection
+    protected function loadCargos(DataQuery $restQuery, CargoService $cargoService): Collection|array
     {
         $restQuery->addFields(
             CargoDto::entity(),
@@ -124,7 +123,8 @@ class CargoListController extends Controller
 
         $stores = $this->loadStores();
         $deliveryServices = DeliveryService::allServices();
-        $cargos = $cargos->map(function (CargoDto $cargo) use ($merchants, $stores, $deliveryServices) {
+
+        return $cargos->map(function (CargoDto $cargo) use ($merchants, $stores, $deliveryServices) {
             $data = $cargo->toArray();
 
             $data['merchant'] = $merchants->has($cargo->merchant_id) ? $merchants[$cargo->merchant_id] : [];
@@ -140,8 +140,6 @@ class CargoListController extends Controller
 
             return $data;
         });
-
-        return $cargos;
     }
 
     /**
@@ -152,7 +150,6 @@ class CargoListController extends Controller
         Request $request,
         bool $withDefaultFilter = false
     ): DataQuery {
-        /** @var RestQuery $restQuery */
         $restQuery = $cargoService->newQuery()->addSort('created_at', 'desc');
 
         $page = $request->get('page', 1);
@@ -182,10 +179,9 @@ class CargoListController extends Controller
     }
 
     /**
-     * TODO пересмотреть область видимости метода
      * @return Collection|StoreDto[]
      */
-    public function loadStores(): Collection
+    protected function loadStores(): Collection
     {
         /** @var Collection|StoreDto[] $stores */
         static $stores = null;

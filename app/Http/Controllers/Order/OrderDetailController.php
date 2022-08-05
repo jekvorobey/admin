@@ -16,6 +16,7 @@ use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Dto\Payment\PaymentCancelReason;
@@ -483,9 +484,7 @@ class OrderDetailController extends Controller
                 ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
 
-            $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use (
-                $productsByOffers
-            ) {
+            $order->basket->items = $order->basket->items->map(function (BasketItemDto $basketItemDto) use ($productsByOffers) {
                 $product = $basketItemDto->product;
                 $productPim = $productsByOffers->has($basketItemDto->offer_id) ?
                     $productsByOffers[$basketItemDto->offer_id]->product : [];
@@ -536,6 +535,7 @@ class OrderDetailController extends Controller
             ],
         ]);
         if ($order->history->isNotEmpty()) {
+            /** @var HistoryDto $historyDto */
             foreach ($order->history as $historyDto) {
                 $data = $historyDto->data;
                 if (mb_strtolower($historyDto->entity_type) == OrderDto::entity() && isset($data['status'])) {
