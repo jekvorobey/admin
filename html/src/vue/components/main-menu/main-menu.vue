@@ -25,7 +25,7 @@
 </script>
 <style>
     .sidebar-sticky {
-        min-width: 250px;
+        min-width: 100%;
         position: -webkit-sticky;
         position: sticky;
         top: 48px;

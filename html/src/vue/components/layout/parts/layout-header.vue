@@ -16,7 +16,7 @@
             <span class="logo-text d-none d-md-block">Administration System</span>
         </div>
 
-        <div v-if="!user.isGuest" class="d-flex align-items-baseline">
+        <div v-if="!user.isGuest" class="d-flex align-items-baseline pr-20">
             <notifications/>
 
             <communication-chats-unread/>
@@ -68,6 +68,9 @@
 </script>
 
 <style scoped>
+    .pr-20{
+        padding-right: 20px;
+    }
     .navbar{
         padding: 0.5rem 1rem 0.7rem 1rem;
     }

@@ -3,7 +3,7 @@
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="container-fluid">
             <div class="row flex-xl-nowrap">
-                <div class="bg-light col-xl-2 no-padding" v-if="!user.isGuest">
+                <div class="bg-light col-xl-2 no-padding w-20" v-if="!user.isGuest">
                     <MainMenu></MainMenu>
                 </div>
                 <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
@@ -88,6 +88,9 @@
 </script>
 
 <style scoped>
+    .w-20{
+        min-width: 20%;
+    }
     .fake-vue-body {
         height: 100%;
     }
