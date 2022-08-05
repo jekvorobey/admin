@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "524346e0c33fc24ce2a559a2cb4172db",
+    "content-hash": "dd866779804cd8748d4e9a61e726c1ac",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1330,11 +1330,11 @@
         },
         {
             "name": "ibt/cm-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-6366-bank-transfer-payment-method",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cm-lib",
-                "reference": "d901c4a33a77a70ef06f5d66838d645fc5d240b0"
+                "reference": "b6417cd6d44132a7e0fa48c7a6fe440d7b498a67"
             },
             "require": {
                 "ext-json": "*",
@@ -1345,7 +1345,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1369,15 +1368,15 @@
                 }
             ],
             "description": "iBT Customer management client",
-            "time": "2022-07-11T09:31:58+00:00"
+            "time": "2022-08-05T08:23:14+00:00"
         },
         {
             "name": "ibt/cms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-6366-update-organization-card-info",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-cms-lib",
-                "reference": "d8d8756541ce30a26d4ab41fa913a820a55e43fc"
+                "reference": "a61c761d40280470b6c902e1404d392c00062e9c"
             },
             "require": {
                 "ext-json": "*",
@@ -1387,7 +1386,6 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1401,7 +1399,7 @@
                 }
             ],
             "description": "iBT CMS service client",
-            "time": "2022-07-08T10:33:17+00:00"
+            "time": "2022-08-03T08:25:38+00:00"
         },
         {
             "name": "ibt/common-lib",
@@ -1625,11 +1623,11 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-6366-bank-transfer-payment-method",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "dd824ca15d139c39328e012c5a3210ed1cb3b10b"
+                "reference": "2efb3e9aa30fc6a67ce4d4169031bf0d5aba636b"
             },
             "require": {
                 "ext-json": "*",
@@ -1641,7 +1639,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1665,7 +1662,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-07-12T07:47:16+00:00"
+            "time": "2022-08-04T11:51:29+00:00"
         },
         {
             "name": "ibt/pim-lib",

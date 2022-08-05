@@ -152,6 +152,7 @@ class CustomerDetailController extends Controller
                 'legal_info_company_name' => $customer->legal_info_company_name,
                 'legal_info_company_address' => $customer->legal_info_company_address,
                 'legal_info_inn' => $customer->legal_info_inn,
+                'legal_info_kpp' => $customer->legal_info_kpp,
                 'legal_info_payment_account' => $customer->legal_info_payment_account,
                 'legal_info_bik' => $customer->legal_info_bik,
                 'legal_info_bank' => $customer->legal_info_bank,
