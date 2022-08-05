@@ -497,15 +497,6 @@ Route::middleware('auth')->group(function () {
         Route::post('byOffers', [OrderListController::class, 'byOffers'])->name('orders.byOffers');
 
         Route::prefix('{id}')->where(['id' => '[0-9]+'])->group(function () {
-            Route::get('', 'OrderDetailController@detail')->name('orders.detail');
-            Route::put('changeStatus', 'OrderDetailController@changeStatus')->name('orders.changeStatus');
-            Route::put('markAsPaid', 'OrderDetailController@markAsPaid')->name('orders.markAsPaid');
-            Route::put('pay', 'OrderDetailController@pay')->name('orders.pay');
-            Route::put('capturePayment', 'OrderDetailController@capturePayment')->name('orders.capturePayment');
-            Route::put('cancel', 'OrderDetailController@cancel')->name('orders.cancel');
-            Route::put('return', 'OrderDetailController@returnCompletedOrder')->name('orders.return');
-            Route::get('invoice-offer', 'OrderDetailController@invoiceOffer')->name('order.invoiceOffer');
-            Route::get('upd', 'OrderDetailController@upd')->name('order.upd');
             Route::get('', [OrderDetailController::class, 'detail'])->name('orders.detail');
             Route::put('changeStatus', [OrderDetailController::class, 'changeStatus'])->name('orders.changeStatus');
             Route::put('markAsPaid', [OrderDetailController::class, 'markAsPaid'])->name('orders.markAsPaid');
@@ -513,6 +504,8 @@ Route::middleware('auth')->group(function () {
             Route::put('capturePayment', [OrderDetailController::class, 'capturePayment'])->name('orders.capturePayment');
             Route::put('cancel', [OrderDetailController::class, 'cancel'])->name('orders.cancel');
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
+            Route::get('invoice-offer', [OrderDetailController::class, 'invoiceOffer'])->name('order.invoiceOffer');
+            Route::get('upd', [OrderDetailController::class, 'upd'])->name('order.upd');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
@@ -552,10 +545,6 @@ Route::middleware('auth')->group(function () {
                         );
 
                         Route::prefix('documents')->group(function () {
-                            Route::get('acceptance-act', 'TabShipmentsController@acceptanceAct')->name('orders.detail.shipments.documents.acceptanceAct');
-                            Route::get('inventory', 'TabShipmentsController@inventory')->name('orders.detail.shipments.documents.inventory');
-                            Route::get('assembling-card', 'TabShipmentsController@assemblingCard')->name('orders.detail.shipments.documents.assemblingCard');
-                            Route::get('upd', 'TabShipmentsController@shipmentUpd')->name('orders.detail.shipments.documents.upd');
                             Route::get('acceptance-act', [TabShipmentsController::class, 'acceptanceAct'])->name(
                                 'orders.detail.shipments.documents.acceptanceAct'
                             );
@@ -563,6 +552,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('assembling-card', [TabShipmentsController::class, 'assemblingCard'])->name(
                                 'orders.detail.shipments.documents.assemblingCard'
                             );
+                            Route::get('upd', [TabShipmentsController::class, 'shipmentUpd'])->name('orders.detail.shipments.documents.upd');
                         });
 
                         Route::prefix('/shipment-packages')->group(function () {
