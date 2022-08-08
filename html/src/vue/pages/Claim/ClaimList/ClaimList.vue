@@ -16,7 +16,10 @@
                     <f-multi-select v-model="filter.status" :options="statusOptions" class="col">
                         Статус заявки
                     </f-multi-select>
-                    <f-custom-search-select @onSelect="onSelect" v-model="filter.merchantId" :options="merchantOptions" class="col">
+                    <f-custom-search-select
+                            v-model="filter.merchantId"
+                            :options="merchantOptions"
+                            class="col">
                         Мерчант
                     </f-custom-search-select>
                 </div>
@@ -210,9 +213,6 @@ export default {
         };
     },
     methods: {
-        onSelect(merchantID){
-            this.filter.merchantId = merchantID
-        },
         statusName(statusId) {
             return this.claimStatuses[statusId] || 'N/A';
         },
