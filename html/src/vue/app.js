@@ -616,11 +616,17 @@ Vue.mixin({
 /**
  @typedef AllPaymentMethods - методы оплаты
  @type {Object}
- @property {integer} prepaid - Предоплата (онлайн)
- @property {integer} postpaid - Постоплата (Наличными или картой при получении)
- @property {integer} creditpaid - В кредит от pp.credit
- @property {integer} b2b_sberbank - СберБизнес онлайн
- @property {integer} bank_transfer - Оплата через юрлицо
+ @property {PaymentMethod} prepaid - Предоплата (онлайн)
+ @property {PaymentMethod} postpaid - Постоплата (Наличными или картой при получении)
+ @property {PaymentMethod} creditpaid - В кредит от pp.credit
+ @property {PaymentMethod} b2b_sberbank - СберБизнес онлайн
+ @property {PaymentMethod} bank_transfer - Оплата через юрлицо
+ */
+/**
+ @typedef PaymentMethod - метод оплаты
+ @type {Object}
+ @property {integer} id
+ @property {string} name - название
  */
 /**
  @typedef PaymentStatus - статус оплаты

@@ -561,11 +561,15 @@ class ViewRender
     {
         if ($load) {
             $this->allPaymentMethods = [
-                PaymentMethod::PREPAID => 'prepaid',
-                PaymentMethod::POSTPAID => 'postpaid',
-                PaymentMethod::CREDITPAID => 'creditpaid',
-                PaymentMethod::B2B_SBERBANK => 'b2b_sberbank',
-                PaymentMethod::BANK_TRANSFER_FOR_LEGAL => 'bank_transfer',
+                'prepaid' => new PaymentMethod(['id' => PaymentMethod::PREPAID, 'name' => 'Онлайн оплата']),
+                'postpaid' => new PaymentMethod(
+                    ['id' => PaymentMethod::POSTPAID, 'name' => 'Наличными или картой при получении']
+                ),
+                'creditpaid' => new PaymentMethod(['id' => PaymentMethod::CREDITPAID, 'name' => 'В рассрочку']),
+                'b2b_sberbank' => new PaymentMethod(['id' => PaymentMethod::B2B_SBERBANK, 'name' => 'СберБизнес']),
+                'bank_transfer' => new PaymentMethod(
+                    ['id' => PaymentMethod::BANK_TRANSFER_FOR_LEGAL, 'name' => 'Оплата со счёта юридического лица']
+                ),
             ];
         }
 

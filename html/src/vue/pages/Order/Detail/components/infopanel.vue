@@ -34,7 +34,7 @@
                         </b-dropdown-item-button>
                         <b-dropdown-item-button v-if="canMarkAsPaid"
                                                 @click="markAsPaid()">
-                            Заказ оплачен (в рассрочку)
+                            Заказ оплачен (в рассрочку или на юрлицо)
                         </b-dropdown-item-button>
 
                         <b-dropdown-item-button v-if="canMarkAsPaidForce"
@@ -400,7 +400,7 @@ export default {
             return this.order.is_problem;
         },
         isBankTransferPayment() {
-            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer;
+            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;
         },
         customerPhoneLink() {
             return 'tel:' + (this.order.customer && this.order.customer.user ? this.order.customer.user.phone : '');

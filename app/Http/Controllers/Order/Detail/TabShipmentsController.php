@@ -56,6 +56,29 @@ class TabShipmentsController extends OrderDetailController
     }
 
     /**
+     * Обновить информацию по платежно-расчетному документу отправления
+     * @throws Exception
+     */
+    public function savePrd(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $data = $this->validate(request(), [
+            'payment_document_number' => ['required', 'string'],
+            'payment_document_date' => ['required', 'date'],
+        ]);
+
+        $shipmentDto = new ShipmentDto();
+        $shipmentDto->payment_document_number = $data['payment_document_number'];
+        $shipmentDto->payment_document_date = $data['payment_document_date'];
+        $shipmentService->updateShipment($shipmentId, $shipmentDto);
+
+        return response()->json([
+            'order' => $this->getOrder($orderId),
+        ]);
+    }
+
+    /**
      * Изменить статус отправления
      * @throws Exception
      */

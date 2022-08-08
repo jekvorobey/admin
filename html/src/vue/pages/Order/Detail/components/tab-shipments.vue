@@ -26,7 +26,7 @@
                         </b-dropdown>
                         <template v-if="canUpdate(blocks.orders)">
                             <b-dropdown text="Действия" size="sm"
-                                        v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment)">
+                                        v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment) || isBankTransferPayment">
                                 <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)"
                                                         @click="markAsNonProblem(shipment)">
                                     Пометить как непроблемное
@@ -49,6 +49,11 @@
                                                         @click="showOrderReturnModal(shipment)">
                                     <fa-icon icon="times"></fa-icon>
                                     Отменить отправление
+                                </b-dropdown-item-button>
+                                <b-dropdown-item-button v-if="isBankTransferPayment"
+                                                        @click="showPRDModal(shipment)">
+                                    <fa-icon icon="pencil-alt"></fa-icon>
+                                    Указать платежно-расчетный документ
                                 </b-dropdown-item-button>
                             </b-dropdown>
                             <button class="btn btn-light btn-sm" @click="editShipment(shipment)"
@@ -196,6 +201,8 @@
                              v-if="Object.values(selectedShipment).length > 0"/>
         <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="shipment"
                                  @update:modelElement="cancelShipment($event)"/>
+        <modal-shipment-prd-info :model-shipment.sync="selectedShipment" :model-order.sync="order"
+                             v-if="Object.values(selectedShipment).length > 0"/>
     </div>
 </template>
 <script>
@@ -203,6 +210,7 @@ import ModalShipmentEdit from './forms/modal-shipment-edit.vue';
 import ShipmentItems from './forms/shipment-items.vue';
 import Services from '../../../../../scripts/services/services';
 import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
+import ModalShipmentPrdInfo from "./forms/modal-shipment-prd-info.vue";
 
 export default {
     props: {
@@ -212,6 +220,7 @@ export default {
         ModalShipmentEdit,
         ShipmentItems,
         ModalAddReturnReason,
+        ModalShipmentPrdInfo
     },
     data() {
         return {
@@ -284,6 +293,12 @@ export default {
                 Services.msg('Заказ был оплачен способом оплаты, для которого недоступен частичный возврат', 'danger');
             }
         },
+        showPRDModal(shipment) {
+            if (this.isBankTransferPayment) {
+                this.selectedShipment = shipment;
+                this.$bvModal.show('modal-shipment-prd-info');
+            }
+        },
         cancelShipment(returnReason) {
             let errorMessage = 'Ошибка при отмене отправления';
 
@@ -347,7 +362,7 @@ export default {
             },
         },
         isBankTransferPayment() {
-            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer;
+            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;
         },
         isPaid() {
             return this.order.payment_status.id === this.paymentStatuses.paid.id;
