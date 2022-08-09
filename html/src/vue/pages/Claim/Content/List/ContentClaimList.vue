@@ -30,7 +30,6 @@
                         <div class="additional-filter pt-3 mt-3">
                             <div class="row">
                                 <f-custom-search-select
-                                        @onSelect="onSelect"
                                         v-model="filter.merchant"
                                         :options="toOptionsArray(options.merchants)"
                                         class="col"
@@ -204,9 +203,6 @@ export default {
         };
     },
     methods: {
-        onSelect(merchant){
-            this.filter.merchant = merchant
-        },
         statusName(statusId) {
             return this.options.statuses[statusId] || 'N/A';
         },

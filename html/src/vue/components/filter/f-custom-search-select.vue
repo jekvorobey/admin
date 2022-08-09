@@ -35,13 +35,13 @@
         components: {VSearchInput},
         data(){
             return{
-                myValue: !isNaN(this.value) && this.value !== null ? this.options.filter(option => option.value === this.value) : [{text:'Не выбрано'}],
+                myValue: !isNaN(this.value) && this.value !== '' ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}],
                 visible: false,
                 inputSearch: ''
             }
         },
         props: {
-            value: {},
+            value: [Number, String],
             options: Array,
             without_none: Boolean,
         },
@@ -69,7 +69,7 @@
             },
             select(option) {
                 option === '' ? this.myValue = [{text:'Не выбрано'}] : this.myValue = [option];
-                option === '' ? this.$emit('onSelect', null) : this.$emit('onSelect', option.value)
+                option === '' ? this.$emit('input', null) : this.$emit('input', option.value);
             },
             onSearch(value){
                 this.inputSearch = value
@@ -88,7 +88,6 @@
         border-radius: 4px;
         background: #ffffff;
         position: relative;
-        z-index: 1;
     }
     .aselect .selector .arrow {
         position: absolute;
