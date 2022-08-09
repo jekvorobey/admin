@@ -35,6 +35,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use Pim\Dto\BrandDto;
@@ -218,14 +219,13 @@ class OrderDetailController extends Controller
     /**
      * Получить документ "Универсальный передаточный документ"
      */
-    public function upd(int $orderId, OrderService $orderService, FileService $fileService): StreamedResponse
+    public function upd(int $orderId, OrderService $orderService): StreamedResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
-        $upd = $orderService->orderDocuments($orderId, OrderDocumentDto::UPD_TYPE)->first();
-        $file = $fileService->getFiles($upd->file_id)->first();
+        $upd = $orderService->upd($orderId);
 
-        return $this->getDocumentResponse($file);
+        return $this->getDocumentResponse($upd);
     }
 
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
@@ -526,6 +526,15 @@ class OrderDetailController extends Controller
             && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING])
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+
+        $order['canMarkAsLegal'] = true;
+        foreach ($order->deliveries as $delivery) {
+            foreach ($delivery->shipments as $shipment) {
+                if (!$shipment->payment_document_number || !$shipment->payment_document_date) {
+                    $order['canMarkAsLegal'] = false;
+                }
+            }
+        }
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
