@@ -131,7 +131,7 @@
             <th>Личный промокод</th>
             <td>{{personalDiscount || '-'}}</td>
         </tr>
-        <template v-if="customer.referral">
+        <template>
             <tr class="table-secondary">
                 <th colspan="2">Платежные реквизиты</th>
             </tr>
@@ -236,16 +236,16 @@
                 </td>
             </tr>
 
-            <tr class="table-secondary">
+            <tr class="table-secondary" v-if="customer.referral">
                 <th colspan="2">Договор реферального партнера</th>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Номер договора</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.referral_contract_number"/>
                 </td>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Дата договора</th>
                 <td>
                     <date-picker
@@ -257,7 +257,7 @@
                     />
                 </td>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Документы</th>
                 <td>
                     <div v-for="(document, i) in referralContracts" class="mb-1">

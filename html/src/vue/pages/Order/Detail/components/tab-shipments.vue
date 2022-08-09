@@ -50,11 +50,6 @@
                                     <fa-icon icon="times"></fa-icon>
                                     Отменить отправление
                                 </b-dropdown-item-button>
-                                <b-dropdown-item-button v-if="isBankTransferPayment"
-                                                        @click="showPRDModal(shipment)">
-                                    <fa-icon icon="pencil-alt"></fa-icon>
-                                    Указать платежно-расчетный документ
-                                </b-dropdown-item-button>
                             </b-dropdown>
                             <button class="btn btn-light btn-sm" @click="editShipment(shipment)"
                                     v-if="canEditShipment(shipment)">
@@ -201,8 +196,6 @@
                              v-if="Object.values(selectedShipment).length > 0"/>
         <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="shipment"
                                  @update:modelElement="cancelShipment($event)"/>
-        <modal-shipment-prd-info :model-shipment.sync="selectedShipment" :model-order.sync="order"
-                             v-if="Object.values(selectedShipment).length > 0"/>
     </div>
 </template>
 <script>
@@ -210,7 +203,6 @@ import ModalShipmentEdit from './forms/modal-shipment-edit.vue';
 import ShipmentItems from './forms/shipment-items.vue';
 import Services from '../../../../../scripts/services/services';
 import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
-import ModalShipmentPrdInfo from "./forms/modal-shipment-prd-info.vue";
 
 export default {
     props: {
@@ -220,7 +212,6 @@ export default {
         ModalShipmentEdit,
         ShipmentItems,
         ModalAddReturnReason,
-        ModalShipmentPrdInfo
     },
     data() {
         return {

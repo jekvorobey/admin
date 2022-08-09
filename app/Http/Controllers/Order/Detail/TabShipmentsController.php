@@ -41,6 +41,8 @@ class TabShipmentsController extends OrderDetailController
             'psd' => ['required', 'date'],
             'fsd' => ['sometimes', 'nullable', 'date'],
             'status' => ['required', Rule::in(array_keys(ShipmentStatus::allStatuses()))],
+            'payment_document_number' => ['sometimes', 'nullable', 'string'],
+            'payment_document_date' => ['sometimes', 'nullable', 'date'],
         ]);
 
         $shipmentDto = new ShipmentDto();
@@ -48,29 +50,8 @@ class TabShipmentsController extends OrderDetailController
         $shipmentDto->psd = $data['psd'];
         $shipmentDto->fsd = $data['fsd'] ?? null;
         $shipmentDto->status = $data['status'];
-        $shipmentService->updateShipment($shipmentId, $shipmentDto);
-
-        return response()->json([
-            'order' => $this->getOrder($orderId),
-        ]);
-    }
-
-    /**
-     * Обновить информацию по платежно-расчетному документу отправления
-     * @throws Exception
-     */
-    public function savePrd(int $orderId, int $shipmentId, ShipmentService $shipmentService): JsonResponse
-    {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-
-        $data = $this->validate(request(), [
-            'payment_document_number' => ['required', 'string'],
-            'payment_document_date' => ['required', 'date'],
-        ]);
-
-        $shipmentDto = new ShipmentDto();
-        $shipmentDto->payment_document_number = $data['payment_document_number'];
-        $shipmentDto->payment_document_date = $data['payment_document_date'];
+        $shipmentDto->payment_document_number = $data['payment_document_number'] ?? null;
+        $shipmentDto->payment_document_date = $data['payment_document_date'] ?? null;
         $shipmentService->updateShipment($shipmentId, $shipmentDto);
 
         return response()->json([

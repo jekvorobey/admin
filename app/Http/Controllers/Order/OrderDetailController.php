@@ -124,7 +124,8 @@ class OrderDetailController extends Controller
         $order = $this->getOrder($id);
         if ($data['payment_method'] === PaymentMethod::BANK_TRANSFER_FOR_LEGAL) {
             $orderService->generateOrderUPD($id);
-            foreach ($order->shipments as $shipment) {
+            /** @var ShipmentDto $shipment */
+            foreach ($order['shipments'] as $shipment) {
                 $shipmentService->generateShipmentUPD($shipment->id);
             }
         }
@@ -427,6 +428,7 @@ class OrderDetailController extends Controller
                 $shipment->psd = date_time2str($shipment->psd);
                 $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
+                $shipment->payment_document_date = $shipment->payment_document_date ? $shipment->payment_document_date->format('Y-m-d') : '';
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems()->keyBy('id');
                 $shipment['delivery_xml_id'] = !$shipment->is_canceled ? $delivery->xml_id : null;
                 $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;

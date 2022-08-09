@@ -531,7 +531,6 @@ Route::middleware('auth')->group(function () {
                 Route::prefix('shipments')->group(function () {
                     Route::prefix('{shipmentId}')->where(['shipmentId' => '[0-9]+'])->group(function () {
                         Route::put('', [TabShipmentsController::class, 'save'])->name('orders.detail.shipments.save');
-                        Route::put('', [TabShipmentsController::class, 'savePrd'])->name('orders.detail.shipments.savePrd');
                         Route::put('change-status', [TabShipmentsController::class, 'changeShipmentStatus'])->name(
                             'orders.detail.shipments.changeShipmentStatus'
                         );
