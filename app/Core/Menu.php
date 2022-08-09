@@ -393,8 +393,8 @@ class Menu
                 'title' => BlockDto::blockById(BlockDto::ADMIN_BLOCK_COMMUNICATIONS)->name,
                 'items' => [
                     [
-                        'title' => 'Непрочитанные сообщения' . static::unreadCount(),
-                        'route' => route('communications.chats.unread'),
+                        'title' => 'Cообщения' . static::unreadCount(),
+                        'route' => route('communications.chats.index'),
                     ],
                     [
                         'title' => 'Сервисные уведомления',

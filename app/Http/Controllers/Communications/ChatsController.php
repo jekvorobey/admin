@@ -20,6 +20,7 @@ use Greensight\Message\Dto\Communication\CommunicationChatDto;
 use Greensight\Message\Services\CommunicationService\CommunicationService;
 use Greensight\Message\Services\CommunicationService\Constructors\ListConstructor;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use MerchantManagement\Dto\OperatorDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use MerchantManagement\Services\OperatorService\OperatorService;
@@ -28,7 +29,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class ChatsController extends Controller
 {
-    public function unread(MerchantService $merchantService)
+    public function index(Request $request, MerchantService $merchantService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_COMMUNICATIONS);
 
@@ -36,15 +37,15 @@ class ChatsController extends Controller
         $this->loadCommunicationChannels = true;
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
-        $this->loadCommunicationTypes = true;
 
-        $this->title = 'Непрочитанные сообщения';
-        return $this->render('Communication/ChatsUnread', [
+        $this->title = 'Сообщения';
+
+        return $this->render('Communication/Chats', [
             'roles' => Helpers::getRoles([
                 Front::FRONT_MAS,
                 Front::FRONT_SHOWCASE,
             ]),
-            'theme' => request('theme', ''),
+            'theme' => $request->get('theme', ''),
             'merchants' => $merchantService->merchants(),
         ]);
     }
@@ -75,29 +76,36 @@ class ChatsController extends Controller
      * @throws NotFoundExceptionInterface
      * @throws RestClientException
      */
-    public function filter(CommunicationService $communicationService): JsonResponse
+    public function filter(Request $request, CommunicationService $communicationService): JsonResponse
     {
         $listConstructor = $communicationService->chats();
-        if (request('user_ids')) {
-            $listConstructor->setUserIds(request('user_ids'));
+
+        if ($userIds = $request->get('user_ids')) {
+            $listConstructor->setUserIds($userIds);
         }
-        if (request('theme')) {
-            $listConstructor->setTheme(request('theme'));
+        if ($theme = $request->get('theme')) {
+            $listConstructor->setTheme($theme);
         }
-        if (request('channel_ids')) {
-            $listConstructor->setChannelIds(request('channel_ids'));
+        if ($channelIds = $request->get('channel_ids')) {
+            $listConstructor->setChannelIds($channelIds);
         }
-        if (request('status_ids')) {
-            $listConstructor->setStatusIds(request('status_ids'));
+        if ($statusIds = $request->get('status_ids')) {
+            $listConstructor->setStatusIds($statusIds);
         }
-        if (request('type_ids')) {
-            $listConstructor->setTypeIds(request('type_ids'));
+        if ($typeIds = $request->get('type_ids')) {
+            $listConstructor->setTypeIds($typeIds);
         }
-        if (!is_null(request('unread_admin'))) {
-            $listConstructor->setUnreadAdmin((bool) request('unread_admin'));
+        if (!is_null($unreadAdmin = $request->get('unread_admin'))) {
+            $listConstructor->setUnreadAdmin((bool) $unreadAdmin);
         }
-        if (request('pageNumber')) {
-            $listConstructor->setPage(request('pageNumber'));
+        if (!is_null($unreadUser = $request->get('unread_user'))) {
+            $listConstructor->setUnreadUser((bool) $unreadUser);
+        }
+        if ($pageNumber = $request->get('pageNumber')) {
+            $listConstructor->setPage($pageNumber);
+        }
+        if (!is_null($isLatestMessageFromCustomer = $request->get('is_latest_message_from_customer'))) {
+            $listConstructor->setIsLatestMessageFromCustomer($isLatestMessageFromCustomer);
         }
 
         [$chats, $users, $files, $customers, $operators, $pager] = $this->loadChats($listConstructor);

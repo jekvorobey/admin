@@ -988,7 +988,7 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('chats')->group(function () {
-            Route::get('unread', [ChatsController::class, 'unread'])->name('communications.chats.unread');
+            Route::get('/', [ChatsController::class, 'index'])->name('communications.chats.index');
             Route::get('unread/count', [ChatsController::class, 'unreadCount'])->name('communications.chats.unread.count');
             Route::get('filter', [ChatsController::class, 'filter'])->name('communications.chats.filter');
             Route::put('read', [ChatsController::class, 'read'])->name('communications.chats.read');
