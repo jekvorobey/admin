@@ -15,8 +15,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Collection;
 
 class RoleController extends Controller
 {
@@ -133,7 +133,6 @@ class RoleController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -147,9 +146,6 @@ class RoleController extends Controller
         );
     }
 
-    /**
-     * @throws ValidationException
-     */
     protected function makeQuery(Request $request, bool $withDefaultFilter = false): RestQuery
     {
         $restQuery = new RestQuery();
@@ -171,7 +167,7 @@ class RoleController extends Controller
         return $restQuery;
     }
 
-    protected function loadItems(RestQuery $query, RoleService $roleService)
+    protected function loadItems(RestQuery $query, RoleService $roleService): Collection|array
     {
         return $roleService->roles($query);
     }

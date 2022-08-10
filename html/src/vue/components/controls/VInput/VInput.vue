@@ -38,6 +38,7 @@
 
 <script>
     import inputMixin from '../../../mixins/input-mixin';
+    import {fioClean} from '../../../utils/validations';
 
     const validTags = ['input', 'textarea'];
 
@@ -58,6 +59,7 @@ export default {
                 return validTags.indexOf(value) !== -1;
             },
         },
+        validation: { type: String, default: null },
     },
     data() {
         return {
@@ -74,7 +76,17 @@ export default {
             }
 
             return this.value;
-        }
+        },
+        input(e) {
+            if (!this.validation){
+                this.$emit('input', e.target.value);
+            }
+
+            if (this.validation === 'fio'){
+                e.target.value = fioClean(e.target.value)
+                this.$emit('input', e.target.value)
+            }
+        },
     }
 };
 </script>

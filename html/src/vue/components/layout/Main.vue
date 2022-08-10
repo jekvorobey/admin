@@ -3,7 +3,7 @@
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="container-fluid">
             <div class="row flex-xl-nowrap">
-                <div class="bg-light col-xl-2 no-padding" v-if="!user.isGuest">
+                <div class="bg-light col-xl-2 no-padding mw-250" v-if="!user.isGuest">
                     <MainMenu></MainMenu>
                 </div>
                 <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
@@ -50,27 +50,12 @@
         },
         methods: {
             goBack() {
-                if (this.backUrl) {
-                    if (document.referrer) {
-                        const referrer = new URL(document.referrer);
-                        window.location.href = (
-                            (referrer.host === location.host) &&
-                            (referrer.pathname === this.backUrl)
-                        )
-                            ? referrer
-                            : this.backUrl;
-                    } else {
-                        window.location.href = this.backUrl;
-                    }
-                } else {
-                    if (document.referrer) {
-                        const referrer = new URL(document.referrer);
-                        if (referrer.host === location.host) {
-                            window.location.href = referrer;
-                        }
+                if (document.referrer) {
+                    const referrer = new URL(document.referrer);
+                    if (referrer.host === location.host) {
+                        window.location.href = referrer;
                     }
                 }
-
             }
         },
         computed: {
@@ -103,6 +88,9 @@
 </script>
 
 <style scoped>
+    .mw-250{
+        min-width: 250px;
+    }
     .fake-vue-body {
         height: 100%;
     }

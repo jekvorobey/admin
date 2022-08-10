@@ -30,7 +30,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Pim\Dto\BrandDto;
 use Pim\Services\BrandService\BrandService;
 
@@ -112,7 +111,6 @@ class OrderListController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array
@@ -197,7 +195,7 @@ class OrderListController extends Controller
                 ->keyBy('id');
         }
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers, $points) {
+        return $orders->map(function (OrderDto $order) use ($users, $customers, $points) {
             $data = $order->toArray();
 
             $data['customer'] = $customers->has($order->customer_id) && $users->has($customers[$order->customer_id]->user_id)
@@ -282,8 +280,6 @@ class OrderListController extends Controller
 
             return $data;
         });
-
-        return $orders;
     }
 
     /**

@@ -94,7 +94,7 @@ class FlowDeliveryController extends Controller
         $result = true;
         try {
             $deliveryService->updateDelivery($validatedData['id'], $deliveryDto);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $result = false;
         }
 
@@ -131,7 +131,7 @@ class FlowDeliveryController extends Controller
         $result = true;
         try {
             $shipmentService->updateShipment($validatedData['id'], $shipmentDto);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             $result = false;
         }
 
@@ -147,7 +147,7 @@ class FlowDeliveryController extends Controller
         $deliveryService = resolve(DeliveryService::class);
         try {
             $delivery = $deliveryService->delivery($deliveryId);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             //
         }
 
@@ -168,7 +168,7 @@ class FlowDeliveryController extends Controller
 
         try {
             $shipments = $shipmentService->shipments($restQuery);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             //
         }
 
@@ -187,7 +187,7 @@ class FlowDeliveryController extends Controller
 
         try {
             $merchants = $merchantService->merchants($restQuery);
-        } catch (\Throwable $e) {
+        } catch (\Throwable) {
             //
         }
 

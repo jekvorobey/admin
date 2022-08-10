@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Marketing;
 use App\Core\DiscountHelper;
 use App\Core\Helpers;
 use App\Http\Controllers\Controller;
+use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Marketing\Dto\Discount\DiscountStatusDto;
@@ -94,6 +95,7 @@ class BundleController extends Controller
      *
      * @return mixed
      * @throws PimException
+     * @throws Exception
      */
     public function createPage(CategoryService $categoryService, BrandService $brandService)
     {

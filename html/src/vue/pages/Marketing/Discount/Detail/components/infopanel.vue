@@ -162,6 +162,7 @@
                         v-model="discount.end_date"
                         format="YYYY-MM-DD HH:mm"
                         value-type="format"
+                        @change="onChangeDateTo"
                         input-class="form-control form-control-sm"
                     />
                 </td>
@@ -431,9 +432,15 @@
                     .map(id => { return parseInt(id); })
                     .filter(id => { return id > 0 });
             },
-
             checkConditionValidity() {
                 this.$emit("validateCondition");
+            },
+            onChangeDateTo(value) {
+                let dateTime = new Date(value);
+                if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
+                    dateTime.setHours(23, 59, 59);
+                    this.discount.end_date = moment(dateTime).format("YYYY-MM-DD HH:mm");
+                }
             },
         },
         computed: {

@@ -83,7 +83,7 @@ class PublicEventOrdersController extends Controller
         $userIds = $customers->pluck('user_id')->all();
         $users = UserHelper::getUsersByIds($userIds);
 
-        $orders = $orders->map(function (OrderDto $order) use ($users, $customers) {
+        return $orders->map(function (OrderDto $order) use ($users, $customers) {
             $data = $order->toArray();
 
             $data['customer'] = $customers->has($order->customer_id) && $users->has($customers[$order->customer_id]->user_id)
@@ -101,7 +101,5 @@ class PublicEventOrdersController extends Controller
 
             return $data;
         });
-
-        return $orders;
     }
 }

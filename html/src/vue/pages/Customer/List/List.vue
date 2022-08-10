@@ -18,7 +18,7 @@
                         </b-col>
                     </b-row>
                     <div class="row mb-2">
-                        <v-input v-model="filter.full_name" class="col-md-4 col-12">ФИО</v-input>
+                        <v-input v-model="filter.full_name" validation="fio" class="col-md-4 col-12">ФИО</v-input>
                         <v-select v-model="filter.gender" :options="genders" class="col-md-4 col-12">Пол</v-select>
 
 

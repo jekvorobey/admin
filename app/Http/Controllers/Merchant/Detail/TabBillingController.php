@@ -8,8 +8,6 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\DataQuery;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\FileService\FileService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -23,9 +21,8 @@ class TabBillingController extends Controller
     /**
      * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
-     * @return Application|ResponseFactory|Response
      */
-    public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService)
+    public function addReturn(int $merchantId, int $operationId, MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
@@ -37,9 +34,8 @@ class TabBillingController extends Controller
     /**
      * TODO пересмотреть аннотацию
      * Сохранить биллинговый период
-     * @return Application|ResponseFactory|Response
      */
-    public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService)
+    public function deleteOperation(int $merchantId, int $operationId, MerchantService $merchantService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
@@ -66,10 +62,8 @@ class TabBillingController extends Controller
 
     /**
      * AJAX добавление корректировки биллинга
-     *
-     * @return Application|Response|ResponseFactory
      */
-    public function addCorrection(int $merchantId, Request $request)
+    public function addCorrection(int $merchantId, Request $request): Response
     {
         $data = $this->validate($request, [
             'correction_sum' => 'integer',

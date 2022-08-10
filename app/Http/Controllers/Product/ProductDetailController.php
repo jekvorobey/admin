@@ -14,8 +14,6 @@ use Greensight\Marketing\Services\ProductBonusOptionService\ProductBonusOptionSe
 use Greensight\Oms\Dto\OrderStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
 use Greensight\Store\Services\StockService\StockService;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -39,12 +37,16 @@ use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Pim\Services\PublicEventService\PublicEventService;
 use Pim\Services\SearchService\SearchService;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductDetailController extends Controller
 {
     /**
      * @return mixed
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function index(
         int $id,
@@ -69,6 +71,7 @@ class ProductDetailController extends Controller
         $brands = $brandService->newQuery()->prepare($brandService)->brands();
         $categories = $categoryService->newQuery()->prepare($categoryService)->categories();
 
+        /** @var ProductBonusOptionService $productBonusOptionService */
         $productBonusOptionService = resolve(ProductBonusOptionService::class);
         $availableBadges = $badgesService->productBadges('code', '!=', ProductBadgeDto::BADGE_FOR_PROFI)->keyBy('id');
         $maxPercentagePayment = $productBonusOptionService->get($id, ProductBonusOptionDto::MAX_PERCENTAGE_PAYMENT);
@@ -111,6 +114,9 @@ class ProductDetailController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function saveProduct(int $id, Request $request, ProductService $productService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
@@ -177,9 +183,8 @@ class ProductDetailController extends Controller
 
     /**
      * Обновить состав продукта
-     * @return Application|ResponseFactory|Response
      */
-    public function saveIngredients(int $productId, ProductService $productService)
+    public function saveIngredients(int $productId, ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -205,7 +210,7 @@ class ProductDetailController extends Controller
         return response()->json();
     }
 
-    public function sortImages(int $id, Request $request, ProductService $productService)
+    public function sortImages(int $id, Request $request, ProductService $productService): JsonResponse
     {
         $data = $this->validate($request, [
             'images_ids' => 'required|array',

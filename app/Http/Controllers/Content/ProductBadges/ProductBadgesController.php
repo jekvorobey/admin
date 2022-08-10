@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Pim\Services\ProductService\ProductService;
@@ -93,9 +91,8 @@ class ProductBadgesController extends Controller
 
     /**
      * Изменить порядок продуктовых ярлыков
-     * @return Application|ResponseFactory|Response
      */
-    public function reorder(ContentBadgesService $badgesService)
+    public function reorder(ContentBadgesService $badgesService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -110,9 +107,8 @@ class ProductBadgesController extends Controller
 
     /**
      * Удалить продуктовый ярлык и его связи с товарами
-     * @return Application|ResponseFactory|Response
      */
-    public function remove(ContentBadgesService $badgesService, ProductService $productService)
+    public function remove(ContentBadgesService $badgesService, ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 

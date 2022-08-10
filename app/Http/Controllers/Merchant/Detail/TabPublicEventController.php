@@ -73,7 +73,7 @@ class TabPublicEventController extends Controller
      * @return Collection|PublicEventDto[]
      * @throws Exception
      */
-    private function loadEvents($organizersIds)
+    private function loadEvents($organizersIds): Collection|array
     {
         if (!count($organizersIds)) {
             return [];

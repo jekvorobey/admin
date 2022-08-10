@@ -30,9 +30,14 @@ use Pim\Dto\Product\ProductDto;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 
 class OfferListController extends Controller
 {
+    /**
+     * @throws PimException
+     */
     public function index(
         Request $request,
         OfferService $offerService,
@@ -58,6 +63,9 @@ class OfferListController extends Controller
         ]);
     }
 
+    /**
+     * @throws PimException
+     */
     public function page(
         Request $request,
         OfferService $offerService,
@@ -77,6 +85,9 @@ class OfferListController extends Controller
         return response()->json($data);
     }
 
+    /**
+     * @throws PimException
+     */
     public function findOffers(Request $request, OfferService $offerService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
@@ -97,12 +108,15 @@ class OfferListController extends Controller
         return response()->json($offers);
     }
 
+    /**
+     * @throws PimException
+     */
     public function createOffer(
         Request $request,
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ) {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -152,13 +166,16 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
+    /**
+     * @throws PimException
+     */
     public function editOffer(
         int $id,
         Request $request,
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ) {
+    ): Response {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -209,7 +226,10 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
-    public function changeSaleStatus(Request $request, OfferService $offerService)
+    /**
+     * @throws PimException
+     */
+    public function changeSaleStatus(Request $request, OfferService $offerService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -236,7 +256,7 @@ class OfferListController extends Controller
         return response('', 204);
     }
 
-    public function deleteOffers(Request $request, OfferService $offerService)
+    public function deleteOffers(Request $request, OfferService $offerService): Response
     {
         $data = $request->validate([
             'offer_ids' => 'array|required',
@@ -382,12 +402,12 @@ class OfferListController extends Controller
         MerchantService $merchantService,
         PriceService $priceService,
         StockService $stockService
-    ) {
+    ): Collection {
         $offers = $offerService->offers($query);
         $merchantIds = $offers->pluck('merchant_id')->all();
         $offerIds = $offers->pluck('id')->all();
         if (!$offerIds) {
-            return [];
+            return collect();
         }
 
         $merchants = $merchantService

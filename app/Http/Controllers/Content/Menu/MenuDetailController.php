@@ -13,11 +13,10 @@ use Illuminate\Http\Request;
 class MenuDetailController extends Controller
 {
     /**
-     * @param int $id
      * @return mixed
      * @throws CmsException
      */
-    public function index($id, MenuService $menuService)
+    public function index(int $id, MenuService $menuService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 

@@ -16,6 +16,7 @@ use Pim\Dto\PublicEvent\PublicEventStatus;
 use Pim\Services\PublicEventService\PublicEventService;
 use Pim\Services\ShoppilotService\ShoppilotService;
 use Throwable;
+use Illuminate\Support\Collection;
 
 class PublicEventListController extends Controller
 {
@@ -90,7 +91,7 @@ class PublicEventListController extends Controller
         int $page,
         PublicEventService $publicEventService,
         ShoppilotService $shopPilotService
-    ) {
+    ): Collection|array {
         $publicEvents = $this->makeRestQuery($publicEventService)
             ->pageNumber($page, self::ITEM_PER_PAGE)
             ->withActualSprint()
@@ -106,7 +107,7 @@ class PublicEventListController extends Controller
                     $publicEvent['shoppilotExist'] = $shopPilotPublicEventsExist[$publicEvent['id']];
                     return $publicEvent;
                 });
-            } catch (Throwable $e) {
+            } catch (Throwable) {
             }
         }
 
@@ -123,7 +124,6 @@ class PublicEventListController extends Controller
     }
 
     /**
-     * @throws ValidationException
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      */
     protected function getFilter(bool $withDefault = false): array

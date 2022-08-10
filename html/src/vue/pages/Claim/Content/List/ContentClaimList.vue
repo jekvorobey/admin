@@ -29,12 +29,13 @@
                     <div v-if="opened">
                         <div class="additional-filter pt-3 mt-3">
                             <div class="row">
-                                <f-select
+                                <f-custom-search-select
                                         v-model="filter.merchant"
                                         :options="toOptionsArray(options.merchants)"
-                                        class="col">
+                                        class="col"
+                                >
                                     Мерчант
-                                </f-select>
+                                </f-custom-search-select>
                                 <f-select
                                         v-model="filter.unpack"
                                         :options="toOptionsArray(options.unpack)"
@@ -153,6 +154,7 @@
     import modalMixin from '../../../../mixins/modal';
     import claimList from '../components/claim-list.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
+    import FCustomSearchSelect from '../../../../components/filter/f-custom-search-select.vue';
 
     const cleanHiddenFilter = {
         merchant: '',
@@ -175,7 +177,8 @@ export default {
         FSelect,
         modal,
         claimList,
-        VSelect
+        VSelect,
+        FCustomSearchSelect
     },
     mixins: [modalMixin],
     props: {

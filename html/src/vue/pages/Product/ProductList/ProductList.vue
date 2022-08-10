@@ -29,22 +29,22 @@
                     <div v-if="opened">
                         <div class="additional-filter pt-3 mt-3">
                             <div class="row">
-                                <f-input v-model="filter.priceFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.priceFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     Цена
                                     <template #prepend><span class="input-group-text">от</span></template>
                                     <template #append><span class="input-group-text">руб.</span></template>
                                 </f-input>
-                                <f-input v-model="filter.priceTo" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.priceTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     &nbsp;
                                     <template #prepend><span class="input-group-text">до</span></template>
                                     <template #append><span class="input-group-text">руб.</span></template>
                                 </f-input>
 
-                                <f-input v-model="filter.qtyFrom" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.qtyFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     Кол-во
                                     <template #prepend><span class="input-group-text">от</span></template>
                                 </f-input>
-                                <f-input v-model="filter.qtyTo" class="col-lg-2 col-md-3 col-sm-12">
+                                <f-input v-model="filter.qtyTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
                                     &nbsp;
                                     <template #prepend><span class="input-group-text">до</span></template>
                                 </f-input>
@@ -66,18 +66,18 @@
                                 >Видимость цен</f-select>
                             </div>
                             <div class="row">
-                                <f-select
+                                <f-custom-search-select
                                         v-model="filter.brand"
                                         :options="brandOptions"
                                         class="col-md-3 col-sm-12"
-                                >Бренд</f-select>
-                                <f-select
+                                >Бренд</f-custom-search-select>
+                                <f-custom-search-select
                                         v-model="filter.category"
                                         :options="categoryOptions"
                                         class="col-md-3 col-sm-12">
                                     Категория
                                     <template #help>Будут показаны товары выбранной и всех дочерних категорий</template>
-                                </f-select>
+                                </f-custom-search-select>
                                 <f-select
                                         v-model="filter.approvalStatus"
                                         :options="approvalOptions"
@@ -90,11 +90,11 @@
                                 >Контент</f-select>
                             </div>
                             <div class="row">
-                                <f-select
-                                    v-model="filter.merchant"
-                                    :options="merchantOptions"
-                                    class="col-md-3 col-sm-12"
-                                >Мерчант</f-select>
+                                <f-custom-search-select
+                                        v-model="filter.merchant"
+                                        :options="merchantOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Мерчант</f-custom-search-select>
                                 <f-select
                                     v-model="filter.badges"
                                     :options="badgeOptions"
@@ -283,6 +283,7 @@
     import Modal from '../../../components/controls/modal/modal.vue';
     import ProductBadgesModal from '../ProductDetail/components/product-badges-modal.vue';
     import { mapActions, mapGetters } from 'vuex';
+    import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
 
     import {
         ACT_LOAD_PAGE,
@@ -355,6 +356,7 @@
             FDate,
             Dropdown,
             VInput,
+            FCustomSearchSelect,
         },
         props: {
             iProducts: {},
