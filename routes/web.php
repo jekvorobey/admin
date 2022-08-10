@@ -768,6 +768,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/filter', [ProductGroupDetailController::class, 'getFilters'])->name('productGroup.getFilters');
             Route::get('/filter-by-category', [ProductGroupDetailController::class, 'getFiltersByCategory'])->name('productGroup.getFiltersByCategory');
             Route::post('/product', [ProductGroupDetailController::class, 'getProducts'])->name('productGroup.getProducts');
+            Route::post('/products-by-offers', [ProductGroupDetailController::class, 'getProductsByOffers'])->name('productGroup.getProductsByOffers');
         });
 
         Route::prefix('menu')->namespace('Menu')->group(function () {

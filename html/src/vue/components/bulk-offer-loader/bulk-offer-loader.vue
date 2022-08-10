@@ -48,6 +48,11 @@ export const mode = Object.freeze({
     OFFER_ID: 'OFFER_ID'
 });
 
+export const returnMode = Object.freeze({
+    OFFER: 'OFFER',
+    PRODUCT: 'PRODUCT',
+});
+
 export default {
     props: {
         loadedProducts: {
@@ -70,6 +75,11 @@ export default {
         loader: {
             type: Function,
             required: true,
+        },
+
+        returnMode: {
+            type: String,
+            default: returnMode.OFFER,
         }
     },
 
@@ -188,8 +198,8 @@ export default {
                             return offer.id === codeOrId;
                         });
 
-                        if (!this.loadedProducts.includes(offer.id)) {
-                            loadedIds.push(offer.id);
+                        if (!this.loadedProducts.includes(this.returnMode === returnMode.OFFER ? offer.id : offer.productId)) {
+                            loadedIds.push(this.returnMode === returnMode.OFFER ? offer.id : offer.productId);
 
                             this.report.push({
                                 vendorCode: `${this.mode === this.modes.OFFER_ID ? 'Офер' : 'Артикул'} ${codeOrId}`,

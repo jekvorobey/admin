@@ -8,6 +8,7 @@
             :loaded-products="iSelectedProductIds"
             show-report
             :loader="offerLoader"
+            :return-mode="offerLoaderReturnModes.PRODUCT"
             @load="onLoadOffers"
         />
 
@@ -46,7 +47,10 @@
     import _chunk from 'lodash/chunk';
 
     import Services from '../../../../../scripts/services/services';
-    import BulkOfferLoader, { mode as loaderMode } from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
+    import BulkOfferLoader, {
+        mode as loaderMode,
+        returnMode
+    } from '../../../../components/bulk-offer-loader/bulk-offer-loader.vue';
 
     export default {
         components: {
@@ -65,6 +69,8 @@
                 report: [],
 
                 debounce: null,
+
+                offerLoaderReturnModes: returnMode,
             };
         },
 
@@ -79,7 +85,9 @@
                 }
 
                 let offers = await Services.net().post(
-                    this.getRoute('productGroup.getProducts'),
+                    mode === loaderMode.OFFER_ID
+                        ? this.getRoute('productGroup.getProductsByOffers')
+                        : this.getRoute('productGroup.getProducts'),
                     {},
                     params,
                 );
@@ -88,7 +96,7 @@
                     return {
                         id: offer.id,
                         vendorCode: offer.vendor_code,
-                        productId: null,
+                        productId: offer.product ? offer.product.id : offer.id,
                     };
                 });
             },
