@@ -413,8 +413,11 @@ class DiscountHelper
 
     public static function getUserNames(): Collection
     {
+        $discountService = resolve(DiscountService::class);
+        $discountUsersInfo = $discountService->usersInfo([]);
+
         $userService = resolve(UserService::class);
-        $query = $userService->newQuery();
+        $query = $userService->newQuery()->setFilter('id', array_values($discountUsersInfo['authors'] ?? null));
         $users = $userService->users($query);
 
         return collect($users)->pluck('login', 'id');
