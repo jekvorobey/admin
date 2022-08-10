@@ -18,8 +18,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Pim\Core\PimException;
 use Pim\Dto\CategoryDto;
+use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Product\ProductDto;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\PropertyDirectoryValueService\PropertyDirectoryValueService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -216,6 +219,36 @@ class ProductGroupDetailController extends Controller
         $products = $productService->products($query);
 
         return response()->json($products);
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function getProductsByOffers(Request $request, OfferService $offerService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
+
+        $validatedData = $request->validate([
+            'id' => 'array',
+        ]);
+
+        $query = $offerService->newQuery();
+
+        $query->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
+            ->include(ProductDto::entity());
+
+        $validatedData = array_filter($validatedData);
+        if (!$validatedData) {
+            throw new HttpException('500');
+        }
+
+        foreach ($validatedData as $keyParam => $valueParam) {
+            $query->setFilter($keyParam, $valueParam);
+        }
+
+        $offers = $offerService->offers($query);
+
+        return response()->json($offers);
     }
 
     /**
