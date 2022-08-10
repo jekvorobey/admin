@@ -32,13 +32,9 @@
                                                 @click="capturePayment()">
                             Подтвердить платеж
                         </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="canMarkAsPaid && isCreditPayment"
+                        <b-dropdown-item-button v-if="canMarkAsPaid"
                                                 @click="markAsPaid()">
-                            Заказ оплачен (в рассрочку)
-                        </b-dropdown-item-button>
-                        <b-dropdown-item-button v-if="canMarkAsPaid && canMarkAsLegal && isBankTransferPayment"
-                                                @click="markAsPaid()">
-                            Заказ оплачен (через юрлицо)
+                            Заказ оплачен (в рассрочку или через юрлицо)
                         </b-dropdown-item-button>
 
                         <b-dropdown-item-button v-if="canMarkAsPaidForce"
@@ -378,9 +374,6 @@ export default {
         },
         canMarkAsPaid() {
             return this.order.canMarkAsPaid;
-        },
-        canMarkAsLegal() {
-            return this.order.canMarkAsLegal;
         },
         canMarkAsPaidForce() {
             return this.order.canMarkAsPaidForce;

@@ -514,7 +514,8 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $order['canMarkAsPaid'] = $order->payment_status->id === PaymentStatus::WAITING
+        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITPAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL])
+            && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
@@ -522,15 +523,6 @@ class OrderDetailController extends Controller
             && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING])
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
-
-        $order['canMarkAsLegal'] = true;
-        foreach ($order->deliveries as $delivery) {
-            foreach ($delivery->shipments as $shipment) {
-                if (!$shipment->payment_document_number || !$shipment->payment_document_date) {
-                    $order['canMarkAsLegal'] = false;
-                }
-            }
-        }
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
