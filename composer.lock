@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "338c1bb1940899e8df9af1548fb99737",
+    "content-hash": "524346e0c33fc24ce2a559a2cb4172db",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1582,11 +1582,11 @@
         },
         {
             "name": "ibt/message-lib",
-            "version": "dev-feature/BX-6594-custom-filter-chats",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "042ae81d8ae7d7471c3ab665368eba4820541847"
+                "reference": "603a08ad72a3fa271d72baf0c20ec5dbb86ddca1"
             },
             "require": {
                 "ext-json": "*",
@@ -1597,6 +1597,7 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1620,7 +1621,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-08-09T10:14:36+00:00"
+            "time": "2022-08-11T07:42:50+00:00"
         },
         {
             "name": "ibt/oms-lib",
@@ -11246,14 +11247,7 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "ibt/message-lib",
-            "version": "dev-feature/BX-6594-custom-filter-chats",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
