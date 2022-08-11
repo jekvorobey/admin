@@ -434,11 +434,15 @@
 
                 if (user.fronts && user.fronts.length) {
                     if (user.fronts.includes(this.userFronts.mas)) {
-                        result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
-                            '?tab=communication&allTab=0&showChat=' + chatId;
-                    } else if (user.fronts.includes(this.userFronts.mas)) {
-                        result = this.getRoute('customers.detail', { id: this.customers[userId].id }) +
-                            '?tab=communication&allTab=1&showChat=' + chatId;
+                        if (typeof this.operators[userId] !== 'undefined') {
+                            result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
+                                '?tab=communication&allTab=0&showChat=' + chatId;
+                        }
+                    } else if (user.fronts.includes(this.userFronts.showcase)) {
+                        if (typeof this.customers[userId] !== 'undefined') {
+                            result = this.getRoute('customers.detail', {id: this.customers[userId].id}) +
+                                '?tab=communication&allTab=1&showChat=' + chatId;
+                        }
                     }
                 }
 
