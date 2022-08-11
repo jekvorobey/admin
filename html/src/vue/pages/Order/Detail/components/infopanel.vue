@@ -11,10 +11,10 @@
                                             @click="orderInvoiceOffer()">
                         Получить счет-оферту
                     </b-dropdown-item-button>
-                    <b-dropdown-item-button v-if="isBankTransferPayment && isPaid"
+                    <!--<b-dropdown-item-button v-if="isBankTransferPayment && isPaid"
                                             @click="orderUpd()">
                         Получить УПД
-                    </b-dropdown-item-button>
+                    </b-dropdown-item-button>-->
                 </b-dropdown>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
                     <template
