@@ -1586,12 +1586,12 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-message-lib",
-                "reference": "6cf86a8d20da58db0c6f06dfefca314c4b8074fb"
+                "reference": "603a08ad72a3fa271d72baf0c20ec5dbb86ddca1"
             },
             "require": {
                 "ext-json": "*",
                 "ibt/common-lib": "dev-master",
-                "php": "^7.1.3"
+                "php": "^7.1.3|^8.0.2"
             },
             "require-dev": {
                 "laravel/framework": "^5.8",
@@ -1621,7 +1621,7 @@
                 }
             ],
             "description": "iBT message client",
-            "time": "2022-07-08T10:33:31+00:00"
+            "time": "2022-08-11T07:42:50+00:00"
         },
         {
             "name": "ibt/oms-lib",
