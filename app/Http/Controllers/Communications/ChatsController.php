@@ -37,6 +37,7 @@ class ChatsController extends Controller
         $this->loadCommunicationChannels = true;
         $this->loadCommunicationThemes = true;
         $this->loadCommunicationStatuses = true;
+        $this->loadCommunicationTypes = true;
 
         $this->title = 'Сообщения';
 
