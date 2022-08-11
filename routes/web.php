@@ -504,6 +504,8 @@ Route::middleware('auth')->group(function () {
             Route::put('capturePayment', [OrderDetailController::class, 'capturePayment'])->name('orders.capturePayment');
             Route::put('cancel', [OrderDetailController::class, 'cancel'])->name('orders.cancel');
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
+            Route::get('invoice-offer', [OrderDetailController::class, 'invoiceOffer'])->name('order.invoiceOffer');
+            Route::get('upd', [OrderDetailController::class, 'upd'])->name('order.upd');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
@@ -550,6 +552,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('assembling-card', [TabShipmentsController::class, 'assemblingCard'])->name(
                                 'orders.detail.shipments.documents.assemblingCard'
                             );
+                            Route::get('upd', [TabShipmentsController::class, 'shipmentUpd'])->name('orders.detail.shipments.documents.upd');
                         });
 
                         Route::prefix('/shipment-packages')->group(function () {

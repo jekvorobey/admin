@@ -131,7 +131,7 @@
             <th>Личный промокод</th>
             <td>{{personalDiscount || '-'}}</td>
         </tr>
-        <template v-if="customer.referral">
+        <template>
             <tr class="table-secondary">
                 <th colspan="2">Платежные реквизиты</th>
             </tr>
@@ -145,6 +145,12 @@
                 <th>ИНН</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.legal_info_inn"/>
+                </td>
+            </tr>
+            <tr>
+                <th>КПП</th>
+                <td>
+                    <input class="form-control form-control-sm" v-model="form.legal_info_kpp"/>
                 </td>
             </tr>
             <tr>
@@ -230,16 +236,16 @@
                 </td>
             </tr>
 
-            <tr class="table-secondary">
+            <tr class="table-secondary" v-if="customer.referral">
                 <th colspan="2">Договор реферального партнера</th>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Номер договора</th>
                 <td>
                     <input class="form-control form-control-sm" v-model="form.referral_contract_number"/>
                 </td>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Дата договора</th>
                 <td>
                     <date-picker
@@ -251,7 +257,7 @@
                     />
                 </td>
             </tr>
-            <tr>
+            <tr v-if="customer.referral">
                 <th>Документы</th>
                 <td>
                     <div v-for="(document, i) in referralContracts" class="mb-1">
@@ -307,6 +313,7 @@ export default {
                 legal_info_company_name: this.model.legal_info_company_name,
                 legal_info_company_address: this.model.legal_info_company_address,
                 legal_info_inn: this.model.legal_info_inn,
+                legal_info_kpp: this.model.legal_info_kpp,
                 legal_info_payment_account: this.model.legal_info_payment_account,
                 legal_info_bik: this.model.legal_info_bik,
                 legal_info_bank: this.model.legal_info_bank,
@@ -344,6 +351,7 @@ export default {
                 (this.customer.legal_info_company_name || '') !== (this.form.legal_info_company_name || '') ||
                 (this.customer.legal_info_company_address || '') !== (this.form.legal_info_company_address || '') ||
                 (this.customer.legal_info_inn || '') !== (this.form.legal_info_inn || '') ||
+                (this.customer.legal_info_kpp || '') !== (this.form.legal_info_kpp || '') ||
                 (this.customer.legal_info_payment_account || '') !== (this.form.legal_info_payment_account || '') ||
                 (this.customer.legal_info_bik || '') !== (this.form.legal_info_bik || '') ||
                 (this.customer.legal_info_bank || '') !== (this.form.legal_info_bank || '') ||
@@ -383,6 +391,7 @@ export default {
                     legal_info_company_name: this.form.legal_info_company_name,
                     legal_info_company_address: this.form.legal_info_company_address,
                     legal_info_inn: this.form.legal_info_inn,
+                    legal_info_kpp: this.form.legal_info_kpp,
                     legal_info_payment_account: this.form.legal_info_payment_account,
                     legal_info_bik: this.form.legal_info_bik,
                     legal_info_bank: this.form.legal_info_bank,
@@ -416,6 +425,7 @@ export default {
                 this.customer.legal_info_company_name = this.form.legal_info_company_name;
                 this.customer.legal_info_company_address = this.form.legal_info_company_address;
                 this.customer.legal_info_inn = this.form.legal_info_inn;
+                this.customer.legal_info_kpp = this.form.legal_info_kpp;
                 this.customer.legal_info_payment_account = this.form.legal_info_payment_account;
                 this.customer.legal_info_bik = this.form.legal_info_bik;
                 this.customer.legal_info_bank = this.form.legal_info_bank;
@@ -446,6 +456,7 @@ export default {
             this.form.legal_info_company_name = this.customer.legal_info_company_name;
             this.form.legal_info_company_address = this.customer.legal_info_company_address;
             this.form.legal_info_inn = this.customer.legal_info_inn;
+            this.form.legal_info_kpp = this.customer.legal_info_kpp;
             this.form.legal_info_payment_account = this.customer.legal_info_payment_account;
             this.form.legal_info_bik = this.customer.legal_info_bik;
             this.form.legal_info_bank = this.customer.legal_info_bank;

@@ -39,6 +39,7 @@ class Controller extends BaseController
     protected bool $loadOrderStatuses = false;
     protected bool $loadBasketTypes = false;
     protected bool $loadPaymentStatuses = false;
+    protected bool $loadAllPaymentMethods = false;
     protected bool $loadDeliveryStatuses = false;
     protected bool $loadShipmentStatuses = false;
     protected bool $loadCargoStatuses = false;
@@ -83,6 +84,7 @@ class Controller extends BaseController
             ->loadOrderStatuses($this->loadOrderStatuses)
             ->loadBasketTypes($this->loadBasketTypes)
             ->loadPaymentStatuses($this->loadPaymentStatuses)
+            ->loadAllPaymentMethods($this->loadAllPaymentMethods)
             ->loadDeliveryStatuses($this->loadDeliveryStatuses)
             ->loadShipmentStatuses($this->loadShipmentStatuses)
             ->loadCargoStatuses($this->loadCargoStatuses)
