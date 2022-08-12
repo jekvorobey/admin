@@ -123,7 +123,7 @@ class MerchantStoreController extends Controller
     {
         return [
             DeliveryService::SERVICE_B2CPL => B2CplCourierCallTime::all(),
-            DeliveryService::SERVICE_DPD => DpdCourierCallTime::all(),
+            //DeliveryService::SERVICE_DPD => DpdCourierCallTime::all(),
         ];
     }
 
