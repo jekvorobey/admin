@@ -133,23 +133,23 @@ class Controller extends BaseController
     protected function canView(int|array $blocks): bool
     {
         foreach ((array) $blocks as $block) {
-            $state = resolve(RequestInitiator::class)->canView($block);
-            if ($state === false) {
-                abort(403, 'Недостаточно прав');
+            if (resolve(RequestInitiator::class)->canView($block)) {
+                return true;
             }
         }
 
-        return true;
+        abort(403, 'Недостаточно прав');
     }
 
-    protected function canUpdate(int $block): bool
+    protected function canUpdate(int|array $blocks): bool
     {
-        $state = resolve(RequestInitiator::class)->canUpdate($block);
-        if ($state === false) {
-            abort(403, 'Недостаточно прав');
+        foreach ((array) $blocks as $block) {
+            if (resolve(RequestInitiator::class)->canUpdate($block)) {
+                return true;
+            }
         }
 
-        return true;
+        abort(403, 'Недостаточно прав');
     }
 
     /**

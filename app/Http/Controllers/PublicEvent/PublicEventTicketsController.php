@@ -90,7 +90,7 @@ class PublicEventTicketsController extends Controller
                 : null;
 
             return $data;
-        });
+        })->all();
     }
 
     protected function makeRestQuery(OrderService $orderService, array $sprints): DataQuery
