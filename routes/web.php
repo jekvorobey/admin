@@ -124,6 +124,7 @@ use App\Http\Controllers\PublicEvent\SpecialtyController;
 use App\Http\Controllers\Referral\LevelsController;
 use App\Http\Controllers\Referral\MassPromoProductsController;
 use App\Http\Controllers\Referral\OptionsController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceNotification\ServiceNotificationController;
 use App\Http\Controllers\ServiceNotification\SystemAlertController;
 use App\Http\Controllers\ServiceNotification\TemplateController;
@@ -150,7 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [MainController::class, 'logoutAjax'])->name('logout');
 
     Route::prefix('search')->group(function () {
-        Route::get('products', [UsersController::class, 'changePassword'])->name('search.products');
+        Route::get('products', [SearchController::class, 'products'])->name('search.products');
     });
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {
