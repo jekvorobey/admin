@@ -54,7 +54,14 @@
                         v-model="store.dpd_regular_num"
                         class="col-lg-6 col-12"
                 >Номер регулярного заказа DPD</v-input>
-                <input type="checkbox" v-model="store.is_always_splitted"/>Всегда сплитом
+            </div>
+            <div class="col-lg-6 col-12 form-group">
+                <div class="row">
+                    <label>
+                        Всегда сплитом
+                        <input type="checkbox" v-model="store.is_always_splitted"/>
+                    </label>
+                </div>
             </div>
         </form>
 
