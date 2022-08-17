@@ -50,6 +50,8 @@ Build:
     stage: build
     image: docker:stable
     script:
+        - mkdir -p gitlab_key/
+        - echo "$SSH_RSA" | tr -d '\r' > gitlab_key/id_rsa
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
         - docker pull $CONTAINER_IMAGE:latest || true
         - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG .
