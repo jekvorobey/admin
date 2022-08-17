@@ -50,10 +50,9 @@ Build:
     stage: build
     image: docker:stable
     script:
-        #    - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
-        - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD $REGISTRY
-        #    - docker pull $CONTAINER_IMAGE:latest || true
-        #    - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG .
+        - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
+        - docker pull $CONTAINER_IMAGE:latest || true
+        - docker build --cache-from $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG .
         - docker build -t $CONTAINER_IMAGE:latest -t $CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG .
         - docker image push $CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG
         - docker image push $CONTAINER_IMAGE:latest
