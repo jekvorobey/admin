@@ -1,4 +1,4 @@
 import boot from '../../../default-entry';
-import Page from './ChatsUnread.vue';
+import Page from './Chats.vue';
 
 boot(Page);

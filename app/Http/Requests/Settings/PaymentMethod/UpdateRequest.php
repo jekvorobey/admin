@@ -13,6 +13,7 @@ class UpdateRequest extends FormRequest
             'code' => 'required|string',
             'active' => 'required|boolean',
             'is_apply_discounts' => 'required|boolean',
+            'is_available_for_mc' => 'required|boolean',
             'button_text' => 'nullable|string',
             'min_available_price' => 'nullable|numeric',
             'max_available_price' => 'nullable|numeric',

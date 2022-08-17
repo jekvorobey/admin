@@ -152,6 +152,43 @@
                 >Контактный e-mail</v-input>
             </div>
 
+            <h3 class="mb-3">Сведения о главном бухгалтере</h3>
+            <div class="row">
+                <v-input v-model="$v.form.general_accountant_last_name.$model"
+                         :error="errorGeneralAccountantLastName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('general_accountant_last_name')}"
+                >Фамилия</v-input>
+                <v-input v-model="$v.form.general_accountant_first_name.$model"
+                         :error="errorGeneralAccountantFirstName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('general_accountant_first_name')}"
+                >Имя</v-input>
+                <v-input v-model="$v.form.general_accountant_middle_name.$model"
+                         :error="errorGeneralAccountantMiddleName"
+                         class="col-md-4 col-12"
+                         @change="() => {updateInput('general_accountant_middle_name')}"
+                >Отчество</v-input>
+            </div>
+            <div class="row">
+                <v-input
+                    v-model="$v.form.general_accountant_phone.$model"
+                    :placeholder="telPlaceholder"
+                    :error="errorGeneralAccountantPhone"
+                    v-mask="telMask"
+                    class="col-md-6 col-12"
+                    autocomplete="off"
+                    @change="() => {updateInput('general_accountant_phone')}"
+                >Контактный телефон</v-input>
+                <v-input
+                    v-model="$v.form.general_accountant_email.$model"
+                    :placeholder="emailPlaceholder"
+                    :error="errorGeneralAccountantEmail"
+                    class="col-md-6 col-12"
+                    autocomplete="off"
+                    @change="() => {updateInput('general_accountant_email')}"
+                >Контактный e-mail</v-input>
+            </div>
 
             <h3 class="mb-3">Контактная информация</h3>
             <div class="row">
@@ -248,6 +285,12 @@ export default {
         logistics_manager_phone: String,
         logistics_manager_email: String,
 
+        general_accountant_last_name: String,
+        general_accountant_first_name: String,
+        general_accountant_middle_name: String,
+        general_accountant_phone: String,
+        general_accountant_email: String,
+
         contact_centre_phone: String,
         social_phone: String,
         email_for_merchant: String,
@@ -284,6 +327,12 @@ export default {
                 logistics_manager_middle_name: this.logistics_manager_middle_name,
                 logistics_manager_phone: this.logistics_manager_phone,
                 logistics_manager_email: this.logistics_manager_email,
+
+                general_accountant_last_name: this.general_accountant_last_name,
+                general_accountant_first_name: this.general_accountant_first_name,
+                general_accountant_middle_name: this.general_accountant_middle_name,
+                general_accountant_phone: this.general_accountant_phone,
+                general_accountant_email: this.general_accountant_email,
 
                 contact_centre_phone: this.contact_centre_phone,
                 social_phone: this.social_phone,
@@ -351,6 +400,12 @@ export default {
             logistics_manager_middle_name: {required},
             logistics_manager_phone: {required},
             logistics_manager_email: {required, email},
+
+            general_accountant_last_name: {required},
+            general_accountant_first_name: {required},
+            general_accountant_middle_name: {required},
+            general_accountant_phone: {required},
+            general_accountant_email: {required, email},
 
             contact_centre_phone: {required},
             social_phone: {required},
@@ -524,6 +579,32 @@ export default {
             if (this.$v.form.logistics_manager_email.$dirty) {
                 if (!this.$v.form.logistics_manager_email.required) return "Обязательное поле!";
                 if (!this.$v.form.logistics_manager_email.email) return "Введите валидный e-mail!";
+            }
+        },
+        errorGeneralAccountantLastName() {
+            if (this.$v.form.general_accountant_last_name.$dirty) {
+                if (!this.$v.form.general_accountant_last_name.required) return "Обязательное поле!";
+            }
+        },
+        errorGeneralAccountantFirstName() {
+            if (this.$v.form.general_accountant_first_name.$dirty) {
+                if (!this.$v.form.general_accountant_first_name.required) return "Обязательное поле!";
+            }
+        },
+        errorGeneralAccountantMiddleName() {
+            if (this.$v.form.general_accountant_middle_name.$dirty) {
+                if (!this.$v.form.general_accountant_middle_name.required) return "Обязательное поле!";
+            }
+        },
+        errorGeneralAccountantPhone() {
+            if (this.$v.form.general_accountant_phone.$dirty) {
+                if (!this.$v.form.general_accountant_phone.required) return "Обязательное поле!";
+            }
+        },
+        errorGeneralAccountantEmail() {
+            if (this.$v.form.general_accountant_email.$dirty) {
+                if (!this.$v.form.general_accountant_email.required) return "Обязательное поле!";
+                if (!this.$v.form.general_accountant_email.email) return "Введите валидный e-mail!";
             }
         },
         errorContactCentrePhone() {
