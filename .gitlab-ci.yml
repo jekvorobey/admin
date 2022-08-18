@@ -3,7 +3,6 @@ variables:
     REGISTRY_USER: gitlab
     REGISTRY_PASS: Ohng5zahzi1quahV
     CONTAINER_IMAGE: $REGISTRY/$CI_PROJECT_NAME
-    CONTAINER_IMAGE_TAG: $CI_PROJECT_NAME-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
     LOCAL_PATH: /home/iBT.studio/svc/$CI_PROJECT_NAME
     DEV_SERVER: NONE
     DEV_DOMAIN: NONE
@@ -16,6 +15,11 @@ variables:
     variables:
         ANSIBLE_HOST_KEY_CHECKING: "False"
     before_script:
+        - if [[ -z "$CI_COMMIT_TAG" ]]; then \
+            CONTAINER_IMAGE_TAG=${CI_COMMIT_SHORT_SHA} \
+          else \
+            CONTAINER_IMAGE_TAG=${CI_COMMIT_TAG}-${CI_COMMIT_SHORT_SHA} \
+          fi
         - apk update && apk add openssh-client
         - mkdir -p ~/.ssh
         - echo "$SSH_RSA" | tr -d '\r' > ~/.ssh/id_rsa
@@ -50,6 +54,11 @@ Build:
     stage: build
     image: docker:stable
     script:
+        - if [[ -z "$CI_COMMIT_TAG" ]]; then \
+            CONTAINER_IMAGE_TAG=${CI_COMMIT_SHORT_SHA} \
+          else \
+            CONTAINER_IMAGE_TAG=${CI_COMMIT_TAG}-${CI_COMMIT_SHORT_SHA} \
+          fi 
         - mkdir -p gitlab_key/
         - echo "$SSH_RSA" | tr -d '\r' > gitlab_key/id_rsa
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
@@ -71,6 +80,7 @@ Stage:
         - echo "deploy to $DEV_SERVER"
         - echo "$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG @ $LOCAL_PATH"
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "mkdir -p $LOCAL_PATH/"
+        - sed -r "s|(image: CONTAINER_IMAGE):.*|\1:$CONTAINER_IMAGE_TAG|" -i docker-compose.yml
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$DEV_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "export TAG=$CONTAINER_IMAGE_TAG; export IMAGE=$CONTAINER_IMAGE; cd $LOCAL_PATH; docker-compose up -d"
 #    only:
@@ -87,6 +97,7 @@ Production:
         - echo "deploy to $PROD_SERVER"
         - echo "$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG @ $LOCAL_PATH"
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "mkdir -p $LOCAL_PATH/"
+        - sed -r "s|(image: CONTAINER_IMAGE):.*|\1:$CONTAINER_IMAGE_TAG|" -i docker-compose.yml
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$PROD_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; cd $LOCAL_PATH; docker-compose -f ../../docker-compose.yml -f docker-compose.yml up -d"
 #    only:
