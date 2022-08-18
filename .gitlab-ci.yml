@@ -88,7 +88,7 @@ Production:
         - echo "$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG @ $LOCAL_PATH"
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "mkdir -p $LOCAL_PATH/"
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$PROD_SERVER:$LOCAL_PATH/docker-compose.yml
-        - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; cd $LOCAL_PATH; docker-compose up -d -f ../../docker-compose.yml -f docker-compose.yml"
+        - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; cd $LOCAL_PATH; docker-compose -f ../../docker-compose.yml -f docker-compose.yml up -d"
 #    only:
 #        - tags    
     when: manual
