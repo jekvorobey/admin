@@ -1,0 +1,18 @@
+  ibt-admin:
+    container_name: ibt-admin
+    image: registry.ibt.ru:5050/ibt-admin:${TAG}
+    restart: always
+    env_file:
+      - /home/iBT.studio/svc/ibt-admin/.env
+    environment:
+      - PHP_SOCK_FILE=/sockets/ibt-admin_php
+    volumes:
+      - /sockets/:/sockets/
+      - /home/iBT.studio/svc/ibt-admin/.env:/var/www/.env
+    hostname: ibt-admin.prod
+    networks:
+      prod.svc.cluster.local:
+        aliases:
+          - ibt-admin.prod.svc.cluster.local
+    extra_hosts:
+      - "mysql-master:host-gateway"
