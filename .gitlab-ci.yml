@@ -4,7 +4,7 @@ variables:
     REGISTRY_PASS: Ohng5zahzi1quahV
     CONTAINER_IMAGE: $REGISTRY/$CI_PROJECT_NAME
     CONTAINER_IMAGE_TAG: $CI_PROJECT_NAME-$CI_COMMIT_TAG-$CI_COMMIT_SHORT_SHA
-    LOCAL_PATH: /home/$CI_PROJECT_NAME/$CI_PROJECT_NAME
+    LOCAL_PATH: /home/iBT.studio/svc/$CI_PROJECT_NAME
     DEV_SERVER: NONE
     DEV_DOMAIN: NONE
     PROD_SERVER: 77.223.118.180
@@ -60,6 +60,8 @@ Build:
         - docker image push $CONTAINER_IMAGE:latest
     # rules:
     #   - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    only:
+        - tags    
 
 Stage:
     <<: *main_deploy_settings
@@ -71,6 +73,8 @@ Stage:
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "mkdir -p $LOCAL_PATH/"
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$DEV_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "export TAG=$CONTAINER_IMAGE_TAG; export IMAGE=$CONTAINER_IMAGE; cd $LOCAL_PATH; docker-compose up -d"
+    only:
+        - tags
     when: manual
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -84,5 +88,7 @@ Production:
         - echo "$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG @ $LOCAL_PATH"
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "mkdir -p $LOCAL_PATH/"
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$PROD_SERVER:$LOCAL_PATH/docker-compose.yml
-        - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; export IMAGE=$CONTAINER_IMAGE; cd $LOCAL_PATH; docker-compose up -d"
+        - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; cd $LOCAL_PATH; docker-compose up -d"
+    only:
+        - tags    
     when: manual
