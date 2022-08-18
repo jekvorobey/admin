@@ -60,8 +60,8 @@ Build:
         - docker image push $CONTAINER_IMAGE:latest
     # rules:
     #   - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    only:
-        - tags    
+#    only:
+#        - tags    
 
 Stage:
     <<: *main_deploy_settings
@@ -73,8 +73,8 @@ Stage:
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "mkdir -p $LOCAL_PATH/"
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$DEV_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "export TAG=$CONTAINER_IMAGE_TAG; export IMAGE=$CONTAINER_IMAGE; cd $LOCAL_PATH; docker-compose up -d"
-    only:
-        - tags
+#    only:
+#        - tags
     when: manual
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -89,6 +89,6 @@ Production:
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "mkdir -p $LOCAL_PATH/"
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$PROD_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "export TAG=$CONTAINER_IMAGE_TAG; cd $LOCAL_PATH; docker-compose up -d"
-    only:
-        - tags    
+#    only:
+#        - tags    
     when: manual
