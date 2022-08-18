@@ -1,3 +1,4 @@
+servces:
   ibt-admin:
     container_name: ibt-admin
     image: registry.ibt.ru:5050/ibt-admin:${TAG}
