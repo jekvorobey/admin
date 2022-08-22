@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "524346e0c33fc24ce2a559a2cb4172db",
+    "content-hash": "ec372916e17f5ba618def834b1731320",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1468,7 +1468,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-logistics-lib",
-                "reference": "5dd6b42ce9c5a3a7680671629190176597c335b5"
+                "reference": "9863334854f1df2c96a3cd7bd83482bfc50d0604"
             },
             "require": {
                 "ext-json": "*",
@@ -1502,7 +1502,7 @@
                 }
             ],
             "description": "iBT logistics client",
-            "time": "2022-07-21T08:32:53+00:00"
+            "time": "2022-08-17T10:43:16+00:00"
         },
         {
             "name": "ibt/marketing-lib",
