@@ -56,6 +56,14 @@
                             @click="showOrderReturnModal()">
                             Отменить заказ
                         </b-dropdown-item-button>
+
+
+                        <b-dropdown-item-button
+                                v-if="isCreditPayment && !isCancel"
+                                @click="showOrderCreditPaymentCreateModal()">
+                            Сформировать кассовый чек
+                        </b-dropdown-item-button>
+
                     </template>
                     <b-dropdown-item-button
                         v-else-if="this.order.basket.type === this.basketTypes.product && order.status && order.status.id === orderStatuses.done.id"
@@ -193,6 +201,8 @@
         </b-row>
         <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="order"
                                  @update:modelElement="cancelOrder($event)"/>
+
+        <modal-credit-payment-receipt-create :order="order" @update:createCreditPaymentReceipt="createCreditPaymentReceipt($event)"/>
     </b-card>
 </template>
 
@@ -201,10 +211,11 @@ import Services from '../../../../../scripts/services/services.js';
 
 import {validationMixin} from 'vuelidate';
 import ModalAddReturnReason from "./forms/modal-add-return-reason.vue";
+import ModalCreditPaymentReceiptCreate from "./forms/modal-credit-payment-receipt-create.vue";
 
 export default {
     name: 'infopanel',
-    components: {ModalAddReturnReason},
+    components: {ModalAddReturnReason, ModalCreditPaymentReceiptCreate},
     mixins: [
         validationMixin,
     ],
@@ -287,6 +298,9 @@ export default {
         showOrderReturnModal() {
             this.$bvModal.show('modal-add-return-reason-order');
         },
+        showOrderCreditPaymentCreateModal() {
+            this.$bvModal.show('modal-credit-payment-receipt-create');
+        },
         cancelOrder(returnReason) {
             let errorMessage = 'Ошибка при отмене заказа';
 
@@ -298,6 +312,46 @@ export default {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);
                     Services.msg("Изменения сохранены");
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        createCreditPaymentReceipt(receiptType) {
+            let errorMessage = 'Ошибка сервера при формировании фискального чека';
+
+            Services.showLoader();
+            Services.net().put(this.getRoute('orders.createCreditPaymentReceipt', {id: this.order.id}), null, {
+                receiptType: receiptType
+            }).then(data => {
+                if (data.order) {
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
+                    let message = data.result.message ? data.result.message : "Изменения сохранены";
+                    Services.msg(message);
+                } else {
+                    Services.msg(errorMessage, 'danger');
+                }
+            }, () => {
+                Services.msg(errorMessage, 'danger');
+            }).finally(data => {
+                Services.hideLoader();
+            });
+        },
+        paymentCheckCreditStatus() {
+            let errorMessage = 'Ошибка сервера при запросе статуса кредитной заявки';
+
+            Services.showLoader();
+            Services.net().get(this.getRoute('orders.paymentCheckCreditStatus', {id: this.order.id}), null).then(data => {
+                if (data.order) {
+                    this.$set(this, 'order', data.order);
+                    this.$set(this.order, 'shipments', data.order.shipments);
+                    let message = data.result.message ? data.result.message : "Изменения сохранены";
+                    Services.msg(message);
                 } else {
                     Services.msg(errorMessage, 'danger');
                 }

@@ -507,6 +507,8 @@ Route::middleware('auth')->group(function () {
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
             Route::get('invoice-offer', [OrderDetailController::class, 'invoiceOffer'])->name('order.invoiceOffer');
             Route::get('upd', [OrderDetailController::class, 'upd'])->name('order.upd');
+            Route::get('paymentCheckCreditStatus', [OrderDetailController::class, 'paymentCheckCreditStatus'])->name('orders.paymentCheckCreditStatus');
+            Route::put('createCreditPaymentReceipt', [OrderDetailController::class, 'createCreditPaymentReceipt'])->name('orders.createCreditPaymentReceipt');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
