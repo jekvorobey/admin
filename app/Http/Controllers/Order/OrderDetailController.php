@@ -643,6 +643,4 @@ class OrderDetailController extends Controller
 
         return $kpis->sortBy('status_at')->values();
     }
-
-    
 }
