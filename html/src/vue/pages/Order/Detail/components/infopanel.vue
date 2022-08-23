@@ -202,7 +202,9 @@
         <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="order"
                                  @update:modelElement="cancelOrder($event)"/>
 
-        <modal-credit-payment-receipt-create :order="order" @update:createCreditPaymentReceipt="createCreditPaymentReceipt($event)"/>
+        <modal-credit-payment-receipt-create :order="order"
+                                             @update:createCreditPaymentReceipt="createCreditPaymentReceipt($event)"
+                                             @update:paymentCheckCreditStatus="paymentCheckCreditStatus()"/>
     </b-card>
 </template>
 
@@ -350,7 +352,7 @@ export default {
                 if (data.order) {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);
-                    let message = data.result.message ? data.result.message : "Изменения сохранены";
+                    let message = data.result.message ? data.result.message : "Запрос выполнен успешно";
                     Services.msg(message);
                 } else {
                     Services.msg(errorMessage, 'danger');

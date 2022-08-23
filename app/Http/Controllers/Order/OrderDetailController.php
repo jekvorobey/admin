@@ -190,6 +190,11 @@ class OrderDetailController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
 
         $result = $orderService->paymentCheckCreditStatus($id);
+        $message = '';
+        foreach ($result as $key => $item) {
+            $message .= "{$key} : {$item}\n<br>";
+        }
+        $result['message'] = $message;
 
         return response()->json([
             'order' => $this->getOrder($id),
