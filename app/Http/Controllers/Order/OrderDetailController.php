@@ -213,7 +213,6 @@ class OrderDetailController extends Controller
         $data = $this->validate($request, [
             'receiptType' => 'required|int',
         ]);
-        
         $result = $orderService->createCreditPaymentReceipt($id, $data['receiptType']);
 
         return response()->json([
