@@ -4,11 +4,14 @@
             <b-form-row>
                 <div class="col-12 text-center">
                     <button class="btn btn-info mb-1 w-75" @click="createCreditPaymentReceipt(1)">Расчёт "ПРЕДОПЛАТА"</button>
+                    <p class="text-left">Формирование кассового чека с расчетом "Предоплата", если заказ в статусе "Передан в доставку", статус кредитной заявки сменился на "Cached" и нет ранее сформированных чеков</p>
                     <br>
                     <button class="btn btn-info mb-1 w-75" @click="createCreditPaymentReceipt(2)">Расчёт "В КРЕДИТ"</button>
+                    <p class="text-left">Формирование кассового чека с расчетом "В кредит", если заказ в статусе "Передан в доставку" и нет ранее сформированных чеков</p>
                     <br>
                     <button class="btn btn-info mb-1 w-75" @click="createCreditPaymentReceipt(3)">Расчёт "ПОГАШЕНИЕ КРЕДИТА"</button>
-                </div>
+                    <p class="text-left">Формирование кассового чека с расчетом "Погашение кредита", если статус кредитной заявки сменился на "Cached", заказ еще в пути и ранее был выбит чек с расчетом "В кредит"</p>
+                    </div>
             </b-form-row>
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
