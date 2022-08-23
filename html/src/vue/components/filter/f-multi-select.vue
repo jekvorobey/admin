@@ -1,12 +1,14 @@
 <template>
     <div class="form-group">
         <label :for="id" class="d-flex justify-content-between">
-            <slot/>
             <div>
-                <button class="btn small-btn badge btn-primary" @click="addAllOptions">all</button>
-                <button class="btn small-btn badge badge-danger" @click="deleteAllOptions">X</button>
+                <slot/>
+                <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
             </div>
-            <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
+            <div class="btn-group advanced-styles">
+                <button class="btn small-btn badge btn-outline-primary" @click="addAllOptions">all</button>
+                <button class="btn small-btn badge btn-outline-danger" @click="deleteAllOptions">X</button>
+            </div>
         </label>
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend">
@@ -154,7 +156,8 @@
         position: absolute;
         background: white;
         border: 1px solid #DFDFDF;
-        width: calc( 100% - 30px );
+        /*width: calc( 100% - 30px );*/
+        max-width: calc( 100% - 30px );
         z-index: 9999;
         max-height: 300px;
         overflow-y: auto;
@@ -189,5 +192,13 @@
         border-radius: 0.2rem;
         font-size: 12px;
         padding: 3px 5px;
+    }
+
+    .advanced-styles  .btn-outline-danger {
+        border-color: #dc354385;
+    }
+
+    .advanced-styles .btn-outline-primary {
+        border-color: #007bff70;
     }
 </style>

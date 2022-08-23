@@ -1,6 +1,6 @@
 <template>
-    <div class="position-relative">
-        <input class="form-control search-input" type="text" placeholder="Поиск..."
+    <div class="position-fixed">
+        <input class="fixed-input-search form-control search-input" type="text" placeholder="Поиск..."
                @input="onInput($event.target.value)"
                :value="value"
         >
@@ -32,5 +32,9 @@
         position: absolute;
         right: 10px;
         top: calc(50% - 10px);
+    }
+    .fixed-input-search{
+        width: 100%;
+        max-width: inherit;
     }
 </style>

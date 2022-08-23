@@ -16,7 +16,7 @@
                         <ul>
                             <v-search-input @onSearch="onSearch" :value="inputSearch"/>
                             <li v-if="!without_none" @click="select('')">Не выбрано</li>
-                            <li :class="{ current : option === myValue }" v-for="option in filteredOptions" @click="select(option)">{{ option.text }}</li>
+                            <li :class="{ 'li-first-item': index === 0, current : option === myValue }" v-for="(option, index) in filteredOptions" @click="select(option)">{{ option.text }}</li>
                         </ul>
                     </div>
                 </div>
@@ -141,5 +141,8 @@
     }
     .aselect .visible {
         visibility: visible;
+    }
+    .li-first-item {
+        padding-top: 40px;
     }
 </style>
