@@ -19,12 +19,11 @@ class ProductSelectionController extends Controller
      * @throws PimException
      */
     public function selection(
-        Request       $request,
+        Request $request,
         SearchService $searchService,
-        BrandService  $brandService,
-        OfferService  $offerService
-    )
-    {
+        BrandService $brandService,
+        OfferService $offerService
+    ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
         $this->title = 'Подбор товаров';
 
@@ -44,9 +43,8 @@ class ProductSelectionController extends Controller
 
         $productSearchResult->products = array_map(function ($product) use ($offers) {
 
-            $product['offerId'] = $offers[$product['id']] ?? null;
+            $product['offerIds'] = $offers[$product['id']] ?? null;
             return $product;
-
         }, $productSearchResult->products);
 
         dump([
@@ -76,11 +74,10 @@ class ProductSelectionController extends Controller
             ProductQuery::NAME,
             ProductQuery::BRAND_NAME,
             ProductQuery::STRIKES,
-            ProductQuery::DATE_ADD
+            ProductQuery::DATE_ADD,
         ]);
 
         $filter = $request->get('filter', []);
-        $query->offerId = data_get($filter, 'offerId');
         $query->merchantId = data_get($filter, 'merchants');
         $query->vendorCode = data_get($filter, 'vendorCode');
         $query->id = data_get($filter, 'id');
