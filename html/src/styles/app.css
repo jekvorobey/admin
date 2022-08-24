@@ -4,6 +4,10 @@ body {
     font-size: 14px;
 }
 
+label{
+    margin-bottom: 0 !important;
+}
+
 .breadcrumb-item a {
     color: black;
     text-decoration: underline;

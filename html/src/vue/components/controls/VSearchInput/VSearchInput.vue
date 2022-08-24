@@ -1,5 +1,5 @@
 <template>
-    <div class="position-fixed">
+    <div>
         <input class="fixed-input-search form-control search-input" type="text" placeholder="Поиск..."
                @input="onInput($event.target.value)"
                :value="value"
@@ -31,7 +31,7 @@
     .input-close-btn{
         position: absolute;
         right: 10px;
-        top: calc(50% - 10px);
+        top: 8px;
     }
     .fixed-input-search{
         width: 100%;

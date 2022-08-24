@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group">
+    <div class="form-group col-sm-12 col-md-3">
         <label :for="id" class="d-flex justify-content-between">
             <div>
                 <slot/>
@@ -40,12 +40,15 @@
                 </template>
                 <template v-else>
                     <v-search-input @onSearch="onSearch" :value="inputSearch"/>
-                    <div
-                            v-for="option in filteredOptions"
-                            class="select-item"
-                            :class="{selected:valueSelected(option.value)}"
-                            @click="toggleOption(option.value)"
-                    >{{ option.text }}</div>
+                    <div class="inner-list">
+                        <div
+                                v-for="option in filteredOptions"
+                                class="select-item"
+                                :class="{selected:valueSelected(option.value)}"
+                                @click="toggleOption(option.value)"
+                        >{{ option.text }}</div>
+                    </div>
+
                 </template>
             </div>
         </transition>
@@ -156,9 +159,10 @@
         position: absolute;
         background: white;
         border: 1px solid #DFDFDF;
-        /*width: calc( 100% - 30px );*/
-        max-width: calc( 100% - 30px );
+        width: calc( 100% - 30px );
         z-index: 9999;
+    }
+    .inner-list{
         max-height: 300px;
         overflow-y: auto;
     }

@@ -7,16 +7,16 @@
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend"><slot name="prepend"/></div>
             <div class="aselect" :id="id">
-                <div class="selector" @click="toggle($event.target)">
+                <div class="selector" @click="toggle($event.target)" :class="{'mh-32': !visible}">
                     <div class="label">
                         <span>{{ myValue[0].text }}</span>
                     </div>
                     <div class="arrow" :class="{ expanded : visible }"></div>
                     <div :class="{ hidden : !visible, visible }">
-                        <ul>
-                            <v-search-input @onSearch="onSearch" :value="inputSearch"/>
+                        <v-search-input @onSearch="onSearch" :value="inputSearch" class="li-search"/>
+                        <ul class="inner-list">
                             <li v-if="!without_none" @click="select('')">Не выбрано</li>
-                            <li :class="{ 'li-first-item': index === 0, current : option === myValue }" v-for="(option, index) in filteredOptions" @click="select(option)">{{ option.text }}</li>
+                            <li :class="{ current : option === myValue }" v-for="(option, index) in filteredOptions" @click="select(option)">{{ option.text }}</li>
                         </ul>
                     </div>
                 </div>
@@ -78,7 +78,21 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .mh-32{
+        max-height: calc(100% - 32px);
+    }
+    .li-search{
+        z-index: 1;
+        background: #fff;
+    }
+    .li-search .input-close-btn {
+        top: 33px;
+    }
+    .inner-list{
+        max-height: 300px;
+        overflow-y: auto;
+    }
     .aselect {
         width: 310px;
         cursor: pointer;
@@ -141,8 +155,5 @@
     }
     .aselect .visible {
         visibility: visible;
-    }
-    .li-first-item {
-        padding-top: 40px;
     }
 </style>
