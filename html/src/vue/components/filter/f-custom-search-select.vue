@@ -16,7 +16,7 @@
                         <v-search-input @onSearch="onSearch" :value="inputSearch" class="li-search"/>
                         <ul class="inner-list">
                             <li v-if="!without_none" @click="select('')">Не выбрано</li>
-                            <li :class="{ current : option === myValue }" v-for="(option, index) in filteredOptions" @click="select(option)">{{ option.text }}</li>
+                            <li :class="{ current : option === myValue }" v-for="option in filteredOptions" @click="select(option)">{{ option.text }}</li>
                         </ul>
                     </div>
                 </div>
