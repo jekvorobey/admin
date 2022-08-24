@@ -99,6 +99,7 @@ use App\Http\Controllers\Product\OfferDetailController;
 use App\Http\Controllers\Product\OfferListController;
 use App\Http\Controllers\Product\ProductDetailController;
 use App\Http\Controllers\Product\ProductListController;
+use App\Http\Controllers\Product\ProductSelectionController;
 use App\Http\Controllers\Product\PropertiesController;
 use App\Http\Controllers\Product\VariantGroup\Detail\TabProductsController;
 use App\Http\Controllers\Product\VariantGroup\Detail\TabPropertiesController;
@@ -673,6 +674,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', [ProductListController::class, 'index'])->name('products.list');
         Route::get('page', [ProductListController::class, 'page'])->name('products.listPage');
+        Route::get('selection', [ProductSelectionController::class, 'selection'])->name('products.selection');
 
         Route::put('approval', [ProductListController::class, 'updateApprovalStatus'])->name('products.massApproval');
         Route::put('production', [ProductListController::class, 'updateProductionStatus'])->name('products.massProduction');
