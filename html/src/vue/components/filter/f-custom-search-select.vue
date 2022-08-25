@@ -7,9 +7,9 @@
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend"><slot name="prepend"/></div>
             <div class="aselect" :id="id">
-                <div class="selector" @click="toggle($event.target)" :class="{'mh-32': !visible}">
+                <div class="selector" @click="toggle($event.target)" :class="{'mh-32': !visible, 'isDisabled': isDisabled}">
                     <div class="label">
-                        <span>{{ myValue[0].text }}</span>
+                        <span>{{ myValue[0].text}}</span>
                     </div>
                     <div class="arrow" :class="{ expanded : visible }"></div>
                     <div :class="{ hidden : !visible, visible }">
@@ -35,7 +35,6 @@
         components: {VSearchInput},
         data(){
             return{
-                myValue: !isNaN(this.value) && this.value !== '' ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}],
                 visible: false,
                 inputSearch: ''
             }
@@ -44,8 +43,16 @@
             value: [Number, String],
             options: Array,
             without_none: Boolean,
+            isDisabled: {
+                type: Boolean,
+                default: false,
+                required: false
+            },
         },
         computed: {
+            myValue(){
+                return this.options.length > 1 && !isNaN(this.value) && this.value !== '' && this.value != null ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}];
+            },
             id() {
                 return `filter-select-${this._uid}`
             },
@@ -63,8 +70,10 @@
         },
         methods: {
             toggle(target) {
-                if(!target.classList.contains('search-input') && !target.classList.contains('search-input-close-btn')){
-                    this.visible = !this.visible;
+                if(!this.isDisabled){
+                    if(!target.classList.contains('search-input') && !target.classList.contains('search-input-close-btn')){
+                        this.visible = !this.visible;
+                    }
                 }
             },
             select(option) {
@@ -155,5 +164,8 @@
     }
     .aselect .visible {
         visibility: visible;
+    }
+    .isDisabled{
+        background: #e9ecef !important;
     }
 </style>

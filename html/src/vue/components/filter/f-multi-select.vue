@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group col-sm-12 col-md-3">
+    <div class="form-group col-sm-12">
         <label :for="id" class="d-flex justify-content-between">
             <div>
                 <slot/>
@@ -28,15 +28,18 @@
         <transition name="slide">
             <div v-if="opened" class="select-list" @mouseleave="toggleList">
                 <template v-if="grouped">
-                    <template v-for="group in groups">
-                        <div class="select-item select-item--heading">{{ group }}</div>
-                        <div
-                                v-for="option in groupOptions(group)"
-                                class="select-item"
-                                :class="{selected:valueSelected(option.value)}"
-                                @click="toggleOption(option.value)"
-                        >{{ option.text }}</div>
-                    </template>
+                    <v-search-input @onSearch="onSearch" :value="inputSearch"/>
+                    <div class="inner-list">
+                        <template v-for="group in groups">
+                            <div class="select-item select-item--heading" v-if="filteredGroupOptions(group).length > 0">{{ group }}</div>
+                            <div
+                                    v-for="option in filteredGroupOptions(group)"
+                                    class="select-item"
+                                    :class="{selected:valueSelected(option.value)}"
+                                    @click="toggleOption(option.value)"
+                            >{{ option.text }}</div>
+                        </template>
+                    </div>
                 </template>
                 <template v-else>
                     <v-search-input @onSearch="onSearch" :value="inputSearch"/>
@@ -96,7 +99,7 @@
                     return res;
                 }, new Set())];
             },
-            filteredOptions(){
+            filteredOptions(l){
                 if (this.inputSearch !== null && this.inputSearch !== ''){
                     return this.options.filter(option => {
                             return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
@@ -134,6 +137,17 @@
             },
             groupOptions(group) {
                 return this.options.filter(option => option.group === group);
+            },
+            filteredGroupOptions(group){
+                if (this.inputSearch !== null && this.inputSearch !== ''){
+                    return this.groupOptions(group).filter(option => {
+                            return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
+                        }
+                    )
+                }
+                else {
+                    return this.groupOptions(group)
+                }
             },
             addAllOptions(){
                 this.options.forEach(option => {
