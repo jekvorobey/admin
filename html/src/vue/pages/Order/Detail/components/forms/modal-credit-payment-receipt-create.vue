@@ -15,7 +15,7 @@
             </b-form-row>
             <div class="float-right mt-3">
                 <button class="btn btn-info" @click="paymentCheckCreditStatus()">Проверить статус кредитной заявки</button>
-                <b-button @click="close()" variant="outline-primary">Отмена</b-button>
+                <b-button @click="close()" variant="outline-primary">Закрыть</b-button>
             </div>
         </template>
     </b-modal>
@@ -46,7 +46,6 @@
                 }
 
                 this.$emit('update:createCreditPaymentReceipt', receiptType);
-                this.$bvModal.hide('modal-credit-payment-receipt-create');
             },
             resetModal() {
             },
