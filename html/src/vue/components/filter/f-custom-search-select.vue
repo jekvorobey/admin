@@ -7,7 +7,7 @@
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend"><slot name="prepend"/></div>
             <div class="aselect" :id="id">
-                <div class="selector" @click="toggle($event.target)" :class="{'mh-32': !visible, 'isDisabled': isDisabled}">
+                <div class="selector" @click="toggle($event.target)" :class="{'isDisabled': isDisabled}">
                     <div class="label">
                         <span>{{ myValue[0].text}}</span>
                     </div>
@@ -21,6 +21,7 @@
                     </div>
                 </div>
             </div>
+            <span class="custom-search-error" v-if="error">{{ error }}</span>
             <div v-if="$slots.append" class="input-group-append"><slot name="append"/></div>
         </div>
     </div>
@@ -48,10 +49,11 @@
                 default: false,
                 required: false
             },
+            error: [String, Object]
         },
         computed: {
             myValue(){
-                return this.options.length > 1 && !isNaN(this.value) && this.value !== '' && this.value != null ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}];
+                return this.options.length > 1 && this.value !== '' && this.value != null ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}];
             },
             id() {
                 return `filter-select-${this._uid}`
@@ -77,7 +79,6 @@
                 }
             },
             select(option) {
-                option === '' ? this.myValue = [{text:'Не выбрано'}] : this.myValue = [option];
                 option === '' ? this.$emit('input', null) : this.$emit('input', option.value);
             },
             onSearch(value){
@@ -88,9 +89,6 @@
 </script>
 
 <style>
-    .mh-32{
-        max-height: calc(100% - 32px);
-    }
     .li-search{
         z-index: 1;
         background: #fff;
@@ -103,7 +101,7 @@
         overflow-y: auto;
     }
     .aselect {
-        width: 310px;
+        width: 100%;
         cursor: pointer;
     }
     .aselect .selector {
@@ -161,11 +159,19 @@
     }
     .aselect .hidden {
         visibility: hidden;
+        max-height: 0;
     }
     .aselect .visible {
         visibility: visible;
+        max-height: 500px;
     }
     .isDisabled{
         background: #e9ecef !important;
+    }
+    .custom-search-error{
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
     }
 </style>

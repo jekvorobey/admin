@@ -1,5 +1,5 @@
 <template>
-    <div class="form-group col-sm-12">
+    <div>
         <label :for="id" class="d-flex justify-content-between">
             <div>
                 <slot/>

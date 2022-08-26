@@ -3,16 +3,12 @@
         <div class="card">
             <div class="card-body">
                 <b-form @submit.prevent="">
-                    <b-row class="mb-2" v-if="roles">
+                    <b-row class="mb-2 align-items-center" v-if="roles">
                         <b-col cols="3">
-                            <label for="chat-users-role">Роли пользователей</label>
+                            <label>Роли пользователей</label>
                         </b-col>
-                        <b-col cols="9">
-                            <v-select2 v-model="form.role_ids" class="form-control form-control-sm" multiple>
-                                <b-form-select-option :value="role_id" v-for="(role_name, role_id) in roles" :key="role_id">
-                                    {{ role_name }}
-                                </b-form-select-option>
-                            </v-select2>
+                        <b-col>
+                            <f-multi-select v-model="form.role_ids" :options="roleOptions"></f-multi-select>
                         </b-col>
                     </b-row>
 
@@ -133,13 +129,14 @@
 <script>
     import VSelect2 from '../../controls/VSelect2/v-select2.vue';
     import CommunicationChatMessage from "../communication-chat-message/communication-chat-message.vue";
+    import FMultiSelect from '../../filter/f-multi-select.vue';
 
     import { mapGetters } from 'vuex';
     import Services from "../../../../scripts/services/services";
 
     export default {
         name: 'communication-chat-creator',
-        components: {VSelect2, CommunicationChatMessage},
+        components: {VSelect2, CommunicationChatMessage, FMultiSelect},
         props: ['usersProp', 'userSendIds', 'roles', 'merchants'],
         data() {
             let users = this.usersProp ? this.usersProp : {};
@@ -259,6 +256,12 @@
                         !type.channel_id ||
                         Number(type.channel_id) === Number(this.form.channel_id);
                 })
+            },
+            roleOptions() {
+                return Object.values(this.roles).map((role, index) => ({
+                    value: index,
+                    text: role
+                }));
             },
         },
         watch: {

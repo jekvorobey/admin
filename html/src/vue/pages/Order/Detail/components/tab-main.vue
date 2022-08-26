@@ -483,10 +483,10 @@
                 }
             },
         },
-        async created() {
+        created() {
             if (this.model.pickupDelivery) {
                 Services.showLoader();
-                await Services.net().get(this.getRoute('orders.detail.main', {id: this.model.id})).then(data => {
+                Services.net().get(this.getRoute('orders.detail.main', {id: this.model.id})).then(data => {
                     this.points = data.points;
                 }).finally(() => {
                     Services.hideLoader();

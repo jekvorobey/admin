@@ -2,13 +2,13 @@
     <layout-main back>
         <form v-on:submit.prevent.stop="add" class="mt-3">
             <div class="row">
-                <v-select
-                    v-model="$v.store.merchant_id.$model"
-                    :options="merchantOptions"
-                    :error="error_merchant_id"
-                    class="col-lg-6 col-12">
-                    Мерчант
-                </v-select>
+                <div class="form-group col-lg-6 col-12">
+                    <f-custom-search-select
+                            v-model="$v.store.merchant_id.$model"
+                            :options="merchantOptions"
+                            :error="error_merchant_id"
+                    >Мерчант</f-custom-search-select>
+                </div>
             </div>
             <div class="row">
                 <v-input
@@ -61,6 +61,7 @@
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
+    import FCustomSearchSelect from '../../../../components/filter/f-custom-search-select.vue';
 
     import {validationMixin} from 'vuelidate';
     import {integer, required, requiredIf} from 'vuelidate/lib/validators';
@@ -71,6 +72,7 @@
         VInput,
         VSelect,
         VDadata,
+        FCustomSearchSelect,
     },
     mixins: [validationMixin],
     props: {
