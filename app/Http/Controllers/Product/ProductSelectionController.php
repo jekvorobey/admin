@@ -23,13 +23,13 @@ class ProductSelectionController extends Controller
         $query = $this->makeQuery($request);
         $productSearchResult = $searchService->products($query);
 
-        dump([
+        return $this->render('Product/ProductSelection', [
             'iProducts' => $productSearchResult->products,
             'iTotal' => $productSearchResult->total,
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'merchants' => $this->getMerchants()->values(),
+                'merchants' => $this->getMerchants()->pluck('legal_name', 'id'),
             ],
         ]);
     }
