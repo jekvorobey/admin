@@ -674,7 +674,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', [ProductListController::class, 'index'])->name('products.list');
         Route::get('page', [ProductListController::class, 'page'])->name('products.listPage');
-        Route::get('selection', [ProductSelectionController::class, 'selection'])->name('products.selection');
+        Route::prefix('selection')->group(function () {
+            Route::get('', [ProductSelectionController::class, 'selection'])->name('products.selection');
+            Route::get('page', [ProductSelectionController::class, 'page'])->name('products.selection.listPage');
+        });
 
         Route::put('approval', [ProductListController::class, 'updateApprovalStatus'])->name('products.massApproval');
         Route::put('production', [ProductListController::class, 'updateProductionStatus'])->name('products.massProduction');
