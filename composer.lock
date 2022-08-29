@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec372916e17f5ba618def834b1731320",
+    "content-hash": "b56fbf4a6568612dafb6a2d3fb29b27c",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1624,11 +1624,11 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-5759-dpd-delivery",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-oms-lib",
-                "reference": "85538b409674cf46b01dc56728824e2d19f787c1"
+                "reference": "c91ebf4064b5630c6f6d31ebfb4d2f1e4c337edc"
             },
             "require": {
                 "ext-json": "*",
@@ -1640,7 +1640,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1664,7 +1663,7 @@
                 }
             ],
             "description": "iBT oms client",
-            "time": "2022-08-11T07:11:32+00:00"
+            "time": "2022-08-29T05:55:13+00:00"
         },
         {
             "name": "ibt/pim-lib",
@@ -11249,6 +11248,12 @@
     "aliases": [
         {
             "package": "ibt/logistics-lib",
+            "version": "dev-feature/BX-5759-dpd-delivery",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        },
+        {
+            "package": "ibt/oms-lib",
             "version": "dev-feature/BX-5759-dpd-delivery",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
