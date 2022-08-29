@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Pim\Core\PimException;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\SearchService\SearchService;
+use Illuminate\Http\JsonResponse;
 
 class ProductSelectionController extends Controller
 {
@@ -59,5 +60,22 @@ class ProductSelectionController extends Controller
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
 
         return $query;
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function page(Request $request, SearchService $searchService): JsonResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $query = $this->makeQuery($request);
+        $productSearchResult = $searchService->products($query);
+
+        $data = [
+            'products' => $productSearchResult->products,
+            'total' => $productSearchResult->total,
+        ];
+        return response()->json($data);
     }
 }
