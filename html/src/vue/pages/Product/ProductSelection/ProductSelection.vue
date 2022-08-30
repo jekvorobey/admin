@@ -490,8 +490,6 @@
         },
 
         created() {
-            console.log('created --- ProductSelection');
-
             window.onpopstate = () => {
                 let query = qs.parse(document.location.search.substr(1));
                 if (query.page) {

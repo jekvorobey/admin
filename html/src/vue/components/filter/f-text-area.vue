@@ -14,7 +14,7 @@
 
 <script>
     export default {
-        name: 'f-select',
+        name: 'f-text-area',
         inheritAttrs: false,
         props: {
             value: {},
