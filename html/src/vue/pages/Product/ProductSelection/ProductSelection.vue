@@ -21,27 +21,48 @@
             </template>
         </b-card>
 
+        <div class="d-flex justify-content-between mt-3 mb-3">
+            <div class="action-bar d-flex justify-content-start">
+                <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyOfferIdsToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать ID офферов</button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyArticlesToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
+            </div>
+        </div>
+
         <table class="table">
             <thead>
             <tr>
-                <th>offer id</th>
-                <th>Мерчант</th>
-                <th>Артикул</th>
-                <th>product id</th>
-                <th>Товар</th>
-                <th>Бренд</th>
-                <th>На витрине</th>
+                <th>
+                    <input type="checkbox"
+                           :checked="checkAll"
+                           @change="e => massCheckboxAllOnPage(e)"/>
+                </th>
+                <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
+                <th>
+                    <button class="btn btn-light float-right" @click="showChangeColumns">
+                        <fa-icon icon="cog"></fa-icon>
+                    </button>
+                    <modal-columns :i-columns="editedShowColumns"></modal-columns>
+                </th>
             </tr>
             </thead>
             <tbody>
             <tr v-for="product in products">
-                <td>{{product.offerId}}</td>
-                <td>{{product.merchantId}}</td>
-                <td> ??? </td>
-                <th>{{product.id}}</th>
-                <td>{{product.name}}</td>
-                <td>{{product.brandName}}</td>
-                <td> {{product.active}} </td>
+                <td class="d-flex flex-column align-items-center">
+                    <input type="checkbox"
+                           :checked="massHas({type:massProductsType, id:product.id})"
+                           @change="e => massCheckbox(e, massProductsType, product.id)"/>
+                </td>
+                <td v-for="column in columns" v-if="column.isShown" v-html="column.value(product)"></td>
+                <td></td>
             </tr>
             </tbody>
         </table>
@@ -66,6 +87,8 @@
     } from '../../../components/bulk-offer-loader/bulk-offer-loader.vue';
     import Services from "../../../../scripts/services/services";
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+    import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
+
     import {
         ACT_LOAD_PAGE,
         ACT_LOAD_SELECTION_PAGE,
@@ -85,6 +108,13 @@
     import Helpers from "../../../../scripts/helpers";
     import Media from "../../../../scripts/media";
 
+    import modalMixin from '../../../mixins/modal';
+    import mediaMixin from '../../../mixins/media';
+    import massSelectionMixin from '../../../mixins/mass-selection';
+    import { validationMixin } from 'vuelidate';
+    import { required } from 'vuelidate/lib/validators';
+    import * as clipboard from "clipboard-polyfill";
+
     const cleanHiddenFilter = {
         merchants: [],
         qty_from: '',
@@ -102,9 +132,17 @@
     export default {
         name: "ProductSelection",
 
+        mixins: [
+            modalMixin,
+            mediaMixin,
+            massSelectionMixin,
+            validationMixin
+        ],
+
         components: {
             BulkOfferLoader,
-            FMultiSelect
+            FMultiSelect,
+            ModalColumns,
         },
 
         props: {
@@ -131,6 +169,72 @@
                 selectedProductIds: this.iSelectedProductIds,
                 offerLoaderReturnModes: returnMode,
                 opened: false,
+                massProductsType: 'products',
+                columns: [
+                    {
+                        name: 'offer id',
+                        code: 'offerId',
+                        value: function(claim) {
+                            return claim.offerId  ? claim.offerId : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: true,
+                    },
+                    {
+                        name: 'Мерчант',
+                        code: 'merchantId',
+                        value: function(claim) {
+                            return claim.merchantId ? claim.merchantId : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Артикул',
+                        code: 'vendorCode',
+                        value: function(claim) {
+                            return claim.vendorCode ? claim.vendorCode : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'product id',
+                        code: 'id',
+                        value: function(claim) {
+                            return claim.id ? claim.id : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: true,
+                    },
+                    {
+                        name: 'Товар',
+                        code: 'name',
+                        value: function(claim) {
+                            return claim.name ? claim.name : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'Бренд',
+                        code: 'brandName',
+                        value: (claim) => {
+                            return claim.brandName ? claim.brandName : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                    {
+                        name: 'На витрине',
+                        code: 'active',
+                        value: (claim) => {
+                            return claim.active ? claim.active : 'N/A';
+                        },
+                        isShown: true,
+                        isAlwaysShown: false,
+                    },
+                ],
             };
         },
 
@@ -264,6 +368,73 @@
                     filter: cleanFilter
                 });
             },
+
+            exportProductsById(productIds) {
+                Services.showLoader();
+                Services.net().get(
+                    this.route('products.exportByProductIds'),
+                    {'product_ids': productIds}
+                ).then(data => {
+                        let link = document.createElement("a");
+                        link.href = data.path;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        link = null;
+
+                        Services.msg("Товары экспортированы");
+                    },
+                    () => {
+                        Services.msg("Ошибка экспорта товаров", 'danger');
+                    }
+                ).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+
+            massCheckboxAllOnPage(e) {
+                if (e.target.checked) {
+                    this.products.forEach(product => {
+                        if (!this.massAll(this.massProductsType).includes(product.id)) {
+                            this.massCheckbox(e, this.massProductsType, product.id);
+                        }
+                    });
+                } else {
+                    this.products.forEach(product => {
+                        if (this.massAll(this.massProductsType).includes(product.id)) {
+                            this.massCheckbox(e, this.massProductsType, product.id);
+                        }
+                    });
+                }
+            },
+
+            copyOfferIdsToClipBoard() {
+                let text = this.massAll(this.massProductsType)
+                    .map(x => {
+                        if(this.products.find(prod => prod.id === x) !== undefined) {
+                            return this.products.find(prod => prod.id === x).offerId
+                        }
+                    }).join(' ');
+
+                let cleanText = text.trim().split(' ').join(',')
+                clipboard.writeText(cleanText).then();
+            },
+
+            copyArticlesToClipBoard() {
+                let text = this.massAll(this.massProductsType)
+                    .map(x => {
+                        if(this.products.find(prod => prod.id === x) !== undefined) {
+                            return this.products.find(prod => prod.id === x).vendorCode
+                        }
+                    }).join(' ');
+
+                let cleanText = text.trim().split(' ').join(',')
+                clipboard.writeText(cleanText).then();
+            },
+
+            showChangeColumns() {
+                this.openModal('list_columns');
+            },
         },
 
         computed: {
@@ -288,6 +459,27 @@
             countSelected() {
                 return Object.values(this.checkboxes).reduce((acc, val) => acc + val, 0);
             },
+
+            checkAll() {
+                let BreakException = {};
+
+                try {
+                    this.products.forEach(product => {
+                        if (!this.massAll(this.massProductsType).includes(product.id))
+                            throw BreakException;
+                    });
+                } catch (e) {
+                    if (e !== BreakException) throw e;
+                    return false;
+                }
+                return true;
+            },
+
+            editedShowColumns() {
+                return this.columns.filter(function(column) {
+                    return !column.isAlwaysShown;
+                })
+            }
         },
 
         created() {
