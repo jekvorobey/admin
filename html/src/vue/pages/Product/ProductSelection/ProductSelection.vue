@@ -5,13 +5,13 @@
                 <f-multi-select v-model="filter.merchants" :options="toOptionsArray(options.merchants)" class="col-sm-12 col-md-8 col-xl-8">
                     Мерчант
                 </f-multi-select>
-                <bulk-offer-loader
-                        :loaded-products="iSelectedProductIds"
-                        show-report
-                        :loader="offerLoader"
-                        :return-mode="offerLoaderReturnModes.PRODUCT"
-                        @load="onLoadOffers"
-                />
+            </div>
+            <div class="row">
+                <f-text-area v-if="this.isOfferId" placeholderName="Введите Offer ID через запятую" v-model="filter.offerId" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
+                <f-text-area v-else placeholderName="Введите Артикулы через запятую" v-model="filter.vendorCode" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
+                <button class="btn btn-dark" @click="changeTextFilter">
+                    <span class="font-weight-bold">{{this.isOfferId ? 'Поиск по Артикулам' : 'Поиск по Offer ID'}}</span>
+                </button>
             </div>
             <template v-slot:footer>
                 <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
@@ -87,6 +87,8 @@
     import Services from "../../../../scripts/services/services";
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
+    import FInput from '../../../components/filter/f-input.vue';
+    import FTextArea from '../../../components/filter/f-text-area.vue';
 
     import {
         ACT_LOAD_PAGE,
@@ -116,16 +118,11 @@
 
     const cleanHiddenFilter = {
         merchants: [],
-        qty_from: '',
-        qty_to: '',
     };
 
     const cleanFilter = Object.assign({
-        id: '',
-        productName: '',
-        statuses: [],
-        price_from: '',
-        price_to: '',
+        offerId : [],
+        vendorCode: [],
     }, cleanHiddenFilter);
 
     export default {
@@ -142,6 +139,8 @@
             BulkOfferLoader,
             FMultiSelect,
             ModalColumns,
+            FInput,
+            FTextArea
         },
 
         props: {
@@ -170,6 +169,7 @@
                 offerLoaderReturnModes: returnMode,
                 opened: false,
                 massProductsType: 'products',
+                isOfferId: true,
                 columns: [
                     {
                         name: 'offer id',
@@ -205,7 +205,7 @@
                             return claim.id ? claim.id : 'N/A';
                         },
                         isShown: true,
-                        isAlwaysShown: true,
+                        isAlwaysShown: false,
                     },
                     {
                         name: 'Товар',
@@ -251,6 +251,12 @@
             ...mapMutations(NAMESPACE, {
                 massClear: SET_CLEAR
             }),
+
+            changeTextFilter(){
+                this.filter.offerId = null;
+                this.filter.vendorCode = null;
+                this.isOfferId = !this.isOfferId
+            },
 
             imageUrl(id) {
                 return Media.compressed(id, 290, 290);
