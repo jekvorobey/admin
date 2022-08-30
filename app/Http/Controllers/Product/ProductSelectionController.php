@@ -10,19 +10,21 @@ use Pim\Core\PimException;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\SearchService\SearchService;
 use Illuminate\Http\JsonResponse;
+use MerchantManagement\Services\MerchantService\MerchantService;
+use MerchantManagement\Dto\MerchantDto;
 
 class ProductSelectionController extends Controller
 {
     /**
      * @throws PimException
      */
-    public function selection(Request $request, SearchService $searchService)
+    public function selection(Request $request, SearchService $searchService, MerchantService $merchantService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
         $this->title = 'Подбор товаров';
 
         $query = $this->makeQuery($request);
-        $productSearchResult = $searchService->products($query);
+        $productSearchResult = $this->loadItems($query, $searchService, $merchantService);
 
         return $this->render('Product/ProductSelection', [
             'iProducts' => $productSearchResult->products,
@@ -48,7 +50,9 @@ class ProductSelectionController extends Controller
             ProductQuery::VENDOR_CODE,
             ProductQuery::PRODUCT_ID,
             ProductQuery::NAME,
+            ProductQuery::CATALOG_IMAGE_ID,
             ProductQuery::BRAND_NAME,
+            ProductQuery::ACTIVE,
             ProductQuery::STRIKES,
             ProductQuery::DATE_ADD,
         ]);
@@ -65,12 +69,39 @@ class ProductSelectionController extends Controller
     /**
      * @throws PimException
      */
-    public function page(Request $request, SearchService $searchService): JsonResponse
+    protected function loadItems(ProductQuery $query, SearchService $searchService, MerchantService $merchantService)
+    {
+        $productSearchResult = $searchService->products($query);
+        $merchantIds = collect($productSearchResult->products)->pluck('merchantId')->all();
+        $productIds = collect($productSearchResult->products)->pluck('id')->all();
+        if (!$productIds) {
+            return collect();
+        }
+
+        $merchants = $merchantService
+            ->newQuery()
+            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->setFilter('id', $merchantIds)
+            ->merchants()
+            ->keyBy('id');
+
+        $productSearchResult->products = array_map(function ($product) use ($merchants) {
+            $product['merchantName'] = $merchants->has($product['merchantId']) ? $merchants->get($product['merchantId'])->legal_name : 'N/A';
+            return $product;
+        }, $productSearchResult->products);
+
+        return $productSearchResult;
+    }
+
+    /**
+     * @throws PimException
+     */
+    public function page(Request $request, SearchService $searchService, MerchantService $merchantService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $query = $this->makeQuery($request);
-        $productSearchResult = $searchService->products($query);
+        $productSearchResult = $this->loadItems($query, $searchService, $merchantService);
 
         $data = [
             'products' => $productSearchResult->products,

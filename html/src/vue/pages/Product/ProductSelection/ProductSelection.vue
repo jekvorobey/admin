@@ -1,6 +1,5 @@
 <template>
     <layout-main>
-        <h1>Selection Products test</h1>
         <b-card>
             <div class="row">
                 <f-multi-select v-model="filter.merchants" :options="toOptionsArray(options.merchants)" class="col-sm-12 col-md-8 col-xl-8">
@@ -162,6 +161,7 @@
             });
 
             let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+            filter.merchants = filter.merchants.map(value => parseInt(value));
 
             return {
                 checkboxes: {},
@@ -182,9 +182,9 @@
                     },
                     {
                         name: 'Мерчант',
-                        code: 'merchantId',
+                        code: 'merchantName',
                         value: function(claim) {
-                            return claim.merchantId ? claim.merchantId : 'N/A';
+                            return claim.merchantName ? claim.merchantName : 'N/A';
                         },
                         isShown: true,
                         isAlwaysShown: false,
@@ -229,7 +229,8 @@
                         name: 'На витрине',
                         code: 'active',
                         value: (claim) => {
-                            return claim.active ? claim.active : 'N/A';
+                            return `<span class="badge ${claim.active ? 'badge-success' : 'badge-danger'}">` + (claim.active ? 'Да' : 'Нет') + '</span>'
+
                         },
                         isShown: true,
                         isAlwaysShown: false,
