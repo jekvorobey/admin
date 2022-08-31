@@ -9,7 +9,7 @@
             <div class="row">
                 <f-text-area v-if="this.isOfferId" placeholderName="Введите Offer ID через запятую" v-model="filter.offerId" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
                 <f-text-area v-else placeholderName="Введите Артикулы через запятую" v-model="filter.vendorCode" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
-                <button class="btn btn-dark" @click="changeTextFilter">
+                <button class="switch-btn btn btn-dark" @click="changeTextFilter">
                     <span class="font-weight-bold">{{this.isOfferId ? 'Поиск по Артикулам' : 'Поиск по Offer ID'}}</span>
                 </button>
             </div>
@@ -22,17 +22,35 @@
 
         <div class="d-flex justify-content-between mt-3 mb-3">
             <div class="action-bar d-flex justify-content-start">
-                <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                <span class="total-products mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
                 <button v-if="!massEmpty(massProductsType)"
                         @click="copyOfferIdsToClipBoard"
                         type="button"
                         class="btn btn-outline-secondary mr-3">
-                    <fa-icon icon="copy"></fa-icon> Копировать ID офферов</button>
+                    <fa-icon icon="copy" class="mr-1"></fa-icon>
+                    <span>Копировать ID офферов</span>
+                </button>
                 <button v-if="!massEmpty(massProductsType)"
                         @click="copyArticlesToClipBoard"
                         type="button"
                         class="btn btn-outline-secondary mr-3">
-                    <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
+                    <fa-icon icon="copy" class="mr-1"></fa-icon>
+                    <span>Копировать артикулы</span>
+                </button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="exportOffersById"
+                        type="button"
+                        class="btn btn-outline-primary mr-3">
+                    <fa-icon icon="download" class="mr-1"></fa-icon>
+                    <span>Скачать Офферы</span>
+                </button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="exportArticlesById"
+                        type="button"
+                        class="btn btn-outline-primary">
+                    <fa-icon icon="download" class="mr-1"></fa-icon>
+                    <span>Скачать артикулы</span>
+                </button>
             </div>
         </div>
 
@@ -376,27 +394,73 @@
                 });
             },
 
-            exportProductsById(productIds) {
+            exportOffersById() {
                 Services.showLoader();
-                Services.net().get(
-                    this.route('products.exportByProductIds'),
-                    {'product_ids': productIds}
-                ).then(data => {
-                        let link = document.createElement("a");
-                        link.href = data.path;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        link = null;
 
-                        Services.msg("Товары экспортированы");
-                    },
-                    () => {
-                        Services.msg("Ошибка экспорта товаров", 'danger');
-                    }
-                ).finally(() => {
-                    Services.hideLoader();
-                });
+                let text = this.massAll(this.massProductsType)
+                    .map(x => {
+                        if(this.products.find(prod => prod.id === x) !== undefined) {
+                            return this.products.find(prod => prod.id === x).offerId
+                        }
+                    }).join(' ');
+
+                let cleanText = text.trim().split(' ')
+                console.log({'offerId': cleanText})
+                Services.hideLoader();
+
+                // Services.net().get(
+                //     this.route('products.exportByProductIds'),
+                //     {'product_ids': productIds}
+                // ).then(data => {
+                //         let link = document.createElement("a");
+                //         link.href = data.path;
+                //         document.body.appendChild(link);
+                //         link.click();
+                //         document.body.removeChild(link);
+                //         link = null;
+                //
+                //         Services.msg("Товары экспортированы");
+                //     },
+                //     () => {
+                //         Services.msg("Ошибка экспорта товаров", 'danger');
+                //     }
+                // ).finally(() => {
+                //     Services.hideLoader();
+                // });
+            },
+            exportArticlesById() {
+                Services.showLoader();
+
+                let text = this.massAll(this.massProductsType)
+                    .map(x => {
+                        if(this.products.find(prod => prod.id === x) !== undefined) {
+                            return this.products.find(prod => prod.id === x).vendorCode
+                        }
+                    }).join(' ');
+
+                let cleanText = text.trim().split(' ')
+                console.log({'vendorCode': cleanText})
+                Services.hideLoader();
+
+                // Services.net().get(
+                //     this.route('products.exportByProductIds'),
+                //     {'product_ids': productIds}
+                // ).then(data => {
+                //         let link = document.createElement("a");
+                //         link.href = data.path;
+                //         document.body.appendChild(link);
+                //         link.click();
+                //         document.body.removeChild(link);
+                //         link = null;
+                //
+                //         Services.msg("Товары экспортированы");
+                //     },
+                //     () => {
+                //         Services.msg("Ошибка экспорта товаров", 'danger');
+                //     }
+                // ).finally(() => {
+                //     Services.hideLoader();
+                // });
             },
 
             massCheckboxAllOnPage(e) {
@@ -503,5 +567,13 @@
 </script>
 
 <style scoped>
-
+    .total-products{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .switch-btn{
+        min-width: 190px;
+    }
 </style>
