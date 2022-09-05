@@ -53,6 +53,19 @@ class ProductListController extends Controller
             }, $productSearchResult->products);
         }
 
+        $offers = $offerService->offers(
+            (new RestQuery())
+                ->setFilter('product_id', $productIds)
+        );
+        $offers = $offers->mapToGroups(function ($item) {
+            return [$item->product_id => $item->id];
+        });
+
+        $productSearchResult->products = array_map(function ($product) use ($offers) {
+            $product['offerId'] = $offers[$product['id']] ?? null;
+            return $product;
+        }, $productSearchResult->products);
+
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
             'iTotal' => $productSearchResult->total,
@@ -225,7 +238,7 @@ class ProductListController extends Controller
         $query = new ProductQuery();
         $filter = $request->get('filter', []);
         $page = $request->get('page', 1);
-        if(data_get($filter, 'pageSize') && data_get($filter, 'pageSize') <= 500) {
+        if (data_get($filter, 'pageSize') && data_get($filter, 'pageSize') <= 500) {
             $pageSize = data_get($filter, 'pageSize');
         } else {
             $pageSize = 10;
