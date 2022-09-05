@@ -44,7 +44,7 @@
             },
             saveBadges() {
                 Services.showLoader();
-                Services.net().put(this.getRoute('products.attachBadges', {}),
+                Services.net().put(this.getRoute('products.updateBadges', {}),
                     {
                         product_ids: this.productId,
                         badges: JSON.stringify(this.productBadges)
