@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Product;
 
-
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
@@ -18,9 +17,9 @@ use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\ShoppilotService\ShoppilotService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -203,7 +202,7 @@ class ProductListController extends Controller
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',
             'badges' => 'nullable|json',
-            'period' => 'nullable|json'
+            'period' => 'nullable|json',
         ]);
 
         $productIds = $data['product_ids'];
