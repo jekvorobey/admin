@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Product;
 
+
 use App\Http\Controllers\Controller;
 use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
