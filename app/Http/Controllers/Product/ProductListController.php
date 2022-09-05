@@ -7,7 +7,6 @@ use Cms\Dto\ProductBadgeDto;
 use Cms\Services\ContentBadgesService\ContentBadgesService;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
-use Greensight\CommonMsa\Rest\RestQuery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -17,7 +16,6 @@ use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
-use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
 use Pim\Services\ShoppilotService\ShoppilotService;
@@ -34,8 +32,7 @@ class ProductListController extends Controller
         CategoryService $categoryService,
         BrandService $brandService,
         ShoppilotService $shoppilotService,
-        ContentBadgesService $badgesService,
-        OfferService $offerService
+        ContentBadgesService $badgesService
     ) {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -187,7 +184,7 @@ class ProductListController extends Controller
             'product_ids' => 'required|array',
             'product_ids.*' => 'integer',
             'badges' => 'nullable|json',
-            'period' => 'nullable|json'
+            'period' => 'nullable|json',
         ]);
 
         $productIds = $data['product_ids'];
@@ -223,7 +220,7 @@ class ProductListController extends Controller
         $query = new ProductQuery();
         $filter = $request->get('filter', []);
         $page = $request->get('page', 1);
-        if(data_get($filter, 'pageSize') && data_get($filter, 'pageSize') <= 500) {
+        if (data_get($filter, 'pageSize') && data_get($filter, 'pageSize') <= 500) {
             $pageSize = data_get($filter, 'pageSize');
         } else {
             $pageSize = 10;
