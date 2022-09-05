@@ -30,7 +30,7 @@ RUN yarn prod
 
 #FROM wntbrian/php-fpm:libs
 #FROM makasim/nginx-php-fpm:7.3-all-exts
-FROM registry.ibt.ru:5050/php:8.1-redis
+FROM registry.ibt.ru:5050/php:8.1-1.0-redis
 
 #RUN apt-get update && apt-get install -y --no-install-recommends --no-install-suggests && rm -rf /var/lib/apt/lists/*
 WORKDIR /var/www
