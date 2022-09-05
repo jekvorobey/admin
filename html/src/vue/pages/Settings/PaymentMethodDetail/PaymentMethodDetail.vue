@@ -54,6 +54,18 @@
                 </span>
             </div>
 
+            <div class="form-group">
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-available-for-mc"
+                           v-model="$v.paymentMethod.is_available_for_mc.$model"
+                    >
+                    <label class="custom-control-label" for="payment-method-is-available-for-mc"></label>
+                    <label for="payment-method-is-available-for-mc">Доступен для оплаты МК</label>
+                </span>
+            </div>
+
             <div class="form-group" v-if="hasSetting('is_fixed_discount')">
                 <span class="custom-control custom-switch">
                     <input type="checkbox"
@@ -117,6 +129,7 @@ export default {
                 name: {required},
                 active: {required},
                 is_apply_discounts: {required},
+                is_available_for_mc: {required},
                 button_text: {},
                 min_available_price: {},
                 max_available_price: {},
@@ -145,6 +158,7 @@ export default {
                 active: this.paymentMethod.active,
                 is_postpaid: this.paymentMethod.is_postpaid,
                 is_apply_discounts: this.paymentMethod.is_apply_discounts,
+                is_available_for_mc: this.paymentMethod.is_available_for_mc,
                 button_text: this.paymentMethod.button_text,
                 min_available_price: this.paymentMethod.min_available_price,
                 max_available_price: this.paymentMethod.max_available_price,

@@ -6,14 +6,25 @@
             </b-col>
             <b-col v-if="canUpdate(blocks.orders)">
                 <button @click="makeDial" class="btn btn-info btn-sm float-right">Позвонить</button>
+                <b-dropdown text="Документы" size="sm" class="float-right" v-if="isBankTransferPayment">
+                    <b-dropdown-item-button v-if="isBankTransferPayment"
+                                            @click="orderInvoiceOffer()">
+                        Получить счет-оферту
+                    </b-dropdown-item-button>
+                    <b-dropdown-item-button v-if="isBankTransferPayment && isPaid && isPublicEventType"
+                                            @click="orderUpd()">
+                        Получить УПД
+                    </b-dropdown-item-button>
+                </b-dropdown>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
-                    <template v-if="(isNotPaid || (order.status && order.status.id < orderStatuses.done.id)) && !isCancel">
-                      <b-dropdown-item-button>
-                        Пометить, как проблемный
-                      </b-dropdown-item-button>
-                      <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
-                          Оплатить
-                      </b-dropdown-item-button>-->
+                    <template
+                        v-if="(isNotPaid || (order.status && order.status.id < orderStatuses.done.id)) && !isCancel">
+                        <b-dropdown-item-button>
+                            Пометить, как проблемный
+                        </b-dropdown-item-button>
+                        <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
+                            Оплатить
+                        </b-dropdown-item-button>-->
                         <b-dropdown-item-button v-if="!isNotPaid">
                             Вернуть деньги
                         </b-dropdown-item-button>
@@ -23,31 +34,33 @@
                         </b-dropdown-item-button>
                         <b-dropdown-item-button v-if="canMarkAsPaid"
                                                 @click="markAsPaid()">
-                            Заказ оплачен (в рассрочку)
+                            Заказ оплачен (в рассрочку или через юрлицо)
                         </b-dropdown-item-button>
 
                         <b-dropdown-item-button v-if="canMarkAsPaidForce"
                                                 @click="markAsPaidForce()">
                             Сделать оплаченным
                         </b-dropdown-item-button>
-<!--                      <b-dropdown-item-button>-->
-<!--                        Отправить уведомление клиенту-->
-<!--                      </b-dropdown-item-button>-->
-<!--                      <b-dropdown-item-button>-->
-<!--                        Отправить уведомление мерчанту-->
-<!--                      </b-dropdown-item-button>-->
-                      <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
-                                              @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
-                        Ожидает подтверждения Мерчантом
-                      </b-dropdown-item-button>
-                      <b-dropdown-item-button v-if="order.status && order.status.id < orderStatuses.done.id && !isCancel"
-                                              @click="showOrderReturnModal()">
-                        Отменить заказ
-                      </b-dropdown-item-button>
+                        <!--                      <b-dropdown-item-button>-->
+                        <!--                        Отправить уведомление клиенту-->
+                        <!--                      </b-dropdown-item-button>-->
+                        <!--                      <b-dropdown-item-button>-->
+                        <!--                        Отправить уведомление мерчанту-->
+                        <!--                      </b-dropdown-item-button>-->
+                        <b-dropdown-item-button v-if="isPreOrderStatus || isCreatedStatus"
+                                                @click="changeOrderStatus(orderStatuses.awaitingConfirmation.id)">
+                            Ожидает подтверждения Мерчантом
+                        </b-dropdown-item-button>
+                        <b-dropdown-item-button
+                            v-if="order.status && order.status.id < orderStatuses.done.id && !isCancel"
+                            @click="showOrderReturnModal()">
+                            Отменить заказ
+                        </b-dropdown-item-button>
                     </template>
                     <b-dropdown-item-button
                         v-else-if="this.order.basket.type === this.basketTypes.product && order.status && order.status.id === orderStatuses.done.id"
-                        @click="returnOrder()">Возврат</b-dropdown-item-button>
+                        @click="returnOrder()">Возврат
+                    </b-dropdown-item-button>
                 </b-dropdown>
             </b-col>
         </b-row>
@@ -221,7 +234,7 @@ export default {
             let errorMessage = 'Ошибка при изменении статуса платежа';
 
             Services.showLoader();
-            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id})).then(data => {
+            Services.net().put(this.getRoute('orders.markAsPaid', {id: this.order.id}), {}, {payment_method: this.order.payment_method.id}).then(data => {
                 if (data.order) {
                     this.$set(this, 'order', data.order);
                     this.$set(this.order, 'shipments', data.order.shipments);
@@ -326,6 +339,16 @@ export default {
         paymentCancelReasonName(code) {
             return this.order.paymentCancelReasons[code].name;
         },
+        orderInvoiceOffer() {
+            window.open(this.getRoute('order.invoiceOffer', {
+                id: this.order.id,
+            }));
+        },
+        orderUpd() {
+            window.open(this.getRoute('order.upd', {
+                id: this.order.id,
+            }));
+        },
     },
     computed: {
         order: {
@@ -355,6 +378,9 @@ export default {
         canMarkAsPaidForce() {
             return this.order.canMarkAsPaidForce;
         },
+        isPaid() {
+            return this.order.payment_status.id === this.paymentStatuses.paid.id;
+        },
         isNotPaid() {
             return this.order.payment_status.id !== this.paymentStatuses.paid.id;
         },
@@ -373,6 +399,12 @@ export default {
         isProblem() {
             return this.order.is_problem;
         },
+        isCreditPayment() {
+            return this.order.payment_method_id === this.allPaymentMethods.creditpaid.id;
+        },
+        isBankTransferPayment() {
+            return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;
+        },
         customerPhoneLink() {
             return 'tel:' + (this.order.customer && this.order.customer.user ? this.order.customer.user.phone : '');
         },
@@ -386,6 +418,9 @@ export default {
         paymentsHasReturnReason() {
             let payments = this.order.payments.filter(payment => payment.cancel_reason !== '');
             return payments.length > 0;
+        },
+        isPublicEventType() {
+            return this.order.type === this.basketTypes.master;
         },
     },
 };

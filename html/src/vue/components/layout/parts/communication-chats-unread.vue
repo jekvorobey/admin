@@ -1,5 +1,5 @@
 <template>
-    <a :href="getRoute('communications.chats.unread')" class="btn btn-dark" v-if="count">
+    <a :href="getRoute('communications.chats.index')" class="btn btn-dark" v-if="count">
         <fa-icon icon="envelope" size="lg"/>
         <span class="badge badge-info">{{ count }}</span>
     </a>

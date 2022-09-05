@@ -41,6 +41,8 @@ class TabShipmentsController extends OrderDetailController
             'psd' => ['required', 'date'],
             'fsd' => ['sometimes', 'nullable', 'date'],
             'status' => ['required', Rule::in(array_keys(ShipmentStatus::allStatuses()))],
+            'payment_document_number' => ['sometimes', 'nullable', 'string'],
+            'payment_document_date' => ['sometimes', 'nullable', 'date'],
         ]);
 
         $shipmentDto = new ShipmentDto();
@@ -48,6 +50,8 @@ class TabShipmentsController extends OrderDetailController
         $shipmentDto->psd = $data['psd'];
         $shipmentDto->fsd = $data['fsd'] ?? null;
         $shipmentDto->status = $data['status'];
+        $shipmentDto->payment_document_number = $data['payment_document_number'] ?? null;
+        $shipmentDto->payment_document_date = $data['payment_document_date'] ?? null;
         $shipmentService->updateShipment($shipmentId, $shipmentDto);
 
         return response()->json([
@@ -137,6 +141,17 @@ class TabShipmentsController extends OrderDetailController
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
         return $this->getDocumentResponse($shipmentService->shipmentInventory($shipmentId));
+    }
+
+    /**
+     * Получить документ "Универсальный передаточный документ"
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     */
+    public function shipmentUpd(int $orderId, int $shipmentId, ShipmentService $shipmentService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        return $this->getDocumentResponse($shipmentService->shipmentUpd($shipmentId));
     }
 
     protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse

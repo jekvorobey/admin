@@ -28,6 +28,18 @@
                     </v-date>
                 </div>
             </b-form-row>
+            <b-form-row v-if="isBankTransferPayment">
+                <div class="col-sm-6">
+                    <v-input v-model="$v.form.payment_document_number.$model">
+                        Номер платежно-расчетного документа
+                    </v-input>
+                </div>
+                <div class="col-sm-6">
+                    <v-date v-model="$v.form.payment_document_date.$model">
+                        Дата платежно-расчетного документа
+                    </v-date>
+                </div>
+            </b-form-row>
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-primary">Отмена</b-button>
@@ -67,6 +79,8 @@
                     delivery_service_zero_mile: this.modelShipment.tariff_id,
                     psd: this.modelShipment.psd_original,
                     fsd: this.modelShipment.fsd_original,
+                    payment_document_number: this.modelShipment.payment_document_number,
+                    payment_document_date: this.modelShipment.payment_document_date,
                 },
             }
         },
@@ -82,6 +96,8 @@
                     fsd: {required: requiredIf(() => {
                         return self.shipment.fsd;
                     })},
+                    payment_document_number: {notRequired},
+                    payment_document_date: {notRequired},
                 }
             };
         },
@@ -141,6 +157,9 @@
                         return "Обязательное поле";
                     }
                 }
+            },
+            isBankTransferPayment() {
+                return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;
             },
         },
         created() {

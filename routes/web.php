@@ -505,6 +505,8 @@ Route::middleware('auth')->group(function () {
             Route::put('capturePayment', [OrderDetailController::class, 'capturePayment'])->name('orders.capturePayment');
             Route::put('cancel', [OrderDetailController::class, 'cancel'])->name('orders.cancel');
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
+            Route::get('invoice-offer', [OrderDetailController::class, 'invoiceOffer'])->name('order.invoiceOffer');
+            Route::get('upd', [OrderDetailController::class, 'upd'])->name('order.upd');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
@@ -551,6 +553,7 @@ Route::middleware('auth')->group(function () {
                             Route::get('assembling-card', [TabShipmentsController::class, 'assemblingCard'])->name(
                                 'orders.detail.shipments.documents.assemblingCard'
                             );
+                            Route::get('upd', [TabShipmentsController::class, 'shipmentUpd'])->name('orders.detail.shipments.documents.upd');
                         });
 
                         Route::prefix('/shipment-packages')->group(function () {
@@ -990,7 +993,7 @@ Route::middleware('auth')->group(function () {
         });
 
         Route::prefix('chats')->group(function () {
-            Route::get('unread', [ChatsController::class, 'unread'])->name('communications.chats.unread');
+            Route::get('/', [ChatsController::class, 'index'])->name('communications.chats.index');
             Route::get('unread/count', [ChatsController::class, 'unreadCount'])->name('communications.chats.unread.count');
             Route::get('filter', [ChatsController::class, 'filter'])->name('communications.chats.filter');
             Route::put('read', [ChatsController::class, 'read'])->name('communications.chats.read');

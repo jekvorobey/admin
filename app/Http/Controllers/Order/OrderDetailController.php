@@ -16,6 +16,7 @@ use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\BasketItemDto;
 use Greensight\Oms\Dto\Delivery\DeliveryDto;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
+use Greensight\Oms\Dto\Document\DocumentDto;
 use Greensight\Oms\Dto\History\HistoryDto;
 use Greensight\Oms\Dto\OrderDto;
 use Greensight\Oms\Dto\OrderStatus;
@@ -23,6 +24,7 @@ use Greensight\Oms\Dto\Payment\PaymentCancelReason;
 use Greensight\Oms\Dto\Payment\PaymentMethod;
 use Greensight\Oms\Dto\Payment\PaymentStatus;
 use Greensight\Oms\Services\OrderService\OrderService;
+use Greensight\Oms\Services\ShipmentService\ShipmentService;
 use Greensight\Store\Dto\Package\PackageDto;
 use Greensight\Store\Dto\Package\PackageType;
 use Greensight\Store\Services\PackageService\PackageService;
@@ -37,6 +39,7 @@ use Pim\Dto\BrandDto;
 use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -59,6 +62,7 @@ class OrderDetailController extends Controller
         $this->loadDeliveryStatuses = true;
         $this->loadShipmentStatuses = true;
         $this->loadDeliveryServices = true;
+        $this->loadAllPaymentMethods = true;
 
         $order = $this->getOrder($id);
 
@@ -95,20 +99,43 @@ class OrderDetailController extends Controller
     }
 
     /**
-     * Отметить заказ как оплаченный (для рассрочки)
+     * Отметить заказ как оплаченный (для рассрочки и по счету-оферте)
      * @throws Exception
      */
-    public function markAsPaid(int $id, OrderService $orderService): JsonResponse
-    {
+    public function markAsPaid(
+        int $id,
+        Request $request,
+        OrderService $orderService,
+        ShipmentService $shipmentService
+    ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+
+        $data = $this->validate($request, [
+            'payment_method' => 'required|integer',
+        ]);
 
         $order = new OrderDto();
         $order->payment_status = PaymentStatus::PAID;
         $orderService->updateOrder($id, $order);
 
+        $order = $this->getOrder($id);
+        if ($data['payment_method'] === PaymentMethod::BANK_TRANSFER_FOR_LEGAL) {
+            switch ($order->type) {
+                case OrderDto::TYPE_PRODUCT:
+                    /** @var ShipmentDto $shipment */
+                    foreach ($order['shipments'] as $shipment) {
+                        $shipmentService->generateShipmentUPD($shipment->id);
+                    }
+                    break;
+                case OrderDto::TYPE_PUBLIC_EVENT:
+                    $orderService->generateOrderUPD($id);
+                    break;
+            }
+        }
+
         return response()->json([
-            'order' => $this->getOrder($id),
+            'order' => $order,
         ]);
     }
 
@@ -178,6 +205,37 @@ class OrderDetailController extends Controller
         return response()->json([
             'order' => $this->getOrder($id),
         ]);
+    }
+
+    /**
+     * Получить документ "Счет оферта"
+     */
+    public function invoiceOffer(int $orderId, OrderService $orderService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $invoiceOffer = $orderService->orderInvoiceOffer($orderId);
+
+        return $this->getDocumentResponse($invoiceOffer);
+    }
+
+    /**
+     * Получить документ "Универсальный передаточный документ"
+     */
+    public function upd(int $orderId, OrderService $orderService): StreamedResponse
+    {
+        $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $upd = $orderService->upd($orderId);
+
+        return $this->getDocumentResponse($upd);
+    }
+
+    protected function getDocumentResponse(DocumentDto $documentDto): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($documentDto) {
+            echo file_get_contents($documentDto->absolute_url);
+        }, $documentDto->original_name);
     }
 
     /**
@@ -373,6 +431,7 @@ class OrderDetailController extends Controller
                 $shipment->psd = date_time2str($shipment->psd);
                 $shipment['fsd_original'] = $shipment->fsd ? $shipment->fsd->format('Y-m-d') : '';
                 $shipment->fsd = date2str($shipment->fsd);
+                $shipment->payment_document_date = $shipment->payment_document_date ? $shipment->payment_document_date->format('Y-m-d') : '';
                 $shipment['nonPackedBasketItems'] = $shipment->nonPackedBasketItems()->keyBy('id');
                 $shipment['delivery_xml_id'] = !$shipment->is_canceled ? $delivery->xml_id : null;
                 $shipment['delivery_status_xml_id'] = $delivery->status_xml_id;
@@ -461,7 +520,7 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $order['canMarkAsPaid'] = $order->paymentMethod->id === PaymentMethod::CREDITPAID
+        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITPAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL])
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);

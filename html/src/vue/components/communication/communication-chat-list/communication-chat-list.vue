@@ -6,7 +6,7 @@
             </div>
             <div class="card-body">
                 <b-row class="mb-2">
-                    <f-input v-model="searchForm.theme ? searchForm.theme : filter.theme" placeholder="Введите тему" list="themesList" class="col-3">
+                    <f-input v-model="searchForm.theme" placeholder="Введите тему" list="themesList" class="col-3">
                         Тема
                     </f-input>
                     <datalist id="themesList">
@@ -18,9 +18,9 @@
                     <f-multi-select v-model="searchForm.status_ids" :options="availableStatusesForSearchFormOptions" class="col-3">
                         Статус
                     </f-multi-select>
-                    <f-multi-select v-model="searchForm.type_ids" :options="availableTypesForSearchFormOptions" class="col-3">
-                        Тип
-                    </f-multi-select>
+                    <f-select v-model="selectedCustomFilterKey" :options="customFilterOptions" class="col-3">
+                        Активность
+                    </f-select>
                 </b-row>
             </div>
             <div class="card-footer">
@@ -181,23 +181,25 @@
 <script>
     import FInput from "../../filter/f-input.vue";
     import FMultiSelect from "../../filter/f-multi-select.vue";
+    import FSelect from "../../filter/f-select.vue";
 
     import CommunicationChatCreator from "../communication-chat-creator/communication-chat-creator.vue";
     import CommunicationChatMessage from '../communication-chat-message/communication-chat-message.vue';
 
     import Services from '../../../../scripts/services/services.js';
-    import withQuery from "with-query";
 
     export default {
         name: 'communication-chat-list',
         components: {
             FInput,
             FMultiSelect,
+            FSelect,
             CommunicationChatCreator,
             CommunicationChatMessage,
         },
         props: {
             filter: Object,
+            defaultCustomFilter: null,
             usersProp: Array,
             roles: Object,
             merchants: Array,
@@ -209,11 +211,12 @@
                 pageNumber: null,
                 showChat: null,
                 searchForm: {
-                    theme: '',
+                    theme: this.filter.theme || '',
                     channel_ids: [],
                     status_ids: [],
                     type_ids: [],
                 },
+                selectedCustomFilterKey: null,
                 editForm: {
                     theme: '',
                     channel_id: null,
@@ -274,22 +277,18 @@
             filterChats() {
                 Services.showLoader();
                 let filter = {};
-                if (this.searchForm.theme) {
-                    filter.theme = this.searchForm.theme;
-                }
-                if (this.searchForm.channel_ids) {
-                    filter.channel_ids = this.searchForm.channel_ids;
-                }
-                if (this.searchForm.status_ids) {
-                    filter.status_ids = this.searchForm.status_ids;
-                }
-                if (this.searchForm.type_ids) {
-                    filter.type_ids = this.searchForm.type_ids;
-                }
+
                 if (this.pageNumber) {
                     filter.pageNumber = this.pageNumber;
                 }
+
                 filter = Object.assign(filter, this.filter);
+                filter = Object.assign(filter, this.searchForm);
+
+                if (this.selectedCustomFilter) {
+                    this.selectedCustomFilter.setFilter(filter);
+                }
+
                 Services.net().get(
                     this.getRoute('communications.chats.filter'), filter)
                     .then((data) => {
@@ -435,16 +434,20 @@
 
                 if (user.fronts && user.fronts.length) {
                     if (user.fronts.includes(this.userFronts.mas)) {
-                        result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
-                            '?tab=communication&allTab=0&showChat=' + chatId;
-                    } else if (user.fronts.includes(this.userFronts.mas)) {
-                        result = this.getRoute('customers.detail', { id: this.customers[userId].id }) +
-                            '?tab=communication&allTab=1&showChat=' + chatId;
+                        if (typeof this.operators[userId] !== 'undefined') {
+                            result = this.getRoute('merchant.detail', { id: this.operators[userId].merchant_id}) +
+                                '?tab=communication&allTab=0&showChat=' + chatId;
+                        }
+                    } else if (user.fronts.includes(this.userFronts.showcase)) {
+                        if (typeof this.customers[userId] !== 'undefined') {
+                            result = this.getRoute('customers.detail', {id: this.customers[userId].id}) +
+                                '?tab=communication&allTab=1&showChat=' + chatId;
+                        }
                     }
                 }
 
                 return result;
-            }
+            },
         },
         computed: {
             communicationChannelsOptions() {
@@ -465,12 +468,54 @@
             availableTypesForEditForm() {
                 return this.availableTypes(this.editForm);
             },
+            customFilterOptions() {
+                return [
+                    {
+                        value: 1,
+                        text: 'Модерировать портфолио',
+                        setFilter: filter => {
+                            filter.theme = 'Клиент добавил портфолио';
+                            filter.unread_admin = 1;
+                        }
+                    },
+                    {
+                        value: 2,
+                        text: 'Неотвеченные',
+                        setFilter: filter => {
+                            filter.is_latest_message_from_customer = true
+                        }
+                    },
+                    {
+                        value: 3,
+                        text: 'Просмотренные и неотвеченные',
+                        setFilter: filter => {
+                            filter.is_latest_message_from_customer = true;
+                            filter.unread_admin = 0;
+                        }
+                    },
+                    {
+                        value: 4,
+                        text: 'Непросмотренные клиентом',
+                        setFilter: filter => {
+                            filter.unread_user = 1
+                        }
+                    },
+                ]
+            },
+            selectedCustomFilter() {
+                return this.customFilterOptions.find(filter => filter.value == this.selectedCustomFilterKey);
+            }
         },
         created() {
             Services.event().$on('updateListEvent', ({chats, users, files, customers, operators}) => {
                 this.updateChatsList(chats, users, files, customers, operators)
             });
             Services.event().$on('closeModalCreate', this.onCloseModalCreate);
+
+            if (this.defaultCustomFilter) {
+                this.selectedCustomFilterKey = this.defaultCustomFilter;
+            }
+
             this.filterChats();
         }
     };

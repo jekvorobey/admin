@@ -60,7 +60,7 @@
                 </div>
                 <div class="form-group col-lg-3 col-md-6 mt-4">
                     <div class="input-group input-group-sm mt-2" v-if="canView(blocks.communications)">
-                        Запросы: <a :href="getRoute('communications.chats.unread') + '?theme=Запрос промокода'">{{ this.promoRequestsCount }}</a>
+                        Запросы: <a :href="getRoute('communications.chats.index') + '?theme=Запрос промокода'">{{ this.promoRequestsCount }}</a>
                     </div>
                     <div class="input-group input-group-sm mt-2" v-else>
                         Запросы: {{ this.promoRequestsCount }}

@@ -1,7 +1,8 @@
 <template>
     <layout-main>
         <communication-chat-list
-            :filter="{unread_admin: 1, theme: theme}"
+            :filter="{theme: theme}"
+            :defaultCustomFilter="2"
             :roles="roles"
             :merchants="merchants"
         />
