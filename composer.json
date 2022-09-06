@@ -75,7 +75,7 @@
         "ibt/merchant-management-lib": "dev-master",
         "ibt/message-lib": "dev-master",
         "ibt/oms-lib": "dev-master",
-        "ibt/pim-lib": "dev-master",
+        "ibt/pim-lib": "dev-feature/BX-7481-addProductBadgesActivePeriod as dev-master",
         "ibt/reports-lib": "dev-master",
         "ibt/store-lib": "dev-master",
         "laravel/framework": "^9.0",

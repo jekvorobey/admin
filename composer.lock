@@ -1753,7 +1753,7 @@
         },
         {
             "name": "ibt/pim-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-pim-lib.git",
@@ -1773,7 +1773,6 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -11209,7 +11208,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/pim-lib",
+            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
