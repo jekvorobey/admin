@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "524346e0c33fc24ce2a559a2cb4172db",
+    "content-hash": "b42b99f7caf93f8e9fc33c2e299de007",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1669,11 +1669,11 @@
         },
         {
             "name": "ibt/pim-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-pim-lib",
-                "reference": "4ee7ac13b8f52571972d55095245de2351748320"
+                "reference": "8f4376f6f5eafc7a1802defb27e10d7b39653f85"
             },
             "require": {
                 "ext-json": "*",
@@ -1683,7 +1683,6 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1697,7 +1696,7 @@
                 }
             ],
             "description": "iBT PIM service client",
-            "time": "2022-07-12T07:47:39+00:00"
+            "time": "2022-09-05T20:50:23+00:00"
         },
         {
             "name": "ibt/reports-lib",
@@ -11247,7 +11246,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/pim-lib",
+            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
@@ -11271,5 +11277,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.1.0"
 }
