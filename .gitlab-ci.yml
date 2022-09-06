@@ -54,6 +54,7 @@ Build:
         - CONTAINER_IMAGE=`echo $REGISTRY/$CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]'`        
         - if [[ -z "$CI_COMMIT_TAG" ]]; then CONTAINER_IMAGE_TAG=${CI_COMMIT_SHORT_SHA}; else CONTAINER_IMAGE_TAG=${CI_COMMIT_TAG}-${CI_COMMIT_SHORT_SHA}; fi 
         - mkdir -p gitlab_key/
+        - echo "$SSH_RSA"
         - echo "$SSH_RSA" | tr -d '\r' > gitlab_key/id_rsa
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
         - docker pull $CONTAINER_IMAGE:latest || true
