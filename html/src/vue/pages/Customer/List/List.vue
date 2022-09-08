@@ -31,7 +31,7 @@
                                        v-model="filter.use_period"
                                        class="custom-control-input"
                                        id="created_at">
-                                <label class="custom-control-label" for="created_at">Дата регистрации</label>
+                                <label class="custom-control-label" for="created_at">Дата регистрации покупателя</label>
                             </div>
                         </f-date>
                         <f-date v-else

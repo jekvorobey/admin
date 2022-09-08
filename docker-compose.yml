@@ -1,0 +1,21 @@
+services:
+  ENV-ibt-admin:
+    container_name: ENV-ibt-admin
+    image: registry.ibt.ru:5050/ibt-admin:${TAG}
+    restart: always
+    env_file:
+      - /home/iBT.studio/ENV/svc/ibt-admin/.env
+    environment:
+      - PHP_SOCK_FILE=/sockets/ENV-ibt-admin_php
+    volumes:
+      - /sockets/:/sockets/
+      - /home/iBT.studio/ENV/data/jwt_key/:/var/www/jwt_key/
+      - /home/iBT.studio/ENV/svc/ibt-admin/.env:/var/www/.env
+    hostname: ibt-admin.ENV
+    networks:
+      ENV.svc.cluster.local:
+        aliases:
+          - ibt-admin.ENV.svc.cluster.local
+    extra_hosts:
+      - "mysql-master:host-gateway"
+      - "redis-ENV:host-gateway"
