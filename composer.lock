@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "32ae34d379a6b7fc5e32149e80581da8",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1700,16 +1700,16 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-7042-add-api-credit-line",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "0e3788a5903a6ad51f8ce78f7b4e515e4631b602"
+                "reference": "b5673dc228a43381046df77ca233d933568c4831"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=0e3788a5903a6ad51f8ce78f7b4e515e4631b602",
-                "reference": "0e3788a5903a6ad51f8ce78f7b4e515e4631b602",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=b5673dc228a43381046df77ca233d933568c4831",
+                "reference": "b5673dc228a43381046df77ca233d933568c4831",
                 "shasum": ""
             },
             "require": {
@@ -1722,7 +1722,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1749,7 +1748,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2022-08-11T07:36:05+00:00"
+            "time": "2022-09-08T10:58:58+00:00"
         },
         {
             "name": "ibt/pim-lib",
