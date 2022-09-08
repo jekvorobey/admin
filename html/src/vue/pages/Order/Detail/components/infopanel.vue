@@ -11,10 +11,10 @@
                                             @click="orderInvoiceOffer()">
                         Получить счет-оферту
                     </b-dropdown-item-button>
-                    <!--<b-dropdown-item-button v-if="isBankTransferPayment && isPaid"
+                    <b-dropdown-item-button v-if="isBankTransferPayment && isPaid && isPublicEventType"
                                             @click="orderUpd()">
                         Получить УПД
-                    </b-dropdown-item-button>-->
+                    </b-dropdown-item-button>
                 </b-dropdown>
                 <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isReturned">
                     <template
@@ -474,6 +474,9 @@ export default {
         paymentsHasReturnReason() {
             let payments = this.order.payments.filter(payment => payment.cancel_reason !== '');
             return payments.length > 0;
+        },
+        isPublicEventType() {
+            return this.order.type === this.basketTypes.master;
         },
     },
 };

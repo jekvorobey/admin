@@ -121,10 +121,16 @@ class OrderDetailController extends Controller
 
         $order = $this->getOrder($id);
         if ($data['payment_method'] === PaymentMethod::BANK_TRANSFER_FOR_LEGAL) {
-            //$orderService->generateOrderUPD($id);
-            /** @var ShipmentDto $shipment */
-            foreach ($order['shipments'] as $shipment) {
-                $shipmentService->generateShipmentUPD($shipment->id);
+            switch ($order->type) {
+                case OrderDto::TYPE_PRODUCT:
+                    /** @var ShipmentDto $shipment */
+                    foreach ($order['shipments'] as $shipment) {
+                        $shipmentService->generateShipmentUPD($shipment->id);
+                    }
+                    break;
+                case OrderDto::TYPE_PUBLIC_EVENT:
+                    $orderService->generateOrderUPD($id);
+                    break;
             }
         }
 
