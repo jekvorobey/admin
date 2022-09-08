@@ -83,6 +83,12 @@ Stage:
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "cd $LOCAL_PATH; docker-compose -f ../../../docker-compose.yml -f docker-compose.yml up -d; docker exec ibt-ingress nginx -s reload"
     only:
         - dev
+        - master
+        - tags
+        - /^release/.*$/
+        - /^hotfix/.*$/
+        - /^hottask/.*$/
+
     when: manual
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -103,5 +109,6 @@ Production:
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "cd $LOCAL_PATH; docker-compose -f ../../../docker-compose.yml -f docker-compose.yml up -d; docker exec ibt-ingress nginx -s reload"
     only:
         - master
+        - tags
     when: manual
 
