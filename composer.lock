@@ -1507,12 +1507,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-logistics-lib.git",
-                "reference": "5331ac5e87dfa18ff21f5214c5df459c6af78893"
+                "reference": "9a0420387710145f7d908969fabd874ebfcaaa06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-logistics-lib/repository/archive.zip?sha=5331ac5e87dfa18ff21f5214c5df459c6af78893",
-                "reference": "5331ac5e87dfa18ff21f5214c5df459c6af78893",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-logistics-lib/repository/archive.zip?sha=9a0420387710145f7d908969fabd874ebfcaaa06",
+                "reference": "9a0420387710145f7d908969fabd874ebfcaaa06",
                 "shasum": ""
             },
             "require": {
@@ -1550,7 +1550,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965501/issues"
             },
-            "time": "2022-08-04T09:52:42+00:00"
+            "time": "2022-09-13T09:43:52+00:00"
         },
         {
             "name": "ibt/marketing-lib",
@@ -1703,12 +1703,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "0e3788a5903a6ad51f8ce78f7b4e515e4631b602"
+                "reference": "422c63f9faca5f4709c2b627034e2d4dd5acdb97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=0e3788a5903a6ad51f8ce78f7b4e515e4631b602",
-                "reference": "0e3788a5903a6ad51f8ce78f7b4e515e4631b602",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=422c63f9faca5f4709c2b627034e2d4dd5acdb97",
+                "reference": "422c63f9faca5f4709c2b627034e2d4dd5acdb97",
                 "shasum": ""
             },
             "require": {
@@ -1747,7 +1747,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2022-08-11T07:36:05+00:00"
+            "time": "2022-09-13T09:57:19+00:00"
         },
         {
             "name": "ibt/pim-lib",
