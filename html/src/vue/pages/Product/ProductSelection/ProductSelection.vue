@@ -411,8 +411,7 @@
                     {'offer_ids': cleanOfferIds}
                 ).then(data => {
                         let link = document.createElement("a");
-                        // path - картинка дефолт, name - имя файла твое
-                        link.href = data.name;
+                        link.href = data.path;
                         link.setAttribute('download','');
                         console.log(link)
                         document.body.appendChild(link);
@@ -446,8 +445,7 @@
                     {'vendor_codes': cleanVendorCodes}
                 ).then(data => {
                         let link = document.createElement("a");
-                        // path - картинка дефолт, name - имя файла твое
-                        link.href = data.name;
+                        link.href = data.path;
                         link.setAttribute('download','');
                         console.log(link)
                         document.body.appendChild(link);
