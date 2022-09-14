@@ -404,29 +404,27 @@
                         }
                     }).join(' ');
 
-                let cleanText = text.trim().split(' ')
-                console.log({'offerId': cleanText})
-                Services.hideLoader();
+                let cleanOfferIds = text.trim().split(' ')
 
-                // Services.net().get(
-                //     this.route('products.exportByProductIds'),
-                //     {'product_ids': productIds}
-                // ).then(data => {
-                //         let link = document.createElement("a");
-                //         link.href = data.path;
-                //         document.body.appendChild(link);
-                //         link.click();
-                //         document.body.removeChild(link);
-                //         link = null;
-                //
-                //         Services.msg("Товары экспортированы");
-                //     },
-                //     () => {
-                //         Services.msg("Ошибка экспорта товаров", 'danger');
-                //     }
-                // ).finally(() => {
-                //     Services.hideLoader();
-                // });
+                Services.net().get(
+                    this.route('products.selection.exportByOfferIds'),
+                    {'offer_ids': cleanOfferIds}
+                ).then(data => {
+                        let link = document.createElement("a");
+                        link.href = data.path;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        link = null;
+
+                        Services.msg("Офферы экспортированы");
+                    },
+                    () => {
+                        Services.msg("Ошибка экспорта товаров", 'danger');
+                    }
+                ).finally(() => {
+                    Services.hideLoader();
+                });
             },
             exportArticlesById() {
                 Services.showLoader();
@@ -438,29 +436,27 @@
                         }
                     }).join(' ');
 
-                let cleanText = text.trim().split(' ')
-                console.log({'vendorCode': cleanText})
-                Services.hideLoader();
+                let cleanVendorCodes = text.trim().split(' ')
 
-                // Services.net().get(
-                //     this.route('products.exportByProductIds'),
-                //     {'product_ids': productIds}
-                // ).then(data => {
-                //         let link = document.createElement("a");
-                //         link.href = data.path;
-                //         document.body.appendChild(link);
-                //         link.click();
-                //         document.body.removeChild(link);
-                //         link = null;
-                //
-                //         Services.msg("Товары экспортированы");
-                //     },
-                //     () => {
-                //         Services.msg("Ошибка экспорта товаров", 'danger');
-                //     }
-                // ).finally(() => {
-                //     Services.hideLoader();
-                // });
+                Services.net().get(
+                    this.route('products.selection.exportByVendorCodes'),
+                    {'vendor_codes': cleanVendorCodes}
+                ).then(data => {
+                        let link = document.createElement("a");
+                        link.href = data.path;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        link = null;
+
+                        Services.msg("Товары экспортированы");
+                    },
+                    () => {
+                        Services.msg("Ошибка экспорта товаров", 'danger');
+                    }
+                ).finally(() => {
+                    Services.hideLoader();
+                });
             },
 
             massCheckboxAllOnPage(e) {
