@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "524346e0c33fc24ce2a559a2cb4172db",
+    "content-hash": "6393dacf28b3ecf5637fbf8789a0e133",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1287,11 +1287,11 @@
         },
         {
             "name": "ibt/catalog-import-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-7618-addProductsSelectionSection",
             "source": {
                 "type": "git",
                 "url": "git@git.yiilab.com:ibt.studio/ibt-catalog-import-lib",
-                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e"
+                "reference": "36ed7604db5c0969187796c8295442d253ab8ade"
             },
             "require": {
                 "ext-json": "*",
@@ -1302,7 +1302,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1326,7 +1325,7 @@
                 }
             ],
             "description": "iBT catalog import client",
-            "time": "2022-07-08T10:33:12+00:00"
+            "time": "2022-09-14T06:38:50+00:00"
         },
         {
             "name": "ibt/cm-lib",
@@ -11247,7 +11246,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/catalog-import-lib",
+            "version": "dev-feature/BX-7618-addProductsSelectionSection",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
@@ -11271,5 +11277,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.1.0"
 }

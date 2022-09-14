@@ -66,7 +66,7 @@
         "ext-json": "*",
         "barryvdh/laravel-debugbar": "^3.6",
         "box/spout": "^3.3",
-        "ibt/catalog-import-lib": "dev-master",
+        "ibt/catalog-import-lib": "dev-feature/BX-7618-addProductsSelectionSection as dev-master",
         "ibt/cm-lib": "dev-master",
         "ibt/cms-lib": "dev-master",
         "ibt/common-lib": "dev-master",
