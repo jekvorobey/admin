@@ -413,7 +413,7 @@
                         let link = document.createElement("a");
                         // path - картинка дефолт, name - имя файла твое
                         link.href = data.name;
-                        link.download = data.name;
+                        link.setAttribute('download','');
                         console.log(link)
                         document.body.appendChild(link);
                         link.click();
@@ -448,7 +448,7 @@
                         let link = document.createElement("a");
                         // path - картинка дефолт, name - имя файла твое
                         link.href = data.name;
-                        link.download = data.name;
+                        link.setAttribute('download','');
                         console.log(link)
                         document.body.appendChild(link);
                         link.click();
