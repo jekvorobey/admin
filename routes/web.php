@@ -95,6 +95,7 @@ use App\Http\Controllers\Order\Shipment\ShipmentListController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ImportExport\ProductsExportController;
+use App\Http\Controllers\Product\ImportExport\ProductsSelectionExportController;
 use App\Http\Controllers\Product\OfferDetailController;
 use App\Http\Controllers\Product\OfferListController;
 use App\Http\Controllers\Product\ProductDetailController;
@@ -745,10 +746,13 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
-
         Route::prefix('import-export')->namespace('ImportExport')->group(function () {
             Route::get('export-by-product-ids', [ProductsExportController::class, 'exportByProductIds'])->name('products.exportByProductIds');
             Route::get('export-by-filters', [ProductsExportController::class, 'exportByFilters'])->name('products.exportByFilters');
+            Route::get('export-by-offer-ids', [ProductsSelectionExportController::class, 'exportByOfferIds'])->name('products.selection.exportByOfferIds');
+            Route::get('export-by-vendor-codes', [ProductsSelectionExportController::class, 'exportByVendorCodes'])->name(
+                'products.selection.exportByVendorCodes'
+            );
         });
     });
 
