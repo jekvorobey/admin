@@ -141,10 +141,10 @@
                                 ||promoProduct.files.$dirty)">
                             <fa-icon icon="save"/>
                         </button>
-                        <button class="btn btn-danger btn-sm"
-                                @click="deletePromoProduct(promoProduct.$model.id, index)">
-                            <fa-icon icon="trash-alt"/>
-                        </button>
+                        <v-delete-button
+                                btnClass="btn btn-danger btn-sm"
+                                @delete="deletePromoProduct(promoProduct.$model.id, index)"
+                        />
                     </template>
                 </td>
             </tr>

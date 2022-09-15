@@ -55,10 +55,10 @@
             <fa-icon icon="edit"
                      @click="openModal(redirect)"/>
           </b-button>
-          <b-button class="btn btn-danger btn-sm">
-            <fa-icon icon="trash-alt"
-                     @click="removeItem(redirect.id)"/>
-          </b-button>
+          <v-delete-button
+                btnClass="btn btn-danger btn-sm"
+                @delete="removeItem(redirect.id)"
+          />
         </td>
       </tr>
       </tbody>
@@ -100,6 +100,7 @@ import FInput from '../../../components/filter/f-input.vue';
 import VInput from '../../../components/controls/VInput/VInput.vue';
 import FileInput from '../../../components/controls/FileInput/FileInput.vue';
 import RedirectEditModal from './components/redirect-edit-modal.vue';
+import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
 import {mapActions} from "vuex";
 import withQuery from "with-query";
 import Services from "../../../../scripts/services/services";
@@ -116,6 +117,7 @@ export default {
     RedirectEditModal,
     FileInput,
     VInput,
+    VDeleteButton
   },
   props: {
     iRedirects: {},

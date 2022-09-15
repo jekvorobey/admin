@@ -61,10 +61,10 @@
                 </td>
                 <td>{{productGroup.type.name}}</td>
                 <td v-if="canUpdate(blocks.content)">
-                    <b-button class="btn btn-danger btn-sm">
-                        <fa-icon icon="trash-alt"
-                                 @click="removeItem(productGroup.id)"/>
-                    </b-button>
+                    <v-delete-button
+                        btnClass="btn btn-danger btn-sm"
+                        @delete="removeItem(productGroup.id)"
+                    />
                 </td>
             </tr>
             </tbody>
@@ -87,7 +87,7 @@
 
     import Services from '../../../../scripts/services/services';
     import withQuery from 'with-query';
-
+    import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
     import FSelect from '../../../components/filter/f-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
     import { mapActions } from 'vuex';
@@ -101,6 +101,7 @@
         components: {
             FSelect,
             FInput,
+            VDeleteButton
         },
         props: {
             iProductGroups: {},

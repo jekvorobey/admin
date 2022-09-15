@@ -46,10 +46,11 @@
                             @click="openContactEditModal(contact.id)">
                         <fa-icon icon="pencil-alt"/>
                     </button>
-                    <button class="btn btn-sm btn-danger"
-                            @click="deleteContact(contact.id, index)">
-                        <fa-icon icon="trash-alt"/>
-                    </button>
+
+                    <v-delete-button
+                        btnClass="btn btn-sm btn-danger"
+                        @delete="deleteContact(contact.id, index)"
+                    />
                 </td>
             </tr>
             </tbody>

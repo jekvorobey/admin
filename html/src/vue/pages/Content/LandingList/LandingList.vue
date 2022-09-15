@@ -57,7 +57,7 @@
                         <fa-icon icon="eye" />
                     </a>
                     <v-delete-button
-                        class="btn btn-danger btn-sm"
+                        btnClass="btn btn-danger btn-sm"
                         @delete="removeItem(landing.id)"
                     />
                 </td>
