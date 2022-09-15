@@ -162,13 +162,16 @@
                 this.applyFilter();
             },
             removeItem(id) {
+                Services.showLoader();
                 Services.net()
                     .delete(this.getRoute('banner.delete', {id: id,}))
                     .then((data) => {
+                        Services.hideLoader();
                         this.showMessageBox({title: 'Элемент удалён'});
                         this.loadPage();
                     })
                     .catch(() => {
+                        Services.hideLoader();
                         this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                     });
             }
