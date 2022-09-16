@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Logistics\Dto\Lists\CourierCallTime\B2CplCourierCallTime;
-use Greensight\Logistics\Dto\Lists\CourierCallTime\DpdCourierCallTime;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Store\Dto\StoreContactDto;
 use Greensight\Store\Dto\StoreDto;
