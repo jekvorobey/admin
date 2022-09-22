@@ -175,16 +175,14 @@
                         <label for="discount-merchant-btn">Инициатор скидки</label>
                     </span>
                 </th>
-                <td colspan="2">
+                <td colspan="2" style="max-width: 140px;">
                     <template v-if="merchantBtn">
-                        <select class="form-control form-control-sm"
-                                   :class="{ 'is-invalid': errorDiscountMerchantId }"
-                                   id="discount-merchant-select"
-                                   v-model="$v.discount.merchant_id.$model">
-                            <option v-for="merchant in merchants" :value="merchant.id">
-                                {{ merchant.name }}
-                            </option>
-                        </select>
+                        <f-custom-search-select
+                                style="display: flex; height: 27px;"
+                                :class="{ 'is-invalid': errorDiscountMerchantId }"
+                                v-model="$v.discount.merchant_id.$model"
+                                :options="merchantOptions"
+                        ></f-custom-search-select>
                         <span class="invalid-feedback" role="alert">
                             {{ errorDiscountMerchantId }}
                         </span>
@@ -232,6 +230,7 @@
 </template>
 
 <script>
+    import FCustomSearchSelect from '../../../../../components/filter/f-custom-search-select.vue';
     import Services from "../../../../../../scripts/services/services";
     import VSelect2 from '../../../../../components/controls/VSelect2/v-select2.vue';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
@@ -245,6 +244,7 @@
     export default {
         name: 'discount-detail-infopanel',
         components: {
+            FCustomSearchSelect,
             VInput,
             VSelect2,
             BrandsSearch,
@@ -566,6 +566,9 @@
                 if (this.$v.discount.bundleItems.$dirty) {
                     if (!this.$v.discount.bundleItems.required) return "Обязательное поле";
                 }
+            },
+            merchantOptions() {
+                return this.merchants.map(merchant => ({value: merchant.id, text: merchant.name}));
             },
         },
         watch: {

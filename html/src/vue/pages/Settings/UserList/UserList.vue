@@ -19,9 +19,11 @@
                         <f-select v-model="filter.front" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
                             Система
                         </f-select>
-                        <f-select v-model="filter.role" :options="roleOptions" class="col-sm-12 col-md-3 col-xl-2">
-                            Роли
-                        </f-select>
+                        <f-custom-search-select
+                                class="col-sm-12 col-md-3 col-xl-2"
+                                v-model="filter.role"
+                                :options="roleOptions"
+                        >Роли</f-custom-search-select>
                     </b-row>
 
                     <b-button type="submit" variant="dark">Применить</b-button>
@@ -109,6 +111,7 @@ import UserAddModal from '../components/user-add-modal.vue';
 import modalMixin from '../../../mixins/modal.js';
 import FInput from '../../../components/filter/f-input.vue';
 import FSelect from '../../../components/filter/f-select.vue';
+import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
 
 import { telMask } from '../../../../scripts/mask.js';
 
@@ -136,6 +139,7 @@ export default {
         UserAddModal,
         FInput,
         FSelect,
+        FCustomSearchSelect,
     },
     props: {
         iUsers: {},
