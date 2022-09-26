@@ -7,12 +7,28 @@
                     <MainMenu></MainMenu>
                 </div>
                 <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
-                    <div class="container-fluid px-3 pb-5">
+                    <div ref="menu" class="container-fluid px-3 pb-5 menu-scroll" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+                        <button class="btn-scroll right-scroll-btn" :class="{'show-scroll': this.showScroll}" @click="scrollRight">
+                            <v-svg
+                                    name="arrow-bar-left"
+                                    modifier="fill-white"
+                                    width="24"
+                                    height="24"
+                            />
+                        </button>
+                        <button class="btn-scroll left-scroll-btn" :class="{'show-scroll': this.showScroll}" @click="scrollLeft">
+                            <v-svg
+                                    name="arrow-bar-right"
+                                    modifier="fill-white"
+                                    width="24"
+                                    height="24"
+                            />
+                        </button>
                         <div v-if="back" class="mt-3">
                             <span class="button-back" @click="goBack"><fa-icon icon="angle-left"></fa-icon> Назад</span>
                         </div>
                         <h1 class="mt-3 mb-3" v-if="!hideTitle">{{ title }}</h1>
-                        <slot></slot>
+                        <slot class="test-penis"></slot>
                         <div class="clearfix"></div>
                     </div>
                 </main>
@@ -29,10 +45,18 @@
     import LayoutHeader from './parts/layout-header.vue';
     import ModalMessage from '../modal-message/modal-message.vue';
     import MainMenu from '../main-menu/main-menu.vue';
+    import VSvg from '../controls/VSvg/VSvg.vue';
     import Services from '../../../scripts/services/services.js';
+    import '../../../images/sprite/arrow-bar-left.svg';
+    import '../../../images/sprite/arrow-bar-right.svg';
 
     export default {
         name: 'layout-main',
+        data(){
+            return{
+                showScroll: false
+            }
+        },
         props: {
             onIndex: { type: Boolean, default: false },
             back: Boolean,
@@ -47,6 +71,7 @@
             LayoutHeader,
             ModalMessage,
             MainMenu,
+            VSvg
         },
         methods: {
             goBack() {
@@ -56,6 +81,21 @@
                         window.location.href = referrer;
                     }
                 }
+            },
+            scrollLeft() {
+                const menu = this.$refs.menu
+                menu.scrollTo({
+                    left: menu.scrollLeft + 200,
+                    behavior: 'smooth'
+                })
+            },
+
+            scrollRight() {
+                const menu = this.$refs.menu
+                menu.scrollTo({
+                    left: menu.scrollLeft - 200,
+                    behavior: 'smooth'
+                })
             }
         },
         computed: {
@@ -105,6 +145,31 @@
         opacity: 0.8;
     }
 
+    .menu-scroll{
+        overflow-x: scroll;
+    }
+
+    .btn-scroll{
+        transition: 0.3s all;
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+        position: fixed;
+        top: 50%;
+        outline: none;
+        border: none;
+        background: #c19e9e52;
+        opacity: 0;
+    }
+    .btn-scroll:hover {
+        background: #c19e9e82;
+    }
+    .left-scroll-btn{
+        right: 50px;
+    }
+    .show-scroll{
+        opacity: 1;
+    }
     /* ============= Loader ===================== */
     #preloader {
         position: fixed;
