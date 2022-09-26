@@ -15,7 +15,12 @@
                 <f-input v-model="filter.name" class="col-lg-3 col-md-6">Название организации</f-input>
                 <f-input v-model="filter.operator_full_name" class="col-lg-3 col-md-6">ФИО</f-input>
                 <f-input v-model="filter.operator_email" class="col-lg-3 col-md-6">Email</f-input>
-                <f-input v-model="filter.operator_phone" class="col-lg-3 col-md-6">Телефон</f-input>
+                <v-input
+                    v-model="filter.operator_phone"
+                    v-mask="telMask"
+                    validation="phone"
+                    class="col-lg-3 col-md-6"
+                >Телефон</v-input>
                 <div class="form-group col-lg-3 col-md-6">
                     <label for="manager_id">Менеджер</label>
                     <div class="input-group input-group-sm">
@@ -114,9 +119,9 @@
 
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
-
+    import VInput from "../../../components/controls/VInput/VInput.vue";
     import FDate from '../../../components/filter/f-date.vue';
-
+    import { telMask } from '../../../../scripts/mask.js';
     import ModalCreateMerchant from "./components/modal-create-merchant.vue";
     import CommunicationChatCreator
         from "../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
@@ -135,7 +140,7 @@
 
 export default {
     name: 'page-index',
-    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant, CommunicationChatCreator},
+    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant, CommunicationChatCreator, VInput},
     props: [
         'done',
         'iMerchants',
@@ -253,6 +258,9 @@ export default {
         }
     },
     computed: {
+        telMask() {
+            return telMask;
+        },
         statusOptions() {
             return Object.values(this.options.statuses).map(status => ({value: status.id, text: status.name}));
         },

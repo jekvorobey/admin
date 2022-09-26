@@ -38,7 +38,7 @@
 
 <script>
     import inputMixin from '../../../mixins/input-mixin';
-    import {fioClean} from '../../../utils/validations';
+    import {fioClean, phoneClean} from '../../../utils/validations';
 
     const validTags = ['input', 'textarea'];
 
@@ -78,13 +78,17 @@ export default {
             return this.value;
         },
         input(e) {
-            if (!this.validation){
-                this.$emit('input', e.target.value);
-            }
-
-            if (this.validation === 'fio'){
-                e.target.value = fioClean(e.target.value)
-                this.$emit('input', e.target.value)
+            switch (this.validation) {
+                case 'fio':
+                    e.target.value = fioClean(e.target.value)
+                    this.$emit('input', e.target.value)
+                    break;
+                case 'phone':
+                    e.target.value = phoneClean(e.target.value)
+                    this.$emit('input', e.target.value)
+                    break;
+                default:
+                    this.$emit('input', e.target.value);
             }
         },
     }

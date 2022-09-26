@@ -14,7 +14,7 @@
                             </b-form-select>
                         </b-col>
                         <b-col>
-                            <v-input v-model="filter.phone" v-mask="telMask">Телефон</v-input>
+                            <v-input v-model="filter.phone" v-mask="telMask" validation="phone">Телефон</v-input>
                         </b-col>
                     </b-row>
                     <div class="row mb-2">
