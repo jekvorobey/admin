@@ -79,7 +79,7 @@
         background: #c19e9e82;
     }
     .right-scroll-btn{
-        right: 50px;
+        right: 15px;
     }
     .show-scroll{
         opacity: 1;

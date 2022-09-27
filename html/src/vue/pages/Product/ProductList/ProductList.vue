@@ -1,6 +1,6 @@
 <template>
     <layout-main>
-        <div class="menu-scroll" ref="menu" >
+        <div :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu" >
             <div class="card">
                 <div class="card-header">
                     Фильтр
@@ -620,9 +620,6 @@
                 console.log(direction)
                 const menu = this.$refs.menu
 
-                if (Variables.matchMedia('desktop')){
-
-                }
                 if (direction === 'left') {
                     menu.scrollTo({
                         left: menu.scrollLeft - 200,
@@ -649,6 +646,10 @@
             this.opened = this.isHiddenFilterDefaultOpen();
         },
         computed: {
+            isMobile(){
+                return window.innerWidth < 768
+            },
+
             ...mapGetters(NAMESPACE, {
                 GET_PAGE_NUMBER,
                 total: GET_TOTAL,
@@ -733,6 +734,9 @@
 <style scoped>
     .menu-scroll{
         overflow-x: scroll;
+    }
+    .menu-scroll-hidden{
+        overflow-x: hidden;
     }
     th {
         vertical-align: top !important;
