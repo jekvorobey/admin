@@ -9,14 +9,14 @@
                         <span class="badge badge-danger" v-if="isCancel">Отменен</span>
 
                         <template v-if="isCreatedStatus && !isCancel && canUpdate(blocks.orders)">
-                            <button class="btn btn-primary" v-if="isRequestSend"
+                            <button class="btn btn-primary" v-if="isRequestSend || !cargo.delivery_service.has_courier_call_api_method"
                                     @click="changeCargoStatus(cargoStatuses.shipped.id)">Груз передан курьеру</button>
                             <button class="btn btn-warning" v-else
                                     title="Задание на забор груза не создано">Груз передан курьеру</button>
                         </template>
 
                         <b-dropdown text="Действия" class="float-right" size="sm" v-if="!isTakenStatus && !isCancel && canUpdate(blocks.orders)">
-                            <template v-if="isCreatedStatus">
+                            <template v-if="isCreatedStatus && cargo.delivery_service.has_courier_call_api_method">
                                 <b-dropdown-item-button v-if="isRequestSend" @click="cancelCourierCall()">
                                     Отменить задание на забор груза
                                 </b-dropdown-item-button>

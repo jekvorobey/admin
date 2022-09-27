@@ -50,13 +50,11 @@
                 <f-input v-model="filter.name" class="col-lg-3 col-md-6">Название</f-input>
                 <f-input v-model="filter.code" type="number" class="col-lg-3 col-md-6">Код</f-input>
                 <div class="form-group col-lg-3 col-md-6">
-                    <label for="owner">Реферальный партнер</label>
-                    <div class="input-group input-group-sm">
-                        <select class="form-control" v-model="filter.owner" id="owner">
-                            <option :value="null">-</option>
-                            <option v-for="owner in owners" :value="owner.id">{{ owner.title }}</option>
-                        </select>
-                    </div>
+                    <f-custom-search-select
+                            class="input-group input-group-sm"
+                            v-model="filter.owner"
+                            :options="ownerOptions"
+                    >Реферальный партнер</f-custom-search-select>
                 </div>
                 <div class="form-group col-lg-3 col-md-6 mt-4">
                     <div class="input-group input-group-sm mt-2" v-if="canView(blocks.communications)">
@@ -185,10 +183,11 @@ import FCheckbox from '../../../../components/filter/f-checkbox.vue';
 import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import Services from '../../../../../scripts/services/services.js';
+import FCustomSearchSelect from '../../../../components/filter/f-custom-search-select.vue';
 
 export default {
     name: 'page-promo-code-list',
-    components: {VDeleteButton, FCheckbox, FInput, FDate,},
+    components: {VDeleteButton, FCheckbox, FInput, FDate, FCustomSearchSelect},
     props: ['iPromoCodes', 'promoRequestsCount', 'Merchants', 'types', 'statuses', 'creators', 'owners',],
     data() {
         return {
@@ -356,6 +355,12 @@ export default {
 
     },
     computed: {
+        ownerOptions() {
+            return Object.values(this.owners).map(owner => ({
+                value: owner.id,
+                text: owner.title
+            }));
+        },
     }
 }
 </script>

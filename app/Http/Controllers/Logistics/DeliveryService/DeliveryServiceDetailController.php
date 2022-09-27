@@ -60,6 +60,7 @@ class DeliveryServiceDetailController extends Controller
                 'add_fitting_service' => $deliveryService->add_fitting_service,
                 'add_return_service' => $deliveryService->add_return_service,
                 'add_open_service' => $deliveryService->add_open_service,
+                'has_courier_call_api_method' => $deliveryService->has_courier_call_api_method,
                 //Вкладка "Ограничения"
                 'do_dangerous_products_delivery' => $deliveryService->do_dangerous_products_delivery,
                 'max_shipments_per_day' => $deliveryService->max_shipments_per_day,
