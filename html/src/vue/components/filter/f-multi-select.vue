@@ -1,12 +1,14 @@
 <template>
-    <div class="form-group">
+    <div>
         <label :for="id" class="d-flex justify-content-between">
-            <slot/>
             <div>
-                <button class="btn small-btn badge btn-primary" @click="addAllOptions">all</button>
-                <button class="btn small-btn badge badge-danger" @click="deleteAllOptions">X</button>
+                <slot/>
+                <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
             </div>
-            <fa-icon v-if="$slots.help" icon="question-circle" v-b-popover.hover="$slots.help[0].text"></fa-icon>
+            <div class="btn-group advanced-styles">
+                <button class="btn small-btn badge btn-outline-primary" @click="addAllOptions">all</button>
+                <button class="btn small-btn badge btn-outline-danger" @click="deleteAllOptions">X</button>
+            </div>
         </label>
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend">
@@ -26,24 +28,30 @@
         <transition name="slide">
             <div v-if="opened" class="select-list" @mouseleave="toggleList">
                 <template v-if="grouped">
-                    <template v-for="group in groups">
-                        <div class="select-item select-item--heading">{{ group }}</div>
+                    <v-search-input @onSearch="onSearch" :value="inputSearch"/>
+                    <div class="inner-list">
+                        <template v-for="group in groups">
+                            <div class="select-item select-item--heading" v-if="filteredGroupOptions(group).length > 0">{{ group }}</div>
+                            <div
+                                    v-for="option in filteredGroupOptions(group)"
+                                    class="select-item"
+                                    :class="{selected:valueSelected(option.value)}"
+                                    @click="toggleOption(option.value)"
+                            >{{ option.text }}</div>
+                        </template>
+                    </div>
+                </template>
+                <template v-else>
+                    <v-search-input @onSearch="onSearch" :value="inputSearch"/>
+                    <div class="inner-list">
                         <div
-                                v-for="option in groupOptions(group)"
+                                v-for="option in filteredOptions"
                                 class="select-item"
                                 :class="{selected:valueSelected(option.value)}"
                                 @click="toggleOption(option.value)"
                         >{{ option.text }}</div>
-                    </template>
-                </template>
-                <template v-else>
-                    <v-search-input @onSearch="onSearch" :value="inputSearch"/>
-                    <div
-                            v-for="option in filteredOptions"
-                            class="select-item"
-                            :class="{selected:valueSelected(option.value)}"
-                            @click="toggleOption(option.value)"
-                    >{{ option.text }}</div>
+                    </div>
+
                 </template>
             </div>
         </transition>
@@ -91,7 +99,7 @@
                     return res;
                 }, new Set())];
             },
-            filteredOptions(){
+            filteredOptions(l){
                 if (this.inputSearch !== null && this.inputSearch !== ''){
                     return this.options.filter(option => {
                             return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
@@ -130,6 +138,17 @@
             groupOptions(group) {
                 return this.options.filter(option => option.group === group);
             },
+            filteredGroupOptions(group){
+                if (this.inputSearch !== null && this.inputSearch !== ''){
+                    return this.groupOptions(group).filter(option => {
+                            return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
+                        }
+                    )
+                }
+                else {
+                    return this.groupOptions(group)
+                }
+            },
             addAllOptions(){
                 this.options.forEach(option => {
                     this.value.push(option.value);
@@ -156,6 +175,8 @@
         border: 1px solid #DFDFDF;
         width: calc( 100% - 30px );
         z-index: 9999;
+    }
+    .inner-list{
         max-height: 300px;
         overflow-y: auto;
     }
@@ -189,5 +210,13 @@
         border-radius: 0.2rem;
         font-size: 12px;
         padding: 3px 5px;
+    }
+
+    .advanced-styles  .btn-outline-danger {
+        border-color: #dc354385;
+    }
+
+    .advanced-styles .btn-outline-primary {
+        border-color: #007bff70;
     }
 </style>

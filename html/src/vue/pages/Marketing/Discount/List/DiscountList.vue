@@ -38,29 +38,19 @@
                             </div>
                             <div class="row mt-3">
                                 <div class="col-6">
-                                    <label>Инициатор</label>
-                                    <v-select2 v-model="filter.merchant_id"
-                                               class="form-control"
-                                               :multiple="true"
-                                               :selectOnClose="true"
-                                               width="100%">
-                                        <option v-for="initiator in initiatorsOptions" :value="initiator.value">{{ initiator.text }}</option>
-                                    </v-select2>
+                                    <f-multi-select v-model="filter.merchant_id" :options="initiatorsOptions">
+                                        Инициатор
+                                    </f-multi-select>
                                 </div>
                                 <div class="col-6">
-                                    <label>Автор</label>
-                                    <v-select2 v-model="filter.user_id"
-                                               class="form-control"
-                                               :allowClear="true"
-                                               :multiple="true"
-                                               width="100%">
-                                        <option v-for="author in authorsOptions" :value="author.value">{{ author.text }}</option>
-                                    </v-select2>
+                                    <f-multi-select v-model="filter.user_id" :options="authorsOptions">
+                                        Автор
+                                    </f-multi-select>
                                 </div>
                             </div>
                             <div class="row mt-4">
                                 <div class="col-6">
-                                    <div class="row">
+                                    <div>
                                         <label><b>Дата создания</b></label>
                                     </div>
                                     <div class="row">
@@ -70,7 +60,7 @@
                                 </div>
 
                                 <div class="col-6">
-                                    <div class="row">
+                                    <div>
                                         <label><b>Период действия скидки</b></label>
                                     </div>
                                     <div class="row">

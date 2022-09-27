@@ -122,6 +122,7 @@ class MerchantStoreController extends Controller
     {
         return [
             DeliveryService::SERVICE_B2CPL => B2CplCourierCallTime::all(),
+            //DeliveryService::SERVICE_DPD => DpdCourierCallTime::all(),
         ];
     }
 
@@ -153,6 +154,7 @@ class MerchantStoreController extends Controller
             'xml_id' => 'string|nullable',
             'active' => 'boolean',
             'name' => 'string|required',
+            'dpd_regular_num' => 'string|nullable',
         ], $addressValidate);
         $validatedData = $request->validate($validate);
 

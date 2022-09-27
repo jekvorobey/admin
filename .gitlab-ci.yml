@@ -54,6 +54,7 @@ Build:
         - CONTAINER_IMAGE=`echo $REGISTRY/$CI_PROJECT_ROOT_NAMESPACE/$CI_PROJECT_NAME | tr '[:upper:]' '[:lower:]'`        
         - if [[ -z "$CI_COMMIT_TAG" ]]; then CONTAINER_IMAGE_TAG=${CI_COMMIT_SHORT_SHA}; else CONTAINER_IMAGE_TAG=${CI_COMMIT_TAG}-${CI_COMMIT_SHORT_SHA}; fi 
         - mkdir -p gitlab_key/
+        - echo "$SSH_RSA"
         - echo "$SSH_RSA" | tr -d '\r' > gitlab_key/id_rsa
         - docker login -u $REGISTRY_USER -p $REGISTRY_PASS  $REGISTRY
         - docker pull $CONTAINER_IMAGE:latest || true
@@ -80,8 +81,14 @@ Stage:
         - sed -r "s|(image:.).*:.*|\1$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG|;s|ENV|$ENV|g" -i docker-compose.yml
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$DEV_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$DEV_SERVER "cd $LOCAL_PATH; docker-compose -f ../../../docker-compose.yml -f docker-compose.yml up -d; docker exec ibt-ingress nginx -s reload"
-#    only:
-#        - tags
+    only:
+        - dev
+        - master
+        - tags
+        - /^release/.*$/
+        - /^hotfix/.*$/
+        - /^hottask/.*$/
+
     when: manual
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -100,6 +107,8 @@ Production:
         - sed -r "s|(image:.).*:.*|\1$CONTAINER_IMAGE:$CONTAINER_IMAGE_TAG|;s|ENV|$ENV|g" -i docker-compose.yml
         - scp -o StrictHostKeyChecking=no docker-compose.yml root@$PROD_SERVER:$LOCAL_PATH/docker-compose.yml
         - ssh -o StrictHostKeyChecking=no root@$PROD_SERVER "cd $LOCAL_PATH; docker-compose -f ../../../docker-compose.yml -f docker-compose.yml up -d; docker exec ibt-ingress nginx -s reload"
-#    only:
-#        - tags    
+    only:
+        - master
+        - tags
     when: manual
+

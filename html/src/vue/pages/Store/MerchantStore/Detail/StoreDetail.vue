@@ -49,6 +49,12 @@
                         class="col-lg-6 col-12"
                 >Комментарий к адресу</v-input>
             </div>
+            <div class="row">
+                <v-input
+                        v-model="store.dpd_regular_num"
+                        class="col-lg-6 col-12"
+                >Номер регулярного заказа DPD</v-input>
+            </div>
         </form>
 
         <hr class="mt-3">

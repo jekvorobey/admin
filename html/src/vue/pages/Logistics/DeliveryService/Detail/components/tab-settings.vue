@@ -38,10 +38,15 @@
             </b-col>
         </b-row>
         <b-row>
-            <b-col class="col-md-6">
+            <b-col>
                 <v-select v-model="$v.form.do_return.$model" :options="booleanOptions">
                     Принимает возвраты
                 </v-select>
+            </b-col>
+            <b-col>
+              <v-select v-model="$v.form.has_courier_call_api_method.$model" :options="booleanOptions">
+                  Есть отдельный метод для вызова курьера на забор груза
+              </v-select>
             </b-col>
         </b-row>
         <b-row>
@@ -145,6 +150,7 @@ export default {
                 add_fitting_service: this.model.add_fitting_service,
                 add_return_service: this.model.add_return_service,
                 add_open_service: this.model.add_open_service,
+                has_courier_call_api_method: this.model.has_courier_call_api_method,
             },
         }
     },
@@ -161,6 +167,7 @@ export default {
             add_fitting_service: {required},
             add_return_service: {required},
             add_open_service: {required},
+            has_courier_call_api_method: {required},
         }
     },
     methods: {

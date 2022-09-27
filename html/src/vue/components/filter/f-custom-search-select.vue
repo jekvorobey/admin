@@ -7,20 +7,21 @@
         <div class="input-group input-group-sm">
             <div v-if="$slots.prepend" class="input-group-prepend"><slot name="prepend"/></div>
             <div class="aselect" :id="id">
-                <div class="selector" @click="toggle($event.target)">
+                <div class="selector" @click="toggle($event.target)" :class="{'isDisabled': isDisabled}">
                     <div class="label">
-                        <span>{{ myValue[0].text }}</span>
+                        <span>{{ myValue[0].text}}</span>
                     </div>
                     <div class="arrow" :class="{ expanded : visible }"></div>
                     <div :class="{ hidden : !visible, visible }">
-                        <ul>
-                            <v-search-input @onSearch="onSearch" :value="inputSearch"/>
+                        <v-search-input @onSearch="onSearch" :value="inputSearch" class="li-search"/>
+                        <ul class="inner-list">
                             <li v-if="!without_none" @click="select('')">Не выбрано</li>
                             <li :class="{ current : option === myValue }" v-for="option in filteredOptions" @click="select(option)">{{ option.text }}</li>
                         </ul>
                     </div>
                 </div>
             </div>
+            <span class="custom-search-error" v-if="error">{{ error }}</span>
             <div v-if="$slots.append" class="input-group-append"><slot name="append"/></div>
         </div>
     </div>
@@ -35,7 +36,6 @@
         components: {VSearchInput},
         data(){
             return{
-                myValue: !isNaN(this.value) && this.value !== '' ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}],
                 visible: false,
                 inputSearch: ''
             }
@@ -44,8 +44,17 @@
             value: [Number, String],
             options: Array,
             without_none: Boolean,
+            isDisabled: {
+                type: Boolean,
+                default: false,
+                required: false
+            },
+            error: [String, Object]
         },
         computed: {
+            myValue(){
+                return this.options.length > 1 && this.value !== '' && this.value != null ? this.options.filter(option => option.value == this.value) : [{text:'Не выбрано'}];
+            },
             id() {
                 return `filter-select-${this._uid}`
             },
@@ -63,12 +72,13 @@
         },
         methods: {
             toggle(target) {
-                if(!target.classList.contains('search-input') && !target.classList.contains('search-input-close-btn')){
-                    this.visible = !this.visible;
+                if(!this.isDisabled){
+                    if(!target.classList.contains('search-input') && !target.classList.contains('search-input-close-btn')){
+                        this.visible = !this.visible;
+                    }
                 }
             },
             select(option) {
-                option === '' ? this.myValue = [{text:'Не выбрано'}] : this.myValue = [option];
                 option === '' ? this.$emit('input', null) : this.$emit('input', option.value);
             },
             onSearch(value){
@@ -78,9 +88,20 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .li-search{
+        z-index: 1;
+        background: #fff;
+    }
+    .li-search .input-close-btn {
+        top: 33px;
+    }
+    .inner-list{
+        max-height: 300px;
+        overflow-y: auto;
+    }
     .aselect {
-        width: 310px;
+        width: 100%;
         cursor: pointer;
     }
     .aselect .selector {
@@ -138,8 +159,19 @@
     }
     .aselect .hidden {
         visibility: hidden;
+        max-height: 0;
     }
     .aselect .visible {
         visibility: visible;
+        max-height: 500px;
+    }
+    .isDisabled{
+        background: #e9ecef !important;
+    }
+    .custom-search-error{
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 80%;
+        color: #dc3545;
     }
 </style>

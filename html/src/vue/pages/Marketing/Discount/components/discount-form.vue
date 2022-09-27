@@ -390,7 +390,7 @@
                     end_date: null,
                     offers: null,
                     bundles: null,
-                    bundle_items: null,
+                    bundleItems: null,
                     status: 1, // STATUS_ACTIVE
                     product_qty_limit: null,
                     brands: [],

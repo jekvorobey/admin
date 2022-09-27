@@ -210,6 +210,12 @@
                     <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint" :disabled="!canEdit">
                         Точка выдачи заказа*
                     </v-select>
+                    <f-custom-search-select
+                            v-model="$v.form.point_id.$model"
+                            :options="pointOptions"
+                            @input="onChangePoint"
+                            :isDisabled="!canEdit"
+                    >Точка выдачи заказа*</f-custom-search-select>
                     <template v-if="points[selectedPointId]">
                         <p class="font-weight-bold">{{points[selectedPointId].type.name}} {{points[selectedPointId].name}}</p>
                         <p><span class="font-weight-bold">Адрес:</span> {{points[selectedPointId].address.address_string}}</p>
@@ -247,6 +253,7 @@
     import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
     import VInput from '../../../../components/controls/VInput/VInput.vue';
     import VDadata from '../../../../components/controls/VDaData/VDaData.vue';
+    import FCustomSearchSelect from '../../../../components/filter/f-custom-search-select.vue';
 
     import {email, required, requiredIf} from 'vuelidate/lib/validators';
     import {validationMixin} from 'vuelidate';
@@ -259,6 +266,7 @@
             VDadata,
             VInput,
             VSelect,
+            FCustomSearchSelect
         },
         props: [
             'model',
