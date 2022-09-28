@@ -188,6 +188,46 @@ class OrderDetailController extends Controller
     }
 
     /**
+     * Проверить статус заявки на кредит.
+     * @throws Exception
+     */
+    public function paymentCheckCreditStatus(int $id, OrderService $orderService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $result = $orderService->paymentCheckCreditStatus($id);
+        $message = '';
+        foreach ($result as $key => $item) {
+            $message .= "{$key} : {$item}\n<br>";
+        }
+        $result['message'] = $message;
+
+        return response()->json([
+            'order' => $this->getOrder($id),
+            'result' => $result,
+        ]);
+    }
+
+    /**
+     * Сформировать фискальный чек к кредитному заказу
+     * @throws Exception
+     */
+    public function createCreditPaymentReceipt(int $id, Request $request, OrderService $orderService): JsonResponse
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+
+        $data = $this->validate($request, [
+            'receiptType' => 'required|int',
+        ]);
+        $result = $orderService->createCreditPaymentReceipt($id, $data['receiptType']);
+
+        return response()->json([
+            'order' => $this->getOrder($id),
+            'result' => $result,
+        ]);
+    }
+
+    /**
      * Возврат выполненного заказа
      * @throws Exception
      */

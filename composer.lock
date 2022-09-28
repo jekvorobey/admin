@@ -1704,12 +1704,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "48b017c08eb602b03c8577c47978c102e4c49817"
+                "reference": "5d1c63c1fc891c1843262659c66fe60683637c2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=48b017c08eb602b03c8577c47978c102e4c49817",
-                "reference": "48b017c08eb602b03c8577c47978c102e4c49817",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=5d1c63c1fc891c1843262659c66fe60683637c2e",
+                "reference": "5d1c63c1fc891c1843262659c66fe60683637c2e",
                 "shasum": ""
             },
             "require": {
@@ -1749,7 +1749,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2022-09-13T10:49:09+00:00"
+            "time": "2022-09-28T06:19:11+00:00"
         },
         {
             "name": "ibt/pim-lib",
