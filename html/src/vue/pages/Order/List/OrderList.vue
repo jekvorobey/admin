@@ -40,9 +40,9 @@
                         <label class="custom-control-label" for="created_between">Период заказа</label>
                     </div>
                 </f-date>
-                <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-3 col-xl-2">
-                    Статус
-                </f-multi-select>
+                <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-sm-12 col-md-2">
+                    Отменен
+                </f-select>
             </div>
             <transition name="slide">
                 <div v-if="opened">
@@ -104,9 +104,9 @@
                             </f-date>
                         </div>
                         <div class="row">
-                            <f-select v-model="filter.is_canceled" :options="booleanOptions" class="col-sm-12 col-md-2">
-                                Отменен
-                            </f-select>
+                            <f-multi-select v-model="filter.status" :options="statusOptions" class="col-sm-12 col-md-3 col-xl-2">
+                                Статус
+                            </f-multi-select>
                             <f-select v-model="filter.is_problem" :options="booleanOptions" class="col-sm-12 col-md-2">
                                 Проблемный
                             </f-select>
