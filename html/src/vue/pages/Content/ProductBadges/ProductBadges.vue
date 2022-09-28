@@ -67,10 +67,10 @@
                             </button>
                         </div>
                         <div class="col-6" style="text-align: left">
-                            <button @click="deleteBadge(badge.id, index)"
-                                    class="btn btn-danger btn-md">
-                                Удалить <fa-icon icon="trash-alt"/>
-                            </button>
+                            <v-delete-button
+                                btnClass="btn btn-danger btn-md"
+                                @delete="deleteBadge(badge.id, index)"
+                            />
                         </div>
                     </div>
                 </div>
@@ -90,12 +90,14 @@
     import modalMixin from '../../../mixins/modal';
     import Modal from '../../../components/controls/modal/modal.vue';
     import ModalEditForm from "./components/modal-edit-form.vue"
+    import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
 
     export default {
         components: {
             draggable,
             Modal,
-            ModalEditForm
+            ModalEditForm,
+            VDeleteButton
         },
         mixins: [modalMixin],
         props: {

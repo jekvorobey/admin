@@ -301,8 +301,10 @@
                     .then(() => {
                         return this[ACT_LOAD_PAGE]({page: this.page});
                     })
+                    .catch(error => Services.msg('Не удалось организатора ' + error, 'danger'))
                     .finally(() => {
                         Services.hideLoader();
+                        Services.msg('Организатор успешно удален')
                         this.massClear(this.massSelectionType);
                     });
             },

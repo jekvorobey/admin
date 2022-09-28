@@ -42,6 +42,12 @@ export default {
             Services.hideLoader();
             this.$emit('deleted')
           })
+      .catch((error) => {
+        Services.hideLoader();
+      })
+      .finally(() => {
+        Services.hideLoader();
+      })
     },
     designLink(id) {
       return this.getRoute('certificate.designs_edit', {id})

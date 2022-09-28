@@ -25,9 +25,10 @@
                     <button class="btn btn-warning btn-sm" @click="openSpecialty(specialty)">
                         <fa-icon icon="edit"/>
                     </button>
-                    <button class="btn btn-danger btn-sm" @click="deleteSpecialty(specialty.id)">
-                        <fa-icon icon="trash-alt"/>
-                    </button>
+                    <v-delete-button
+                            btnClass="btn btn-danger btn-sm"
+                            @delete="deleteSpecialty(specialty.id)"
+                    />
                 </td>
             </tr>
             </tbody>
@@ -51,6 +52,7 @@
 
 import FormModal from './components/form-modal.vue';
 import modalMixin from '../../../mixins/modal';
+import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
 import Services from '../../../../scripts/services/services.js';
 import withQuery from "with-query";
 
@@ -61,7 +63,7 @@ export default {
         iPager: {},
         iCurrentPage: {},
     },
-    components: {FormModal},
+    components: {FormModal, VDeleteButton},
     data() {
         return {
             specialties: this.iSpecialties,

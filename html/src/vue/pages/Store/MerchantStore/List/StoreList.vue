@@ -52,7 +52,10 @@
                 </td>
                 <td>{{ store.address ? store.address.city : '' }}</td>
                 <td v-if="canUpdate(blocks.stores)">
-                    <fa-icon icon="trash-alt" @click="deleteStore(index)"></fa-icon>
+                    <v-delete-button
+                            btnClass="btn btn-danger btn-sm"
+                            @delete="deleteStore(index)"
+                    />
                 </td>
             </tr>
             </tbody>
@@ -77,6 +80,7 @@
     import FMultiSelect from '../../../../components/filter/f-multi-select.vue';
     import FDate from '../../../../components/filter/f-date.vue';
     import {mapGetters} from 'vuex';
+    import VDeleteButton from "../../../../components/controls/VDeleteButton/VDeleteButton.vue";
 
     const cleanFilter = {
     id: '',
@@ -93,6 +97,7 @@ export default {
         FInput,
         FMultiSelect,
         FDate,
+        VDeleteButton
     },
     props: {
         iStores: [Array, null],
