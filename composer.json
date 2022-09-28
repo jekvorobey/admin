@@ -72,7 +72,7 @@
         "ibt/common-lib": "dev-master",
         "ibt/logistics-lib": "dev-master",
         "ibt/marketing-lib": "dev-master",
-        "ibt/merchant-management-lib": "dev-master",
+        "ibt/merchant-management-lib": "dev-feature/BX-7620-cash-receipts-own-company",
         "ibt/message-lib": "dev-master",
         "ibt/oms-lib": "dev-master",
         "ibt/pim-lib": "dev-master",

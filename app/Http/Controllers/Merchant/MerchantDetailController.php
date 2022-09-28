@@ -188,9 +188,11 @@ class MerchantDetailController extends Controller
                 'commissionaire_contract_number' => $merchant->commissionaire_contract_number,
                 'commissionaire_contract_at' => $merchant->commissionaire_contract_at
                     ? Carbon::createFromFormat('Y-m-d', $merchant->commissionaire_contract_at)->format('Y-m-d') : null,
+                'commissionaire_type' => (bool) $merchant->commissionaire_type,
                 'agent_contract_number' => $merchant->agent_contract_number,
                 'agent_contract_at' => $merchant->agent_contract_at
                     ? Carbon::createFromFormat('Y-m-d', $merchant->agent_contract_at)->format('Y-m-d') : null,
+                'agent_type' => (bool) $merchant->agent_type,
                 'main_operator' => [
                     'first_name' => $userMain ? $userMain->first_name : '',
                     'last_name' => $userMain ? $userMain->last_name : 'N/A',
@@ -270,14 +272,21 @@ class MerchantDetailController extends Controller
             'merchant.commissionaire_contract_at' => 'nullable|date_format:Y-m-d',
         ]);
 
-        if (isset($data['merchant']['sale_info_brands']) && isset($data['merchant']['sale_info_categories'])) {
+        if (isset($data['merchant']['sale_info_brands'], $data['merchant']['sale_info_categories'])) {
             $sale_info = [
                 'brands' => $data['merchant']['sale_info_brands'],
                 'categories' => $data['merchant']['sale_info_categories'],
             ];
             $data['merchant']['sale_info'] = json_encode($sale_info);
-            unset($data['merchant']['sale_info_brands']);
-            unset($data['merchant']['sale_info_categories']);
+            unset($data['merchant']['sale_info_brands'], $data['merchant']['sale_info_categories']);
+        }
+
+        if (isset($data['merchant']['commissionaire_type'])) {
+            $data['merchant']['commissionaire_type'] = $this->mixedToInt($data['merchant']['commissionaire_type']);
+        }
+
+        if (isset($data['merchant']['agent_type'])) {
+            $data['merchant']['agent_type'] = $this->mixedToInt($data['merchant']['agent_type']);
         }
 
         $editedMerchant = new MerchantDto($data['merchant']);
@@ -287,5 +296,14 @@ class MerchantDetailController extends Controller
         $merchantService->update($editedMerchant);
 
         return response('', 204);
+    }
+
+    private function mixedToInt(mixed $value): int
+    {
+        if (in_array($value, ['false', false, null, 0], true)) {
+            return 0;
+        }
+
+        return 1;
     }
 }
