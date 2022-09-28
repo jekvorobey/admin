@@ -1848,12 +1848,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-store-lib.git",
-                "reference": "dec8e203816bf308d46bdf11e31eb0d015b8fba1"
+                "reference": "af0659c64c69a38d3d85b0931f2ed5387340df1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-store-lib/repository/archive.zip?sha=dec8e203816bf308d46bdf11e31eb0d015b8fba1",
-                "reference": "dec8e203816bf308d46bdf11e31eb0d015b8fba1",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-store-lib/repository/archive.zip?sha=af0659c64c69a38d3d85b0931f2ed5387340df1a",
+                "reference": "af0659c64c69a38d3d85b0931f2ed5387340df1a",
                 "shasum": ""
             },
             "require": {
@@ -1892,7 +1892,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965575/issues"
             },
-            "time": "2022-07-08T10:33:37+00:00"
+            "time": "2022-09-28T05:09:16+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
