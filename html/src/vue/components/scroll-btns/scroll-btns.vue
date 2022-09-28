@@ -6,10 +6,11 @@
             @click="onScroll('left')"
         >
             <v-svg
-                    name="arrow-bar-left"
-                    modifier="fill-white"
-                    width="24"
-                    height="24"
+                    class="left-scroll-svg"
+                    name="caret-left"
+                    modifier="stroke-white"
+                    width="34"
+                    height="34"
             />
         </button>
         <button
@@ -18,10 +19,11 @@
             @click="onScroll('right')"
         >
             <v-svg
-                    name="arrow-bar-right"
-                    modifier="fill-white"
-                    width="24"
-                    height="24"
+                    class="right-scroll-svg"
+                    name="caret-right"
+                    modifier="stroke-white"
+                    width="34"
+                    height="34"
             />
         </button>
     </div>
@@ -31,6 +33,8 @@
     import VSvg from '../controls/VSvg/VSvg.vue';
     import '../../../images/sprite/arrow-bar-left.svg';
     import '../../../images/sprite/arrow-bar-right.svg';
+    import '../../../images/sprite/caret-left.svg';
+    import '../../../images/sprite/caret-right.svg';
     export default {
         name: "scroll-btns",
         components:{
@@ -78,8 +82,17 @@
     .btn-scroll:hover {
         background: #c19e9e82;
     }
+    .left-scroll-btn{
+        left: -50px;
+    }
+    .left-scroll-svg{
+        transform: translateX(20px);
+    }
     .right-scroll-btn{
-        right: 15px;
+        right: -50px;
+    }
+    .right-scroll-svg{
+        transform: translateX(-20px);
     }
     .show-scroll{
         opacity: 1;
