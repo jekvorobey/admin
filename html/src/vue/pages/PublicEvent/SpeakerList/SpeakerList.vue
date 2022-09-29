@@ -262,7 +262,12 @@
                 Services.showLoader();
                 this[ACT_DELETE_SPEAKERS]({ids})
                     .then(() => {
+                        Services.msg("Запись успешно удалена!");
                         return this[ACT_LOAD_PAGE]({page: this.page});
+                    })
+                    .catch((error) => {
+                        Services.hideLoader()
+                        Services.msg("Не удалось удалить запись", 'danger');
                     })
                     .finally(() => {
                         Services.hideLoader();

@@ -507,6 +507,8 @@ Route::middleware('auth')->group(function () {
             Route::put('return', [OrderDetailController::class, 'returnCompletedOrder'])->name('orders.return');
             Route::get('invoice-offer', [OrderDetailController::class, 'invoiceOffer'])->name('order.invoiceOffer');
             Route::get('upd', [OrderDetailController::class, 'upd'])->name('order.upd');
+            Route::get('paymentCheckCreditStatus', [OrderDetailController::class, 'paymentCheckCreditStatus'])->name('orders.paymentCheckCreditStatus');
+            Route::put('createCreditPaymentReceipt', [OrderDetailController::class, 'createCreditPaymentReceipt'])->name('orders.createCreditPaymentReceipt');
 
             Route::namespace('Detail')->group(function () {
                 Route::prefix('main')->group(function () {
@@ -1109,6 +1111,8 @@ Route::middleware('auth')->group(function () {
 
             Route::prefix('whitelist')->group(function () {
                 Route::get('', [CustomerWhitelistController::class, 'index'])->name('customers.whitelist');
+                Route::get('page', [CustomerWhitelistController::class, 'page'])->name('customers.whitelist.pagination');
+                Route::post('create-accounts', [CustomerWhitelistController::class, 'createAccounts'])->name('customers.whitelist.create_accounts');
                 Route::post('import', [CustomerWhitelistController::class, 'import'])->name('customers.whitelist.import');
                 Route::get('export', [CustomerWhitelistController::class, 'export'])->name('customers.whitelist.export');
             });

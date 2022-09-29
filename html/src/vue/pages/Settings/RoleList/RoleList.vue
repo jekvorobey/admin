@@ -48,10 +48,11 @@
                 <td v-else>{{ role.name }}</td>
                 <td>{{ frontName(role.front) }}</td>
                 <td v-if="canUpdate(blocks.settings)">
-                    <b-button class="btn btn-danger btn-sm" v-if="role.can_delete">
-                        <fa-icon icon="trash-alt"
-                                 @click="deleteRole(role.id)"/>
-                    </b-button>
+                    <v-delete-button
+                            v-if="role.can_delete"
+                            btnClass="btn btn-danger btn-sm"
+                            @delete="deleteRole(role.id)"
+                    />
                 </td>
             </tr>
             </tbody>
@@ -75,7 +76,7 @@
 
 import Services from '../../../../scripts/services/services';
 import withQuery from 'with-query';
-
+import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteButton.vue";
 import RoleAddModal from '../components/role-add-modal.vue';
 import modalMixin from '../../../mixins/modal.js';
 import FInput from '../../../components/filter/f-input.vue';
@@ -98,6 +99,7 @@ export default {
         RoleAddModal,
         FInput,
         FSelect,
+        VDeleteButton
     },
     props: {
         iRoles: {},

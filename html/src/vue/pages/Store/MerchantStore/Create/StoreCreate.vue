@@ -47,6 +47,16 @@
                         v-model="store.address.comment"
                         class="col-lg-6 col-12">Комментарий к адресу</v-input>
             </div>
+
+            <div class="col-lg-6 col-12 form-group">
+                <div class="row">
+                    <label>
+                        Всегда сплитом
+                        <input type="checkbox" v-model="store.is_always_splitted"/>
+                    </label>
+                </div>
+            </div>
+
             <button
                     @click="add"
                     type="button"

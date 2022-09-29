@@ -152,34 +152,42 @@
                             </div>
                         </td>
                     </tr>
+                    <tr>
+                        <th><label for="commissionaire_type">Признак комиссионера</label></th>
+                        <td><input v-model="$v.form.commissionaire_type.$model" id="commissionaire_type" type='checkbox' :value="form.commissionaire_type"/></td>
+                    </tr>
 
                     <tr class="table-secondary"><th colspan="2">Агентские документы для МК</th></tr>
                     <tr>
-                      <th>Номер Договора</th>
-                      <td><v-input v-model="$v.form.agent_contract_number.$model"/></td>
+                        <th>Номер Договора</th>
+                        <td><v-input v-model="$v.form.agent_contract_number.$model"/></td>
                     </tr>
                     <tr>
-                      <th>Дата договора</th>
-                      <td><date-picker v-model="$v.form.agent_contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
+                        <th>Дата договора</th>
+                        <td><date-picker v-model="$v.form.agent_contract_at.$model" value-type="format" format="YYYY-MM-DD" input-class="form-control form-control-sm" class="w-100"/></td>
                     </tr>
                     <tr>
-                      <th>Документы</th>
-                      <td>
-                        <div v-for="(document, i) in agentDocuments" class="mb-1">
-                          <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
-                          <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
-                        </div>
-                        <div v-if="!agentDocuments.length">-</div>
+                        <th>Документы</th>
+                        <td>
+                            <div v-for="(document, i) in agentDocuments" class="mb-1">
+                                <a :href="media.file(document.file_id)" target="_blank">{{ document.name }}</a>
+                                <v-delete-button btn-class="btn-danger btn-sm" @delete="deleteDocument(document.file_id, i)"/>
+                            </div>
+                            <div v-if="!agentDocuments.length">-</div>
 
-                        <div>
-                          <file-input destination="merchantDocument" v-if="!form.agentFile" @uploaded="(data) => form.agentFile = data" class="mb-3"></file-input>
-                          <div v-else class="alert alert-success py-1 px-3" role="alert">
-                            Файл <a :href="form.agentFile.url" target="_blank" class="alert-link">{{ form.agentFile.name }}</a> загружен
-                            <v-delete-button @delete="form.agentFile = null" btn-class="btn-danger btn-sm"/>
-                            <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.agent, 'agentFile')"><fa-icon icon="plus"/></button>
-                          </div>
-                        </div>
-                      </td>
+                            <div>
+                                <file-input destination="merchantDocument" v-if="!form.agentFile" @uploaded="(data) => form.agentFile = data" class="mb-3"></file-input>
+                                <div v-else class="alert alert-success py-1 px-3" role="alert">
+                                    Файл <a :href="form.agentFile.url" target="_blank" class="alert-link">{{ form.agentFile.name }}</a> загружен
+                                    <v-delete-button @delete="form.agentFile = null" btn-class="btn-danger btn-sm"/>
+                                    <button class="btn btn-success btn-sm" @click="createDocument(merchantDocumentTypes.agent, 'agentFile')"><fa-icon icon="plus"/></button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><label for="agent_type">Признак агента</label></th>
+                        <td><input v-model="$v.form.agent_type.$model" type='checkbox' id="agent_type" :value="form.agent_type"/></td>
                     </tr>
                     </tbody>
                 </table>
@@ -228,10 +236,11 @@
                 commercial_info: this.model.commercial_info,
                 commissionaire_contract_number: this.model.commissionaire_contract_number,
                 commissionaire_contract_at: this.model.commissionaire_contract_at ? this.model.commissionaire_contract_at : '',
+                commissionaire_type: this.model.commissionaire_type,
                 agent_contract_number: this.model.agent_contract_number,
                 agent_contract_at: this.model.agent_contract_at ? this.model.agent_contract_at : '',
+                agent_type: this.model.agent_type,
                 excluded_payment_methods: this.model.excluded_payment_methods ? this.model.excluded_payment_methods : [],
-
                 agentFile: null,
                 commissionaireFile: null,
             },
@@ -262,8 +271,10 @@
                 commercial_info: {notRequired},
                 commissionaire_contract_number: {notRequired},
                 commissionaire_contract_at: {notRequired},
+                commissionaire_type: {notRequired},
                 agent_contract_number: {notRequired},
                 agent_contract_at: {notRequired},
+                agent_type: {notRequired},
                 excluded_payment_methods: {notRequired},
             },
         };
@@ -295,8 +306,10 @@
                 this.merchant.commercial_info = this.form.commercial_info;
                 this.merchant.commissionaire_contract_number = this.form.commissionaire_contract_number;
                 this.merchant.commissionaire_contract_at = this.form.commissionaire_contract_at;
+                this.merchant.commissionaire_type = this.form.commissionaire_type;
                 this.merchant.agent_contract_number = this.form.agent_contract_number;
                 this.merchant.agent_contract_at = this.form.agent_contract_at;
+                this.merchant.agent_type = this.form.agent_type;
                 this.merchant.excluded_payment_methods = this.form.excluded_payment_methods;
                 Services.msg("Изменения сохранены");
             }).finally(() => {
@@ -321,8 +334,10 @@
             this.form.commercial_info = this.merchant.commercial_info;
             this.form.commissionaire_contract_number = this.merchant.commissionaire_contract_number;
             this.form.commissionaire_contract_at = this.merchant.commissionaire_contract_at;
+            this.form.commissionaire_type = this.merchant.commissionaire_type;
             this.form.agent_contract_number = this.merchant.agent_contract_number;
             this.form.agent_contract_at = this.merchant.agent_contract_at;
+            this.form.agent_type = this.merchant.agent_type;
             this.form.excluded_payment_methods = this.merchant.excluded_payment_methods;
         },
         deleteDocument(file_id, index) {

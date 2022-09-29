@@ -155,6 +155,7 @@ class MerchantStoreController extends Controller
             'active' => 'boolean',
             'name' => 'string|required',
             'dpd_regular_num' => 'string|nullable',
+            'is_always_splitted' => 'boolean',
         ], $addressValidate);
         $validatedData = $request->validate($validate);
 
