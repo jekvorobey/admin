@@ -7,7 +7,9 @@
                 <v-delete-button @delete="() => deleteOrganizers(massAll(massSelectionType))"/>
             </div>
         </div>
-        <table class="table">
+        <div :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
+         <table class="table" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+             <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
             <thead>
                 <tr>
                     <td></td>
@@ -50,6 +52,7 @@
                 </tr>
             </tbody>
         </table>
+        </div>
         <div>
             <b-pagination
                     v-if="numPages !== 1"
@@ -112,7 +115,7 @@
 <script>
     import withQuery from 'with-query';
     import FSelect from '../../../components/filter/f-select.vue';
-
+    import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
     import { mapActions, mapGetters } from 'vuex';
 
     import {
@@ -154,7 +157,8 @@
             Modal,
             VInput,
             FileInput,
-            VDeleteButton
+            VDeleteButton,
+            ScrollBtns
         },
         props: {
             iOrganizers: {},
@@ -170,6 +174,7 @@
             });
 
             return {
+                showScroll: false,
                 merchants: this.iMerchants,
                 editOrganizerId: null,
                 form: {
@@ -214,6 +219,24 @@
                 ACT_SAVE_ORGANIZER,
                 ACT_DELETE_ORGANIZER,
             ]),
+            onScroll(direction) {
+                const menu = this.$refs.menu
+
+                if (direction === 'left') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft - 200,
+                        behavior: 'smooth'
+                    })
+                }
+
+                if (direction === 'right') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft + 200,
+                        behavior: 'smooth'
+                    })
+
+                }
+            },
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
@@ -326,6 +349,9 @@
                 numPages: GET_NUM_PAGES,
                 organizers: GET_LIST,
             }),
+            isMobile(){
+                return window.innerWidth <= 768
+            },
             telMask() {
                 return telMask;
             },
