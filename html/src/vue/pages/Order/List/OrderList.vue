@@ -124,9 +124,9 @@
                             <f-multi-select v-model="filter.type" :options="typeOptions" class="col-sm-12 col-md-2">
                                 Тип заказа
                             </f-multi-select>
-                          <f-input v-model="filter.delivery_xml_id" type="text" class="col-sm-12 col-md-3">
-                            Трек номер ЛО
-                          </f-input>
+                            <f-input v-model="filter.delivery_xml_id" type="text" class="col-sm-12 col-md-3">
+                                Трек номер ЛО
+                            </f-input>
                         </div>
                     </div>
                 </div>
@@ -142,55 +142,56 @@
                 <a :href="getRoute('orders.create')" class="btn btn-success mt-3">Создать заказ</a>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-condensed">
+        <div class="table-responsive" :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
+            <table class="table table-condensed" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+                <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
                 <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="select-all-page-orders" v-model="isSelectAllPageOrders" @click="selectAllPageOrders()">
-                            <label for="select-all-page-orders" class="mb-0">Все</label>
-                        </th>
-                        <th v-for="column in columns" v-if="column.isShown">
-                            <span v-html="column.name"></span>
-                            <fa-icon v-if="column.description" icon="question-circle"
-                                     v-b-popover.hover="column.description"></fa-icon>
-                        </th>
-                        <th>
-                            <button class="btn btn-light float-right" @click="showChangeColumns">
-                                <fa-icon icon="cog"></fa-icon>
-                            </button>
-                            <modal-columns :i-columns="editedShowColumns"></modal-columns>
-                        </th>
-                    </tr>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="select-all-page-orders" v-model="isSelectAllPageOrders" @click="selectAllPageOrders()">
+                        <label for="select-all-page-orders" class="mb-0">Все</label>
+                    </th>
+                    <th v-for="column in columns" v-if="column.isShown">
+                        <span v-html="column.name"></span>
+                        <fa-icon v-if="column.description" icon="question-circle"
+                                 v-b-popover.hover="column.description"></fa-icon>
+                    </th>
+                    <th>
+                        <button class="btn btn-light float-right" @click="showChangeColumns">
+                            <fa-icon icon="cog"></fa-icon>
+                        </button>
+                        <modal-columns :i-columns="editedShowColumns"></modal-columns>
+                    </th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="order in orders">
-                        <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
-                        <td v-for="column in columns" v-if="column.isShown">
-                            <template v-if="column.code === 'number'">
-                                <a :href="getRoute('orders.detail', {id: order.id})">{{order.number}}</a><br>
-                                <order-type :type='order.type'/>
+                <tr v-for="order in orders">
+                    <td><input type="checkbox" value="true" class="order-select" :value="order.id"></td>
+                    <td v-for="column in columns" v-if="column.isShown">
+                        <template v-if="column.code === 'number'">
+                            <a :href="getRoute('orders.detail', {id: order.id})">{{order.number}}</a><br>
+                            <order-type :type='order.type'/>
+                        </template>
+                        <template v-else-if="column.code === 'status'">
+                            <order-status :status='order.status'/>
+                            <template v-if="order.is_canceled">
+                                <br><span class="badge badge-danger">Отменен</span>
                             </template>
-                            <template v-else-if="column.code === 'status'">
-                                <order-status :status='order.status'/>
-                                <template v-if="order.is_canceled">
-                                    <br><span class="badge badge-danger">Отменен</span>
-                                </template>
-                                <template v-if="order.is_problem">
-                                    <br><span class="badge badge-danger">Проблемный</span>
-                                </template>
-                                <template v-if="order.is_require_check">
-                                    <br><span class="badge badge-danger">Требует проверки</span>
-                                </template>
+                            <template v-if="order.is_problem">
+                                <br><span class="badge badge-danger">Проблемный</span>
                             </template>
-                            <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
-                            <div v-else v-html="column.value(order)"></div>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr v-if="!orders.length">
-                        <td :colspan="columns.length + 1">Заказов нет</td>
-                    </tr>
+                            <template v-if="order.is_require_check">
+                                <br><span class="badge badge-danger">Требует проверки</span>
+                            </template>
+                        </template>
+                        <payment-status v-else-if="column.code === 'payment_status'" :status="order.payment_status"></payment-status>
+                        <div v-else v-html="column.value(order)"></div>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr v-if="!orders.length">
+                    <td :colspan="columns.length + 1">Заказов нет</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -220,7 +221,7 @@
     import Dropdown from '../../../components/dropdown/dropdown.vue';
     import Helpers from '../../../../scripts/helpers';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
-
+    import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
     import modalMixin from '../../../mixins/modal.js';
 
     const cleanHiddenFilter = {
@@ -307,6 +308,7 @@
             VDadata,
             Dropdown,
             ModalColumns,
+            ScrollBtns
         },
         data() {
             let self = this;
@@ -321,6 +323,7 @@
             filter.type = filter.type.map(value => parseInt(value));
             filter.stores = filter.stores.map(value => parseInt(value));
             return {
+                showScroll: false,
                 opened: false,
                 currentPage: this.iCurrentPage,
                 orders: this.iOrders,
@@ -512,6 +515,25 @@
             };
         },
         methods: {
+            onScroll(direction){
+                console.log(direction)
+                const menu = this.$refs.menu
+
+                if (direction === 'left') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft - 200,
+                        behavior: 'smooth'
+                    })
+                }
+
+                if (direction === 'right') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft + 200,
+                        behavior: 'smooth'
+                    })
+
+                }
+            },
             changePage(newPage) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: newPage,
@@ -592,6 +614,9 @@
                     value: status.id,
                     text: status.name
                 }));
+            },
+            isMobile(){
+                return window.innerWidth <= 768
             },
             deliveryTypeOptions() {
                 return Object.values(this.deliveryTypes).map(type => ({value: type.id, text: type.name}));

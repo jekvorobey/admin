@@ -3,7 +3,7 @@
         <LayoutHeader :on-index="onIndex"></LayoutHeader>
         <div class="container-fluid">
             <div class="row flex-xl-nowrap">
-                <div class="bg-light col-xl-2 no-padding mw-250" v-if="!user.isGuest">
+                <div class="bg-light col-xl-2 no-padding mw-250 navbar-z" v-if="!user.isGuest">
                     <MainMenu></MainMenu>
                 </div>
                 <main class="flex-grow-1 no-padding" :class="!user.isGuest ? 'col-xl-10' : 'col-xl-12'">
@@ -178,5 +178,8 @@
             -ms-transform: rotate(360deg);
             transform: rotate(360deg);
         }
+    }
+    .navbar-z{
+        z-index: 9999999;
     }
 </style>

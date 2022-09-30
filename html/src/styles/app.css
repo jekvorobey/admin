@@ -54,3 +54,11 @@ label{
     line-height: 1rem;
     overflow: hidden;
 }
+
+.menu-scroll{
+    overflow-x: scroll !important;
+}
+
+.menu-scroll-hidden{
+    overflow-x: hidden !important;
+}

@@ -53,7 +53,7 @@
                 this.$emit('onScroll', direction)
             },
             onResize() {
-                this.screenWidthToShow = window.innerWidth < 1280
+                this.screenWidthToShow = window.innerWidth < 2550
             }
         },
         created() {
@@ -85,7 +85,7 @@
     .left-scroll-btn{
         left: -50px;
     }
-    .left-scroll-svg{
+    .left-scroll-svg {
         transform: translateX(20px);
     }
     .right-scroll-btn{
@@ -96,5 +96,21 @@
     }
     .show-scroll{
         opacity: 1;
+    }
+
+    @media (min-width: 1200px){
+        .left-scroll-btn{
+            left: 200px;
+        }
+    }
+    @media (min-width: 1600px){
+        .left-scroll-btn{
+            left: 220px;
+        }
+    }
+    @media (min-width: 1800px){
+        .left-scroll-btn{
+            left: 260px;
+        }
     }
 </style>

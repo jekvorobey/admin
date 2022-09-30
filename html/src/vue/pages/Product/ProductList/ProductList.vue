@@ -647,7 +647,7 @@
         },
         computed: {
             isMobile(){
-                return window.innerWidth < 768
+                return window.innerWidth <= 768
             },
 
             ...mapGetters(NAMESPACE, {
@@ -732,12 +732,6 @@
 </script>
 
 <style scoped>
-    .menu-scroll{
-        overflow-x: scroll;
-    }
-    .menu-scroll-hidden{
-        overflow-x: hidden;
-    }
     th {
         vertical-align: top !important;
     }
