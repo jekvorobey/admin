@@ -95,8 +95,9 @@
                 <span class="float-right">Всего отправлений: {{ pager.total }}.</span>
             </template>
         </b-card>
-        <div class="table-responsive">
-            <table class="table table-condensed">
+        <div class="table-responsive" :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
+            <table class="table table-condensed" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+                <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
                 <thead>
                 <tr>
                     <th>
@@ -156,7 +157,7 @@ import Services from '../../../../scripts/services/services';
 import withQuery from 'with-query';
 import qs from 'qs';
 import {mapGetters} from 'vuex';
-
+import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
 import FInput from '../../../components/filter/f-input.vue';
 import FDate from '../../../components/filter/f-date.vue';
 import FMultiSelect from '../../../components/filter/f-multi-select.vue';
@@ -240,6 +241,7 @@ export default {
         VDadata,
         Dropdown,
         ModalColumns,
+        ScrollBtns
     },
     data() {
         let self = this;
@@ -251,6 +253,7 @@ export default {
         filter.merchants = filter.merchants.map(value => parseInt(value));
         filter.stores = filter.stores.map(value => parseInt(value));
         return {
+            showScroll: false,
             opened: false,
             currentPage: this.iCurrentPage,
             shipments: this.iShipments,
@@ -460,6 +463,24 @@ export default {
         };
     },
     methods: {
+        onScroll(direction) {
+            const menu = this.$refs.menu
+
+            if (direction === 'left') {
+                menu.scrollTo({
+                    left: menu.scrollLeft - 200,
+                    behavior: 'smooth'
+                })
+            }
+
+            if (direction === 'right') {
+                menu.scrollTo({
+                    left: menu.scrollLeft + 200,
+                    behavior: 'smooth'
+                })
+
+            }
+        },
         changePage(newPage) {
             history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                 page: newPage,
@@ -611,6 +632,9 @@ export default {
     },
     computed: {
         ...mapGetters(['getRoute']),
+        isMobile(){
+            return window.innerWidth <= 768
+        },
         statusOptions() {
             return Object.values(this.shipmentStatuses).map(status => ({value: status.id, text: status.name}));
         },

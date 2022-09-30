@@ -616,8 +616,7 @@
                 }
             },
 
-            onScroll(direction){
-                console.log(direction)
+            onScroll(direction) {
                 const menu = this.$refs.menu
 
                 if (direction === 'left') {
