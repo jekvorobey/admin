@@ -61,7 +61,9 @@
             filteredOptions(){
                 if (this.inputSearch !== null && this.inputSearch !== ''){
                     return this.options.filter(option => {
-                            return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
+                            if (option.text !== undefined){
+                                return option.text.toLowerCase().includes(this.inputSearch.toLowerCase())
+                            }
                         }
                     )
                 }
@@ -94,7 +96,7 @@
         background: #fff;
     }
     .li-search .input-close-btn {
-        top: 33px;
+        /*top: 33px;*/
     }
     .inner-list{
         max-height: 300px;
