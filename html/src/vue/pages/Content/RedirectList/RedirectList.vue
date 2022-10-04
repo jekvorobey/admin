@@ -2,8 +2,8 @@
   <layout-main>
     <div class="mt-3 mb-3 shadow p-3">
       <div class="row">
-        <f-input v-model="filter.from" class="col-lg-3 col-md-4 col-sm-12">Ссылка</f-input>
-        <f-input v-model="filter.to" class="col-lg-3 col-md-4 col-sm-12">Короткая ссылка</f-input>
+        <f-input v-model="filter.from" class="col-lg-3 col-md-4 col-sm-12">Короткая ссылка</f-input>
+        <f-input v-model="filter.to" class="col-lg-3 col-md-4 col-sm-12">Ссылка</f-input>
         <f-input v-model="filter.product_id" class="col-lg-3 col-md-4 col-sm-12">ID Продукта</f-input>
       </div>
       <button @click="applyFilter" class="btn btn-dark">Применить</button>

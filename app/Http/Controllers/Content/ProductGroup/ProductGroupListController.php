@@ -84,7 +84,7 @@ class ProductGroupListController extends Controller
         }
 
         if (isset($filter['name'])) {
-            $query->setFilter('name', $filter['name']);
+            $query->setFilter('name', 'like', "%{$filter['name']}%");
         }
 
         if (isset($filter['active'])) {
