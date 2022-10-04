@@ -144,7 +144,7 @@
         font-size: 16px;
         border: 1px solid gainsboro;
         position: absolute;
-        z-index: 1;
+        z-index: 10;
         background: #fff;
     }
     .aselect li {
