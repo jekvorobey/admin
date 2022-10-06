@@ -96,7 +96,7 @@
         background: #fff;
     }
     .li-search .input-close-btn {
-        /*top: 33px;*/
+        top: 33px;
     }
     .inner-list{
         max-height: 300px;
