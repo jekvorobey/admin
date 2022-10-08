@@ -101,7 +101,6 @@ class MerchantOperatorController extends Controller
         RequestInitiator $requestInitiator
     ): Response|Application|ResponseFactory {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
-
         $userData = $request->validate([
             'last_name' => 'string|required',
             'first_name' => 'string|required',
@@ -112,7 +111,7 @@ class MerchantOperatorController extends Controller
             'phone' => 'string|required',
             'password' => 'string|nullable',
             'roles' => 'array|required',
-            'roles.' => Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS))),
+            'roles.*' => ['integer', Rule::in(array_keys(Helpers::getRoles(Front::FRONT_MAS)))],
             'active' => 'bool|required',
         ]);
 
