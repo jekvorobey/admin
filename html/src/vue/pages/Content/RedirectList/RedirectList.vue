@@ -161,11 +161,11 @@ export default {
     },
     loadPage() {
 
-      ['from', 'to'].forEach(key => {
-        if (this.filter.hasOwnProperty(key) && this.filter[key] !== '') {
-          this.filter[key] = Helpers.addSlash(this.filter[key])
-        }
-      })
+      // ['from', 'to'].forEach(key => {
+      //   if (this.filter.hasOwnProperty(key) && this.filter[key] !== '') {
+      //     this.filter[key] = Helpers.addSlash(this.filter[key])
+      //   }
+      // })
       Services.net().get(this.route('redirect.page'), {
         page: this.currentPage,
         filter: this.filter,
