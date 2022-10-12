@@ -3,7 +3,8 @@
         <div v-if="!extSystem && canUpdate(blocks.merchants)">
             <v-select class="col-md-4 col-6" :options="extSystemOptions" v-model="extSystemsSelect.driver_id"><h4>
                 Выберите интеграцию</h4></v-select>
-            <button v-if="extSystemsSelect.driver_id && !is1C(extSystemsSelect.driver_id)" @click="openModal('integrationModal')"
+            <button v-if="extSystemsSelect.driver_id && !is1C(extSystemsSelect.driver_id)"
+                    @click="openModal('integrationModal')"
                     class="btn btn-success btn-md">
                 Добавить интеграцию
             </button>
@@ -89,6 +90,10 @@
                 <tr>
                     <th>Дата создания</th>
                     <td>{{ datetimePrint(extSystem.created_at) }}</td>
+                </tr>
+                <tr>
+                    <th>Комментарий</th>
+                    <td>{{ extSystem.comment }}</td>
                 </tr>
                 </tbody>
             </table>
