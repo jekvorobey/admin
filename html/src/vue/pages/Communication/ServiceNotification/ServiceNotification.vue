@@ -7,7 +7,9 @@
                 <v-delete-button @delete="() => deleteNotifications(massAll(massSelectionType))"/>
             </div>
         </div>
-        <table class="table">
+        <div :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
+        <table class="table" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+            <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
             <thead>
                 <tr>
                     <td></td>
@@ -53,6 +55,7 @@
                 </tr>
             </tbody>
         </table>
+        </div>
         <div>
             <b-pagination
                     v-if="numPages !== 1"
@@ -117,7 +120,7 @@
     import massSelectionMixin from '../../../mixins/mass-selection';
     import {validationMixin} from 'vuelidate';
     import {required} from 'vuelidate/lib/validators';
-
+    import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
@@ -135,7 +138,8 @@
             Modal,
             VInput,
             FileInput,
-            VDeleteButton
+            VDeleteButton,
+            ScrollBtns
         },
         props: {
             iNotifications: {},
@@ -150,6 +154,7 @@
             });
 
             return {
+                showScroll: false,
                 editNotificationId: null,
                 form: {
                     name: null,
@@ -179,6 +184,24 @@
                 ACT_SAVE_NOTIFICATION,
                 ACT_DELETE_NOTIFICATIONS,
             ]),
+            onScroll(direction) {
+                const menu = this.$refs.menu
+
+                if (direction === 'left') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft - 200,
+                        behavior: 'smooth'
+                    })
+                }
+
+                if (direction === 'right') {
+                    menu.scrollTo({
+                        left: menu.scrollLeft + 200,
+                        behavior: 'smooth'
+                    })
+
+                }
+            },
             loadPage(page) {
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
@@ -275,7 +298,9 @@
                     this.loadPage(page);
                 }
             },
-
+            isMobile(){
+                return window.innerWidth <= 768
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
