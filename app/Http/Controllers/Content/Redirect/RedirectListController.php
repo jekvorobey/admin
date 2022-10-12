@@ -72,11 +72,11 @@ class RedirectListController extends Controller
         $filter = $request->get('filter', []);
 
         if (isset($filter['from']) && $filter['from']) {
-            $query->setFilter('from', $filter['from']);
+            $query->setFilter('from', 'like', "%{$filter['from']}%");
         }
 
         if (isset($filter['to']) && $filter['to']) {
-            $query->setFilter('to', $filter['to']);
+            $query->setFilter('to', 'like', "%{$filter['to']}%");
         }
 
         if (isset($filter['product_id']) && $filter['product_id']) {
