@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "f873a8ad767b1737bb8e5bed2518f024",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1290,16 +1290,16 @@
         },
         {
             "name": "ibt/catalog-import-lib",
-            "version": "dev-master",
+            "version": "dev-feature/BX-7618-addProductsSelectionSection",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-catalog-import-lib.git",
-                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e"
+                "reference": "36ed7604db5c0969187796c8295442d253ab8ade"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=5843b2fc9c6aa630236837a8dc0c8b9765a70b0e",
-                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=36ed7604db5c0969187796c8295442d253ab8ade",
+                "reference": "36ed7604db5c0969187796c8295442d253ab8ade",
                 "shasum": ""
             },
             "require": {
@@ -1311,7 +1311,6 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1338,7 +1337,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965293/issues"
             },
-            "time": "2022-07-08T10:33:12+00:00"
+            "time": "2022-09-14T06:38:50+00:00"
         },
         {
             "name": "ibt/cm-lib",
@@ -11209,7 +11208,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/catalog-import-lib",
+            "version": "dev-feature/BX-7618-addProductsSelectionSection",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,

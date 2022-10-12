@@ -30,6 +30,10 @@ class Menu
                         'route' => route('variantGroups.list'),
                     ],
                     [
+                        'title' => 'Подбор товаров',
+                        'route' => route('products.selection'),
+                    ],
+                    [
                         'title' => 'Справочники',
                         'items' => [
                             [
