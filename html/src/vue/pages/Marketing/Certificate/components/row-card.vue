@@ -29,7 +29,7 @@
         <td>{{request.comment}}</td>
         <td>{{request.to_email}}</td>
         <td>{{request.to_phone}}</td>
-        <td v-if="canUpdate(blocks.marketing)">
+        <td v-if="canUpdate(blocks.marketing)" class="td-flex-column">
             <b-button class="btn btn-info btn-sm" style="height: 31px; padding-top: 7px;" @click="showModalInputDay" :id="btn_id()" v-if="card.status == 306 || card.status == 301">
                 <fa-icon icon="redo-alt" class="float-right media-btn" v-b-popover.hover="'Продлить срок активации'"></fa-icon>
             </b-button>
@@ -203,3 +203,10 @@ export default {
 }
 </script>
 
+<style scoped>
+    .td-flex-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
