@@ -13,9 +13,12 @@
                         <f-input v-model="filter.email" class="col-sm-12 col-md-3 col-xl-2">
                             Email
                         </f-input>
-                        <f-input v-model="filter.phone" v-mask="telMask" class="col-sm-12 col-md-3 col-xl-2">
-                            Телефон
-                        </f-input>
+                        <v-input
+                            v-model="filter.phone"
+                            v-mask="telMask"
+                            validation="phone"
+                            class="col-sm-12 col-md-3 col-xl-2"
+                        >Телефон</v-input>
                         <f-select v-model="filter.front" :options="frontOptions" class="col-sm-12 col-md-3 col-xl-2">
                             Система
                         </f-select>
@@ -112,6 +115,7 @@ import modalMixin from '../../../mixins/modal.js';
 import FInput from '../../../components/filter/f-input.vue';
 import FSelect from '../../../components/filter/f-select.vue';
 import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
+import VInput from "../../../components/controls/VInput/VInput.vue";
 
 import { telMask } from '../../../../scripts/mask.js';
 
@@ -140,6 +144,7 @@ export default {
         FInput,
         FSelect,
         FCustomSearchSelect,
+        VInput
     },
     props: {
         iUsers: {},
