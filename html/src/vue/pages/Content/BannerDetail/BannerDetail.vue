@@ -67,7 +67,6 @@ export default {
                     } else this.banner.url = this.banner.url + '/?isOpen=true';
                 }
             }
-
             if (!this.isOpen && /\/\?isOpen=true/.test(this.banner.url)) {
                 this.banner.url = this.banner.url.replace(/\/\?isOpen=true/, '')
             }
