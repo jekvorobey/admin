@@ -95,10 +95,12 @@ use App\Http\Controllers\Order\Shipment\ShipmentListController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
 use App\Http\Controllers\Product\ImportExport\ProductsExportController;
+use App\Http\Controllers\Product\ImportExport\ProductsSelectionExportController;
 use App\Http\Controllers\Product\OfferDetailController;
 use App\Http\Controllers\Product\OfferListController;
 use App\Http\Controllers\Product\ProductDetailController;
 use App\Http\Controllers\Product\ProductListController;
+use App\Http\Controllers\Product\ProductSelectionController;
 use App\Http\Controllers\Product\PropertiesController;
 use App\Http\Controllers\Product\VariantGroup\Detail\TabProductsController;
 use App\Http\Controllers\Product\VariantGroup\Detail\TabPropertiesController;
@@ -675,6 +677,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('products')->namespace('Product')->group(function () {
         Route::get('', [ProductListController::class, 'index'])->name('products.list');
         Route::get('page', [ProductListController::class, 'page'])->name('products.listPage');
+        Route::prefix('selection')->group(function () {
+            Route::get('', [ProductSelectionController::class, 'selection'])->name('products.selection');
+            Route::get('page', [ProductSelectionController::class, 'page'])->name('products.selection.listPage');
+        });
 
         Route::put('approval', [ProductListController::class, 'updateApprovalStatus'])->name('products.massApproval');
         Route::put('production', [ProductListController::class, 'updateProductionStatus'])->name('products.massProduction');
@@ -742,10 +748,13 @@ Route::middleware('auth')->group(function () {
                 });
             });
         });
-
         Route::prefix('import-export')->namespace('ImportExport')->group(function () {
             Route::get('export-by-product-ids', [ProductsExportController::class, 'exportByProductIds'])->name('products.exportByProductIds');
             Route::get('export-by-filters', [ProductsExportController::class, 'exportByFilters'])->name('products.exportByFilters');
+            Route::get('export-by-offer-ids', [ProductsSelectionExportController::class, 'exportByOfferIds'])->name('products.selection.exportByOfferIds');
+            Route::get('export-by-vendor-codes', [ProductsSelectionExportController::class, 'exportByVendorCodes'])->name(
+                'products.selection.exportByVendorCodes'
+            );
         });
     });
 

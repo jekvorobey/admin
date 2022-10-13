@@ -25,7 +25,7 @@
                             </b-dropdown-item-button>
                         </b-dropdown>
                         <template v-if="canUpdate(blocks.orders)">
-                            <b-dropdown text="Действия" size="sm"
+                            <b-dropdown text="Действия" size="sm" right
                                         v-if="canMarkAsNonProblem(shipment) || canGetBarcodes(shipment) || canGetCdekReceipt(shipment) || canCancelShipment(shipment) || isBankTransferPayment">
                                 <b-dropdown-item-button v-if="canMarkAsNonProblem(shipment)"
                                                         @click="markAsNonProblem(shipment)">

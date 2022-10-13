@@ -15,6 +15,12 @@
 </script>
 
 <style scoped>
+    .stroke-white{
+        stroke: #fff;
+    }
+    .stroke-black{
+        stroke: #000000;
+    }
     .fill-white{
         fill: #fff;
     }

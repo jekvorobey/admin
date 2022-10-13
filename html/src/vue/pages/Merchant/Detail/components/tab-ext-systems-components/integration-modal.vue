@@ -64,6 +64,9 @@
                     <label class="form-check-label" for="paramActiveOrder">Активировать</label>
                 </div>
             </div>
+            <div class="row">
+                <v-input v-model="form.comment" tag="textarea" class="col-md-6 col-12">Комментарий</v-input>
+            </div>
         </div>
         <div v-else-if="isFileSharing">
             <div class="row">
@@ -135,6 +138,7 @@ export default {
                 paramPeriodPriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.params.period : 10,
                 paramActivePriceStock: this.options.paramPriceStock ? this.options.paramPriceStock.active : true,
                 fileName: this.options ? this.options.fileName : '',
+                comment: this.extSystem ? this.extSystem.comment : '',
             },
         };
     },
@@ -214,6 +218,7 @@ export default {
                 login: this.form.login,
                 password: this.form.password,
                 driver: this.extSystemDriver,
+                comment: this.form.comment,
                 integrationParams: {
                     paramPeriodPrice: this.form.paramPeriodPrice,
                     paramPeriodStock: this.form.paramPeriodStock,

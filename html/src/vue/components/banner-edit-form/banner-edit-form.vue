@@ -103,6 +103,11 @@
             <ckeditor v-model="banner.additional_text" :editor="editor" :config="editorSettings" />
         </b-form-group>
 
+        <label>
+            <input type="checkbox" :checked="isOpen" @change="$emit('isOpen', $event.target.checked)">
+            Автоматически открывать условия при переходе на страницу
+        </label>
+
         <b-form-group label="Сортировка" label-for="banner-sort">
             <b-form-input
                 v-model="banner.sort"
@@ -195,7 +200,8 @@
             iBannerButtonTypes: Array,
             iBannerButtonLocations: Array,
             iBannerImages: [Object, Array],
-            options: Object
+            options: Object,
+            isOpen: Boolean,
         },
 
         data() {

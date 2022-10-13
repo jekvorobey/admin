@@ -11,6 +11,8 @@ export const GET_PAGE_SIZE = 'get_page_size';
 export const GET_NUM_PAGES = 'get_num_pages';
 
 export const ACT_LOAD_PAGE = 'act_load_page';
+export const ACT_LOAD_SELECTION_PAGE = 'act_load_selection_page';
+
 export const ACT_UPDATE_APPROVAL = 'act_update_approval';
 export const ACT_UPDATE_PRODUCTION = 'act_update_production';
 export const ACT_UPDATE_ARCHIVE = 'act_update_archive';
@@ -43,6 +45,19 @@ export default {
         [ACT_LOAD_PAGE]({commit, rootGetters}, {filter, page}) {
             Services.showLoader();
             return Services.net().get(rootGetters.getRoute('products.listPage'), {page, filter})
+                .then(data => {
+                    commit(SET_PAGE, {
+                        list: data.products,
+                        total: data.total,
+                        page
+                    })
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+        },
+        [ACT_LOAD_SELECTION_PAGE]({commit, rootGetters}, {filter, page}) {
+            Services.showLoader();
+            return Services.net().get(rootGetters.getRoute('products.selection.listPage'), {page, filter})
                 .then(data => {
                     commit(SET_PAGE, {
                         list: data.products,

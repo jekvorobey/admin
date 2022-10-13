@@ -141,6 +141,7 @@ class TabExtSystemsController extends Controller
             case ExtSystemDriver::DRIVER_1C:
                 $code = $merchant->code;
                 $name = $merchant->legal_name;
+                $comment = $merchant->comment;
                 $connectionParams = [
                     'login' => $merchant->code . '_merchant',
                     'password' => Str::random(10),
@@ -149,6 +150,7 @@ class TabExtSystemsController extends Controller
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 $code = 'moysklad';
                 $name = 'МойСклад';
+                $comment = $data['comment'];
                 $connectionParams = [
                     'token' => $data['token'] ?? '',
                     'login' => $data['login'] ?? '',
@@ -158,6 +160,7 @@ class TabExtSystemsController extends Controller
             case ExtSystemDriver::DRIVER_FILE_SHARING:
                 $code = 'filesharing';
                 $name = 'Файловый обмен';
+                $comment = $data['comment'];
                 $connectionParams = [
                     'login' => $data['login'],
                     'password' => $data['password'],
@@ -169,6 +172,7 @@ class TabExtSystemsController extends Controller
             default:
                 $code = $merchant->code;
                 $name = $merchant->legal_name;
+                $comment = $data['comment'];
         }
 
         return [
@@ -177,6 +181,7 @@ class TabExtSystemsController extends Controller
             'name' => $name,
             'driver' => $data['driver'],
             'connection_params' => $connectionParams,
+            'comment' => $comment,
         ];
     }
 
