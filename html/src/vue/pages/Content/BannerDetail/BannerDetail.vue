@@ -38,9 +38,11 @@ export default {
         iBannerImages: Object,
         options: Object
     },
+
     data() {
         return {
-            banner: this.iBanner
+            banner: this.iBanner,
+            isOpen: /isOpen/.test(this.iBanner.url)
         };
     },
     methods: {
@@ -50,94 +52,72 @@ export default {
         updateBanner(model) {
             this.banner = model;
         },
+        isOpenChange(value) {
+            this.isOpen = value;
+        },
+        customizeUrlIsOpen() {
+            if (this.isOpen && !/isOpen/.test(this.banner.url)) {
+                if (this.banner.url.includes('?')) {
+                    if (this.banner.url[this.banner.url.length - 1] === '/') {
+                        this.banner.url = this.banner.url.slice(0, this.banner.url.length - 1) + '&isOpen=true'
+                    } else this.banner.url = this.banner.url + '&isOpen=true'
+                } else {
+                    if (this.banner.url[this.banner.url.length - 1] === '/') {
+                        this.banner.url = this.banner.url + '?isOpen=true';
+                    } else this.banner.url = this.banner.url + '/?isOpen=true';
+                }
+            }
+
+            if (!this.isOpen && /\/\?isOpen=true/.test(this.banner.url)) {
+                this.banner.url = this.banner.url.replace(/\/\?isOpen=true/, '')
+            }
+
+            if (!this.isOpen && /&isOpen=true/.test(this.banner.url)) {
+                this.banner.url = this.banner.url.replace(/&isOpen=true/, '')
+            }
+        },
         submit() {
+            this.customizeUrlIsOpen()
+
             if (this.isCreatingMode) {
                 this.create();
             } else {
                 this.update();
             }
         },
+        update() {
+            this.banner.bannerCountdown = this.iBannerCountdown;
+            let model = this.banner;
 
-        data() {
-            return {
-                banner: this.iBanner,
-                isOpen: /isOpen/.test(this.iBanner.url)
-            };
+            Services.net()
+                .put(this.getRoute('banner.update', {id: this.banner.id,}), {}, model)
+                .then((data) => {
+                    this.showMessageBox({title: 'Изменения сохранены'});
+                    window.location.href = this.route('banner.listPage');
+                })
+                .catch((e) => {
+                    this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                });
         },
-        methods: {
-            ...mapActions({
-                showMessageBox: 'modal/showMessageBox',
-            }),
-            updateBanner(model) {
-                this.banner = model;
-            },
-            isOpenChange(value) {
-                this.isOpen = value;
-            },
-            customizeUrlIsOpen() {
-                if (this.isOpen && !/isOpen/.test(this.banner.url)) {
-                    if (this.banner.url.includes('?')) {
-                        if (this.banner.url[this.banner.url.length - 1] === '/') {
-                            this.banner.url = this.banner.url.slice(0, this.banner.url.length - 1) + '&isOpen=true'
-                        } else this.banner.url = this.banner.url + '&isOpen=true'
-                    } else {
-                        if (this.banner.url[this.banner.url.length - 1] === '/') {
-                            this.banner.url = this.banner.url + '?isOpen=true';
-                        } else this.banner.url = this.banner.url + '/?isOpen=true';
-                    }
-                }
-
-                if (!this.isOpen && /\/\?isOpen=true/.test(this.banner.url)) {
-                    this.banner.url = this.banner.url.replace(/\/\?isOpen=true/, '')
-                }
-
-                if (!this.isOpen && /&isOpen=true/.test(this.banner.url)) {
-                    this.banner.url = this.banner.url.replace(/&isOpen=true/, '')
-                }
-            },
-            submit() {
-                this.customizeUrlIsOpen()
-
-                if (this.isCreatingMode) {
-                    this.create();
-                } else {
-                    this.update();
-                }
-            },
-            update() {
-                this.banner.bannerCountdown = this.iBannerCountdown;
-                let model = this.banner;
-
-                Services.net()
-                    .put(this.getRoute('banner.update', {id: this.banner.id,}), {}, model)
-                    .then((data) => {
-                        this.showMessageBox({title: 'Изменения сохранены'});
-                        window.location.href = this.route('banner.listPage');
-                    })
-                    .catch((e) => {
-                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-                    });
-            },
-            create() {
-                let model = this.banner;
-
-                Services.net()
-                    .post(this.getRoute('banner.create'), {}, model)
-                    .then((data) => {
-                        this.showMessageBox({title: 'Страница сохранена'});
-                        window.location.href = this.route('banner.listPage');
-                    })
-                    .catch(() => {
-                        this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
-                    });
-            },
+        create() {
+            let model = this.banner;
+            Services.net()
+                .post(this.getRoute('banner.create'), {}, model)
+                .then((data) => {
+                    this.showMessageBox({title: 'Страница сохранена'});
+                    window.location.href = this.route('banner.listPage');
+                })
+                .catch(() => {
+                    this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
+                });
         },
-        computed: {
-            isCreatingMode() {
-                return !this.banner || this.banner.id == null;
-            },
+    },
+    computed: {
+        isCreatingMode() {
+            return !this.banner || this.banner.id == null;
         },
-    };
+    },
+};
 </script>
 
 <style scoped>
