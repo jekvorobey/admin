@@ -103,9 +103,8 @@
             </div>
         </template>
 
-        <div class="row" :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
-            <table class="table table-hover" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
-                <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
+        <div class="row">
+            <table class="table table-hover">
                 <thead class="thead-light">
                 <tr>
                     <th></th>
@@ -185,15 +184,13 @@ import moment from 'moment';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import Services from '../../../../../scripts/services/services.js';
 import FCustomSearchSelect from '../../../../components/filter/f-custom-search-select.vue';
-import ScrollBtns from '../../../../components/scroll-btns/scroll-btns.vue'
 
 export default {
     name: 'page-promo-code-list',
-    components: {VDeleteButton, FCheckbox, FInput, FDate, FCustomSearchSelect, ScrollBtns},
+    components: {VDeleteButton, FCheckbox, FInput, FDate, FCustomSearchSelect},
     props: ['iPromoCodes', 'promoRequestsCount', 'Merchants', 'types', 'statuses', 'creators', 'owners',],
     data() {
         return {
-            showScroll: false,
             filter: {
                 created_at: '',
                 validity_period: '',
@@ -217,24 +214,6 @@ export default {
         }
     },
     methods: {
-        onScroll(direction) {
-            const menu = this.$refs.menu
-
-            if (direction === 'left') {
-                menu.scrollTo({
-                    left: menu.scrollLeft - 200,
-                    behavior: 'smooth'
-                })
-            }
-
-            if (direction === 'right') {
-                menu.scrollTo({
-                    left: menu.scrollLeft + 200,
-                    behavior: 'smooth'
-                })
-
-            }
-        },
         getMerchantName(id) {
             let merchant_name;
             Object.values(this.merchants).map(merchant => (
@@ -376,9 +355,6 @@ export default {
 
     },
     computed: {
-        isMobile(){
-            return window.innerWidth <= 768
-        },
         ownerOptions() {
             return Object.values(this.owners).map(owner => ({
                 value: owner.id,
