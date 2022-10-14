@@ -67,6 +67,14 @@
             </b-form-select>
         </b-form-group>
 
+        <div v-if="banner.type_id === bannerTypes[1].id">
+            <label>
+                Добавить таймер на баннер
+                <input type="checkbox" :checked="isAddCountdown" v-model="isAddCountdown">
+            </label>
+        </div>
+
+
         <b-form-group v-if="showColorField" label="Цвет" label-for="banner-color">
             <div class="d-flex align-items-center">
                 <div>
@@ -116,6 +124,7 @@
                     input-class="form-control"
                     format="YYYY-MM-DD HH:mm:ss"
                     value-type="format"
+                    :required="isAddCountdown"
                 />
             </b-form-group>
 
@@ -333,7 +342,8 @@ export default {
         iBannerButtonTypes: Array,
         iBannerButtonLocations: Array,
         iBannerImages: [Object, Array],
-        options: Object
+        options: Object,
+        isOpen: Boolean,
     },
 
     data() {
@@ -346,7 +356,6 @@ export default {
             bannerButtonLocations: this.iBannerButtonLocations,
             bannerImages: this.iBannerImages,
             hasButton: this.initHasButton(),
-
             editor: CustomEditor,
             editorSettings: {
                 mediaEmbed: {
@@ -363,7 +372,8 @@ export default {
                     destination: 'landing',
                     url: this.route('uploadFile'),
                 },
-            }
+            },
+            isAddCountdown: false
         };
     },
 
@@ -590,6 +600,12 @@ export default {
             deep: true,
             handler() {
                 this.$emit('update', this.banner);
+            },
+        },
+        bannerCountdown: {
+            deep: true,
+            handler() {
+                this.$emit('updateCountdown', this.bannerCountdown);
             },
         },
     }

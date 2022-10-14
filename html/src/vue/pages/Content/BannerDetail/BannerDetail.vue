@@ -3,6 +3,7 @@
         <b-form @submit.prevent="submit">
             <banner-edit-form
                 @update="updateBanner"
+                @updateCountdown="updateBannerCountdown"
                 :iBanner="iBanner"
                 :iBannerTypes="iBannerTypes"
                 :iBannerCountdown="iBannerCountdown"
@@ -36,12 +37,13 @@ export default {
         iBannerButtonTypes: Array,
         iBannerButtonLocations: Array,
         iBannerImages: Object,
-        options: Object
+        options: [Object, Array],
     },
 
     data() {
         return {
             banner: this.iBanner,
+            bannerCountdown: this.iBannerCountdown,
             isOpen: /isOpen/.test(this.iBanner.url)
         };
     },
@@ -51,6 +53,9 @@ export default {
         }),
         updateBanner(model) {
             this.banner = model;
+        },
+        updateBannerCountdown(model){
+            this.bannerCountdown = model
         },
         isOpenChange(value) {
             this.isOpen = value;
@@ -85,22 +90,23 @@ export default {
             }
         },
         update() {
-            this.banner.bannerCountdown = this.iBannerCountdown;
-            let model = this.banner;
-            console.log(model);
+            this.banner['bannerCountdown'] = this.bannerCountdown;
+            const model = this.banner;
 
             Services.net()
                 .put(this.getRoute('banner.update', {id: this.banner.id,}), {}, model)
                 .then((data) => {
                     this.showMessageBox({title: 'Изменения сохранены'});
-                    // window.location.href = this.route('banner.listPage');
+                    window.location.href = this.route('banner.listPage');
                 })
                 .catch((e) => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                 });
         },
         create() {
-            let model = this.banner;
+            this.banner['bannerCountdown'] = this.bannerCountdown;
+            const model = this.banner;
+
             Services.net()
                 .post(this.getRoute('banner.create'), {}, model)
                 .then((data) => {
