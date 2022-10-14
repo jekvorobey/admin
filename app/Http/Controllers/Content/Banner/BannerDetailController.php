@@ -18,7 +18,6 @@ use Greensight\CommonMsa\Services\FileService\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class BannerDetailController extends Controller
 {
@@ -217,7 +216,10 @@ class BannerDetailController extends Controller
             'bannerCountdown.bg_numbers_bottom' => 'string|max:100|nullable',
         ]);
 
-        $bannerCountdownService->updateBannerCountdown($validatedCountdownData['bannerCountdown']['id'], new BannerCountdownDto($validatedCountdownData));
+        $bannerCountdownService->updateBannerCountdown(
+            $validatedCountdownData['bannerCountdown']['id'],
+            new BannerCountdownDto($validatedCountdownData['bannerCountdown']
+            ));
 
         return response()->json([], 204);
     }

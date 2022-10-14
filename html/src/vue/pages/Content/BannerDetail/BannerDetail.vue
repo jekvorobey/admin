@@ -87,12 +87,13 @@ export default {
         update() {
             this.banner.bannerCountdown = this.iBannerCountdown;
             let model = this.banner;
+            console.log(model);
 
             Services.net()
                 .put(this.getRoute('banner.update', {id: this.banner.id,}), {}, model)
                 .then((data) => {
                     this.showMessageBox({title: 'Изменения сохранены'});
-                    window.location.href = this.route('banner.listPage');
+                    // window.location.href = this.route('banner.listPage');
                 })
                 .catch((e) => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
