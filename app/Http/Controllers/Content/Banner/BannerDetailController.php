@@ -60,8 +60,8 @@ class BannerDetailController extends Controller
         return $this->render('Content/BannerDetail', [
             'iBanner' => $banner,
             'iBannerTypes' => $bannerTypes,
-            'iBannerCountdown' => $bannerCountdown,
-            'iBannerCountdownImages' => $bannerCountdownImages,
+            'iBannerCountdown' => $bannerCountdown ?? null,
+            'iBannerCountdownImages' => $bannerCountdownImages ?? null,
             'iBannerButtonTypes' => $bannerButtonTypes,
             'iBannerButtonLocations' => $bannerButtonLocations,
             'iBannerImages' => $bannerImages,
