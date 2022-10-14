@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f873a8ad767b1737bb8e5bed2518f024",
+    "content-hash": "9b1880f715942a5651c3ccca1bff7cd2",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1290,16 +1290,16 @@
         },
         {
             "name": "ibt/catalog-import-lib",
-            "version": "dev-feature/BX-7618-addProductsSelectionSection",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-catalog-import-lib.git",
-                "reference": "36ed7604db5c0969187796c8295442d253ab8ade"
+                "reference": "f1a9485fc37ab9140cc6eaf075123d38761163c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=36ed7604db5c0969187796c8295442d253ab8ade",
-                "reference": "36ed7604db5c0969187796c8295442d253ab8ade",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=f1a9485fc37ab9140cc6eaf075123d38761163c8",
+                "reference": "f1a9485fc37ab9140cc6eaf075123d38761163c8",
                 "shasum": ""
             },
             "require": {
@@ -1311,6 +1311,7 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1337,7 +1338,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965293/issues"
             },
-            "time": "2022-09-14T06:38:50+00:00"
+            "time": "2022-10-12T16:13:11+00:00"
         },
         {
             "name": "ibt/cm-lib",
@@ -1393,16 +1394,16 @@
         },
         {
             "name": "ibt/cms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/8996-counter-in-banners",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-cms-lib.git",
-                "reference": "8d7283c726bc1ce61c8720dd6edda56296b95881"
+                "reference": "f03740fe0bd9249351b03c39083adcdb304d69ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=8d7283c726bc1ce61c8720dd6edda56296b95881",
-                "reference": "8d7283c726bc1ce61c8720dd6edda56296b95881",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=f03740fe0bd9249351b03c39083adcdb304d69ba",
+                "reference": "f03740fe0bd9249351b03c39083adcdb304d69ba",
                 "shasum": ""
             },
             "require": {
@@ -1413,7 +1414,6 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1430,7 +1430,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965660/issues"
             },
-            "time": "2022-09-08T18:50:34+07:00"
+            "time": "2022-10-13T16:40:02+04:00"
         },
         {
             "name": "ibt/common-lib",
@@ -11210,8 +11210,8 @@
     ],
     "aliases": [
         {
-            "package": "ibt/catalog-import-lib",
-            "version": "dev-feature/BX-7618-addProductsSelectionSection",
+            "package": "ibt/cms-lib",
+            "version": "dev-feature/8996-counter-in-banners",
             "alias": "dev-master",
             "alias_normalized": "dev-master"
         }
