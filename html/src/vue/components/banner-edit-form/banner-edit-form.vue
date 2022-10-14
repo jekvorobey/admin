@@ -403,17 +403,17 @@ export default {
         },
         normalizeBannerCountdown(source) {
             return {
-                id: source.id ? source.id : null,
-                date_from: source.date_from ? source.date_from : null,
-                date_to: source.date_to ? source.date_to : null,
-                desktop_image_id: source.desktop_image_id ? source.desktop_image_id : null,
-                tablet_image_id: source.tablet_image_id ? source.tablet_image_id : null,
-                mobile_image_id: source.mobile_image_id ? source.mobile_image_id : null,
-                text: source.text ? source.text : null,
-                text_color: source.text_color ? source.text_color : '#000000',
-                num_color: source.num_color ? source.num_color : '#fff',
-                bg_numbers_top: source.bg_numbers_top ? source.bg_numbers_top : '#222',
-                bg_numbers_bottom: source.bg_numbers_bottom ? source.bg_numbers_bottom : '#393939',
+                id: source && source.id ? source.id : null,
+                date_from: source && source.date_from ? source.date_from : null,
+                date_to: source && source.date_to ? source.date_to : null,
+                desktop_image_id: source && source.desktop_image_id ? source.desktop_image_id : null,
+                tablet_image_id: source && source.tablet_image_id ? source.tablet_image_id : null,
+                mobile_image_id: source && source.mobile_image_id ? source.mobile_image_id : null,
+                text: source && source.text ? source.text : null,
+                text_color: source && source.text_color ? source.text_color : '#000000',
+                num_color: source && source.num_color ? source.num_color : '#fff',
+                bg_numbers_top: source && source.bg_numbers_top ? source.bg_numbers_top : '#222',
+                bg_numbers_bottom: source && source.bg_numbers_bottom ? source.bg_numbers_bottom : '#393939',
             };
         },
         normalizeButton(source) {
