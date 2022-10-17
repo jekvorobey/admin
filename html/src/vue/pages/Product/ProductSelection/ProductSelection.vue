@@ -7,8 +7,8 @@
                 </f-multi-select>
             </div>
             <div class="row">
-                <f-text-area v-if="this.isOfferId" placeholderName="Введите Offer ID через запятую" v-model="filter.offerId" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
-                <f-text-area v-else placeholderName="Введите Артикулы через запятую" v-model="filter.vendorCode" class="col-sm-12 col-md-8 col-xl-8"></f-text-area>
+                <f-text-area-search v-if="this.isOfferId" placeholderName="Введите Offer ID через запятую" v-model="filter.offerId" class="col-sm-12 col-md-8 col-xl-8"></f-text-area-search>
+                <f-text-area-search v-else placeholderName="Введите Артикулы через запятую" v-model="filter.vendorCode" class="col-sm-12 col-md-8 col-xl-8"></f-text-area-search>
                 <button class="switch-btn btn btn-dark" @click="changeTextFilter">
                     <span class="font-weight-bold">{{this.isOfferId ? 'Поиск по Артикулам' : 'Поиск по Offer ID'}}</span>
                 </button>
@@ -106,7 +106,7 @@
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
     import FInput from '../../../components/filter/f-input.vue';
-    import FTextArea from '../../../components/filter/f-text-area.vue';
+    import FTextAreaSearch from '../../../components/filter/f-text-area-search.vue';
 
     import {
         ACT_LOAD_PAGE,
@@ -158,7 +158,7 @@
             FMultiSelect,
             ModalColumns,
             FInput,
-            FTextArea
+            FTextAreaSearch
         },
 
         props: {
