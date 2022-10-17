@@ -67,13 +67,143 @@
             </b-form-select>
         </b-form-group>
 
-        <div v-if="banner.type_id === bannerTypes[1].id">
+        <div v-if="showCountdownSettings">
             <label>
                 Добавить таймер на баннер
                 <input type="checkbox" :checked="isAddCountdown" v-model="isAddCountdown">
             </label>
         </div>
+        <transition name="slide">
+            <div v-if="isAddCountdown">
+                <b-form-group label="Дата начала таймера" label-for="banner-countdown-date-from">
+                    <date-picker
+                            v-model="bannerCountdown.date_from"
+                            id="banner-countdown-date-from"
+                            type="datetime"
+                            input-class="form-control"
+                            format="YYYY-MM-DD HH:mm:ss"
+                            value-type="format"
+                    />
+                </b-form-group>
 
+                <b-form-group label="Дата окончания таймера*" label-for="banner-countdown-date-to">
+                    <date-picker
+                            v-model="bannerCountdown.date_to"
+                            id="banner-countdown-date-to"
+                            type="datetime"
+                            input-class="form-control"
+                            format="YYYY-MM-DD HH:mm:ss"
+                            value-type="format"
+                            :input-attr="{'required': isAddCountdown}"
+                    />
+                </b-form-group>
+
+                <!--            Десктоп изображение для фона таймера<br>-->
+                <!--            <img v-if="desktopImageForCountdown"-->
+                <!--                 :src="desktopImageForCountdown.url"-->
+                <!--                 class="preview-photo"-->
+                <!--            >-->
+                <!--            <file-input-->
+                <!--                @uploaded="onUploadDesktopImageForCountdown"-->
+                <!--                class="preview-photo-input"-->
+                <!--            />-->
+
+                <!--            Планшетное изображение для фона таймера<br>-->
+                <!--            <img v-if="tabletImageForCountdown"-->
+                <!--                 :src="tabletImageForCountdown.url"-->
+                <!--                 class="preview-photo"-->
+                <!--            >-->
+                <!--            <file-input-->
+                <!--                @uploaded="onUploadTabletImageForCountdown"-->
+                <!--                class="preview-photo-input"-->
+                <!--            />-->
+
+                <!--            Мобильное изображение для фона таймера<br>-->
+                <!--            <img v-if="mobileImageForCountdown"-->
+                <!--                 :src="mobileImageForCountdown.url"-->
+                <!--                 class="preview-photo"-->
+                <!--            >-->
+                <!--            <file-input-->
+                <!--                @uploaded="onUploadMobileImageForCountdown"-->
+                <!--                class="preview-photo-input"-->
+                <!--            />-->
+
+                <b-form-group
+                        label="Текст таймера"
+                        label-for="banner-countdown-text"
+                >
+                    <b-form-input
+                            id="banner-countdown-text"
+                            v-model="bannerCountdown.text"
+                            type="text"
+                            placeholder="Введите текст таймера"
+                    />
+                </b-form-group>
+
+                <b-form-group label="Цвет текста таймера" label-for="banner-countdown-text-color">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <vue-swatches v-model="bannerCountdown.text_color" id="banner-countdown-text-color"
+                                          show-fallback
+                                          fallback-input-type="color"/>
+                        </div>
+                        <div class="ml-2">
+                            <b-button size="sm" @click="bannerCountdown.text_color = '#000000'">Сбросить</b-button>
+                        </div>
+                    </div>
+                    <div>
+                        HEX: {{ bannerCountdown.text_color ? bannerCountdown.text_color : 'Не выбран' }}
+                    </div>
+                </b-form-group>
+
+                <b-form-group label="Цвет цифр таймера" label-for="banner-countdown-num-color">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <vue-swatches v-model="bannerCountdown.num_color" id="banner-countdown-num-color" show-fallback
+                                          fallback-input-type="color"/>
+                        </div>
+                        <div class="ml-2">
+                            <b-button size="sm" @click="bannerCountdown.num_color = '#fff'">Сбросить</b-button>
+                        </div>
+                    </div>
+                    <div>
+                        HEX: {{ bannerCountdown.num_color ? bannerCountdown.num_color : 'Не выбран' }}
+                    </div>
+                </b-form-group>
+
+                <b-form-group label="Цвет фона над цифрами в таймере" label-for="banner-countdown-bg-top-color">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <vue-swatches v-model="bannerCountdown.bg_numbers_top" id="banner-countdown-bg-top-color"
+                                          show-fallback
+                                          fallback-input-type="color"/>
+                        </div>
+                        <div class="ml-2">
+                            <b-button size="sm" @click="bannerCountdown.bg_numbers_top = '#222'">Сбросить</b-button>
+                        </div>
+                    </div>
+                    <div>
+                        HEX: {{ bannerCountdown.bg_numbers_top ? bannerCountdown.bg_numbers_top : 'Не выбран' }}
+                    </div>
+                </b-form-group>
+
+                <b-form-group label="Цвет фона над цифрами в таймере" label-for="banner-countdown-bg-bottom-color">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <vue-swatches v-model="bannerCountdown.bg_numbers_bottom" id="banner-countdown-bg-bottom-color"
+                                          show-fallback
+                                          fallback-input-type="color"/>
+                        </div>
+                        <div class="ml-2">
+                            <b-button size="sm" @click="bannerCountdown.bg_numbers_bottom = '#393939'">Сбросить</b-button>
+                        </div>
+                    </div>
+                    <div>
+                        HEX: {{ bannerCountdown.bg_numbers_bottom ? bannerCountdown.bg_numbers_bottom : 'Не выбран' }}
+                    </div>
+                </b-form-group>
+            </div>
+        </transition>
 
         <b-form-group v-if="showColorField" label="Цвет" label-for="banner-color">
             <div class="d-flex align-items-center">
@@ -103,136 +233,6 @@
                 HEX: {{ banner.controls_color ? banner.controls_color : 'Не выбран' }}
             </div>
         </b-form-group>
-
-        <div v-if="showCountdownSettings">
-            <b-form-group label="Дата начала таймера" label-for="banner-countdown-date-from">
-                <date-picker
-                    v-model="bannerCountdown.date_from"
-                    id="banner-countdown-date-from"
-                    type="datetime"
-                    input-class="form-control"
-                    format="YYYY-MM-DD HH:mm:ss"
-                    value-type="format"
-                />
-            </b-form-group>
-
-            <b-form-group label="Дата окончания таймера*" label-for="banner-countdown-date-to">
-                <date-picker
-                    v-model="bannerCountdown.date_to"
-                    id="banner-countdown-date-to"
-                    type="datetime"
-                    input-class="form-control"
-                    format="YYYY-MM-DD HH:mm:ss"
-                    value-type="format"
-                    :required="isAddCountdown"
-                />
-            </b-form-group>
-
-            <!--            Десктоп изображение для фона таймера<br>-->
-            <!--            <img v-if="desktopImageForCountdown"-->
-            <!--                 :src="desktopImageForCountdown.url"-->
-            <!--                 class="preview-photo"-->
-            <!--            >-->
-            <!--            <file-input-->
-            <!--                @uploaded="onUploadDesktopImageForCountdown"-->
-            <!--                class="preview-photo-input"-->
-            <!--            />-->
-
-            <!--            Планшетное изображение для фона таймера<br>-->
-            <!--            <img v-if="tabletImageForCountdown"-->
-            <!--                 :src="tabletImageForCountdown.url"-->
-            <!--                 class="preview-photo"-->
-            <!--            >-->
-            <!--            <file-input-->
-            <!--                @uploaded="onUploadTabletImageForCountdown"-->
-            <!--                class="preview-photo-input"-->
-            <!--            />-->
-
-            <!--            Мобильное изображение для фона таймера<br>-->
-            <!--            <img v-if="mobileImageForCountdown"-->
-            <!--                 :src="mobileImageForCountdown.url"-->
-            <!--                 class="preview-photo"-->
-            <!--            >-->
-            <!--            <file-input-->
-            <!--                @uploaded="onUploadMobileImageForCountdown"-->
-            <!--                class="preview-photo-input"-->
-            <!--            />-->
-
-            <b-form-group
-                label="Текст таймера"
-                label-for="banner-countdown-text"
-            >
-                <b-form-input
-                    id="banner-countdown-text"
-                    v-model="bannerCountdown.text"
-                    type="text"
-                    placeholder="Введите текст таймера"
-                />
-            </b-form-group>
-
-            <b-form-group label="Цвет текста таймера" label-for="banner-countdown-text-color">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <vue-swatches v-model="bannerCountdown.text_color" id="banner-countdown-text-color"
-                                      show-fallback
-                                      fallback-input-type="color"/>
-                    </div>
-                    <div class="ml-2">
-                        <b-button size="sm" @click="bannerCountdown.text_color = '#000000'">Сбросить</b-button>
-                    </div>
-                </div>
-                <div>
-                    HEX: {{ bannerCountdown.text_color ? bannerCountdown.text_color : 'Не выбран' }}
-                </div>
-            </b-form-group>
-
-            <b-form-group label="Цвет цифр таймера" label-for="banner-countdown-num-color">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <vue-swatches v-model="bannerCountdown.num_color" id="banner-countdown-num-color" show-fallback
-                                      fallback-input-type="color"/>
-                    </div>
-                    <div class="ml-2">
-                        <b-button size="sm" @click="bannerCountdown.num_color = '#fff'">Сбросить</b-button>
-                    </div>
-                </div>
-                <div>
-                    HEX: {{ bannerCountdown.num_color ? bannerCountdown.num_color : 'Не выбран' }}
-                </div>
-            </b-form-group>
-
-            <b-form-group label="Цвет фона над цифрами в таймере" label-for="banner-countdown-bg-top-color">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <vue-swatches v-model="bannerCountdown.bg_numbers_top" id="banner-countdown-bg-top-color"
-                                      show-fallback
-                                      fallback-input-type="color"/>
-                    </div>
-                    <div class="ml-2">
-                        <b-button size="sm" @click="bannerCountdown.bg_numbers_top = '#222'">Сбросить</b-button>
-                    </div>
-                </div>
-                <div>
-                    HEX: {{ bannerCountdown.bg_numbers_top ? bannerCountdown.bg_numbers_top : 'Не выбран' }}
-                </div>
-            </b-form-group>
-
-            <b-form-group label="Цвет фона над цифрами в таймере" label-for="banner-countdown-bg-bottom-color">
-                <div class="d-flex align-items-center">
-                    <div>
-                        <vue-swatches v-model="bannerCountdown.bg_numbers_bottom" id="banner-countdown-bg-bottom-color"
-                                      show-fallback
-                                      fallback-input-type="color"/>
-                    </div>
-                    <div class="ml-2">
-                        <b-button size="sm" @click="bannerCountdown.bg_numbers_bottom = '#393939'">Сбросить</b-button>
-                    </div>
-                </div>
-                <div>
-                    HEX: {{ bannerCountdown.bg_numbers_bottom ? bannerCountdown.bg_numbers_bottom : 'Не выбран' }}
-                </div>
-            </b-form-group>
-        </div>
 
         <b-form-group v-if="showPathTemplatesField" label="Страницы" label-for="banner-path-templates">
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates"/>
@@ -335,13 +335,19 @@ export default {
     },
 
     props: {
-        iBanner: Object,
+        iBanner:  {
+            type: [Array, Object]
+        },
         iBannerTypes: Array,
         iBannerCountdown: Object,
-        iBannerCountdownImages: [Object, Array],
+        iBannerCountdownImages: {
+            type: [Array, Object]
+        },
         iBannerButtonTypes: Array,
         iBannerButtonLocations: Array,
-        iBannerImages: [Object, Array],
+        iBannerImages: {
+            type: [Array, Object]
+        },
         options: Object,
         isOpen: Boolean,
     },
@@ -555,8 +561,7 @@ export default {
         },
 
         showCountdownSettings() {
-            if (
-                this.banner &&
+            if (this.banner &&
                 (
                     this.banner.type_id === bannerType.mainTop ||
                     this.banner.type_id === bannerType.catalogTop

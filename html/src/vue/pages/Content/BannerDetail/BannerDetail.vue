@@ -30,13 +30,17 @@ export default {
         BannerEditForm,
     },
     props: {
-        iBanner: Object,
+        iBanner: {
+            type: [Array, Object]
+        },
         iBannerTypes: Array,
         iBannerCountdown: Object,
         iBannerCountdownImages: Object,
         iBannerButtonTypes: Array,
         iBannerButtonLocations: Array,
-        iBannerImages: Object,
+        iBannerImages: {
+            type: [Array, Object]
+        },
         options: [Object, Array],
     },
 
