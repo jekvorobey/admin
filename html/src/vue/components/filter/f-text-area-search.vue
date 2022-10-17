@@ -14,7 +14,7 @@
 
 <script>
     export default {
-        name: 'f-text-area',
+        name: 'f-text-area-search',
         inheritAttrs: false,
         props: {
             value: {},
@@ -23,7 +23,13 @@
         },
         methods: {
             input(e) {
-                this.$emit('input', e.target.value.split(','));
+                let cleanVal = e.target.value.replace(/(\r\n|\n|\r|\t)/gm, ","),
+                    splitVal = cleanVal.split(','),
+                    result = splitVal.filter(item => item !== ""),
+                    totalResult = [];
+
+                result.forEach(item => totalResult.push(...item.split(' ')))
+                this.$emit('input', totalResult);
             },
         },
         computed: {
