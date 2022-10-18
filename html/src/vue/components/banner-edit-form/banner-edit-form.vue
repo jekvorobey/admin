@@ -70,31 +70,31 @@
         <div v-if="showCountdownSettings">
             <label>
                 Добавить таймер на баннер
-                <input type="checkbox" :checked="isAddCountdown" v-model="isAddCountdown">
+                <input type="checkbox" :checked="banner.isAddCountdown" v-model="banner.isAddCountdown">
             </label>
         </div>
         <transition name="slide">
-            <div v-if="isAddCountdown">
+            <div v-if="banner.isAddCountdown">
                 <b-form-group label="Дата начала таймера" label-for="banner-countdown-date-from">
                     <date-picker
-                            v-model="bannerCountdown.date_from"
-                            id="banner-countdown-date-from"
-                            type="datetime"
-                            input-class="form-control"
-                            format="YYYY-MM-DD HH:mm:ss"
-                            value-type="format"
+                        v-model="bannerCountdown.date_from"
+                        id="banner-countdown-date-from"
+                        type="datetime"
+                        input-class="form-control"
+                        format="YYYY-MM-DD HH:mm:ss"
+                        value-type="format"
                     />
                 </b-form-group>
 
                 <b-form-group label="Дата окончания таймера*" label-for="banner-countdown-date-to">
                     <date-picker
-                            v-model="bannerCountdown.date_to"
-                            id="banner-countdown-date-to"
-                            type="datetime"
-                            input-class="form-control"
-                            format="YYYY-MM-DD HH:mm:ss"
-                            value-type="format"
-                            :input-attr="{'required': isAddCountdown}"
+                        v-model="bannerCountdown.date_to"
+                        id="banner-countdown-date-to"
+                        type="datetime"
+                        input-class="form-control"
+                        format="YYYY-MM-DD HH:mm:ss"
+                        value-type="format"
+                        :input-attr="{'required': banner.isAddCountdown}"
                     />
                 </b-form-group>
 
@@ -129,14 +129,14 @@
                 <!--            />-->
 
                 <b-form-group
-                        label="Текст таймера"
-                        label-for="banner-countdown-text"
+                    label="Текст таймера"
+                    label-for="banner-countdown-text"
                 >
                     <b-form-input
-                            id="banner-countdown-text"
-                            v-model="bannerCountdown.text"
-                            type="text"
-                            placeholder="Введите текст таймера"
+                        id="banner-countdown-text"
+                        v-model="bannerCountdown.text"
+                        type="text"
+                        placeholder="Введите текст таймера"
                     />
                 </b-form-group>
 
@@ -159,7 +159,8 @@
                 <b-form-group label="Цвет цифр таймера" label-for="banner-countdown-num-color">
                     <div class="d-flex align-items-center">
                         <div>
-                            <vue-swatches v-model="bannerCountdown.num_color" id="banner-countdown-num-color" show-fallback
+                            <vue-swatches v-model="bannerCountdown.num_color" id="banner-countdown-num-color"
+                                          show-fallback
                                           fallback-input-type="color"/>
                         </div>
                         <div class="ml-2">
@@ -187,15 +188,17 @@
                     </div>
                 </b-form-group>
 
-                <b-form-group label="Цвет фона над цифрами в таймере" label-for="banner-countdown-bg-bottom-color">
+                <b-form-group label="Цвет фона под цифрами в таймере" label-for="banner-countdown-bg-bottom-color">
                     <div class="d-flex align-items-center">
                         <div>
-                            <vue-swatches v-model="bannerCountdown.bg_numbers_bottom" id="banner-countdown-bg-bottom-color"
+                            <vue-swatches v-model="bannerCountdown.bg_numbers_bottom"
+                                          id="banner-countdown-bg-bottom-color"
                                           show-fallback
                                           fallback-input-type="color"/>
                         </div>
                         <div class="ml-2">
-                            <b-button size="sm" @click="bannerCountdown.bg_numbers_bottom = '#393939'">Сбросить</b-button>
+                            <b-button size="sm" @click="bannerCountdown.bg_numbers_bottom = '#393939'">Сбросить
+                            </b-button>
                         </div>
                     </div>
                     <div>
@@ -335,7 +338,7 @@ export default {
     },
 
     props: {
-        iBanner:  {
+        iBanner: {
             type: [Array, Object]
         },
         iBannerTypes: Array,
@@ -379,7 +382,6 @@ export default {
                     url: this.route('uploadFile'),
                 },
             },
-            isAddCountdown: false
         };
     },
 
@@ -415,6 +417,7 @@ export default {
                 path_templates: source.path_templates ? source.path_templates : null,
                 sort: source.sort ? source.sort : null,
                 additional_text: source.additional_text ? source.additional_text : null,
+                isAddCountdown: source.isAddCountdown ? source.isAddCountdown : false,
             };
         },
         normalizeBannerCountdown(source) {
