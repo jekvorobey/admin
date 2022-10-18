@@ -83,7 +83,15 @@
                     Период обмена (мин)
                 </v-input>
             </div>
+            <div class="row">
+                <v-input v-model="form.comment" tag="textarea" class="col-md-6 col-12">Комментарий</v-input>
+            </div>
             <input v-model="$v.form.paramActivePriceStock.$model" type="checkbox"> Активировать
+        </div>
+        <div v-else-if="is1C">
+            <div class="row">
+                <v-input v-model="form.comment" tag="textarea" class="col-md-6 col-12">Комментарий</v-input>
+            </div>
         </div>
         <button @click="save" class="btn mt-4 btn-dark">Сохранить</button>
     </div>
