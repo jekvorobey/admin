@@ -132,6 +132,7 @@
                         v-model="values.users"
                         :error="valuesUserError"
                         @change="initUserError"
+                        @blur="onBlur"
                     >ID пользователей (через запятую)</v-input>
 
                     <!-- Для определенных пользовательских сегментов -->
@@ -389,22 +390,13 @@
                 },
                 deep: true
             },
-
-            'values.users': {
-                handler(val, oldVal) {
-                    if (val && val !== oldVal) {
-                        let format = this.formatIds(this.values.users).join(', ');
-                        let separator = val.slice(-1) === ','
-                            ? ','
-                            : (val.slice(-2) === ', ' ? ', ' : '');
-
-                        this.values.users = format + separator;
-                    }
-                },
-            },
         },
 
         methods: {
+            onBlur() {
+                this.values.users = this.values.users.split(',')
+            },
+
             createValuesFromProperty(property) {
                 const keys = Object.keys(property).filter(key => {
                     return key !== 'type';
@@ -594,7 +586,7 @@
             },
 
             checkValuesUsers() {
-                return (this.formatIds(this.values.users).length > 0);
+                return this.values.users.length > 0
             },
 
             checkValuesRoles() {
