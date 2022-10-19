@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9b1880f715942a5651c3ccca1bff7cd2",
+    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1394,16 +1394,16 @@
         },
         {
             "name": "ibt/cms-lib",
-            "version": "dev-feature/8996-counter-in-banners",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-cms-lib.git",
-                "reference": "f03740fe0bd9249351b03c39083adcdb304d69ba"
+                "reference": "e69f3962e5c35eaae9a35496c51e4bea4bb8babd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=f03740fe0bd9249351b03c39083adcdb304d69ba",
-                "reference": "f03740fe0bd9249351b03c39083adcdb304d69ba",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=e69f3962e5c35eaae9a35496c51e4bea4bb8babd",
+                "reference": "e69f3962e5c35eaae9a35496c51e4bea4bb8babd",
                 "shasum": ""
             },
             "require": {
@@ -1414,6 +1414,7 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1430,7 +1431,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965660/issues"
             },
-            "time": "2022-10-13T16:40:02+04:00"
+            "time": "2022-10-19T08:54:01+00:00"
         },
         {
             "name": "ibt/common-lib",
@@ -11208,14 +11209,7 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "ibt/cms-lib",
-            "version": "dev-feature/8996-counter-in-banners",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
