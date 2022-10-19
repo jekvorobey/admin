@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Content\Banner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use Cms\Core\CmsException;
 use Cms\Dto\BannerButtonLocationDto;
 use Cms\Dto\BannerButtonTypeDto;
+use Cms\Dto\BannerCountdownDto;
 use Cms\Dto\BannerDto;
 use Cms\Dto\BannerTypeDto;
+use Cms\Services\BannerCountdownService\BannerCountdownService;
 use Cms\Services\BannerService\BannerService;
 use Cms\Services\BannerTypeService\BannerTypeService;
 use Greensight\CommonMsa\Dto\BlockDto;
@@ -24,26 +27,39 @@ class BannerDetailController extends Controller
      * @throws CmsException
      */
     public function updatePage(
-        int $id,
-        BannerService $bannerService,
-        BannerTypeService $bannerTypeService,
-        FileService $fileService
-    ) {
+        int                    $id,
+        BannerService          $bannerService,
+        BannerTypeService      $bannerTypeService,
+        BannerCountdownService $bannerCountdownService,
+        FileService            $fileService
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $banner = $this->getBanner($id, $bannerService);
-        $bannerImages = $this->getBannerImages([
+        $bannerImages = $this->getImages([
             $banner['desktop_image_id'],
             $banner['tablet_image_id'],
             $banner['mobile_image_id'],
         ], $fileService);
         $bannerTypes = $this->getBannerTypes($bannerTypeService);
+
+        $bannerCountdown = $this->getBannerCountdown($bannerCountdownService, $banner->countdown_id);
+        $bannerCountdownImages = $this->getImages([
+            $bannerCountdown['desktop_image_id'],
+            $bannerCountdown['tablet_image_id'],
+            $bannerCountdown['mobile_image_id'],
+        ], $fileService);
+        $banner->isAddCountdown = (bool)$bannerCountdown->date_to;
+
         $bannerButtonTypes = $this->getBannerButtonTypes();
         $bannerButtonLocations = $this->getBannerButtonLocations();
 
         return $this->render('Content/BannerDetail', [
             'iBanner' => $banner,
             'iBannerTypes' => $bannerTypes,
+            'iBannerCountdown' => $bannerCountdown ?? null,
+            'iBannerCountdownImages' => $bannerCountdownImages ?? null,
             'iBannerButtonTypes' => $bannerButtonTypes,
             'iBannerButtonLocations' => $bannerButtonLocations,
             'iBannerImages' => $bannerImages,
@@ -66,6 +82,8 @@ class BannerDetailController extends Controller
         return $this->render('Content/BannerDetail', [
             'iBanner' => [],
             'iBannerTypes' => $bannerTypes,
+            'iBannerCountdown' => null,
+            'iBannerCountdownImages' => null,
             'iBannerButtonTypes' => $bannerButtonTypes,
             'iBannerButtonLocations' => $bannerButtonLocations,
             'iBannerImages' => [],
@@ -77,11 +95,12 @@ class BannerDetailController extends Controller
      * @throws CmsException
      */
     public function bannerInitialDate(
-        Request $request,
-        BannerService $bannerService,
+        Request           $request,
+        BannerService     $bannerService,
         BannerTypeService $bannerTypeService,
-        FileService $fileService
-    ): JsonResponse {
+        FileService       $fileService
+    ): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_CONTENT);
 
         $validatedData = $request->validate([
@@ -116,9 +135,27 @@ class BannerDetailController extends Controller
     /**
      * @throws CmsException
      */
-    public function create(Request $request, BannerService $bannerService): JsonResponse
+    public function create(Request $request, BannerService $bannerService, BannerCountdownService $bannerCountdownService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
+
+        $validatedCountdownData = $request->validate([
+            'bannerCountdown.date_from' => 'string|nullable',
+            'bannerCountdown.date_to' => 'string|nullable',
+            'bannerCountdown.desktop_image_id' => 'integer|nullable',
+            'bannerCountdown.tablet_image_id' => 'integer|nullable',
+            'bannerCountdown.mobile_image_id' => 'integer|nullable',
+            'bannerCountdown.text' => 'string|max:50|nullable',
+            'bannerCountdown.text_color' => 'string|max:100|nullable',
+            'bannerCountdown.num_color' => 'string|max:100|nullable',
+            'bannerCountdown.bg_numbers_top' => 'string|max:100|nullable',
+            'bannerCountdown.bg_numbers_bottom' => 'string|max:100|nullable',
+        ]);
+
+        $bannerCountdownId = $bannerCountdownService->createBannerCountdown(
+            new BannerCountdownDto($validatedCountdownData ? $validatedCountdownData['bannerCountdown'] : $validatedCountdownData)
+        );
+
 
         $validatedData = $request->validate([
             'name' => 'string|required',
@@ -143,6 +180,8 @@ class BannerDetailController extends Controller
             'banner_min_products' => 'integer|nullable',
         ]);
 
+        $validatedData['countdown_id'] = $bannerCountdownId;
+
         $id = $bannerService->createBanner(new BannerDto($validatedData));
 
         return response()->json($id, 200);
@@ -151,7 +190,7 @@ class BannerDetailController extends Controller
     /**
      * @throws CmsException
      */
-    public function update(int $id, Request $request, BannerService $bannerService): JsonResponse
+    public function update(int $id, Request $request, BannerService $bannerService, BannerCountdownService $bannerCountdownService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
@@ -183,17 +222,40 @@ class BannerDetailController extends Controller
 
         $bannerService->updateBanner($validatedData['id'], new BannerDto($validatedData));
 
+        $validatedCountdownData = $request->validate([
+            'bannerCountdown.id' => 'integer|required',
+            'bannerCountdown.date_from' => 'string|nullable',
+            'bannerCountdown.date_to' => 'string|nullable',
+            'bannerCountdown.desktop_image_id' => 'integer|nullable',
+            'bannerCountdown.tablet_image_id' => 'integer|nullable',
+            'bannerCountdown.mobile_image_id' => 'integer|nullable',
+            'bannerCountdown.text' => 'string|max:50|nullable',
+            'bannerCountdown.text_color' => 'string|max:100|nullable',
+            'bannerCountdown.num_color' => 'string|max:100|nullable',
+            'bannerCountdown.bg_numbers_top' => 'string|max:100|nullable',
+            'bannerCountdown.bg_numbers_bottom' => 'string|max:100|nullable',
+        ]);
+
+        $bannerCountdownService->updateBannerCountdown(
+            $validatedCountdownData['bannerCountdown']['id'],
+            new BannerCountdownDto($validatedCountdownData['bannerCountdown']
+            ));
+
         return response()->json([], 204);
     }
 
     /**
      * @throws CmsException
      */
-    public function delete(int $id, BannerService $bannerService): JsonResponse
+    public function delete(int $id, BannerService $bannerService, BannerCountdownService $bannerCountdownService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CONTENT);
 
+        $bannerCountdownId = $this->getBanner($id, $bannerService)->countdown_id;
+
         $bannerService->deleteBanner($id);
+
+        $bannerCountdownService->deleteBannerCountdown($bannerCountdownId);
 
         return response()->json([], 204);
     }
@@ -242,9 +304,19 @@ class BannerDetailController extends Controller
     }
 
     /**
+     * @return BannerCountdownDto
+     * @throws CmsException
+     */
+    private function getBannerCountdown(BannerCountdownService $bannerCountdownService, $countdownId): BannerCountdownDto
+    {
+        $countdowns = $bannerCountdownService->bannerCountdowns($bannerCountdownService->newQuery())->keyBy('id');
+        return $countdowns->get($countdownId);
+    }
+
+    /**
      * @return Collection|FileDto[]
      */
-    private function getBannerImages(array $ids, FileService $fileService): Collection
+    private function getImages(array $ids, FileService $fileService): Collection
     {
         return $fileService
             ->getFiles($ids)
