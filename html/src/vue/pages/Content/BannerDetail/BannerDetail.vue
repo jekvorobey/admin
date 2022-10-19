@@ -94,6 +94,12 @@ export default {
             }
         },
         update() {
+
+           if (!this.banner.isAddCountdown) {
+                this.bannerCountdown.date_from = null
+                this.bannerCountdown.date_to = null
+            }
+
             this.banner['bannerCountdown'] = this.bannerCountdown;
             const model = this.banner;
 
