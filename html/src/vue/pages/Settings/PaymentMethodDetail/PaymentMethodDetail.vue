@@ -101,12 +101,12 @@
                 </span>
             </div>
 
-            <div class="form-group" v-if="hasSetting('is_displayed_in_mk')">
+            <div class="form-group" v-if="hasSetting('is_displayed_in_public_events')">
                 <span class="custom-control custom-switch">
                     <input type="checkbox"
                            class="custom-control-input"
                            id="payment-method-is-displayed-in-mk"
-                           v-model="$v.paymentMethod.settings.is_displayed_in_mk.$model">
+                           v-model="$v.paymentMethod.settings.is_displayed_in_public_events.$model">
                     <label class="custom-control-label" for="payment-method-is-displayed-in-mk"></label>
                     <label for="payment-method-is-displayed-in-mk">Выводить в каталоге МК и на странице МК</label>
                 </span>
@@ -172,7 +172,7 @@ export default {
                     is_fixed_discount: {},
                     discount: {},
                     is_displayed_in_catalog: {},
-                    is_displayed_in_mk: {},
+                    is_displayed_in_public_events: {},
                     installment_period: {},
                     signingKD: {},
                 },
@@ -234,7 +234,7 @@ export default {
             return this.paymentMethod.settings.is_displayed_in_catalog;
         },
         isDisplayedInMk() {
-            return this.paymentMethod.settings.is_displayed_in_mk;
+            return this.paymentMethod.settings.is_displayed_in_public_events;
         },
     }
 }
