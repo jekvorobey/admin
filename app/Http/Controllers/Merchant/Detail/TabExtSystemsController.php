@@ -24,8 +24,9 @@ class TabExtSystemsController extends Controller
 
     public function __construct(
         MerchantIntegrationService $merchantIntegrationService,
-        MerchantService $merchantService
-    ) {
+        MerchantService            $merchantService
+    )
+    {
         $this->merchantIntegrationService = $merchantIntegrationService;
         $this->merchantService = $merchantService;
     }
@@ -54,7 +55,7 @@ class TabExtSystemsController extends Controller
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $request->all();
-        $extSystem = new ExtSystemDto($this->loadExtSystemAttributes($merchantId, $data));
+        $extSystem = new ExtSystemDto($this->loadExtSystemAttributes($merchantId, $data, 'create'));
         $extSystemId = $this->merchantIntegrationService->createExtSystem($extSystem);
         $this->saveIntegrations($data, collect(), $extSystemId);
         $this->saveSettings($data);
@@ -63,14 +64,15 @@ class TabExtSystemsController extends Controller
     }
 
     public function update(
-        int $extSystemId,
-        IntegrationRequest $request,
+        int                        $extSystemId,
+        IntegrationRequest         $request,
         MerchantIntegrationService $merchantIntegrationService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_MERCHANTS);
 
         $data = $request->all();
-        $extSystem = new ExtSystemDto($this->loadExtSystemAttributes($data['merchantId'], $data));
+        $extSystem = new ExtSystemDto($this->loadExtSystemAttributes($data['merchantId'], $data, 'update'));
         $merchantIntegrationService->updateExtSystem($extSystemId, $extSystem);
 
         $integrations = $merchantIntegrationService->integrations($extSystemId);
@@ -101,7 +103,7 @@ class TabExtSystemsController extends Controller
         $paramPriceStock = null;
         if ($this->extSystem) {
             $integration = $this->merchantIntegrationService->integrations($this->extSystem->id)->keyBy('type');
-            $driver = (int) $this->extSystem->driver;
+            $driver = (int)$this->extSystem->driver;
             switch ($driver) {
                 case ExtSystemDriver::DRIVER_1C:
                     $host = config('common-lib.integration1CHost');
@@ -133,19 +135,27 @@ class TabExtSystemsController extends Controller
         ];
     }
 
-    private function loadExtSystemAttributes(int $merchantId, array $data): array
+    private function loadExtSystemAttributes(int $merchantId, array $data, $action): array
     {
         $merchant = $this->merchantService->merchant($merchantId);
         $connectionParams = [];
-        switch ((int) $data['driver']) {
+        switch ((int)$data['driver']) {
             case ExtSystemDriver::DRIVER_1C:
                 $code = $merchant->code;
                 $name = $merchant->legal_name;
-                $comment = $merchant->comment;
-                $connectionParams = [
-                    'login' => $merchant->code . '_merchant',
-                    'password' => Str::random(10),
-                ];
+                if ($action === 'create') {
+                    $comment = '';
+                    $connectionParams = [
+                        'login' => $merchant->code . '_merchant',
+                        'password' => Str::random(10),
+                    ];
+                } elseif ($action === 'update') {
+                    $comment = $data['comment'];
+                    $connectionParams = [
+                        'login' => $data['login'],
+                        'password' => $data['password'],
+                    ];
+                }
                 break;
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 $code = 'moysklad';
@@ -187,7 +197,7 @@ class TabExtSystemsController extends Controller
 
     private function saveIntegrations(array $data, Collection $integrations, int $extSystemId): void
     {
-        switch ((int) $data['driver']) {
+        switch ((int)$data['driver']) {
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 foreach ($this->moyskladIntegrationsData($data['integrationParams']) as $integrationData) {
                     $integrationDto = new IntegrationDto($integrationData);
@@ -220,7 +230,7 @@ class TabExtSystemsController extends Controller
 
     private function saveSettings(array $data): void
     {
-        switch ((int) $data['driver']) {
+        switch ((int)$data['driver']) {
             case ExtSystemDriver::DRIVER_MOY_SKLAD:
                 $settings = [
                     new MerchantSettingDto(['name' => MerchantSettingDto::MOYSKLAD_PRICE_NAME, 'value' => $data['settingPriceValue'] ?? '']),

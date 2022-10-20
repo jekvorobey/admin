@@ -97,7 +97,7 @@
                 </tr>
                 </tbody>
             </table>
-            <button v-if="!is1C(extSystem.driver)" @click="openModal('integrationModal')"
+            <button @click="openModal('integrationModal')"
                     class="btn btn-sm btn-success">
                 Редактировать
             </button>
