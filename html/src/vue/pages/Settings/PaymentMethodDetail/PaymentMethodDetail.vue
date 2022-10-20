@@ -96,13 +96,26 @@
                            id="payment-method-is-displayed-in-catalog"
                            v-model="$v.paymentMethod.settings.is_displayed_in_catalog.$model">
                     <label class="custom-control-label" for="payment-method-is-displayed-in-catalog"></label>
-                    <label for="payment-method-is-displayed-in-catalog">Выводить в каталоге товаров и на странице товара</label>
+                    <label
+                        for="payment-method-is-displayed-in-catalog">Выводить в каталоге товаров и на странице товара</label>
                 </span>
             </div>
 
-            <div class="form-group" v-if="hasSetting('installment_period') && isDisplayedInCatalog">
+            <div class="form-group" v-if="hasSetting('is_displayed_in_mk')">
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-displayed-in-mk"
+                           v-model="$v.paymentMethod.settings.is_displayed_in_mk.$model">
+                    <label class="custom-control-label" for="payment-method-is-displayed-in-mk"></label>
+                    <label for="payment-method-is-displayed-in-mk">Выводить в каталоге МК и на странице МК</label>
+                </span>
+            </div>
+
+            <div class="form-group" v-if="hasSetting('installment_period') && (isDisplayedInCatalog || isDisplayedInMk)">
                 <v-input id="payment-method-setting-installment-period"
-                         v-model="$v.paymentMethod.settings.installment_period.$model">
+                         v-model="$v.paymentMethod.settings.installment_period.$model"
+                         readonly="readonly">
                     Период рассрочки
                 </v-input>
             </div>
@@ -159,6 +172,7 @@ export default {
                     is_fixed_discount: {},
                     discount: {},
                     is_displayed_in_catalog: {},
+                    is_displayed_in_mk: {},
                     installment_period: {},
                     signingKD: {},
                 },
@@ -218,6 +232,9 @@ export default {
         },
         isDisplayedInCatalog() {
             return this.paymentMethod.settings.is_displayed_in_catalog;
+        },
+        isDisplayedInMk() {
+            return this.paymentMethod.settings.is_displayed_in_mk;
         },
     }
 }
