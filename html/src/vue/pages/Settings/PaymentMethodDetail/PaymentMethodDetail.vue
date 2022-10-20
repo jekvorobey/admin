@@ -96,7 +96,7 @@
                            id="payment-method-is-displayed-in-catalog"
                            v-model="$v.paymentMethod.settings.is_displayed_in_catalog.$model">
                     <label class="custom-control-label" for="payment-method-is-displayed-in-catalog"></label>
-                    <label for="payment-method-is-displayed-in-catalog">Выводить в каталоге</label>
+                    <label for="payment-method-is-displayed-in-catalog">Выводить в каталоге товаров и на странице товара</label>
                 </span>
             </div>
 
