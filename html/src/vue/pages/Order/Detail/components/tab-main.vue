@@ -207,9 +207,6 @@
             </template>
             <b-row v-if="this.order.pickupDelivery">
                 <b-col>
-                    <v-select v-model="$v.form.point_id.$model" :options="pointOptions" @change="onChangePoint" :disabled="!canEdit">
-                        Точка выдачи заказа*
-                    </v-select>
                     <f-custom-search-select
                             v-model="$v.form.point_id.$model"
                             :options="pointOptions"
