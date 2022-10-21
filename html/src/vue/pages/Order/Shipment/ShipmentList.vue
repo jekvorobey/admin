@@ -648,7 +648,7 @@ export default {
             return Object.values(this.deliveryServices).map(service => ({value: service.id, text: service.name}));
         },
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
         },
         storeOptions() {
             return Object.values(this.stores).map(store => ({value: store.id, text: store.address.address_string}));

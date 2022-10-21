@@ -139,7 +139,6 @@ export default {
     data() {
         let self = this;
         let filter = Object.assign({}, cleanFilter, this.iFilter);
-        filter.merchantId = parseInt(filter.merchantId);
         filter.status = filter.status.map(value => parseInt(value));
 
         return {
@@ -167,7 +166,7 @@ export default {
                     name: 'Мерчант',
                     code: 'merchant',
                     value: function(claim) {
-                        return claim.merchant.legal_name ? claim.merchant.legal_name : 'N/A';
+                        return claim.merchant.name ? claim.merchant.name : 'N/A';
                     },
                     isShown: true,
                     isAlwaysShown: false,
@@ -300,7 +299,7 @@ export default {
             return statusOptions;
         },
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
         },
         editedShowColumns() {
             return this.columns.filter(function(column) {

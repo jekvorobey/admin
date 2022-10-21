@@ -546,7 +546,7 @@
     },
     computed: {
         merchantOptions() {
-            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+            return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
         },
 
         error_merchant_id() {

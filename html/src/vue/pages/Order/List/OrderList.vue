@@ -630,7 +630,7 @@
                 return Object.values(this.deliveryServices).map(service => ({value: service.id, text: service.name}));
             },
             merchantOptions() {
-                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             confirmationTypeOptions() {
                 return Object.values(this.confirmationTypes).map(confirmation_type => ({value: confirmation_type.id, text: confirmation_type.name}));
