@@ -15,7 +15,12 @@
                 <f-input v-model="filter.name" class="col-lg-3 col-md-6">Название организации</f-input>
                 <f-input v-model="filter.operator_full_name" class="col-lg-3 col-md-6">ФИО</f-input>
                 <f-input v-model="filter.operator_email" class="col-lg-3 col-md-6">Email</f-input>
-                <f-input v-model="filter.operator_phone" class="col-lg-3 col-md-6">Телефон</f-input>
+                <v-input
+                    v-model="filter.operator_phone"
+                    v-mask="telMask"
+                    validation="phone"
+                    class="col-lg-3 col-md-6"
+                >Телефон</v-input>
                 <div class="form-group col-lg-3 col-md-6">
                     <label for="manager_id">Менеджер</label>
                     <div class="input-group input-group-sm">
@@ -48,8 +53,9 @@
             <b-button class="btn btn-success ml-2" v-b-modal="modalIdCreateMerchant">Создать мерчанта</b-button>
             <button class="btn btn-outline-primary ml-2" :disabled="!selectedMerchantIds.length" @click="onShowModalCreate()">Отправить сообщение</button>
         </div>
-
-        <table class="table">
+        <div class="table-responsive" :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu">
+         <table class="table"  @mouseenter="showScroll = true" @mouseleave="showScroll = false">
+             <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
             <thead>
             <tr>
                 <th></th>
@@ -84,6 +90,7 @@
             </tr>
             </tbody>
         </table>
+        </div>
         <div>
             <b-pagination
                     v-if="pager.pages !== 1"
@@ -115,8 +122,11 @@
     import FMultiSelect from '../../../components/filter/f-multi-select.vue';
     import FInput from '../../../components/filter/f-input.vue';
 
-    import FDate from '../../../components/filter/f-date.vue';
+    import VInput from "../../../components/controls/VInput/VInput.vue";
+    import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
 
+    import FDate from '../../../components/filter/f-date.vue';
+    import { telMask } from '../../../../scripts/mask.js';
     import ModalCreateMerchant from "./components/modal-create-merchant.vue";
     import CommunicationChatCreator
         from "../../../components/communication/communication-chat-creator/communication-chat-creator.vue";
@@ -135,7 +145,7 @@
 
 export default {
     name: 'page-index',
-    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant, CommunicationChatCreator},
+    components: {FDate, FMultiSelect, FInput, ModalCreateMerchant, CommunicationChatCreator, VInput, ScrollBtns},
     props: [
         'done',
         'iMerchants',
@@ -150,6 +160,7 @@ export default {
         filter.status = filter.status.map(status => parseInt(status));
         filter.rating = filter.rating.map(rating => parseInt(rating));
         return {
+            showScroll: false,
             modalIdCreateMerchant: 'modalIdCreateMerchant',
             merchants: this.iMerchants,
             pager: this.iPager,
@@ -161,6 +172,24 @@ export default {
         };
     },
     methods: {
+        onScroll(direction) {
+            const menu = this.$refs.menu
+
+            if (direction === 'left') {
+                menu.scrollTo({
+                    left: menu.scrollLeft - 200,
+                    behavior: 'smooth'
+                })
+            }
+
+            if (direction === 'right') {
+                menu.scrollTo({
+                    left: menu.scrollLeft + 200,
+                    behavior: 'smooth'
+                })
+
+            }
+        },
         pushRoute() {
             history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                 page: this.currentPage,
@@ -253,6 +282,12 @@ export default {
         }
     },
     computed: {
+        telMask() {
+            return telMask;
+        },
+        isMobile(){
+            return window.innerWidth <= 768
+        },
         statusOptions() {
             return Object.values(this.options.statuses).map(status => ({value: status.id, text: status.name}));
         },

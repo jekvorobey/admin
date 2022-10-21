@@ -67,7 +67,15 @@
                 </v-select>
                 <div class="row mt-3">
                     <v-input v-model="$v.form.email.$model" :error="errorEmail" class="col-md-6 col-12"><h5>E-mail*</h5></v-input>
-                    <v-input v-model="$v.form.phone.$model" :error="errorPhone" v-mask="telMask" class="col-md-6 col-12"><h5>Телефон*</h5></v-input>
+                    <v-input
+                            v-model="$v.form.phone.$model"
+                            :error="errorPhone"
+                            v-mask="telMask"
+                            validation="phone"
+                            class="col-md-6 col-12"
+                    >
+                        <h5>Телефон*</h5>
+                    </v-input>
                 </div>
                 <div class="row mb-3">
                     <span class="col-md-6 col-12">*Обязательное поле, если система Admin или MAS</span>

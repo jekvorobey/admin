@@ -1294,12 +1294,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-catalog-import-lib.git",
-                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e"
+                "reference": "f1a9485fc37ab9140cc6eaf075123d38761163c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=5843b2fc9c6aa630236837a8dc0c8b9765a70b0e",
-                "reference": "5843b2fc9c6aa630236837a8dc0c8b9765a70b0e",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-catalog-import-lib/repository/archive.zip?sha=f1a9485fc37ab9140cc6eaf075123d38761163c8",
+                "reference": "f1a9485fc37ab9140cc6eaf075123d38761163c8",
                 "shasum": ""
             },
             "require": {
@@ -1338,7 +1338,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965293/issues"
             },
-            "time": "2022-07-08T10:33:12+00:00"
+            "time": "2022-10-12T16:13:11+00:00"
         },
         {
             "name": "ibt/cm-lib",
@@ -1398,12 +1398,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-cms-lib.git",
-                "reference": "570ef28de966dc5b1c7d7f0cc3a5e6f2cb084cf9"
+                "reference": "e69f3962e5c35eaae9a35496c51e4bea4bb8babd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=570ef28de966dc5b1c7d7f0cc3a5e6f2cb084cf9",
-                "reference": "570ef28de966dc5b1c7d7f0cc3a5e6f2cb084cf9",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=e69f3962e5c35eaae9a35496c51e4bea4bb8babd",
+                "reference": "e69f3962e5c35eaae9a35496c51e4bea4bb8babd",
                 "shasum": ""
             },
             "require": {
@@ -1431,7 +1431,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965660/issues"
             },
-            "time": "2022-08-11T07:11:27+00:00"
+            "time": "2022-10-19T08:54:01+00:00"
         },
         {
             "name": "ibt/common-lib",
