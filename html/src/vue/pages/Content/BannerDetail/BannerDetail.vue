@@ -4,6 +4,8 @@
             <banner-edit-form
                 @update="updateBanner"
                 @updateCountdown="updateBannerCountdown"
+                @isOpen="isOpenChange"
+                :is-open="isOpen"
                 :iBanner="iBanner"
                 :iBannerTypes="iBannerTypes"
                 :iBannerCountdown="iBannerCountdown"
