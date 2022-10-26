@@ -56,13 +56,26 @@ export default ({ mode, presets }) =>
                             name: 'images/[name].[ext]',
                         },
                     },
+                    {
+                        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+                        loader: 'url-loader',
+                        options: {
+                            limit: 10000,
+                            name: 'images/fonts/[name].[hash:7].[ext]'
+                        }
+                    },
                 ],
             },
             resolve: {
                 symlinks: false,
                 alias: {
                     vue$: 'vue/dist/vue.esm.js',
+                    globalize$: "./node_modules/globalize/dist/globalize.js",
+                    globalize: "./node_modules/globalize/dist/globalize",
+                    cldr$: "./node_modules/cldrjs/dist/cldr.js",
+                    cldr: "./node_modules/cldrjs/dist/cldr"
                 },
+                extensions: ['.ts', '.js', '.json']
             },
             plugins: [new VueLoaderPlagin()],
         },
