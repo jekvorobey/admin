@@ -49,7 +49,7 @@ class CargoListController extends Controller
             'stores' => $this->loadStores(),
             'iFilter' => $this->getFilter(true),
             'iSort' => $request->get('sort', 'created_at'),
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'name')->merchants(),
         ]);
     }
 

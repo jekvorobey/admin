@@ -262,7 +262,7 @@ export default {
     },
       merchantName(id) {
           let merchant = Object.values(this.merchants).find(merchant => merchant.id === id);
-          return merchant ? merchant.legal_name : 'N/A';
+          return merchant ? merchant.name : 'N/A';
       },
     reportSelected(id) {
       return this.selectedReportsIds.indexOf(id) !== -1;
@@ -291,7 +291,7 @@ export default {
       return Object.values(this.statuses).map(status => ({value: status.id, text: status.name}));
     },
     merchantOptions() {
-      return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+      return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
     },
   },
   created() {
