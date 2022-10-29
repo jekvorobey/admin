@@ -29,14 +29,15 @@ class ProductListController extends Controller
      * @throws PimException
      */
     public function index(
-        Request $request,
-        SearchService $searchService,
-        CategoryService $categoryService,
-        BrandService $brandService,
-        ShoppilotService $shoppilotService,
+        Request              $request,
+        SearchService        $searchService,
+        CategoryService      $categoryService,
+        BrandService         $brandService,
+        ShoppilotService     $shoppilotService,
         ContentBadgesService $badgesService,
-        OfferService $offerService
-    ) {
+        OfferService         $offerService
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $this->title = 'Товары';
@@ -89,10 +90,11 @@ class ProductListController extends Controller
      * @throws PimException
      */
     public function page(
-        Request $request,
-        SearchService $searchService,
+        Request          $request,
+        SearchService    $searchService,
         ShoppilotService $shoppilotService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $query = $this->makeQuery($request);

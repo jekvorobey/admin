@@ -52,9 +52,9 @@ class PriceChangeClaimController extends Controller
             'routePrefix' => 'priceChangeClaims',
             'iClaims' => $claims,
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRICE_CHANGE)->statusNames,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $this->getMerchants(),
             'iPager' => $pager,
-            'iCurrentPage' => (int) $request->get('page', 1),
+            'iCurrentPage' => (int)$request->get('page', 1),
             'iFilter' => $this->getFilter(),
         ]);
     }
