@@ -18,7 +18,11 @@
         </thead>
         <tbody>
             <tr v-for="order in orders">
-                <td>{{ order.order_number }}</td>
+                <td>
+                    <a :href="getRoute('orders.detail', {id: order.order_id})">
+                        {{ order.order_number }}
+                    </a>
+                </td>
                 <td>{{ order.name }} <span class="badge badge-warning" v-if="order.is_returned">Возврат</span></td>
                 <td>{{ order.qty | integer}}</td>
                 <td>{{ cutValue(order.price_commission) }}</td>
