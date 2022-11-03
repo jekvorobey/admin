@@ -70,7 +70,6 @@ class CustomerListController extends Controller
             'isReferral' => $isReferral,
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
-            'isSetPassword' => ['yes', 'no'],
             'registeringUsers' => $registeringUsers,
         ]);
     }
