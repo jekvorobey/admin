@@ -70,11 +70,13 @@
                     <th>Сегмент RFM</th>
                     <th>Дата последнего посещения</th>
                     <th>Статус</th>
+                    <th>Пароль</th>
+                    <th>Кто регистрировал</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in users">
+                <tr v-for="(user, index) in users">
                     <td><a :href="getRoute('customers.detail', {id: user.id})">{{ user.id }}</a></td>
                     <td>{{ datePrint(user.register_date) }}</td>
                     <td>{{ user.full_name || 'N/A' }}</td>
@@ -83,6 +85,12 @@
                     <td>{{ user.segment || '-'  }}</td>
                     <td>{{ user.last_visit || '-'  }}</td>
                     <td>{{ statuses[user.status] }}</td>
+                    <td>{{ user.has_password | userHasPassword }}</td>
+                    <td>
+                        <a :href="getRoute('settings.userDetail', {id: user.registered_by_user_id})" target="_blank">
+                            {{ user.registered_by_user_id }}
+                        </a>
+                    </td>
                     <td></td>
                 </tr>
             </tbody>
@@ -147,7 +155,7 @@ export default {
     computed: {
         telMask() {
             return telMask;
-        }
+        },
     },
     methods: {
         fetchUsers() {
@@ -171,6 +179,11 @@ export default {
         cleanFilter() {
             this.filter = {...defaultFilter};
             this.applyFilters();
+        }
+    },
+    filters : {
+        userHasPassword(value) {
+            return value ? 'Установлен' : 'Не установлен'
         }
     },
     created() {
