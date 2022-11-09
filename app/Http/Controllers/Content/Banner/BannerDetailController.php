@@ -110,7 +110,7 @@ class BannerDetailController extends Controller
 
         if (!is_null($id)) {
             $banner = $this->getBanner($id, $bannerService);
-            $bannerImages = $this->getBannerImages([
+            $bannerImages = $this->getImages([
                 $banner['desktop_image_id'],
                 $banner['tablet_image_id'],
                 $banner['mobile_image_id'],
