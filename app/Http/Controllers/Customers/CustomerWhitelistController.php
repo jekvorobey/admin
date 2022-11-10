@@ -94,7 +94,9 @@ class CustomerWhitelistController extends Controller
                         $restQuery->setFilter('user_id', filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 'notNull' : 'null');
                         break;
                     case 'is_possible_to_create_account':
-                        $restQuery->setFilter('phone', 'notNull')->setFilter('user_id', 'null');
+                        $restQuery
+                            ->setFilter('phone', 'regexp', '^(\\+7|8)\\d{10}$')
+                            ->setFilter('user_id', 'null');
                         break;
                     case 'city':
                     case 'comment':
