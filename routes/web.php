@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analytics\AnalyticsDashboardController;
 use App\Http\Controllers\Basket\BasketDetailController;
 use App\Http\Controllers\Basket\BasketListController;
 use App\Http\Controllers\BillingReport\BillingReportController;
@@ -1340,5 +1341,11 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {
         Route::get('available', [PublicEventDetailController::class, 'availableOrganizers'])->name('public-event.availableOrganizers');
+    });
+
+    Route::prefix('analytics/dashboard')->group(function () {
+        Route::get('saleLastMonthByDay', [AnalyticsDashboardController::class, 'saleLastMonthByDay'])->name('analytics.dashboard.saleLastMonthByDay');
+        Route::get('saleLastYearByMonth', [AnalyticsDashboardController::class, 'saleLastYearByMonth'])->name('analytics.dashboard.saleLastYearByMonth');
+        Route::get('saleAllPeriodByMonth', [AnalyticsDashboardController::class, 'saleAllPeriodByMonth'])->name('analytics.dashboard.saleAllPeriodByMonth');
     });
 });

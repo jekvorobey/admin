@@ -3,40 +3,153 @@
         <h1>{{ message }}</h1>
         <section>
             <h1>Аналитика</h1>
-            <DxChart
-                    :data-source="data">
-                <DxArgumentAxis :tick-interval="10"/>
-                <DxSeries type="bar"/>
-                <DxLegend :visible="false"/>
-            </DxChart>
-            <div>
-                <DxChart ref="chart">
-                    <DxTooltip
-                            :enabled="true"
-                            :customize-tooltip="customizeTooltip"
-                    />
-                    <DxAdaptiveLayout :width="450"/>
-                    <DxSize :height="200"/>
-                    <DxCommonSeriesSettings type="bar"/>
-                </DxChart>
 
-                <DxPivotGrid
-                        id="pivotgrid"
-                        ref="grid"
-                        :data-source="dataSource"
+            <div class="options">
+                <div class="caption">Options</div>
+                <div class="option">
+                    <DxCheckBox
+                        id="show-totals-prior"
+                        :value="false"
+                        :on-value-changed="onShowTotalsPriorChanged"
+                        text="Show Totals Prior"
+                    />
+                </div>
+                <div class="option">
+                    <DxCheckBox
+                        id="data-field-area"
+                        :value="false"
+                        :on-value-changed="onDataFieldAreaChanged"
+                        text="Data Field Headers in Rows"
+                    />
+                </div>
+                <div class="option">
+                    <DxCheckBox
+                        id="row-header-layout"
+                        :value="true"
+                        :on-value-changed="onRowHeaderLayoutChanged"
+                        text="Tree Row Header Layout"
+                    />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <DxChart
+                        ref="chartOne"
+                        :data-source="dataSourceChartOne"
+                    >
+                        <DxSize :height="420"/>
+                        <DxValueAxis
+                            :grid="{ opacity: 0.2 }"
+                            value-type="numeric"
+                        >
+                            <DxLabel :customize-text="customizeChartOneLabelText"/>
+                        </DxValueAxis>
+                        <DxArgumentAxis type="discrete">
+                            <DxGrid
+                                :visible="true"
+                                :opacity="0.5"
+                            />
+                        </DxArgumentAxis>
+                        <DxCommonPaneSettings>
+                            <DxBorder
+                                :visible="true"
+                                :width="2"
+                                :top="false"
+                                :right="false"
+                            />
+                        </DxCommonPaneSettings>
+                        <DxSeries
+                            argument-field="Number"
+                            value-field="Temperature"
+                            type="spline"
+                        />
+                        <DxLegend :visible="false"/>
+                        <DxTooltip
+                            :enabled="true"
+                            :customize-tooltip="customizeChartOneTooltip"
+                        />
+                        <DxExport :enabled="true"/>
+                        <DxLoadingIndicator :enabled="true"/>
+                    </DxChart>
+                </div>
+                <div class="col-12 col-md-6">
+                    <DxChart
+                        ref="chartTwo"
+                        :data-source="dataSourceChartTwo"
+                    >
+                        <DxSize :height="420"/>
+                        <DxValueAxis
+                            :grid="{ opacity: 0.2 }"
+                            value-type="numeric"
+                        >
+                            <DxLabel :customize-text="customizeChartTwoLabelText"/>
+                        </DxValueAxis>
+                        <DxArgumentAxis type="discrete">
+                            <DxGrid
+                                :visible="true"
+                                :opacity="0.5"
+                            />
+                        </DxArgumentAxis>
+                        <DxCommonPaneSettings>
+                            <DxBorder
+                                :visible="true"
+                                :width="2"
+                                :top="false"
+                                :right="false"
+                            />
+                        </DxCommonPaneSettings>
+                        <DxSeries
+                            argument-field="Number"
+                            value-field="Temperature"
+                            type="spline"
+                        />
+                        <DxLegend :visible="false"/>
+                        <DxTooltip
+                            :enabled="true"
+                            :customize-tooltip="customizeChartTwoTooltip"
+                        />
+                        <DxExport :enabled="true"/>
+                        <DxLoadingIndicator :enabled="true"/>
+                    </DxChart>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <!--
+                    <DxChart ref="chartThree">
+                        <DxArgumentAxis type="discrete">
+                            <DxGrid
+                                :visible="true"
+                                :opacity="0.5"
+                            />
+                        </DxArgumentAxis>
+                        <DxTooltip
+                            :enabled="true"
+                            :customize-tooltip="customizeChartThreeTooltip"
+                        />
+                        <DxAdaptiveLayout :width="450"/>
+                        <DxSize :height="200"/>
+                        <DxCommonSeriesSettings type="bar"/>
+                    </DxChart>
+                    -->
+                    <DxPivotGrid
+                        ref="pivotGridThree"
+                        :data-source="dataSourcePivotGridThree"
                         :allow-sorting-by-summary="true"
                         :allow-filtering="true"
                         :show-borders="true"
-                        :show-column-grand-totals="false"
-                        :show-row-grand-totals="false"
-                        :show-row-totals="false"
+                        :show-column-grand-totals="true"
+                        :show-row-grand-totals="true"
+                        :show-row-totals="true"
                         :show-column-totals="false"
-                >
-                    <DxFieldChooser
+                    >
+                        <DxFieldChooser
                             :enabled="true"
-                            :height="400"
-                    />
-                </DxPivotGrid>
+                            :height="600"
+                        />
+                    </DxPivotGrid>
+                </div>
             </div>
         </section>
     </layout-main>
@@ -44,18 +157,21 @@
 
 <script>
 
-    import {
+    import DxChart, {
         DxArgumentAxis,
         DxSeries,
         DxLegend,
-    } from 'devextreme-vue/chart';
-
-    import {
-        DxChart,
         DxAdaptiveLayout,
         DxCommonSeriesSettings,
         DxSize,
         DxTooltip,
+        DxValueAxis,
+        DxCommonPaneSettings,
+        DxGrid,
+        DxBorder,
+        DxLabel,
+        DxExport,
+        DxLoadingIndicator,
     } from 'devextreme-vue/chart';
 
     import {
@@ -63,22 +179,17 @@
         DxFieldChooser,
     } from 'devextreme-vue/pivot-grid';
 
-    import {sales} from "./sales-data";
+    import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
+    import DataSource from 'devextreme/data/data_source';
+    import DxCheckBox from 'devextreme-vue/check-box';
+    import 'devextreme/data/odata/store';
 
-    const data = [{
-        arg: 1990,
-        val: 5320816667
-    }, {
-        arg: 2000,
-        val: 6127700428
-    }, {
-        arg: 2010,
-        val: 6916183482
-    }];
+    import ruMessages from "devextreme/localization/messages/ru.json";
+    import { locale, loadMessages } from "devextreme/localization";
 
-    const currencyFormatter = new Intl.NumberFormat('en-US', {
+    const currencyFormatter = new Intl.NumberFormat('ru-Ru', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'Rub',
         minimumFractionDigits: 0,
     });
 
@@ -98,69 +209,198 @@
             DxTooltip,
             DxPivotGrid,
             DxFieldChooser,
+            DxValueAxis,
+            DxCommonPaneSettings,
+            DxGrid,
+            DxBorder,
+            DxLabel,
+            DxExport,
+            DxLoadingIndicator,
+        },
+        created() {
+            loadMessages(ruMessages);
+            locale('ru');
         },
         data() {
-            return {
-                data,
-                dataSource: {
-                    fields: [{
-                        caption: 'Region',
+
+            const dataSourceChartOne = new DataSource({
+                store: {
+                    url: 'https://js.devexpress.com/Demos/WidgetsGallery/odata/WeatherItems',
+                    type: 'odata',
+                    version: 4,
+                    //jsonp: true,
+                },
+                postProcess(results) {
+                    return results[0].DayItems;
+                },
+                expand: 'DayItems',
+                filter: ['Id', '=', 1],
+                paginate: false,
+            });
+
+            const dataSourceChartTwo = new DataSource({
+                store: {
+                    url: 'https://js.devexpress.com/Demos/WidgetsGallery/odata/WeatherItems',
+                    type: 'odata',
+                    version: 4,
+                    //jsonp: true,
+                },
+                postProcess(results) {
+                    return results[0].DayItems;
+                },
+                expand: 'DayItems',
+                filter: ['Id', '=', 1],
+                paginate: false,
+            });
+
+            const dataSourcePivotGridThree = new PivotGridDataSource({
+                fields: [
+                    {
+                        caption: 'Тип',
                         width: 120,
                         dataField: 'region',
-                        area: 'row',
-                        sortBySummaryField: 'Total',
-                    }, {
-                        caption: 'City',
-                        dataField: 'city',
-                        width: 150,
-                        area: 'row',
-                    }, {
-                        dataField: 'date',
-                        dataType: 'date',
                         area: 'column',
-                    }, {
-                        groupName: 'date',
-                        groupInterval: 'month',
-                        visible: false,
-                    }, {
-                        caption: 'Total',
-                        dataField: 'amount',
-                        dataType: 'number',
-                        summaryType: 'sum',
-                        format: 'currency',
+                        sortBySummaryField: 'amount',
+                        sortOrder: "desc"
+                    },
+                    {
+                        caption: "Год",
+                        dataField: "date",
+                        dataType: 'date',
+                        groupInterval: "year",
+                        sortOrder: "desc",
+                        area: "row",
+                    },
+                    {
+                        caption: "Месяц",
+                        dataField: "date",
+                        dataType: 'date',
+                        groupInterval: "month",
+                        sortOrder: "desc",
+                        area: "row",
+                    },
+                    {
+                        caption: "День",
+                        dataField: "date",
+                        dataType: 'date',
+                        groupInterval: "day",
+                        sortOrder: "desc",
+                        area: "row",
+                    },
+                    {
+                        caption: 'Кол-во',
+                        summaryType: 'count',
+                        format: {
+                            precision: 0,
+                            type: "fixedPoint",
+                        },
                         area: 'data',
-                    }],
-                    store: sales,
-                },
-                customizeTooltip(args) {
-                    const valueText = currencyFormatter.format(args.originalValue);
-                    return {
-                        html: `${args.seriesName} | Total<div class='currency'>${valueText}</div>`,
-                    };
-                },
+                    },
+                    {
+                        caption: 'Всего',
+                        dataField: 'amount',
+                        summaryType: 'sum',
+                        dataType: 'number',
+                        format: {
+                            precision: 0,
+                            type: "fixedPoint",
+                        },
+                        sortOrder: "desc",
+                        area: 'data',
+                    },
+                    {
+                        caption: '%',
+                        dataField: 'amount',
+                        summaryType: 'sum',
+                        dataType: 'number',
+                        area: 'data',
+                        format: {
+                            precision: 1,
+                            type: "percent",
+                        },
+                        //runningTotal: 'column',
+                        //allowCrossGroupCalculation: true,
+                        summaryDisplayMode: 'percentOfRowGrandTotal',
+                        showGrandTotals: false,
+                    },
+                    {
+                        caption: '%',
+                        dataField: 'amount',
+                        summaryType: 'sum',
+                        dataType: 'number',
+                        area: 'data',
+                        format: {
+                            precision: 1,
+                            type: "percent",
+                        },
+                        summaryDisplayMode: 'percentOfColumnTotal',
+                    }
+                ],
+                store: {
+                    url: '/analytics/dashboard/saleAllPeriodByMonth',
+                    type: 'odata',
+                    version: 4,
+                    jsonp: true,
+                }
+            });
+
+            return {
+                dataSourceChartOne,
+                dataSourceChartTwo,
+                dataSourcePivotGridThree,
             };
         },
-        mounted() {
-            const pivotGrid = this.$refs.grid.instance;
-            const chart = this.$refs.chart.instance;
-            pivotGrid.bindChart(chart, {
-                dataFieldsDisplayMode: 'splitPanes',
-                alternateDataFields: false,
-            });
-            const dataSource = pivotGrid.getDataSource();
-            setTimeout(() => {
-                dataSource.expandHeaderItem('row', ['North America']);
-                dataSource.expandHeaderItem('column', [2013]);
-            }, 0);
+        methods: {
+            onValueChanged({ value }) {
+                this.dataSourceChartTwo.filter(['Id', '=', value]);
+                this.dataSourceChartTwo.load();
+            },
+
+            customizeChartOneLabelText({ valueText }) {
+                //return `${valueText}${'&#176C'}`;
+                return `${valueText}`;
+            },
+
+            customizeChartOneTooltip({ valueText }) {
+                return {
+                    //text: `${valueText}${'&#176C'}`,
+                    text: `${valueText}`,
+                };
+            },
+
+            customizeChartTwoLabelText({ valueText }) {
+                //return `${valueText}${'&#176C'}`;
+                return `${valueText}`;
+            },
+
+            customizeChartTwoTooltip({ valueText }) {
+                return {
+                    //text: `${valueText}${'&#176C'}`,
+                    text: `${valueText}`,
+                };
+            },
+
+            customizeChartThreeTooltip(args) {
+                const valueText = currencyFormatter.format(args.originalValue);
+                return {
+                    html: `${args.seriesName} | Всего<div class='currency'>${valueText}</div>`,
+                };
+            },
         },
+        /*
+        mounted() {
+            const pivotGridThree = this.$refs.pivotGridThree.instance;
+            const chartThree = this.$refs.chartThree.instance;
+            pivotGridThree.bindChart(chartThree, {
+                dataFieldsDisplayMode: 'splitPanes',
+                alternateDataFields: true,
+            });
+        },
+        */
     };
 </script>
 
 <style>
-    #pivotgrid {
-        margin-top: 20px;
-    }
-
     .currency {
         text-align: center;
     }
