@@ -66,8 +66,8 @@ class ContentClaimController extends Controller
         $claims = $query ? $this->loadClaims($query, $merchantService) : [];
         $pager = $query ? $query->countClaims() : [];
 
-        $merchantsQuery = (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'legal_name');
-        $merchants = $merchantService->merchants($merchantsQuery)->pluck('legal_name', 'id');
+        $merchantsQuery = (new RestQuery())->addFields(MerchantDto::entity(), 'id', 'name');
+        $merchants = $merchantService->merchants($merchantsQuery)->pluck('name', 'id');
 
         return $this->render('Claim/Content/List', [
             'iClaims' => $claims,
@@ -105,11 +105,11 @@ class ContentClaimController extends Controller
         $meta = $claimMeta->pluck('value', 'propName');
 
         $merchantsQuery = (new RestQuery())
-            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->addFields(MerchantDto::entity(), 'id', 'name')
             ->setFilter('status', MerchantStatus::STATUS_WORK);
         $merchants = $merchantService
             ->merchants($merchantsQuery)
-            ->pluck('legal_name', 'id');
+            ->pluck('name', 'id');
 
 
         return $this->render('Claim/Content/Create', [
@@ -397,14 +397,14 @@ class ContentClaimController extends Controller
 
         $merchantIds = $claims->pluck('merchant_id')->all();
         $merchantQuery = (new RestQuery())
-            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->addFields(MerchantDto::entity(), 'id', 'name')
             ->setFilter('id', $merchantIds);
         $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
 
         return $claims->map(function (ContentClaimDto $claim) use ($users, $merchants) {
             $claim['userName'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->short_name : 'N/A';
             $claim['userLogin'] = $users->has($claim->user_id) ? $users->get($claim->user_id)->login : 'N/A';
-            $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->legal_name : 'N/A';
+            $claim['merchantName'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->name : 'N/A';
             $claim['merchantId'] = $merchants->has($claim->merchant_id) ? $merchants->get($claim->merchant_id)->id : 'N/A';
             return $claim;
         });

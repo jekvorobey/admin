@@ -19,7 +19,7 @@
                         <b-col cols="9">
                             <v-select2 v-model="form.merchant_id" class="form-control form-control-sm">
                                 <option value="null">Все</option>
-                                <option v-for="merchant in merchants" :value="merchant.id">{{ merchant.legal_name }}</option>
+                                <option v-for="merchant in merchants" :value="merchant.id">{{ merchant.name }}</option>
                             </v-select2>
                         </b-col>
                     </b-row>
@@ -199,7 +199,7 @@
             getMerchantName(id) {
                 let merchant_name;
                 Object.values(this.merchants).map(merchant => (
-                    merchant.id === id ? merchant_name = merchant.legal_name : null
+                    merchant.id === id ? merchant_name = merchant.name : null
                 ));
                 return merchant_name;
             },

@@ -120,11 +120,11 @@
                             <template v-else-if="column.code === 'merchant'">
                                 <div v-if="variantGroup.merchant && canView(blocks.merchants)">
                                   <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})">
-                                    {{variantGroup.merchant.legal_name}}
+                                    {{variantGroup.merchant.name}}
                                   </a>
                                 </div>
                                 <div v-if="variantGroup.merchant && !canView(blocks.merchants)">
-                                  {{variantGroup.merchant.legal_name}}
+                                  {{variantGroup.merchant.name}}
                                 </div>
                                 <div v-if="!variantGroup.merchant">
                                   <template>N/A</template>
@@ -387,7 +387,7 @@
                 return this.categories.map(category => ({value: category.id, text: category.name}));
             },
             merchantOptions() {
-                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             editedShowColumns() {
                 return this.columns.filter(function(column) {

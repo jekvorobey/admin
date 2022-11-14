@@ -349,7 +349,7 @@
                 return this.brands.map(brand => ({value: brand.id, text: brand.name}));
             },
             merchantOptions() {
-                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+                return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             booleanOptions() {
                 return [

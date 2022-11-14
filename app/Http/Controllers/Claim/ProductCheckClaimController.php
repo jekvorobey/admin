@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\In;
-use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Dto\Product\ProductApprovalStatus;
 use Pim\Dto\Product\ProductDto;
@@ -51,7 +50,7 @@ class ProductCheckClaimController extends Controller
             'routePrefix' => 'productCheckClaims',
             'iClaims' => $claims,
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $this->getMerchants(),
             'iPager' => $pager,
             'iCurrentPage' => (int) $request->get('page', 1),
             'iFilter' => $this->getFilter(),
