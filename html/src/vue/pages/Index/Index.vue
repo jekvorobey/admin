@@ -650,7 +650,7 @@
             },
 
             refreshDataSourceChartOne() {
-                this.$refs.dateBoxOne.instance.value = this.dateChartTwo;
+                this.$refs.dateBoxOne.instance.value = this.dateChartOne;
                 this.dataSourceChartOne = new DataSource({
                     store: {
                         url: '/api/analytics/dashboard/sales/day-by-hour?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
