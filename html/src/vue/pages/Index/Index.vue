@@ -23,6 +23,7 @@
                                 v-model:value="dateChartOne"
                                 @valueChanged="refreshDataSourceChartOne()"
                                 class="float-left mr-1"
+                                style="max-width: 150px"
                                 type="date"
                             />
                             <DxButton
@@ -35,6 +36,7 @@
                             <DxChart
                                 ref="chartOne"
                                 :data-source="dataSourceChartOne"
+                                :loading-indicator=" { enabled: false } "
                             >
                                 <DxSize :height="420"/>
 
@@ -144,6 +146,7 @@
                                 v-model:value="dateChartTwo"
                                 @valueChanged="refreshDataSourceChartTwo()"
                                 class="float-left mr-1"
+                                style="max-width: 150px"
                                 type="date"
                                 display-format="monthAndYear"
                                 :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'century' }"
@@ -158,6 +161,7 @@
                             <DxChart
                                 ref="chartTwo"
                                 :data-source="dataSourceChartTwo"
+                                :loading-indicator=" { enabled: false } "
                             >
                                 <DxSize :height="420"/>
                                 <DxValueAxis
@@ -663,7 +667,7 @@
             },
 
             updateDataSourceChartTwo() {
-                this.dataSourceChartOne.reload();
+                this.dataSourceChartTwo.reload();
             },
 
             downDataSourceChartTwo() {
