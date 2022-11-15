@@ -3,6 +3,14 @@ import qs from 'qs';
 import Services from './services';
 
 function paramSerialise(params) {
+    if (params.filter) {
+        for (const [key, value] of Object.entries(params.filter)) {
+            if (value.includes('#')) {
+                params.filter[key] = value.replace(/#/g, "%23");
+            }
+        }
+    }
+
     // Qs is already included in the Axios package
     return qs.stringify(params, {
         arrayFormat: "brackets",
@@ -26,7 +34,7 @@ export default class NetService {
         return {uri, params};
     }
 
-    params(method, uri, params = {}, data = {}, options={}) {
+    params(method, uri, params = {}, data = {}, options = {}) {
         let store = Services.store();
         let {uri: newUri, params: newParams} = NetService.prepareUri(uri, params);
         let config = Object.assign({
@@ -56,20 +64,20 @@ export default class NetService {
         return config;
     }
 
-    get(uri, params = {}, options={}, disableErrorAlert = false) {
+    get(uri, params = {}, options = {}, disableErrorAlert = false) {
         return this.request(this.params('get', uri, params, {}, options), disableErrorAlert);
     }
 
-    post(uri, params = {}, data = {}, options={}, disableErrorAlert = false) {
+    post(uri, params = {}, data = {}, options = {}, disableErrorAlert = false) {
         return this.request(this.params('post', uri, params, data, options), disableErrorAlert)
 
     }
 
-    put(uri, params = {}, data = {}, options={}, disableErrorAlert = false) {
+    put(uri, params = {}, data = {}, options = {}, disableErrorAlert = false) {
         return this.request(this.params('put', uri, params, data, options), disableErrorAlert);
     }
 
-    delete(uri, params = {}, options={}, disableErrorAlert = false) {
+    delete(uri, params = {}, options = {}, disableErrorAlert = false) {
         return this.request(this.params('delete', uri, params, {}, options), disableErrorAlert);
     }
 

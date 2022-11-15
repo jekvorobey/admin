@@ -120,7 +120,7 @@ class Controller extends BaseController
             /** @var MerchantService $merchantService */
             $merchantService = resolve(MerchantService::class);
             $merchantQuery = $merchantService->newQuery()
-                ->addFields(MerchantDto::entity(), 'id', 'legal_name');
+                ->addFields(MerchantDto::entity(), 'id', 'name');
             if ($merchantIds) {
                 $merchantQuery->setFilter('id', $merchantIds);
             }

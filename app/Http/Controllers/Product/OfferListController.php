@@ -58,7 +58,7 @@ class OfferListController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'merchants' => $this->getMerchants()->pluck('legal_name', 'id'),
+                'merchants' => $this->getMerchants()->pluck('name', 'id'),
             ],
         ]);
     }
@@ -412,7 +412,7 @@ class OfferListController extends Controller
 
         $merchants = $merchantService
             ->newQuery()
-            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->addFields(MerchantDto::entity(), 'id', 'name')
             ->setFilter('id', $merchantIds)
             ->merchants()
             ->keyBy('id');
@@ -431,7 +431,7 @@ class OfferListController extends Controller
                 'saleAt' => $offer->sale_at,
                 'createdAt' => $offer->created_at,
                 'merchantId' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->id : 'N/A',
-                'merchantName' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->legal_name : 'N/A',
+                'merchantName' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->name : 'N/A',
                 'price' => $prices->has($offer->id) ? $prices->get($offer->id)->price : 0,
                 'qty' => $stocks->has($offer->id) ? $stocks->get($offer->id) : 0,
             ];

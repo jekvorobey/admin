@@ -45,7 +45,7 @@ class MerchantStoreController extends Controller
             'iFilter' => $this->getFilter() ?: null,
             'iCurrentPage' => (int) $page,
             'pager' => $pager,
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'name')->merchants(),
         ]);
     }
 
@@ -86,7 +86,7 @@ class MerchantStoreController extends Controller
         $this->title = 'Добавление склада мерчанта';
 
         return $this->render('Store/MerchantStore/Create', [
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'name')->merchants(),
         ]);
     }
 
@@ -99,7 +99,7 @@ class MerchantStoreController extends Controller
 
         return $this->render('Store/MerchantStore/Detail', [
             'iStore' => $this->getStore($id, $storeService),
-            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'legal_name')->merchants(),
+            'merchants' => $merchantService->newQuery()->addFields(MerchantDto::entity(), 'id', 'name')->merchants(),
             'pickupTimes' => $this->getPickupTimes(),
         ]);
     }

@@ -116,7 +116,7 @@ class MerchantSettlementsController extends Controller
             request('filter') ?? [],
             [
                 'status' => 'string|someone',
-                'legal_name' => 'string|someone',
+                'name' => 'string|someone',
                 'created_at' => 'string|someone',
             ]
         )->attributes();
