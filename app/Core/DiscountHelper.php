@@ -39,11 +39,12 @@ class DiscountHelper
 {
     public static function getParams(
         Request $request,
-        int $userId,
-        array $pager = [],
-        ?int $merchantId = null,
-        array $type = []
-    ): array {
+        int     $userId,
+        array   $pager = [],
+        ?int    $merchantId = null,
+        array   $type = []
+    ): array
+    {
         $discountInDto = new DiscountInDto();
 
         if (!empty($pager)) {
@@ -92,9 +93,10 @@ class DiscountHelper
 
     public static function getDiscountUsersInfo(
         DiscountService $discountService,
-        int $userId,
-        $merchantId = null
-    ): array {
+        int             $userId,
+                        $merchantId = null
+    ): array
+    {
         $filter = [
             'filter' => [
                 '!status' => DiscountStatusDto::STATUS_CREATED,
@@ -338,22 +340,22 @@ class DiscountHelper
                     $conditions[] = $model->setFirstOrder();
                     break;
                 case DiscountConditionDto::MIN_PRICE_ORDER:
-                    $conditions[] = $model->setMinPriceOrder((float) $condition['sum']);
+                    $conditions[] = $model->setMinPriceOrder((float)$condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_BRAND:
                     if (empty($condition['brands'])) {
                         break;
                     }
-                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float) $condition['sum']);
+                    $conditions[] = $model->setMinPriceBrands($condition['brands'], (float)$condition['sum']);
                     break;
                 case DiscountConditionDto::MIN_PRICE_CATEGORY:
                     if (empty($condition['categories'])) {
                         break;
                     }
-                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float) $condition['sum']);
+                    $conditions[] = $model->setMinPriceCategories($condition['categories'], (float)$condition['sum']);
                     break;
                 case DiscountConditionDto::EVERY_UNIT_PRODUCT:
-                    $conditions[] = $model->setEveryUnitProduct((int) $condition['offer'], (int) $condition['count']);
+                    $conditions[] = $model->setEveryUnitProduct((int)$condition['offer'], (int)$condition['count']);
                     break;
                 case DiscountConditionDto::DELIVERY_METHOD:
                     if (empty($condition['deliveryMethods'])) {
@@ -380,7 +382,7 @@ class DiscountHelper
                     $conditions[] = $model->setCustomers($condition['users']);
                     break;
                 case DiscountConditionDto::ORDER_SEQUENCE_NUMBER:
-                    $conditions[] = $model->setOrderSequenceNumber((int) $condition['sequenceNumber']);
+                    $conditions[] = $model->setOrderSequenceNumber((int)$condition['sequenceNumber']);
                     break;
                 case DiscountConditionDto::DISCOUNT_SYNERGY:
                     if (!empty($condition['synergy'])) {
@@ -426,8 +428,8 @@ class DiscountHelper
     public static function getDefaultPager(Request $request, int $perPage = 20): array
     {
         return [
-            'page' => (int) $request->get('page', 1),
-            'perPage' => (int) $request->get('perPage', $perPage),
+            'page' => (int)$request->get('page', 1),
+            'perPage' => (int)$request->get('perPage', $perPage),
         ];
     }
 
@@ -456,7 +458,16 @@ class DiscountHelper
         $query = $listsService->newQuery()->include('regions');
         $data['districts'] = $listsService->federalDistricts($query)->toArray();
 
-        $params = (new DiscountInDto())->toQuery();
+        $params =
+            (new DiscountInDto())
+                ->status([
+                    DiscountStatusDto::STATUS_ACTIVE,
+                    DiscountStatusDto::STATUS_ON_CHECKING,
+                    DiscountStatusDto::STATUS_SENT,
+                    DiscountStatusDto::STATUS_CREATED,
+                ])
+                ->toQuery();
+
         $data['discounts'] = $discountService->discounts($params)
             ->sortByDesc('created_at')
             ->map(function (DiscountDto $item) {
