@@ -7,28 +7,33 @@
             <v-input id="payment-method-name"
                      v-model="$v.paymentMethod.name.$model"
                      :error="errorNameField"
-            >Название</v-input>
+            >Название
+            </v-input>
 
             <v-input id="payment-method-code"
                      :value="paymentMethod.code"
                      disabled
-            >Символьный код</v-input>
+            >Символьный код
+            </v-input>
 
             <v-input tag="textarea"
                      id="payment-method-button-text"
                      v-model="$v.paymentMethod.button_text.$model"
                      rows="14"
-            >Контент на кнопке</v-input>
+            >Контент на кнопке
+            </v-input>
 
             <v-input id="payment-method-min-available-price"
                      v-model="$v.paymentMethod.min_available_price.$model"
                      type="number"
-            >Доступен при сумме от</v-input>
+            >Доступен при сумме от
+            </v-input>
 
             <v-input id="payment-method-max-available-price"
                      v-model="$v.paymentMethod.max_available_price.$model"
                      type="number"
-            >Доступен при сумме до</v-input>
+            >Доступен при сумме до
+            </v-input>
 
             <div class="form-group">
                 <span class="custom-control custom-switch">
@@ -71,8 +76,7 @@
                     <input type="checkbox"
                            class="custom-control-input"
                            id="payment-method-is-fixed-discount"
-                           v-model="$v.paymentMethod.settings.is_fixed_discount.$model"
-                    >
+                           v-model="$v.paymentMethod.settings.is_fixed_discount.$model">
                     <label class="custom-control-label" for="payment-method-is-fixed-discount"></label>
                     <label for="payment-method-is-fixed-discount">Фиксированный размер скидки</label>
                 </span>
@@ -82,6 +86,37 @@
                 <v-input id="payment-method-setting-discount"
                          v-model="$v.paymentMethod.settings.discount.$model">
                     Размер скидки
+                </v-input>
+            </div>
+
+            <div class="form-group" v-if="hasSetting('is_displayed_in_catalog')">
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-displayed-in-catalog"
+                           v-model="$v.paymentMethod.settings.is_displayed_in_catalog.$model">
+                    <label class="custom-control-label" for="payment-method-is-displayed-in-catalog"></label>
+                    <label
+                        for="payment-method-is-displayed-in-catalog">Выводить в каталоге товаров и на странице товара</label>
+                </span>
+            </div>
+
+            <div class="form-group" v-if="hasSetting('is_displayed_in_public_events')">
+                <span class="custom-control custom-switch">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="payment-method-is-displayed-in-mk"
+                           v-model="$v.paymentMethod.settings.is_displayed_in_public_events.$model">
+                    <label class="custom-control-label" for="payment-method-is-displayed-in-mk"></label>
+                    <label for="payment-method-is-displayed-in-mk">Выводить в каталоге МК и на странице МК</label>
+                </span>
+            </div>
+
+            <div class="form-group" v-if="hasSetting('installment_period') && (isDisplayedInCatalog || isDisplayedInMk)">
+                <v-input id="payment-method-setting-installment-period"
+                         v-model="$v.paymentMethod.settings.installment_period.$model"
+                         readonly="readonly">
+                    Период рассрочки
                 </v-input>
             </div>
 
@@ -104,9 +139,9 @@ import Services from "../../../../scripts/services/services";
 import VSelect from '../../../components/controls/VSelect/VSelect.vue';
 import VInput from '../../../components/controls/VInput/VInput.vue';
 import VDate from '../../../components/controls/VDate/VDate.vue';
-import { validationMixin } from 'vuelidate';
-import { required } from 'vuelidate/lib/validators';
-import { mapActions } from 'vuex';
+import {validationMixin} from 'vuelidate';
+import {required} from 'vuelidate/lib/validators';
+import {mapActions} from 'vuex';
 
 export default {
     components: {
@@ -136,6 +171,9 @@ export default {
                 settings: {
                     is_fixed_discount: {},
                     discount: {},
+                    is_displayed_in_catalog: {},
+                    is_displayed_in_public_events: {},
+                    installment_period: {},
                     signingKD: {},
                 },
             },
@@ -175,7 +213,7 @@ export default {
                 }, () => {
                     this.showMessageBox({title: 'Ошибка', text: 'Попробуйте позже'});
                 }).finally(() => {
-                    Services.hideLoader();
+                Services.hideLoader();
             });
         },
         hasSetting(settingKey) {
@@ -191,6 +229,12 @@ export default {
         },
         isFixedDiscount() {
             return this.paymentMethod.settings.is_fixed_discount;
+        },
+        isDisplayedInCatalog() {
+            return this.paymentMethod.settings.is_displayed_in_catalog;
+        },
+        isDisplayedInMk() {
+            return this.paymentMethod.settings.is_displayed_in_public_events;
         },
     }
 }
