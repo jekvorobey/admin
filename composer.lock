@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4a8a6ae2dbad8b0790fd14e4f5ce1d6",
+    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1700,16 +1700,16 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-feature/7215-dashboards",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "085fed568ad21063c4dda86730236ee9c7978636"
+                "reference": "2b2da4280935c64edc820faed6730a2d1d5a4afb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=085fed568ad21063c4dda86730236ee9c7978636",
-                "reference": "085fed568ad21063c4dda86730236ee9c7978636",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=2b2da4280935c64edc820faed6730a2d1d5a4afb",
+                "reference": "2b2da4280935c64edc820faed6730a2d1d5a4afb",
                 "shasum": ""
             },
             "require": {
@@ -1722,6 +1722,7 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1748,7 +1749,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2022-11-15T12:38:49+03:00"
+            "time": "2022-11-15T12:11:10+00:00"
         },
         {
             "name": "ibt/pim-lib",
