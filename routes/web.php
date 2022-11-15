@@ -1343,9 +1343,16 @@ Route::middleware('auth')->group(function () {
         Route::get('available', [PublicEventDetailController::class, 'availableOrganizers'])->name('public-event.availableOrganizers');
     });
 
-    Route::prefix('analytics/dashboard')->group(function () {
-        Route::get('saleLastMonthByDay', [AnalyticsDashboardController::class, 'saleLastMonthByDay'])->name('analytics.dashboard.saleLastMonthByDay');
-        Route::get('saleLastYearByMonth', [AnalyticsDashboardController::class, 'saleLastYearByMonth'])->name('analytics.dashboard.saleLastYearByMonth');
-        Route::get('saleAllPeriodByMonth', [AnalyticsDashboardController::class, 'saleAllPeriodByMonth'])->name('analytics.dashboard.saleAllPeriodByMonth');
+    Route::prefix('api')->group(function () {
+        Route::prefix('analytics')->group(function () {
+            Route::prefix('dashboard')->group(function () {
+                Route::prefix('sales')->group(function () {
+                    Route::get('all-period-by-day', [AnalyticsDashboardController::class, 'salesAllPeriodByDay'])->name('analytics.dashboard.sales.allPeriodByDay');
+                    Route::get('day-by-hour', [AnalyticsDashboardController::class, 'salesDayByHour'])->name('analytics.dashboard.sales.dayByHour');
+                    Route::get('month-by-day', [AnalyticsDashboardController::class, 'salesMonthByDay'])->name('analytics.dashboard.sales.monthByDay');
+                    Route::get('year-by-month', [AnalyticsDashboardController::class, 'salesYearByMonth'])->name('analytics.dashboard.sales.YearByMonth');
+                });
+            });
+        });
     });
 });

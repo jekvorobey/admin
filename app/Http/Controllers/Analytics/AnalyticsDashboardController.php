@@ -9,58 +9,36 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AnalyticsDashboardController extends Controller
 {
-    public function saleAllPeriodByMonth(Request $request, AnalyticsService $analyticsService): JsonResponse
+    public function salesDayByHour(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
-        $resultData = $analyticsService->saleAllPeriodByMonth($request);
+        $resultData = $analyticsService->salesDayByHour($request);
 
-        $callback = $request->get('$callback');
-        $response = new JsonResponse();
-        $response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
-
-        if (isset($callback) && $callback) {
-            $response->setCallback($callback);
-            $data = array(
-                'd' => array(
-                    'results' => $resultData,
-                    '__count' => count($resultData),
-                )
-            );
-        } else {
-            $data = $resultData;
-        }
-        $response->setData($data ?? []);
-
-        return $response;
+        return $this->getResponse($request, $resultData);
     }
 
-    public function saleLastYearByMonth(Request $request, AnalyticsService $analyticsService): JsonResponse
+    public function salesMonthByDay(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
-        $resultData = $analyticsService->saleLastYearByMonth($request);
+        $resultData = $analyticsService->salesMonthByDay($request);
 
-        $callback = $request->get('$callback');
-        $response = new JsonResponse();
-        $response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
-
-        if (isset($callback) && $callback) {
-            $response->setCallback($callback);
-            $data = array(
-                'd' => array(
-                    'results' => $resultData,
-                    '__count' => count($resultData),
-                )
-            );
-        } else {
-            $data = $resultData;
-        }
-        $response->setData($data ?? []);
-
-        return $response;
+        return $this->getResponse($request, $resultData);
     }
 
-    public function saleLastMonthByDay(Request $request, AnalyticsService $analyticsService): JsonResponse
+    public function salesYearByMonth(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
-        $resultData = $analyticsService->saleLastMonthByDay($request);
+        $resultData = $analyticsService->salesYearByMonth($request);
 
+        return $this->getResponse($request, $resultData);
+    }
+
+    public function salesAllPeriodByDay(Request $request, AnalyticsService $analyticsService): JsonResponse
+    {
+        $resultData = $analyticsService->salesAllPeriodByDay();
+
+        return $this->getResponse($request, $resultData);
+    }
+
+    private function getResponse(Request $request, ?array $resultData = []): JsonResponse
+    {
         $callback = $request->get('$callback');
         $response = new JsonResponse();
         $response->setEncodingOptions(JSON_UNESCAPED_UNICODE);

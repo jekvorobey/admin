@@ -74,7 +74,7 @@
         "ibt/marketing-lib": "dev-master",
         "ibt/merchant-management-lib": "dev-master",
         "ibt/message-lib": "dev-master",
-        "ibt/oms-lib": "dev-master",
+        "ibt/oms-lib": "dev-feature/7215-dashboards",
         "ibt/pim-lib": "dev-master",
         "ibt/reports-lib": "dev-master",
         "ibt/store-lib": "dev-master",
