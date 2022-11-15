@@ -1,166 +1,173 @@
 <template>
     <layout-main>
-        <div :class="{'menu-scroll-hidden': !isMobile, 'menu-scroll': isMobile}" ref="menu" >
-            <div class="card">
-                <div class="card-header">
-                    Фильтр
-                    <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
-                        {{ opened ? 'Меньше' : 'Больше' }} фильтров
-                        <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
-                    </button>
+        <div class="card">
+            <div class="card-header">
+                Фильтр
+                <button @click="toggleHiddenFilter" class="btn btn-sm btn-light float-right">
+                    {{ opened ? 'Меньше' : 'Больше' }} фильтров
+                    <fa-icon :icon="opened ? 'compress-arrows-alt' : 'expand-arrows-alt'"></fa-icon>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <f-input v-model="filter.name" class="col-md-4 col-sm-12">Название</f-input>
+                    <f-input v-model="filter.vendorCode" class="col-md-2 col-sm-12">Артикул</f-input>
+                    <f-input v-model="filter.id" class="col-md-2 col-sm-12">ID</f-input>
+                    <f-select
+                            v-model="filter.active"
+                            :options="activeOptions"
+                            class="col-md-2 col-sm-12"
+                    >На витрине</f-select>
+                    <f-select
+                            v-model="filter.archive"
+                            :options="archiveOptions"
+                            class="col-md-2 col-sm-12"
+                    >Архивность</f-select>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <f-input v-model="filter.name" class="col-md-4 col-sm-12">Название</f-input>
-                        <f-input v-model="filter.vendorCode" class="col-md-2 col-sm-12">Артикул</f-input>
-                        <f-input v-model="filter.id" class="col-md-2 col-sm-12">ID</f-input>
-                        <f-select
-                                v-model="filter.active"
-                                :options="activeOptions"
-                                class="col-md-2 col-sm-12"
-                        >На витрине</f-select>
-                        <f-select
-                                v-model="filter.archive"
-                                :options="archiveOptions"
-                                class="col-md-2 col-sm-12"
-                        >Архивность</f-select>
-                    </div>
 
-                    <transition name="slide">
-                        <div v-if="opened">
-                            <div class="additional-filter pt-3 mt-3">
-                                <div class="row">
-                                    <f-input v-model="filter.priceFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
-                                        Цена
-                                        <template #prepend><span class="input-group-text">от</span></template>
-                                        <template #append><span class="input-group-text">руб.</span></template>
-                                    </f-input>
-                                    <f-input v-model="filter.priceTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
-                                        &nbsp;
-                                        <template #prepend><span class="input-group-text">до</span></template>
-                                        <template #append><span class="input-group-text">руб.</span></template>
-                                    </f-input>
+                <transition name="slide">
+                    <div v-if="opened">
+                        <div class="additional-filter pt-3 mt-3">
+                            <div class="row">
+                                <f-input v-model="filter.priceFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
+                                    Цена
+                                    <template #prepend><span class="input-group-text">от</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
+                                <f-input v-model="filter.priceTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
+                                    &nbsp;
+                                    <template #prepend><span class="input-group-text">до</span></template>
+                                    <template #append><span class="input-group-text">руб.</span></template>
+                                </f-input>
 
-                                    <f-input v-model="filter.qtyFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
-                                        Кол-во
-                                        <template #prepend><span class="input-group-text">от</span></template>
-                                    </f-input>
-                                    <f-input v-model="filter.qtyTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
-                                        &nbsp;
-                                        <template #prepend><span class="input-group-text">до</span></template>
-                                    </f-input>
+                                <f-input v-model="filter.qtyFrom" type="number" class="col-lg-2 col-md-3 col-sm-12">
+                                    Кол-во
+                                    <template #prepend><span class="input-group-text">от</span></template>
+                                </f-input>
+                                <f-input v-model="filter.qtyTo" type="number" class="col-lg-2 col-md-3 col-sm-12">
+                                    &nbsp;
+                                    <template #prepend><span class="input-group-text">до</span></template>
+                                </f-input>
 
-                                    <f-date
-                                            v-model="filter.dateFrom"
-                                            class="col-lg-2 col-md-3 col-sm-12"
-                                    >Дата содания от</f-date>
-                                    <f-date
-                                            v-model="filter.dateTo"
-                                            class="col-lg-2 col-md-3 col-sm-12"
-                                    >Дата содания до</f-date>
-                                </div>
-                                <div class="row">
-                                    <f-select
-                                            v-model="filter.isPriceHidden"
-                                            :options="priceHiddenOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Видимость цен</f-select>
-                                </div>
-                                <div class="row">
-                                    <f-custom-search-select
-                                            v-model="filter.brand"
-                                            :options="brandOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Бренд</f-custom-search-select>
-                                    <f-custom-search-select
-                                            v-model="filter.category"
-                                            :options="categoryOptions"
-                                            class="col-md-3 col-sm-12">
-                                        Категория
-                                        <template #help>Будут показаны товары выбранной и всех дочерних категорий</template>
-                                    </f-custom-search-select>
-                                    <f-select
-                                            v-model="filter.approvalStatus"
-                                            :options="approvalOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Согласовано</f-select>
-                                    <f-select
-                                            v-model="filter.productionStatus"
-                                            :options="productionOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Контент</f-select>
-                                </div>
-                                <div class="row">
-                                    <f-custom-search-select
-                                            v-model="filter.merchant"
-                                            :options="merchantOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Мерчант</f-custom-search-select>
-                                    <f-select
-                                            v-model="filter.badges"
-                                            :options="badgeOptions"
-                                            class="col-md-3 col-sm-12"
-                                    >Шильдики</f-select>
-                                </div>
+                                <f-date
+                                        v-model="filter.dateFrom"
+                                        class="col-lg-2 col-md-3 col-sm-12"
+                                >Дата содания от</f-date>
+                                <f-date
+                                        v-model="filter.dateTo"
+                                        class="col-lg-2 col-md-3 col-sm-12"
+                                >Дата содания до</f-date>
+                            </div>
+                            <div class="row">
+                                <f-select
+                                    v-model="filter.isPriceHidden"
+                                    :options="priceHiddenOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Видимость цен</f-select>
+                            </div>
+                            <div class="row">
+                                <f-custom-search-select
+                                        v-model="filter.brand"
+                                        :options="brandOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Бренд</f-custom-search-select>
+                                <f-custom-search-select
+                                        v-model="filter.category"
+                                        :options="categoryOptions"
+                                        class="col-md-3 col-sm-12">
+                                    Категория
+                                    <template #help>Будут показаны товары выбранной и всех дочерних категорий</template>
+                                </f-custom-search-select>
+                                <f-select
+                                        v-model="filter.approvalStatus"
+                                        :options="approvalOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Согласовано</f-select>
+                                <f-select
+                                        v-model="filter.productionStatus"
+                                        :options="productionOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Контент</f-select>
+                            </div>
+                            <div class="row">
+                                <f-custom-search-select
+                                        v-model="filter.merchant"
+                                        :options="merchantOptions"
+                                        class="col-md-3 col-sm-12"
+                                >Мерчант</f-custom-search-select>
+                                <f-select
+                                    v-model="filter.badges"
+                                    :options="badgeOptions"
+                                    class="col-md-3 col-sm-12"
+                                >Шильдики</f-select>
                             </div>
                         </div>
-                    </transition>
-                </div>
-                <div class="card-footer">
-                    <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
-                    <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
-                    <span class="float-right">Всего товаров: {{ total }}.</span>
-                </div>
+                    </div>
+                </transition>
             </div>
-
-            <div class="d-flex justify-content-between mt-3 mb-3">
-                <div class="action-bar d-flex justify-content-start">
-                    <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
-                    <b-button-group class="mr-4">
-                        <b-button variant="success"
-                                  v-if="massEmpty(massProductsType)"
-                                  @click="exportProductsByFilters"
-                        >Экспорт отфильтрованных</b-button>
-                        <b-dropdown right
-                                    split
-                                    variant="success"
-                                    text="Экспорт отфильтрованных"
-                                    v-if="!massEmpty(massProductsType)"
-                                    @click="exportProductsByFilters"
-                        >
-                            <b-dropdown-item @click="exportProductsById(massAll(massProductsType))">Экспорт выбранных</b-dropdown-item>
-                        </b-dropdown>
-                    </b-button-group>
-                    <dropdown v-if="!massEmpty(massProductsType)" :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
-                        Сменить статус
-                    </dropdown>
-                    <button v-if="!massEmpty(massProductsType)"
-                            @click="copyOfferIdsToClipBoard"
-                            type="button"
-                            class="btn btn-outline-secondary mr-3">
-                        <fa-icon icon="copy"></fa-icon> Копировать ID офферов</button>
-                    <button v-if="!massEmpty(massProductsType)"
-                            @click="copyProductIdsToClipBoard"
-                            type="button"
-                            class="btn btn-outline-secondary mr-3">
-                        <fa-icon icon="copy"></fa-icon> Копировать ID товаров</button>
-                    <button v-if="!massEmpty(massProductsType)"
-                            @click="copyArticlesToClipBoard"
-                            type="button"
-                            class="btn btn-outline-secondary mr-3">
-                        <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
-
-                    <button v-if="!massEmpty(massProductsType)"
-                            @click="openBadgesEditModal"
-                            type="button"
-                            class="btn btn-success mr-3">
-                        <fa-icon icon="cog"></fa-icon> Назначить шильдики</button>
-                </div>
+            <div class="card-footer">
+                <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
+                <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
+                <span class="float-right">Всего товаров: {{ total }}.</span>
             </div>
+        </div>
 
-            <table class="table" @mouseenter="showScroll = true" @mouseleave="showScroll = false">
-                <scroll-btns @onScroll="onScroll" :showScroll="showScroll"/>
-                <thead>
+        <div class="d-flex justify-content-between mt-3 mb-3">
+            <div class="action-bar d-flex justify-content-start">
+                <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                <b-button-group class="mr-4">
+                    <b-button variant="success"
+                              v-if="massEmpty(massProductsType)"
+                              @click="exportProductsByFilters"
+                    >Экспорт отфильтрованных</b-button>
+                    <b-dropdown right
+                                split
+                                variant="success"
+                                text="Экспорт отфильтрованных"
+                                v-if="!massEmpty(massProductsType)"
+                                @click="exportProductsByFilters"
+                    >
+                        <b-dropdown-item @click="exportProductsById(massAll(massProductsType))">Экспорт выбранных</b-dropdown-item>
+                    </b-dropdown>
+                </b-button-group>
+                <dropdown v-if="!massEmpty(massProductsType)" :items="statusItems" @select="startChangeStatus" class="mr-4 order-btn">
+                    Сменить статус
+                </dropdown>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyOfferIdsToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать ID офферов</button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyProductIdsToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать ID товаров</button>
+                <button v-if="!massEmpty(massProductsType)"
+                        @click="copyArticlesToClipBoard"
+                        type="button"
+                        class="btn btn-outline-secondary mr-3">
+                    <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
+
+                <b-dropdown variant="success"
+                            text="Назначить шильдики"
+                            v-if="!massEmpty(massProductsType)"
+                >
+                    <button v-if="!massEmpty(massProductsType)"
+                            @click="openBadgesEditModal('add')"
+                            type="button"
+                            class="btn btn-success mb-2 shild-group-btn">
+                        <fa-icon icon="cog"></fa-icon> Добавить</button>
+                    <button v-if="!massEmpty(massProductsType)"
+                            @click="openBadgesEditModal('delete')"
+                            type="button"
+                            class="btn btn-danger shild-group-btn">
+                        <fa-icon icon="trash-alt"></fa-icon> Удалить</button>
+                </b-dropdown>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
                 <tr>
                     <th>
                         <input type="checkbox"
@@ -181,13 +188,13 @@
                     <th>Согласование</th>
                     <th>Отгружен в Aplaut</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 <tr v-for="product in products">
                     <td class="d-flex flex-column align-items-center">
                         <input type="checkbox"
-                               :checked="massHas({type:massProductsType, id:product.id})"
-                               @change="e => massCheckbox(e, massProductsType, product.id)"/>
+                                :checked="massHas({type:massProductsType, id:product.id})"
+                                @change="e => massCheckbox(e, massProductsType, product.id)"/>
                         <fa-icon
                                 v-if="!product.ready"
                                 icon="exclamation-triangle"
@@ -240,44 +247,43 @@
                         <template v-else>Информация временно недоступна</template>
                     </td>
                 </tr>
-                </tbody>
-            </table>
-            <div>
-                <b-pagination
-                        v-if="numPages !== 1"
-                        v-model="page"
-                        :total-rows="total"
-                        :per-page="pageSize"
-                        :hide-goto-end-buttons="numPages < 10"
-                        class="mt-3 float-right"
-                ></b-pagination>
-            </div>
-            <transition name="modal">
-                <modal :close="closeModal" v-if="isModalOpen('StatusCommentModal')">
-                    <div slot="header">
-                        Комментарий
-                    </div>
-                    <div slot="body">
-                        <v-input tag="textarea" v-model="$v.statusComment.$model">
-                            Комментарий
-                        </v-input>
-                        <button @click="applyStatus" class="btn btn-dark mt-3" :disabled="!$v.$anyDirty">Сохранить</button>
-                    </div>
-                </modal>
-            </transition>
-
-            <product-badges-modal
-                    :product-id="massAll(this.massProductsType)"
-                    :available-badges="options.availableBadges"
-                    @save="() => { massClear(massProductsType); loadPage(iCurrentPage) }"
-            />
+            </tbody>
+        </table>
+        <div>
+            <b-pagination
+                    v-if="numPages !== 1"
+                    v-model="page"
+                    :total-rows="total"
+                    :per-page="pageSize"
+                    :hide-goto-end-buttons="numPages < 10"
+                    class="mt-3 float-right"
+            ></b-pagination>
         </div>
+        <transition name="modal">
+            <modal :close="closeModal" v-if="isModalOpen('StatusCommentModal')">
+                <div slot="header">
+                    Комментарий
+                </div>
+                <div slot="body">
+                    <v-input tag="textarea" v-model="$v.statusComment.$model">
+                        Комментарий
+                    </v-input>
+                    <button @click="applyStatus" class="btn btn-dark mt-3" :disabled="!$v.$anyDirty">Сохранить</button>
+                </div>
+            </modal>
+        </transition>
+
+        <product-badges-modal
+            :product-id="massAll(this.massProductsType)"
+            :available-badges="options.availableBadges"
+            :badgesAction="this.badgesAction"
+            @save="() => { massClear(massProductsType); loadPage(iCurrentPage) }"
+        />
     </layout-main>
 </template>
 
 <script>
     import withQuery from 'with-query';
-    import Variables from "../../../../scripts/variables";
 
     import { BButtonGroup, BButton, BDropdown, BDropdownItem, BDropdownDivider } from 'bootstrap-vue';
     import FSelect from '../../../components/filter/f-select.vue';
@@ -289,7 +295,6 @@
     import ProductBadgesModal from '../ProductDetail/components/product-badges-modal.vue';
     import { mapActions, mapGetters } from 'vuex';
     import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
-    import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
 
     import {
         ACT_LOAD_PAGE,
@@ -363,7 +368,6 @@
             Dropdown,
             VInput,
             FCustomSearchSelect,
-            ScrollBtns
         },
         props: {
             iProducts: {},
@@ -401,7 +405,6 @@
             }
 
             return {
-                showScroll: false,
                 filter,
                 opened: false,
                 statusItems: statusDropdown,
@@ -411,6 +414,8 @@
                 massStatus: null,
 
                 massProductsType: 'products',
+
+                badgesAction: null
             };
         },
         validations: {
@@ -553,7 +558,8 @@
                     .map(x => this.iProducts.find(prod => prod.id === x).vendorCode).join(',');
                 clipboard.writeText(text).then();
             },
-            openBadgesEditModal() {
+            openBadgesEditModal(action) {
+                this.badgesAction = action;
                 this.$bvModal.show('productBadgesEdit');
             },
             exportProductsById(productIds) {
@@ -615,25 +621,6 @@
                     });
                 }
             },
-
-            onScroll(direction) {
-                const menu = this.$refs.menu
-
-                if (direction === 'left') {
-                    menu.scrollTo({
-                        left: menu.scrollLeft - 200,
-                        behavior: 'smooth'
-                    })
-                }
-
-                if (direction === 'right') {
-                    menu.scrollTo({
-                        left: menu.scrollLeft + 200,
-                        behavior: 'smooth'
-                    })
-
-                }
-            },
         },
         created() {
             window.onpopstate = () => {
@@ -645,10 +632,6 @@
             this.opened = this.isHiddenFilterDefaultOpen();
         },
         computed: {
-            isMobile(){
-                return window.innerWidth <= 768
-            },
-
             ...mapGetters(NAMESPACE, {
                 GET_PAGE_NUMBER,
                 total: GET_TOTAL,
@@ -668,7 +651,7 @@
                 return this.options.brands.map(brand => ({value: brand.code, text: brand.name}));
             },
             merchantOptions() {
-                return this.options.merchants.map(merchant => ({value: merchant.id, text: merchant.name}));
+                return this.options.merchants.map(merchant => ({value: merchant.id, text: merchant.legal_name}));
             },
             badgeOptions() {
                 return this.options.availableBadges.map(badge => ({value: badge.code, text: badge.text}));
@@ -746,5 +729,9 @@
     }
     .additional-filter {
         border-top: 1px solid #DFDFDF;
+    }
+    .shild-group-btn {
+        margin: 0;
+        width: 100%;
     }
 </style>
