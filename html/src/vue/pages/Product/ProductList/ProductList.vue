@@ -149,11 +149,21 @@
                         class="btn btn-outline-secondary mr-3">
                     <fa-icon icon="copy"></fa-icon> Копировать артикулы</button>
 
-                <button v-if="!massEmpty(massProductsType)"
-                        @click="openBadgesEditModal"
-                        type="button"
-                        class="btn btn-success mr-3">
-                    <fa-icon icon="cog"></fa-icon> Назначить шильдики</button>
+                <b-dropdown variant="success"
+                            text="Назначить шильдики"
+                            v-if="!massEmpty(massProductsType)"
+                >
+                    <button v-if="!massEmpty(massProductsType)"
+                            @click="openBadgesEditModal('add')"
+                            type="button"
+                            class="btn btn-success mb-2 shild-group-btn">
+                        <fa-icon icon="cog"></fa-icon> Добавить</button>
+                    <button v-if="!massEmpty(massProductsType)"
+                            @click="openBadgesEditModal('delete')"
+                            type="button"
+                            class="btn btn-danger shild-group-btn">
+                        <fa-icon icon="trash-alt"></fa-icon> Удалить</button>
+                </b-dropdown>
             </div>
         </div>
         <table class="table">
@@ -266,6 +276,7 @@
         <product-badges-modal
             :product-id="massAll(this.massProductsType)"
             :available-badges="options.availableBadges"
+            :badgesAction="this.badgesAction"
             @save="() => { massClear(massProductsType); loadPage(iCurrentPage) }"
         />
     </layout-main>
@@ -363,7 +374,7 @@
             iTotal: {},
             iCurrentPage: {},
             iFilter: {},
-            options: {}
+            options: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
@@ -403,6 +414,8 @@
                 massStatus: null,
 
                 massProductsType: 'products',
+
+                badgesAction: null
             };
         },
         validations: {
@@ -545,7 +558,8 @@
                     .map(x => this.iProducts.find(prod => prod.id === x).vendorCode).join(',');
                 clipboard.writeText(text).then();
             },
-            openBadgesEditModal() {
+            openBadgesEditModal(action) {
+                this.badgesAction = action;
                 this.$bvModal.show('productBadgesEdit');
             },
             exportProductsById(productIds) {
@@ -715,5 +729,9 @@
     }
     .additional-filter {
         border-top: 1px solid #DFDFDF;
+    }
+    .shild-group-btn {
+        margin: 0;
+        width: 100%;
     }
 </style>
