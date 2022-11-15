@@ -365,7 +365,7 @@
 
             const dataSourceChartOne = new DataSource({
                 store: {
-                    url: this.pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
+                    url: pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -375,7 +375,7 @@
 
             const dataSourceChartTwo = new DataSource({
                 store: {
-                    url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
+                    url: pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
