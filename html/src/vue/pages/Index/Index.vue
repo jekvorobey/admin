@@ -25,6 +25,7 @@
                                 class="float-left mr-1"
                                 style="max-width: 150px"
                                 type="date"
+                                display-format="dd.MM.yyyy"
                             />
                             <DxButton
                                 icon="arrowright"
@@ -265,6 +266,7 @@
                         :show-row-grand-totals="true"
                         :show-row-totals="true"
                         :show-column-totals="false"
+                        :show-totals-prior="showTotalsPrior"
                     >
                         <DxFieldChooser :enabled="true"/>
                         <DxExport :enabled="true"/>
@@ -378,12 +380,28 @@
             const dataSourcePivotGridThree = new PivotGridDataSource({
                 fields: [
                     {
-                        caption: 'Тип',
+                        caption: 'Тип товара',
                         width: 120,
                         dataField: 'nameType',
                         area: 'column',
                         sortBySummaryField: 'amount',
-                        sortOrder: "desc"
+                        sortOrder: "desc",
+                        displayFolder: 'Товары',
+                    },
+                    {
+                        caption: 'Код типа',
+                        width: 120,
+                        dataField: 'type',
+                        sortBySummaryField: 'amount',
+                        sortOrder: "desc",
+                        displayFolder: 'Товары',
+                    },
+                    {
+                        caption: "Полная дата",
+                        dataField: "date",
+                        dataType: 'date',
+                        sortOrder: "desc",
+                        displayFolder: 'Дата',
                     },
                     {
                         caption: "Год",
@@ -430,7 +448,7 @@
                     },
                     {
                         caption: 'Заказы всего, р.',
-                        dataField: 'amountOrders',
+                        dataField: 'amountOrdersFull',
                         summaryType: 'sum',
                         dataType: 'number',
                         format: {
@@ -443,6 +461,22 @@
                             }
                         },
                         sortOrder: "desc",
+                        displayFolder: 'Заказы',
+                    },
+                    {
+                        caption: 'Товары всего, шт.',
+                        dataField: 'countProductsFull',
+                        summaryType: 'sum',
+                        format: {
+                            precision: 0,
+                            type: "fixedPoint",
+                        },
+                        customizeText: function (cellInfo) {
+                            if (cellInfo.value) {
+                                return cellInfo.valueText;
+                            }
+                        },
+                        area: 'data',
                         displayFolder: 'Заказы',
                     },
                     {
@@ -480,7 +514,7 @@
                         displayFolder: 'Заказы',
                     },
                     {
-                        caption: 'Кол-во товаров',
+                        caption: 'Товары в обр. шт',
                         dataField: 'countProducts',
                         summaryType: 'sum',
                         format: {
@@ -569,6 +603,19 @@
                         displayFolder: 'Отмены',
                     },
                     {
+                        caption: "Отмен. тов, шт",
+                        dataField: "countProductsCancel",
+                        dataType: "number",
+                        format: 'fixedPoint',
+                        summaryType: "sum",
+                        customizeText: function (cellInfo) {
+                            if (cellInfo.value) {
+                                return cellInfo.valueText;
+                            }
+                        },
+                        displayFolder: 'Отмены',
+                    },
+                    {
                         caption: "Отмен., %",
                         dataType: "number",
                         format: {
@@ -628,6 +675,7 @@
                 dataSourcePivotGridThree,
                 dateChartOne: dateChartOne,
                 dateChartTwo: dateChartTwo,
+                showTotalsPrior: "columns",
             };
         },
         methods: {
