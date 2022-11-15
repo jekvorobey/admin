@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Analytics\AnalyticsDashboardController;
 use App\Http\Controllers\Basket\BasketDetailController;
 use App\Http\Controllers\Basket\BasketListController;
 use App\Http\Controllers\BillingReport\BillingReportController;
@@ -1340,5 +1341,18 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('organizers')->namespace('PublicEvent')->group(function () {
         Route::get('available', [PublicEventDetailController::class, 'availableOrganizers'])->name('public-event.availableOrganizers');
+    });
+
+    Route::prefix('api')->group(function () {
+        Route::prefix('analytics')->group(function () {
+            Route::prefix('dashboard')->group(function () {
+                Route::prefix('sales')->group(function () {
+                    Route::get('all-period-by-day', [AnalyticsDashboardController::class, 'salesAllPeriodByDay'])->name('analytics.dashboard.sales.allPeriodByDay');
+                    Route::get('day-by-hour', [AnalyticsDashboardController::class, 'salesDayByHour'])->name('analytics.dashboard.sales.dayByHour');
+                    Route::get('month-by-day', [AnalyticsDashboardController::class, 'salesMonthByDay'])->name('analytics.dashboard.sales.monthByDay');
+                    Route::get('year-by-month', [AnalyticsDashboardController::class, 'salesYearByMonth'])->name('analytics.dashboard.sales.YearByMonth');
+                });
+            });
+        });
     });
 });
