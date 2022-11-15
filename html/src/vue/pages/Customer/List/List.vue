@@ -14,6 +14,25 @@
                             </b-form-select>
                         </b-col>
                         <b-col>
+                            <label for="filter-has_password">Пароль</label>
+                            <b-form-select v-model="filter.has_password" id="filter-has_password">
+                                <b-form-select-option :value="null">Не выбрано</b-form-select-option>
+                                <b-form-select-option :value="item.value" v-for="(item, id) in passwords" :key="id">
+                                    {{ item.title }}
+                                </b-form-select-option>
+                            </b-form-select>
+                        </b-col>
+                        <v-input v-model="filter.registered_by_user_id" type="number" class="col-md-4 col-12">Кем зарегистрирован</v-input>
+<!--                        <b-col>-->
+<!--                            <label for="filter-registered_by_user_id">Кем зарегистрирован</label>-->
+<!--                            <b-form-select v-model="filter.registered_by_user_id" id="filter-registered_by_user_id">-->
+<!--                                <b-form-select-option :value="null">Не выбрано</b-form-select-option>-->
+<!--                                <b-form-select-option :value="item.id" v-for="(item, id) in registeringUsers" :key="id">-->
+<!--                                    {{ item.full_name ? item.full_name + ' ' + item.id: item.id }}-->
+<!--                                </b-form-select-option>-->
+<!--                            </b-form-select>-->
+<!--                        </b-col>-->
+                        <b-col>
                             <v-input v-model="filter.phone" v-mask="telMask" validation="phone">Телефон</v-input>
                         </b-col>
                     </b-row>
@@ -70,11 +89,13 @@
                     <th>Сегмент RFM</th>
                     <th>Дата последнего посещения</th>
                     <th>Статус</th>
+                    <th>Пароль</th>
+                    <th>Кто регистрировал</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="user in users">
+                <tr v-for="(user, index) in users">
                     <td><a :href="getRoute('customers.detail', {id: user.id})">{{ user.id }}</a></td>
                     <td>{{ datePrint(user.register_date) }}</td>
                     <td>{{ user.full_name || 'N/A' }}</td>
@@ -83,6 +104,12 @@
                     <td>{{ user.segment || '-'  }}</td>
                     <td>{{ user.last_visit || '-'  }}</td>
                     <td>{{ statuses[user.status] }}</td>
+                    <td>{{ user.has_password | userHasPassword }}</td>
+                    <td>
+                        <a :href="getRoute('settings.userDetail', {id: user.registered_by_user_id})" target="_blank">
+                            {{ user.registered_by_user_id }}
+                        </a>
+                    </td>
                     <td></td>
                 </tr>
             </tbody>
@@ -111,6 +138,8 @@ import ModalCreateUser from './components/modal-create-user.vue';
 
 const defaultFilter = {
     status: null,
+    registered_by_user_id: null,
+    has_password: null,
     phone: '',
     full_name: '',
     gender: 0,
@@ -122,7 +151,7 @@ const defaultFilter = {
 
 export default {
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate},
-    props: ['statuses', 'perPage', 'isReferral','roles'],
+    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',
@@ -138,7 +167,17 @@ export default {
                 0: 'Все',
                 2: 'Мужской',
                 1: 'Женский'
-            }
+            },
+            passwords: [
+                {
+                    title: 'Установлен',
+                    value: 'yes'
+                },
+                {
+                    title: 'Не установлен',
+                    value: 'no'
+                },
+            ]
         };
     },
     watch: {
@@ -147,7 +186,7 @@ export default {
     computed: {
         telMask() {
             return telMask;
-        }
+        },
     },
     methods: {
         fetchUsers() {
@@ -171,6 +210,11 @@ export default {
         cleanFilter() {
             this.filter = {...defaultFilter};
             this.applyFilters();
+        }
+    },
+    filters : {
+        userHasPassword(value) {
+            return value ? 'Установлен' : 'Не установлен'
         }
     },
     created() {
