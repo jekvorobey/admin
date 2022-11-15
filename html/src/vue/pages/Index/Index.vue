@@ -6,30 +6,32 @@
                 <div class="col-12 col-md-6">
                     <div class="row">
                         <div class="col-12">
-                            <DxButton
-                                icon="refresh"
-                                class="float-left mr-1"
-                                @click="updateDataSourceChartOne()"
-                            />
-                            <DxButton
-                                icon="arrowleft"
-                                class="float-left mr-1"
-                                @click="downDataSourceChartOne()"
-                            />
-                            <DxDateBox
-                                ref="dateBoxOne"
-                                v-model:value="dateChartOne"
-                                @valueChanged="refreshDataSourceChartOne()"
-                                class="float-left mr-1"
-                                style="max-width: 150px"
-                                type="date"
-                                display-format="dd.MM.yyyy"
-                            />
-                            <DxButton
-                                icon="arrowright"
-                                class="float-left mr-1"
-                                @click="upDataSourceChartOne()"
-                            />
+                            <div class="dx-block-buttons">
+                                <DxButton
+                                    icon="refresh"
+                                    class="float-left mr-1"
+                                    @click="updateDataSourceChartOne()"
+                                />
+                                <DxButton
+                                    icon="arrowleft"
+                                    class="float-left mr-1"
+                                    @click="downDataSourceChartOne()"
+                                />
+                                <DxDateBox
+                                    ref="dateBoxOne"
+                                    v-model:value="dateChartOne"
+                                    @valueChanged="refreshDataSourceChartOne()"
+                                    class="float-left mr-1"
+                                    style="max-width: 150px"
+                                    type="date"
+                                    display-format="dd.MM.yyyy"
+                                />
+                                <DxButton
+                                    icon="arrowright"
+                                    class="float-left mr-1"
+                                    @click="upDataSourceChartOne()"
+                                />
+                            </div>
                         </div>
                         <div class="col-12">
                             <DxChart
@@ -130,31 +132,33 @@
                 <div class="col-12 col-md-6">
                     <div class="row">
                         <div class="col-12">
-                            <DxButton
-                                icon="refresh"
-                                class="float-left mr-1"
-                                @click="updateDataSourceChartTwo()"
-                            />
-                            <DxButton
-                                icon="arrowleft"
-                                class="float-left mr-1"
-                                @click="downDataSourceChartTwo()"
-                            />
-                            <DxDateBox
-                                ref="dateBoxTwo"
-                                v-model:value="dateChartTwo"
-                                @valueChanged="refreshDataSourceChartTwo()"
-                                class="float-left mr-1"
-                                style="max-width: 150px"
-                                type="date"
-                                display-format="monthAndYear"
-                                :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'century' }"
-                            />
-                            <DxButton
-                                icon="arrowright"
-                                class="float-left mr-1"
-                                @click="upDataSourceChartTwo()"
-                            />
+                            <div class="dx-block-buttons">
+                                <DxButton
+                                    icon="refresh"
+                                    class="float-left mr-1"
+                                    @click="updateDataSourceChartTwo()"
+                                />
+                                <DxButton
+                                    icon="arrowleft"
+                                    class="float-left mr-1"
+                                    @click="downDataSourceChartTwo()"
+                                />
+                                <DxDateBox
+                                    ref="dateBoxTwo"
+                                    v-model:value="dateChartTwo"
+                                    @valueChanged="refreshDataSourceChartTwo()"
+                                    class="float-left mr-1"
+                                    style="max-width: 150px"
+                                    type="date"
+                                    display-format="monthAndYear"
+                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'century' }"
+                                />
+                                <DxButton
+                                    icon="arrowright"
+                                    class="float-left mr-1"
+                                    @click="upDataSourceChartTwo()"
+                                />
+                            </div>
                         </div>
                         <div class="col-12">
                             <DxChart
@@ -352,12 +356,16 @@
         },
         data() {
 
+            const pathDataSourceChartOne = '/api/analytics/dashboard/sales/day-by-hour';
+            const pathDataSourceChartTwo = '/api/analytics/dashboard/sales/month-by-day';
+            const pathDataSourcePivotGridThree = '/api/analytics/dashboard/sales/all-period-by-day';
+
             const dateChartOne = new Date();
             const dateChartTwo = new Date();
 
             const dataSourceChartOne = new DataSource({
                 store: {
-                    url: '/api/analytics/dashboard/sales/day-by-hour?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
+                    url: this.pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -367,7 +375,7 @@
 
             const dataSourceChartTwo = new DataSource({
                 store: {
-                    url: '/api/analytics/dashboard/sales/month-by-day?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
+                    url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -660,7 +668,7 @@
                     }
                 ],
                 store: {
-                    url: '/api/analytics/dashboard/sales/all-period-by-day',
+                    url: pathDataSourcePivotGridThree,
                     type: 'odata',
                     version: 4,
                     jsonp: true,
@@ -673,6 +681,9 @@
                 dataSourcePivotGridThree,
                 dateChartOne: dateChartOne,
                 dateChartTwo: dateChartTwo,
+                pathDataSourceChartOne: pathDataSourceChartOne,
+                pathDataSourceChartTwo: pathDataSourceChartTwo,
+                pathDataSourcePivotGridThree: pathDataSourcePivotGridThree,
                 showTotalsPrior: "columns",
             };
         },
@@ -703,7 +714,7 @@
                 this.$refs.dateBoxOne.instance.value = this.dateChartOne;
                 this.dataSourceChartOne = new DataSource({
                     store: {
-                        url: '/api/analytics/dashboard/sales/day-by-hour?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
+                        url: this.pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
                         type: 'odata',
                         version: 4,
                         jsonp: false,
@@ -730,7 +741,7 @@
                 this.$refs.dateBoxTwo.instance.value = this.dateChartTwo;
                 this.dataSourceChartTwo = new DataSource({
                     store: {
-                        url: '/api/analytics/dashboard/sales/month-by-day?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
+                        url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
                         type: 'odata',
                         version: 4,
                         jsonp: false,
@@ -741,3 +752,12 @@
         },
     };
 </script>
+
+<style>
+    .dx-block-buttons {
+        position: absolute;
+        max-width: Calc(100% - 50px);
+        z-index: +1;
+        margin-top: 8px;
+    }
+</style>
