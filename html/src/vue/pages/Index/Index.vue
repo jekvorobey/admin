@@ -24,7 +24,8 @@
                                     class="float-left mr-1"
                                     style="max-width: 150px"
                                     type="date"
-                                    display-format="dd.MM.yyyy"
+                                    display-format="shortDate"
+                                    :calendarOptions=" { maxZoomLevel: 'month', minZoomLevel: 'decade' }"
                                 />
                                 <DxButton
                                     icon="arrowright"
@@ -151,7 +152,7 @@
                                     style="max-width: 150px"
                                     type="date"
                                     display-format="monthAndYear"
-                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'century' }"
+                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
                                 />
                                 <DxButton
                                     icon="arrowright"
@@ -702,16 +703,15 @@
 
             downDataSourceChartOne() {
                 this.dateChartOne.setDate(this.dateChartOne.getDate() - 1);
-                this.refreshDataSourceChartOne();
+                setTimeout(() => this.refreshDataSourceChartOne(), 50);
             },
 
             upDataSourceChartOne() {
                 this.dateChartOne.setDate(this.dateChartOne.getDate() + 1);
-                this.refreshDataSourceChartOne();
+                setTimeout(() => this.refreshDataSourceChartOne(), 50);
             },
 
             refreshDataSourceChartOne() {
-                this.$refs.dateBoxOne.instance.value = this.dateChartOne;
                 this.dataSourceChartOne = new DataSource({
                     store: {
                         url: this.pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
@@ -721,6 +721,7 @@
                     },
                     paginate: false,
                 });
+                this.$refs.dateBoxOne.instance.value = this.dateChartOne;
             },
 
             updateDataSourceChartTwo() {
@@ -729,16 +730,15 @@
 
             downDataSourceChartTwo() {
                 this.dateChartTwo.setMonth(this.dateChartTwo.getMonth() - 1);
-                this.refreshDataSourceChartTwo();
+                setTimeout(() => this.refreshDataSourceChartTwo(), 50);
             },
 
             upDataSourceChartTwo() {
                 this.dateChartTwo.setMonth(this.dateChartTwo.getMonth() + 1);
-                this.refreshDataSourceChartTwo();
+                setTimeout(() => this.refreshDataSourceChartTwo(), 50);
             },
 
             refreshDataSourceChartTwo() {
-                this.$refs.dateBoxTwo.instance.value = this.dateChartTwo;
                 this.dataSourceChartTwo = new DataSource({
                     store: {
                         url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
@@ -748,6 +748,7 @@
                     },
                     paginate: false,
                 });
+                this.$refs.dateBoxTwo.instance.value = this.dateChartTwo;
             },
         },
     };
