@@ -55,7 +55,7 @@
                     <td>{{ offer.created_at }}</td>
                     <td>
                         <a :href="getRoute('merchant.detail', {id: offer.merchant.id})" target="_blank">
-                            {{ offer.merchant.legal_name }}
+                            {{ offer.merchant.name }}
                         </a>
                     </td>
                     <td>{{ offer.price }} руб.</td>
