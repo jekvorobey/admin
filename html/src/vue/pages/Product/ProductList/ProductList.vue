@@ -668,7 +668,7 @@
                 return this.options.brands.map(brand => ({value: brand.code, text: brand.name}));
             },
             merchantOptions() {
-                return this.options.merchants.map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+                return this.options.merchants.map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             badgeOptions() {
                 return this.options.availableBadges.map(badge => ({value: badge.code, text: badge.text}));
