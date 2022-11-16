@@ -70,7 +70,7 @@
 
                                 <DxSeries
                                     value-field="aggAmountOrders"
-                                    name="В работе"
+                                    name="Успешные"
                                     color="green"
                                     type="splineArea"
                                     stack="second"
@@ -196,7 +196,7 @@
 
                                 <DxSeries
                                     value-field="aggAmountOrders"
-                                    name="В работе"
+                                    name="Успешные"
                                     color="green"
                                     type="splineArea"
                                     stack="second"
@@ -409,6 +409,7 @@
                         dataType: 'date',
                         sortOrder: "desc",
                         displayFolder: 'Дата',
+                        visible: false,
                     },
                     {
                         caption: "Год",
@@ -483,11 +484,10 @@
                                 return cellInfo.valueText;
                             }
                         },
-                        area: 'data',
                         displayFolder: 'Заказы',
                     },
                     {
-                        caption: 'Заказы в обр., шт',
+                        caption: 'Заказы успеш., шт',
                         dataField: 'countOrders',
                         summaryType: 'sum',
                         format: {
@@ -503,7 +503,7 @@
                         displayFolder: 'Заказы',
                     },
                     {
-                        caption: 'Заказы в обр., р.',
+                        caption: 'Заказы успеш., р.',
                         dataField: 'amountOrders',
                         summaryType: 'sum',
                         dataType: 'number',
@@ -521,7 +521,7 @@
                         displayFolder: 'Заказы',
                     },
                     {
-                        caption: 'Товары в обр. шт',
+                        caption: 'Товары успеш. шт',
                         dataField: 'countProducts',
                         summaryType: 'sum',
                         format: {
@@ -580,6 +580,46 @@
                             }
                         },
                         displayFolder: 'Показатели',
+                    },
+                    {
+                        caption: "Доставка всего, р.",
+                        dataField: "amountDeliveryFull",
+                        dataType: "number",
+                        format: 'fixedPoint',
+                        summaryType: "sum",
+                        customizeText: function (cellInfo) {
+                            if (cellInfo.value) {
+                                return cellInfo.valueText;
+                            }
+                        },
+                        displayFolder: 'Доставка',
+                    },
+                    {
+                        caption: "Доставка отм., р.",
+                        dataField: "amountDeliveryCancel",
+                        dataType: "number",
+                        format: 'fixedPoint',
+                        summaryType: "sum",
+                        customizeText: function (cellInfo) {
+                            if (cellInfo.value) {
+                                return cellInfo.valueText;
+                            }
+                        },
+                        displayFolder: 'Доставка',
+                    },
+                    {
+                        caption: "Доставка, р.",
+                        dataField: "amountDelivery",
+                        dataType: "number",
+                        format: 'fixedPoint',
+                        area: "data",
+                        summaryType: "sum",
+                        customizeText: function (cellInfo) {
+                            if (cellInfo.value) {
+                                return cellInfo.valueText;
+                            }
+                        },
+                        displayFolder: 'Доставка',
                     },
                     {
                         caption: "Отмен., шт",
