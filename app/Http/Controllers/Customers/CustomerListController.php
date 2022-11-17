@@ -39,9 +39,11 @@ class CustomerListController extends Controller
      * Отображаем только РП
      * @return mixed
      */
-    public function listReferralPartner()
+    public function listReferralPartner(UserService $userService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
+        self::$userService = $userService;
 
         return $this->list('Список реферальных партнеров', true);
     }
@@ -57,6 +59,7 @@ class CustomerListController extends Controller
             ->groupBy('registered_by_user_id')
             ->keys()
             ->toArray();
+
         $registeringUsers = self::$userService->users((new RestQuery())->setFilter('id', $registeringUsersIds))
             ->map(function ($item) {
                 return [
