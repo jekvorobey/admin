@@ -812,8 +812,8 @@
             const dataSourceChartFour = new DataSource({
                 store: {
                     url: pathDataSourceChartFour +
-                        '?start=' + moment(dateChartFourStart).format('YYYY-MM-01') +
-                        '&end=' + moment(dateChartFourEnd).format('YYYY-MM-01'),
+                        '?start=' + moment(dateChartFourStart).startOf('month').format('YYYY-MM-DD') +
+                        '&end=' + moment(dateChartFourEnd).endOf('month').format('YYYY-MM-DD'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -890,7 +890,7 @@
             refreshDataSourceChartTwo() {
                 this.dataSourceChartTwo = new DataSource({
                     store: {
-                        url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
+                        url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).startOf('month').format('YYYY-MM-DD'),
                         type: 'odata',
                         version: 4,
                         jsonp: false,
@@ -908,8 +908,8 @@
                 this.dataSourceChartFour = new DataSource({
                     store: {
                         url: this.pathDataSourceChartFour +
-                            '?start=' + moment(this.dateChartFourStart).format('YYYY-MM-01') +
-                            '&end=' + moment(this.dateChartFourEnd).format('YYYY-MM-01'),
+                            '?start=' + moment(this.dateChartFourStart).startOf('month').format('YYYY-MM-DD') +
+                            '&end=' + moment(this.dateChartFourEnd).endOf('month').format('YYYY-MM-DD'),
                         type: 'odata',
                         version: 4,
                         jsonp: false,

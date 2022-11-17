@@ -11,6 +11,8 @@ class AnalyticsDashboardController extends Controller
 {
     public function salesDayByHour(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
         $resultData = $analyticsService->salesDayByHour($request);
 
         return $this->getResponse($request, $resultData);
@@ -18,6 +20,8 @@ class AnalyticsDashboardController extends Controller
 
     public function salesMonthByDay(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
         $resultData = $analyticsService->salesMonthByDay($request);
 
         return $this->getResponse($request, $resultData);
@@ -25,6 +29,8 @@ class AnalyticsDashboardController extends Controller
 
     public function salesYearByMonth(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
         $resultData = $analyticsService->salesYearByMonth($request);
 
         return $this->getResponse($request, $resultData);
@@ -32,6 +38,8 @@ class AnalyticsDashboardController extends Controller
 
     public function salesAllPeriodByDay(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
         $resultData = $analyticsService->salesAllPeriodByDay();
 
         return $this->getResponse($request, $resultData);
