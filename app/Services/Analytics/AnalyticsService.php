@@ -65,12 +65,12 @@ class AnalyticsService
         $analyticsService = app(DashboardsAnalyticsService::class);
 
         $start = $request->get('start');
-        $start = (new \DateTime($start))->format('Y-01-01 00:00:00');
+        $start = (new \DateTime($start))->format('Y-m-01 00:00:00');
 
-        if (!$request->get('start')) {
-            $end = $request->get('end', (new \DateTime())->format('Y-12-31 23:59:59'));
+        if (!$request->get('start') || $request->get('start')) {
+            $end = $request->get('end', (new \DateTime())->format('Y-m-t 23:59:59'));
         } else {
-            $end = (new \DateTime($start))->format('Y-12-31 23:59:59');
+            $end = (new \DateTime($start))->format('Y-m-t 23:59:59');
         }
 
         return $analyticsService->salesYearByMonth($start, $end);

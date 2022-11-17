@@ -38,7 +38,6 @@
                             <DxChart
                                 ref="chartOne"
                                 :data-source="dataSourceChartOne"
-                                :loading-indicator=" { enabled: false } "
                             >
                                 <DxSize :height="420"/>
 
@@ -124,7 +123,7 @@
                                 />
 
                                 <DxExport :enabled="true"/>
-                                <DxLoadingIndicator :enabled="true"/>
+                                <DxLoadingIndicator :enabled="false"/>
                             </DxChart>
                         </div>
                     </div>
@@ -165,7 +164,6 @@
                             <DxChart
                                 ref="chartTwo"
                                 :data-source="dataSourceChartTwo"
-                                :loading-indicator=" { enabled: false } "
                             >
                                 <DxSize :height="420"/>
                                 <DxValueAxis
@@ -250,7 +248,96 @@
                                 />
 
                                 <DxExport :enabled="true"/>
-                                <DxLoadingIndicator :enabled="true"/>
+                                <DxLoadingIndicator :enabled="false"/>
+                            </DxChart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="dx-block-buttons">
+                                <DxButton
+                                    icon="refresh"
+                                    class="float-left mr-1"
+                                    @click="updateDataSourceChartFour()"
+                                />
+                                <DxDateBox
+                                    ref="dateBoxFourStart"
+                                    v-model:value="dateChartFourStart"
+                                    @valueChanged="refreshDataSourceChartFour()"
+                                    class="float-left mr-1"
+                                    style="max-width: 150px"
+                                    type="date"
+                                    display-format="monthAndYear"
+                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
+                                />
+                                <DxDateBox
+                                    ref="dateBoxFourEnd"
+                                    v-model:value="dateChartFourEnd"
+                                    @valueChanged="refreshDataSourceChartFour()"
+                                    class="float-left mr-1"
+                                    style="max-width: 150px"
+                                    type="date"
+                                    display-format="monthAndYear"
+                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
+                                />
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <DxChart
+                                ref="chartFour"
+                                :data-source="dataSourceChartFour"
+                                :loading-indicator=" { enabled: false } "
+                            >
+                                <DxCommonSeriesSettings
+                                    argument-field="month"
+                                    value-field="amountOrders"
+                                    type="stackedbar"
+                                >
+                                </DxCommonSeriesSettings>
+
+                                <DxSeries
+                                    value-field="amountOrders"
+                                    name="Успешные"
+                                    color="rgb(0 128 0 / 60%)"
+                                    stack="first"
+                                />
+
+                                <DxSeries
+                                    value-field="amountOrdersCancel"
+                                    name="Отмены"
+                                    color="rgb(255 0 0 / 60%)"
+                                    stack="first"
+                                />
+
+                                <DxCrosshair
+                                    :enabled="true"
+                                    color="#000"
+                                    dash-style="dot"
+                                >
+                                    <DxLabel
+                                        :visible="true"
+                                        background-color="#555"
+                                    />
+                                </DxCrosshair>
+
+                                <DxTooltip
+                                    :enabled="true"
+                                    :format="{ precision: 0, type: 'fixedPoint' }"
+                                    align="left"
+                                />
+
+                                <DxArgumentAxis :aggregate-by-category="false"/>
+                                <DxLegend
+                                    vertical-alignment="bottom"
+                                    horizontal-alignment="center"
+                                />
+
+                                <DxExport :enabled="true"/>
+                                <DxLoadingIndicator :enabled="false"/>
                             </DxChart>
                         </div>
                     </div>
@@ -289,6 +376,7 @@
         DxLegend,
         DxAdaptiveLayout,
         DxCommonSeriesSettings,
+        DxAggregation,
         DxSize,
         DxTooltip,
         DxValueAxis,
@@ -341,6 +429,7 @@
             DxFieldChooser,
             DxValueAxis,
             DxCommonPaneSettings,
+            DxAggregation,
             DxGrid,
             DxBorder,
             DxLabel,
@@ -359,14 +448,18 @@
 
             const pathDataSourceChartOne = '/api/analytics/dashboard/sales/day-by-hour';
             const pathDataSourceChartTwo = '/api/analytics/dashboard/sales/month-by-day';
+            const pathDataSourceChartFour = '/api/analytics/dashboard/sales/year-by-month';
             const pathDataSourcePivotGridThree = '/api/analytics/dashboard/sales/all-period-by-day';
 
             const dateChartOne = new Date();
             const dateChartTwo = new Date();
+            const dateChartFourEnd = new Date();
+            const dateChartFourStart = new Date();
+            dateChartFourStart.setMonth(dateChartFourStart.getMonth() - 18);
 
             const dataSourceChartOne = new DataSource({
                 store: {
-                    url: pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
+                    url: pathDataSourceChartOne + '?start=' + moment(dateChartOne).format('YYYY-MM-DD'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -376,7 +469,7 @@
 
             const dataSourceChartTwo = new DataSource({
                 store: {
-                    url: pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).format('YYYY-MM-01'),
+                    url: pathDataSourceChartTwo + '?start=' + moment(dateChartTwo).format('YYYY-MM-01'),
                     type: 'odata',
                     version: 4,
                     jsonp: false,
@@ -716,14 +809,30 @@
                 }
             });
 
+            const dataSourceChartFour = new DataSource({
+                store: {
+                    url: pathDataSourceChartFour +
+                        '?start=' + moment(dateChartFourStart).format('YYYY-MM-01') +
+                        '&end=' + moment(dateChartFourEnd).format('YYYY-MM-01'),
+                    type: 'odata',
+                    version: 4,
+                    jsonp: false,
+                },
+                paginate: false,
+            });
+
             return {
                 dataSourceChartOne,
                 dataSourceChartTwo,
+                dataSourceChartFour,
                 dataSourcePivotGridThree,
                 dateChartOne: dateChartOne,
                 dateChartTwo: dateChartTwo,
+                dateChartFourStart: dateChartFourStart,
+                dateChartFourEnd: dateChartFourEnd,
                 pathDataSourceChartOne: pathDataSourceChartOne,
                 pathDataSourceChartTwo: pathDataSourceChartTwo,
+                pathDataSourceChartFour: pathDataSourceChartFour,
                 pathDataSourcePivotGridThree: pathDataSourcePivotGridThree,
                 showTotalsPrior: "columns",
             };
@@ -789,6 +898,26 @@
                     paginate: false,
                 });
                 this.$refs.dateBoxTwo.instance.value = this.dateChartTwo;
+            },
+
+            updateDataSourceChartFour() {
+                this.dataSourceChartFour.reload();
+            },
+
+            refreshDataSourceChartFour() {
+                this.dataSourceChartFour = new DataSource({
+                    store: {
+                        url: this.pathDataSourceChartFour +
+                            '?start=' + moment(this.dateChartFourStart).format('YYYY-MM-01') +
+                            '&end=' + moment(this.dateChartFourEnd).format('YYYY-MM-01'),
+                        type: 'odata',
+                        version: 4,
+                        jsonp: false,
+                    },
+                    paginate: false,
+                })
+                this.$refs.dateBoxFourStart.instance.value = this.dateChartFourStart;
+                this.$refs.dateBoxFourEnd.instance.value = this.dateChartFourEnd;
             },
         },
     };
