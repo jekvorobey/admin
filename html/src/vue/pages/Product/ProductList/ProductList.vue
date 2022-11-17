@@ -113,8 +113,16 @@
         </div>
 
         <div class="d-flex justify-content-between mt-3 mb-3">
-            <div class="action-bar d-flex justify-content-start">
-                <span class="mr-4">Выбрано товаров: {{massAll(massProductsType).length}}</span>
+            <div class="action-bar d-flex justify-content-start align-items-center">
+                <span class="d-flex flex-column align-items-center mr-4">
+                    <span>Выбрано товаров: {{massAll(massProductsType).length}}</span>
+                    <span class="page-size-filter__text">Количество записей:</span>
+                     <f-select class="page-size-filter__select"
+                             @input="this.applyFilter"
+                             v-model="filter.pageSize"
+                             :options="pageSizeOptions"
+                     ></f-select>
+                </span>
                 <b-button-group class="mr-4">
                     <b-button variant="success"
                               v-if="massEmpty(massProductsType)"
@@ -337,6 +345,7 @@
         dateFrom: null,
         dateTo: null,
         isPriceHidden: null,
+        pageSize: null,
     };
 
     const cleanFilter = Object.assign({
@@ -689,6 +698,16 @@
                     {value: false, text: 'Нет'},
                 ];
             },
+            pageSizeOptions() {
+                return [
+                    {value: 10, text: 'по 10'},
+                    {value: 20, text: 'по 20'},
+                    {value: 50, text: 'по 50'},
+                    {value: 100, text: 'по 100'},
+                    {value: 200, text: 'по 200'},
+                    {value: 500, text: 'по 500'},
+                ]
+            },
             priceHiddenOptions() {
                 return [
                   {value: false, text: 'Цены видны'},
@@ -733,5 +752,12 @@
     .shild-group-btn {
         margin: 0;
         width: 100%;
+    }
+    .page-size-filter__select {
+        height: auto;
+        line-height: 0;
+    }
+    .page-size-filter__text {
+        font-size: 12px;
     }
 </style>
