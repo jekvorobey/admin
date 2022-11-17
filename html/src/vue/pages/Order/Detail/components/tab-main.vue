@@ -26,7 +26,7 @@
                 <div class="col-sm-4">
                     <span class="font-weight-bold">Мерчанты:</span>
                     <template v-for="(merchant, key) in order.merchants">
-                        <span v-if="key > 0">, </span><a :href="getRoute('merchant.detail', {id: merchant.id})" target="_blank">{{ merchant.legal_name }}</a>
+                        <span v-if="key > 0">, </span><a :href="getRoute('merchant.detail', {id: merchant.id})" target="_blank">{{ merchant.name }}</a>
                     </template>
                 </div>
                 <div class="col-sm-4">

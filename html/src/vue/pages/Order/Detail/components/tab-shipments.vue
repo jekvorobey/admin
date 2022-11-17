@@ -101,7 +101,7 @@
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Мерчант:</span>
                     <a :href="getRoute('merchant.detail', {id: shipment.merchant.id})"
-                       target="_blank">{{ shipment.merchant.legal_name }}</a>
+                       target="_blank">{{ shipment.merchant.name }}</a>
                 </div>
                 <div class="col-sm-6">
                     <span class="font-weight-bold">Склад:</span>
