@@ -14,6 +14,7 @@ use Greensight\Customer\Dto\ReferralBillOperationDto;
 use Greensight\Customer\Dto\ReferralOrderHistoryDto;
 use Greensight\Customer\Services\ReferralService\Dto\GetReferralOrderHistoryDto;
 use Greensight\Customer\Services\ReferralService\ReferralService;
+use Greensight\Oms\Services\OrderService\OrderService;
 use Illuminate\Http\JsonResponse;
 
 class TabOrderReferrerController extends Controller
@@ -70,7 +71,7 @@ class TabOrderReferrerController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
-        $referralService->deleteReferralOrderHistory((int) $id, (int) $history_id);
+        $referralService->deleteReferralOrderHistory((int)$id, (int)$history_id);
 
         return response()->json([
             'orders' => $this->loadOrders($id),
@@ -83,9 +84,9 @@ class TabOrderReferrerController extends Controller
         $referralService = resolve(ReferralService::class);
         $referralOrderHistories = $referralService->getReferralOrderHistories(
             (new GetReferralOrderHistoryDto())
-            ->setReferralId($customer_id)
-            ->setRelations(['billOperation'])
-            ->setSort('order_date', 'desc')
+                ->setReferralId($customer_id)
+                ->setRelations(['billOperation'])
+                ->setSort('order_date', 'desc')
         );
 
         [$returnReferralOrderHistories, $referralOrderHistories] =
@@ -95,7 +96,7 @@ class TabOrderReferrerController extends Controller
             return collect();
         }
 
-        return $referralOrderHistories
+        $referralOrderHistories
             ->map(function (ReferralOrderHistoryDto $orderHistoryDto) use ($returnReferralOrderHistories) {
                 $hasReturnedOperation = $returnReferralOrderHistories
                     ->where('order_number', $orderHistoryDto->order_number)
@@ -114,5 +115,18 @@ class TabOrderReferrerController extends Controller
                     'is_returned' => $hasReturnedOperation,
                 ];
             });
+
+        $orderFilter = [];
+        foreach ($referralOrderHistories as $referralOrderHistory) {
+            $orderFilter[] = $referralOrderHistory->order_number;
+        }
+        $orderService = resolve(OrderService::class);
+        $restQuery = $orderService->newQuery()->addFields('id')->setFilter('number', $orderFilter);
+        $ordersIds = $orderService->orders($restQuery)->pluck('id', 'number')->toArray();
+
+        $referralOrderHistories->each(function ($item) use ($ordersIds) {
+            $item->order_id = array_key_exists($item->order_number, $ordersIds) ? $ordersIds[$item->order_number] : null;
+        });
+        return $referralOrderHistories;
     }
 }

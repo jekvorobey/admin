@@ -41,6 +41,10 @@
                     <span class="font-weight-bold">Стоимость заказа без скидки:</span> {{preparePrice(order.cost)}} руб.
                 </div>
                 <div class="col-sm-4">
+                    <span class="font-weight-bold">Примененные скидки:</span>
+                    <div v-for="field in order.discounts">{{field.name}}</div>
+                </div>
+                <div class="col-sm-4">
                     <span class="font-weight-bold">Скидка заказа:</span> {{preparePrice(order.discount)}} руб.
                 </div>
             </b-row>

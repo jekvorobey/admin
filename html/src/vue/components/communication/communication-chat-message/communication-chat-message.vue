@@ -1,8 +1,13 @@
 <template>
     <div>
         <h3>Сообщение</h3>
-        <b-form-textarea v-model="form.message"/>
+        <b-form-textarea v-model="form.message" :class="{'error-input' :errorEmptyMessage}"/>
+        <transition name="fade">
+            <span v-if="errorEmptyMessage" class="error-message">Это обязательное поле для заполнения</span>
+        </transition>
+
         <hr/>
+
         <h3>Файлы</h3>
         <div v-for="(file, key) in form.files">
             <file-input v-if="!file.is_load"
@@ -40,6 +45,7 @@ export default {
         }
         return {
             sendButtonName: sendButtonName,
+            errorEmptyMessage: false,
             form: {
                 message: '',
                 files: [
@@ -72,6 +78,12 @@ export default {
             ];
         },
         onClickSend() {
+            if (!this.form.message) {
+                this.errorEmptyMessage = true;
+                return
+            }
+
+            this.errorEmptyMessage = false;
             const files = [];
             this.form.files.forEach(file => {
                 if (file.is_load && file.file.id) {
@@ -88,5 +100,10 @@ export default {
 </script>
 
 <style scoped>
-
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
 </style>

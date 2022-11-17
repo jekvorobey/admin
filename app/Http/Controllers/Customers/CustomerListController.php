@@ -20,13 +20,17 @@ class CustomerListController extends Controller
 {
     public const PER_PAGE = 10;
 
+    private static $userService;
+
     /**
      * Отображаем всех пользователей
      * @return mixed
      */
-    public function listProfessional()
+    public function listProfessional(UserService $userService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
+        self::$userService = $userService;
 
         return $this->list('Клиентская база');
     }
@@ -35,9 +39,11 @@ class CustomerListController extends Controller
      * Отображаем только РП
      * @return mixed
      */
-    public function listReferralPartner()
+    public function listReferralPartner(UserService $userService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
+
+        self::$userService = $userService;
 
         return $this->list('Список реферальных партнеров', true);
     }
@@ -48,11 +54,26 @@ class CustomerListController extends Controller
 
         $this->title = $title;
 
+        $registeringUsersIds = self::$userService->users((new RestQuery())
+            ->setFilter('registered_by_user_id', 'notNull', null))
+            ->groupBy('registered_by_user_id')
+            ->keys()
+            ->toArray();
+
+        $registeringUsers = self::$userService->users((new RestQuery())->setFilter('id', $registeringUsersIds))
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'full_name' => $item->full_name,
+                ];
+            });
+
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
+            'registeringUsers' => $registeringUsers,
         ]);
     }
 
@@ -73,6 +94,8 @@ class CustomerListController extends Controller
             'isReferral' => 'required|boolean',
             'page' => 'nullable',
             'role' => 'nullable',
+            'has_password' => 'nullable',
+            'registered_by_user_id' => 'nullable'
         ]);
 
         $restQueryUser = new RestQuery();
@@ -112,6 +135,16 @@ class CustomerListController extends Controller
         if (!empty($filter['gender'])) {
             $restQueryUser->setFilter('gender', '=', $filter['gender']);
         }
+        if (!empty($filter['has_password'])) {
+            if ($filter['has_password'] === 'yes') {
+                $restQueryUser->setFilter('password', 'notNull', null);
+            } elseif ($filter['has_password'] === 'no') {
+                $restQueryUser->setFilter('password', 'null', null);
+            }
+        }
+        if (!empty($filter['registered_by_user_id'])) {
+            $restQueryUser->setFilter('registered_by_user_id', $filter['registered_by_user_id']);
+        }
 
         $restQueryUser->setFilter('front', Front::FRONT_SHOWCASE)
             ->addSort('id', 'desc')
@@ -150,6 +183,8 @@ class CustomerListController extends Controller
                 'segment' => '', //TODO
                 'last_visit' => '', //TODO
                 'gender' => $customer->gender,
+                'has_password' => $user->has_password,
+                'registered_by_user_id' => $user->registered_by_user_id,
             ];
         })->filter()->values();
 
@@ -160,10 +195,11 @@ class CustomerListController extends Controller
     }
 
     public function create(
-        UserService $userService,
-        CustomerService $customerService,
+        UserService      $userService,
+        CustomerService  $customerService,
         RequestInitiator $requestInitiator
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         $data = $this->validate(request(), [

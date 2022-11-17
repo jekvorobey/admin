@@ -24,6 +24,8 @@ import Media from '../scripts/media.js';
 import * as moment from 'moment';
 import {mapGetters} from 'vuex';
 
+import 'devextreme/dist/css/dx.light.css';
+
 import './plugins/VueUploadComponent';
 
 Vue.use(BootstrapVue);
