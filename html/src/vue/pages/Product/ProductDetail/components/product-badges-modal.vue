@@ -111,17 +111,31 @@
 
                         if (checkedArray.includes(this.badges[field].id)) {
                             this.productBadges.push(obj)
+                            // obj['start_at'] = checkedArray[this.badges[field].id]['start_at']
                         }
                     }
                 }
             },
+            prepareDataToServer(data) {
+                let res = {}
+                data.forEach(item => {
+                    res[item['id']] = {
+                        'start_at': item['start_at'],
+                        'end_at': item['end_at']
+                    }
+                })
+
+                console.log(res)
+                return res;
+            },
             updateBadges() {
                 console.log('обновление шильдиков')
                 Services.showLoader();
+                let serverData = this.prepareDataToServer(this.productBadges);
                 Services.net().put(this.getRoute('products.updateBadges', {}),
                     {
                         product_ids: this.productId,
-                        badges: JSON.stringify(this.productBadges)
+                        badges: JSON.stringify(serverData)
                     }
                 ).then(() => {
                     Services.msg('Шильдики товара успешно обновлены')
