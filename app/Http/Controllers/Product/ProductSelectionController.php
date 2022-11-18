@@ -32,7 +32,7 @@ class ProductSelectionController extends Controller
             'iCurrentPage' => $request->get('page', 1),
             'iFilter' => $request->get('filter', []),
             'options' => [
-                'merchants' => $this->getMerchants()->pluck('legal_name', 'id'),
+                'merchants' => $this->getMerchants()->pluck('name', 'id'),
             ],
         ]);
     }
@@ -80,13 +80,13 @@ class ProductSelectionController extends Controller
 
         $merchants = $merchantService
             ->newQuery()
-            ->addFields(MerchantDto::entity(), 'id', 'legal_name')
+            ->addFields(MerchantDto::entity(), 'id', 'name')
             ->setFilter('id', $merchantIds)
             ->merchants()
             ->keyBy('id');
 
         $productSearchResult->products = array_map(function ($product) use ($merchants) {
-            $product['merchantName'] = $merchants->has($product['merchantId']) ? $merchants->get($product['merchantId'])->legal_name : 'N/A';
+            $product['merchantName'] = $merchants->has($product['merchantId']) ? $merchants->get($product['merchantId'])->name : 'N/A';
             return $product;
         }, $productSearchResult->products);
 
