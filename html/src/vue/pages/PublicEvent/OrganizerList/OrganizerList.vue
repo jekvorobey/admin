@@ -372,7 +372,7 @@
                 }
             },
             merchantOptions() {
-              return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+              return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             errorName() {
                 if (this.$v.form.name.$dirty) {
