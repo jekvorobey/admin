@@ -5,8 +5,12 @@ import Services from './services';
 function paramSerialise(params) {
     if (params.filter) {
         for (const [key, value] of Object.entries(params.filter)) {
-            if (value.includes('#')) {
-                params.filter[key] = value.replace(/#/g, "%23");
+            try {
+                if (typeof value === 'string' && value.includes('#')) {
+                    params.filter[key] = value.replace(/#/g, "%23");
+                }
+            } catch(e) {
+                console.log(e)
             }
         }
     }
