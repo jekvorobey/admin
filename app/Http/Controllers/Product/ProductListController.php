@@ -52,7 +52,6 @@ class ProductListController extends Controller
                 return $product;
             }, $productSearchResult->products);
         }
-
         $offers = $offerService->offers(
             (new RestQuery())
                 ->setFilter('product_id', $productIds)
@@ -65,6 +64,7 @@ class ProductListController extends Controller
             $product['offerId'] = $offers[$product['id']] ?? null;
             return $product;
         }, $productSearchResult->products);
+
 
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
