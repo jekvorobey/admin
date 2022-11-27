@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "4b0e3dd1d181504b77ee59d83824518f",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1757,12 +1757,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-pim-lib.git",
-                "reference": "4ee7ac13b8f52571972d55095245de2351748320"
+                "reference": "8f4376f6f5eafc7a1802defb27e10d7b39653f85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=4ee7ac13b8f52571972d55095245de2351748320",
-                "reference": "4ee7ac13b8f52571972d55095245de2351748320",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=8f4376f6f5eafc7a1802defb27e10d7b39653f85",
+                "reference": "8f4376f6f5eafc7a1802defb27e10d7b39653f85",
                 "shasum": ""
             },
             "require": {
@@ -1789,7 +1789,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965556/issues"
             },
-            "time": "2022-07-12T07:47:39+00:00"
+            "time": "2022-09-05T23:50:23+03:00"
         },
         {
             "name": "ibt/reports-lib",
