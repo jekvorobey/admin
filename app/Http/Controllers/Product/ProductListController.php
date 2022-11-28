@@ -17,9 +17,9 @@ use Pim\Dto\Product\ProductProductionStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\BrandService\BrandService;
 use Pim\Services\CategoryService\CategoryService;
+use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Pim\Services\SearchService\SearchService;
-use Pim\Services\OfferService\OfferService;
 use Pim\Services\ShoppilotService\ShoppilotService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -185,30 +185,9 @@ class ProductListController extends Controller
         ]);
 
         $productIds = $data['product_ids'];
-        $badges = $data['badges'] ?? null;
+        $badges = json_decode($data['badges']) ?? null;
+
         $productService->updateBadges($productIds, $badges);
-
-        return response('', 204);
-    }
-
-    /**
-     * Прикрепить шильдики к товарам
-     */
-    public function attachBadges(ProductService $productService): Response
-    {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
-
-        $data = $this->validate(request(), [
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'integer',
-            'badges' => 'nullable|json',
-            'period' => 'nullable|json',
-        ]);
-
-        $productIds = $data['product_ids'];
-        $badges = $data['badges'] ?? null;
-        $period = $data['period'] ?? null;
-        $productService->attachBadges($productIds, $badges, $period);
 
         return response('', 204);
     }

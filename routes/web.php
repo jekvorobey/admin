@@ -688,7 +688,6 @@ Route::middleware('auth')->group(function () {
         Route::put('archive', [ProductListController::class, 'updateArchiveStatus'])->name('products.massArchive');
         Route::prefix('badges')->group(function () {
             Route::put('update', [ProductListController::class, 'updateBadges'])->name('products.updateBadges');
-            Route::put('attach', [ProductListController::class, 'attachBadges'])->name('products.attachBadges');
             Route::put('detach', [ProductListController::class, 'detachBadges'])->name('products.detachBadges');
         });
 
