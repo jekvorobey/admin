@@ -1,5 +1,4 @@
 {
-
     "_readme": [
         "This file locks the dependencies of your project to a known state",
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
@@ -1758,18 +1757,18 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-pim-lib.git",
-                "reference": "8f4376f6f5eafc7a1802defb27e10d7b39653f85"
+                "reference": "f1434493bfe5f63a1147ccbcb5411b4291a541b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=8f4376f6f5eafc7a1802defb27e10d7b39653f85",
-                "reference": "8f4376f6f5eafc7a1802defb27e10d7b39653f85",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=f1434493bfe5f63a1147ccbcb5411b4291a541b2",
+                "reference": "f1434493bfe5f63a1147ccbcb5411b4291a541b2",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ibt/common-lib": "dev-master",
-                "php": "^7.1.3|^8.1"
+                "php": "^7.1.3"
             },
             "require-dev": {
                 "laravel/framework": "^5.8"
@@ -1790,7 +1789,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965556/issues"
             },
-            "time": "2022-09-05T23:50:23+03:00"
+            "time": "2022-11-29T00:18:56+04:00"
         },
         {
             "name": "ibt/reports-lib",
