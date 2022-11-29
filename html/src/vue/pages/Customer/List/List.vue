@@ -151,7 +151,7 @@ const defaultFilter = {
 
 export default {
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate},
-    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers'],
+    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers', 'options'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',

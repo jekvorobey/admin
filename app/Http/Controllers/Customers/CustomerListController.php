@@ -11,6 +11,7 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
@@ -21,16 +22,18 @@ class CustomerListController extends Controller
     public const PER_PAGE = 10;
 
     private static $userService;
+    private static $roleService;
 
     /**
      * Отображаем всех пользователей
      * @return mixed
      */
-    public function listProfessional(UserService $userService)
+    public function listProfessional(UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         self::$userService = $userService;
+        self::$roleService = $roleService;
 
         return $this->list('Клиентская база');
     }
@@ -39,11 +42,12 @@ class CustomerListController extends Controller
      * Отображаем только РП
      * @return mixed
      */
-    public function listReferralPartner(UserService $userService)
+    public function listReferralPartner(UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         self::$userService = $userService;
+        self::$roleService = $roleService;
 
         return $this->list('Список реферальных партнеров', true);
     }
@@ -74,6 +78,10 @@ class CustomerListController extends Controller
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
             'registeringUsers' => $registeringUsers,
+            'options' => [
+                'fronts' => Front::allFronts(),
+                'roles' => self::$roleService->roles(),
+            ],
         ]);
     }
 
