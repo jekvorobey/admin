@@ -22,7 +22,6 @@ class CustomerListController extends Controller
     public const PER_PAGE = 10;
 
     private static $userService;
-    private static $roleService;
 
     /**
      * Отображаем всех пользователей
@@ -33,9 +32,26 @@ class CustomerListController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         self::$userService = $userService;
-        self::$roleService = $roleService;
+        $options = [
+            'fronts' => Front::allFronts(),
+            'roles' => $roleService->roles(),
+            'canAddUsers' => self::canAddUsers()
+        ];
 
-        return $this->list('Клиентская база');
+        return $this->list('Клиентская база', options: $options,);
+    }
+
+    /**
+     * Проверяем есть ли у пользователя права для добавления пользователей
+     * @return boolean
+     */
+    private static function canAddUsers()
+    {
+        $RequestInitiator = resolve(RequestInitiator::class);
+        return
+            $RequestInitiator->hasRole(RoleDto::ROLE_ADMINISTRATOR)
+            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC)
+            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC);
     }
 
     /**
@@ -47,12 +63,11 @@ class CustomerListController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         self::$userService = $userService;
-        self::$roleService = $roleService;
 
         return $this->list('Список реферальных партнеров', true);
     }
 
-    protected function list($title, $isReferral = null)
+    protected function list($title, $isReferral = null, $options = null)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -78,10 +93,7 @@ class CustomerListController extends Controller
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
             'registeringUsers' => $registeringUsers,
-            'options' => [
-                'fronts' => Front::allFronts(),
-                'roles' => self::$roleService->roles(),
-            ],
+            'options' => $options,
         ]);
     }
 
