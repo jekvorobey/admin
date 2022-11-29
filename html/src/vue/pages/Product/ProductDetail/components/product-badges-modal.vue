@@ -43,7 +43,7 @@
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-danger">Отмена</b-button>
                 <button v-if="onUpdate" @click="updateBadges" class="btn btn-success">Обновить</button>
-                <button v-if="onAdd" @click="addBadges" class="btn btn-success">Добавить</button>
+                <button v-if="onAdd" @click="updateBadges" class="btn btn-success">Добавить</button>
                 <button v-if="onDelete" @click="deleteBadges" class="btn btn-success">Удалить</button>
             </div>
         </template>
@@ -111,31 +111,16 @@
 
                         if (checkedArray.includes(this.badges[field].id)) {
                             this.productBadges.push(obj)
-                            // obj['start_at'] = checkedArray[this.badges[field].id]['start_at']
                         }
                     }
                 }
             },
-            prepareDataToServer(data) {
-                let res = {}
-                data.forEach(item => {
-                    res[item['id']] = {
-                        'start_at': item['start_at'],
-                        'end_at': item['end_at']
-                    }
-                })
-
-                console.log(res)
-                return res;
-            },
             updateBadges() {
-                console.log('обновление шильдиков')
                 Services.showLoader();
-                let serverData = this.prepareDataToServer(this.productBadges);
                 Services.net().put(this.getRoute('products.updateBadges', {}),
                     {
                         product_ids: this.productId,
-                        badges: JSON.stringify(serverData)
+                        badges: JSON.stringify(this.productBadges)
                     }
                 ).then(() => {
                     Services.msg('Шильдики товара успешно обновлены')
@@ -147,25 +132,7 @@
                     Services.hideLoader();
                 })
             },
-            addBadges() {
-                Services.showLoader();
-                Services.net().put(this.getRoute('products.updateBadges', {}),
-                    {
-                        product_ids: this.productId,
-                        badges: JSON.stringify(this.productBadges)
-                    }
-                ).then(() => {
-                    Services.msg('Шильдики товара успешно добавлены')
-                    this.$emit('save', this.productBadges)
-                    this.$bvModal.hide("productBadgesEdit");
-                }, () => {
-                    Services.msg('Не удалось сохранить изменения', 'danger')
-                }).finally(() => {
-                    Services.hideLoader();
-                })
-            },
             deleteBadges() {
-                console.log('удаление шильдиков')
                 Services.showLoader();
                 Services.net().put(this.getRoute('products.detachBadges', {}),
                     {
