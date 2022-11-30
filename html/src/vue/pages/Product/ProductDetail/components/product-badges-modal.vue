@@ -42,9 +42,8 @@
 
             <div class="float-right mt-3">
                 <b-button @click="close()" variant="outline-danger">Отмена</b-button>
-                <button v-if="onUpdate" @click="updateBadges" class="btn btn-success">Обновить</button>
-                <button v-if="onAdd" @click="updateBadges" class="btn btn-success">Добавить</button>
-                <button v-if="onDelete" @click="deleteBadges" class="btn btn-success">Удалить</button>
+                <button v-if="onAdd || onUpdate" @click="updateBadges" class="btn btn-success">Добавить</button>
+                <button v-if="onDelete || onUpdate" @click="deleteBadges" class="btn btn-danger">Удалить</button>
             </div>
         </template>
     </b-modal>
@@ -82,7 +81,14 @@
             }
         },
         methods: {
+            prepareUpdateBadgesToDelete() {
+                let res = [];
+                this.productBadges.forEach(item => res.push(item.id));
+
+                this.productBadges = res;
+            },
             initiateModal() {
+                console.log('initiateModal')
                 this.productBadges = this.attachedBadges ? this.attachedBadges : [];
 
                 let checkedArray = this.productBadges;
@@ -112,6 +118,11 @@
                         if (checkedArray.includes(this.badges[field].id)) {
                             this.productBadges.push(obj)
                         }
+                        checkedArray.forEach(item => {
+                            if (typeof item === 'object' && item.id === this.badges[field].id) {
+                                this.productBadges.push(obj)
+                            }
+                        })
                     }
                 }
             },
@@ -129,10 +140,13 @@
                 }, () => {
                     Services.msg('Не удалось сохранить изменения', 'danger')
                 }).finally(() => {
-                    Services.hideLoader();
+                    if (this.onUpdate) window.location.reload()
+                    else Services.hideLoader();
                 })
             },
             deleteBadges() {
+                if (this.onUpdate) this.prepareUpdateBadgesToDelete();
+
                 Services.showLoader();
                 Services.net().put(this.getRoute('products.detachBadges', {}),
                     {
@@ -141,12 +155,13 @@
                     }
                 ).then(() => {
                     Services.msg('Шильдики товара успешно удалены')
-                    this.$emit('save', this.productBadges)
+                    this.$emit('save', this.productBadges, 'delete')
                     this.$bvModal.hide("productBadgesEdit");
                 }, () => {
                     Services.msg('Не удалось сохранить изменения', 'danger')
                 }).finally(() => {
-                    Services.hideLoader();
+                    if (this.onUpdate) window.location.reload()
+                    else Services.hideLoader();
                 })
             },
             checkIncludesID(id) {
@@ -158,6 +173,9 @@
                 return false
             }
         },
+        mounted() {
+            this.initiateModal()
+        }
     }
 </script>
 
