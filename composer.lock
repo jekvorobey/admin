@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b0e3dd1d181504b77ee59d83824518f",
+    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1753,26 +1753,27 @@
         },
         {
             "name": "ibt/pim-lib",
-            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-pim-lib.git",
-                "reference": "f1434493bfe5f63a1147ccbcb5411b4291a541b2"
+                "reference": "86ed921fae5c4bbd1178e3250302d9e557af2c39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=f1434493bfe5f63a1147ccbcb5411b4291a541b2",
-                "reference": "f1434493bfe5f63a1147ccbcb5411b4291a541b2",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=86ed921fae5c4bbd1178e3250302d9e557af2c39",
+                "reference": "86ed921fae5c4bbd1178e3250302d9e557af2c39",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ibt/common-lib": "dev-master",
-                "php": "^7.1.3"
+                "php": "^7.1.3|^8.1"
             },
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1789,7 +1790,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965556/issues"
             },
-            "time": "2022-11-29T00:18:56+04:00"
+            "time": "2022-12-01T08:08:35+00:00"
         },
         {
             "name": "ibt/reports-lib",
@@ -11208,14 +11209,7 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "ibt/pim-lib",
-            "version": "dev-feature/BX-7481-addProductBadgesActivePeriod",
-            "alias": "dev-master",
-            "alias_normalized": "dev-master"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
