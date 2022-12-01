@@ -74,6 +74,10 @@
                     <b-button type="submit" variant="dark">Искать</b-button>
                     <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser">Создать</b-button>
                     <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
+                    <button v-if="options.canAddUsers" @click="openModal('userAdd')" class="btn btn-success d-block mt-4">
+                        <fa-icon icon="plus"/>
+                        Добавить пользователя
+                    </button>
                 </b-form>
             </div>
         </div>
@@ -123,6 +127,8 @@
         />
 
         <modal-create-user v-if="!isReferral && canUpdate(blocks.clients)" :id="modalIdCreateUser"/>
+        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
+                        @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
 
@@ -134,7 +140,9 @@ import VDate from '../../../components/controls/VDate/VDate.vue';
 import FDate from '../../../components/filter/f-date.vue';
 import { telMask } from '../../../../scripts/mask.js';
 import Services from '../../../../scripts/services/services.js';
+import modalMixin from '../../../mixins/modal.js';
 import ModalCreateUser from './components/modal-create-user.vue';
+import UserAddModal from '../../Settings/components/user-add-modal.vue';
 
 const defaultFilter = {
     status: null,
@@ -150,8 +158,9 @@ const defaultFilter = {
 };
 
 export default {
-    components: {ModalCreateUser, VInput, VSelect, VDate, FDate},
-    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers'],
+    mixins: [modalMixin],
+    components: {ModalCreateUser, VInput, VSelect, VDate, FDate, UserAddModal},
+    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers', 'options'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',
@@ -210,7 +219,11 @@ export default {
         cleanFilter() {
             this.filter = {...defaultFilter};
             this.applyFilters();
-        }
+        },
+        onUserCreated(newData) {
+            Object.assign(this.users, newData);
+            this.showMessageBox({text: "Пользователь создан!"});
+        },
     },
     filters : {
         userHasPassword(value) {

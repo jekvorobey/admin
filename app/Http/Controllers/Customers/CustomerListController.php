@@ -11,9 +11,11 @@ use Greensight\CommonMsa\Dto\UserDto;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
+use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
@@ -26,20 +28,39 @@ class CustomerListController extends Controller
      * Отображаем всех пользователей
      * @return mixed
      */
-    public function listProfessional(UserService $userService)
+    public function listProfessional(UserService $userService, RoleService $roleService, MerchantService $merchantService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
         self::$userService = $userService;
+        $options = [
+            'fronts' => Front::allFronts(),
+            'roles' => $roleService->roles(),
+            'merchants' => $merchantService->merchants(),
+            'canAddUsers' => self::canAddUsers()
+        ];
 
-        return $this->list('Клиентская база');
+        return $this->list('Клиентская база', options: $options,);
+    }
+
+    /**
+     * Проверяем есть ли у пользователя права для добавления пользователей
+     * @return boolean
+     */
+    private static function canAddUsers()
+    {
+        $RequestInitiator = resolve(RequestInitiator::class);
+        return
+            $RequestInitiator->hasRole(RoleDto::ROLE_ADMINISTRATOR)
+            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC)
+            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC);
     }
 
     /**
      * Отображаем только РП
      * @return mixed
      */
-    public function listReferralPartner(UserService $userService)
+    public function listReferralPartner(UserService $userService, RoleService $roleService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -48,7 +69,7 @@ class CustomerListController extends Controller
         return $this->list('Список реферальных партнеров', true);
     }
 
-    protected function list($title, $isReferral = null)
+    protected function list($title, $isReferral = null, $options = null)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -74,6 +95,7 @@ class CustomerListController extends Controller
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
             'registeringUsers' => $registeringUsers,
+            'options' => $options,
         ]);
     }
 
