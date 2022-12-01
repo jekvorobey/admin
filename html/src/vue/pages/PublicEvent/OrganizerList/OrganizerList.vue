@@ -72,7 +72,11 @@
                     <div class="form-group">
                         <v-input v-model="$v.form.name.$model" :error="errorName">Название*</v-input>
                         <b-form-checkbox v-model="$v.form.company.$model" @change="changeCompany">Юр. лицо*</b-form-checkbox>
-                        <f-select  :disabled="$v.form.company.$model == false" v-model="$v.form.merchant_id.$model" :options="merchantOptions" >Мерчант</f-select>
+                        <f-custom-search-select
+                            :isDisabled="$v.form.company.$model == false"
+                            v-model="$v.form.merchant_id.$model"
+                            :options="merchantOptions"
+                        >Мерчант</f-custom-search-select>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_name.$model">ФИО контакта</v-input>
                         <v-input :disabled="$v.form.company.$model == false" v-model="$v.form.contact_description.$model">Описание контакта</v-input>
                         <v-input v-model="$v.form.phone.$model" :placeholder="telPlaceholder" :error="errorPhone" v-mask="telMask" autocomplete="off">Телефон*</v-input>
@@ -115,6 +119,7 @@
 <script>
     import withQuery from 'with-query';
     import FSelect from '../../../components/filter/f-select.vue';
+    import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
     import ScrollBtns from '../../../components/scroll-btns/scroll-btns.vue'
     import { mapActions, mapGetters } from 'vuex';
 
@@ -158,7 +163,8 @@
             VInput,
             FileInput,
             VDeleteButton,
-            ScrollBtns
+            ScrollBtns,
+            FCustomSearchSelect
         },
         props: {
             iOrganizers: {},
@@ -372,7 +378,7 @@
                 }
             },
             merchantOptions() {
-              return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.legal_name}));
+              return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
             },
             errorName() {
                 if (this.$v.form.name.$dirty) {
