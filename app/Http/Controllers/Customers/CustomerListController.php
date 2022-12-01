@@ -15,6 +15,7 @@ use Greensight\CommonMsa\Services\RoleService\RoleService;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Customer\Services\CustomerService\CustomerService;
 use Illuminate\Http\JsonResponse;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CustomerListController extends Controller
@@ -27,7 +28,7 @@ class CustomerListController extends Controller
      * Отображаем всех пользователей
      * @return mixed
      */
-    public function listProfessional(UserService $userService, RoleService $roleService)
+    public function listProfessional(UserService $userService, RoleService $roleService, MerchantService $merchantService)
     {
         $this->canView(BlockDto::ADMIN_BLOCK_CLIENTS);
 
@@ -35,6 +36,7 @@ class CustomerListController extends Controller
         $options = [
             'fronts' => Front::allFronts(),
             'roles' => $roleService->roles(),
+            'merchants' => $merchantService->merchants(),
             'canAddUsers' => self::canAddUsers()
         ];
 
