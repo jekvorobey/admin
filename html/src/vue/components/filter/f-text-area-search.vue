@@ -23,15 +23,6 @@
         },
         methods: {
             input(e) {
-                // Красивый парсинг ввода для артикулов без пробелов
-                // let cleanVal = e.target.value.replace(/(\r\n|\n|\r|\t)/gm, ","),
-                //     splitVal = cleanVal.split(','),
-                //     result = splitVal.filter(item => item !== ""),
-                //     totalResult = [];
-                //
-                // result.forEach(item => totalResult.push(...item.split(' ')))
-                // this.$emit('input', totalResult);
-
                 // Парсинг переноса строк и табуляции, формирования массива - разделитель запятая
                 this.$emit('input', e.target.value.replace(/[\r\n\t]+/g, ',').split(','))
             },
