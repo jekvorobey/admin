@@ -686,7 +686,10 @@ Route::middleware('auth')->group(function () {
         Route::put('approval', [ProductListController::class, 'updateApprovalStatus'])->name('products.massApproval');
         Route::put('production', [ProductListController::class, 'updateProductionStatus'])->name('products.massProduction');
         Route::put('archive', [ProductListController::class, 'updateArchiveStatus'])->name('products.massArchive');
-        Route::put('badges', [ProductListController::class, 'attachBadges'])->name('products.attachBadges');
+        Route::prefix('badges')->group(function () {
+            Route::put('update', [ProductListController::class, 'updateBadges'])->name('products.updateBadges');
+            Route::put('detach', [ProductListController::class, 'detachBadges'])->name('products.detachBadges');
+        });
 
         Route::prefix('properties')->group(function () {
             Route::get('', [PropertiesController::class, 'list'])->name('products.properties.list');

@@ -1757,12 +1757,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-pim-lib.git",
-                "reference": "4ee7ac13b8f52571972d55095245de2351748320"
+                "reference": "86ed921fae5c4bbd1178e3250302d9e557af2c39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=4ee7ac13b8f52571972d55095245de2351748320",
-                "reference": "4ee7ac13b8f52571972d55095245de2351748320",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=86ed921fae5c4bbd1178e3250302d9e557af2c39",
+                "reference": "86ed921fae5c4bbd1178e3250302d9e557af2c39",
                 "shasum": ""
             },
             "require": {
@@ -1790,7 +1790,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965556/issues"
             },
-            "time": "2022-07-12T07:47:39+00:00"
+            "time": "2022-12-01T08:08:35+00:00"
         },
         {
             "name": "ibt/reports-lib",

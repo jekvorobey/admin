@@ -24,8 +24,8 @@
             <shadow-card title="Шильдики на товаре"
                          :buttons="canUpdate(blocks.products) ? {onEdit:'pencil-alt'} : {}"
                          @onEdit="openBadgesEditModal">
-                <ul v-if="product_badges.length > 0">
-                    <li v-for="badge in product_badges" v-if="options.availableBadges[badge]">
+                <ul v-if="activeBadges.length > 0">
+                    <li v-for="badge in activeBadges">
                         <h5>
                             <span class="badge badge-dark">
                                 {{ options.availableBadges[badge].text }}
@@ -132,11 +132,25 @@ export default {
         data() {
             return {
                 product_ingredients: this.composition(),
-                product_badges: this.sortBadges(this.badges)
+                product_badges: this.sortBadges(this.badges),
+                activeBadges: this.badges
             }
         },
         methods: {
-            updateBadges(badges) {
+            updateBadges(badges, option=null) {
+                if (option && option === 'delete') {
+                   this.activeBadges = this.activeBadges.filter((item, idx) => item !== badges[idx])
+                } else {
+                    this.activeBadges = []
+                    badges.forEach(item => {
+                        if(typeof item === 'object') {
+                            this.activeBadges.push(item.id)
+                        } else {
+                            this.activeBadges.push(item)
+                        }
+                    })
+                }
+
                 this.product_badges = this.sortBadges(badges);
             },
             sortBadges(badgesToSort) {
