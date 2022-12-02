@@ -1,6 +1,6 @@
 <template>
-    <transition name="modal" v-if="canUpdate(blocks.settings)">
-        <modal :close="closeModal" v-if="isModalOpen('userAdd')">
+    <transition name="modal">
+        <modal :close="closeModal" v-if="isModalOpen('userAdd') && canUpdate(blocks.settings)">
             <div slot="header">
                 <h4>{{ source ? 'Редактирование пользователя' : 'Добавление пользователя' }}</h4>
             </div>
@@ -155,7 +155,7 @@ export default {
                         return form.fronts.includes(this.userFronts.admin) || form.fronts.includes(this.userFronts.mas)
                     }),
                     email,
-                    isUnique: function() {
+                    isUnique() {
                         return this.isFieldUnique(this.form.email, 'email');
                     },
                     $lazy: true
@@ -164,7 +164,7 @@ export default {
                     required: requiredIf(function(form){
                         return form.fronts.includes(this.userFronts.showcase)
                     }),
-                    isUnique: function() {
+                    isUnique() {
                         let phoneNumber = this.form.phone ?
                             this.form.phone.replace(/[()]|\s|-/g, '') : null;
                         return this.isFieldUnique(phoneNumber, 'phone');
