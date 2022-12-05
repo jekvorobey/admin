@@ -22,7 +22,20 @@
                                 </b-form-select-option>
                             </b-form-select>
                         </b-col>
-                        <v-input v-model="filter.registered_by_user_id" type="number" class="col-md-4 col-12">Кем зарегистрирован</v-input>
+
+                        <b-col>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox"
+                                       @input="changeSearchUserRegister"
+                                       :checked="searchByID"
+                                       class="custom-control-input"
+                                       id="search_register_user">
+                                <label class="custom-control-label" for="search_register_user">{{ searchByIDText }}</label>
+                            </div>
+                            <v-input v-if="searchByID" v-model="filter.registered_by_user_id" type="number"></v-input>
+                            <v-input v-if="!searchByID" v-model="filter.registered_by_user_fio"></v-input>
+                        </b-col>
+
 <!--                        <b-col>-->
 <!--                            <label for="filter-registered_by_user_id">Кем зарегистрирован</label>-->
 <!--                            <b-form-select v-model="filter.registered_by_user_id" id="filter-registered_by_user_id">-->
@@ -99,7 +112,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(user, index) in users">
+                <tr v-for="user in users">
                     <td><a :href="getRoute('customers.detail', {id: user.id})">{{ user.id }}</a></td>
                     <td>{{ datePrint(user.register_date) }}</td>
                     <td>{{ user.full_name || 'N/A' }}</td>
@@ -113,6 +126,7 @@
                         <a :href="getRoute('settings.userDetail', {id: user.registered_by_user_id})" target="_blank">
                             {{ user.registered_by_user_id }}
                         </a>
+                        {{ user.registered_by_user_fio }}
                     </td>
                     <td></td>
                 </tr>
@@ -147,6 +161,7 @@ import UserAddModal from '../../Settings/components/user-add-modal.vue';
 const defaultFilter = {
     status: null,
     registered_by_user_id: null,
+    registered_by_user_fio: null,
     has_password: null,
     phone: '',
     full_name: '',
@@ -186,7 +201,8 @@ export default {
                     title: 'Не установлен',
                     value: 'no'
                 },
-            ]
+            ],
+            searchByID: false
         };
     },
     watch: {
@@ -196,8 +212,18 @@ export default {
         telMask() {
             return telMask;
         },
+        searchByIDText() {
+            return this.searchByID ? 'Кто регистрировал (ID)' : 'Кто регистрировал (ФИО)';
+        }
     },
     methods: {
+        changeSearchUserRegister() {
+            if (this.searchByID) this.filter.registered_by_user_id = null;
+            else this.filter.registered_by_user_fio = null;
+
+            this.searchByID = !this.searchByID;
+        },
+
         fetchUsers() {
             let filter = {...this.filter};
 
