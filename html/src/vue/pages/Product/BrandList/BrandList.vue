@@ -210,8 +210,8 @@
                 this.form.code = null;
                 this.form.description = null;
                 this.form.file_id = null;
-                this.form.active = null;
-                this.form.is_visible = null;
+                this.form.active = true;
+                this.form.is_visible = true;
                 this.openModal('BrandFormModal');
             },
 
