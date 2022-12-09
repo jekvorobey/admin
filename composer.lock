@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "aac484aa4894adb82af225e355ee8468",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1435,16 +1435,16 @@
         },
         {
             "name": "ibt/common-lib",
-            "version": "dev-master",
+            "version": "dev-fix/8397-duplicate-modal-addusers",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-common-ms-code.git",
-                "reference": "916b86b1b48f6a6cad0b77747841a1a76811d2cc"
+                "reference": "7d714e76cf9b55ce433d761efc97adbdb8f62cc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-common-ms-code/repository/archive.zip?sha=916b86b1b48f6a6cad0b77747841a1a76811d2cc",
-                "reference": "916b86b1b48f6a6cad0b77747841a1a76811d2cc",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-common-ms-code/repository/archive.zip?sha=7d714e76cf9b55ce433d761efc97adbdb8f62cc2",
+                "reference": "7d714e76cf9b55ce433d761efc97adbdb8f62cc2",
                 "shasum": ""
             },
             "require": {
@@ -1462,7 +1462,6 @@
                 "phpunit/php-code-coverage": "6.1.4",
                 "phpunit/phpunit": "^7.5"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -1499,7 +1498,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965392/issues"
             },
-            "time": "2022-10-25T08:04:02+00:00"
+            "time": "2022-12-09T10:18:02+04:00"
         },
         {
             "name": "ibt/logistics-lib",
@@ -11209,7 +11208,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/common-lib",
+            "version": "dev-fix/8397-duplicate-modal-addusers",
+            "alias": "dev-master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,

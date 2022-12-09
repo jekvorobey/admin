@@ -37,23 +37,12 @@ class CustomerListController extends Controller
             'fronts' => Front::allFronts(),
             'roles' => $roleService->roles(),
             'merchants' => $merchantService->merchants(),
-            'canAddUsers' => self::canAddUsers()
+            'canViewUserUpdateButton' => $this->canViewInFront(BlockDto::ADMIN_BLOCK_ADD_USER),
         ];
 
-        return $this->list('Клиентская база', options: $options,);
-    }
+        dd($options);
 
-    /**
-     * Проверяем есть ли у пользователя права для добавления пользователей
-     * @return boolean
-     */
-    private static function canAddUsers()
-    {
-        $RequestInitiator = resolve(RequestInitiator::class);
-        return
-            $RequestInitiator->hasRole(RoleDto::ROLE_ADMINISTRATOR)
-            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC)
-            || $RequestInitiator->hasRole(RoleDto::ROLE_MANAGER_KC);
+        return $this->list('Клиентская база', options: $options,);
     }
 
     /**

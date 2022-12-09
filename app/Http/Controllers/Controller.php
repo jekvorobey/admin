@@ -141,6 +141,17 @@ class Controller extends BaseController
         abort(403, 'Недостаточно прав');
     }
 
+    protected function canViewInFront(int|array $blocks): bool
+    {
+        foreach ((array) $blocks as $block) {
+            if (resolve(RequestInitiator::class)->canView($block)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function canUpdate(int|array $blocks): bool
     {
         foreach ((array) $blocks as $block) {

@@ -118,7 +118,7 @@ class UsersController extends Controller
         OperatorService $operatorService,
         RequestInitiator $authUser
     ): JsonResponse {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ADD_USER);
 
         $data = $request->all();
         $newUser = new UserDto($data);
