@@ -40,8 +40,6 @@ class CustomerListController extends Controller
             'canViewUserUpdateButton' => $this->canViewInFront(BlockDto::ADMIN_BLOCK_ADD_USER),
         ];
 
-        dd($options);
-
         return $this->list('Клиентская база', options: $options,);
     }
 
