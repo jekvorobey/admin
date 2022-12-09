@@ -1439,12 +1439,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-common-ms-code.git",
-                "reference": "916b86b1b48f6a6cad0b77747841a1a76811d2cc"
+                "reference": "afe3d64e1aee98f09cd7393f2d7e2c9ce4932a7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-common-ms-code/repository/archive.zip?sha=916b86b1b48f6a6cad0b77747841a1a76811d2cc",
-                "reference": "916b86b1b48f6a6cad0b77747841a1a76811d2cc",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-common-ms-code/repository/archive.zip?sha=afe3d64e1aee98f09cd7393f2d7e2c9ce4932a7b",
+                "reference": "afe3d64e1aee98f09cd7393f2d7e2c9ce4932a7b",
                 "shasum": ""
             },
             "require": {
@@ -1499,7 +1499,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965392/issues"
             },
-            "time": "2022-10-25T08:04:02+00:00"
+            "time": "2022-12-09T10:42:03+00:00"
         },
         {
             "name": "ibt/logistics-lib",

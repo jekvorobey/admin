@@ -74,7 +74,7 @@
                     <b-button type="submit" variant="dark">Искать</b-button>
                     <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser">Создать</b-button>
                     <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
-                    <button v-if="options.canAddUsers" @click="openModal('userAdd')" class="btn btn-success d-block mt-4">
+                    <button v-if="options.canViewUserUpdateButton" @click="openModal('userAdd')" class="btn btn-success d-block mt-4">
                         <fa-icon icon="plus"/>
                         Добавить пользователя
                     </button>
