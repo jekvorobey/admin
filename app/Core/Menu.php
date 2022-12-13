@@ -488,6 +488,30 @@ class Menu
                     ],
                 ],
             ],
+            [
+                'id' => BlockDto::ADMIN_ANALYTICS_REPORT_GROUP_1,
+                'title' => BlockDto::blockById(BlockDto::ADMIN_ANALYTICS_REPORT_GROUP_1)->name,
+                'active' => false,
+                'items' => [
+                    [
+                        'title' => 'Конкуренция',
+                        'route' => route('analytics.competition'),
+                    ],
+                    [
+                        'title' => 'Массив заказов',
+                        'route' => route('analytics.dumpOrders'),
+                    ],
+                ],
+            ],
+            /* TODO Добавление доп.раздела аналитики с отличными правами
+            [
+                'id' => BlockDto::ADMIN_ANALYTICS_REPORT_GROUP_2,
+                'title' => BlockDto::blockById(BlockDto::ADMIN_ANALYTICS_REPORT_GROUP_2)->name,
+                'active' => false,
+                'items' => [
+                ],
+            ],
+            */
         ];
     }
 
@@ -520,6 +544,7 @@ class Menu
     {
         $allowMenu = [];
         $allowBlockIds = resolve(RequestInitiator::class)->blockPermissions()->pluck('block_id')->toArray();
+
         if (empty($allowBlockIds)) {
             return [];
         }
