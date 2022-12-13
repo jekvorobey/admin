@@ -20,7 +20,7 @@ class AnalyticsService
         RoleDto::ROLE_FINANCIER,
         RoleDto::ROLE_MARKETING_MANAGER,
         RoleDto::ROLE_SUPERVISER_KC,
-        12 //RoleDto::ROLE_MARKETING, TODO Add to CommonMsa.RoleDto new role const ROLE_MARKETING = 12
+        RoleDto::ROLE_MARKETING_USER,
     ];
 
     public function salesAllPeriodByDay(): array
