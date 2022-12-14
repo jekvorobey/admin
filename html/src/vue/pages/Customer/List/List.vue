@@ -36,15 +36,6 @@
                             <v-input v-if="!searchByID" v-model="filter.registered_by_user_fio"></v-input>
                         </b-col>
 
-<!--                        <b-col>-->
-<!--                            <label for="filter-registered_by_user_id">Кем зарегистрирован</label>-->
-<!--                            <b-form-select v-model="filter.registered_by_user_id" id="filter-registered_by_user_id">-->
-<!--                                <b-form-select-option :value="null">Не выбрано</b-form-select-option>-->
-<!--                                <b-form-select-option :value="item.id" v-for="(item, id) in registeringUsers" :key="id">-->
-<!--                                    {{ item.full_name ? item.full_name + ' ' + item.id: item.id }}-->
-<!--                                </b-form-select-option>-->
-<!--                            </b-form-select>-->
-<!--                        </b-col>-->
                         <b-col>
                             <v-input v-model="filter.phone" v-mask="telMask" validation="phone">Телефон</v-input>
                         </b-col>
@@ -175,7 +166,7 @@ const defaultFilter = {
 export default {
     mixins: [modalMixin],
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate, UserAddModal},
-    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers', 'options'],
+    props: ['statuses', 'perPage', 'isReferral', 'roles', 'options'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',

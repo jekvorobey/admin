@@ -75,26 +75,11 @@ class CustomerListController extends Controller
 
         $this->title = $title;
 
-        $registeringUsersIds = self::$userService->users((new RestQuery())
-            ->setFilter('registered_by_user_id', 'notNull', null))
-            ->groupBy('registered_by_user_id')
-            ->keys()
-            ->toArray();
-
-        $registeringUsers = self::$userService->users((new RestQuery())->setFilter('id', $registeringUsersIds))
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'full_name' => $item->full_name,
-                ];
-            });
-
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
-            'registeringUsers' => $registeringUsers,
             'options' => $options,
         ]);
     }
@@ -117,7 +102,8 @@ class CustomerListController extends Controller
             'page' => 'nullable',
             'role' => 'nullable',
             'has_password' => 'nullable',
-            'registered_by_user_id' => 'nullable'
+            'registered_by_user_id' => 'nullable',
+            'registered_by_user_fio' => 'nullable',
         ]);
 
         $restQueryUser = new RestQuery();
