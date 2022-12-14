@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>id</th>
+                    <th>xml_id</th>
                     <th>Дата создания</th>
                     <th>Мерчант</th>
                     <th>Цена</th>
@@ -51,6 +52,9 @@
                         <a :href="getRoute('offers.detail', {id: offer.id})" target="_blank">
                             {{ offer.id }}
                         </a>
+                    </td>
+                    <td>
+                        {{ offer.xml_id }}
                     </td>
                     <td>{{ offer.created_at }}</td>
                     <td>

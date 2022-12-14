@@ -27,7 +27,10 @@
                 </thead>
                 <tbody>
                     <tr v-for="offer in claim.payload.offers">
-                        <td>{{ offer.offerId }}</td>
+                        <td>
+                            <div>{{ offer.offerId }}</div>
+                            <div v-if="model && model.productsByOffers">{{ getXmlID(offer.offerId) }}</div>
+                        </td>
                         <td>{{ product(offer.offerId).id }}</td>
                         <td v-if="canView(blocks.products)">
                             <a :href="getRoute('products.detail', {id: product(offer.offerId).id})" target="_blank">
@@ -98,6 +101,13 @@
         },
         mixins: [modalMixin],
         methods: {
+            getXmlID(offerId) {
+                try {
+                    return this.model.productsByOffers[offerId].offer.xml_id
+                } catch (e) {
+                    return null
+                }
+            },
             isStatus(statusId) {
                 return this.claim.status === statusId;
             },
