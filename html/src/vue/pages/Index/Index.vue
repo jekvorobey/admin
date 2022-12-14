@@ -701,7 +701,7 @@
                         displayFolder: 'Доставка',
                     },
                     {
-                        caption: "Доставка, р.",
+                        caption: "Доставка в т.ч., р.",
                         dataField: "amountDelivery",
                         dataType: "number",
                         format: 'fixedPoint',
