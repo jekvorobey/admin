@@ -151,6 +151,11 @@
                 :width="100"
             />
             <DxColumn
+                data-field="deliveredAt"
+                data-type="date"
+                :width="100"
+            />
+            <DxColumn
                 data-field="overdueDays"
                 data-type="number"
                 :width="50"
