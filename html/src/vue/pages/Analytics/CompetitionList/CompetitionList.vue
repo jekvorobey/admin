@@ -1,933 +1,284 @@
 <template>
     <layout-main>
-        <h1>{{ message }}</h1>
-        <section>
-            <div class="row">
-                <div class="col-12 col-md-6">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="dx-block-buttons">
-                                <DxButton
-                                    icon="refresh"
-                                    class="float-left mr-1"
-                                    @click="updateDataSourceChartOne()"
-                                />
-                                <DxButton
-                                    icon="arrowleft"
-                                    class="float-left mr-1"
-                                    @click="downDataSourceChartOne()"
-                                />
-                                <DxDateBox
-                                    ref="dateBoxOne"
-                                    v-model:value="dateChartOne"
-                                    @valueChanged="refreshDataSourceChartOne()"
-                                    class="float-left mr-1"
-                                    style="max-width: 150px"
-                                    type="date"
-                                    display-format="shortDate"
-                                    :calendarOptions=" { maxZoomLevel: 'month', minZoomLevel: 'decade' }"
-                                />
-                                <DxButton
-                                    icon="arrowright"
-                                    class="float-left mr-1"
-                                    @click="upDataSourceChartOne()"
-                                />
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <DxChart
-                                ref="chartOne"
-                                :data-source="dataSourceChartOne"
-                            >
-                                <DxSize :height="420"/>
+        <DxDataGrid
+            ref="dataGrid"
+            :data-source="dataSource"
+            :remote-operations="true"
+            :allow-column-reordering="true"
+            :allow-column-resizing="true"
+            :column-resizing-mode="columnResizingMode"
+            :column-auto-width="true"
+            :row-alternation-enabled="true"
+            :show-borders="true"
+            :height="gridHeight"
+            :width="gridWidth"
 
-                                <DxValueAxis
-                                    :grid="{ opacity: 0.2 }"
-                                    value-type="numeric"
-                                >
-                                    <DxLabel :customize-text="customizeChartOneLabelText"/>
-                                </DxValueAxis>
+            @toolbar-preparing="onToolbarPreparing"
+            @row-dbl-click="onRowDblClick"
+        >
+            <DxColumn
+                data-field="brandName"
+                data-type="string"
+                :width="150"
+            />
+            <DxColumn
+                data-field="categoryGroupName"
+                data-type="string"
+                :width="150"
+            />
+            <DxColumn
+                data-field="categoryName"
+                data-type="string"
+                :width="150"
+            />
+            <DxColumn
+                data-field="merchantId"
+                data-type="number"
+                :width="50"
+            />
+            <DxColumn
+                data-field="merchantName"
+                data-type="string"
+                :width="150"
+            />
+            <DxColumn
+                data-field="offerId"
+                data-type="number"
+                :width="80"
+            />
+            <DxColumn
+                data-field="productId"
+                data-type="number"
+                :width="80"
+            />
+            <DxColumn
+                data-field="vendorCode"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="productName"
+                data-type="string"
+                :width="400"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="qty"
+                data-type="number"
+                :width="80"
+                :allow-sorting="false"
+            >
+                <DxFormat
+                    type="fixedPoint"
+                    :precision="0"
+                />
+            </DxColumn>
+            <DxColumn
+                data-field="price"
+                data-type="number"
+                :width="80"
+                :allow-sorting="false"
+            >
+                <DxFormat
+                    type="fixedPoint"
+                    :precision="0"
+                />
+            </DxColumn>
+            <DxColumn
+                data-field="priceWithDiscount"
+                data-type="number"
+                :width="80"
+                :allow-sorting="false"
+            >
+                <DxFormat
+                    type="fixedPoint"
+                    :precision="0"
+                />
+            </DxColumn>
+            <DxColumn
+                data-field="percentDiscount"
+                data-type="number"
+                :width="80"
+                :allow-sorting="false"
+            >
+                <DxFormat
+                    type="percent"
+                    :precision="2"
+                />
+            </DxColumn>
+            <DxColumn
+                :width="0"
+            />
 
-                                <DxCommonSeriesSettings
-                                    type="area"
-                                    hover-mode="allArgumentPoints"
-                                    selection-mode="allArgumentPoints"
-                                    argument-field="hour"
-                                >
-                                    <DxLabel
-                                        format="shortTime"
-                                    />
-                                </DxCommonSeriesSettings>
-
-                                <DxSeries
-                                    value-field="aggAmountOrdersFull"
-                                    name="Всего"
-                                    color="#ffa500"
-                                    type="splineArea"
-                                    stack="first"
-                                />
-
-                                <DxSeries
-                                    value-field="aggAmountOrders"
-                                    name="Успешные"
-                                    color="green"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="aggAmountOrdersCancel"
-                                    name="Отмены"
-                                    color="red"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="amountOrdersFull"
-                                    name="Динамика"
-                                    color="blue"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="forecastAmountOrders"
-                                    name="Прогноз"
-                                    color="red"
-                                    type="spline"
-                                    stack="second"
-                                />
-
-                                <DxCrosshair
-                                    :enabled="true"
-                                    color="#000"
-                                    dash-style="dot"
-                                >
-                                    <DxLabel
-                                        :visible="true"
-                                        background-color="#555"
-                                    />
-                                </DxCrosshair>
-
-                                <DxTooltip
-                                    :enabled="true"
-                                    :format="{ precision: 0, type: 'fixedPoint' }"
-                                    align="left"
-                                />
-
-                                <DxArgumentAxis :value-margins-enabled="false"/>
-                                <DxLegend
-                                    vertical-alignment="bottom"
-                                    horizontal-alignment="center"
-                                />
-
-                                <DxExport :enabled="true"/>
-                                <DxLoadingIndicator :enabled="false"/>
-                            </DxChart>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="dx-block-buttons">
-                                <DxButton
-                                    icon="refresh"
-                                    class="float-left mr-1"
-                                    @click="updateDataSourceChartTwo()"
-                                />
-                                <DxButton
-                                    icon="arrowleft"
-                                    class="float-left mr-1"
-                                    @click="downDataSourceChartTwo()"
-                                />
-                                <DxDateBox
-                                    ref="dateBoxTwo"
-                                    v-model:value="dateChartTwo"
-                                    @valueChanged="refreshDataSourceChartTwo()"
-                                    class="float-left mr-1"
-                                    style="max-width: 150px"
-                                    type="date"
-                                    display-format="monthAndYear"
-                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
-                                />
-                                <DxButton
-                                    icon="arrowright"
-                                    class="float-left mr-1"
-                                    @click="upDataSourceChartTwo()"
-                                />
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <DxChart
-                                ref="chartTwo"
-                                :data-source="dataSourceChartTwo"
-                            >
-                                <DxSize :height="420"/>
-                                <DxValueAxis
-                                    :grid="{ opacity: 0.2 }"
-                                    value-type="numeric"
-                                >
-                                    <DxLabel :customize-text="customizeChartTwoLabelText"/>
-                                </DxValueAxis>
-
-                                <DxCommonSeriesSettings
-                                    type="area"
-                                    hover-mode="allArgumentPoints"
-                                    selection-mode="allArgumentPoints"
-                                    argument-field="date"
-                                >
-                                    <DxLabel
-                                        format="shortTime"
-                                    />
-                                </DxCommonSeriesSettings>
-
-                                <DxSeries
-                                    value-field="aggAmountOrdersFull"
-                                    name="Всего"
-                                    color="#ffa500"
-                                    type="splineArea"
-                                    stack="first"
-                                />
-
-                                <DxSeries
-                                    value-field="aggAmountOrders"
-                                    name="Успешные"
-                                    color="green"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="aggAmountOrdersCancel"
-                                    name="Отмены"
-                                    color="red"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="amountOrdersFull"
-                                    name="Динамика"
-                                    color="blue"
-                                    type="splineArea"
-                                    stack="second"
-                                />
-
-                                <DxSeries
-                                    value-field="forecastAmountOrders"
-                                    name="Прогноз"
-                                    color="red"
-                                    type="spline"
-                                    stack="second"
-                                />
-
-                                <DxCrosshair
-                                    :enabled="true"
-                                    color="#000"
-                                    dash-style="dot"
-                                >
-                                    <DxLabel
-                                        :visible="true"
-                                        background-color="#555"
-                                    />
-                                </DxCrosshair>
-
-                                <DxTooltip
-                                    :enabled="true"
-                                    :format="{ precision: 0, type: 'fixedPoint' }"
-                                    align="left"
-                                />
-
-                                <DxArgumentAxis :value-margins-enabled="false"/>
-                                <DxLegend
-                                    vertical-alignment="bottom"
-                                    horizontal-alignment="center"
-                                />
-
-                                <DxExport :enabled="true"/>
-                                <DxLoadingIndicator :enabled="false"/>
-                            </DxChart>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="dx-block-buttons">
-                                <DxButton
-                                    icon="refresh"
-                                    class="float-left mr-1"
-                                    @click="updateDataSourceChartFour()"
-                                />
-                                <DxDateBox
-                                    ref="dateBoxFourStart"
-                                    v-model:value="dateChartFourStart"
-                                    @valueChanged="refreshDataSourceChartFour()"
-                                    class="float-left mr-1"
-                                    style="max-width: 150px"
-                                    type="date"
-                                    display-format="monthAndYear"
-                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
-                                />
-                                <DxDateBox
-                                    ref="dateBoxFourEnd"
-                                    v-model:value="dateChartFourEnd"
-                                    @valueChanged="refreshDataSourceChartFour()"
-                                    class="float-left mr-1"
-                                    style="max-width: 150px"
-                                    type="date"
-                                    display-format="monthAndYear"
-                                    :calendarOptions=" { maxZoomLevel: 'year', minZoomLevel: 'decade' }"
-                                />
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <DxChart
-                                ref="chartFour"
-                                :data-source="dataSourceChartFour"
-                                :loading-indicator=" { enabled: false } "
-                            >
-                                <DxCommonSeriesSettings
-                                    argument-field="month"
-                                    value-field="amountOrders"
-                                    type="stackedbar"
-                                >
-                                </DxCommonSeriesSettings>
-
-                                <DxSeries
-                                    value-field="amountOrders"
-                                    name="Успешные"
-                                    color="rgb(0 128 0 / 60%)"
-                                    stack="first"
-                                />
-
-                                <DxSeries
-                                    value-field="amountOrdersCancel"
-                                    name="Отмены"
-                                    color="rgb(255 0 0 / 60%)"
-                                    stack="first"
-                                />
-
-                                <DxCrosshair
-                                    :enabled="true"
-                                    color="#000"
-                                    dash-style="dot"
-                                >
-                                    <DxLabel
-                                        :visible="true"
-                                        background-color="#555"
-                                    />
-                                </DxCrosshair>
-
-                                <DxTooltip
-                                    :enabled="true"
-                                    :format="{ precision: 0, type: 'fixedPoint' }"
-                                    align="left"
-                                />
-
-                                <DxArgumentAxis :aggregate-by-category="false"/>
-                                <DxLegend
-                                    vertical-alignment="bottom"
-                                    horizontal-alignment="center"
-                                />
-
-                                <DxExport :enabled="true"/>
-                                <DxLoadingIndicator :enabled="false"/>
-                            </DxChart>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
-                    <DxPivotGrid
-                        ref="pivotGridThree"
-                        :data-source="dataSourcePivotGridThree"
-                        :allow-sorting-by-summary="true"
-                        :allow-filtering="true"
-                        :allow-expand-all="true"
-                        :show-borders="true"
-                        :show-column-grand-totals="true"
-                        :show-row-grand-totals="true"
-                        :show-row-totals="true"
-                        :show-column-totals="false"
-                        :show-totals-prior="showTotalsPrior"
-                    >
-                        <DxFieldChooser :enabled="true"/>
-                        <DxExport :enabled="true"/>
-                    </DxPivotGrid>
-                </div>
-            </div>
-        </section>
+            <DxColumnChooser :enabled="true"/>
+            <DxSelection mode="single"/>
+            <DxExport
+                :enabled="true"
+                :allow-export-selected-data="false"
+                :file-name="exportFileName"
+            />
+            <DxSearchPanel
+                :visible="false"
+                :highlight-case-sensitive="true"
+            />
+            <DxPager
+                :allowed-page-sizes="pageSizes"
+                :show-page-size-selector="true"
+            />
+            <DxPaging :page-size="50"/>
+        </DxDataGrid>
     </layout-main>
 </template>
-
 <script>
 import moment from 'moment';
 
-import DxChart, {
-    DxArgumentAxis,
-    DxSeries,
-    DxLegend,
-    DxAdaptiveLayout,
-    DxCommonSeriesSettings,
-    DxAggregation,
-    DxSize,
-    DxTooltip,
-    DxValueAxis,
-    DxCommonPaneSettings,
-    DxGrid,
-    DxBorder,
-    DxLabel,
-    DxExport,
-    DxLoadingIndicator,
-    DxCrosshair,
-} from 'devextreme-vue/chart';
-
 import {
-    DxPivotGrid,
-    DxFieldChooser,
-} from 'devextreme-vue/pivot-grid';
+    DxDataGrid,
+    DxColumn,
+    DxSelection,
+    DxExport,
+    DxPager,
+    DxPaging,
+    DxLoadPanel,
+    DxToolbar,
+    DxItem,
+    DxColumnChooser,
+    DxSearchPanel,
+    DxFormat,
+} from 'devextreme-vue/data-grid';
 
-import DxDateBox from 'devextreme-vue/date-box';
-import DxCheckBox from 'devextreme-vue/check-box';
-import DxButton from 'devextreme-vue/button';
-
-import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-
 import ruMessages from "devextreme/localization/messages/ru.json";
 import { locale, loadMessages } from "devextreme/localization";
 
-const currencyFormatter = new Intl.NumberFormat('ru-Ru', {
-    style: 'currency',
-    currency: 'Rub',
-    minimumFractionDigits: 0,
-});
-
 export default {
-    name: 'page-index',
-    props: [
-        'message'
-    ],
     components: {
-        DxChart,
-        DxArgumentAxis,
-        DxSeries,
-        DxLegend,
-        DxAdaptiveLayout,
-        DxCommonSeriesSettings,
-        DxSize,
-        DxTooltip,
-        DxPivotGrid,
-        DxFieldChooser,
-        DxValueAxis,
-        DxCommonPaneSettings,
-        DxAggregation,
-        DxGrid,
-        DxBorder,
-        DxLabel,
+        DxDataGrid,
+        DxColumn,
+        DxSelection,
         DxExport,
-        DxLoadingIndicator,
-        DxDateBox,
-        DxCheckBox,
-        DxButton,
-        DxCrosshair,
+        DxPager,
+        DxPaging,
+        DxLoadPanel,
+        DxToolbar,
+        DxItem,
+        DxColumnChooser,
+        DxSearchPanel,
+        DxFormat,
     },
     created() {
         loadMessages(ruMessages);
         locale('ru');
     },
     data() {
+        const pathDataSource = '/api/analytics/competition';
+        const createdEnd = new Date();
+        const createdStart = new Date();
+        createdStart.setMonth(createdStart.getMonth() - 1);
 
-        const pathDataSourceChartOne = '/api/analytics/dashboard/sales/day-by-hour';
-        const pathDataSourceChartTwo = '/api/analytics/dashboard/sales/month-by-day';
-        const pathDataSourceChartFour = '/api/analytics/dashboard/sales/year-by-month';
-        const pathDataSourcePivotGridThree = '/api/analytics/dashboard/sales/all-period-by-day';
-
-        const dateChartOne = new Date();
-        const dateChartTwo = new Date();
-        const dateChartFourEnd = new Date();
-        const dateChartFourStart = new Date();
-        dateChartFourStart.setMonth(dateChartFourStart.getMonth() - 18);
-
-        const dataSourceChartOne = new DataSource({
+        const dataSource = new DataSource({
+            paginate: true,
+            pageSize: 100,
             store: {
-                url: pathDataSourceChartOne + '?start=' + moment(dateChartOne).format('YYYY-MM-DD'),
-                type: 'odata',
-                version: 4,
-                jsonp: false,
-            },
-            paginate: false,
-        });
-
-        const dataSourceChartTwo = new DataSource({
-            store: {
-                url: pathDataSourceChartTwo + '?start=' + moment(dateChartTwo).format('YYYY-MM-01'),
-                type: 'odata',
-                version: 4,
-                jsonp: false,
-            },
-            paginate: false,
-        });
-
-        const dataSourcePivotGridThree = new PivotGridDataSource({
-            fields: [
-                {
-                    caption: 'Тип товара',
-                    width: 120,
-                    dataField: 'nameType',
-                    area: 'column',
-                    sortBySummaryField: 'amount',
-                    sortOrder: "desc",
-                    displayFolder: 'Товары',
-                },
-                {
-                    caption: 'Код типа',
-                    width: 120,
-                    dataField: 'type',
-                    sortBySummaryField: 'amount',
-                    sortOrder: "desc",
-                    displayFolder: 'Товары',
-                },
-                {
-                    caption: "Полная дата",
-                    dataField: "date",
-                    dataType: 'date',
-                    sortOrder: "desc",
-                    displayFolder: 'Дата',
-                    visible: false,
-                },
-                {
-                    caption: "Год",
-                    dataField: "date",
-                    dataType: 'date',
-                    groupInterval: "year",
-                    sortOrder: "desc",
-                    area: "row",
-                    displayFolder: 'Дата',
-                },
-                {
-                    caption: "Месяц",
-                    dataField: "date",
-                    dataType: 'date',
-                    groupInterval: "month",
-                    sortOrder: "desc",
-                    area: "row",
-                    displayFolder: 'Дата',
-                },
-                {
-                    caption: "День",
-                    dataField: "date",
-                    dataType: 'date',
-                    groupInterval: "day",
-                    sortOrder: "desc",
-                    area: "row",
-                    displayFolder: 'Дата',
-                },
-                {
-                    caption: 'Заказы всего, шт',
-                    dataField: 'countOrdersFull',
-                    summaryType: 'sum',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    area: 'data',
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: 'Заказы всего, р.',
-                    dataField: 'amountOrdersFull',
-                    summaryType: 'sum',
-                    dataType: 'number',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    sortOrder: "desc",
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: 'Товары всего, шт.',
-                    dataField: 'countProductsFull',
-                    summaryType: 'sum',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: 'Заказы успеш., шт',
-                    dataField: 'countOrders',
-                    summaryType: 'sum',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    area: 'data',
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: 'Заказы успеш., р.',
-                    dataField: 'amountOrders',
-                    summaryType: 'sum',
-                    dataType: 'number',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    sortOrder: "desc",
-                    area: 'data',
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: 'Товары успеш. шт',
-                    dataField: 'countProducts',
-                    summaryType: 'sum',
-                    format: {
-                        precision: 0,
-                        type: "fixedPoint",
-                    },
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    area: 'data',
-                    displayFolder: 'Заказы',
-                },
-                {
-                    caption: "Ср.чек, р.",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    area: "data",
-                    visible: true,
-                    summaryType: "custom",
-                    calculateSummaryValue: function (data) {
-                        if(data.value('countOrders')) {
-                            return Math.round(data.value('amountOrders') / data.value('countOrders') * 100) / 100;
-                        }
-                    },
-                    displayFolder: 'Показатели',
-                },
-                {
-                    caption: "Ср.поз., р.",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    area: "data",
-                    visible: true,
-                    summaryType: "custom",
-                    calculateSummaryValue: function (data) {
-                        if(data.value('countProducts')) {
-                            return Math.round(data.value('amountOrders') / data.value('countProducts') * 100) / 100;
-                        }
-                    },
-                    displayFolder: 'Показатели',
-                },
-                {
-                    caption: "Ср.поз., шт",
-                    dataType: 'number',
-                    format: {
-                        precision: 2,
-                        type: "fixedPoint",
-                    },
-                    area: "data",
-                    visible: true,
-                    summaryType: "custom",
-                    calculateSummaryValue: function (data) {
-                        if(data.value('countOrders')) {
-                            return Math.round(data.value('countProducts') / data.value('countOrders') * 100) / 100;
-                        }
-                    },
-                    displayFolder: 'Показатели',
-                },
-                {
-                    caption: "Доставка всего, р.",
-                    dataField: "amountDeliveryFull",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Доставка',
-                },
-                {
-                    caption: "Доставка отм., р.",
-                    dataField: "amountDeliveryCancel",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Доставка',
-                },
-                {
-                    caption: "Доставка, р.",
-                    dataField: "amountDelivery",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    area: "data",
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Доставка',
-                },
-                {
-                    caption: "Отмен., шт",
-                    dataField: "countOrdersCancel",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    area: "data",
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Отмены',
-                },
-                {
-                    caption: "Отмен., р.",
-                    dataField: "amountOrdersCancel",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    area: "data",
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Отмены',
-                },
-                {
-                    caption: "Отмен. тов, шт",
-                    dataField: "countProductsCancel",
-                    dataType: "number",
-                    format: 'fixedPoint',
-                    summaryType: "sum",
-                    customizeText: function (cellInfo) {
-                        if (cellInfo.value) {
-                            return cellInfo.valueText;
-                        }
-                    },
-                    displayFolder: 'Отмены',
-                },
-                {
-                    caption: "Отмен., %",
-                    dataType: "number",
-                    format: {
-                        precision: 1,
-                        type: "percent",
-                    },
-                    area: "data",
-                    summaryType: "custom",
-                    calculateSummaryValue: function (data) {
-                        if(data.value('countOrdersCancel')) {
-                            return Math.round((data.value('countOrdersCancel') / (data.value('countOrders') + data.value('countOrdersCancel'))) * 10000)/10000;
-                        }
-                    },
-                    displayFolder: 'Отмены',
-                },
-                {
-                    caption: 'ТО 2, %',
-                    dataField: 'amountOrders',
-                    summaryType: 'sum',
-                    dataType: 'number',
-                    area: 'data',
-                    format: {
-                        precision: 1,
-                        type: "percent",
-                    },
-                    //runningTotal: 'column',
-                    //allowCrossGroupCalculation: true,
-                    summaryDisplayMode: 'percentOfRowGrandTotal',
-                    showGrandTotals: false,
-                    displayFolder: 'Показатели',
-                },
-                {
-                    caption: 'ТО 1, %',
-                    dataField: 'amountOrders',
-                    summaryType: 'sum',
-                    dataType: 'number',
-                    area: 'data',
-                    format: {
-                        precision: 1,
-                        type: "percent",
-                    },
-                    summaryDisplayMode: 'percentOfColumnTotal',
-                    displayFolder: 'Показатели',
-                }
-            ],
-            store: {
-                url: pathDataSourcePivotGridThree,
+                url: pathDataSource,
+                key: 'id',
                 type: 'odata',
                 version: 4,
                 jsonp: true,
-            }
+                beforeSend(request) {
+                    request.params.createdStart = moment(createdStart).format('YYYY-MM-DD');
+                    request.params.createdEnd = moment(createdEnd).format('YYYY-MM-DD');
+                },
+            },
         });
 
-        const dataSourceChartFour = new DataSource({
-            store: {
-                url: pathDataSourceChartFour +
-                    '?start=' + moment(dateChartFourStart).startOf('month').format('YYYY-MM-DD') +
-                    '&end=' + moment(dateChartFourEnd).endOf('month').format('YYYY-MM-DD'),
-                type: 'odata',
-                version: 4,
-                jsonp: false,
-            },
-            paginate: false,
-        });
+        const valuePaymentStatus = [];
 
         return {
-            dataSourceChartOne,
-            dataSourceChartTwo,
-            dataSourceChartFour,
-            dataSourcePivotGridThree,
-            dateChartOne: dateChartOne,
-            dateChartTwo: dateChartTwo,
-            dateChartFourStart: dateChartFourStart,
-            dateChartFourEnd: dateChartFourEnd,
-            pathDataSourceChartOne: pathDataSourceChartOne,
-            pathDataSourceChartTwo: pathDataSourceChartTwo,
-            pathDataSourceChartFour: pathDataSourceChartFour,
-            pathDataSourcePivotGridThree: pathDataSourcePivotGridThree,
-            showTotalsPrior: "columns",
+            createdStart,
+            createdEnd,
+            dataSource,
+            pathDataSource,
+            valuePaymentStatus,
+            pageSizes: [50, 100, 500],
+            gridHeight: "Calc(100Vh - 100px)",
+            gridWidth: "100%",
+            columnResizingMode: "widget",
+            exportFileName: "competition",
+            exportFormats: ["xlsx"],
         };
     },
+    computed: {
+        selectedRowKeysPaymentStatuses() {
+            return this.valuePaymentStatus;
+        },
+    },
     methods: {
-        customizeChartOneLabelText({ valueText }) {
-            return `${valueText}`;
+        reloadDataSource() {
+            this.dataSource.reload();
         },
+        refreshDataSource() {
+            let createdStart = moment(this.createdStart).format('YYYY-MM-DD');
+            let createdEnd = moment(this.createdEnd).format('YYYY-MM-DD');
 
-        customizeChartTwoLabelText({ valueText }) {
-            return `${valueText}`;
-        },
-
-        updateDataSourceChartOne() {
-            this.dataSourceChartOne.reload();
-        },
-
-        downDataSourceChartOne() {
-            this.dateChartOne.setDate(this.dateChartOne.getDate() - 1);
-            setTimeout(() => this.refreshDataSourceChartOne(), 50);
-        },
-
-        upDataSourceChartOne() {
-            this.dateChartOne.setDate(this.dateChartOne.getDate() + 1);
-            setTimeout(() => this.refreshDataSourceChartOne(), 50);
-        },
-
-        refreshDataSourceChartOne() {
-            this.dataSourceChartOne = new DataSource({
+            this.dataSource = new DataSource({
+                paginate: true,
+                pageSize: 100,
                 store: {
-                    url: this.pathDataSourceChartOne + '?start=' + moment(this.dateChartOne).format('YYYY-MM-DD'),
+                    url: this.pathDataSource,
+                    key: 'id',
                     type: 'odata',
                     version: 4,
-                    jsonp: false,
+                    jsonp: true,
+                    beforeSend(request) {
+                        request.params.createdStart = createdStart;
+                        request.params.createdEnd = createdEnd;
+                    },
                 },
-                paginate: false,
             });
-            this.$refs.dateBoxOne.instance.value = this.dateChartOne;
         },
-
-        updateDataSourceChartTwo() {
-            this.dataSourceChartTwo.reload();
+        exportToExcel() {
+            const dataGrid = this.$refs.dataGrid.instance;
+            dataGrid.exportToExcel();
         },
-
-        downDataSourceChartTwo() {
-            this.dateChartTwo.setMonth(this.dateChartTwo.getMonth() - 1);
-            setTimeout(() => this.refreshDataSourceChartTwo(), 50);
+        onRowDblClick(e) {
+            let data = e.data;
+            if (data.offerId) {
+                window.open('/offers/'+ data.offerId, '_blank');
+            }
         },
-
-        upDataSourceChartTwo() {
-            this.dateChartTwo.setMonth(this.dateChartTwo.getMonth() + 1);
-            setTimeout(() => this.refreshDataSourceChartTwo(), 50);
-        },
-
-        refreshDataSourceChartTwo() {
-            this.dataSourceChartTwo = new DataSource({
-                store: {
-                    url: this.pathDataSourceChartTwo + '?start=' + moment(this.dateChartTwo).startOf('month').format('YYYY-MM-DD'),
-                    type: 'odata',
-                    version: 4,
-                    jsonp: false,
-                },
-                paginate: false,
+        onToolbarPreparing(e) {
+            let dataGrid = e.component;
+            e.toolbarOptions.items.unshift({
+                location: "before",
+                widget: "dxButton",
+                options: {
+                    icon: "refresh",
+                    onClick: function() {
+                        dataGrid.refresh();
+                    }
+                }
             });
-            this.$refs.dateBoxTwo.instance.value = this.dateChartTwo;
-        },
-
-        updateDataSourceChartFour() {
-            this.dataSourceChartFour.reload();
-        },
-
-        refreshDataSourceChartFour() {
-            this.dataSourceChartFour = new DataSource({
-                store: {
-                    url: this.pathDataSourceChartFour +
-                        '?start=' + moment(this.dateChartFourStart).startOf('month').format('YYYY-MM-DD') +
-                        '&end=' + moment(this.dateChartFourEnd).endOf('month').format('YYYY-MM-DD'),
-                    type: 'odata',
-                    version: 4,
-                    jsonp: false,
-                },
-                paginate: false,
-            })
-            this.$refs.dateBoxFourStart.instance.value = this.dateChartFourStart;
-            this.$refs.dateBoxFourEnd.instance.value = this.dateChartFourEnd;
         },
     },
 };
 </script>
-
 <style>
-.dx-block-buttons {
-    position: absolute;
-    max-width: Calc(100% - 50px);
-    z-index: +1;
-    margin-top: 8px;
+.dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
+    width: 35px;
+    min-width: 35px;
+    max-width: 35px;
+}
+.dx-datagrid {
+    color: rgb(0 0 0);
+}
+.dx-datagrid .dx-row > td {
+    padding: 3px;
+}
+.dx-datagrid-headers {
+    color: rgb(0 0 0);
+    background: rgb(232 232 232);
 }
 </style>
