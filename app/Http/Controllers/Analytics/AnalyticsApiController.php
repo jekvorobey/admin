@@ -7,8 +7,31 @@ use App\Services\Analytics\AnalyticsService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AnalyticsDashboardController extends Controller
+class AnalyticsApiController extends Controller
 {
+    public function __construct()
+    {
+        ini_set('memory_limit', '256M');
+    }
+
+    public function competition(Request $request, AnalyticsService $analyticsService): JsonResponse
+    {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
+        $resultData = $analyticsService->competition($request);
+
+        return $this->getResponse($request, $resultData);
+    }
+
+    public function dumpOrders(Request $request, AnalyticsService $analyticsService): JsonResponse
+    {
+        $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
+
+        $resultData = $analyticsService->dumpOrders($request);
+
+        return $this->getResponse($request, $resultData);
+    }
+
     public function salesDayByHour(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
         $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
@@ -55,12 +78,12 @@ class AnalyticsDashboardController extends Controller
             $response->setCallback($callback);
             $data = array(
                 'd' => array(
-                    'results' => $resultData,
-                    '__count' => count($resultData),
+                    'results' => $resultData['results'] ?? $resultData,
+                    '__count' => $resultData['__count'] ?? count($resultData),
                 )
             );
         } else {
-            $data = $resultData;
+            $data = $resultData['results'] ?? $resultData;
         }
         $response->setData($data ?? []);
 

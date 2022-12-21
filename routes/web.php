@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Analytics\AnalyticsDashboardController;
+use App\Http\Controllers\Analytics\AnalyticsController;
+use App\Http\Controllers\Analytics\AnalyticsApiController;
 use App\Http\Controllers\Basket\BasketDetailController;
 use App\Http\Controllers\Basket\BasketListController;
 use App\Http\Controllers\BillingReport\BillingReportController;
@@ -686,7 +687,10 @@ Route::middleware('auth')->group(function () {
         Route::put('approval', [ProductListController::class, 'updateApprovalStatus'])->name('products.massApproval');
         Route::put('production', [ProductListController::class, 'updateProductionStatus'])->name('products.massProduction');
         Route::put('archive', [ProductListController::class, 'updateArchiveStatus'])->name('products.massArchive');
-        Route::put('badges', [ProductListController::class, 'attachBadges'])->name('products.attachBadges');
+        Route::prefix('badges')->group(function () {
+            Route::put('update', [ProductListController::class, 'updateBadges'])->name('products.updateBadges');
+            Route::put('detach', [ProductListController::class, 'detachBadges'])->name('products.detachBadges');
+        });
 
         Route::prefix('properties')->group(function () {
             Route::get('', [PropertiesController::class, 'list'])->name('products.properties.list');
@@ -1343,14 +1347,25 @@ Route::middleware('auth')->group(function () {
         Route::get('available', [PublicEventDetailController::class, 'availableOrganizers'])->name('public-event.availableOrganizers');
     });
 
+    Route::prefix('analytics')->namespace('Analytics')->group(function () {
+        Route::prefix('competition')->group(function () {
+            Route::get('', [AnalyticsController::class, 'competition'])->name('analytics.competition');
+        });
+        Route::prefix('dump-orders')->group(function () {
+            Route::get('', [AnalyticsController::class, 'dumpOrders'])->name('analytics.dumpOrders');
+        });
+    });
+
     Route::prefix('api')->group(function () {
         Route::prefix('analytics')->group(function () {
+            Route::get('competition', [AnalyticsApiController::class, 'competition'])->name('analytics.api.competition');
+            Route::get('dump-orders', [AnalyticsApiController::class, 'dumpOrders'])->name('analytics.api.dumpOrders');
             Route::prefix('dashboard')->group(function () {
                 Route::prefix('sales')->group(function () {
-                    Route::get('all-period-by-day', [AnalyticsDashboardController::class, 'salesAllPeriodByDay'])->name('analytics.dashboard.sales.allPeriodByDay');
-                    Route::get('day-by-hour', [AnalyticsDashboardController::class, 'salesDayByHour'])->name('analytics.dashboard.sales.dayByHour');
-                    Route::get('month-by-day', [AnalyticsDashboardController::class, 'salesMonthByDay'])->name('analytics.dashboard.sales.monthByDay');
-                    Route::get('year-by-month', [AnalyticsDashboardController::class, 'salesYearByMonth'])->name('analytics.dashboard.sales.YearByMonth');
+                    Route::get('all-period-by-day', [AnalyticsApiController::class, 'salesAllPeriodByDay'])->name('analytics.dashboard.sales.allPeriodByDay');
+                    Route::get('day-by-hour', [AnalyticsApiController::class, 'salesDayByHour'])->name('analytics.dashboard.sales.dayByHour');
+                    Route::get('month-by-day', [AnalyticsApiController::class, 'salesMonthByDay'])->name('analytics.dashboard.sales.monthByDay');
+                    Route::get('year-by-month', [AnalyticsApiController::class, 'salesYearByMonth'])->name('analytics.dashboard.sales.YearByMonth');
                 });
             });
         });

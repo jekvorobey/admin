@@ -15,6 +15,8 @@
                     <th>Логотип</th>
                     <th>Название</th>
                     <th>Код</th>
+                    <th>Активность</th>
+                    <th>Видимость</th>
                     <th v-if="canUpdate(blocks.products)" class="text-right">Действия</th>
                 </tr>
             </thead>
@@ -29,6 +31,16 @@
                     <td><img :src="fileUrl(brand.file_id)" class="preview"></td>
                     <td>{{brand.name}}</td>
                     <td>{{brand.code}}</td>
+                    <td>
+                        <span class="badge" :class="getBadgeClass(brand.active)">
+                            {{ brand.active ? 'Да' : 'Нет' }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge" :class="getBadgeClass(brand.is_visible)">
+                            {{ brand.is_visible ? 'Да' : 'Нет' }}
+                        </span>
+                    </td>
                     <td v-if="canUpdate(blocks.products)">
                         <v-delete-button @delete="() => deleteBrands([brand.id])" class="float-right ml-1"/>
                         <button class="btn btn-warning float-right" @click="editBrand(brand)">
@@ -60,6 +72,27 @@
                         <v-input v-model="$v.form.description.$model" :error="errorDescription" tag="textarea">Описание*</v-input>
                         <img v-if="form.file_id" :src="fileUrl(form.file_id)" class="preview">
                         <file-input destination="brand" :error="errorFile" @uploaded="onFileUpload">Логотип*</file-input>
+                        <b-row class="mt-3">
+                            <b-col cols="4">
+                                <label for="brand-active">Активность</label>
+                            </b-col>
+                            <b-col cols="8">
+                                <input id="brand-active"
+                                       type="checkbox"
+                                       v-model="$v.form.active.$model"/>
+                            </b-col>
+                        </b-row>
+                        <b-row class="mt-3">
+                            <b-col cols="4">
+                                <label for="brand-is_visible">Видимость</label>
+                            </b-col>
+                            <b-col cols="8">
+                                <input id="brand-is_visible"
+                                       type="checkbox"
+                                       v-model="$v.form.is_visible.$model"/>
+                            </b-col>
+                            <b-col cols="12"><sup>Вывод в разделе брендов, в поиске, в фидах</sup></b-col>
+                        </b-row>
                     </div>
                     <div class="form-group">
                         <button @click="onSave" type="button" class="btn btn-primary">Сохранить</button>
@@ -134,6 +167,8 @@
                     code: null,
                     description: null,
                     file_id: null,
+                    active: null,
+                    is_visible: null,
                 },
                 massSelectionType: 'brands',
             };
@@ -145,7 +180,9 @@
                     pattern: (value) => /^[a-zA-Z0-9-]*$/.test(value)
                 },
                 description: {required},
-                file_id: {required}
+                file_id: {required},
+                active: {required},
+                is_visible: {required},
             }
         },
         methods: {
@@ -173,6 +210,8 @@
                 this.form.code = null;
                 this.form.description = null;
                 this.form.file_id = null;
+                this.form.active = true;
+                this.form.is_visible = true;
                 this.openModal('BrandFormModal');
             },
 
@@ -183,6 +222,8 @@
                 this.form.code = brand.code;
                 this.form.description = brand.description;
                 this.form.file_id = brand.file_id;
+                this.form.active = brand.active;
+                this.form.is_visible = brand.is_visible;
                 this.openModal('BrandFormModal');
             },
             onSave() {
@@ -217,6 +258,10 @@
             },
             onFileUpload(file) {
                 this.$v.form.file_id.$model = file.id;
+            },
+            getBadgeClass(active) {
+                if (active) return 'badge-success';
+                return 'badge-danger';
             }
         },
         created() {

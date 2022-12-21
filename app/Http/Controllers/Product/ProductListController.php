@@ -52,7 +52,6 @@ class ProductListController extends Controller
                 return $product;
             }, $productSearchResult->products);
         }
-
         $offers = $offerService->offers(
             (new RestQuery())
                 ->setFilter('product_id', $productIds)
@@ -65,6 +64,7 @@ class ProductListController extends Controller
             $product['offerId'] = $offers[$product['id']] ?? null;
             return $product;
         }, $productSearchResult->products);
+
 
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
@@ -172,9 +172,30 @@ class ProductListController extends Controller
     }
 
     /**
-     * Назначить или обнулить шильдики у товаров
+     * Обновить шильдики у товаров
      */
-    public function attachBadges(ProductService $productService): Response
+    public function updateBadges(ProductService $productService): Response
+    {
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
+
+        $data = $this->validate(request(), [
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'integer',
+            'badges' => 'nullable|json',
+        ]);
+
+        $productIds = $data['product_ids'];
+        $badges = json_decode($data['badges']) ?? null;
+
+        $productService->updateBadges($productIds, $badges);
+
+        return response('', 204);
+    }
+
+    /**
+     * Открепить шильдики от товаров
+     */
+    public function detachBadges(ProductService $productService): Response
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
@@ -186,7 +207,7 @@ class ProductListController extends Controller
 
         $productIds = $data['product_ids'];
         $badges = $data['badges'] ?? null;
-        $productService->updateBadges($productIds, $badges);
+        $productService->detachBadges($productIds, $badges);
 
         return response('', 204);
     }
@@ -194,8 +215,14 @@ class ProductListController extends Controller
     protected function makeQuery(Request $request): ProductQuery
     {
         $query = new ProductQuery();
+        $filter = $request->get('filter', []);
         $page = $request->get('page', 1);
-        $query->page($page, 10);
+        if (data_get($filter, 'pageSize') && data_get($filter, 'pageSize') <= 500) {
+            $pageSize = data_get($filter, 'pageSize');
+        } else {
+            $pageSize = 10;
+        }
+        $query->page($page, $pageSize);
         $query->segment = 1;// todo
         $query->role = RoleDto::ROLE_SHOWCASE_GUEST;
         $query->fields([
@@ -214,9 +241,10 @@ class ProductListController extends Controller
             ProductQuery::APPROVAL_STATUS,
             ProductQuery::INDEX_MARK,
             ProductQuery::STRIKES,
+            ProductQuery::OFFER_ID,
+            ProductQuery::MERCHANT_ID,
         ]);
 
-        $filter = $request->get('filter', []);
         $query->name = data_get($filter, 'name');
         $query->id = data_get($filter, 'id');
         $query->vendorCode = data_get($filter, 'vendorCode');
@@ -240,7 +268,9 @@ class ProductListController extends Controller
         $query->dateTo = data_get($filter, 'dateTo');
         $query->isPriceHidden = data_get($filter, 'isPriceHidden');
         $query->badges = data_get($filter, 'badges');
+        $query->offer_id = data_get($filter, 'offerId');
         $query->merchantId = data_get($filter, 'merchant');
+        $query->vendorCode = data_get($filter, 'vendorCode');
         $query->orderBy(ProductQuery::DATE_ADD, 'desc');
 
         return $query;
