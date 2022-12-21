@@ -72,12 +72,14 @@
                     </div>
 
                     <b-button type="submit" variant="dark">Искать</b-button>
-                    <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser">Создать</b-button>
                     <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
-                    <button v-if="options.canViewUserUpdateButton" @click="openModal('userAdd')" class="btn btn-success d-block mt-4">
-                        <fa-icon icon="plus"/>
+                    <br>
+                    <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser" class="btn mt-2">
+                        Создать клиента
+                    </b-button>
+                    <b-button v-if="canUpdate(blocks.settings) || canUpdate(blocks.users)" @click="openModal('userAdd')" class="btn btn-success mt-2">
                         Добавить пользователя
-                    </button>
+                    </b-button>
                 </b-form>
             </div>
         </div>
