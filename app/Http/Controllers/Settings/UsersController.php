@@ -35,7 +35,7 @@ class UsersController extends Controller
         RoleService $roleService,
         MerchantService $merchantService
     ) {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $this->title = 'Список пользователей';
 
@@ -55,7 +55,7 @@ class UsersController extends Controller
 
     public function page(Request $request, UserService $userService): JsonResponse
     {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $query = $this->makeQuery($request);
         $data = [
@@ -78,7 +78,7 @@ class UsersController extends Controller
         MerchantService $merchantService,
         OperatorService $operatorService
     ) {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userQuery = new RestQuery();
         $userQuery->setFilter('id', $id);
@@ -118,7 +118,7 @@ class UsersController extends Controller
         OperatorService $operatorService,
         RequestInitiator $authUser
     ): JsonResponse {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ADD_USER);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $data = $request->all();
         $newUser = new UserDto($data);
@@ -170,7 +170,7 @@ class UsersController extends Controller
 
     public function isUnique(Request $request, UserService $userService): JsonResponse
     {
-        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_MERCHANTS]);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER, BlockDto::ADMIN_BLOCK_MERCHANTS]);
 
         $data = $request->get('data');
         $field = $request->get('field');
@@ -200,7 +200,7 @@ class UsersController extends Controller
 
     public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userService->addRoles($id, $request->roles);
 
@@ -211,7 +211,7 @@ class UsersController extends Controller
 
     public function deleteRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userService->deleteRoles($id, $request->roles);
 
@@ -222,7 +222,7 @@ class UsersController extends Controller
 
     public function banUser(int $id, UserService $userService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userService->ban($id);
 
@@ -231,7 +231,7 @@ class UsersController extends Controller
 
     public function banArray(BanUsersRequest $request, UserService $userService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userService->banArray($request->ids);
 
@@ -240,7 +240,7 @@ class UsersController extends Controller
 
     public function unBanUser(int $id, UserService $userService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userService->unban($id);
 
@@ -255,7 +255,7 @@ class UsersController extends Controller
         OperatorService $operatorService,
         RequestInitiator $user
     ): JsonResponse {
-        $this->canView(BlockDto::ADMIN_BLOCK_SETTINGS);
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $data = $this->validate(request(), [
             'role_ids' => 'required|array',

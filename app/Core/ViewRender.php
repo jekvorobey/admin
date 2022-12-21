@@ -148,6 +148,7 @@ class ViewRender
             'communications' => BlockDto::ADMIN_BLOCK_COMMUNICATIONS,
             'events' => BlockDto::ADMIN_BLOCK_PUBLIC_EVENTS,
             'settings' => BlockDto::ADMIN_BLOCK_SETTINGS,
+            'users' => BlockDto::ADMIN_BLOCK_ADD_USER,
         ];
 
         return $this;

@@ -37,7 +37,6 @@ class CustomerListController extends Controller
             'fronts' => Front::allFronts(),
             'roles' => $roleService->roles(),
             'merchants' => $merchantService->merchants(),
-            'canViewUserUpdateButton' => $this->canViewInFront(BlockDto::ADMIN_BLOCK_ADD_USER),
         ];
 
         return $this->list('Клиентская база', options: $options,);
