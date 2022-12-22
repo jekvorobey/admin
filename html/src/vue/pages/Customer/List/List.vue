@@ -77,7 +77,7 @@
                     <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser" class="btn mt-2">
                         Создать клиента
                     </b-button>
-                    <b-button v-if="canUpdate(blocks.settings) || canUpdate(blocks.users)" @click="openModal('userAdd')" class="btn btn-success mt-2">
+                    <b-button v-if="options && ( canUpdate(blocks.settings) || canUpdate(blocks.users) )" @click="openModal('userAdd')" class="btn btn-success mt-2">
                         Добавить пользователя
                     </b-button>
                 </b-form>
@@ -129,7 +129,7 @@
         />
 
         <modal-create-user v-if="!isReferral && canUpdate(blocks.clients)" :id="modalIdCreateUser"/>
-        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
+        <user-add-modal v-if="options" :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
                         @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
