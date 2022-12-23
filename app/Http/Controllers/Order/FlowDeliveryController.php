@@ -120,7 +120,7 @@ class FlowDeliveryController extends Controller
             'height' => 'numeric|nullable',
             'length' => 'numeric|nullable',
             'weight' => 'numeric|nullable',
-            'required_shipping_at' => 'string|nullable',
+            'psd' => 'string|nullable',
             'assembly_problem_comment' => 'string|nullable',
 
             'package_qty' => 'integer|nullable',
