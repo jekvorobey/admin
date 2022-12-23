@@ -335,6 +335,7 @@ Vue.mixin({
  @property {number} communications
  @property {number} events
  @property {number} settings
+ @property {number} users
  */
 /**
  @typedef BlockPermissions
