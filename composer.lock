@@ -1559,12 +1559,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-marketing-lib.git",
-                "reference": "066b3cd088873638e43fb51eedf39affe7023448"
+                "reference": "27778d56a0fbddb492d8eb46e8b4db9319583dd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-marketing-lib/repository/archive.zip?sha=066b3cd088873638e43fb51eedf39affe7023448",
-                "reference": "066b3cd088873638e43fb51eedf39affe7023448",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-marketing-lib/repository/archive.zip?sha=27778d56a0fbddb492d8eb46e8b4db9319583dd4",
+                "reference": "27778d56a0fbddb492d8eb46e8b4db9319583dd4",
                 "shasum": ""
             },
             "require": {
@@ -1603,7 +1603,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965511/issues"
             },
-            "time": "2022-12-15T04:12:43+00:00"
+            "time": "2022-12-28T13:38:10+07:00"
         },
         {
             "name": "ibt/merchant-management-lib",
