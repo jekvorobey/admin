@@ -64,6 +64,18 @@
                 :allow-sorting="false"
             />
             <DxColumn
+                data-field="optionsName"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="optionsValue"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
                 data-field="qty"
                 data-type="number"
                 :width="80"
