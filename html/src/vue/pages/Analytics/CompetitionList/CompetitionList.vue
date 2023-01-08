@@ -22,14 +22,28 @@
                 :width="150"
             />
             <DxColumn
+                data-field="categoryGroupId"
+                data-type="number"
+                :width="50"
+                :allow-sorting="false"
+            />
+            <DxColumn
                 data-field="categoryGroupName"
                 data-type="string"
                 :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="categoryId"
+                data-type="number"
+                :width="50"
+                :allow-sorting="false"
             />
             <DxColumn
                 data-field="categoryName"
                 data-type="string"
                 :width="150"
+                :allow-sorting="false"
             />
             <DxColumn
                 data-field="merchantId"
@@ -64,13 +78,13 @@
                 :allow-sorting="false"
             />
             <DxColumn
-                data-field="optionsName"
+                data-field="optionNames"
                 data-type="string"
                 :width="150"
                 :allow-sorting="false"
             />
             <DxColumn
-                data-field="optionsValue"
+                data-field="optionValues"
                 data-type="string"
                 :width="150"
                 :allow-sorting="false"
