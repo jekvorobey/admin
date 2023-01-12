@@ -30,7 +30,7 @@
             <tr>
                 <th></th>
                 <th>№</th>
-                <th>Наименование</th>
+                <th>Название</th>
                 <th>Система</th>
                 <th v-if="canUpdate(blocks.settings)">Действия</th>
             </tr>
