@@ -10,21 +10,25 @@
         <div class="col-8">
             <div class="col-8">
                 <!-- На заказ от определенной суммы -->
-                <div v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
-                    <v-input
-                        v-model="values.sum"
-                        type="number"
-                        min="0"
-                        :error="valuesErrors.sum"
-                        @change="initSumError"
-                    >От (руб.)</v-input>
-                </div>
+                <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_ORDER">
+                    <div>
+                        <v-input
+                                :value="values.sum"
+                                @blur="onBlurValueSum($event)"
+                                type="number"
+                                min="0"
+                                :error="valuesErrors.sum"
+                                @change="initSumError"
+                        >От (руб.)</v-input>
+                    </div>
+                </template>
 
                 <!-- На заказ от определенной суммы товаров заданного бренда -->
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_BRAND">
                     <div>
                         <v-input
-                            v-model="values.sum"
+                            :value="values.sum"
+                            @blur="onBlurValueSum($event)"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -46,7 +50,8 @@
                 <template v-if="conditionType === CONDITION_TYPE_MIN_PRICE_CATEGORY">
                     <div>
                         <v-input
-                            v-model="values.sum"
+                            :value="values.sum"
+                            @blur="onBlurValueSum($event)"
                             type="number"
                             min="0"
                             :error="valuesErrors.sum"
@@ -393,6 +398,11 @@
         },
 
         methods: {
+
+            onBlurValueSum(e) {
+                this.values.sum = e.target.value;
+            },
+
             onBlur() {
                 this.values.users = this.values.users.split(',')
             },
