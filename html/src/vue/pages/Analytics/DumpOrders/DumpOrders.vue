@@ -219,6 +219,11 @@
                 :width="350"
             />
             <DxColumn
+                data-field="deliveryService"
+                data-type="string"
+                :width="350"
+            />
+            <DxColumn
                 :width="0"
             />
 
