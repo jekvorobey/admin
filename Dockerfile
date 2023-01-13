@@ -30,7 +30,7 @@ RUN yarn prod
 
 #FROM wntbrian/php-fpm:libs
 #FROM makasim/nginx-php-fpm:7.3-all-exts
-FROM registry.ibt.ru:5050/php81:1.7
+FROM registry.ibt.ru:5050/php81:1.10
 
 RUN docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache
