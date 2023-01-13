@@ -393,6 +393,7 @@ export default {
                 version: 4,
                 jsonp: true,
                 beforeSend(request) {
+                    request.timeout = 180000;
                     request.params.createdStart = moment(createdStart).format('YYYY-MM-DD');
                     request.params.createdEnd = moment(createdEnd).format('YYYY-MM-DD');
                 },
@@ -449,6 +450,7 @@ export default {
                     version: 4,
                     jsonp: true,
                     beforeSend(request) {
+                        request.timeout = 180000;
                         request.params.createdStart = createdStart;
                         request.params.createdEnd = createdEnd;
                         if (valuePaymentStatus) {
@@ -464,7 +466,7 @@ export default {
         },
         exportToExcel() {
             const dataGrid = this.$refs.dataGrid.instance;
-            dataGrid.exportToExcel();
+            dataGrid.exportToExcel(false);
         },
         onRowDblClick(e) {
             let data = e.data;

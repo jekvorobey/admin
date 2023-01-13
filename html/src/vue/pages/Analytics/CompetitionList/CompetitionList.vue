@@ -186,9 +186,6 @@ export default {
     },
     data() {
         const pathDataSource = '/api/analytics/competition';
-        const createdEnd = new Date();
-        const createdStart = new Date();
-        createdStart.setMonth(createdStart.getMonth() - 1);
 
         const dataSource = new DataSource({
             paginate: true,
@@ -200,8 +197,7 @@ export default {
                 version: 4,
                 jsonp: true,
                 beforeSend(request) {
-                    request.params.createdStart = moment(createdStart).format('YYYY-MM-DD');
-                    request.params.createdEnd = moment(createdEnd).format('YYYY-MM-DD');
+                    request.timeout = 180000;
                 },
             },
         });
@@ -209,8 +205,6 @@ export default {
         const valuePaymentStatus = [];
 
         return {
-            createdStart,
-            createdEnd,
             dataSource,
             pathDataSource,
             valuePaymentStatus,
@@ -232,8 +226,6 @@ export default {
             this.dataSource.reload();
         },
         refreshDataSource() {
-            let createdStart = moment(this.createdStart).format('YYYY-MM-DD');
-            let createdEnd = moment(this.createdEnd).format('YYYY-MM-DD');
 
             this.dataSource = new DataSource({
                 paginate: true,
@@ -245,15 +237,14 @@ export default {
                     version: 4,
                     jsonp: true,
                     beforeSend(request) {
-                        request.params.createdStart = createdStart;
-                        request.params.createdEnd = createdEnd;
+                        request.timeout = 180000;
                     },
                 },
             });
         },
         exportToExcel() {
             const dataGrid = this.$refs.dataGrid.instance;
-            dataGrid.exportToExcel();
+            dataGrid.exportToExcel(false);
         },
         onRowDblClick(e) {
             let data = e.data;
