@@ -49,12 +49,13 @@ class ProductDetailController extends Controller
      * @throws NotFoundExceptionInterface
      */
     public function index(
-        int $id,
-        ProductService $productService,
-        CategoryService $categoryService,
-        BrandService $brandService,
+        int                  $id,
+        ProductService       $productService,
+        CategoryService      $categoryService,
+        BrandService         $brandService,
         ContentBadgesService $badgesService
-    ) {
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         [
@@ -171,9 +172,10 @@ class ProductDetailController extends Controller
      */
     public function savePublicEvents(
         AttachPublicEventRequest $request,
-        int $id,
-        ProductService $productService
-    ): JsonResponse {
+        int                      $id,
+        ProductService           $productService
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $productService->savePublicEvents($id, $request->all()['public_events']);
@@ -336,15 +338,15 @@ class ProductDetailController extends Controller
         $merchantIds = $product->offers->pluck('merchant_id');
         $merchants = $this->getMerchants($merchantIds->unique()->all());
         $product->offers = $product->offers->map(function (OfferDto $item) use ($priceService, $stockService, $merchants) {
-                $item['qty'] = $stockService->qtyByOffer($item->id);
-                $priceIn = new PriceInDto($item->id);
-                $priceDto = $priceService->price($priceIn);
-                $item['price'] = $priceDto ? $priceDto->price : 0;
-                $item['saleStatus'] = OfferSaleStatus::statusById($item['sale_status']);
-                $item['merchant'] = $merchants->has($item->merchant_id) ? $merchants[$item->merchant_id] : null;
-                $item->created_at = date_time2str(new Carbon($item->created_at));
+            $item['qty'] = $stockService->qtyByOffer($item->id);
+            $priceIn = new PriceInDto($item->id);
+            $priceDto = $priceService->price($priceIn);
+            $item['price'] = $priceDto ? $priceDto->price : 0;
+            $item['saleStatus'] = OfferSaleStatus::statusById($item['sale_status']);
+            $item['merchant'] = $merchants->has($item->merchant_id) ? $merchants[$item->merchant_id] : null;
+            $item->created_at = date_time2str(new Carbon($item->created_at));
 
-                return $item;
+            return $item;
         });
 
         $query = new ProductQuery();
