@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: madri
- * Date: 21.10.2019
- * Time: 15:32
- */
-
 namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Controller;
@@ -39,12 +32,13 @@ class OfferListController extends Controller
      * @throws PimException
      */
     public function index(
-        Request $request,
-        OfferService $offerService,
+        Request         $request,
+        OfferService    $offerService,
         MerchantService $merchantService,
-        PriceService $priceService,
-        StockService $stockService
-    ) {
+        PriceService    $priceService,
+        StockService    $stockService
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $this->title = 'Предложения мерчантов';
@@ -67,12 +61,13 @@ class OfferListController extends Controller
      * @throws PimException
      */
     public function page(
-        Request $request,
-        OfferService $offerService,
+        Request         $request,
+        OfferService    $offerService,
         MerchantService $merchantService,
-        PriceService $priceService,
-        StockService $stockService
-    ): JsonResponse {
+        PriceService    $priceService,
+        StockService    $stockService
+    ): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $query = $this->makeQuery($request);
@@ -112,11 +107,12 @@ class OfferListController extends Controller
      * @throws PimException
      */
     public function createOffer(
-        Request $request,
+        Request      $request,
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ): Response {
+    ): Response
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -156,7 +152,7 @@ class OfferListController extends Controller
                     'store_id' => $stock['store_id'],
                     'product_id' => $data['product_id'],
                     'offer_id' => $offerId,
-                    'qty' => (float) $stock['qty'],
+                    'qty' => (float)$stock['qty'],
                 ]);
                 $stocks->push($stockDto);
             }
@@ -170,12 +166,13 @@ class OfferListController extends Controller
      * @throws PimException
      */
     public function editOffer(
-        int $id,
-        Request $request,
+        int          $id,
+        Request      $request,
         OfferService $offerService,
         PriceService $priceService,
         StockService $stockService
-    ): Response {
+    ): Response
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -216,7 +213,7 @@ class OfferListController extends Controller
                     'store_id' => $stock['store_id'],
                     'product_id' => $data['product_id'],
                     'offer_id' => $id,
-                    'qty' => (float) $stock['qty'],
+                    'qty' => (float)$stock['qty'],
                 ]);
                 $stocks->push($stockDto);
             }
@@ -295,10 +292,11 @@ class OfferListController extends Controller
 //    }
 
     public function loadStoreAndQty(
-        Request $request,
+        Request      $request,
         StoreService $storeService,
         StockService $stockService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -325,10 +323,11 @@ class OfferListController extends Controller
     }
 
     public function validateOffer(
-        Request $request,
+        Request        $request,
         ProductService $productService,
-        OfferService $offerService
-    ): JsonResponse {
+        OfferService   $offerService
+    ): JsonResponse
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $data = $request->validate([
@@ -369,7 +368,7 @@ class OfferListController extends Controller
         $query = (new RestQuery())
             ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
-            ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'created_at')
+            ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'xml_id', 'guid', 'created_at')
             ->addFields(ProductDto::entity(), 'id', 'name');
         $page = $request->get('page', 1);
         $query->pageNumber($page, 20);
@@ -397,12 +396,13 @@ class OfferListController extends Controller
      * @throws PimException
      */
     protected function loadItems(
-        RestQuery $query,
-        OfferService $offerService,
+        RestQuery       $query,
+        OfferService    $offerService,
         MerchantService $merchantService,
-        PriceService $priceService,
-        StockService $stockService
-    ): Collection {
+        PriceService    $priceService,
+        StockService    $stockService
+    ): Collection
+    {
         $offers = $offerService->offers($query);
         $merchantIds = $offers->pluck('merchant_id')->all();
         $offerIds = $offers->pluck('id')->all();
@@ -434,6 +434,8 @@ class OfferListController extends Controller
                 'merchantName' => $merchants->has($offer->merchant_id) ? $merchants->get($offer->merchant_id)->name : 'N/A',
                 'price' => $prices->has($offer->id) ? $prices->get($offer->id)->price : 0,
                 'qty' => $stocks->has($offer->id) ? $stocks->get($offer->id) : 0,
+                'xmlId' => $offer->xml_id,
+                'guid' => $offer->guid,
             ];
         });
     }

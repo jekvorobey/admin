@@ -14,7 +14,9 @@
                                     class="col-sm-12 col-md-8 col-xl-8"></f-text-area-search>
                 <button class="switch-btn btn btn-dark" @click="changeTextFilter">
                     <span
-                        class="font-weight-bold">{{ this.isOfferId ? 'Поиск по Артикулам' : 'Поиск по Offer ID' }}</span>
+                        class="font-weight-bold">{{
+                            this.isOfferId ? 'Поиск по Артикулам' : 'Поиск по Offer ID'
+                        }}</span>
                 </button>
             </div>
             <template v-slot:footer>

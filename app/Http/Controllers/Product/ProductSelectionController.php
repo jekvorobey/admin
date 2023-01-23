@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\Controller;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use MerchantManagement\Dto\MerchantDto;
+use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferDto;
-use Pim\Dto\Product\ProductArchiveStatus;
 use Pim\Dto\Search\ProductQuery;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\SearchService\SearchService;
-use Illuminate\Http\JsonResponse;
-use MerchantManagement\Services\MerchantService\MerchantService;
-use MerchantManagement\Dto\MerchantDto;
 
 class ProductSelectionController extends Controller
 {
@@ -82,7 +81,7 @@ class ProductSelectionController extends Controller
         }
 
         $OfferQuery = $offerService->newQuery()
-            ->addFields(OfferDto::entity(), 'id', 'xml_id')
+            ->addFields(OfferDto::entity(), 'id', 'xml_id', 'guid')
             ->setFilter('product_id', $productIds);
         $offers = $offerService->offers($OfferQuery)->keyBy('id');
 
@@ -96,6 +95,7 @@ class ProductSelectionController extends Controller
         $productSearchResult->products = array_map(function ($product) use ($merchants, $offers) {
             $product['merchantName'] = $merchants->has($product['merchantId']) ? $merchants->get($product['merchantId'])->name : 'N/A';
             $product['xmlId'] = $offers->has($product['offerId']) ? $offers->get($product['offerId'])->xml_id : null;
+            $product['guid'] = $offers->has($product['offerId']) ? $offers->get($product['offerId'])->guid : null;
             return $product;
         }, $productSearchResult->products);
 
