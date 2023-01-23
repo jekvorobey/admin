@@ -267,17 +267,3 @@ export default {
     }
 };
 </script>
-
-<style>
-.autocomplete-input {
-    border: none;
-    padding: 0;
-    background: none;
-}
-
-.autocomplete-input:focus, .autocomplete-input[aria-expanded="true"] {
-    border-color: #fff;
-    background-color: #fff;
-    box-shadow: none;
-}
-</style>
