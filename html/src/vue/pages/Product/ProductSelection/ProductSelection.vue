@@ -199,7 +199,13 @@ export default {
                     name: 'offer id',
                     code: 'offerId',
                     value: function (claim) {
-                        return claim.offerId ? claim.offerId : 'N/A';
+                        const offerId = claim.offerId ? claim.offerId : 'N/A';
+
+                        return `
+                          <b-button v-b-tooltip.hover title="${claim.guid}">
+                            ${offerId}
+                          </b-button>
+                        `
                     },
                     isShown: true,
                     isAlwaysShown: true,

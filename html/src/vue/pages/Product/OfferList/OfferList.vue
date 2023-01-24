@@ -90,7 +90,14 @@
             <tbody>
             <tr v-for="(offer, index) in offers">
                 <td><input type="checkbox" v-model="checkboxes[offer.id]"></td>
-                <td><a :href="getRoute('offers.detail', {id: offer.id})">{{ offer.id }}</a></td>
+                <td>
+                    <a :href="getRoute('offers.detail', {id: offer.id})"
+                       :id="'tooltip-target-' + index"
+                    >{{ offer.id }}</a>
+                    <b-tooltip :target="'tooltip-target-' + index" triggers="hover">
+                       <b>{{offer.guid}}</b>
+                    </b-tooltip>
+                </td>
                 <td>{{ offer.xmlId }}</td>
                 <td>{{ offer.productName }}</td>
                 <td>{{ offer.merchantName }}</td>

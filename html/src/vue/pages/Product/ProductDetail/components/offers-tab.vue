@@ -51,9 +51,13 @@
                 :class="offer.id === currentOffer.id ? 'table-primary' : ''"
                 :title="offer.id === currentOffer.id ? 'Оффер на витрине' : ''">
                 <td>
-                    <a :href="getRoute('offers.detail', {id: offer.id})" target="_blank">
+                    <a :href="getRoute('offers.detail', {id: offer.id})" target="_blank"
+                       :id="'tooltip-target-' + index">
                         {{ offer.id }}
                     </a>
+                    <b-tooltip :target="'tooltip-target-' + index" triggers="hover">
+                        <b>{{offer.guid}}</b>
+                    </b-tooltip>
                 </td>
                 <td>
                     {{ offer.xml_id }}

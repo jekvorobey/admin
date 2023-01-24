@@ -34,7 +34,14 @@
                         <div>{{ offer.offerId }}</div>
                         <div v-if="model && model.productsByOffers">{{ getXmlID(offer.offerId) }}</div>
                     </td>
-                    <td>{{ product(offer.offerId).id }}</td>
+                    <td>
+                        <span :id="'tooltip-target-' + product(offer.offerId).id">
+                            {{ product(offer.offerId).id }}
+                        </span>
+                        <b-tooltip :target="'tooltip-target-' + product(offer.offerId).id" triggers="hover">
+                            <b>{{getGuid(offer.offerId)}}</b>
+                        </b-tooltip>
+                    </td>
                     <td v-if="canView(blocks.products)">
                         <a :href="getRoute('products.detail', {id: product(offer.offerId).id})" target="_blank">
                             {{ product(offer.offerId).name }}
