@@ -1762,12 +1762,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=587f34783069db47d061450e7aee868378a72ebf",
-                "reference": "587f34783069db47d061450e7aee868378a72ebf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=b416ee864891454750123e8e37797b83ce4e569d",
-                "reference": "b416ee864891454750123e8e37797b83ce4e569d",
+                "reference": "587f34783069db47d061450e7aee868378a72ebf",
                 "shasum": ""
             },
             "require": {
