@@ -1507,12 +1507,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-logistics-lib.git",
-                "reference": "9a68ea7609ecf0ef85dc419e4b20e075fc79a6c6"
+                "reference": "5e0f5413856b8a964fff32dd108afd2f93edde1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-logistics-lib/repository/archive.zip?sha=9a68ea7609ecf0ef85dc419e4b20e075fc79a6c6",
-                "reference": "9a68ea7609ecf0ef85dc419e4b20e075fc79a6c6",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-logistics-lib/repository/archive.zip?sha=5e0f5413856b8a964fff32dd108afd2f93edde1c",
+                "reference": "5e0f5413856b8a964fff32dd108afd2f93edde1c",
                 "shasum": ""
             },
             "require": {
@@ -1551,7 +1551,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965501/issues"
             },
-            "time": "2022-12-13T07:41:09+00:00"
+            "time": "2023-01-17T00:21:25+08:00"
         },
         {
             "name": "ibt/marketing-lib",
@@ -1559,12 +1559,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-marketing-lib.git",
-                "reference": "5568bd60f5e9537b6498be88f0eb3c348335dee0"
+                "reference": "27778d56a0fbddb492d8eb46e8b4db9319583dd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-marketing-lib/repository/archive.zip?sha=5568bd60f5e9537b6498be88f0eb3c348335dee0",
-                "reference": "5568bd60f5e9537b6498be88f0eb3c348335dee0",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-marketing-lib/repository/archive.zip?sha=27778d56a0fbddb492d8eb46e8b4db9319583dd4",
+                "reference": "27778d56a0fbddb492d8eb46e8b4db9319583dd4",
                 "shasum": ""
             },
             "require": {
@@ -1603,7 +1603,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965511/issues"
             },
-            "time": "2022-08-04T06:34:49+00:00"
+            "time": "2022-12-28T13:38:10+07:00"
         },
         {
             "name": "ibt/merchant-management-lib",
@@ -1704,12 +1704,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "9e2b84efffbaa93fdf297b0e1ad118ae0115e3fb"
+                "reference": "e9c676d96d5afbf0543c25abbbbfa87d979d4c33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=9e2b84efffbaa93fdf297b0e1ad118ae0115e3fb",
-                "reference": "9e2b84efffbaa93fdf297b0e1ad118ae0115e3fb",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=e9c676d96d5afbf0543c25abbbbfa87d979d4c33",
+                "reference": "e9c676d96d5afbf0543c25abbbbfa87d979d4c33",
                 "shasum": ""
             },
             "require": {
@@ -1749,7 +1749,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2022-12-13T07:40:15+00:00"
+            "time": "2022-12-15T04:11:58+00:00"
         },
         {
             "name": "ibt/pim-lib",
@@ -1763,6 +1763,12 @@
                 "type": "zip",
                 "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=587f34783069db47d061450e7aee868378a72ebf",
                 "reference": "587f34783069db47d061450e7aee868378a72ebf",
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-pim-lib/repository/archive.zip?sha=b416ee864891454750123e8e37797b83ce4e569d",
+                "reference": "b416ee864891454750123e8e37797b83ce4e569d",
+>>>>>>> dev
                 "shasum": ""
             },
             "require": {

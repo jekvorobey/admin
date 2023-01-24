@@ -4,15 +4,16 @@
             ref="dataGrid"
             :data-source="dataSource"
             :remote-operations="true"
-            :allow-column-reordering="false"
+            :allow-column-reordering="true"
             :allow-column-resizing="true"
             :column-resizing-mode="columnResizingMode"
             :column-auto-width="true"
             :row-alternation-enabled="true"
             :show-borders="true"
             :height="gridHeight"
+            :width="gridWidth"
 
-            @content-ready="onContentReady"
+            @row-dbl-click="onRowDblClick"
         >
             <DxColumn
                 data-field="orderId"
@@ -78,6 +79,18 @@
                 :allow-sorting="false"
             />
             <DxColumn
+                data-field="categoryGroupId"
+                data-type="number"
+                :width="50"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="categoryGroupName"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
                 data-field="categoryId"
                 data-type="number"
                 :width="50"
@@ -121,7 +134,19 @@
             <DxColumn
                 data-field="productName"
                 data-type="string"
-                :width="350"
+                :width="400"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="optionNames"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="optionValues"
+                data-type="string"
+                :width="150"
                 :allow-sorting="false"
             />
             <DxColumn
@@ -145,7 +170,12 @@
                 :width="150"
             />
             <DxColumn
-                data-field="requiredShippingAt"
+                data-field="deliveryAt"
+                data-type="date"
+                :width="100"
+            />
+            <DxColumn
+                data-field="deliveredAt"
                 data-type="date"
                 :width="100"
             />
@@ -188,6 +218,14 @@
                 data-type="string"
                 :width="350"
             />
+            <DxColumn
+                data-field="deliveryService"
+                data-type="string"
+                :width="350"
+            />
+            <DxColumn
+                :width="0"
+            />
 
             <DxToolbar>
                 <DxItem
@@ -203,11 +241,16 @@
                     template="createdEndTemplate"
                 />
                 <DxItem
+                    location="before"
+                    template="selectStatusesTemplate"
+                />
+                <DxItem
                     location="after"
                     template="exportTemplate"
                 />
             </DxToolbar>
 
+            <DxColumnChooser :enabled="true"/>
             <DxSelection mode="single"/>
             <DxExport
                 :enabled="true"
@@ -252,6 +295,49 @@
                     display-format="shortDate"
                 />
             </template>
+            <template #selectStatusesTemplate>
+                <DxDropDownBox
+                    v-model:value="valuePaymentStatus"
+                    :defer-rendering="false"
+                    :show-clear-button="true"
+                    :data-source="dataSourcePaymentStatuses"
+                    :width="290"
+                    display-expr="value"
+                    value-expr="id"
+                    placeholder="Статус оплаты..."
+                >
+                    <template #content="{ data }">
+                        <DxDataGrid
+                            :height="345"
+                            :width="250"
+                            :hover-state-enabled="true"
+                            :column-auto-width="false"
+                            key-expr="id"
+                            :data-source="dataSourcePaymentStatuses"
+                            :selected-row-keys="selectedRowKeysPaymentStatuses"
+                            @selection-changed="onSelectionChangedPaymentStatuses"
+                        >
+                            <DxColumn
+                                column="Код"
+                                data-field="id"
+                                data-type="number"
+                                :width="50"
+                            />
+                            <DxColumn
+                                column="Название"
+                                data-field="value"
+                                data-type="string"
+                                :width="100"
+                            />
+                            <DxSelection mode="multiple"/>
+                            <DxPaging
+                                :enabled="true"
+                                :page-size="100"
+                            />
+                        </DxDataGrid>
+                    </template>
+                </DxDropDownBox>
+            </template>
             <template #exportTemplate>
                 <DxButton
                     icon="xlsxfile"
@@ -274,9 +360,11 @@ import {
     DxLoadPanel,
     DxToolbar,
     DxItem,
+    DxColumnChooser,
     DxSearchPanel,
 } from 'devextreme-vue/data-grid';
 
+import DxDropDownBox from 'devextreme-vue/drop-down-box';
 import DxDateBox from 'devextreme-vue/date-box';
 import DxButton from 'devextreme-vue/button';
 
@@ -296,8 +384,10 @@ export default {
         DxLoadPanel,
         DxToolbar,
         DxItem,
+        DxDropDownBox,
         DxButton,
         DxDateBox,
+        DxColumnChooser,
         DxSearchPanel,
     },
     created() {
@@ -320,34 +410,52 @@ export default {
                 version: 4,
                 jsonp: true,
                 beforeSend(request) {
+                    request.timeout = 180000;
                     request.params.createdStart = moment(createdStart).format('YYYY-MM-DD');
                     request.params.createdEnd = moment(createdEnd).format('YYYY-MM-DD');
                 },
             },
         });
 
+        const dataSourcePaymentStatuses = [
+            {id: 1, value: 'Не оплачено'},
+            {id: 2, value: 'Оплачено'},
+            {id: 3, value: 'Просрочено'},
+            {id: 4, value: 'Средства захолдированы'},
+            {id: 5, value: 'Ошибка проведения платежа'},
+            {id: 6, value: 'Ожидает оплаты'},
+        ];
+
+        const valuePaymentStatus = [];
+
         return {
-            createdStart: createdStart,
-            createdEnd: createdEnd,
+            createdStart,
+            createdEnd,
             dataSource,
             pathDataSource,
+            dataSourcePaymentStatuses,
+            valuePaymentStatus,
             pageSizes: [50, 100, 500],
-            gridHeight: "Calc(100Vh - 150px)",
+            gridHeight: "Calc(100Vh - 100px)",
+            gridWidth: "100%",
             columnResizingMode: "widget",
             exportFileName: "dump-orders",
             exportFormats: ["xlsx"],
-            onContentReady(e) {
-            },
         };
+    },
+    computed: {
+        selectedRowKeysPaymentStatuses() {
+            return this.valuePaymentStatus;
+        },
     },
     methods: {
         reloadDataSource() {
             this.dataSource.reload();
         },
         refreshDataSource() {
-
             let createdStart = moment(this.createdStart).format('YYYY-MM-DD');
             let createdEnd = moment(this.createdEnd).format('YYYY-MM-DD');
+            let valuePaymentStatus = this.valuePaymentStatus;
 
             this.dataSource = new DataSource({
                 paginate: true,
@@ -359,17 +467,47 @@ export default {
                     version: 4,
                     jsonp: true,
                     beforeSend(request) {
+                        request.timeout = 180000;
                         request.params.createdStart = createdStart;
                         request.params.createdEnd = createdEnd;
+                        if (valuePaymentStatus) {
+                            request.params.paymentStatus = valuePaymentStatus;
+                        }
                     },
                 },
             });
         },
-
+        onSelectionChangedPaymentStatuses({ selectedRowsData }) {
+            this.valuePaymentStatus = selectedRowsData.map((item) => item.id);
+            this.refreshDataSource();
+        },
         exportToExcel() {
             const dataGrid = this.$refs.dataGrid.instance;
-            dataGrid.exportToExcel();
-        }
+            dataGrid.exportToExcel(false);
+        },
+        onRowDblClick(e) {
+            let data = e.data;
+            if (data.orderId) {
+                window.open('/orders/'+ data.orderId, '_blank');
+            }
+        },
     },
 };
 </script>
+<style>
+.dx-datagrid-content .dx-datagrid-table .dx-row .dx-command-select {
+    width: 35px;
+    min-width: 35px;
+    max-width: 35px;
+}
+.dx-datagrid {
+    color: rgb(0 0 0);
+}
+.dx-datagrid .dx-row > td {
+    padding: 3px;
+}
+.dx-datagrid-headers {
+    color: rgb(0 0 0);
+    background: rgb(232 232 232);
+}
+</style>

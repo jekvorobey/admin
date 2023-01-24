@@ -1,6 +1,6 @@
 <template>
     <transition name="modal">
-        <modal :close="closeModal" v-if="isModalOpen('userAdd') && canUpdate(blocks.settings)">
+        <modal :close="closeModal" v-if="isModalOpen('userAdd') && (canUpdate(blocks.settings) || canUpdate(blocks.users))">
             <div slot="header">
                 <h4>{{ source ? 'Редактирование пользователя' : 'Добавление пользователя' }}</h4>
             </div>

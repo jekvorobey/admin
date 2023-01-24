@@ -47,6 +47,16 @@
                         В составе есть элемент питания
                     </v-select>
                 </div>
+                <hr>
+                <div class="row">
+                    <v-input v-model="$v.form.limit_qty.$model" :error="errorLimitQty" class="col-md-6 col-sm-12">
+                        Ограничение в одни руки, шт
+                    </v-input>
+                    <v-input v-model="$v.form.limit_period.$model" :error="errorLimitPeriod" class="col-md-6 col-sm-12">
+                        Период ограничения, ч.
+                    </v-input>
+                </div>
+                <hr>
                 <button @click="save" class="btn btn-dark" :disabled="!$v.form.$anyDirty">Сохранить</button>
             </div>
         </modal>
@@ -68,7 +78,9 @@
     import modalMixin from '../../../../mixins/modal.js';
 
     const formFields = ['has_battery', 'explosive', 'name', 'brand_id', 'category_id', 'approval_status',
-        'vendor_code', 'width', 'height', 'length', 'weight'];
+        'vendor_code', 'width', 'height', 'length', 'weight',
+        'limit_qty', 'limit_period'
+    ];
     export default {
         components: {
             modal,
@@ -99,6 +111,8 @@
                 weight: {required, integer},
                 has_battery: {},
                 explosive: {},
+                limit_qty: {integer},
+                limit_period: {integer},
             }
         },
         methods: {
@@ -209,6 +223,16 @@
                 if (this.$v.form.weight.$dirty) {
                     if (!this.$v.form.weight.required) return "Обязательное поле!";
                     if (!this.$v.form.weight.integer) return "Только цифры!";
+                }
+            },
+            errorLimitQty() {
+                if (this.$v.form.limit_qty.$dirty) {
+                    if (!this.$v.form.limit_qty.integer) return "Только цифры!";
+                }
+            },
+            errorLimitPeriod() {
+                if (this.$v.form.limit_period.$dirty) {
+                    if (!this.$v.form.limit_period.integer) return "Только цифры!";
                 }
             }
         }

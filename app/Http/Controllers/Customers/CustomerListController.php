@@ -37,7 +37,6 @@ class CustomerListController extends Controller
             'fronts' => Front::allFronts(),
             'roles' => $roleService->roles(),
             'merchants' => $merchantService->merchants(),
-            'canViewUserUpdateButton' => $this->canViewInFront(BlockDto::ADMIN_BLOCK_ADD_USER),
         ];
 
         return $this->list('Клиентская база', options: $options,);
@@ -62,26 +61,11 @@ class CustomerListController extends Controller
 
         $this->title = $title;
 
-        $registeringUsersIds = self::$userService->users((new RestQuery())
-            ->setFilter('registered_by_user_id', 'notNull', null))
-            ->groupBy('registered_by_user_id')
-            ->keys()
-            ->toArray();
-
-        $registeringUsers = self::$userService->users((new RestQuery())->setFilter('id', $registeringUsersIds))
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'full_name' => $item->full_name,
-                ];
-            });
-
         return $this->render('Customer/List', [
             'statuses' => CustomerDto::statusesName(),
             'isReferral' => $isReferral,
             'perPage' => self::PER_PAGE,
             'roles' => $isReferral === null ? Helpers::getOptionRoles(true) : null,
-            'registeringUsers' => $registeringUsers,
             'options' => $options,
         ]);
     }
@@ -104,7 +88,8 @@ class CustomerListController extends Controller
             'page' => 'nullable',
             'role' => 'nullable',
             'has_password' => 'nullable',
-            'registered_by_user_id' => 'nullable'
+            'registered_by_user_id' => 'nullable',
+            'registered_by_user_fio' => 'nullable',
         ]);
 
         $restQueryUser = new RestQuery();
@@ -154,11 +139,18 @@ class CustomerListController extends Controller
         if (!empty($filter['registered_by_user_id'])) {
             $restQueryUser->setFilter('registered_by_user_id', $filter['registered_by_user_id']);
         }
+        if (!empty($filter['registered_by_user_fio'])) {
+            $restQueryRegisteredByUser = new RestQuery();
+            $restQueryRegisteredByUser->setFilter('full_name', "LIKE", $filter['registered_by_user_fio']);
+            $registeredByUserId = $userService->users($restQueryRegisteredByUser)->pluck('id')->toArray();
+            $restQueryUser->setFilter('registered_by_user_id', $registeredByUserId);
+        }
 
         $restQueryUser->setFilter('front', Front::FRONT_SHOWCASE)
             ->addSort('id', 'desc')
             ->pageNumber(request('page', 1), self::PER_PAGE);
         $users = $userService->users($restQueryUser)->keyBy('id');
+
         if ($users->isEmpty()) {
             return response()->json([
                 'users' => [],
@@ -194,8 +186,23 @@ class CustomerListController extends Controller
                 'gender' => $customer->gender,
                 'has_password' => $user->has_password,
                 'registered_by_user_id' => $user->registered_by_user_id,
+                'registered_by_user_fio' => null,
             ];
         })->filter()->values();
+
+        $registeredByUserIds = $result->pluck('registered_by_user_id')->filter()->unique()->toArray();
+        if (!empty($registeredByUserIds)) {
+            $restQueryRegisteredByUser = new RestQuery();
+            $restQueryRegisteredByUser->setFilter('id', $registeredByUserIds);
+            $registeredByUsers = $userService->users($restQueryRegisteredByUser)->keyBy('id');
+
+            $result = $result->map(function ($user) use ($registeredByUsers) {
+                if ($registeredByUser = $registeredByUsers->get($user['registered_by_user_id'])) {
+                    $user['registered_by_user_fio'] = $registeredByUser->full_name;
+                }
+                return $user;
+            });
+        }
 
         return response()->json([
             'users' => $result,

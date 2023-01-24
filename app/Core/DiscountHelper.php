@@ -128,6 +128,7 @@ class DiscountHelper
             'start_date' => 'string|nullable',
             'end_date' => 'string|nullable',
             'promo_code_only' => 'boolean|required',
+            'summarizable_with_all' => 'boolean|required',
             'status' => 'numeric|required',
             'product_qty_limit' => 'numeric|nullable',
             'offers' => 'array',
@@ -153,6 +154,7 @@ class DiscountHelper
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'promo_code_only' => $data['promo_code_only'],
+            'summarizable_with_all' => $data['summarizable_with_all'],
             'relations' => [],
             'comment' => $data['comment'],
         ]);

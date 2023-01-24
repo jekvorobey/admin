@@ -269,6 +269,17 @@
             </div>
         </div>
 
+        <div class="row" v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="summarizable_with_all" v-model="discount.summarizable_with_all">
+                    <label class="form-check-label" for="summarizable_with_all">
+                        Суммировать со всеми активными скидками
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="mb-3">
             <template
                 v-if="

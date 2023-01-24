@@ -22,16 +22,20 @@
                                 </b-form-select-option>
                             </b-form-select>
                         </b-col>
-                        <v-input v-model="filter.registered_by_user_id" type="number" class="col-md-4 col-12">Кем зарегистрирован</v-input>
-<!--                        <b-col>-->
-<!--                            <label for="filter-registered_by_user_id">Кем зарегистрирован</label>-->
-<!--                            <b-form-select v-model="filter.registered_by_user_id" id="filter-registered_by_user_id">-->
-<!--                                <b-form-select-option :value="null">Не выбрано</b-form-select-option>-->
-<!--                                <b-form-select-option :value="item.id" v-for="(item, id) in registeringUsers" :key="id">-->
-<!--                                    {{ item.full_name ? item.full_name + ' ' + item.id: item.id }}-->
-<!--                                </b-form-select-option>-->
-<!--                            </b-form-select>-->
-<!--                        </b-col>-->
+
+                        <b-col>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox"
+                                       @input="changeSearchUserRegister"
+                                       :checked="searchByID"
+                                       class="custom-control-input"
+                                       id="search_register_user">
+                                <label class="custom-control-label" for="search_register_user">{{ searchByIDText }}</label>
+                            </div>
+                            <v-input v-if="searchByID" v-model="filter.registered_by_user_id" type="number"></v-input>
+                            <v-input v-if="!searchByID" v-model="filter.registered_by_user_fio"></v-input>
+                        </b-col>
+
                         <b-col>
                             <v-input v-model="filter.phone" v-mask="telMask" validation="phone">Телефон</v-input>
                         </b-col>
@@ -72,12 +76,14 @@
                     </div>
 
                     <b-button type="submit" variant="dark">Искать</b-button>
-                    <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser">Создать</b-button>
                     <b-button @click="cleanFilter" type="button" variant="light">Очистить поля</b-button>
-                    <button v-if="options.canViewUserUpdateButton" @click="openModal('userAdd')" class="btn btn-success d-block mt-4">
-                        <fa-icon icon="plus"/>
+                    <br>
+                    <b-button type="button" variant="outline-dark" v-if="!isReferral && canUpdate(blocks.clients)" v-b-modal="modalIdCreateUser" class="btn mt-2">
+                        Создать клиента
+                    </b-button>
+                    <b-button v-if="options && ( canUpdate(blocks.settings) || canUpdate(blocks.users) )" @click="openModal('userAdd')" class="btn btn-success mt-2">
                         Добавить пользователя
-                    </button>
+                    </b-button>
                 </b-form>
             </div>
         </div>
@@ -99,7 +105,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(user, index) in users">
+                <tr v-for="user in users">
                     <td><a :href="getRoute('customers.detail', {id: user.id})">{{ user.id }}</a></td>
                     <td>{{ datePrint(user.register_date) }}</td>
                     <td>{{ user.full_name || 'N/A' }}</td>
@@ -113,6 +119,7 @@
                         <a :href="getRoute('settings.userDetail', {id: user.registered_by_user_id})" target="_blank">
                             {{ user.registered_by_user_id }}
                         </a>
+                        {{ user.registered_by_user_fio }}
                     </td>
                     <td></td>
                 </tr>
@@ -127,7 +134,7 @@
         />
 
         <modal-create-user v-if="!isReferral && canUpdate(blocks.clients)" :id="modalIdCreateUser"/>
-        <user-add-modal :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
+        <user-add-modal v-if="options" :fronts="options.fronts" :roles="options.roles" :merchants="options.merchants"
                         @onSave="onUserCreated"></user-add-modal>
     </layout-main>
 </template>
@@ -147,6 +154,7 @@ import UserAddModal from '../../Settings/components/user-add-modal.vue';
 const defaultFilter = {
     status: null,
     registered_by_user_id: null,
+    registered_by_user_fio: null,
     has_password: null,
     phone: '',
     full_name: '',
@@ -160,7 +168,7 @@ const defaultFilter = {
 export default {
     mixins: [modalMixin],
     components: {ModalCreateUser, VInput, VSelect, VDate, FDate, UserAddModal},
-    props: ['statuses', 'perPage', 'isReferral', 'roles', 'registeringUsers', 'options'],
+    props: ['statuses', 'perPage', 'isReferral', 'roles', 'options'],
     data() {
         return {
             modalIdCreateUser: 'modalIdCreateUser',
@@ -186,7 +194,8 @@ export default {
                     title: 'Не установлен',
                     value: 'no'
                 },
-            ]
+            ],
+            searchByID: false
         };
     },
     watch: {
@@ -196,8 +205,18 @@ export default {
         telMask() {
             return telMask;
         },
+        searchByIDText() {
+            return this.searchByID ? 'Кто регистрировал (ID)' : 'Кто регистрировал (ФИО)';
+        }
     },
     methods: {
+        changeSearchUserRegister() {
+            if (this.searchByID) this.filter.registered_by_user_id = null;
+            else this.filter.registered_by_user_fio = null;
+
+            this.searchByID = !this.searchByID;
+        },
+
         fetchUsers() {
             let filter = {...this.filter};
 

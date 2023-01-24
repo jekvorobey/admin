@@ -218,6 +218,15 @@
                     </span>
                 </td>
             </tr>
+            <tr v-if="discount.type !== discountTypes.bundleOffer && discount.type !== discountTypes.bundleMasterclass  && (discountTypes.offer in optionDiscountTypes)">
+              <th><label for="summarizable_with_all">Суммировать со всеми активными скидками</label></th>
+              <td colspan="2">
+                    <span class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="summarizable_with_all" v-model="discount.summarizable_with_all">
+                        <label class="custom-control-label" for="summarizable_with_all"></label>
+                    </span>
+              </td>
+            </tr>
             <tr>
               <th>Служебный комментарий</th>
               <td class="position-relative" style="height: 100px;">
@@ -331,6 +340,7 @@
                     status: discount.status,
                     product_qty_limit: discount.product_qty_limit,
                     promo_code_only: !!discount.promo_code_only,
+                    summarizable_with_all: !!discount.summarizable_with_all,
                     merchant_id: this.merchantBtn ? discount.merchant_id : null,
                     comment: discount.comment,
                 };

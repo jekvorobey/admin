@@ -8,24 +8,24 @@
                     type="PARTY"
                     @onSelect="fillOrganizationFromDaData"
                 >
-                    Юридическое наименование организации
+                    Юридическое наименование организации<span class="required-red">*</span>
                 </v-dadata>
             </div>
             <div class="row">
-                <v-input v-model="$v.form.inn.$model" :error="errorInn" class="col-md-6 col-12">ИНН</v-input>
+                <v-input v-model="$v.form.inn.$model" :error="errorInn" class="col-md-6 col-12">ИНН<span class="required-red">*</span> </v-input>
                 <v-input v-model="$v.form.kpp.$model" :error="errorKpp" class="col-md-6 col-12">КПП</v-input>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress">Юридический адрес</v-input>
+                <v-input v-model="$v.form.legal_address.$model" :error="errorLegalAddress">Юридический адрес<span class="required-red">*</span> </v-input>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress">Фактический адрес</v-input>
+                <v-input v-model="$v.form.fact_address.$model" :error="errorFactAddress">Фактический адрес<span class="required-red">*</span> </v-input>
             </div>
 
             <hr/>
 
             <div class="mb-3">
-                <v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount">Номер банковского счета</v-input>
+                <v-input v-model="$v.form.payment_account.$model" :error="errorPaymentAccount">Номер банковского счета<span class="required-red">*</span> </v-input>
             </div>
 
             <div class="mb-3">
@@ -35,18 +35,18 @@
                     type="BANK"
                     @onSelect="fillBankDetailsFromDaData"
                 >
-                    Наименование банка
+                    Наименование банка<span class="required-red">*</span>
                 </v-dadata>
             </div>
 
             <div class="mb-3">
-                <v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik">БИК банка</v-input>
+                <v-input v-model="$v.form.bank_bik.$model" :error="errorBankBik">БИК банка<span class="required-red">*</span></v-input>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount">Номер корреспондентского счета</v-input>
+                <v-input v-model="$v.form.correspondent_account.$model" :error="errorCorrespondentAccount">Номер корреспондентского счета<span class="required-red">*</span></v-input>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.bank_address.$model" :error="errorBankAddress">Юридический адрес банка</v-input>
+                <v-input v-model="$v.form.bank_address.$model" :error="errorBankAddress">Юридический адрес банка<span class="required-red">*</span> </v-input>
             </div>
 
             <hr/>
@@ -83,10 +83,10 @@
             <hr/>
 
             <div class="mb-3">
-                <v-input v-model="$v.form.storage_address.$model" :error="errorStorageAddress" tag="textarea">Адреса складов отгрузки</v-input>
+                <v-input v-model="$v.form.storage_address.$model" :error="errorStorageAddress" tag="textarea">Адреса складов отгрузки<span class="required-red">*</span></v-input>
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.site.$model" :error="errorSite">Сайт компании</v-input>
+                <v-input v-model="$v.form.site.$model" :error="errorSite">Сайт компании<span class="required-red">*</span></v-input>
             </div>
             <div class="mb-3">
                 <v-select
@@ -100,7 +100,7 @@
                 Подтверждение о возможности работы с Платформой с использованием автоматических механизмов интеграции
             </div>
             <div class="mb-3">
-                <v-input v-model="$v.form.sale_info.$model" :error="errorSaleInfo" tag="textarea">Бренды и товарные категории, которыми вы торгуете</v-input>
+                <v-input v-model="$v.form.sale_info.$model" :error="errorSaleInfo" tag="textarea">Бренды и товарные категории, которыми вы торгуете<span class="required-red">*</span></v-input>
             </div>
 
             <hr/>
@@ -419,3 +419,9 @@
         },
     }
 </script>
+
+<style scoped>
+    .required-red {
+        color: #ff0000;
+    }
+</style>
