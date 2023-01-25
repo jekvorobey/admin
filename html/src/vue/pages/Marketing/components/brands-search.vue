@@ -27,7 +27,7 @@
             title: String,
             classes: String,
             brands: Array,
-            iBrands: Array,
+            iBrands: [Array, String],
             error: String,
         },
         data() {

@@ -217,10 +217,12 @@
                     />
                 </td>
                 <td>
-                    <input
+                    <v-input
+                        :group="false"
+                        sm
                         v-model="contact.phone"
-                        class="form-control form-control-sm"
-                        type="text"
+                        v-mask="telMask"
+                        validation="phone"
                         @change="updateContact(index)"
                     />
                 </td>
@@ -265,6 +267,7 @@
 
     import {validationMixin} from 'vuelidate';
     import {integer, required, requiredIf} from 'vuelidate/lib/validators';
+    import {telMask} from "../../../../../scripts/mask";
 
     export default {
     name: 'page-stores-detail',
@@ -545,6 +548,10 @@
         },
     },
     computed: {
+        telMask() {
+            return telMask;
+        },
+
         merchantOptions() {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
         },

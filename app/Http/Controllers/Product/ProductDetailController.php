@@ -131,6 +131,8 @@ class ProductDetailController extends Controller
             'height' => 'integer',
             'length' => 'integer',
             'weight' => 'integer',
+            'limit_qty' => ['nullable', 'integer'],
+            'limit_period' => ['nullable', 'integer'],
         ]);
         $product = new ProductDto($data);
 
@@ -329,6 +331,7 @@ class ProductDetailController extends Controller
         }
         /** @var ProductDto $product */
         $product = $products->first();
+
         $stockService = resolve(StockService::class);
         $priceService = resolve(PriceService::class);
         $orderService = resolve(OrderService::class);

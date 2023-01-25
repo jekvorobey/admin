@@ -1,18 +1,21 @@
 <template>
     <table class="table table-sm">
-    <tbody>
+        <tbody>
         <tr v-if="merchantVat">
             <td>Основная ставка НДС</td>
             <td colspan="1">
                 <div class="input-group input-group-sm">
-                  <v-select v-model="merchantVat.value" label="label"
-                            :options="availableVats">
-                  </v-select>
+                    <v-select v-model="merchantVat.value" label="label"
+                              :options="availableVats">
+                    </v-select>
                 </div>
             </td>
             <td v-if="canUpdate(blocks.merchants)">
-                <button class="btn btn-sm btn-success" @click="saveMerchantVat"><fa-icon icon="save"/></button>
-                <v-delete-button @delete="removeVat(merchantVat.id)" btn-class="btn-danger btn-sm" v-if="merchantVat.id"/>
+                <button class="btn btn-sm btn-success" @click="saveMerchantVat">
+                    <fa-icon icon="save"/>
+                </button>
+                <v-delete-button @delete="removeVat(merchantVat.id)" btn-class="btn-danger btn-sm"
+                                 v-if="merchantVat.id"/>
             </td>
         </tr>
         <tr>
@@ -25,9 +28,9 @@
             <td>{{ typeName(vat.type) }}</td>
             <td>
                 <div class="input-group input-group-sm">
-                  <v-select v-model="vat.value" label="label"
-                            :options="availableVats">
-                  </v-select>
+                    <v-select v-model="vat.value" label="label"
+                              :options="availableVats">
+                    </v-select>
                 </div>
             </td>
             <td>
@@ -36,7 +39,9 @@
             </td>
 
             <td v-if="canUpdate(blocks.merchants)">
-                <button class="btn btn-sm btn-success" @click="saveVat(vat)"><fa-icon icon="save"/></button>
+                <button class="btn btn-sm btn-success" @click="saveVat(vat)">
+                    <fa-icon icon="save"/>
+                </button>
                 <v-delete-button @delete="removeVat(vat.id)" btn-class="btn-danger btn-sm"/>
             </td>
         </tr>
@@ -51,9 +56,9 @@
             </td>
             <td>
                 <div class="input-group input-group-sm">
-                  <v-select v-model="newVat.value" label="label"
-                            :options="availableVats">
-                  </v-select>
+                    <v-select v-model="newVat.value" label="label"
+                              :options="availableVats">
+                    </v-select>
                 </div>
             </td>
             <td>
@@ -61,24 +66,32 @@
                     <div class="input-group-prepend" v-if="newVat.type">
                         <span class="input-group-text">{{ relatedNameByType(newVat.type) }}:</span>
                     </div>
-                    <input v-if="!newVat.type || newVat.type === merchantVatTypes.sku"
-                           v-model="newVat.related_id"
-                           class="form-control form-control-sm">
+                    <autocomplete v-if="!newVat.type || newVat.type === merchantVatTypes.sku"
+                                  :search="search"
+                                  class="form-control form-control-sm"
+                                  :get-result-value="getResultValue"
+                                  @submit="handleSubmit">
+                    </autocomplete>
+
                     <select v-else
                             v-model="newVat.related_id"
                             class="form-control form-control-sm">
                         <option
                             v-for="option in relatedOptionsByType(newVat.type)"
                             :value="option.value">
-                          {{ option.text }}
+                            {{ option.text }}
                         </option>
                     </select>
                 </div>
             </td>
 
-            <td><button class="btn btn-sm btn-outline-success" @click="saveVat(newVat)"><fa-icon icon="plus"/></button></td>
+            <td>
+                <button class="btn btn-sm btn-outline-success" @click="saveVat(newVat)">
+                    <fa-icon icon="plus"/>
+                </button>
+            </td>
         </tr>
-    </tbody>
+        </tbody>
     </table>
 </template>
 
@@ -89,11 +102,13 @@ import VSelect from '../../../../components/controls/VSelect/VSelect.vue';
 import 'vue2-datepicker/index.css';
 import 'vue2-datepicker/locale/ru.js';
 import VDeleteButton from '../../../../components/controls/VDeleteButton/VDeleteButton.vue';
+import Autocomplete from '@trevoreyre/autocomplete-vue';
+import '@trevoreyre/autocomplete-vue/dist/style.css'
 
 export default {
     name: 'tab-taxes',
     props: ['id', 'brandList', 'categoryList'],
-    components: {VDeleteButton, DatePicker, VSelect},
+    components: {VDeleteButton, DatePicker, VSelect, Autocomplete},
     data() {
         return {
             vats: [],
@@ -109,22 +124,44 @@ export default {
         }
     },
     computed: {
-      availableVats() {
-        return [
-          {text: 'Без НДС', value: -1},
-          {text: '0', value: 0},
-          {text: '10', value: 10},
-          {text: '20', value: 20},
-        ];
-      },
+        availableVats() {
+            return [
+                {text: 'Без НДС', value: -1},
+                {text: '0', value: 0},
+                {text: '10', value: 10},
+                {text: '20', value: 20},
+            ];
+        },
     },
     methods: {
+        search(input) {
+            return new Promise(resolve => {
+                if (input.length < 3) {
+                    return resolve([])
+                }
+                Services.net().get(this.getRoute('search.products', {query: input}), {
+                    query: input,
+                    merchantId: this.id
+                }, {
+                    query: input,
+                    merchantId: this.id
+                }).then(data => {
+                    resolve(data.products)
+                })
+            })
+        },
+        getResultValue(result) {
+            return result.name + ' (id:' + result.id + ')'
+        },
+        handleSubmit(result) {
+            this.newVat.related_id = result.id;
+        },
         saveVat(vat) {
             Services.showLoader();
             Services.net().post(this.getRoute('merchant.detail.vat.save', {id: this.id}), {}, {
                 id: vat.id,
                 type: vat.type,
-                value:vat.value,
+                value: vat.value,
                 related_id: vat.related_id,
             }).then((data) => {
                 this.vats = data.vats;
@@ -145,10 +182,10 @@ export default {
                 id: this.merchantVat.id,
                 value: this.merchantVat.value,
             }).then((data) => {
-              this.merchantVat = {
-                id: data.merchantVat.id,
-                value: data.merchantVat.value !== "" ? data.merchantVat.value : null
-              };
+                this.merchantVat = {
+                    id: data.merchantVat.id,
+                    value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+                };
             }).finally(() => {
                 Services.hideLoader();
             })
@@ -160,8 +197,8 @@ export default {
             }).then((data) => {
                 this.commissions = data.commissions;
                 this.merchantVat = {
-                  id: data.merchantVat.id,
-                  value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+                    id: data.merchantVat.id,
+                    value: data.merchantVat.value !== "" ? data.merchantVat.value : null
                 };
                 this.brands = data.brands;
                 this.categories = data.categories;
@@ -204,12 +241,12 @@ export default {
             switch (type) {
                 case this.merchantVatTypes.brand:
                     return Object.values(this.brandList).map(brand => {
-                        return { value: brand.id, text: brand.name }
+                        return {value: brand.id, text: brand.name}
                     });
                 case this.merchantVatTypes.category:
-                  return Object.values(this.categoryList).map(category => {
-                    return { value: category.id, text: category.name }
-                  });
+                    return Object.values(this.categoryList).map(category => {
+                        return {value: category.id, text: category.name}
+                    });
             }
         },
     },
@@ -218,8 +255,8 @@ export default {
         Services.net().get(this.getRoute('merchant.detail.vat', {id: this.id})).then(data => {
             this.vats = data.vats;
             this.merchantVat = {
-              id: data.merchantVat.id,
-              value: data.merchantVat.value !== "" ? data.merchantVat.value : null
+                id: data.merchantVat.id,
+                value: data.merchantVat.value !== "" ? data.merchantVat.value : null
             };
             this.brands = data.brands;
             this.categories = data.categories;

@@ -39,9 +39,11 @@
         <td>
           {{ redirect.id }}
         </td>
-        <td>
-          {{ redirect.from }}
-          <b-button size="sm" class="d-inline-block ml-3" @click="copyFrom(redirect.from)">Скопировать</b-button>
+        <td class="copy-row">
+          <b-button size="sm" class="d-inline-block mr-3" @click="copyFrom(redirect.from)">
+            <fa-icon icon="copy"></fa-icon>
+          </b-button>
+          <span>{{ redirect.from }}</span>
         </td>
         <td>
           {{ redirect.to }}
@@ -242,5 +244,9 @@ export default {
   .hidden-copy-component {
       position: absolute;
       left: -9999px;
+  }
+
+  .copy-row {
+    display: flex;
   }
 </style>
