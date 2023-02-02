@@ -455,7 +455,7 @@ Route::middleware('auth')->group(function () {
             Route::put('banArray', [UsersController::class, 'banArray'])->name('settings.banArray');
             Route::post('updatePassword', [UsersController::class, 'updatePassword'])->name('user.updatePassword');
             Route::get('is-unique', [UsersController::class, 'isUnique'])->name('user.isUnique');
-            Route::get('isMerchantExists', [UsersController::class, 'isMerchantExists'])->name('user.isMerchantExists');
+            Route::get('isMerchantNotExists', [UsersController::class, 'isMerchantNotExists'])->name('user.isMerchantNotExists');
         });
 
         Route::prefix('roles')->group(function () {

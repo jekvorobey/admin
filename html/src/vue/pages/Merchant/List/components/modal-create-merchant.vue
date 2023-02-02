@@ -228,15 +228,15 @@ export default {
             middle_name: {},
             email: {
                 email,
-                isMerchantExists: function () {
-                    return this.isMerchantExistsByField(this.form.email, 'email');
+                isMerchantNotExists: function () {
+                    return this.isMerchantNotExistsByField(this.form.email, 'email');
                 },
                 $lazy: true
             },
             phone: {
-                isMerchantExists: function () {
+                isMerchantNotExists: function () {
                     let phone = this.form.phone.replace(/[()]|\s|-/g, '');
-                    return this.isMerchantExistsByField(phone, 'phone');
+                    return this.isMerchantNotExistsByField(phone, 'phone');
                 },
                 $lazy: true
             },
@@ -260,7 +260,9 @@ export default {
         },
         async save() {
             await this.$v.$touch();
+            console.log(1);
             const isValid = await this.waitForValidation();
+            console.log(isValid);
             if (!isValid) {
                 return;
             }
@@ -325,9 +327,9 @@ export default {
                 this.$v.form.bank_address.$model = data.address.unrestricted_value;
             }
         },
-        isMerchantExistsByField(data, field) {
-            return Services.net().get(this.getRoute('user.isMerchantExists'), {data: data, field: field})
-                .then(data => data.isMerchantExists);
+        isMerchantNotExistsByField(data, field) {
+            return Services.net().get(this.getRoute('user.isMerchantNotExists'), {data: data, field: field})
+                .then(data => data.isMerchantNotExists);
         },
     },
     computed: {
@@ -413,12 +415,13 @@ export default {
         errorEmail() {
             if (this.$v.form.email.$dirty) {
                 if (!this.$v.form.email.email) return "Введите валидный e-mail!";
-                if (this.$v.form.email.isMerchantExists) return "Мерчант с таким E-mail уже существует";
+                // TODO доделать фильтр по email
+                // if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
             }
         },
         errorPhone() {
             if (this.$v.form.phone.$dirty) {
-                if (this.$v.form.phone.isMerchantExists) return "Мерчант с таким телефоном уже существует";
+                if (!this.$v.form.phone.isMerchantNotExists) return "Мерчант с таким телефоном уже существует";
             }
         },
         errorCommunicationMethod() {

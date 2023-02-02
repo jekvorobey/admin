@@ -202,13 +202,13 @@ class UsersController extends Controller
         ]);
     }
 
-    public function isMerchantExists(Request $request, UserService $userService, OperatorService $operatorService): JsonResponse
+    public function isMerchantNotExists(Request $request, UserService $userService, OperatorService $operatorService): JsonResponse
     {
         $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER, BlockDto::ADMIN_BLOCK_MERCHANTS]);
 
         $data = $request->get('data');
         $field = $request->get('field');
-        $isMerchantExists = false;
+        $isMerchantNotExists = true;
 
         if ($data && $field) {
             if ($field === 'phone') {
@@ -230,13 +230,13 @@ class UsersController extends Controller
                 )->first();
 
                 if (!is_null($merchantByUserId)) {
-                    $isMerchantExists = true;
+                    $isMerchantNotExists = false;
                 }
             }
         }
 
         return response()->json([
-            'isMerchantExists' => $isMerchantExists,
+            'isMerchantNotExists' => $isMerchantNotExists,
         ]);
     }
 
