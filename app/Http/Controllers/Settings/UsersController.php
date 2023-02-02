@@ -213,9 +213,11 @@ class UsersController extends Controller
         if ($data && $field) {
             if ($field === 'phone') {
                 $data = phone_format($data);
-            } elseif ($field === 'email') {
-                $field = 'login_email';
             }
+            // TODO доделать фильтр по email
+//            elseif ($field === 'email') {
+//                $field = 'login_email';
+//            }
 
             $userQuery = $userService->newQuery()
                 ->setFilter($field, '=', $data);
