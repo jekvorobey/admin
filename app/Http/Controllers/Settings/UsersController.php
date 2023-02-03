@@ -30,11 +30,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UsersController extends Controller
 {
     public function index(
-        Request $request,
-        UserService $userService,
-        RoleService $roleService,
+        Request         $request,
+        UserService     $userService,
+        RoleService     $roleService,
         MerchantService $merchantService
-    ) {
+    )
+    {
         $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $this->title = 'Список пользователей';
@@ -71,13 +72,14 @@ class UsersController extends Controller
      * @return mixed
      */
     public function detail(
-        int $id,
-        UserService $userService,
-        RoleService $roleService,
+        int             $id,
+        UserService     $userService,
+        RoleService     $roleService,
         CustomerService $customerService,
         MerchantService $merchantService,
         OperatorService $operatorService
-    ) {
+    )
+    {
         $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $userQuery = new RestQuery();
@@ -112,12 +114,13 @@ class UsersController extends Controller
     }
 
     public function saveUser(
-        UserSaveRequest $request,
-        UserService $userService,
-        CustomerService $customerService,
-        OperatorService $operatorService,
+        UserSaveRequest  $request,
+        UserService      $userService,
+        CustomerService  $customerService,
+        OperatorService  $operatorService,
         RequestInitiator $authUser
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $data = $request->all();
@@ -138,11 +141,12 @@ class UsersController extends Controller
     }
 
     protected function checkUser(
-        int $userId,
-        array $data,
+        int             $userId,
+        array           $data,
         CustomerService $customerService,
         OperatorService $operatorService
-    ): void {
+    ): void
+    {
         if (in_array(Front::FRONT_SHOWCASE, $data['fronts'])) {
             $customer = $customerService->customers((new RestQuery())->setFilter('user_id', $userId))->first();
             if (!$customer) {
@@ -198,6 +202,45 @@ class UsersController extends Controller
         ]);
     }
 
+    public function isMerchantNotExists(Request $request, UserService $userService, OperatorService $operatorService): JsonResponse
+    {
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER, BlockDto::ADMIN_BLOCK_MERCHANTS]);
+
+        $data = $request->get('data');
+        $field = $request->get('field');
+        $isMerchantNotExists = true;
+
+        if ($data && $field) {
+            if ($field === 'phone') {
+                $data = phone_format($data);
+            }
+            // TODO доделать фильтр по email
+//            elseif ($field === 'email') {
+//                $field = 'login_email';
+//            }
+
+            $userQuery = $userService->newQuery()
+                ->setFilter($field, '=', $data);
+            $user = $userService->users($userQuery)->first();
+
+            if (!is_null($user)) {
+                /** @var OperatorDto $operatorMain */
+                $merchantByUserId = $operatorService->operators(
+                    (new RestQuery())->setFilter('user_id', $user->id)
+                )->first();
+
+                if (!is_null($merchantByUserId)) {
+                    $isMerchantNotExists = false;
+                }
+            }
+        }
+
+        return response()->json([
+            'isMerchantNotExists' => $isMerchantNotExists,
+        ]);
+    }
+
+
     public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
         $this->canUpdate([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
@@ -251,10 +294,11 @@ class UsersController extends Controller
      * Получение пользователей по массиву ролей
      */
     public function usersByRoles(
-        UserService $userService,
-        OperatorService $operatorService,
+        UserService      $userService,
+        OperatorService  $operatorService,
         RequestInitiator $user
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER]);
 
         $data = $this->validate(request(), [
@@ -321,7 +365,7 @@ class UsersController extends Controller
         ]);
         $authUserId = $authUser->userId();
 
-        if ($authUserId && $authUserId !== (int) $request->userId) {
+        if ($authUserId && $authUserId !== (int)$request->userId) {
             throw new AuthorizationException(
                 'Ошибка авторизации пользователя. Авторизован другой пользователь.'
             );
