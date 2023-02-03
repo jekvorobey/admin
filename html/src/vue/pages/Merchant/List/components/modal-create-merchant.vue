@@ -229,9 +229,10 @@ export default {
             email: {
                 required,
                 email,
-                isMerchantNotExists: function () {
-                    return this.isMerchantNotExistsByField(this.form.email, 'email');
-                },
+                // TODO доделать фильтр по email
+                // isMerchantNotExists: function () {
+                //     return this.isMerchantNotExistsByField(this.form.email, 'email');
+                // },
                 $lazy: true
             },
             phone: {
@@ -261,9 +262,7 @@ export default {
         },
         async save() {
             await this.$v.$touch();
-            console.log(1);
             const isValid = await this.waitForValidation();
-            console.log(isValid);
             if (!isValid) {
                 return;
             }
