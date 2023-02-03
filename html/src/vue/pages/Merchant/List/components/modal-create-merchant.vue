@@ -74,7 +74,7 @@
                     :error="errorEmail"
                     class="col-md-4 col-12"
                     autocomplete="off"
-                >E-mail
+                >E-mail<span class="required-red">*</span>
                 </v-input>
                 <v-input
                     v-model="$v.form.phone.$model"
@@ -227,10 +227,12 @@ export default {
             last_name: {},
             middle_name: {},
             email: {
+                required,
                 email,
-                isMerchantNotExists: function () {
-                    return this.isMerchantNotExistsByField(this.form.email, 'email');
-                },
+                // TODO доделать фильтр по email
+                // isMerchantNotExists: function () {
+                //     return this.isMerchantNotExistsByField(this.form.email, 'email');
+                // },
                 $lazy: true
             },
             phone: {
@@ -260,9 +262,7 @@ export default {
         },
         async save() {
             await this.$v.$touch();
-            console.log(1);
             const isValid = await this.waitForValidation();
-            console.log(isValid);
             if (!isValid) {
                 return;
             }
@@ -415,6 +415,7 @@ export default {
         errorEmail() {
             if (this.$v.form.email.$dirty) {
                 if (!this.$v.form.email.email) return "Введите валидный e-mail!";
+                else if (!this.$v.form.email.required) return "Обязательное поле!";
                 // TODO доделать фильтр по email
                 // if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
             }
