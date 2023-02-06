@@ -160,7 +160,7 @@ export default {
                 add_return_service: this.model.add_return_service,
                 add_open_service: this.model.add_open_service,
                 has_courier_call_api_method: this.model.has_courier_call_api_method,
-                pickup_from_regions: this.model.pickup_from_regions,
+                pickup_from_regions: this.model.pickup_from_regions ? this.model.pickup_from_regions : [],
             },
         }
     },
