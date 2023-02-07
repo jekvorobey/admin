@@ -69,21 +69,22 @@
             </div>
             <div class="row">
                 <v-input
+                        v-model="$v.form.phone.$model"
+                        :placeholder="telPlaceholder"
+                        :error="errorPhone"
+                        v-mask="telMask"
+                        class="col-md-4 col-12"
+                        autocomplete="off"
+                >Телефон<span class="required-red">*</span>
+                </v-input>
+                <v-input
                     v-model="$v.form.email.$model"
                     :placeholder="emailPlaceholder"
                     :error="errorEmail"
+                    :disabled="phoneNotReady"
                     class="col-md-4 col-12"
                     autocomplete="off"
                 >E-mail<span class="required-red">*</span>
-                </v-input>
-                <v-input
-                    v-model="$v.form.phone.$model"
-                    :placeholder="telPlaceholder"
-                    :error="errorPhone"
-                    v-mask="telMask"
-                    class="col-md-4 col-12"
-                    autocomplete="off"
-                >Телефон
                 </v-input>
                 <v-select
                     v-model="$v.form.communication_method.$model"
@@ -230,12 +231,13 @@ export default {
                 required,
                 email,
                 // TODO доделать фильтр по email
-                // isMerchantNotExists: function () {
-                //     return this.isMerchantNotExistsByField(this.form.email, 'email');
-                // },
+                isMerchantNotExists: function () {
+                    return this.isMerchantNotExistsByField(this.form.email, 'email');
+                },
                 $lazy: true
             },
             phone: {
+                required,
                 isMerchantNotExists: function () {
                     let phone = this.form.phone.replace(/[()]|\s|-/g, '');
                     return this.isMerchantNotExistsByField(phone, 'phone');
@@ -333,6 +335,9 @@ export default {
         },
     },
     computed: {
+        phoneNotReady() {
+            return (this.form.phone.length === 0 || this.form.phone.trim().length < 17)
+        },
         telMask() {
             return telMask;
         },
@@ -417,12 +422,13 @@ export default {
                 if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 else if (!this.$v.form.email.required) return "Обязательное поле!";
                 // TODO доделать фильтр по email
-                // if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
+                else if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
             }
         },
         errorPhone() {
             if (this.$v.form.phone.$dirty) {
-                if (!this.$v.form.phone.isMerchantNotExists) return "Мерчант с таким телефоном уже существует";
+                if (!this.$v.form.phone.required) return "Обязательное поле!";
+                else if (!this.$v.form.phone.isMerchantNotExists) return "Мерчант с таким телефоном уже существует";
             }
         },
         errorCommunicationMethod() {
