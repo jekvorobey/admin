@@ -12,7 +12,7 @@
         <b-card no-body v-if="canUpdate(blocks.logistics)">
             <b-tabs lazy card v-model="tabIndex">
                 <b-tab v-for='(tab, key) in tabs' :key="key" :title="tab.title">
-                    <tab-settings v-if="key === 'settings'" :model.sync="deliveryService"/>
+                    <tab-settings v-if="key === 'settings'" :model.sync="deliveryService" :regions="regions"/>
                     <tab-limitations v-else-if="key === 'limitations'" :model.sync="deliveryService"/>
                     <template v-else>
                         Заглушка
@@ -49,6 +49,7 @@
         props: [
             'iDeliveryService',
             'deliveryServiceStatuses',
+            'regions',
             'shipmentsInfo',
         ],
         data() {
