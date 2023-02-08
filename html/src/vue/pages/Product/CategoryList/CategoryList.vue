@@ -18,17 +18,17 @@
             </thead>
         </table>
         <tree-item
-                v-for="item in basicCategories"
-                :key="item.id"
-                :category="item"
-                :collection="categories"
-                :depth="0"
-                @onEdit="editCategory"
+            v-for="item in basicCategories"
+            :key="item.id"
+            :category="item"
+            :collection="categories"
+            :depth="0"
+            @onEdit="editCategory"
         ></tree-item>
 
         <category-edit-modal
-                :category="categoryToEdit"
-                :collection="categories"
+            :category="categoryToEdit"
+            :collection="categories"
         />
 
     </layout-main>
@@ -36,38 +36,38 @@
 
 <script>
 
-    import TreeItem from './components/category-tree-item.vue';
-    import CategoryEditModal from './components/category-edit-modal.vue';
+import TreeItem from './components/category-tree-item.vue';
+import CategoryEditModal from './components/category-edit-modal.vue';
 
-    export default {
-        components: {
-            TreeItem,
-            CategoryEditModal,
-        },
-        props: {
-            categories: Array,
-        },
-        data() {
-            return {
-                categoryToEdit: null,
-            }
-        },
-        methods: {
-            createCategory() {
-                this.categoryToEdit = null;
-                this.$bvModal.show('category-edit-modal');
-            },
-            editCategory(value) {
-                this.categoryToEdit = value;
-                this.$bvModal.show('category-edit-modal');
-            },
-        },
-        computed: {
-            basicCategories() {
-                return this.categories.filter(function (category) {
-                    return (!category.parent_id);
-                });
-            },
+export default {
+    components: {
+        TreeItem,
+        CategoryEditModal,
+    },
+    props: {
+        categories: Array,
+    },
+    data() {
+        return {
+            categoryToEdit: null,
         }
-    };
+    },
+    methods: {
+        createCategory() {
+            this.categoryToEdit = null;
+            this.$bvModal.show('category-edit-modal');
+        },
+        editCategory(value) {
+            this.categoryToEdit = value;
+            this.$bvModal.show('category-edit-modal');
+        },
+    },
+    computed: {
+        basicCategories() {
+            return this.categories.filter(function (category) {
+                return (!category.parent_id);
+            });
+        },
+    }
+};
 </script>
