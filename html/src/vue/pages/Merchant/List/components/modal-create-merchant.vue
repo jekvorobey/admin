@@ -69,12 +69,12 @@
             </div>
             <div class="row">
                 <v-input
-                        v-model="$v.form.phone.$model"
-                        :placeholder="telPlaceholder"
-                        :error="errorPhone"
-                        v-mask="telMask"
-                        class="col-md-4 col-12"
-                        autocomplete="off"
+                    v-model="$v.form.phone.$model"
+                    :placeholder="telPlaceholder"
+                    :error="errorPhone"
+                    v-mask="telMask"
+                    class="col-md-4 col-12"
+                    autocomplete="off"
                 >Телефон<span class="required-red">*</span>
                 </v-input>
                 <v-input
@@ -227,20 +227,23 @@ export default {
             first_name: {},
             last_name: {},
             middle_name: {},
-            email: {
-                required,
-                email,
-                // TODO доделать фильтр по email
-                isMerchantNotExists: function () {
-                    return this.isMerchantNotExistsByField(this.form.email, 'email');
-                },
-                $lazy: true
-            },
             phone: {
                 required,
                 isMerchantNotExists: function () {
                     let phone = this.form.phone.replace(/[()]|\s|-/g, '');
-                    return this.isMerchantNotExistsByField(phone, 'phone');
+                    return Services.net().get(this.getRoute('user.isMerchantNotExists'), {phone})
+                        .then(data => data.isMerchantNotExists);
+                },
+                $lazy: true
+            },
+            email: {
+                required,
+                email,
+                isUserNotExists: function () {
+                    let phone = this.form.phone.replace(/[()]|\s|-/g, '');
+                    let email = this.form.email;
+                    return Services.net().get(this.getRoute('user.isUserNotExists'), {email, phone})
+                        .then(data => data.isUserNotExists);
                 },
                 $lazy: true
             },
@@ -328,10 +331,6 @@ export default {
             if (typeof data.address !== 'undefined') {
                 this.$v.form.bank_address.$model = data.address.unrestricted_value;
             }
-        },
-        isMerchantNotExistsByField(data, field) {
-            return Services.net().get(this.getRoute('user.isMerchantNotExists'), {data: data, field: field})
-                .then(data => data.isMerchantNotExists);
         },
     },
     computed: {
@@ -422,7 +421,7 @@ export default {
                 if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 else if (!this.$v.form.email.required) return "Обязательное поле!";
                 // TODO доделать фильтр по email
-                else if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
+                else if (!this.$v.form.email.isUserNotExists) return "Пользователь с таким E-mail уже существует";
             }
         },
         errorPhone() {

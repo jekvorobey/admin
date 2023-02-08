@@ -456,6 +456,7 @@ Route::middleware('auth')->group(function () {
             Route::post('updatePassword', [UsersController::class, 'updatePassword'])->name('user.updatePassword');
             Route::get('is-unique', [UsersController::class, 'isUnique'])->name('user.isUnique');
             Route::get('isMerchantNotExists', [UsersController::class, 'isMerchantNotExists'])->name('user.isMerchantNotExists');
+            Route::get('isUserNotExists', [UsersController::class, 'isUserNotExists'])->name('user.isUserNotExists');
         });
 
         Route::prefix('roles')->group(function () {
