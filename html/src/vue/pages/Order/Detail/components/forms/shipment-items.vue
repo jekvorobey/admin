@@ -61,6 +61,10 @@
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipPriceHelp"></fa-icon>
                     </b-th>
+                    <b-th>Бонус
+                      <fa-icon icon="question-circle"
+                               v-b-popover.hover="tooltipBonusHelp"></fa-icon>
+                    </b-th>
                     <b-th v-if="canEdit"></b-th>
                 </b-tr>
             </b-thead>
@@ -103,6 +107,7 @@
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
+                        <b-td>{{ preparePrice(basketItem.bonus_spent) }} руб</b-td>
                         <b-td v-if="canEdit">
                             <div v-if="canCancelShipmentItem && !basketItem.is_canceled"
                                  class="float-right">
@@ -221,6 +226,7 @@
                             <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price)) }} руб
                             </b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
+                            <b-td>{{ preparePrice(item.basketItem.bonus_spent) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div class="float-right">
                                     <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
@@ -500,6 +506,9 @@ export default {
         },
         tooltipPriceHelp() {
             return 'Цена товара со всеми скидками с учётом количества';
+        },
+        tooltipBonusHelp () {
+          return 'Потрачено бонусов';
         },
         canEdit() {
             return this.withEdit && this.canUpdate(this.blocks.orders);
