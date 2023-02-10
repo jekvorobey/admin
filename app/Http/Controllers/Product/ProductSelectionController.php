@@ -7,11 +7,13 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Search\ProductQuery;
+use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\SearchService\SearchService;
 
@@ -71,7 +73,7 @@ class ProductSelectionController extends Controller
     /**
      * @throws PimException
      */
-    protected function loadItems(ProductQuery $query, SearchService $searchService, MerchantService $merchantService, OfferService $offerService)
+    protected function loadItems(ProductQuery $query, SearchService $searchService, MerchantService $merchantService, OfferService $offerService): ProductSearchResult|Collection
     {
         $productSearchResult = $searchService->products($query);
         $merchantIds = collect($productSearchResult->products)->pluck('merchantId')->all();
@@ -85,14 +87,12 @@ class ProductSelectionController extends Controller
             ->setFilter('product_id', $productIds);
         $offers = $offerService->offers($OfferQuery)->keyBy('id');
 
-        $merchants = $merchantService
-            ->newQuery()
+        $merchantQuery = $merchantService->newQuery()
             ->addFields(MerchantDto::entity(), 'id', 'name')
-            ->setFilter('id', $merchantIds)
-            ->merchants()
-            ->keyBy('id');
+            ->setFilter('id', $merchantIds);
+        $merchants = $merchantService->merchants($merchantQuery)->keyBy('id');
 
-        $productSearchResult->products = array_map(function ($product) use ($merchants, $offers) {
+        $productSearchResult->products = array_map(static function ($product) use ($merchants, $offers) {
             $product['merchantName'] = $merchants->has($product['merchantId']) ? $merchants->get($product['merchantId'])->name : 'N/A';
             $product['xmlId'] = $offers->has($product['offerId']) ? $offers->get($product['offerId'])->xml_id : null;
             $product['guid'] = $offers->has($product['offerId']) ? $offers->get($product['offerId'])->guid : null;
@@ -105,12 +105,12 @@ class ProductSelectionController extends Controller
     /**
      * @throws PimException
      */
-    public function page(Request $request, SearchService $searchService, MerchantService $merchantService): JsonResponse
+    public function page(Request $request, SearchService $searchService, MerchantService $merchantService, OfferService $offerService): JsonResponse
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $query = $this->makeQuery($request);
-        $productSearchResult = $this->loadItems($query, $searchService, $merchantService);
+        $productSearchResult = $this->loadItems($query, $searchService, $merchantService, $offerService);
 
         $data = [
             'products' => $productSearchResult->products,
