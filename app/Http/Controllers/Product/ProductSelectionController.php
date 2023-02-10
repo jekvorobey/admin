@@ -73,7 +73,7 @@ class ProductSelectionController extends Controller
     /**
      * @throws PimException
      */
-    protected function loadItems(ProductQuery $query, SearchService $searchService, MerchantService $merchantService, OfferService $offerService): ProductSearchResult|Collection
+    protected function loadItems(ProductQuery $query, SearchService $searchService, MerchantService $merchantService, OfferService $offerService)
     {
         $productSearchResult = $searchService->products($query);
         $merchantIds = collect($productSearchResult->products)->pluck('merchantId')->all();
