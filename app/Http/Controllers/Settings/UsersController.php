@@ -205,25 +205,19 @@ class UsersController extends Controller
     public function isMerchantNotExists(Request $request, UserService $userService, OperatorService $operatorService): JsonResponse
     {
         $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER, BlockDto::ADMIN_BLOCK_MERCHANTS]);
-
-        $data = $request->get('data');
-        $field = $request->get('field');
+        $phone = $request->get('phone');
         $isMerchantNotExists = true;
 
-        if ($data && $field) {
-            if ($field === 'phone') {
-                $data = phone_format($data);
-            }
-            // TODO доделать фильтр по email
-//            elseif ($field === 'email') {
-//                $field = 'login_email';
-//            }
+        if ($phone) {
+            $phone = phone_format($phone);
+            $userEmail = null;
 
             $userQuery = $userService->newQuery()
-                ->setFilter($field, '=', $data);
+                ->setFilter('phone', '=', $phone);
             $user = $userService->users($userQuery)->first();
 
             if (!is_null($user)) {
+                $userEmail = $user->email;
                 /** @var OperatorDto $operatorMain */
                 $merchantByUserId = $operatorService->operators(
                     (new RestQuery())->setFilter('user_id', $user->id)
@@ -233,13 +227,35 @@ class UsersController extends Controller
                     $isMerchantNotExists = false;
                 }
             }
+            return response()->json([
+                'isMerchantNotExists' => $isMerchantNotExists,
+                'userEmail' => $userEmail
+            ]);
         }
-
-        return response()->json([
-            'isMerchantNotExists' => $isMerchantNotExists,
-        ]);
     }
 
+    public function isUserNotExists(Request $request, UserService $userService): JsonResponse
+    {
+        $this->canView([BlockDto::ADMIN_BLOCK_SETTINGS, BlockDto::ADMIN_BLOCK_ADD_USER, BlockDto::ADMIN_BLOCK_MERCHANTS]);
+        $email = $request->get('email');
+        $phone = $request->get('phone');
+        $isUserNotExists = true;
+
+        if ($email && $phone) {
+            $userQuery = $userService->newQuery()
+                ->setFilter('login_email', '=', $email);
+            $user = $userService->users($userQuery)->first();
+            if (!is_null($user)) {
+                $userPhone = preg_replace('/[()]|\s|-/', '', $user->phone);
+                if ($userPhone != $phone) {
+                    $isUserNotExists = false;
+                }
+            }
+            return response()->json([
+                'isUserNotExists' => $isUserNotExists
+            ]);
+        }
+    }
 
     public function addRoles(int $id, UserRolesRequest $request, UserService $userService): JsonResponse
     {
