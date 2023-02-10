@@ -62,6 +62,14 @@
                 </div>
             </td>
             <td>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox"
+                           @input="changeProductSearch"
+                           :checked="searchByName"
+                           class="custom-control-input"
+                           id="search_register_user">
+                    <label class="custom-control-label" for="search_register_user">{{ productSearchText }}</label>
+                </div>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend" v-if="newVat.type">
                         <span class="input-group-text">{{ relatedNameByType(newVat.type) }}:</span>
@@ -121,6 +129,7 @@ export default {
             brands: {},
             categories: {},
             products: {},
+            searchByName: false,
         }
     },
     computed: {
@@ -131,6 +140,9 @@ export default {
                 {text: '10', value: 10},
                 {text: '20', value: 20},
             ];
+        },
+        productSearchText() {
+            return !this.searchByName ? 'Поиск по Названию' : 'Поиск по Артикулу';
         },
     },
     methods: {
@@ -149,6 +161,9 @@ export default {
                     resolve(data.products)
                 })
             })
+        },
+        changeProductSearch() {
+            this.searchByName = !this.searchByName;
         },
         getResultValue(result) {
             return result.name + ' (id:' + result.id + ')'
