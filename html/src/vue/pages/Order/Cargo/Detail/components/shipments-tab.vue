@@ -39,7 +39,7 @@
                         </td>
                         <td>{{ shipment.created_at }}</td>
                         <td>{{ preparePrice(shipment.cost) }} руб.</td>
-                        <td>{{ shipment.required_shipping_at }}</td>
+                        <td>{{ shipment.psd }}</td>
                         <td>{{ shipment.packages.length }}</td>
                         <td v-if="canUpdate(blocks.orders)">
                             <fa-icon icon="times" title="Удалить из груза" class="cursor-pointer"

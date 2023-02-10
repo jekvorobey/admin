@@ -194,7 +194,7 @@ class TabOrderController extends Controller
                     case 'cost_to':
                         $restQuery->setFilter('cost', '<=', $value);
                         break;
-                    case 'required_shipping_at':
+                    case 'psd':
                     case 'delivery_at':
                         $value = array_filter($value);
                         if ($value) {
@@ -253,8 +253,8 @@ class TabOrderController extends Controller
                 'delivery_address_house' => 'string|someone',
                 'delivery_address_floor' => 'string|someone',
                 'delivery_address_flat' => 'string|someone',
-                'required_shipping_at' => 'array|someone',
-                'required_shipping_at.' => 'date',
+                'psd' => 'array|someone',
+                'psd.' => 'date',
                 'delivery_at' => 'array|someone',
                 'delivery_at.' => 'date',
             ]
@@ -283,7 +283,7 @@ class TabOrderController extends Controller
                 'cost',
                 'delivery_service_zero_mile',
                 'store_id',
-                'required_shipping_at'
+                'psd'
             )->include('delivery')
         );
 
@@ -384,7 +384,7 @@ class TabOrderController extends Controller
             ];
 
             $data['delivery_address'] = $delivery->getAddressString();
-            $data['required_shipping_at'] = (new Carbon($shipment->required_shipping_at))->format('H:i:s Y-m-d');
+            $data['psd'] = (new Carbon($shipment->psd))->format('H:i:s Y-m-d');
             $data['delivery_at'] = (new Carbon($delivery->delivery_at))->format('H:i:s Y-m-d');
 
             return $data;
