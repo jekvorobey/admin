@@ -14,13 +14,11 @@
                 </b-form-row>
                 <b-form-row>
                     <b-col>
-                        <v-select
+                        <f-custom-search-select
                                 v-model="$v.form.merchant_id.$model"
                                 :options="merchantOptions"
                                 help="Не обязательно для заполнения"
-                        >
-                            Мерчант
-                        </v-select>
+                        >Мерчант</f-custom-search-select>
                     </b-col>
                 </b-form-row>
 
@@ -37,7 +35,7 @@
     import Services from '../../../../../../scripts/services/services.js';
     import VInput from '../../../../../components/controls/VInput/VInput.vue';
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
-
+    import FCustomSearchSelect from '../../../../../components/filter/f-custom-search-select.vue';
     import {validationMixin} from 'vuelidate';
     import {requiredIf} from 'vuelidate/lib/validators';
 
@@ -46,6 +44,7 @@
         components: {
             VInput,
             VSelect,
+            FCustomSearchSelect
         },
         mixins: [
             validationMixin,
