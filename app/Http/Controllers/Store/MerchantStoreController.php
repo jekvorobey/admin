@@ -185,6 +185,7 @@ class MerchantStoreController extends Controller
             'address.comment' => 'string|nullable',
 
             'cdek_address.address_string' => 'string|nullable',
+            'cdek_address.code' => 'regex:/^[a-z0-9\s]+$/i|nullable',
             'cdek_address.country_code' => 'string|required_with:cdek_address.address_string',
             'cdek_address.post_index' => 'string|nullable',
             'cdek_address.region' => 'string|required_with:cdek_address.address_string',
