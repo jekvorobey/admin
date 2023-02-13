@@ -90,6 +90,18 @@
                 :allow-sorting="false"
             />
             <DxColumn
+                data-field="active"
+                data-type="boolean"
+                :width="40"
+                :allow-sorting="false"
+            />
+            <DxColumn
+                data-field="archive"
+                data-type="boolean"
+                :width="40"
+                :allow-sorting="false"
+            />
+            <DxColumn
                 data-field="qty"
                 data-type="number"
                 :width="80"
