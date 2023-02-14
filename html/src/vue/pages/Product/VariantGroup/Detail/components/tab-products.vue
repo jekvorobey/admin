@@ -1,27 +1,45 @@
 <template>
     <div>
-        <b-row class="d-flex justify-content-between mt-3 mb-3">
+        <b-row class="d-flex flex-column justify-content-between mt-3 mb-3">
             <template v-if="variantGroup.properties_count > 0">
-                <b-col class="col-md-3">
-                    <products-search
-                            :model.sync="newProducts"
-                            :excepted-ids="exceptedIds"
-                            :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
-                    ></products-search>
-                </b-col>
-                <b-col v-if="canUpdate(blocks.products)">
-                    <button
-                            class="btn btn-success"
-                            @click="addProducts"
-                    >
-                        <fa-icon icon="plus"></fa-icon> Добавить товар
-                    </button>
-                    <v-delete-button
-                            @delete="deleteProducts(selectedProductIds)"
-                            btn-class="btn-danger"
-                            v-if="selectedProductIds.length > 0" class="ml-3"
-                    />
-                </b-col>
+                <div class="d-flex">
+                    <b-col class="col-md-3">
+                        <products-search
+                                :model.sync="newProducts"
+                                :excepted-ids="exceptedIds"
+                                :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
+                        ></products-search>
+                    </b-col>
+                    <b-col v-if="canUpdate(blocks.products)">
+                        <button
+                                class="btn btn-success"
+                                @click="addProducts"
+                        >
+                            <fa-icon icon="plus"></fa-icon> Добавить товар
+                        </button>
+                        <v-delete-button
+                                @delete="deleteProducts(selectedProductIds)"
+                                btn-class="btn-danger"
+                                v-if="selectedProductIds.length > 0" class="ml-3"
+                        />
+                    </b-col>
+                </div>
+                <div class="d-flex align-items-center">
+                    <b-col class="col-md-3">
+                        <f-text-area-search
+                                v-model="articlesNewProducts"
+                                placeholderName="Введите Артикулы через запятую"
+                        ></f-text-area-search>
+                    </b-col>
+                    <b-col v-if="canUpdate(blocks.products)">
+                        <button
+                                class="btn btn-success"
+                                @click="addProducts"
+                        >
+                            <fa-icon icon="plus"></fa-icon> Добавить по Артикулу
+                        </button>
+                    </b-col>
+                </div>
             </template>
             <template v-else>
                 <b-col>Сначала добавьте <span class="btn-link cursor-pointer" @click="go2PropertiesTab">характеристики</span> для
@@ -106,6 +124,7 @@
 import Services from '../../../../../../scripts/services/services';
 import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import ProductsSearch from '../../../../../components/search/products-search.vue';
+import FTextAreaSearch from '../../../../../components/filter/f-text-area-search.vue';
 
 export default {
         props: {
@@ -114,11 +133,13 @@ export default {
         components: {
             ProductsSearch,
             VDeleteButton,
+            FTextAreaSearch
         },
         data() {
             return {
                 products: [],
                 newProducts: {},
+                articlesNewProducts: [],
                 selectedProductIds: [],
             }
         },
