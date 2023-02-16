@@ -91,7 +91,7 @@
                     :error="errorCommunicationMethod"
                     :options="communicationMethodOptions"
                     class="col-md-4 col-12"
-                >Способ связи
+                >Способ связи<span class="required-red">*</span>
                 </v-select>
             </div>
 
@@ -250,7 +250,9 @@ export default {
                 },
                 $lazy: true
             },
-            communication_method: {},
+            communication_method: {
+                required
+            },
             storage_address: {required},
             site: {required},
             can_integration: {},
@@ -433,6 +435,9 @@ export default {
             } else return null
         },
         errorCommunicationMethod() {
+            if (this.$v.form.email.$dirty) {
+                if (!this.$v.form.communication_method.required) return "Обязательное поле!";
+            }
         },
         errorStorageAddress() {
             if (this.$v.form.storage_address.$dirty) {
