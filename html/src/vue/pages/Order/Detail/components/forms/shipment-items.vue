@@ -46,6 +46,10 @@
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipUnitDiscountHelp"></fa-icon>
                     </b-th>
+                    <b-th>Бонус
+                      <fa-icon icon="question-circle"
+                               v-b-popover.hover="tooltipBonusHelp"></fa-icon>
+                    </b-th>
                     <b-th>Цена за единицу со скидкой
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipUnitPriceHelp"></fa-icon>
@@ -60,10 +64,6 @@
                     <b-th>Сумма со скидкой
                         <fa-icon icon="question-circle"
                                  v-b-popover.hover="tooltipPriceHelp"></fa-icon>
-                    </b-th>
-                    <b-th>Бонус
-                      <fa-icon icon="question-circle"
-                               v-b-popover.hover="tooltipBonusHelp"></fa-icon>
                     </b-th>
                     <b-th v-if="canEdit"></b-th>
                 </b-tr>
@@ -102,12 +102,12 @@
                         </b-td>
                         <b-td v-if="basketItem.is_canceled" class="with-small">Полностью отменено</b-td>
                         <b-td>{{ preparePrice(basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice((basketItem.cost - basketItem.price) / basketItem.qty_original) }} руб</b-td>
+                        <b-td>{{ preparePrice((basketItem.cost - basketItem.price - basketItem.bonus_spent) / basketItem.qty_original) }} руб</b-td>
+                        <b-td>{{ preparePrice(basketItem.bonus_spent) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.cost - basketItem.price) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.price / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice(basketItem.bonus_spent) }} руб</b-td>
                         <b-td v-if="canEdit">
                             <div v-if="canCancelShipmentItem && !basketItem.is_canceled"
                                  class="float-right">
@@ -220,13 +220,13 @@
                                     {{ item.basketItem.product.height }} мм</small>
                             </b-td>
                             <b-td>{{ preparePrice(item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
-                            <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price) / item.basketItem.qty) }} руб</b-td>
+                            <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price - item.basketItem.bonus_spent) / item.basketItem.qty) }} руб</b-td>
+                            <b-td>{{ preparePrice(item.basketItem.bonus_spent) }} руб</b-td>
                             <b-td>{{ preparePrice(item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
                             <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price)) }} руб
                             </b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
-                            <b-td>{{ preparePrice(item.basketItem.bonus_spent) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div class="float-right">
                                     <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
