@@ -4,7 +4,10 @@
             <table class="table table-condensed">
                 <thead>
                 <tr>
-                    <th>ID предложения мерчанта</th>
+                    <th>
+                        <div>ID предложения мерчанта</div>
+                        <div>xml_id</div>
+                    </th>
                     <th>ID товара</th>
                     <th>Название товара</th>
                     <th>Артикул товара</th>
