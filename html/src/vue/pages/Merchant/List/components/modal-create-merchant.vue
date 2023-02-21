@@ -69,12 +69,12 @@
             </div>
             <div class="row">
                 <v-input
-                        v-model="$v.form.phone.$model"
-                        :placeholder="telPlaceholder"
-                        :error="errorPhone"
-                        v-mask="telMask"
-                        class="col-md-4 col-12"
-                        autocomplete="off"
+                    v-model="$v.form.phone.$model"
+                    :placeholder="telPlaceholder"
+                    :error="errorPhone"
+                    v-mask="telMask"
+                    class="col-md-4 col-12"
+                    autocomplete="off"
                 >Телефон<span class="required-red">*</span>
                 </v-input>
                 <v-input
@@ -91,7 +91,7 @@
                     :error="errorCommunicationMethod"
                     :options="communicationMethodOptions"
                     class="col-md-4 col-12"
-                >Способ связи
+                >Способ связи<span class="required-red">*</span>
                 </v-select>
             </div>
 
@@ -227,24 +227,32 @@ export default {
             first_name: {},
             last_name: {},
             middle_name: {},
-            email: {
-                required,
-                email,
-                // TODO доделать фильтр по email
-                isMerchantNotExists: function () {
-                    return this.isMerchantNotExistsByField(this.form.email, 'email');
-                },
-                $lazy: true
-            },
             phone: {
                 required,
                 isMerchantNotExists: function () {
                     let phone = this.form.phone.replace(/[()]|\s|-/g, '');
-                    return this.isMerchantNotExistsByField(phone, 'phone');
+                    return Services.net().get(this.getRoute('user.isMerchantNotExists'), {phone})
+                        .then(data => {
+                            if (data.userEmail && data.isMerchantNotExists) this.form.email = data.userEmail
+                            return data.isMerchantNotExists
+                        });
                 },
                 $lazy: true
             },
-            communication_method: {},
+            email: {
+                required,
+                email,
+                isUserNotExists: function () {
+                    let phone = this.form.phone.replace(/[()]|\s|-/g, '');
+                    let email = this.form.email;
+                    return Services.net().get(this.getRoute('user.isUserNotExists'), {email, phone})
+                        .then(data => data.isUserNotExists);
+                },
+                $lazy: true
+            },
+            communication_method: {
+                required
+            },
             storage_address: {required},
             site: {required},
             can_integration: {},
@@ -329,14 +337,10 @@ export default {
                 this.$v.form.bank_address.$model = data.address.unrestricted_value;
             }
         },
-        isMerchantNotExistsByField(data, field) {
-            return Services.net().get(this.getRoute('user.isMerchantNotExists'), {data: data, field: field})
-                .then(data => data.isMerchantNotExists);
-        },
     },
     computed: {
         phoneNotReady() {
-            return (this.form.phone.length === 0 || this.form.phone.trim().length < 17)
+            return this.form.phone.trim().length < 17 || !this.$v.form.phone.isMerchantNotExists
         },
         telMask() {
             return telMask;
@@ -421,17 +425,19 @@ export default {
             if (this.$v.form.email.$dirty) {
                 if (!this.$v.form.email.email) return "Введите валидный e-mail!";
                 else if (!this.$v.form.email.required) return "Обязательное поле!";
-                // TODO доделать фильтр по email
-                else if (!this.$v.form.email.isMerchantNotExists) return "Мерчант с таким E-mail уже существует";
+                else if (!this.$v.form.email.isUserNotExists) return "Пользователь с таким E-mail уже существует";
             }
         },
         errorPhone() {
             if (this.$v.form.phone.$dirty) {
                 if (!this.$v.form.phone.required) return "Обязательное поле!";
-                else if (!this.$v.form.phone.isMerchantNotExists) return "Мерчант с таким телефоном уже существует";
-            }
+                else if (!this.$v.form.phone.isMerchantNotExists) return "Данный телефон используется у другого мерчанта";
+            } else return null
         },
         errorCommunicationMethod() {
+            if (this.$v.form.email.$dirty) {
+                if (!this.$v.form.communication_method.required) return "Обязательное поле!";
+            }
         },
         errorStorageAddress() {
             if (this.$v.form.storage_address.$dirty) {

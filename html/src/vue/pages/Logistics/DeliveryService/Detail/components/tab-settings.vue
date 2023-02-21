@@ -66,6 +66,12 @@
                     />
                 </div>
             </b-col>
+            <b-col>
+                <f-multi-select v-model="$v.form.pickup_from_regions.$model" :options="regionOptions" class="col-sm-12 col-md-12">
+                    Области, откуда возможен забор грузов
+                    <template #help>если пусто, то все регионы</template>
+                </f-multi-select>
+            </b-col>
         </b-row>
 
         <b-row>
@@ -110,6 +116,7 @@
 <script>
     import Services from '../../../../../../scripts/services/services.js';
     import VSelect from '../../../../../components/controls/VSelect/VSelect.vue';
+    import FMultiSelect from '../../../../../components/filter/f-multi-select.vue';
     import DatePicker from 'vue2-datepicker';
     import 'vue2-datepicker/index.css';
     import 'vue2-datepicker/locale/ru.js';
@@ -123,10 +130,12 @@ export default {
     name: 'tab-settings',
     components: {
         VSelect,
+        FMultiSelect,
         DatePicker,
     },
     props: [
         'model',
+        'regions'
     ],
     mixins: [
         validationMixin,
@@ -151,6 +160,7 @@ export default {
                 add_return_service: this.model.add_return_service,
                 add_open_service: this.model.add_open_service,
                 has_courier_call_api_method: this.model.has_courier_call_api_method,
+                pickup_from_regions: this.model.pickup_from_regions ? this.model.pickup_from_regions : [],
             },
         }
     },
@@ -168,6 +178,7 @@ export default {
             add_return_service: {required},
             add_open_service: {required},
             has_courier_call_api_method: {required},
+            pickup_from_regions: {},
         }
     },
     methods: {
@@ -217,6 +228,9 @@ export default {
         },
         booleanOptions() {
             return [{value: 0, text: 'Нет'}, {value: 1, text: 'Да'}];
+        },
+        regionOptions() {
+            return this.regions.map(region => ({value: region.guid, text: region.name}));
         },
     },
 };

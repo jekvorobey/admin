@@ -31,6 +31,7 @@ class TabSettingsController extends Controller
             'add_return_service' => ['required', 'boolean'],
             'add_open_service' => ['required', 'boolean'],
             'has_courier_call_api_method' => ['required', 'boolean'],
+            'pickup_from_regions' => ['array', 'sometimes'],
         ]);
 
         $deliveryService = new DeliveryService();
@@ -46,6 +47,7 @@ class TabSettingsController extends Controller
         $deliveryService->add_return_service = $data['add_return_service'];
         $deliveryService->add_open_service = $data['add_open_service'];
         $deliveryService->has_courier_call_api_method = $data['has_courier_call_api_method'];
+        $deliveryService->pickup_from_regions = $data['pickup_from_regions'];
 
         $listsService->updateDeliveryService($id, $deliveryService);
 

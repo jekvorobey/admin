@@ -7,6 +7,7 @@ use Greensight\CommonMsa\Dto\AbstractDto;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\Logistics\Dto\Lists\DeliveryService;
 use Greensight\Logistics\Dto\Lists\DeliveryServiceStatus;
+use Greensight\Logistics\Dto\Lists\RegionDto;
 use Greensight\Logistics\Services\ListsService\ListsService;
 use Greensight\Oms\Dto\Delivery\ShipmentDto;
 use Greensight\Oms\Services\ShipmentService\ShipmentService;
@@ -38,6 +39,8 @@ class DeliveryServiceDetailController extends Controller
             ->addFields(ShipmentDto::entity(), 'id', 'status', 'cost');
         $shipments = $shipmentService->shipments($shipmentQuery);
 
+        $regions = $listsService->regions($listsService->newQuery()->addFields(RegionDto::entity(), 'id', 'guid', 'name'));
+
         return $this->render('Logistics/DeliveryService/Detail', [
             'iDeliveryService' => [
                 //Инфопанель
@@ -61,11 +64,13 @@ class DeliveryServiceDetailController extends Controller
                 'add_return_service' => $deliveryService->add_return_service,
                 'add_open_service' => $deliveryService->add_open_service,
                 'has_courier_call_api_method' => $deliveryService->has_courier_call_api_method,
+                'pickup_from_regions' => $deliveryService->pickup_from_regions,
                 //Вкладка "Ограничения"
                 'do_dangerous_products_delivery' => $deliveryService->do_dangerous_products_delivery,
                 'max_shipments_per_day' => $deliveryService->max_shipments_per_day,
             ],
             'deliveryServiceStatuses' => DeliveryServiceStatus::allStatuses(),
+            'regions' => $regions,
             'shipmentsInfo' => [
                 'allCount' => $shipments->count(),
                 'allPrice' => number_format($shipments->sum('cost'), 2, '.', ' '),

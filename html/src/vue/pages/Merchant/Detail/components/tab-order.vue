@@ -117,7 +117,7 @@
                             </f-input>
                         </div>
                         <div class="row">
-                            <f-date v-model="filter.required_shipping_at" class="col-6" range confirm>
+                            <f-date v-model="filter.psd" class="col-6" range confirm>
                                 PSD - Дата отгрузки отправления
                             </f-date>
                             <f-date v-model="filter.delivery_at" class="col-6" range confirm>
@@ -208,7 +208,7 @@
         delivery_address_house: '',
         delivery_address_floor: '',
         delivery_address_flat: '',
-        required_shipping_at: [],
+        psd: [],
         delivery_at: [],
     };
 
@@ -245,7 +245,7 @@
         'delivery_address_house',
         'delivery_address_floor',
         'delivery_address_flat',
-        'required_shipping_at',
+        'psd',
         'delivery_at',
     ];
 
@@ -409,14 +409,14 @@
                         name: 'PSD - Дата отгрузки отправления',
                         code: 'delivery_address',
                         value: function(shipment) {
-                            return shipment.required_shipping_at;
+                            return shipment.psd;
                         },
                         isShown: true,
                         isAlwaysShown: false,
                     },
                     {
                         name: 'PDD - Дата доставки отправления плановая',
-                        code: 'required_shipping_at',
+                        code: 'psd',
                         value: function(shipment) {
                             return shipment.delivery_at;
                         },
