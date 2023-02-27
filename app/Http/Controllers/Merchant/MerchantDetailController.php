@@ -113,12 +113,13 @@ class MerchantDetailController extends Controller
 
         $restQuery = (new RestQuery())
             ->include('product')
+            ->addFields('offer', 'id')
+            ->addFields('product', 'id', 'category_id', 'brand_id')
             ->setFilter('merchant_id', $id);
 
-        $brandIds = $offerService->offers($restQuery)
-            ->pluck('product.brand_id', 'product.brand_id')->toArray();
-        $categoryIds = $offerService->offers($restQuery)
-            ->pluck('product.category_id', 'product.category_id')->toArray();
+        $offers = $offerService->offers($restQuery);
+        $brandIds = $offers->pluck('product.brand_id', 'product.brand_id')->toArray();
+        $categoryIds = $offers->pluck('product.category_id', 'product.category_id')->toArray();
 
         $ratings = $merchantService->ratings()->sortByDesc('name');
         $managers = $userService->users((new RestQuery())
