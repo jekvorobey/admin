@@ -54,6 +54,7 @@
         >
             <b-form-select
                 v-model="banner.type_id"
+                @change="setHidePathTemplates"
                 id="banner-group-type"
                 required
             >
@@ -421,7 +422,7 @@ export default {
                 color: source.color ? source.color : null,
                 controls_color: source.controls_color ? source.controls_color : null,
                 path_templates: source.path_templates ? source.path_templates : null,
-                hide_path_templates: source.hide_path_templates ? source.hide_path_templates : "/cart/*\n/checkout/*",
+                hide_path_templates: source.hide_path_templates ? source.hide_path_templates : null,
                 sort: source.sort ? source.sort : null,
                 additional_text: source.additional_text ? source.additional_text : null,
                 isAddCountdown: source.isAddCountdown ? source.isAddCountdown : false,
@@ -479,6 +480,11 @@ export default {
             if (dateTime && !dateTime.getHours() && !dateTime.getMinutes() && !dateTime.getSeconds()) {
                 dateTime.setHours(23, 59, 59);
                 this.banner.date_to = moment(dateTime).format("YYYY-MM-DD HH:mm");
+            }
+        },
+        setHidePathTemplates() {
+            if (this.banner.type_id && this.banner.type_id === bannerType.through) {
+                this.banner.hide_path_templates = "/cart/*\n/checkout/*";
             }
         },
     },
