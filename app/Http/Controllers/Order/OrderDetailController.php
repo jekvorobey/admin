@@ -560,7 +560,7 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITPAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL], true)
+        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITLINE_PAID, PaymentMethod::POSCREDIT_PAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL], true)
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
