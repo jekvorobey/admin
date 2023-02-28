@@ -68,7 +68,7 @@
         "box/spout": "^3.3",
         "ibt/catalog-import-lib": "dev-master",
         "ibt/cm-lib": "dev-master",
-        "ibt/cms-lib": "dev-master",
+        "ibt/cms-lib": "dev-feature/8997-add-new-banner-type-through-banner as master",
         "ibt/common-lib": "dev-master",
         "ibt/logistics-lib": "dev-master",
         "ibt/marketing-lib": "dev-master",

@@ -241,6 +241,11 @@
             <b-form-textarea v-model="banner.path_templates" id="banner-path-templates"/>
         </b-form-group>
 
+        <b-form-group v-if="showHidePathTemplatesField" label="Скрывать на страницах"
+                      label-for="hide-banner-path-templates">
+            <b-form-textarea v-model="banner.hide_path_templates" id="hide-banner-path-templates"/>
+        </b-form-group>
+
         <b-form-group v-if="bannerIsCatalogTop" label="Дополнительный текст" id="additional-text"
                       label-for="banner-additional-text">
             <ckeditor v-model="banner.additional_text" :editor="editor" :config="editorSettings"/>
@@ -327,6 +332,7 @@ const bannerType = Object.freeze({
     mainMiddle: 8,
     mainBest: 9,
     catalogTop: 2,
+    through: 13,
 });
 
 export default {
@@ -415,6 +421,7 @@ export default {
                 color: source.color ? source.color : null,
                 controls_color: source.controls_color ? source.controls_color : null,
                 path_templates: source.path_templates ? source.path_templates : null,
+                hide_path_templates: source.hide_path_templates ? source.hide_path_templates : "/cart/*\n/checkout/*",
                 sort: source.sort ? source.sort : null,
                 additional_text: source.additional_text ? source.additional_text : null,
                 isAddCountdown: source.isAddCountdown ? source.isAddCountdown : false,
@@ -554,7 +561,8 @@ export default {
                 this.banner &&
                 (
                     this.banner.type_id === bannerType.mainTop ||
-                    this.banner.type_id === bannerType.catalogTop
+                    this.banner.type_id === bannerType.catalogTop ||
+                    this.banner.type_id === bannerType.through
                 )
             ) {
                 return true;
@@ -567,7 +575,8 @@ export default {
             if (this.banner &&
                 (
                     this.banner.type_id === bannerType.mainTop ||
-                    this.banner.type_id === bannerType.catalogTop
+                    this.banner.type_id === bannerType.catalogTop ||
+                    this.banner.type_id === bannerType.through
                 )
             ) {
                 return true;
@@ -591,6 +600,20 @@ export default {
             }
 
             return true;
+        },
+
+        showHidePathTemplatesField() {
+            if (!this.banner || !this.banner.type_id) {
+                return false;
+            }
+
+            if (
+                this.banner.type_id === bannerType.through
+            ) {
+                return true;
+            } else {
+                return false;
+            }
         },
 
         bannerIsCatalogTop() {

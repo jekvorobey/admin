@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
+    "content-hash": "e0377df2cf321f175630f2be29ef78e4",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1403,16 +1403,16 @@
         },
         {
             "name": "ibt/cms-lib",
-            "version": "dev-master",
+            "version": "dev-feature/8997-add-new-banner-type-through-banner",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-cms-lib.git",
-                "reference": "910d1b9a25d75b6c064e06fd972c1682d2806e78"
+                "reference": "79c581cd5bf83fa0ec7910ed26166fa454cee0c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=910d1b9a25d75b6c064e06fd972c1682d2806e78",
-                "reference": "910d1b9a25d75b6c064e06fd972c1682d2806e78",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=79c581cd5bf83fa0ec7910ed26166fa454cee0c9",
+                "reference": "79c581cd5bf83fa0ec7910ed26166fa454cee0c9",
                 "shasum": ""
             },
             "require": {
@@ -1423,7 +1423,6 @@
             "require-dev": {
                 "laravel/framework": "^5.8"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1440,7 +1439,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965660/issues"
             },
-            "time": "2022-11-14T08:38:41+00:00"
+            "time": "2023-02-28T12:20:04+03:00"
         },
         {
             "name": "ibt/common-lib",
@@ -11270,7 +11269,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "ibt/cms-lib",
+            "version": "dev-feature/8997-add-new-banner-type-through-banner",
+            "alias": "master",
+            "alias_normalized": "dev-master"
+        }
+    ],
     "minimum-stability": "dev",
     "stability-flags": {
         "ibt/catalog-import-lib": 20,
