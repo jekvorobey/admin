@@ -157,7 +157,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('search')->group(function () {
         Route::prefix('products')-> group(function () {
             Route::get('', [SearchController::class, 'products'])->name('search.products');
-            Route::get('by-vendor-code', [SearchController::class, 'productsByVendorCode']);
+            Route::get('by-vendor-code', [SearchController::class, 'productsByVendorCode'])->name('search.productsByVendorCode');
         });
     });
 
