@@ -9,11 +9,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AnalyticsApiController extends Controller
 {
-    public function __construct()
-    {
-        ini_set('memory_limit', '256M');
-    }
-
     public function competition(Request $request, AnalyticsService $analyticsService): JsonResponse
     {
         $this->hasRole(AnalyticsService::ANALYTICS_DASHBOARD_VIEW_ROLES);
