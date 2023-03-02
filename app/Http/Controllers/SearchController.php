@@ -59,12 +59,20 @@ class SearchController extends Controller
 
     public function productsByVendorCode(Request $request): JsonResponse
     {
-        $data = $this->validate($request, [
-            'vendorCode' => ['required', 'array'],
-            'vendorCodes.*' => ['required', 'string'],
-            'limit' => ['nullable', 'integer'],
-            'merchantId' => ['nullable', 'integer'],
-        ]);
+        $data = $this->validate(
+            $request,
+            [
+                'vendorCode' => ['required', 'array'],
+                'vendorCodes.*' => ['required', 'string'],
+                'limit' => ['nullable', 'integer'],
+                'merchantId' => ['nullable', 'integer'],
+            ],
+            [],
+            [
+                'vendorCode.required' => 'Поле \'артикулы\' обязательно для заполнения',
+                'vendorCodes.*.required' => 'Поле \'артикулы\' code обязательно для заполнения',
+            ],
+        );
 
         $productQuery = new ProductQuery();
         $productQuery->setFilters($data);
