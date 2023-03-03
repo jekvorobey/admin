@@ -27,12 +27,12 @@
                 <span class="font-weight-bold">Мерчант:</span>
                 <span>
                     <a :href="getRoute('merchant.detail', {id: variantGroup.merchant.id})" v-if="variantGroup.merchant && canView(blocks.merchants)">
-                        {{variantGroup.merchant.legal_name}}
+                        {{variantGroup.merchant.name}}
                     </a>
-                    <span v-if="variantGroup.merchant && !canView(blocks.merchants)">
-                        {{variantGroup.merchant.legal_name}}
+                    <span v-else-if="variantGroup.merchant && !canView(blocks.merchants)">
+                        {{variantGroup.merchant.name}}
                     </span>
-                    <template v-else>N/A</template>
+                    <span v-else>N/A</span>
                 </span>
             </b-col>
         </b-row>

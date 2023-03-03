@@ -56,4 +56,40 @@ class SearchController extends Controller
             })),
         ]);
     }
+
+    public function productsByVendorCode(Request $request): JsonResponse
+    {
+        $data = $this->validate(
+            $request,
+            [
+                'vendorCode' => ['required', 'array'],
+                'vendorCodes.*' => ['required', 'string'],
+                'limit' => ['nullable', 'integer'],
+                'merchantId' => ['nullable', 'integer'],
+            ],
+            [],
+            [
+                'vendorCode.required' => 'Поле \'артикулы\' обязательно для заполнения',
+                'vendorCodes.*.required' => 'Поле \'артикулы\' code обязательно для заполнения',
+            ],
+        );
+
+        $productQuery = new ProductQuery();
+        $productQuery->setFilters($data);
+        $productQuery->fields([
+            ProductQuery::PRODUCT_ID,
+            ProductQuery::VENDOR_CODE,
+            ProductQuery::NAME,
+        ]);
+        $productQuery->segment = 1;
+        $productQuery->role = RoleDto::ROLE_SHOWCASE_GUEST;
+
+        /** @var SearchService $searchService */
+        $searchService = resolve(SearchService::class);
+        $productSearchResult = $searchService->products($productQuery);
+
+        return response()->json([
+            'products' => $productSearchResult->products,
+        ]);
+    }
 }

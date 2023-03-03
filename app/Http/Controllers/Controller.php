@@ -98,10 +98,10 @@ class Controller extends BaseController
             ->render();
     }
 
-    protected function validate(Request $request, array $rules, array $customAttributes = []): array
+    protected function validate(Request $request, array $rules, array $customAttributes = [], array $messages = []): array
     {
         $data = $request->all();
-        $validator = Validator::make($data, $rules, [], $customAttributes);
+        $validator = Validator::make($data, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }
