@@ -64,7 +64,6 @@ class SearchController extends Controller
             [
                 'vendorCode' => ['required', 'array'],
                 'vendorCodes.*' => ['required', 'string'],
-                'limit' => ['nullable', 'integer'],
                 'merchantId' => ['nullable', 'integer'],
             ],
             [],
@@ -81,6 +80,7 @@ class SearchController extends Controller
             ProductQuery::VENDOR_CODE,
             ProductQuery::NAME,
         ]);
+        $productQuery->pageOffset(0, 1000);
         $productQuery->segment = 1;
         $productQuery->role = RoleDto::ROLE_SHOWCASE_GUEST;
 
