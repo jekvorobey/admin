@@ -199,6 +199,7 @@ export default {
             },
              addProductsByArticles() {
                 Services.showLoader();
+                this.newProducts = {};
                 const vendorCode = this.articlesNewProducts
                 Services.net().get(this.getRoute('search.productsByVendorCode'), {vendorCode}).then((data) => {
                     if (data.products.length === 0) {
