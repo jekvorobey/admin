@@ -456,7 +456,13 @@ export default {
             return this.order.is_problem;
         },
         isCreditPayment() {
-            return this.order.payment_method_id === this.allPaymentMethods.creditpaid.id;
+            if (this.order.payment_method_id === this.allPaymentMethods.creditline_paid.id) {
+                return true;
+            }
+            if (this.order.payment_method_id === this.allPaymentMethods.poscredit_paid.id) {
+                return true;
+            }
+            return false;
         },
         isBankTransferPayment() {
             return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;

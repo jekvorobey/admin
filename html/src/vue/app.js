@@ -621,9 +621,11 @@ Vue.mixin({
  @type {Object}
  @property {PaymentMethod} prepaid - Предоплата (онлайн)
  @property {PaymentMethod} postpaid - Постоплата (Наличными или картой при получении)
- @property {PaymentMethod} creditpaid - В кредит от pp.credit
+ @property {PaymentMethod} creditline_paid - В кредит от credit line
+ @property {PaymentMethod} poscredit_paid - В кредит от pos credit
  @property {PaymentMethod} b2b_sberbank - СберБизнес онлайн
  @property {PaymentMethod} bank_transfer - Оплата через юрлицо
+ @property {PaymentMethod} sbp_raiffeisen - Оплата через юрлицо
  */
 /**
  @typedef PaymentMethod - метод оплаты

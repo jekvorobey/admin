@@ -155,7 +155,10 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [MainController::class, 'logoutAjax'])->name('logout');
 
     Route::prefix('search')->group(function () {
-        Route::get('products', [SearchController::class, 'products'])->name('search.products');
+        Route::prefix('products')-> group(function () {
+            Route::get('', [SearchController::class, 'products'])->name('search.products');
+            Route::get('by-vendor-code', [SearchController::class, 'productsByVendorCode'])->name('search.productsByVendorCode');
+        });
     });
 
     Route::prefix('merchant')->namespace('Merchant')->group(function () {

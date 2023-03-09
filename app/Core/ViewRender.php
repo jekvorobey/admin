@@ -563,14 +563,12 @@ class ViewRender
         if ($load) {
             $this->allPaymentMethods = [
                 'prepaid' => new PaymentMethod(['id' => PaymentMethod::PREPAID, 'name' => 'Онлайн оплата']),
-                'postpaid' => new PaymentMethod(
-                    ['id' => PaymentMethod::POSTPAID, 'name' => 'Наличными или картой при получении']
-                ),
-                'creditpaid' => new PaymentMethod(['id' => PaymentMethod::CREDITPAID, 'name' => 'В рассрочку']),
+                'postpaid' => new PaymentMethod(['id' => PaymentMethod::POSTPAID, 'name' => 'Наличными или картой при получении']),
+                'creditline_paid' => new PaymentMethod(['id' => PaymentMethod::CREDITLINE_PAID, 'name' => 'В рассрочку CreditLine']),
                 'b2b_sberbank' => new PaymentMethod(['id' => PaymentMethod::B2B_SBERBANK, 'name' => 'СберБизнес']),
-                'bank_transfer' => new PaymentMethod(
-                    ['id' => PaymentMethod::BANK_TRANSFER_FOR_LEGAL, 'name' => 'Оплата со счёта юридического лица']
-                ),
+                'bank_transfer' => new PaymentMethod(['id' => PaymentMethod::BANK_TRANSFER_FOR_LEGAL, 'name' => 'Оплата со счёта юридического лица']),
+                'sbp_raiffeisen' => new PaymentMethod(['id' => PaymentMethod::SBP_RAIFFEISEN, 'name' => 'СБП Райфайзен']),
+                'poscredit_paid' => new PaymentMethod(['id' => PaymentMethod::POSCREDIT_PAID, 'name' => 'В рассрочку PosCredit']),
             ];
         }
 

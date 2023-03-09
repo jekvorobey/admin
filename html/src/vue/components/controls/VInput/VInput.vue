@@ -14,6 +14,7 @@
                 :value="value"
                 :type="type"
                 :aria-describedby="`${inputId}-alert`"
+                :placeholder="placeholderText"
         />
         <textarea
                 v-if="tag === 'textarea'"
@@ -60,6 +61,11 @@ export default {
             },
         },
         validation: { type: String, default: null },
+        placeholderText: {
+            type: [String],
+            required: false,
+            default: null
+        }
     },
     data() {
         return {

@@ -72,6 +72,12 @@
                 :allow-sorting="false"
             />
             <DxColumn
+                data-field="associationCode"
+                data-type="string"
+                :width="150"
+                :allow-sorting="false"
+            />
+            <DxColumn
                 data-field="productName"
                 data-type="string"
                 :width="400"
