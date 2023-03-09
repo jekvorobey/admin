@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "669931799df622c0d3e086b152dc5901",
+    "content-hash": "4f1ed4f5a27a3bdcdf34dc8ae10a678a",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1793,16 +1793,16 @@
         },
         {
             "name": "ibt/oms-lib",
-            "version": "dev-feature/BX-7088-add-payment-poscredit",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-oms-lib.git",
-                "reference": "4c664e1b09aa1dc5a308cfd6097e347521e7cedd"
+                "reference": "6aef616206c36e9f988ce689ed0e47000c84c480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=4c664e1b09aa1dc5a308cfd6097e347521e7cedd",
-                "reference": "4c664e1b09aa1dc5a308cfd6097e347521e7cedd",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-oms-lib/repository/archive.zip?sha=6aef616206c36e9f988ce689ed0e47000c84c480",
+                "reference": "6aef616206c36e9f988ce689ed0e47000c84c480",
                 "shasum": ""
             },
             "require": {
@@ -1815,6 +1815,7 @@
                 "laravel/framework": "^5.8",
                 "phpunit/phpunit": "^7.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1841,7 +1842,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965542/issues"
             },
-            "time": "2023-02-26T20:03:06+03:00"
+            "time": "2023-03-09T04:43:21+00:00"
         },
         {
             "name": "ibt/pim-lib",
