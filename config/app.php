@@ -48,6 +48,14 @@ return [
     'debug' => (bool) env('APP_DEBUG', false),
 
     /*
+     * Список ip (через запятую), для которых открыт debug-режим
+     */
+    'debug_ip_whitelist' => array_filter(
+        explode(',', env('APP_DEBUG_IP_WHITELIST', '')),
+        fn($ip) => filter_var($ip, FILTER_VALIDATE_IP)
+    ),
+
+    /*
     |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------

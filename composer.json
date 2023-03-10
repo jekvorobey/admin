@@ -64,7 +64,6 @@
     "require": {
         "php": "^8.1",
         "ext-json": "*",
-        "barryvdh/laravel-debugbar": "^3.6",
         "box/spout": "^3.3",
         "ibt/catalog-import-lib": "dev-master",
         "ibt/cm-lib": "dev-master",
@@ -85,6 +84,7 @@
         "sentry/sentry-laravel": "^2.7"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.8",
         "barryvdh/laravel-ide-helper": "^2.12",
         "beyondcode/laravel-dump-server": "^1.8",
         "fzaninotto/faker": "^1.9",
