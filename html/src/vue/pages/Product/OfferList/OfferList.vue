@@ -34,9 +34,13 @@
                 <div v-if="opened">
                     <div class="additional-filter pt-3 mt-3">
                         <div class="row">
+                            <f-multi-select v-model="filter.brands" :options="toOptionsArray(options.brands)"
+                                            class="col-sm-6 col-md-4 col-xl-4">
+                              Бренды
+                            </f-multi-select>
                             <f-multi-select v-model="filter.merchants" :options="toOptionsArray(options.merchants)"
-                                            class="col-sm-12 col-md-8 col-xl-8">
-                                Мерчант
+                                            class="col-sm-6 col-md-4 col-xl-4">
+                              Мерчант
                             </f-multi-select>
                             <f-input v-model="filter.qty_from" type="number" min="0" class="col-sm-12 col-md-2">
                                 Остаток
@@ -146,6 +150,7 @@ import offerStatusEditModal from './components/offer-status-edit-modal.vue';
 
 const cleanHiddenFilter = {
     merchants: [],
+    brands: [],
     qty_from: '',
     qty_to: '',
 };
