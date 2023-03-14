@@ -32,6 +32,7 @@ export default {
         VSelect,
     },
     props: [
+        'order',
         'returnReasons',
         'type'
     ],
@@ -49,14 +50,27 @@ export default {
         };
     },
     methods: {
+        createWarrningMessages() {
+          const shipmentStatuses = [0,1,2,3,4];
+          let message = 'Вы уверены что хотите отменить заказ? \n';
+
+          if(this.order.payment_status.id === 2) message += 'Внимание, заказ оплачен, будет проведен возврат средств \n\n';
+          if(this.order.payment_method_id === 3 || this.order.payment_method_id === 7) message += 'Внимание, отмена кредитной оплаты это геморой, согласуйте с Финансами и Колл-Центром \n\n';
+
+          const isShipment = this.order.shipments.filter(shipment => !shipmentStatuses.includes(shipment.status.id));
+          if(this.order.shipments > 0 && isShipment > 0)  message += '"Внимание! Есть отправления, которые уже возможно переданы курьеру. Ты уверен что хочешь отменить? Согласовать с Логистикой \n';
+
+          return message;
+        },
         save() {
             this.$v.$touch();
             if (this.$v.$invalid) {
                 return;
             }
-
-            this.$emit('update:modelElement', this.returnReason)
-            this.$bvModal.hide('modal-add-return-reason-' + this.type);
+            if (window.confirm(this.createWarrningMessages())) {
+              this.$emit('update:modelElement', this.returnReason)
+              this.$bvModal.hide('modal-add-return-reason-' + this.type);
+            }
         },
         resetModal() {
             this.returnReason = 0;
