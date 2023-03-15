@@ -1,5 +1,29 @@
 <template>
     <layout-main>
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <f-input v-model="filter.name" class="col-md-4 col-sm-12">Название</f-input>
+              <f-input v-model="filter.vendorCode" class="col-md-2 col-sm-12">Код</f-input>
+              <f-input v-model="filter.id" class="col-md-2 col-sm-12">ID</f-input>
+              <f-select
+                  v-model="filter.visibilityFilter"
+                  :options="visibilityFilterOptions"
+                  class="col-md-2 col-sm-12"
+              >Видимость</f-select>
+              <f-select
+                  v-model="filter.activeFilter"
+                  :options="activeFilterOptions"
+                  class="col-md-2 col-sm-12"
+              >Активность</f-select>
+            </div>
+          </div>
+          <div class="card-footer">
+            <button @click="applyFilter" class="btn btn-sm btn-dark">Применить</button>
+            <button @click="clearFilter" class="btn btn-sm btn-outline-dark">Очистить</button>
+            <span class="float-right">Всего брендов: {{ total }}.</span>
+          </div>
+        </div>
         <div class="d-flex justify-content-between mt-3 mb-3" v-if="canUpdate(blocks.products)">
             <button class="btn btn-success" @click="createBrand">Создать бренд</button>
             <div v-if="massAll(massSelectionType).length" class="action-bar d-flex justify-content-start">
@@ -132,8 +156,35 @@
     import Modal from '../../../components/controls/modal/modal.vue';
     import VInput from '../../../components/controls/VInput/VInput.vue';
     import FileInput from '../../../components/controls/FileInput/FileInput.vue';
+    import FInput from '../../../components/filter/f-input.vue';
+    import FSelect from '../../../components/filter/f-select.vue';
     import VDeleteButton from '../../../components/controls/VDeleteButton/VDeleteButton.vue';
     import Services from "../../../../scripts/services/services";
+
+    const cleanHiddenFilter = {
+      brand: '',
+      category: '',
+      merchant: '',
+      badges: '',
+      approvalStatus: '',
+      productionStatus: '',
+      priceFrom: null,
+      priceTo: null,
+      qtyFrom: null,
+      qtyTo: null,
+      dateFrom: null,
+      dateTo: null,
+      isPriceHidden: null,
+      pageSize: null,
+    };
+
+    const cleanFilter = Object.assign({
+      id: '',
+      name: '',
+      vendorCode: '',
+      visibilityFilter: null,
+      activeFilter: null,
+    }, cleanHiddenFilter);
 
     export default {
         mixins: [
@@ -145,6 +196,8 @@
         components: {
             Modal,
             VInput,
+            FInput,
+            FSelect,
             FileInput,
             VDeleteButton
         },
@@ -152,6 +205,7 @@
             iBrands: {},
             iTotal: {},
             iCurrentPage: {},
+            iFilter: {},
         },
         data() {
             this.$store.commit(`${NAMESPACE}/${SET_PAGE}`, {
@@ -160,7 +214,10 @@
                 page: this.iCurrentPage
             });
 
+            let filter = Object.assign({}, JSON.parse(JSON.stringify(cleanFilter)), this.iFilter);
+
             return {
+                filter,
                 editBrandId: null,
                 form: {
                     name: null,
@@ -192,12 +249,20 @@
                 ACT_DELETE_BRAND,
             ]),
             loadPage(page) {
+                let cleanFilter = {};
+                for (let [key, value] of Object.entries(this.filter)) {
+                  if (value !== undefined && value !== null && value !== '') {
+                    cleanFilter[key] = value;
+                  }
+                }
+
                 history.pushState(null, null, location.origin + location.pathname + withQuery('', {
                     page: page,
+                    filter: cleanFilter,
                 }));
 
                 Services.showLoader();
-                this[ACT_LOAD_PAGE]({page})
+                this[ACT_LOAD_PAGE]({page, filter: cleanFilter})
                     .finally(() => {
                         Services.hideLoader();
                 });
@@ -262,7 +327,16 @@
             getBadgeClass(active) {
                 if (active) return 'badge-success';
                 return 'badge-danger';
-            }
+            },
+            applyFilter() {
+              this.loadPage(1);
+              this.massClear(this.massSelectionType);
+            },
+            clearFilter() {
+              this.$set(this, 'filter', JSON.parse(JSON.stringify(cleanFilter)));
+              this.applyFilter();
+              this.massClear(this.massSelectionType);
+            },
         },
         created() {
             window.onpopstate = () => {
@@ -288,7 +362,18 @@
                     this.loadPage(page);
                 }
             },
-
+            visibilityFilterOptions() {
+              return [
+                {value: true, text: 'Да'},
+                {value: false, text: 'Нет'},
+              ];
+            },
+            activeFilterOptions() {
+              return [
+                {value: true, text: 'Да'},
+                {value: false, text: 'Нет'},
+              ];
+            },
             errorName() {
                 if (this.$v.form.name.$dirty) {
                     if (!this.$v.form.name.required) return "Обязательное поле!";
