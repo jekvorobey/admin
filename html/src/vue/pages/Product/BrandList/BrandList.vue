@@ -4,7 +4,7 @@
           <div class="card-body">
             <div class="row">
               <f-input v-model="filter.name" class="col-md-4 col-sm-12">Название</f-input>
-              <f-input v-model="filter.vendorCode" class="col-md-2 col-sm-12">Код</f-input>
+              <f-input v-model="filter.code" class="col-md-2 col-sm-12">Код</f-input>
               <f-input v-model="filter.id" class="col-md-2 col-sm-12">ID</f-input>
               <f-select
                   v-model="filter.visibilityFilter"
@@ -181,7 +181,7 @@
     const cleanFilter = Object.assign({
       id: '',
       name: '',
-      vendorCode: '',
+      code: '',
       visibilityFilter: null,
       activeFilter: null,
     }, cleanHiddenFilter);
