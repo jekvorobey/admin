@@ -17,9 +17,11 @@ use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
+use Pim\Dto\BrandDto;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Offer\OfferSaleStatus;
 use Pim\Dto\Product\ProductDto;
+use Pim\Services\BrandService\BrandService;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -36,7 +38,8 @@ class OfferListController extends Controller
         OfferService    $offerService,
         MerchantService $merchantService,
         PriceService    $priceService,
-        StockService    $stockService
+        StockService    $stockService,
+        BrandService    $brandService
     )
     {
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
@@ -53,6 +56,7 @@ class OfferListController extends Controller
             'iFilter' => $request->get('filter', []),
             'options' => [
                 'merchants' => $this->getMerchants()->pluck('name', 'id'),
+                'brands' => $brandService->brands($brandService->newQuery())->pluck('name', 'id')
             ],
         ]);
     }
@@ -369,7 +373,8 @@ class OfferListController extends Controller
             ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'xml_id', 'guid', 'created_at')
-            ->addFields(ProductDto::entity(), 'id', 'name');
+            ->addFields(ProductDto::entity(), 'id', 'name')
+            ->addFields(BrandDto::entity(), 'id', 'name');
         $page = $request->get('page', 1);
         $query->pageNumber($page, 20);
         $filters = $request->get('filter', []);
@@ -381,6 +386,9 @@ class OfferListController extends Controller
                     break;
                 case 'merchants':
                     $query->setFilter('merchant_id', $value);
+                    break;
+                case 'brands':
+                    $query->setFilter('brand_id', $value);
                     break;
                 case 'productName':
                     $query->setFilter('product_name', 'like', $value);
