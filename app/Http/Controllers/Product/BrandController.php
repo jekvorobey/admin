@@ -93,8 +93,8 @@ class BrandController extends Controller
             'filter.id' => 'nullable|numeric',
             'filter.name' => 'nullable|string|max:255',
             'filter.code' => 'nullable|string|max:255',
-            'filter.visibilityFilter' => 'nullable|boolean',
-            'filter.activeFilter' => 'nullable|boolean',
+            'filter.visibilityFilter' => 'nullable|in:true,false',
+            'filter.activeFilter' => 'nullable|in:true,false',
         ]);
         $query = $brandService->newQuery()->pageNumber($page, 10);
         $filter = $requestData['filter'] ?? [];
@@ -103,16 +103,16 @@ class BrandController extends Controller
             $query->setFilter('id', $filter['id']);
         }
         if (isset($filter['name']) && $filter['name']) {
-            $query->setFilter('number', 'like', "%{$filter['name']}%");
+            $query->setFilter('name', 'like', "%{$filter['name']}%");
         }
         if (isset($filter['code']) && $filter['code']) {
             $query->setFilter('code', $filter['code']);
         }
         if (isset($filter['visibilityFilter']) && $filter['visibilityFilter']) {
-            $query->setFilter('is_visible', $filter['visibilityFilter']);
+            $query->setFilter('is_visible', json_decode($filter['visibilityFilter'], true));
         }
         if (isset($filter['activeFilter']) && $filter['activeFilter']) {
-            $query->setFilter('active', $filter['activeFilter']);
+            $query->setFilter('active', json_decode($filter['activeFilter']));
         }
 
         $total = $brandService->brandsCount($query);
