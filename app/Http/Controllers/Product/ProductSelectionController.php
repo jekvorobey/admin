@@ -7,13 +7,11 @@ use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
 use Pim\Core\PimException;
 use Pim\Dto\Offer\OfferDto;
 use Pim\Dto\Search\ProductQuery;
-use Pim\Dto\Search\ProductSearchResult;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\SearchService\SearchService;
 
@@ -59,6 +57,7 @@ class ProductSelectionController extends Controller
             ProductQuery::ACTIVE,
             ProductQuery::STRIKES,
             ProductQuery::DATE_ADD,
+            ProductQuery::CODE,
         ]);
 
         $filter = $request->get('filter', []);

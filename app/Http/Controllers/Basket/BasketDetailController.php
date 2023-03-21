@@ -123,7 +123,7 @@ class BasketDetailController extends Controller
             $offersIds = $basket->items->pluck('offer_id')->toArray();
 
             $restQuery = $productService->newQuery()
-                ->addFields(ProductDto::entity(), 'vendor_code')
+                ->addFields(ProductDto::entity(), 'vendor_code', 'code')
                 ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
 
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);

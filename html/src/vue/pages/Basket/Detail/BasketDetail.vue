@@ -20,36 +20,34 @@
 </template>
 
 <script>
-    import Infopanel from './components/infopanel.vue';
-    import BasketProductItems from './components/basket-product-items.vue';
-    import BasketEventItems from './components/basket-event-items.vue';
-    import ManagerComment from './components/forms/manager-comment.vue';
+import Infopanel from './components/infopanel.vue';
+import BasketProductItems from './components/basket-product-items.vue';
+import BasketEventItems from './components/basket-event-items.vue';
+import ManagerComment from './components/forms/manager-comment.vue';
 
-    export default {
-        components: {
-            ManagerComment,
-            BasketProductItems,
-            BasketEventItems,
-            Infopanel,
+export default {
+    components: {
+        ManagerComment,
+        BasketProductItems,
+        BasketEventItems,
+        Infopanel,
+    },
+    props: {
+        iBasket: {},
+    },
+    data() {
+        return {
+            basket: this.iBasket,
+        };
+    },
+    methods: {},
+    computed: {
+        isProductType() {
+            return this.basket.type == this.basketTypes.product;
         },
-        props: {
-            iBasket: {},
-        },
-        data() {
-            return {
-                basket: this.iBasket,
-            };
-        },
-        methods: {
-
-        },
-        computed: {
-            isProductType() {
-                return this.basket.type == this.basketTypes.product;
-            },
-            isEventType() {
-                return this.basket.type == this.basketTypes.master;
-            }
-        },
-    };
+        isEventType() {
+            return this.basket.type == this.basketTypes.master;
+        }
+    },
+};
 </script>
