@@ -200,19 +200,21 @@ export default {
              addProductsByArticles() {
                 Services.showLoader();
                 this.newProducts = {};
-                const vendorCode = this.articlesNewProducts
-                Services.net().get(this.getRoute('search.productsByVendorCode'), {vendorCode}).then((data) => {
-                    if (data.products.length === 0) {
-                        Services.msg("По заданным артикулам товаров не найдено", "danger");
-                    }
 
-                    let result = {}
-                    data.products.forEach(product => {
-                        result[product.id] = product
-                    })
-                    Object.assign(this.newProducts, result)
+                Services.net().get(this.getRoute('search.productsByVendorCode'),
+                    {vendorCode: this.articlesNewProducts, merchantId: this.variantGroup.merchant_id})
+                    .then((data) => {
+                      if (data.products.length === 0) {
+                          Services.msg("По заданным артикулам товаров не найдено", "danger");
+                      }
 
-                    this.searchRandomKey = Math.floor(Math.random() * (100000 - 1 + 1) + 1)
+                      let result = {}
+                      data.products.forEach(product => {
+                          result[product.id] = product
+                      })
+                      Object.assign(this.newProducts, result)
+
+                      this.searchRandomKey = Math.floor(Math.random() * (100000 - 1 + 1) + 1)
                 }, () => {
                     Services.msg("Ошибка при поиске товаров через артикулы - проверьте правильность введенных данных", "danger");
                 }).finally(() => {
