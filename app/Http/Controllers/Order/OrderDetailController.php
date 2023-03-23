@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -40,6 +43,7 @@ use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -108,8 +112,9 @@ class OrderDetailController extends Controller
         OrderService $orderService,
         ShipmentService $shipmentService
     ): JsonResponse {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+//        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+//        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+        $this->canMarkAsPaid();
 
         $data = $this->validate($request, [
             'payment_method' => 'required|integer',
@@ -145,14 +150,29 @@ class OrderDetailController extends Controller
      */
     public function markAsPaidForce(int $id, OrderService $orderService): JsonResponse
     {
-        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+//        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+//        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+        $this->canMarkAsPaid();
 
         $orderService->payOrder($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
         ]);
+    }
+
+    /**
+     * Проверяем может ли пользователь сделать заказ оплаченным
+     */
+    private function canMarkAsPaid(): void
+    {
+        $user = resolve(UserService::class)->users(
+            (new RestQuery())->setFilter('id', resolve(RequestInitiator::class)->userId())
+        )->first();
+
+        if (!$user->can_mark_as_paid) {
+            throw new AccessDeniedHttpException('Недостаточно прав');
+        }
     }
 
     /**
@@ -560,15 +580,21 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
+        $admin = resolve(UserService::class)->users(
+            (new RestQuery())->setFilter('id', resolve(RequestInitiator::class)->userId())
+        )->first();
+
         $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITLINE_PAID, PaymentMethod::POSCREDIT_PAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL], true)
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
-            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+            && $admin->can_mark_as_paid;
+//            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
         $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK], true)
             && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING], true)
             && !$order->is_canceled
-            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+            && $admin->can_mark_as_paid;
+//            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
