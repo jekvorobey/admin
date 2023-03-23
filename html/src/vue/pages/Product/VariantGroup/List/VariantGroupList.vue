@@ -115,6 +115,7 @@
                               <a :href="getRoute('variantGroups.detail', {id: variantGroup.id})">
                                   {{variantGroup.name}}
                               </a>
+                              <fa-icon class="cursor-pointer" icon="link" @click="showCase(variantGroup.mainProduct.code)"></fa-icon>
                               <br><small>{{variantGroup.properties_count}} / {{variantGroup.products_count}}</small>
                             </template>
                             <template v-else-if="column.code === 'merchant'">
@@ -191,6 +192,7 @@
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
     import modalMixin from '../../../../mixins/modal.js';
+    import showCaseMixin from '../../../../mixins/show-case';
     import ModalAddVariantGroup from './components/modal-add-variant-group.vue';
 
     const cleanHiddenFilter = {
@@ -219,7 +221,7 @@
     ];
 
     export default {
-        mixins: [modalMixin],
+        mixins: [modalMixin, showCaseMixin],
         props: [
             'iVariantGroups',
             'iCurrentPage',

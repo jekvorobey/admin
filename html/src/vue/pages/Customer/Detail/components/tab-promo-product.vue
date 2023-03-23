@@ -62,12 +62,13 @@
                     </button>
                 </td>
             </tr>
-            <tr v-for="(promoProduct, index) in $v.promoProducts.$each.$iter" v-if="filter.active === !!promoProduct.$model.active">
+            <tr v-for="promoProduct in $v.promoProducts.$each.$iter" v-if="filter.active === !!promoProduct.$model.active">
                 <td>
                     <div>
                         <a :href="getRoute('products.detail', {id: promoProduct.$model.product_id})">
                             {{ promoProduct.$model.product_name }}
                         </a>
+                      <fa-icon class="cursor-pointer" icon="link" @click="showCase(promoProduct.$model.product_code)"></fa-icon>
                     </div>
                     <div v-if="promoProduct.$model.product_id">ID товара: {{ promoProduct.$model.product_id }}</div>
                     <div v-if="promoProduct.$model.brand">Бренд: {{ promoProduct.$model.brand.name }}</div>
@@ -152,12 +153,13 @@ import VDeleteButton from '../../../../components/controls/VDeleteButton/VDelete
 import FileInput from '../../../../components/controls/FileInput/FileInput.vue';
 
 import {validationMixin} from 'vuelidate';
+import showCaseMixin from '../../../../mixins/show-case';
 import {required, integer, maxLength} from 'vuelidate/lib/validators';
 
 export default {
     name: 'tab-promo-product',
     components: {VInput, FileInput, VDeleteButton},
-    mixins: [validationMixin],
+    mixins: [validationMixin, showCaseMixin],
     props: ['id'],
     data() {
         return {

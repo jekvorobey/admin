@@ -32,7 +32,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="offer in claim.payload.offers">
+                <tr v-for="offer in claim.payload.offers" :key="offer.offerId">
                     <td>
                         <div>{{ offer.offerId }}</div>
                         <div v-if="model && model.productsByOffers">{{ getXmlID(offer.offerId) }}</div>
@@ -49,6 +49,7 @@
                         <a :href="getRoute('products.detail', {id: product(offer.offerId).id})" target="_blank">
                             {{ product(offer.offerId).name }}
                         </a>
+                      <fa-icon class="cursor-pointer" icon="link" @click="showCase(claim.productsByOffers[offer.offerId].product.code)"></fa-icon>
                     </td>
                     <td v-else>
                         {{ product(offer.offerId).name }}
@@ -100,6 +101,7 @@
 import Services from '../../../../../../scripts/services/services';
 import OfferPriceRejectModal from './offer-price-reject-modal.vue';
 import modalMixin from '../../../../../mixins/modal';
+import showCaseMixin from '../../../../../mixins/show-case';
 import ValueDifference from '../../../../../components/value-difference/value-difference.vue';
 
 export default {
@@ -115,7 +117,7 @@ export default {
             'selectedOffer': 0,
         }
     },
-    mixins: [modalMixin],
+    mixins: [modalMixin, showCaseMixin],
     methods: {
         getXmlID(offerId) {
             try {

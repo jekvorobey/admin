@@ -94,6 +94,7 @@
                             <small>{{
                                     basketItem.product && basketItem.product.brand ? basketItem.product.brand.name : ''
                                 }}</small>
+                          <fa-icon class="cursor-pointer" icon="link" @click="showCase(basketItem.product.code)"></fa-icon>
                         </b-td>
                         <b-td v-if="!basketItem.is_canceled" class="with-small">
                             {{ basketItem.qty | integer }} шт
@@ -293,6 +294,7 @@ import ModalAddShipmentPackage from './modal-add-shipment-package.vue';
 import ModalAddShipmentPackageItems from './modal-add-shipment-package-items.vue';
 import ModalEditShipmentPackageItem from './modal-edit-shipment-package-item.vue';
 import ModalCancelShipmentItem from './modal-cancel-shipment-item.vue';
+import showCaseMixin from '../../../../../mixins/show-case';
 
 export default {
     name: "shipment-items",
@@ -302,6 +304,7 @@ export default {
         ModalAddShipmentPackage,
         ModalCancelShipmentItem,
     },
+    mixins: [showCaseMixin],
     props: {
         modelShipment: {
             type: Object,

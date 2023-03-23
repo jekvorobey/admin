@@ -103,6 +103,9 @@
                            :value="offer.id"
                 ></td>
                 <td v-for="column in columns" v-if="column.isShown" v-html="column.value(offer)"></td>
+                <td>
+                  <fa-icon class="cursor-pointer" icon="link" @click="showCase(offer.product.code)"></fa-icon>
+                </td>
             </tr>
             <tr v-if="!offers.length">
                 <td :colspan="columns.length + 1">Товары отсутствуют</td>
@@ -154,6 +157,7 @@
     import Services from "../../../../../scripts/services/services";
 
     import modalMixin from '../../../../mixins/modal';
+    import showCaseMixin from '../../../../mixins/show-case';
     import modal from '../../../../components/controls/modal/modal.vue';
     import ModalColumns from '../../../../components/modal-columns/modal-columns.vue';
 
@@ -205,7 +209,7 @@
             modal,
             VSelect,
         },
-        mixins: [modalMixin],
+        mixins: [modalMixin, showCaseMixin],
         data() {
             let self = this;
             let filter = Object.assign({}, cleanFilter);

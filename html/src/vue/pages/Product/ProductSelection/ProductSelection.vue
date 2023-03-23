@@ -84,8 +84,10 @@
                            :checked="massHas({type:massProductsType, id:product.id})"
                            @change="e => massCheckbox(e, massProductsType, product.id)"/>
                 </td>
-                <td v-for="column in columns" v-if="column.isShown" v-html="column.value(product)"></td>
-                <td></td>
+                <td v-for="column in columns" :key="column.name" v-if="column.isShown" v-html="column.value(product)"></td>
+                <td>
+                  <fa-icon class="cursor-pointer" icon="link" @click="showCase(product.code)"></fa-icon>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -133,6 +135,7 @@ import {SET_CLEAR, SET_DESELECT, SET_SELECT} from "../../../store/modules/mass-s
 import Helpers from "../../../../scripts/helpers";
 import Media from "../../../../scripts/media";
 
+import showCaseMixin from '../../../mixins/show-case';
 import modalMixin from '../../../mixins/modal';
 import mediaMixin from '../../../mixins/media';
 import massSelectionMixin from '../../../mixins/mass-selection';
@@ -156,7 +159,8 @@ export default {
         modalMixin,
         mediaMixin,
         massSelectionMixin,
-        validationMixin
+        validationMixin,
+        showCaseMixin
     ],
 
     components: {
