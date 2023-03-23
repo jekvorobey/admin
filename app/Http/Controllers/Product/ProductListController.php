@@ -239,6 +239,7 @@ class ProductListController extends Controller
             ProductQuery::STRIKES,
             ProductQuery::OFFER_ID,
             ProductQuery::MERCHANT_ID,
+            ProductQuery::CODE,
         ]);
 
         $query->name = data_get($filter, 'name');

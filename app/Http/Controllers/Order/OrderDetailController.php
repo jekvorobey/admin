@@ -103,11 +103,12 @@ class OrderDetailController extends Controller
      * @throws Exception
      */
     public function markAsPaid(
-        int $id,
-        Request $request,
-        OrderService $orderService,
+        int             $id,
+        Request         $request,
+        OrderService    $orderService,
         ShipmentService $shipmentService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
@@ -453,7 +454,7 @@ class OrderDetailController extends Controller
             $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
             $delivery['product_cost'] = $delivery->shipments->reduce(function (
-                int $sum,
+                int         $sum,
                 ShipmentDto $shipment
             ) {
                 return $sum + $shipment->cost;
@@ -478,7 +479,7 @@ class OrderDetailController extends Controller
                 $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;
                 $shipment['delivery_pdd'] = $delivery->pdd;
                 $shipment['product_qty'] = $shipment->basketItems->reduce(function (
-                    int $sum,
+                    int           $sum,
                     BasketItemDto $item
                 ) {
                     return $sum + $item->qty;
@@ -548,13 +549,13 @@ class OrderDetailController extends Controller
         }
 
         $order['weight'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
-            int $sum,
+            int           $sum,
             BasketItemDto $item
         ) {
             return $sum + $item->getProductWeight();
         }, 0) : 0;
         $order['total_qty'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
-            int $sum,
+            int           $sum,
             BasketItemDto $item
         ) {
             return $sum + $item->qty;
@@ -579,7 +580,7 @@ class OrderDetailController extends Controller
         if ($order->basket->items->isNotEmpty()) {
             $offersIds = $order->basket->items->pluck('offer_id')->toArray();
             $restQuery = $productService->newQuery()
-                ->addFields(ProductDto::entity(), 'vendor_code')
+                ->addFields(ProductDto::entity(), 'vendor_code', 'code')
                 ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
 
