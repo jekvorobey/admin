@@ -2588,7 +2588,7 @@ cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
 "ckeditor5-custom-build@file:./customCKEditorBuild":
   version "0.0.1"
   dependencies:
-    "@ibt/ckeditor5-file-upload" "file:../../../home/node/.cache/yarn/v6/npm-ckeditor5-custom-build-0.0.1-7ca5c97e-e052-4457-bcc6-4efd5696b30d-1666791057732/node_modules/ckeditor5-custom-build/plugins/ckeditor5-file-upload"
+    "@ibt/ckeditor5-file-upload" "file:../../../home/node/.cache/yarn/v6/npm-ckeditor5-custom-build-0.0.1-5731877f-4025-48fe-be52-8a64e3b8d454-1679569392259/node_modules/ckeditor5-custom-build/plugins/ckeditor5-file-upload"
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -3965,6 +3965,25 @@ dot-prop@^4.1.1:
   integrity sha512-tUMXrxlExSW6U2EXiiKGSBVdYgtV8qlHL+C10TsW4PURY/ic+eaysnSkwB4kA/mBlCyy/IKDJ+Lc3wbWeaXtuQ==
   dependencies:
     is-obj "^1.0.0"
+
+dotenv-defaults@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/dotenv-defaults/-/dotenv-defaults-2.0.2.tgz#6b3ec2e4319aafb70940abda72d3856770ee77ac"
+  integrity sha512-iOIzovWfsUHU91L5i8bJce3NYK5JXeAwH50Jh6+ARUdLiiGlYWfGw6UkzsYqaXZH/hjE/eCd/PlfM/qqyK0AMg==
+  dependencies:
+    dotenv "^8.2.0"
+
+dotenv-webpack@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/dotenv-webpack/-/dotenv-webpack-8.0.1.tgz#6656550460a8076fab20e5ac2eac867e72478645"
+  integrity sha512-CdrgfhZOnx4uB18SgaoP9XHRN2v48BbjuXQsZY5ixs5A8579NxQkmMxRtI7aTwSiSQcM2ao12Fdu+L3ZS3bG4w==
+  dependencies:
+    dotenv-defaults "^2.0.2"
+
+dotenv@^8.2.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
+  integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
 
 download@^6.2.2:
   version "6.2.5"

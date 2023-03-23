@@ -8,6 +8,8 @@ import loadPresets from './config/helpers/loadPresets';
 import devConfig from './config/webpack.dev.babel';
 import prodConfig from './config/webpack.prod.babel';
 
+const Dotenv = require('dotenv-webpack');
+
 export default ({ mode, presets }) =>
     merge(
         {
@@ -77,7 +79,10 @@ export default ({ mode, presets }) =>
                 },
                 extensions: ['.ts', '.js', '.json']
             },
-            plugins: [new VueLoaderPlagin()],
+            plugins: [
+                new VueLoaderPlagin(),
+                new Dotenv()
+            ],
         },
         mode === 'dev' ? devConfig : prodConfig,
         loadPresets(presets)
