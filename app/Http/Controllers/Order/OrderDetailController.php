@@ -112,9 +112,9 @@ class OrderDetailController extends Controller
         OrderService $orderService,
         ShipmentService $shipmentService
     ): JsonResponse {
-//        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-//        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
-        $this->canMarkAsPaid();
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'payment_method' => 'required|integer',
@@ -150,29 +150,15 @@ class OrderDetailController extends Controller
      */
     public function markAsPaidForce(int $id, OrderService $orderService): JsonResponse
     {
-//        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
-//        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
-        $this->canMarkAsPaid();
+        $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+        $this->canUpdateOrders();
 
         $orderService->payOrder($id);
 
         return response()->json([
             'order' => $this->getOrder($id),
         ]);
-    }
-
-    /**
-     * Проверяем может ли пользователь сделать заказ оплаченным
-     */
-    private function canMarkAsPaid(): void
-    {
-        $user = resolve(UserService::class)->users(
-            (new RestQuery())->setFilter('id', resolve(RequestInitiator::class)->userId())
-        )->first();
-
-        if (!$user->can_mark_as_paid) {
-            throw new AccessDeniedHttpException('Недостаточно прав');
-        }
     }
 
     /**
@@ -195,6 +181,7 @@ class OrderDetailController extends Controller
     public function cancel(int $id, Request $request, OrderService $orderService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
@@ -580,21 +567,15 @@ class OrderDetailController extends Controller
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $admin = resolve(UserService::class)->users(
-            (new RestQuery())->setFilter('id', resolve(RequestInitiator::class)->userId())
-        )->first();
-
         $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITLINE_PAID, PaymentMethod::POSCREDIT_PAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL], true)
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
-            && $admin->can_mark_as_paid;
-//            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+            && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
         $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK], true)
             && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING], true)
             && !$order->is_canceled
-            && $admin->can_mark_as_paid;
-//            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+            && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
     }
 
     protected function addOrderProductInfo(OrderDto $order): void
