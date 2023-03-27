@@ -40,8 +40,8 @@ export default {
         [GET_NUM_PAGES]: state => Math.ceil(state.total / PAGE_SIZE)
     },
     actions: {
-        [ACT_LOAD_PAGE]({commit, rootGetters}, {page}) {
-            return Services.net().get(rootGetters.getRoute('brand.listPage'), {page})
+        [ACT_LOAD_PAGE]({commit, rootGetters}, {page, filter=null}) {
+            return Services.net().get(rootGetters.getRoute('brand.listPage'), {page, filter})
                 .then(data => {
                     commit(SET_PAGE, {
                         list: data.brands,

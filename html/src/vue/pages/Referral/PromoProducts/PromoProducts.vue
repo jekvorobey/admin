@@ -76,6 +76,7 @@
                         <a :href="getRoute('products.detail', {id: promoProduct.$model.product_id})">
                             {{ promoProduct.$model.product_name }}
                         </a>
+                        <fa-icon class="cursor-pointer" icon="link" @click="showCase(promoProduct.$model.product_code)"></fa-icon>
                     </div>
                     <div v-else>
                         {{ promoProduct.$model.product_name }}
@@ -169,6 +170,7 @@ import VDeleteButton from "../../../components/controls/VDeleteButton/VDeleteBut
 import FileInput from "../../../components/controls/FileInput/FileInput.vue";
 
 import {validationMixin} from 'vuelidate';
+import showCaseMixin from '../../../mixins/show-case';
 import {required, integer, maxLength} from 'vuelidate/lib/validators';
 
 export default {
@@ -179,7 +181,7 @@ export default {
         FileInput,
         VDeleteButton
     },
-    mixins: [validationMixin],
+    mixins: [validationMixin, showCaseMixin],
     props: [
         'iPromoProducts',
         'activities',

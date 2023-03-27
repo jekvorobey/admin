@@ -88,7 +88,7 @@ class TabPromoProductController extends Controller
                 $promoProduct['product_name'],
                 isset($promoProduct['brand']) ? $promoProduct['brand']['name'] : '',
                 isset($promoProduct['category']) ? $promoProduct['category']['name'] : '',
-                isset($promoProduct['price']) ? (string) $promoProduct['price'] : '',
+                isset($promoProduct['price']) ? (string)$promoProduct['price'] : '',
                 $promoProduct['description'],
                 join(', ', $files),
                 $promoProduct['created_at'],

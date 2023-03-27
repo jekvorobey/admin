@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\Analytics\AnalyticsApiController;
+use App\Http\Controllers\Analytics\AnalyticsController;
 use App\Http\Controllers\Basket\BasketDetailController;
 use App\Http\Controllers\Basket\BasketListController;
 use App\Http\Controllers\BillingReport\BillingReportController;
@@ -35,18 +35,18 @@ use App\Http\Controllers\Customers\ActivitiesController;
 use App\Http\Controllers\Customers\CustomerDetailController;
 use App\Http\Controllers\Customers\CustomerListController;
 use App\Http\Controllers\Customers\CustomerWhitelistController;
+use App\Http\Controllers\Customers\Detail\TabBillingController as CustomerTabBillingController;
 use App\Http\Controllers\Customers\Detail\TabBonusController;
 use App\Http\Controllers\Customers\Detail\TabDocumentController;
+use App\Http\Controllers\Customers\Detail\TabMainController as CustomerTabMainController;
 use App\Http\Controllers\Customers\Detail\TabNewsletterController;
+use App\Http\Controllers\Customers\Detail\TabOrderController as CustomerTabOrderController;
 use App\Http\Controllers\Customers\Detail\TabOrderReferrerController;
 use App\Http\Controllers\Customers\Detail\TabPreferenceController;
 use App\Http\Controllers\Customers\Detail\TabPromocodesController;
 use App\Http\Controllers\Customers\Detail\TabPromoPageController;
 use App\Http\Controllers\Customers\Detail\TabPromoProductController;
 use App\Http\Controllers\Customers\Detail\TabReviewsController;
-use App\Http\Controllers\Customers\Detail\TabMainController as CustomerTabMainController;
-use App\Http\Controllers\Customers\Detail\TabOrderController as CustomerTabOrderController;
-use App\Http\Controllers\Customers\Detail\TabBillingController as CustomerTabBillingController;
 use App\Http\Controllers\DocumentTemplatesController;
 use App\Http\Controllers\Logistics\DeliveryKpiController;
 use App\Http\Controllers\Logistics\DeliveryPriceController;
@@ -86,13 +86,13 @@ use App\Http\Controllers\Order\Cargo\CargoDetailController;
 use App\Http\Controllers\Order\Cargo\CargoListController;
 use App\Http\Controllers\Order\Create\OrderCreateController;
 use App\Http\Controllers\Order\Detail\TabDeliveriesController;
+use App\Http\Controllers\Order\Detail\TabMainController as OrderTabMainController;
 use App\Http\Controllers\Order\Detail\TabShipmentsController;
 use App\Http\Controllers\Order\Directory\OrderReturnReasonListController;
 use App\Http\Controllers\Order\Directory\OrderStatusListController;
 use App\Http\Controllers\Order\FlowDeliveryController;
 use App\Http\Controllers\Order\OrderDetailController;
 use App\Http\Controllers\Order\OrderListController;
-use App\Http\Controllers\Order\Detail\TabMainController as OrderTabMainController;
 use App\Http\Controllers\Order\Shipment\ShipmentListController;
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [MainController::class, 'logoutAjax'])->name('logout');
 
     Route::prefix('search')->group(function () {
-        Route::prefix('products')-> group(function () {
+        Route::prefix('products')->group(function () {
             Route::get('', [SearchController::class, 'products'])->name('search.products');
             Route::get('by-vendor-code', [SearchController::class, 'productsByVendorCode'])->name('search.productsByVendorCode');
         });
