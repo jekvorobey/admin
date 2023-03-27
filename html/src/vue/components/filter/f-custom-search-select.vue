@@ -24,6 +24,7 @@
             <span class="custom-search-error" v-if="error">{{ error }}</span>
             <div v-if="$slots.append" class="input-group-append"><slot name="append"/></div>
         </div>
+        <div v-if="help" class="form-text text-muted small"> {{ help }} </div>
     </div>
 </template>
 
@@ -49,7 +50,12 @@
                 default: false,
                 required: false
             },
-            error: [String, Object]
+            error: [String, Object],
+            help: {
+                type: [String, Object],
+                default: false,
+                required: false
+            }
         },
         computed: {
             myValue(){

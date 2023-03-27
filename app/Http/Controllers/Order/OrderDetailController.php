@@ -8,6 +8,9 @@ use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
 use Greensight\CommonMsa\Dto\RoleDto;
+use Greensight\CommonMsa\Dto\UserDto;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Greensight\Customer\Dto\CustomerDto;
 use Greensight\Logistics\Dto\Lists\DeliveryMethod;
@@ -40,6 +43,7 @@ use Pim\Dto\CategoryDto;
 use Pim\Dto\Product\ProductDto;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -103,13 +107,15 @@ class OrderDetailController extends Controller
      * @throws Exception
      */
     public function markAsPaid(
-        int $id,
-        Request $request,
-        OrderService $orderService,
+        int             $id,
+        Request         $request,
+        OrderService    $orderService,
         ShipmentService $shipmentService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'payment_method' => 'required|integer',
@@ -147,6 +153,7 @@ class OrderDetailController extends Controller
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
         $this->hasRole(RoleDto::ROLE_ADMINISTRATOR);
+        $this->canUpdateOrders();
 
         $orderService->payOrder($id);
 
@@ -175,6 +182,7 @@ class OrderDetailController extends Controller
     public function cancel(int $id, Request $request, OrderService $orderService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
@@ -453,7 +461,7 @@ class OrderDetailController extends Controller
             $delivery->pdd = date2str($delivery->pdd);
             $delivery->delivery_at = date2str(new Carbon($delivery->delivery_at));
             $delivery['product_cost'] = $delivery->shipments->reduce(function (
-                int $sum,
+                int         $sum,
                 ShipmentDto $shipment
             ) {
                 return $sum + $shipment->cost;
@@ -478,7 +486,7 @@ class OrderDetailController extends Controller
                 $shipment['delivery_status_xml_id_at'] = $delivery->status_xml_id_at;
                 $shipment['delivery_pdd'] = $delivery->pdd;
                 $shipment['product_qty'] = $shipment->basketItems->reduce(function (
-                    int $sum,
+                    int           $sum,
                     BasketItemDto $item
                 ) {
                     return $sum + $item->qty;
@@ -548,25 +556,25 @@ class OrderDetailController extends Controller
         }
 
         $order['weight'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
-            int $sum,
+            int           $sum,
             BasketItemDto $item
         ) {
             return $sum + $item->getProductWeight();
         }, 0) : 0;
         $order['total_qty'] = $order->basket->items->isNotEmpty() ? $order->basket->items->reduce(function (
-            int $sum,
+            int           $sum,
             BasketItemDto $item
         ) {
             return $sum + $item->qty;
         }, 0) : 0;
 
-        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITPAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL])
+        $order['canMarkAsPaid'] = in_array($order->paymentMethod->id, [PaymentMethod::CREDITLINE_PAID, PaymentMethod::POSCREDIT_PAID, PaymentMethod::BANK_TRANSFER_FOR_LEGAL], true)
             && $order->payment_status->id === PaymentStatus::WAITING
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole([RoleDto::ROLE_FINANCIER, RoleDto::ROLE_ADMINISTRATOR]);
 
-        $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK])
-            && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING])
+        $order['canMarkAsPaidForce'] = in_array($order->paymentMethod->id, [PaymentMethod::PREPAID, PaymentMethod::B2B_SBERBANK], true)
+            && in_array($order->payment_status->id, [PaymentStatus::NOT_PAID, PaymentStatus::WAITING], true)
             && !$order->is_canceled
             && resolve(RequestInitiator::class)->hasRole(RoleDto::ROLE_ADMINISTRATOR);
     }
@@ -579,7 +587,7 @@ class OrderDetailController extends Controller
         if ($order->basket->items->isNotEmpty()) {
             $offersIds = $order->basket->items->pluck('offer_id')->toArray();
             $restQuery = $productService->newQuery()
-                ->addFields(ProductDto::entity(), 'vendor_code')
+                ->addFields(ProductDto::entity(), 'vendor_code', 'code')
                 ->include(CategoryDto::entity(), BrandDto::entity(), 'mainImage');
             $productsByOffers = $productService->productsByOffers($restQuery, $offersIds);
 

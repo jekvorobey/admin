@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Core\ViewRender;
+use Greensight\CommonMsa\Rest\RestQuery;
+use Greensight\CommonMsa\Services\AuthService\UserService;
 use Greensight\CommonMsa\Services\RequestInitiator\RequestInitiator;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -10,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Controller extends BaseController
@@ -98,10 +101,10 @@ class Controller extends BaseController
             ->render();
     }
 
-    protected function validate(Request $request, array $rules, array $customAttributes = []): array
+    protected function validate(Request $request, array $rules, array $customAttributes = [], array $messages = []): array
     {
         $data = $request->all();
-        $validator = Validator::make($data, $rules, [], $customAttributes);
+        $validator = Validator::make($data, $rules, $messages, $customAttributes);
         if ($validator->fails()) {
             throw new BadRequestHttpException($validator->errors()->first());
         }
@@ -164,5 +167,19 @@ class Controller extends BaseController
         }
 
         return true;
+    }
+
+    /**
+     * Проверяем может ли пользователь сделать заказ оплаченным
+     */
+    protected function canUpdateOrders(): void
+    {
+        $user = resolve(UserService::class)->users(
+            (new RestQuery())->setFilter('id', resolve(RequestInitiator::class)->userId())
+        )->first();
+
+        if (!$user->can_update_orders) {
+            throw new AccessDeniedHttpException('Недостаточно прав');
+        }
     }
 }

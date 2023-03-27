@@ -55,16 +55,12 @@ class ProductListController extends Controller
         $offers = $offerService->offers(
             (new RestQuery())
                 ->setFilter('product_id', $productIds)
-        );
-        $offers = $offers->mapToGroups(function ($item) {
-            return [$item->product_id => $item->id];
-        });
+        )->pluck('id', 'product_id');
 
         $productSearchResult->products = array_map(function ($product) use ($offers) {
-            $product['offerId'] = $offers[$product['id']] ?? null;
+            $product['offerId'] = $offers->get($product['id']) ?? null;
             return $product;
         }, $productSearchResult->products);
-
 
         return $this->render('Product/ProductList', [
             'iProducts' => $productSearchResult->products,
@@ -243,6 +239,7 @@ class ProductListController extends Controller
             ProductQuery::STRIKES,
             ProductQuery::OFFER_ID,
             ProductQuery::MERCHANT_ID,
+            ProductQuery::CODE,
         ]);
 
         $query->name = data_get($filter, 'name');

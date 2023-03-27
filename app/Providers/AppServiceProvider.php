@@ -16,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if (config('app.env') != 'local' && !in_array(request()->ip(), config('app.debug_ip_whitelist'))) {
+            config(['app.debug' => false]);
+        }
     }
 
     /**

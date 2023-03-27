@@ -25,9 +25,9 @@
                         <!--<b-dropdown-item-button v-if="isNotPaid && !isCancel" @click="payOrder()">
                             Оплатить
                         </b-dropdown-item-button>-->
-                        <b-dropdown-item-button v-if="!isNotPaid">
-                            Вернуть деньги
-                        </b-dropdown-item-button>
+<!--                        <b-dropdown-item-button v-if="!isNotPaid">-->
+<!--                            Вернуть деньги-->
+<!--                        </b-dropdown-item-button>-->
                         <b-dropdown-item-button v-if="canCapturePayment"
                                                 @click="capturePayment()">
                             Подтвердить платеж
@@ -199,8 +199,12 @@
                 <span class="font-weight-bold">Вес заказа:</span> {{ order.weight }} г.
             </div>
         </b-row>
-        <modal-add-return-reason :returnReasons="order.orderReturnReasons" type="order"
-                                 @update:modelElement="cancelOrder($event)"/>
+        <modal-add-return-reason
+                :order="order"
+                :returnReasons="order.orderReturnReasons"
+                @update:modelElement="cancelOrder($event)"
+                type="order"
+        />
 
         <modal-credit-payment-receipt-create :order="order"
                                              @update:createCreditPaymentReceipt="createCreditPaymentReceipt($event)"
@@ -456,7 +460,13 @@ export default {
             return this.order.is_problem;
         },
         isCreditPayment() {
-            return this.order.payment_method_id === this.allPaymentMethods.creditpaid.id;
+            if (this.order.payment_method_id === this.allPaymentMethods.creditline_paid.id) {
+                return true;
+            }
+            if (this.order.payment_method_id === this.allPaymentMethods.poscredit_paid.id) {
+                return true;
+            }
+            return false;
         },
         isBankTransferPayment() {
             return this.order.payment_method_id === this.allPaymentMethods.bank_transfer.id;

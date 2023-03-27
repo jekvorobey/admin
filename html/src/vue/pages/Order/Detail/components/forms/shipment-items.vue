@@ -25,7 +25,8 @@
         <b-table-simple hover small caption-top responsive="true">
             <b-thead>
                 <b-tr>
-                    <b-th v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && hasNonPackagedItems">
+                    <b-th
+                        v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && hasNonPackagedItems">
                         <input type="checkbox" id="select-all-page-shipments" v-model="isSelectAllBasketItem"
                                @click="selectAllBasketItems()">
                         <label for="select-all-page-shipments" class="mb-0">Все</label>
@@ -47,8 +48,8 @@
                                  v-b-popover.hover="tooltipUnitDiscountHelp"></fa-icon>
                     </b-th>
                     <b-th>Бонус
-                      <fa-icon icon="question-circle"
-                               v-b-popover.hover="tooltipBonusHelp"></fa-icon>
+                        <fa-icon icon="question-circle"
+                                 v-b-popover.hover="tooltipBonusHelp"></fa-icon>
                     </b-th>
                     <b-th>Цена за единицу со скидкой
                         <fa-icon icon="question-circle"
@@ -71,6 +72,7 @@
             <b-tbody>
                 <template v-if="shipment.nonPackedBasketItems">
                     <tr v-for="basketItem in shipment.nonPackedBasketItems">
+                        <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && hasNonPackagedItems"></b-td>
                         <b-td v-if="canEdit && hasShipmentPackages && !isAssembled && !shipment.is_problem && !basketItem.is_canceled">
                             <input type="checkbox" value="true" class="shipment-select" :value="basketItem.id"
                                    v-model="selectedBasketItemIds"
@@ -92,17 +94,22 @@
                             <small>{{
                                     basketItem.product && basketItem.product.brand ? basketItem.product.brand.name : ''
                                 }}</small>
+                          <fa-icon class="cursor-pointer" icon="link" @click="showCase(basketItem.product.code)"></fa-icon>
                         </b-td>
                         <b-td v-if="!basketItem.is_canceled" class="with-small">
                             {{ basketItem.qty | integer }} шт
-                            <small v-if="basketItem.qty_canceled"> Отменено {{ basketItem.qty_canceled | integer }} шт</small>
+                            <small v-if="basketItem.qty_canceled"> Отменено {{ basketItem.qty_canceled | integer }}
+                                шт</small>
                             <small> {{ basketItem.product.weight }} г</small>
                             <small> {{ basketItem.product.length }} x {{ basketItem.product.width }} x
                                 {{ basketItem.product.height }} мм</small>
                         </b-td>
                         <b-td v-if="basketItem.is_canceled" class="with-small">Полностью отменено</b-td>
                         <b-td>{{ preparePrice(basketItem.cost / basketItem.qty_original) }} руб</b-td>
-                        <b-td>{{ preparePrice((basketItem.cost - basketItem.price - basketItem.bonus_spent) / basketItem.qty_original) }} руб</b-td>
+                        <b-td>{{
+                                preparePrice((basketItem.cost - basketItem.price - basketItem.bonus_spent) / basketItem.qty_original)
+                            }} руб
+                        </b-td>
                         <b-td>{{ preparePrice(basketItem.bonus_spent) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.price / basketItem.qty_original) }} руб</b-td>
                         <b-td>{{ preparePrice(basketItem.qty * basketItem.cost / basketItem.qty_original) }} руб</b-td>
@@ -220,7 +227,10 @@
                                     {{ item.basketItem.product.height }} мм</small>
                             </b-td>
                             <b-td>{{ preparePrice(item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
-                            <b-td>{{ preparePrice((item.basketItem.cost - item.basketItem.price - item.basketItem.bonus_spent) / item.basketItem.qty) }} руб</b-td>
+                            <b-td>{{
+                                    preparePrice((item.basketItem.cost - item.basketItem.price - item.basketItem.bonus_spent) / item.basketItem.qty)
+                                }} руб
+                            </b-td>
                             <b-td>{{ preparePrice(item.basketItem.bonus_spent) }} руб</b-td>
                             <b-td>{{ preparePrice(item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td>{{ preparePrice(item.qty * item.basketItem.cost / item.basketItem.qty) }} руб</b-td>
@@ -229,7 +239,8 @@
                             <b-td>{{ preparePrice(item.qty * item.basketItem.price / item.basketItem.qty) }} руб</b-td>
                             <b-td v-if="canEdit">
                                 <div class="float-right">
-                                    <b-dropdown size="lg" dropleft text="Действия" variant="link" toggle-class="text-decoration-none" no-caret>
+                                    <b-dropdown size="lg" dropleft text="Действия" variant="link"
+                                                toggle-class="text-decoration-none" no-caret>
                                         <template #button-content>
                                             <fa-icon icon="edit" title="Действия" class="cursor-pointer">
                                             </fa-icon>
@@ -246,8 +257,9 @@
                                                                           :max-qty="selectedMaxQty"
                                                                           @onSave="onShipmentPackageItemEdit"
                                                                           v-if="Object.values(selectedShipmentItem).length > 0"/>
-                                        <b-dropdown-item-button v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
-                                                                @click="cancelShipmentItem(item.basketItem)">
+                                        <b-dropdown-item-button
+                                            v-if="canCancelShipmentItem && !item.basketItem.is_canceled"
+                                            @click="cancelShipmentItem(item.basketItem)">
                                             Частично отменить
                                             <modal-cancel-shipment-item :model-shipment.sync="shipment"
                                                                         :model-order.sync="order"
@@ -282,6 +294,7 @@ import ModalAddShipmentPackage from './modal-add-shipment-package.vue';
 import ModalAddShipmentPackageItems from './modal-add-shipment-package-items.vue';
 import ModalEditShipmentPackageItem from './modal-edit-shipment-package-item.vue';
 import ModalCancelShipmentItem from './modal-cancel-shipment-item.vue';
+import showCaseMixin from '../../../../../mixins/show-case';
 
 export default {
     name: "shipment-items",
@@ -291,6 +304,7 @@ export default {
         ModalAddShipmentPackage,
         ModalCancelShipmentItem,
     },
+    mixins: [showCaseMixin],
     props: {
         modelShipment: {
             type: Object,
@@ -507,8 +521,8 @@ export default {
         tooltipPriceHelp() {
             return 'Цена товара со всеми скидками с учётом количества';
         },
-        tooltipBonusHelp () {
-          return 'Потрачено бонусов';
+        tooltipBonusHelp() {
+            return 'Потрачено бонусов';
         },
         canEdit() {
             return this.withEdit && this.canUpdate(this.blocks.orders);

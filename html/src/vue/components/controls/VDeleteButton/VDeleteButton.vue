@@ -2,6 +2,7 @@
     <span style="display: inline-block; vertical-align: middle;">
         <button :id="btn_id()" type="button" @click="onClick" class="btn" :class="btnClass" title="Удалить">
             <fa-icon icon="trash-alt"/>
+            <span> {{ btnText }} </span>
         </button>
         <b-popover :show.sync="popoverShow" placement="auto" ref="popover" :target="btn_id()">
             <template slot="title">
@@ -31,6 +32,11 @@ export default {
             type: String,
             default: 'btn-danger',
         },
+        btnText: {
+            type: String,
+            required: false,
+            default: null
+        }
     },
     data() {
         return {

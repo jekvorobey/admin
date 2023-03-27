@@ -1,27 +1,51 @@
 <template>
     <div>
-        <b-row class="d-flex justify-content-between mt-3 mb-3">
+        <b-row class="d-flex flex-column justify-content-between mt-3 mb-3">
             <template v-if="variantGroup.properties_count > 0">
-                <b-col class="col-md-3">
-                    <products-search
-                            :model.sync="newProducts"
-                            :excepted-ids="exceptedIds"
-                            :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
-                    ></products-search>
-                </b-col>
-                <b-col v-if="canUpdate(blocks.products)">
-                    <button
-                            class="btn btn-success"
-                            @click="addProducts"
-                    >
-                        <fa-icon icon="plus"></fa-icon> Добавить товар
-                    </button>
-                    <v-delete-button
-                            @delete="deleteProducts(selectedProductIds)"
-                            btn-class="btn-danger"
-                            v-if="selectedProductIds.length > 0" class="ml-3"
-                    />
-                </b-col>
+                <div class="d-flex align-items-center mb-3">
+                    <b-col class="col-md-4">
+                        <f-text-area-search
+                                v-model="articlesNewProducts"
+                                placeholderName="Введите Артикулы через запятую"
+                        ></f-text-area-search>
+                    </b-col>
+                    <b-col v-if="canUpdate(blocks.products)">
+                        <button
+                                class="btn btn-success"
+                                @click="addProductsByArticles"
+                        >
+                            <fa-icon icon="search"></fa-icon> Найти по Артикулам
+                        </button>
+                    </b-col>
+                </div>
+                <div class="d-flex">
+                    <b-col class="col-md-4">
+                        <products-search
+                                :model.sync="newProducts"
+                                :excepted-ids="exceptedIds"
+                                :merchant-id="parseInt(variantGroup.merchant_id ? variantGroup.merchant_id : 0)"
+                                :key="searchRandomKey"
+                                placeholder-text="Введите название/артикул товара"
+                        ></products-search>
+                    </b-col>
+                </div>
+                <div class="mt-2">
+                    <b-col v-if="canUpdate(blocks.products)" class="d-flex justify-content-between">
+                        <button
+                                class="btn btn-success"
+                                @click="addProducts"
+                        >
+                            <fa-icon icon="plus"></fa-icon> Добавить выбранные товары
+                        </button>
+                        <v-delete-button
+                                v-if="selectedProductIds.length > 0"
+                                @delete="deleteProducts(selectedProductIds)"
+                                btn-text="Удалить выбранные товары"
+                                btn-class="btn-danger"
+                                class="ml-3"
+                        />
+                    </b-col>
+                </div>
             </template>
             <template v-else>
                 <b-col>Сначала добавьте <span class="btn-link cursor-pointer" @click="go2PropertiesTab">характеристики</span> для
@@ -87,15 +111,17 @@
                     <b-td>{{ preparePrice(product.price) }} руб</b-td>
                     <b-td>{{ product.approval_status ? product.approval_status.name : '' }}</b-td>
                     <b-td v-if="canUpdate(blocks.products)">
-                        <button
-                                class="btn btn-primary"
-                                title="Сделать основным товаром"
-                                @click="setMainProduct(product.id)"
-                                v-if="product.id !== variantGroup.main_product_id"
-                        >
-                            <fa-icon icon="flag"></fa-icon>
-                        </button>
-                        <v-delete-button @delete="deleteProducts([product.id])" btn-class="btn-danger"/>
+                        <div class="d-flex justify-content-end">
+                            <button
+                                    class="btn btn-primary mr-1"
+                                    title="Сделать основным товаром"
+                                    @click="setMainProduct(product.id)"
+                                    v-if="product.id !== variantGroup.main_product_id"
+                            >
+                                <fa-icon icon="flag"></fa-icon>
+                            </button>
+                            <v-delete-button @delete="deleteProducts([product.id])" btn-class="btn-danger"/>
+                        </div>
                     </b-td>
                 </tr>
             </b-tbody>
@@ -106,6 +132,7 @@
 import Services from '../../../../../../scripts/services/services';
 import VDeleteButton from '../../../../../components/controls/VDeleteButton/VDeleteButton.vue';
 import ProductsSearch from '../../../../../components/search/products-search.vue';
+import FTextAreaSearch from '../../../../../components/filter/f-text-area-search.vue';
 
 export default {
         props: {
@@ -114,11 +141,15 @@ export default {
         components: {
             ProductsSearch,
             VDeleteButton,
+            FTextAreaSearch
         },
         data() {
             return {
+                searchRandomKey: 0,
                 products: [],
                 newProducts: {},
+                articlesNewProducts: [],
+                fetchedProductsByArticles: null,
                 selectedProductIds: [],
             }
         },
@@ -156,11 +187,36 @@ export default {
                 Services.net().post(this.getRoute('variantGroups.detail.products.add', {id: this.variantGroup.id}), {}, {
                     productIds: newProductIds,
                 }, {}, true).then((data) => {
+                    console.log('data ', data)
                     this.setData(data);
                     this.newProducts = {};
                     Services.msg("Добавление товара(ов) прошло успешно");
                 }, () => {
                     Services.msg("Ошибка при добавлении товара(ов) - возможно товар(ы) не имеет(ют) указанных характеристик для склейки, или есть дубли товаров по характеристикам для склейки", "danger");
+                }).finally(() => {
+                    Services.hideLoader();
+                });
+            },
+             addProductsByArticles() {
+                Services.showLoader();
+                this.newProducts = {};
+
+                Services.net().get(this.getRoute('search.productsByVendorCode'),
+                    {vendorCode: this.articlesNewProducts, merchantId: this.variantGroup.merchant_id})
+                    .then((data) => {
+                      if (data.products.length === 0) {
+                          Services.msg("По заданным артикулам товаров не найдено", "danger");
+                      }
+
+                      let result = {}
+                      data.products.forEach(product => {
+                          result[product.id] = product
+                      })
+                      Object.assign(this.newProducts, result)
+
+                      this.searchRandomKey = Math.floor(Math.random() * (100000 - 1 + 1) + 1)
+                }, () => {
+                    Services.msg("Ошибка при поиске товаров через артикулы - проверьте правильность введенных данных", "danger");
                 }).finally(() => {
                     Services.hideLoader();
                 });

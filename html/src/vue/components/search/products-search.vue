@@ -7,6 +7,7 @@
                 @focusin="onFocus"
                 @focusout="onFocusOut"
                 @input="onChange"
+                :placeholder-text="placeholderText"
         ></v-input>
         <ul
                 v-show="isOpen && query"
@@ -23,12 +24,14 @@
             </li>
             <li v-if="!products.length" class="autocomplete-result">Ничего не найдено</li>
         </ul>
-        <p v-for="product in foundedProducts">
-            <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
-                {{ product.vendorCode }} {{ product.name }}
-            </a>
-            <button type="button" @click="deleteProduct(product.id)" class="btn"><fa-icon icon="trash-alt"/></button>
-        </p>
+        <div class="products-search-block">
+            <p v-for="product in foundedProducts">
+                <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
+                    {{ product.vendorCode }} {{ product.name }}
+                </a>
+                <button type="button" @click="deleteProduct(product.id)" class="btn"><fa-icon icon="trash-alt"/></button>
+            </p>
+        </div>
     </div>
 </template>
 
@@ -48,6 +51,11 @@
             merchantId: {
                 type: Number,
                 default: 0,
+            },
+            placeholderText: {
+                type: [String],
+                required: false,
+                default: null
             }
         },
         data() {
@@ -141,5 +149,25 @@
     .autocomplete-result:hover {
         background-color: #337ab7;
         color: white;
+    }
+
+    .products-search-block {
+        max-height: 280px;
+        overflow-y: auto;
+    }
+
+    .products-search-block::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(45, 13, 13, 0.3);
+        background-color: #F5F5F5;
+    }
+
+    .products-search-block::-webkit-scrollbar {
+        width: 10px;
+        background-color: #F5F5F5;
+    }
+
+    .products-search-block::-webkit-scrollbar-thumb {
+        background-color: #28a745;
+        border: 2px solid #dcd8d8;
     }
 </style>

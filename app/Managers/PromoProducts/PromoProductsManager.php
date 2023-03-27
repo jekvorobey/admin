@@ -48,7 +48,7 @@ class PromoProductsManager
                     (new RestQuery())
                         ->setFilter('id', $productIds->all())
                         ->include('brand', 'category')
-                        ->addFields(ProductDto::entity(), 'id', 'brand_id', 'category_id', 'name')
+                        ->addFields(ProductDto::entity(), 'id', 'brand_id', 'category_id', 'name', 'code')
                         ->addFields(BrandDto::entity(), 'id', 'name')
                         ->addFields(CategoryDto::entity(), 'id', 'name')
                 )
@@ -65,6 +65,7 @@ class PromoProductsManager
                     $promoProduct['brand'] = $product->brand;
                     $promoProduct['category'] = $product->category;
                     $promoProduct['product_name'] = $product->name;
+                    $promoProduct['product_code'] = $product->code;
                 }
                 if ($offers->has($promoProduct['product_id']) && $prices->has($offers[$promoProduct['product_id']])) {
                     $promoProduct['price'] = $prices[$offers[$promoProduct['product_id']]]->price;
@@ -93,8 +94,8 @@ class PromoProductsManager
         $promotionDto = new PutPromotionDto();
         $promotionDto
             ->setProductId($data['product_id'])
-            ->setMass((bool) $data['mass'])
-            ->setActive((bool) $data['active'])
+            ->setMass((bool)$data['mass'])
+            ->setActive((bool)$data['active'])
             ->setFiles($data['files'] ?? [])
             ->setDescription($data['description'])
             ->setCustomerId($merchantId);

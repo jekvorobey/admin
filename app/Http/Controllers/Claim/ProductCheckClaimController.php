@@ -52,7 +52,7 @@ class ProductCheckClaimController extends Controller
             'claimStatuses' => $claimTypes->firstWhere('id', ClaimTypeDto::TYPE_PRODUCT_CHECK)->statusNames,
             'merchants' => $this->getMerchants(),
             'iPager' => $pager,
-            'iCurrentPage' => (int) $request->get('page', 1),
+            'iCurrentPage' => (int)$request->get('page', 1),
             'iFilter' => $this->getFilter(),
         ]);
     }
@@ -136,11 +136,12 @@ class ProductCheckClaimController extends Controller
      * Изменить статус заявки
      */
     public function changeStatus(
-        int $id,
-        Request $request,
-        ClaimService $claimService,
+        int            $id,
+        Request        $request,
+        ClaimService   $claimService,
         ProductService $productService
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_CLAIMS);
 
         $result = 'ok';
@@ -255,6 +256,7 @@ class ProductCheckClaimController extends Controller
                         'id',
                         'name',
                         'vendor_code',
+                        'code',
                         'approval_status',
                         'approval_status_comment'
                     )
