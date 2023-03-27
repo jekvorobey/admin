@@ -190,6 +190,7 @@ class TabShipmentsController extends OrderDetailController
         ShipmentService $shipmentService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
