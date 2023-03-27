@@ -173,6 +173,7 @@ class BannerDetailController extends Controller
             'color' => 'string|nullable',
             'controls_color' => 'string|nullable',
             'path_templates' => 'string|nullable',
+            'hide_path_templates' => 'string|nullable',
             'additional_text' => 'string|nullable',
             'sort' => 'integer|nullable',
             'banner_size' => 'integer|nullable',
@@ -211,6 +212,7 @@ class BannerDetailController extends Controller
             'color' => 'string|nullable',
             'controls_color' => 'string|nullable',
             'path_templates' => 'string|nullable',
+            'hide_path_templates' => 'string|nullable',
             'additional_text' => 'string|nullable',
             'sort' => 'integer|nullable',
             'banner_size' => 'integer|nullable',
@@ -298,6 +300,7 @@ class BannerDetailController extends Controller
                         BannerTypeDto::MENU_CODE,
                         // BannerTypeDto::MK_TOP_CODE,
                         BannerTypeDto::MK_ITEM_CODE,
+                        BannerTypeDto::THROUGH,
                     ]
                 )
         );

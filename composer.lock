@@ -1407,12 +1407,12 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.com:iBT.studio/ibt-cms-lib.git",
-                "reference": "910d1b9a25d75b6c064e06fd972c1682d2806e78"
+                "reference": "0ef479f1b4257bbfa9a8501d53cb4dd6e895c919"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=910d1b9a25d75b6c064e06fd972c1682d2806e78",
-                "reference": "910d1b9a25d75b6c064e06fd972c1682d2806e78",
+                "url": "https://gitlab.com/api/v4/projects/iBT%2Estudio%2Fibt-cms-lib/repository/archive.zip?sha=0ef479f1b4257bbfa9a8501d53cb4dd6e895c919",
+                "reference": "0ef479f1b4257bbfa9a8501d53cb4dd6e895c919",
                 "shasum": ""
             },
             "require": {
@@ -1440,7 +1440,7 @@
             "support": {
                 "issues": "https://gitlab.com/api/v4/projects/37965660/issues"
             },
-            "time": "2022-11-14T08:38:41+00:00"
+            "time": "2023-03-27T09:31:05+00:00"
         },
         {
             "name": "ibt/common-lib",
