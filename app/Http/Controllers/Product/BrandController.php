@@ -109,7 +109,7 @@ class BrandController extends Controller
             $query->setFilter('code', $filter['code']);
         }
         if (isset($filter['visibilityFilter']) && $filter['visibilityFilter']) {
-            $query->setFilter('is_visible', json_decode($filter['visibilityFilter'], true));
+            $query->setFilter('is_visible', filter_var($filter['visibilityFilter'], FILTER_VALIDATE_BOOLEAN));
         }
         if (isset($filter['activeFilter']) && $filter['activeFilter']) {
             $query->setFilter('active', json_decode($filter['activeFilter']));
