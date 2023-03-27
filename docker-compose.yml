@@ -11,6 +11,7 @@ services:
       - /sockets/:/sockets/
       - /home/iBT.studio/ENV/data/jwt_key/:/var/www/jwt_key/
       - /home/iBT.studio/ENV/svc/ibt-admin/.env:/var/www/.env
+      - /home/iBT.studio/ENV/svc/ibt-admin/html/.env:/var/www/html/.env
       - /home/iBT.studio/ENV/svc/conf/php.ini:/usr/local/etc/php/php.ini
       - /home/iBT.studio/ENV/svc/conf/ibt-admin/php-fpm.conf.tpl:/php-fpm.conf.tpl
       - /home/iBT.studio/ENV/svc/ibt-admin/custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
