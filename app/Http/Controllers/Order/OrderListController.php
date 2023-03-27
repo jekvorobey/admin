@@ -44,12 +44,13 @@ class OrderListController extends Controller
      * @throws Exception
      */
     public function index(
-        Request $request,
-        OrderService $orderService,
-        BrandService $brandService,
-        StoreService $storeService,
+        Request        $request,
+        OrderService   $orderService,
+        BrandService   $brandService,
+        StoreService   $storeService,
         PaymentService $paymentService
-    ) {
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_ORDERS);
 
         $this->title = 'Список заказов';

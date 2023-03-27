@@ -28,6 +28,7 @@
                             <a :href="getRoute('products.detail', {id: product.id})" target="_blank">
                                 {{ product.name }}
                             </a>
+                            <fa-icon class="cursor-pointer" icon="link" @click="showCase(product.code)"></fa-icon>
                         </td>
                         <td v-else>
                             {{ product.name }}
@@ -60,11 +61,12 @@
 
     import Services from "../../../../../../scripts/services/services";
     import modalMixin from "../../../../../mixins/modal";
+    import showCaseMixin from '../../../../../mixins/show-case';
     import ModalProductsReject from './modal-products-reject.vue';
 
     export default {
         components: {ModalProductsReject},
-        mixins: [modalMixin],
+        mixins: [modalMixin, showCaseMixin],
         props: ['claim',],
         data() {
             return {

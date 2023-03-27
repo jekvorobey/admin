@@ -141,6 +141,7 @@
         "devextreme": "22.1",
         "devextreme-cldr-data": "^1.0.3",
         "devextreme-vue": "22.1",
+        "dotenv-webpack": "^8.0.1",
         "focus-visible": "^4.1.5",
         "fontfaceobserver": "^2.1.0",
         "globalize": "^1.7.0",

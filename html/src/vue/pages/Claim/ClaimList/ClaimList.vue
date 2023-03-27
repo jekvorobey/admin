@@ -17,9 +17,9 @@
                         Статус заявки
                     </f-multi-select>
                     <f-custom-search-select
-                            v-model="filter.merchantId"
-                            :options="merchantOptions"
-                            class="col">
+                        v-model="filter.merchantId"
+                        :options="merchantOptions"
+                        class="col">
                         Мерчант
                     </f-custom-search-select>
                 </div>
@@ -51,7 +51,7 @@
         <table class="table table-condensed">
             <thead>
             <tr>
-                <th v-for="column in columns" v-if="column.isShown">{{column.name}}</th>
+                <th v-for="column in columns" v-if="column.isShown">{{ column.name }}</th>
                 <th>
                     <button class="btn btn-light float-right" @click="showChangeColumns">
                         <fa-icon icon="cog"></fa-icon>
@@ -71,34 +71,34 @@
             </tbody>
         </table>
         <b-pagination
-                v-if="pager.pages > 1"
-                v-model="currentPage"
-                :total-rows="pager.total"
-                :per-page="pager.pageSize"
-                @change="changePage"
-                :hide-goto-end-buttons="pager.pages < 10"
-                class="float-right"
+            v-if="pager.pages > 1"
+            v-model="currentPage"
+            :total-rows="pager.total"
+            :per-page="pager.pageSize"
+            @change="changePage"
+            :hide-goto-end-buttons="pager.pages < 10"
+            class="float-right"
         ></b-pagination>
     </layout-main>
 </template>
 
 <script>
 
-    import Services from '../../../../scripts/services/services';
-    import withQuery from 'with-query';
-    import qs from 'qs';
+import Services from '../../../../scripts/services/services';
+import withQuery from 'with-query';
+import qs from 'qs';
 
-    import FInput from '../../../components/filter/f-input.vue';
-    import FDate from '../../../components/filter/f-date.vue';
-    import FMultiSelect from '../../../components/filter/f-multi-select.vue';
-    import FSelect from '../../../components/filter/f-select.vue';
-    import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
-    import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
-    import Helpers from '../../../../scripts/helpers';
+import FInput from '../../../components/filter/f-input.vue';
+import FDate from '../../../components/filter/f-date.vue';
+import FMultiSelect from '../../../components/filter/f-multi-select.vue';
+import FSelect from '../../../components/filter/f-select.vue';
+import FCustomSearchSelect from '../../../components/filter/f-custom-search-select.vue';
+import ModalColumns from '../../../components/modal-columns/modal-columns.vue';
+import Helpers from '../../../../scripts/helpers';
 
-    import modalMixin from '../../../mixins/modal';
+import modalMixin from '../../../mixins/modal';
 
-    const cleanHiddenFilter = {
+const cleanHiddenFilter = {
     created_at: [], created_between: [],
 };
 
@@ -154,9 +154,9 @@ export default {
                 {
                     name: 'ID',
                     code: 'id',
-                    value: function(claim) {
+                    value: function (claim) {
                         return '<a href="' + self.getRoute(self.routePrefix + '.detail',
-                            {id: claim.id}) + '">' +
+                                {id: claim.id}) + '">' +
                             claim.id + '</a>';
                     },
                     isShown: true,
@@ -165,7 +165,7 @@ export default {
                 {
                     name: 'Мерчант',
                     code: 'merchant',
-                    value: function(claim) {
+                    value: function (claim) {
                         return claim.merchant.name ? claim.merchant.name : 'N/A';
                     },
                     isShown: true,
@@ -174,7 +174,7 @@ export default {
                 {
                     name: 'Автор',
                     code: 'author',
-                    value: function(claim) {
+                    value: function (claim) {
                         return claim.userName ? claim.userName : 'N/A';
                     },
                     isShown: true,
@@ -183,7 +183,7 @@ export default {
                 {
                     name: 'Статус',
                     code: 'status',
-                    value: function(claim) {
+                    value: function (claim) {
                         return '<span class="badge ' + self.statusClass(claim.status) + '">' +
                             self.statusName(claim.status) + '</span>';
                     },
@@ -193,7 +193,7 @@ export default {
                 {
                     name: 'Кол-во товаров',
                     code: 'products_qty',
-                    value: function(claim) {
+                    value: function (claim) {
                         return claim.productsQty;
                     },
                     isShown: true,
@@ -274,12 +274,18 @@ export default {
         },
         statusClass(statusId) {
             switch (statusId) {
-                case 1: return 'badge-info';
-                case 2: return 'badge-secondary';
-                case 3: return 'badge-primary';
-                case 4: return 'badge-success';
-                case 5: return 'badge-warning';
-                default: return 'badge-light';
+                case 1:
+                    return 'badge-info';
+                case 2:
+                    return 'badge-secondary';
+                case 3:
+                    return 'badge-primary';
+                case 4:
+                    return 'badge-success';
+                case 5:
+                    return 'badge-warning';
+                default:
+                    return 'badge-light';
             }
         },
         showChangeColumns() {
@@ -302,7 +308,7 @@ export default {
             return Object.values(this.merchants).map(merchant => ({value: merchant.id, text: merchant.name}));
         },
         editedShowColumns() {
-            return this.columns.filter(function(column) {
+            return this.columns.filter(function (column) {
                 return !column.isAlwaysShown;
             })
         }
@@ -324,7 +330,7 @@ export default {
 };
 </script>
 <style scoped>
-    .additional-filter {
-        border-top: 1px solid #DFDFDF;
-    }
+.additional-filter {
+    border-top: 1px solid #DFDFDF;
+}
 </style>

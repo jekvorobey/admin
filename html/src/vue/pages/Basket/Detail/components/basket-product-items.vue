@@ -24,6 +24,7 @@
                             </a>
                             <small>{{ basketItem.product.id }}</small>
                             <small>{{ basketItem.product ? basketItem.product.vendor_code : '' }}</small>
+                            <fa-icon class="cursor-pointer" icon="link" @click="showCase(basketItem.product.code)"></fa-icon>
                         </b-td>
                         <b-td class="with-small">
                             {{
@@ -50,11 +51,13 @@
 
 <script>
     import mediaMixin from '../../../../mixins/media';
+    import showCaseMixin from '../../../../mixins/show-case';
 
     export default {
         name: "basket-product-items",
         mixins: [
             mediaMixin,
+            showCaseMixin,
         ],
         components: {
         },

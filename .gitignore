@@ -85,3 +85,4 @@ public/build
 auth.json
 studio.json
 /html/build/
+/html/.env

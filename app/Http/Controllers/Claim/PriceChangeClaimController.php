@@ -298,7 +298,8 @@ class PriceChangeClaimController extends Controller
                         ProductDto::entity(),
                         'id',
                         'name',
-                        'vendor_code'
+                        'vendor_code',
+                        'code',
                     );
                 $productsByOffers = $productService->productsByOffers($productQuery, $offerIds);
             }
