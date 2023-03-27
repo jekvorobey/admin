@@ -167,6 +167,7 @@ class TabDeliveriesController extends OrderDetailController
     public function cancelDeliveryOrder(int $orderId, int $deliveryId, DeliveryService $deliveryService): JsonResponse
     {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->canUpdateOrders();
 
         $deliveryService->cancelDeliveryOrder($deliveryId);
 
@@ -186,6 +187,7 @@ class TabDeliveriesController extends OrderDetailController
         DeliveryService $deliveryService
     ): JsonResponse {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_ORDERS);
+        $this->canUpdateOrders();
 
         $data = $this->validate($request, [
             'orderReturnReason' => 'required|int',
