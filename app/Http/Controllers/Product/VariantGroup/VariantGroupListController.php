@@ -184,7 +184,7 @@ class VariantGroupListController extends Controller
         $merchants = $this->getMerchants($variantGroups->pluck('merchant_id')->all());
 
         return $variantGroups->map(function (VariantGroupDto $variantGroupDto) use ($merchants) {
-            $variantGroupDto->name = $variantGroupDto->name ? : 'Нет названия';
+            $variantGroupDto->name = $variantGroupDto->name ?: 'Нет названия';
             $variantGroupDto['merchant'] = $variantGroupDto->merchant_id && $merchants->has($variantGroupDto->merchant_id)
                 ? $merchants[$variantGroupDto->merchant_id] : null;
             $variantGroupDto->created_at = date_time2str(new Carbon($variantGroupDto->created_at));

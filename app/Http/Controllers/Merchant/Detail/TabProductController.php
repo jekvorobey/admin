@@ -5,18 +5,18 @@ namespace App\Http\Controllers\Merchant\Detail;
 use App\Http\Controllers\Controller;
 use Exception;
 use Greensight\CommonMsa\Dto\BlockDto;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Pim\Dto\Offer\OfferDto;
-use Pim\Dto\Offer\OfferSaleStatus;
-use Pim\Core\PimException;
-use Pim\Services\OfferService\OfferService;
 use Greensight\CommonMsa\Rest\RestQuery;
 use Greensight\Marketing\Dto\Price\PricesInDto;
 use Greensight\Marketing\Services\PriceService\PriceService;
 use Greensight\Store\Services\StockService\StockService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Pim\Core\PimException;
+use Pim\Dto\Offer\OfferDto;
+use Pim\Dto\Offer\OfferSaleStatus;
+use Pim\Services\OfferService\OfferService;
 
 class TabProductController extends Controller
 {
@@ -136,8 +136,8 @@ class TabProductController extends Controller
         $prices = $offerIds ? $priceService->prices(
             (new PricesInDto())->setOffers($offerIds)
         )->keyBy('offer_id')
-        ->all() :
-        [];
+            ->all() :
+            [];
 
         $qtys = $offerIds ? $stockService->qtyByOffers($offerIds) : [];
 
@@ -147,6 +147,7 @@ class TabProductController extends Controller
                 'product' => [
                     'id' => $offer->product->id,
                     'name' => $offer->product->name,
+                    'code' => $offer->product->code
                 ],
                 'sale_status' => OfferSaleStatus::statusById($offer->sale_status),
                 'price' => array_key_exists($offer->id, $prices) ? $prices[$offer->id]->price : 'Нет данных',

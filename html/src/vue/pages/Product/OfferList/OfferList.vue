@@ -103,7 +103,10 @@
                     </b-tooltip>
                 </td>
                 <td>{{ offer.xmlId }}</td>
-                <td>{{ offer.productName }}</td>
+                <td>
+                  <span>{{ offer.productName }}</span>
+                  <fa-icon class="cursor-pointer" icon="link" @click="showCase(offer.productCode)"></fa-icon>
+                </td>
                 <td>{{ offer.merchantName }}</td>
                 <td>
                         <span class="badge" :class="getStatusClass(offer.saleStatus)">
@@ -145,6 +148,7 @@ import FMultiSelect from '../../../components/filter/f-multi-select.vue';
 import FInput from '../../../components/filter/f-input.vue';
 import Modal from '../../../components/controls/modal/modal.vue';
 import modalMixin from '../../../mixins/modal';
+import showCaseMixin from '../../../mixins/show-case';
 import offerCreateModal from './components/offer-create-modal.vue';
 import offerStatusEditModal from './components/offer-status-edit-modal.vue';
 
@@ -171,7 +175,7 @@ export default {
         offerCreateModal,
         offerStatusEditModal,
     },
-    mixins: [modalMixin],
+    mixins: [modalMixin, showCaseMixin],
     props: {
         iOffers: {},
         iPager: {},

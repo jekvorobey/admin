@@ -13,6 +13,8 @@ use Greensight\Store\Services\StockService\StockService;
 use Greensight\Store\Services\StoreService\StoreService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use MerchantManagement\Dto\MerchantDto;
 use MerchantManagement\Services\MerchantService\MerchantService;
@@ -25,8 +27,6 @@ use Pim\Services\BrandService\BrandService;
 use Pim\Services\OfferService\OfferService;
 use Pim\Services\ProductService\ProductService;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Illuminate\Http\Response;
-use Illuminate\Support\Collection;
 
 class OfferListController extends Controller
 {
@@ -373,7 +373,7 @@ class OfferListController extends Controller
             ->setFilter('entity_type', OfferDto::OFFER_ENTITY_PRODUCT)
             ->include(ProductDto::entity())
             ->addFields(OfferDto::entity(), 'id', 'sale_status', 'merchant_id', 'sale_at', 'xml_id', 'guid', 'created_at')
-            ->addFields(ProductDto::entity(), 'id', 'name')
+            ->addFields(ProductDto::entity(), 'id', 'name', 'code')
             ->addFields(BrandDto::entity(), 'id', 'name');
         $page = $request->get('page', 1);
         $query->pageNumber($page, 20);
@@ -435,6 +435,7 @@ class OfferListController extends Controller
                 'id' => $offer->id,
                 'productId' => $offer->product ? $offer->product->id : null,
                 'productName' => $offer->product ? $offer->product->name : 'N/A',
+                'productCode' => $offer->product?->code,
                 'saleStatus' => $offer->sale_status,
                 'saleAt' => $offer->sale_at,
                 'createdAt' => $offer->created_at,

@@ -22,10 +22,11 @@ class MassPromoProductsController extends Controller
      * @throws CustomerException
      */
     public function list(
-        CustomerService $customerService,
-        ReferralService $referralService,
+        CustomerService      $customerService,
+        ReferralService      $referralService,
         PromoProductsManager $promoProductsManager
-    ) {
+    )
+    {
         $this->canView(BlockDto::ADMIN_BLOCK_REFERRALS);
 
         // Получить список массовых промо-товаров //
@@ -74,9 +75,10 @@ class MassPromoProductsController extends Controller
      * @throws PimException
      */
     public function attachProduct(
-        ReferralService $referralService,
+        ReferralService      $referralService,
         PromoProductsManager $promoProductsManager
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $this->canUpdate(BlockDto::ADMIN_BLOCK_REFERRALS);
 
         $data = $this->validate(request(), [

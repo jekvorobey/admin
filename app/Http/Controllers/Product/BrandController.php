@@ -21,7 +21,7 @@ class BrandController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $page = $request->get('page', 1);
-        [$total, $brands] = $this->loadBrands($brandService, $page);
+        [$total, $brands] = $this->loadBrands($request, $brandService, $page);
 
         return $this->render('Product/BrandList', [
             'iBrands' => $brands,
@@ -38,7 +38,7 @@ class BrandController extends Controller
         $this->canView(BlockDto::ADMIN_BLOCK_PRODUCTS);
 
         $page = $request->get('page', 1);
-        [$total, $brands] = $this->loadBrands($brandService, $page);
+        [$total, $brands] = $this->loadBrands($request, $brandService, $page);
 
         return response()->json([
             'brands' => $brands,
@@ -86,9 +86,34 @@ class BrandController extends Controller
     /**
      * @throws PimException
      */
-    private function loadBrands(BrandService $brandService, $page): array
+    private function loadBrands(Request $request, BrandService $brandService, $page): array
     {
+        $requestData = $request->validate([
+            'filter' => 'nullable|array',
+            'filter.id' => 'nullable|numeric',
+            'filter.name' => 'nullable|string|max:255',
+            'filter.code' => 'nullable|string|max:255',
+            'filter.visibilityFilter' => 'nullable|in:true,false',
+            'filter.activeFilter' => 'nullable|in:true,false',
+        ]);
         $query = $brandService->newQuery()->pageNumber($page, 10);
+        $filter = $requestData['filter'] ?? [];
+
+        if (isset($filter['id']) && $filter['id']) {
+            $query->setFilter('id', $filter['id']);
+        }
+        if (isset($filter['name']) && $filter['name']) {
+            $query->setFilter('name', 'like', "%{$filter['name']}%");
+        }
+        if (isset($filter['code']) && $filter['code']) {
+            $query->setFilter('code', $filter['code']);
+        }
+        if (isset($filter['visibilityFilter']) && $filter['visibilityFilter']) {
+            $query->setFilter('is_visible', filter_var($filter['activeFilter'], FILTER_VALIDATE_BOOLEAN));
+        }
+        if (isset($filter['activeFilter']) && $filter['activeFilter']) {
+            $query->setFilter('active', filter_var($filter['activeFilter'], FILTER_VALIDATE_BOOLEAN));
+        }
 
         $total = $brandService->brandsCount($query);
         $brands = $brandService->brands($query);
